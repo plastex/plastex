@@ -4,7 +4,7 @@ import unittest
 from unittest import TestCase
 from plasTeX.DOM import *
 
-class Construction(TestCase):
+class NodeTest(TestCase):
 
     def _checkPositions(self, node):
         """ Check the postions of all contained nodes """ 
