@@ -292,7 +292,7 @@ class char(Command):
     """ \\char """
     args = 'char:Number'
     def invoke(self, tex):
-        return [chr(self.parse(tex)['char'])]
+        return tex.texttokens(chr(self.parse(tex)['char']))
 
 class chardef(Command):
     args = 'command:cs = num:Number'

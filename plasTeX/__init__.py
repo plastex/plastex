@@ -253,7 +253,11 @@ class Macro(Element):
         """
         if self.counter:
             tex.context.currentlabel = self
-            tex.context.counters.stepcounter(self.counter)
+            try:
+                Counter.counters[self.counter].stepcounter()
+            except KeyError:
+                log.warning('Could not find counter "%s"', self.counter)
+                tex.context.newcounter(self.counter,1)
             self.ref = tex.expandtokens(tex.context['the'+self.counter].invoke(tex))
 
     def arguments(self):
@@ -880,3 +884,129 @@ class MuGlue(Register):
     def addtolength(self, len):
         type(self).value = muglue(type(self).value + len)
 
+
+class Counter(object):
+    """
+    LaTeX counter class
+
+    """
+    counters = {}
+
+    def __init__(self, name, resetby=None, value=0):
+        self.name = name
+        self.resetby = resetby
+        self.value = value
+        Counter.counters[name] = self
+
+    def addtocounter(self, other):
+        self.value += int(other)
+        self.resetcounters()
+
+    def stepcounter(self):
+        self.value += 1
+        self.resetcounters()
+
+    def resetcounters(self):
+        for counter in self.counters.values():
+            if counter.resetby == self.name: 
+                counter.value = 0
+                counter.resetcounters()
+
+    def __int__(self):
+        return self.value
+
+    def __float__(self):
+        return self.value
+
+    def arabic(self):
+        return unicode(self.value)
+    arabic = property(arabic)
+
+    def Roman(self):
+        roman = ""
+        n, number = divmod(self.value, 1000)
+        roman = "M"*n
+        if number >= 900:
+            roman = roman + "CM"
+            number = number - 900
+        while number >= 500:
+            roman = roman + "D"
+            number = number - 500
+        if number >= 400:
+            roman = roman + "CD"
+            number = number - 400
+        while number >= 100:
+            roman = roman + "C"
+            number = number - 100
+        if number >= 90:
+            roman = roman + "XC"
+            number = number - 90
+        while number >= 50:
+            roman = roman + "L"
+            number = number - 50
+        if number >= 40:
+            roman = roman + "XL"
+            number = number - 40
+        while number >= 10:
+            roman = roman + "X"
+            number = number - 10
+        if number >= 9:
+            roman = roman + "IX"
+            number = number - 9
+        while number >= 5:
+            roman = roman + "V"
+            number = number - 5
+        if number >= 4:
+            roman = roman + "IV"
+            number = number - 4
+        while number > 0:
+            roman = roman + "I"
+            number = number - 1
+        return roman
+    Roman = property(Roman)
+
+    def roman(self):
+        return self.Roman.lower()
+    roman = property(roman)
+
+    def Alph(self):
+        return string.letters[self.value-1].upper()
+    Alph = property(Alph)
+
+    def alph(self):
+        return self.Alph.lower()
+    alph = property(alph)
+
+    def fnsymbol(self):
+        return '*' * self.value
+    fnsymbol = property(fnsymbol)
+
+
+class TheCounter(Command):
+    """ Base class for \\thecounter commands """
+    format = None
+
+    def invoke(self, tex):
+
+        def countervalue(m):
+            """ Replace the counter values """
+            parts = m.group(1).split('.')
+            name = parts.pop(0)
+
+            # If there is a reference to another \\thecounter, invoke it
+            if name.startswith('the'):
+                return u''.join(tex.context[name].invoke(tex))
+
+            # Get formatted value of the requested counter
+            format = 'arabic'
+            if parts:
+                format = parts.pop(0)
+
+            return getattr(Counter.counters[name], format)
+
+        format = self.format
+        if self.format is None:
+            format = '%%(%s.arabic)s' % self.nodeName[3:]
+
+        return tex.texttokens(re.sub(r'%\(\s*(\w+(?:\.\w+)?)\s*\)s', 
+                              countervalue, format))

@@ -2,7 +2,7 @@
 
 import new 
 import plasTeX
-from plasTeX import Macro, StringCommand, UnrecognizedMacro, ismacro, macroname
+from plasTeX import ismacro, macroname
 from plasTeX.Logging import getLogger
 from Tokenizer import Tokenizer, Token, DEFAULT_CATEGORIES, VERBATIM_CATEGORIES
 
@@ -64,66 +64,6 @@ class ContextItem(dict):
         return self.name
 
 
-class Counters(dict):
-    """
-    Dictionary that handles incrementing and resetting counters
-
-    """
-
-    class Counter(int):
-        resetby = None
-        format = None
-
-    def __init__(self, data={}, context=None):
-        dict.__init__(self, data)
-        self.context = context
-
-    def new(self, name, initial=0, resetby=None, format=None):
-        counter = self.Counter(initial)
-        counter.resetby = resetby
-        if format is None:
-            format = r'\arabic{%s}' % name
-        self.context.newcommand('the'+name, definition=format)
-        self[name] = counter
-
-    def stepcounter(self, name):
-        self[name] += 1
-        self.resetby(name)
-
-    def setcounter(self, name, value):
-        self[name] = value
-        self.resetby(name)
-
-    def addtocounter(self, name, value):
-        self[name] += value
-        self.resetby(name)
-
-    def refstepcounter(self, name):
-        self[name] += 1
-        self.resetby(name)
-
-    def resetby(self, name):
-        resetby = self[name].resetby
-        for key, value in self.items():
-            if key == resetby:
-                self.setcounter(key, 0)
-
-    def __getitem__(self, key):
-        try:
-            return dict.__getitem__(self, key)
-        except KeyError:
-            self.context.newcounter(key) 
-        return dict.__getitem__(self, key)
-
-    def __setitem__(self, key, value):
-        if self.has_key(key):
-            value = self.Counter(value)
-            value.resetby = self[key].resetby
-        else:
-            if not(isinstance(value, self.Counter)):
-                value = self.Counter(value)
-        dict.__setitem__(self, key, value)
-
 class Context(object):
     """
     Object to handle macro contexts within a TeX document
@@ -136,10 +76,7 @@ class Context(object):
 
     """
 
-    def __init__(self, tex=None):
-        # Handle to the TeX instance that the context belongs to
-        self.tex = tex
-
+    def __init__(self, load=False):
         # Stack of ContextItems
         self.contexts = []
 
@@ -158,11 +95,11 @@ class Context(object):
         # Depth of the context stack
         self.depth = 0
 
-        # LaTeX counters
-        self.counters = Counters(context=self)
-
         # Create a global namespace
         self.push()
+
+        if load:
+            self.loadBaseMacros()
 
     def loadBaseMacros(self):
         """ Import all builtin macros """
@@ -196,7 +133,7 @@ class Context(object):
 
         # Didn't find it, so generate a new class
         log.warning('unrecognized command/environment: %s', key)
-        self[key] = newclass = new.classobj(str(key), (UnrecognizedMacro,), {})
+        self[key] = newclass = new.classobj(str(key), (plasTeX.UnrecognizedMacro,), {})
         return newclass()
 
     def push(self, context=None):
@@ -321,7 +258,7 @@ class Context(object):
             # should probably be an error since we have something 
             # incorrectly grouped.
             if len(self.contexts) == 1:
-                stacklog.warning('%s%s is attempting to pop the global namespace.' % (name, self.tex.lineinfo))
+                stacklog.warning('%s is attempting to pop the global namespace.' % name)
                 break
 
             # Pop the next context in the stack
@@ -362,7 +299,7 @@ class Context(object):
 
         """
         if isinstance(value, basestring):
-            value = StringCommand(value)
+            value = plasTeX.StringCommand(value)
 
         elif not ismacro(value):
             raise ValueError, \
@@ -385,7 +322,7 @@ class Context(object):
 
         """
         if isinstance(value, basestring):
-            value = StringCommand(value)
+            value = plasTeX.StringCommand(value)
 
         elif not ismacro(value):
             raise ValueError, \
@@ -461,7 +398,7 @@ class Context(object):
         """
         self.contexts[-1].categories = self.categories = VERBATIM_CATEGORIES[:]
 
-    def newcounter(self, name, initial=0, resetby=None):
+    def newcounter(self, name, resetby=None, initial=0):
         """ 
         Create a new counter 
 
@@ -473,16 +410,16 @@ class Context(object):
             also be generated for the counter format.
 
         Keyword Arguments:
-        initial -- initial value for the counter
         resetby -- the name of the counter that this counter is reset by
+        initial -- initial value for the counter
 
         """
         name = str(name)
         # Counter already exists
-        if self.counters.has_key(name):
+        if plasTeX.Counter.counters.has_key(name):
             macrolog.debug('counter %s already defined', name)
             return
-        self.counters.new(name, initial, resetby)
+        plasTeX.Counter(name, resetby, initial)
 
     def newcount(self, name, initial=0):
         """ 

@@ -341,6 +341,7 @@ class Tokenizer(object):
         CC_EOL = Token.CC_EOL
         CC_COMMENT = Token.CC_COMMENT
         CC_ACTIVE = Token.CC_ACTIVE
+        prev = None
 
         while 1:
 
@@ -384,6 +385,9 @@ class Tokenizer(object):
                         self.linenumber += 1
                         self.readline()
                     token = EscapeSequence('par')
+                    # Prevent adjacent paragraphs
+                    if prev == token:
+                        continue
                     code = CC_ESCAPE
 
             # Escape sequence
@@ -437,9 +441,12 @@ class Tokenizer(object):
 
             elif code == CC_ACTIVE:
                 token = EscapeSequence('active::%s' % token)
+                token = context.lets.get(token, token)
                 self.state = STATE_M
 
             else:
                 self.state = STATE_M
+
+            prev = token
 
             yield token

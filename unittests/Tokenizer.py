@@ -90,7 +90,6 @@ class Tokenizing(TestCase):
                     Letter('i'), 
                     Other('!'), 
                     Space(' '), 
-                    EscapeSequence('par'), 
                     EscapeSequence('par')]
         assert tokens == expected, '%s != %s' % (tokens, expected)
 

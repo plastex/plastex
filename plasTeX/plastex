@@ -16,9 +16,15 @@ basename = os.path.splitext(file)[0]
 # Parse document
 s = TeX(codecs.open(file,'r',encoding))
 document = s.parse()
+
+# Write expanded source file
 sourcefile = '%s.source' % basename
 codecs.open(sourcefile,'w',encoding).write(document.source)
+
+# Locate the document element
 document = [x for x in document if x.level == Node.DOCUMENT_LEVEL].pop()
+
+# Write XML dump
 outfile = '%s.xml' % basename
 codecs.open(outfile,'w',encoding).write(document.toXML())
 
@@ -27,4 +33,5 @@ from plasTeX.renderers.xhtml import xhtml as renderer
 s.context.applyRenderer(renderer)
 
 # Render output
-print str(document)
+outfile = '%s.html' % basename
+codecs.open(outfile,'w',encoding).write(str(document))

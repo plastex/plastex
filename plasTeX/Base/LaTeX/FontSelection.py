@@ -28,7 +28,7 @@ class normalfont(TextDeclaration): pass
 
 
 class TextCommand(Command):
-    args = 'text'
+    args = 'self'
 
 class textmd(TextCommand): pass
 class textbf(TextCommand): pass

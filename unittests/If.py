@@ -3,7 +3,7 @@
 import unittest
 from unittest import TestCase
 from plasTeX.TeX import TeX
-from plasTeX.Context import Macro
+from plasTeX import Macro
 
 
 class TestIfs(TestCase):

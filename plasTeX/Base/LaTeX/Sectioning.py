@@ -5,7 +5,7 @@ C.4 Sectioning and Table of Contents (p174)
 
 """
 
-from plasTeX import Command, Environment
+from plasTeX import Command, Environment, Counter, TheCounter
 from plasTeX.Logging import getLogger
 
 #
@@ -25,6 +25,38 @@ class StartSection(Command):
                 item.digest(tokens)
             self.appendChild(item)
 
+Counter('part','volume')
+Counter('chapter','part')
+Counter('section','chapter')
+Counter('subsection','section')
+Counter('subsubsection','subsection')
+Counter('paragraph','subsubsection')
+Counter('subparagraph','paragraph')
+Counter('subsubparagraph','subparagraph')
+
+class thepart(TheCounter): 
+    format = '%(part)s'
+
+class thechapter(TheCounter): 
+    format = '%(chapter)s'
+
+class thesection(TheCounter): 
+    format = '%(section)s'
+
+class thesubsection(TheCounter): 
+    format = '%(thesection)s.%(subsection)s'
+
+class thesubsubsection(TheCounter): 
+    format = '%(thesubsection)s.%(subsubsection)s'
+
+class theparagraph(TheCounter):
+    format = '%(thesubsubsection)s.%(paragraph)s'
+
+class thesubparagraph(TheCounter):
+    format = '%(theparagraph)s.%(subparagraph)s'
+
+class thesubsubparagraph(TheCounter):
+    format = '%(thesubparagraph)s.%(subsubparagraph)s'
     
 class part(StartSection):
     level = Command.PART_LEVEL
@@ -88,10 +120,6 @@ class addtocontents(Command):
 # C.4.4 Style Parameters
 #
 
-#class secnumdepth(Counter):
-#    pass
-
-#class tocdepth(Counter):
-#    pass
-
+Counter('secnumdepth')
+Counter('tocdepth')
 

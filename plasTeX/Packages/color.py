@@ -3,7 +3,7 @@
 from plasTeX import Command, Environment
 
 class textcolor(Command):
-    args = 'color text'
+    args = 'color self'
     def invoke(self, tex):
         self.parse(tex)
         self.style['color'] = '#%s' % self.attributes['color']

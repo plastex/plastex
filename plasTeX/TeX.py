@@ -69,7 +69,7 @@ class TeX(object):
     """
 
     def __init__(self, source=None):
-        self.context = Context(self)
+        self.context = Context(load=True)
         self.context.loadBaseMacros()
 
         # Input source stack

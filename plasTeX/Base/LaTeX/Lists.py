@@ -6,7 +6,7 @@ C.6.3 The list and trivlist Enviroments
 
 """
 
-from plasTeX import Environment, Command
+from plasTeX import Environment, Command, Counter, TheCounter
 from plasTeX import Dimen, dimen
 
 class List(Environment):
@@ -37,6 +37,15 @@ class List(Environment):
 # Counters -- enumi, enumii, enumiii, enumiv
 #            
 
+Counter('enumi')
+Counter('enumii')
+Counter('enumiii')
+Counter('enumiv')
+
+class theenumi(TheCounter): pass
+class theenumii(TheCounter): pass
+class theenumiii(TheCounter): pass
+class theenumiv(TheCounter): pass
 
 # C.6.2
     

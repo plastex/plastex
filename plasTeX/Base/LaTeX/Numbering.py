@@ -5,44 +5,47 @@ C.8.4 Numbering (p194)
 
 """
 
-from plasTeX import Command, Environment
+from plasTeX import Command, Environment, Counter
 from plasTeX.Logging import getLogger
 
 class newcounter(Command):
     args = 'name:str [ within ]'
     def invoke(self, tex):
         a = self.parse(tex)
-        tex.context.counters.new(a['name'], resetby=a['within'])
+        tex.context.newcounter(a['name'], a['within'])
 
 class setcounter(Command):
     args = 'name:str value:int'
     def invoke(self, tex):
         a = self.parse(tex)
-        tex.context.counters[a['name']] = a['value']
+        Counter.counters[a['name']].setcounter(a['value'])
 
 class addtocounter(Command):
     args = 'name:str value:int'
     def invoke(self, tex):
         a = self.parse(tex)
-        tex.context.counters[a['name']] += a['value']
+        Counter.counters[a['name']].addtocounter(a['value'])
 
 class value(Command):
     args = 'name:str'
     def invoke(self, tex):
-        return tex.texttokens(tex.context.counters[self.parse(tex)['name']])
+        a = self.parse(tex)
+        return tex.texttokens(Counter.counters[a['name']].arabic)
 
 class arabic(Command):
     """ Return arabic representation """
     args = 'name:str'
     def invoke(self, tex):
-        return tex.texttokens(tex.context.counters[self.parse(tex)['name']])
+        a = self.parse(tex)
+        return tex.texttokens(Counter.counters[a['name']].arabic)
 
 class Roman(Command):
     """ Return uppercase roman representation """
     args = 'name:str'
     def invoke(self, tex):
+        a = self.parse(tex)
         roman = ""
-        n, number = divmod(tex.context.counters[self.parse(tex)['name']], 1000)
+        n, number = divmod(int(Counter.counters['name']), 1000)
         roman = "M"*n
         if number >= 900:
             roman = roman + "CM"
@@ -85,31 +88,37 @@ class Roman(Command):
 class roman(Roman):
     """ Return the lowercase roman representation """
     def invoke(self, tex):
-        return tex.texttokens(u''.join(Roman.invoke()).lower())
+        a = self.parse(tex)
+        return tex.texttokens(Counter.counters[a['name']].roman)
 
 class Alph(Command):
     """ Return the uppercase letter representation """
     args = 'name:str'
     def invoke(self, tex):
-        return tex.texttokens(unicode(tex.context.counters[self.parse(tex)['name']]-1).upper())
+        a = self.parse(tex)
+        return tex.texttokens(Counter.counters[a['name']].Alph)
 
 class alph(Alph):
     """ Return the lowercase letter representation """
     def invoke(self, tex):
-        tex.texttokens(u''.join(Alph.invoke()).lower())
+        a = self.parse(tex)
+        return tex.texttokens(Counter.counters[a['name']].alph)
 
 class fnsymbol(Command):
     """ Return the symbol representation """
     args = 'name:str'
     def invoke(self, tex):
-        return tex.texttokens('*' * self.value)
+        a = self.parse(tex)
+        return tex.texttokens(Counter.counters[a['name']].fnsymbol)
 
 class stepcounter(Command):
     args = 'name:str'
     def invoke(self, tex):
-        tex.context.counters.stepcounter(self.parse(text)['name'])
+        a = self.parse(tex)
+        return Counter.counters[a['name']].stepcounter()
 
 class refstepcounter(Command):
     args = 'name:str'
     def invoke(self, tex):
-        tex.context.counters.stepcounter(self.parse(text)['name'])
+        a = self.parse(tex)
+        return Counter.counters[a['name']].stepcounter()

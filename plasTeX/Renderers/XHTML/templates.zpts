@@ -5,9 +5,7 @@
 <span tal:content="self" class="unknown">children of macro</span>
 </zpt:page-template>
 
-<zpt:page-template name="it itshape textit">
-<i tal:content="self">italic text</i>
-</zpt:page-template>
+<zpt:page-template name="it itshape textit"><i tal:content="self">italic text</i></zpt:page-template>
 
 <zpt:page-template name="tt texttt ttfamily">
 <tt tal:content="self">italic text</tt>
@@ -17,13 +15,9 @@
 <div style="text-align:center" tal:content="self"></div>
 </zpt:page-template>
 
-<zpt:page-template name="color textcolor">
-<span tal:attributes="style self/style/inline" tal:content="self"></span>
-</zpt:page-template>
+<zpt:page-template name="color textcolor"><span tal:attributes="style self/style/inline" tal:content="self"></span></zpt:page-template>
 
-<zpt:page-template name="bf bfseries textbf">
-<b tal:content="self">bold text</b>
-</zpt:page-template>
+<zpt:page-template name="bf bfseries textbf"><b tal:content="self">bold text</b></zpt:page-template>
 
 <zpt:page-template name="emph em">
 <emph tal:content="self">emphasized text</emph>
@@ -69,6 +63,10 @@
 
 <zpt:page-template name="htmlref">
 <a tal:attributes="href string:#${self/attributes/label}" tal:content="self"></a>
+</zpt:page-template>
+
+<zpt:page-template name="alltt jverbatim cverbatim kverbatim tverbatim">
+<pre tal:content="self"></pre>
 </zpt:page-template>
 
 </zpt:page-templates>
