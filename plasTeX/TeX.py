@@ -198,7 +198,6 @@ class TeX(object):
         pushtokens = self.pushtokens
         context = self.context
         ELEMENT_NODE = Node.ELEMENT_NODE
-        CC_ACTIVE = Token.CC_ACTIVE
 
         while 1:
             # Get the next token

@@ -134,14 +134,14 @@ class Macro(Element):
             return getattr(tself, localsname)
         mro = list(tself.__mro__)
         mro.reverse()
-        locals = {}
+        loc = {}
         for cls in mro:
             for value in vars(cls).values():
                 if ismacro(value):
-                    locals[macroname(value)] = value
+                    loc[macroname(value)] = value
         # Cache the locals in a unique name
-        setattr(tself, localsname, locals)
-        return locals
+        setattr(tself, localsname, loc)
+        return loc
 
     def id():
         def fset(self, value):
@@ -855,12 +855,12 @@ class Parameter(Command):
             type(self).value = self.parse(tex)['value']
             Parameter.enabled = True
 
-    def enable(self):
+    def enable(cls):
         Parameter._enablelevel += 1
         Parameter.enabled = Parameter._enablelevel >= 0 
     enable = classmethod(enable)
 
-    def disable(self):
+    def disable(cls):
         Parameter._enablelevel -= 1
         Parameter.enabled = Parameter._enablelevel >= 0 
     disable = classmethod(disable)

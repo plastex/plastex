@@ -440,7 +440,7 @@ def _compareDocumentPosition(self, other):
         return Node.DOCUMENT_POSITION_FOLLOWING
 
     if self is other:
-        return Node.DOCUMENT_IMPLEMENTATION_SPECIFIC
+        return Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC
 
     sparents = []
     parent = self
@@ -1088,7 +1088,8 @@ class Node(object):
 
         """
         try: return self._userdata[key]
-        except (AttributeError, KeyError): return None
+        except (AttributeError, KeyError): pass
+        return None
 
     def __iter__(self):
         if self.childNodes:
@@ -1202,6 +1203,8 @@ def _getElementById(self, elementId):
             if e is not None:
                 return e
 
+    return None
+
 
 class Attr(Node):
     """
@@ -1297,7 +1300,7 @@ class Element(Node):
         newAttr -- attribute node 
 
         """
-        self.setAttributeNode(newAttr.name, newAttr)
+        self.setAttribute(newAttr.name, newAttr)
 
     def removeAttributeNode(self, oldAttr):
         """
@@ -1335,7 +1338,7 @@ class Element(Node):
         value -- value of the attribute
 
         """
-        return self.setAttribute(self, qualifiedName, value)
+        return self.setAttribute(qualifiedName, value)
 
     def removeAttributeNS(self, namespaceURI, localName):
         """

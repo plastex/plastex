@@ -177,9 +177,8 @@ class Context(object):
         self.categories = top.categories
 
         # Setter methods always use the global namespace
-        globals = self.contexts[0]
         self.update = top.update
-        self.__setitem__ = globals.__setitem__
+        self.__setitem__ = self.contexts[0].__setitem__
 
         # Set up inheritance attributes
         self.top.owner = self
@@ -253,7 +252,6 @@ class Context(object):
         # Pop until we find a match, return a list of all of the
         # popped contexts (excluding `None's)
         o = c = None
-        pushed = []
         while self.contexts:
             # Don't let them pop off the global namespace.  This should
             # should probably be an error since we have something 
