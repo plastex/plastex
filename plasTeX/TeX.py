@@ -330,6 +330,7 @@ class TeX(object):
             'nox': lambda x,**y: x,
 
             # These are handled natively
+#           'args': ...,
 #           'tok': ...,
 #           'xtok': ...,
 #           'dimen': ...,
@@ -655,6 +656,18 @@ class TeX(object):
 
         if type in ['cs']:
             expanded = False
+
+        # Definition argument string
+        if type in ['args']:
+            args = []
+            for t in self.itertokens():
+                if t.code == CC_BGROUP:
+                    self.pushtoken(t)
+                    break
+                else:
+                    args.append(t) 
+            else: pass
+            return args, self.source(args)
 
         tokens = self.itertokens()
 

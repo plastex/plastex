@@ -18,7 +18,10 @@ class begin(Macro):
         envlog.debug(name)
         obj = tex.context[name]
         obj.mode = MODE_BEGIN
-        return obj.invoke(tex)
+        out = obj.invoke(tex)
+        if out is None:
+            out = [obj]
+        return out
 
 class end(Macro):
     """ End of an environment """
@@ -29,7 +32,10 @@ class end(Macro):
         envlog.debug(name)
         obj = tex.context[name]
         obj.mode = MODE_END
-        return obj.invoke(tex)
+        out = obj.invoke(tex)
+        if out is None:
+            out = [obj]
+        return out
 
 class newcommand(Command):
     """ \\newcommand """
@@ -41,7 +47,6 @@ class newcommand(Command):
         kwargs = {'opt':a['opt']}
         deflog.debug('command %s %s %s', *args)
         tex.context.newcommand(*args, **kwargs)
-        return [self]
 
 class renewcommand(newcommand): pass
 class providecommand(newcommand): pass
@@ -56,25 +61,23 @@ class newenvironment(Command):
         kwargs = {'opt':a['opt']}
         deflog.debug('environment %s %s %s', *args)
         tex.context.newenvironment(*args, **kwargs)
-        return [self]
 
 class usepackage(Command):
     """ \\usepackage """
     args = '[ %options ] name:str'
-    loaded = {}
     def invoke(self, tex):
-        attrs = self.attributes
         Command.parse(self, tex)
+        attrs = self.attributes
         try: 
             # See if it has already been loaded
-            if type(self).loaded.has_key(attrs['name']):
+            if tex.context.packages.has_key(attrs['name']):
                 return
 
             try: 
                 m = __import__(attrs['name'], globals(), locals())
                 status.info(' ( %s ' % m.__file__)
                 tex.context.importMacros(vars(m))
-                type(self).loaded[attrs['name']] = attrs['options']
+                tex.context.packages[attrs['name']] = attrs['options']
                 status.info(' ) ')
                 return
 
@@ -85,36 +88,29 @@ class usepackage(Command):
             path = attrs['name']
 
             status.info(' ( %s.sty ' % attrs['name'])
-            type(tex)(open(path)).parse()
-            type(self).loaded[self.name] = attrs['options']
+            tex.input(open(path, 'r'))
+            tex.context.packages[attrs['name']] = attrs['options']
             status.info(' ) ')
 
         except (OSError, IOError):
             log.warning('\nError opening package "%s"' % attrs['name'])
             status.info(' ) ')
 
-        return [self]
-
 class documentclass(usepackage):
     """ \\documentclass """
-    def invoke(self, tex):
-        usepackage.invoke(self, tex)
-        from plasTeX import packages
-        tex.context.importMacros(vars(packages))
-        return [self]
 
 class RequirePackage(usepackage):
     """ \\RequirePackage """
 
 class x_ifnextchar(Command):
     texname = '@ifnextchar'
+    args = 'char:tok true:nox false:nox'
     def invoke(self, tex):
-        char = tex.getArgument()[0]
-        truecontent = tex.getArgument()
-        falsecontent = tex.getArgument()
+        Command.parse(self, tex)
+        a = self.attributes
         for t in tex.itertokens():
             tex.pushtoken(t)
-            if char == t:
-                return truecontent
+            if a['char'] == t:
+                return a['true']
             else:
-                return falsecontent
+                return a['false']

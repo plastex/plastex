@@ -16,8 +16,6 @@ class par(Macro):
     level = PARAGRAPH
     def invoke(self, tex):
         status.dot()
-#       tex.context.push(self)
-        return [self]
     def __repr__(self): return '\n\n'
 
 class mbox(Command):
@@ -28,10 +26,9 @@ class mbox(Command):
         if mathshift.inenv:
             shifted = 1
             mathshift.inenv.append(None)
-        tokens = Command.parse(self, tex) 
+        Command.parse(self, tex) 
         if shifted:
             mathshift.inenv.pop()
-        return tokens
 
 class mathshift(Macro):
     """ 
@@ -109,44 +106,24 @@ class macroparameter(Macro):
 class bgroup(Macro):
     def invoke(self, tex):
         self.context.push()
-        return [self]
     def __repr__(self):
         return '{'
 
 class egroup(Macro):
     def invoke(self, tex):
         self.context.pop()
-        return [self]
     def __repr__(self):
         return '}'
 
 class _def(Macro):
-    """
-    TeX's \\def command
-
-    """
+    """ TeX's \\def command """
     local = True
+    args = 'name:cs args:args definition:nox'
     def invoke(self, tex):
-
-        name = tex.getArgument(type='cs')
-
-        # Get argument string
-        args = []
-        for t in tex.itertokens():
-            if t.code == CC_BGROUP:
-                tex.pushtoken(t)
-                break
-            else:
-                args.append(t) 
-        else: pass
-
-        # Parse definition from stream
-        definition = tex.getArgument()
-
-        deflog.debug('def %s %s %s', name, args, definition)
-        tex.context.newdef(name, args, definition, local=self.local)
-
-        return [self]
+        Macro.parse(self, tex)
+        a = self.attributes
+        deflog.debug('def %s %s %s', a['name'], a['args'], a['definition'])
+        tex.context.newdef(a['name'], a['args'], a['definition'], local=self.local)
 
 class x_def(_def): 
     texname = 'def'
@@ -163,12 +140,14 @@ class newif(Macro):
     def invoke(self, tex):
         Macro.parse(self, tex)
         tex.context.newif(self.attributes['name'])
-        return [self]
 
 class _if(Macro):
     """ Test if character codes agree """
+    args = 'a:tok b:tok'
     def invoke(self, tex):
-        return tex.getCase(tex.getArgument()[0] == tex.getArgument()[0])
+        Macro.parse(self, tex)
+        a = self.attributes
+        return tex.getCase(a['a'] == a['b'])
 
 class x_if(_if): 
     """ \\if """
@@ -176,10 +155,12 @@ class x_if(_if):
         
 class ifnum(_if):
     """ Compare two integers """
+    args = 'a:number rel:tok b:number'
     def invoke(self, tex):
-        a = tex.readInteger()
-        relation = tex.getArgument(type='str')
-        b = tex.readInteger()
+        Macro.parse(self, tex)
+        attrs = self.attributes
+        relation = attrs['rel']
+        a, b = attrs['a'], attrs['b']
         if relation == '<':
             return tex.getCase(a < b)
         elif relation == '>':
@@ -190,10 +171,12 @@ class ifnum(_if):
 
 class ifdim(_if):
     """ Compare two dimensions """
+    args = 'a:dimen rel:tok b:dimen'
     def invoke(self, tex):
-        a = tex.readDimen()
-        relation = tex.getArgument(type='str')
-        b = tex.readDimen()
+        Macro.parse(self, tex)
+        attrs = self.attributes
+        relation = attrs['rel']
+        a, b = attrs['a'], attrs['b']
         if relation == '<':
             return tex.getCase(a < b)
         elif relation == '>':
@@ -203,14 +186,18 @@ class ifdim(_if):
         raise ValueError, '"%s" is not a valid relation' % relation
 
 class ifodd(_if):
-    """ Test for odd integer """
+    """ Test for odd integer """   
+    args = 'value:number'
     def invoke(self, tex):
-        return tex.getCase(not(not(tex.readInteger() % 2)))
+        Macro.parse(self, tex)
+        return tex.getCase(not(not(self.attributes['value'] % 2)))
 
 class ifeven(_if):
     """ Test for even integer """
+    args = 'value:number'
     def invoke(self, tex):
-        return tex.getCase(not(tex.readInteger() % 2))
+        Macro.parse(self, tex)
+        return tex.getCase(not(self.attributes['value'] % 2))
 
 class ifvmode(_if):
     """ Test for vertical mode """
@@ -234,36 +221,46 @@ class ifinner(_if):
 
 class ifcat(_if):
     """ Test if category codes agree """
+    args = 'a:tok b:tok'
     def invoke(self, tex):
-        return tex.getCase(tex.getArgument()[0].code == tex.getArgument()[0].code)
+        Macro.parse(self, tex)
+        a = self.attributes
+        return tex.getCase(a['a'].code == a['b'].code)
 
 class ifx(_if):
     """ Test if tokens agree """
+    args = 'a:xtok b:xtok'
     def invoke(self, tex):
-        return tex.getCase(tex.getArgument()[0] == tex.getArgument()[0])
+        Macro.parse(self, tex)
+        a = self.attributes
+        return tex.getCase(a['a'] == a['b'])
 
 class ifvoid(_if):
     """ Test a box register """
+    args = 'value:number'
     def invoke(self, tex):
-        a = tex.readInteger()
+        Macro.parse(self, tex)
         return tex.getCase(False)
 
 class ifhbox(_if):
     """ Test a box register """
+    args = 'value:number'
     def invoke(self, tex):
-        a = tex.readInteger()
+        Macro.parse(self, tex)
         return tex.getCase(False)
 
 class ifvbox(_if):
     """ Test a box register """
+    args = 'value:number'
     def invoke(self, tex):
-        a = tex.readInteger()
+        Macro.parse(self, tex)
         return tex.getCase(False)
 
 class ifeof(_if):
     """ Test for end of file """
+    args = 'value:number'
     def invoke(self, tex):
-        a = tex.readInteger()
+        Macro.parse(self, tex)
         return tex.getCase(False)
 
 class iftrue(_if):
@@ -278,8 +275,10 @@ class iffalse(_if):
 
 class ifcase(_if):
     """ Cases """
+    args = 'value:number'
     def invoke(self, tex):
-        return tex.getCase(tex.readInteger())
+        Macro.parse(self, tex)
+        return tex.getCase(self.attributes['value'])
 
 
 class let(Macro):
@@ -330,21 +329,23 @@ class input(Command):
     """ \\input """
     args = 'name:str'
     def invoke(self, tex):
-        attrs = self.attributes
         Command.parse(self, tex)
-        tokens = []
+        a = self.attributes
         try: 
             #path = kpsewhich(attrs['name'])
-            path = attrs['name']
+            path = a['name']
 
-            status.info(' ( %s.tex ' % attrs['name'])
+            status.info(' ( %s.tex ' % path)
             tex.input(open(path, 'r'))
             status.info(' ) ')
 
         except (OSError, IOError):
-            log.warning('\nProblem opening file "%s"', attrs['name'])
+            log.warning('\nProblem opening file "%s"', path)
             status.info(' ) ')
-        return tokens
+
+class endinput(Command):
+    def invoke(self, tex):
+        tex.endinput()
 
 class include(input):
     """ \\include """

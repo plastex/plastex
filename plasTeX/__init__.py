@@ -389,7 +389,7 @@ class Macro(MacroInterface, Element, RenderMixIn):
             return self.__compiled_arguments
 
         # Split the arguments into their primary components
-        args = iter([x.strip() for x in re.split(r'([\'"]\w+[\'"]|\w+(?::\w+)*|\W|\s+)', type(self).args) if x is not None and x.strip()])
+        args = iter([x.strip() for x in re.split(r'(<=>|[\'"]\w+[\'"]|\w+(?::\w+)*|\W|\s+)', type(self).args) if x is not None and x.strip()])
 
         groupings = {'[':'[]','(':'()','<':'<>','{':'{}'}
 
@@ -406,12 +406,8 @@ class Macro(MacroInterface, Element, RenderMixIn):
                 argdict.clear()
                 macroargs.append(CompiledArgument('*modifier*', {'spec':item}))
 
-            # Optional relations
+            # Optional equals
             elif item in '=':
-                if argdict:
-                    raise ValueError, \
-                        'Improperly placed "%s" in argument string "%s"' % \
-                        (item, type(self).args)
                 argdict.clear()
                 macroargs.append(CompiledArgument('*equals*', {'spec':item}))
 
@@ -438,6 +434,10 @@ class Macro(MacroInterface, Element, RenderMixIn):
             # Dictionary argument
             elif item == '%':
                 argdict['type'] = 'dict'
+
+            # Definition arguments
+            elif item == '#':
+                argdict['type'] = 'args'
 
             # List delimiter
             elif item in ',;.':

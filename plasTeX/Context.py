@@ -64,10 +64,16 @@ class Context(object):
         # Tokens aliased by \let
         self.lets = {}
 
+        # Imported packages and their options
+        self.packages = {}
+
         # Macro dictionary
         self.macros = self
 
         # Import all builtin macros
+        from plasTeX import packages as _macros
+        self.importMacros(vars(_macros))
+
         from plasTeX.packages import TeX as _macros
         self.importMacros(vars(_macros))
 
