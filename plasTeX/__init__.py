@@ -5,7 +5,6 @@ from Utils import *
 from DOM import Element, Text, Node, DocumentFragment, Document
 from Tokenizer import Token
 from plasTeX.Logging import getLogger
-from Renderer import RenderMixIn
 
 log = getLogger()
 status = getLogger('status')
@@ -51,7 +50,7 @@ class CSSStyles(dict):
             return None      
         return '; '.join(['%s:%s' % (x[0],x[1]) for x in self.items()])
 
-class Macro(Element, RenderMixIn):
+class Macro(Element):
     """
     Base class for all macros
 
@@ -197,7 +196,10 @@ class Macro(Element, RenderMixIn):
                 # or set labels.  This must be done immediately since
                 # the following arguments may contain labels.
                 if i == 0:
-                    if not(arg.name == '*modifier*' and output is None):
+                    if arg.name == '*modifier*':
+                        if output is None:
+                            self.resolve(tex)
+                    else:
                         self.resolve(tex)
                 self.argsource += source
                 self.attributes[arg.name] = output
@@ -359,7 +361,7 @@ class Macro(Element, RenderMixIn):
             self.appendChild(tok)
         
 
-class TeXFragment(DocumentFragment, RenderMixIn):
+class TeXFragment(DocumentFragment):
     def source(self):
         return sourcechildren(self)
     source = property(source)

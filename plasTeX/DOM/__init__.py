@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys
+import sys, re
 
 class DOMString(unicode):
     """
@@ -515,6 +515,12 @@ def _nextSibling(self):
             next = True
     return None
 
+def xmlstr(obj):
+    """ Escape special characters to create a legal xml string """
+    if isinstance(obj, basestring):
+        return obj.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;')
+    else:
+        return str(obj)
 
 class Node(object):
     """
@@ -587,17 +593,86 @@ class Node(object):
 
 #   _ownerDocument = None
 
+    def toXML(self):
+        """ 
+        Dump the object as XML 
+
+        Returns:
+        string in XML format
+
+        """
+        # Only the content of DocumentFragments get rendered
+        if isinstance(self, DocumentFragment):
+            s = []
+            for value in self:
+                if hasattr(value, 'toXML'):
+                    value = value.toXML()
+                else:
+                    value = xmlstr(value)
+                s.append(value)
+            return ''.join(s)
+
+        # Remap name into valid XML tag name
+        name = self.nodeName
+        name = name.replace('@','-')
+
+        modifier = re.search(r'(\W*)$', name).group(1)
+        if modifier:
+            name = re.sub(r'(\W*)$', r'', name)
+            modifier = ' modifier="%s"' % xmlstr(modifier)
+
+        if not name:
+            name = 'unknown'
+
+        source = ''
+        #source = ' source="%s"' % xmlstr(self.source)
+
+        ref = ''
+        try:
+            if self.ref is not None:
+                ref = ' ref="%s"' % xmlstr(self.ref)
+        except AttributeError: pass
+
+        label = ''
+        try:
+            if self.id != id(self):
+                label = ' id="%s"' % xmlstr(self.id)
+        except AttributeError: pass
+
+        # Bail out early if the element is empty
+        if not(self.attributes) and not(self.childNodes):
+            return '<%s%s%s%s%s/>' % (name, modifier, source, ref, label)
+
+        s = ['<%s%s%s%s%s>\n' % (name, modifier, source, ref, label)]
+            
+        # Render attributes
+        if self.attributes:
+            for key, value in self.attributes.items():
+                if value is None:
+                    s.append('    <plastex:arg name="%s"/>\n' % key)
+                else:
+                    if hasattr(value, 'toXML'):
+                        value = value.toXML()
+                    else:
+                        value = xmlstr(value)
+                    s.append('    <plastex:arg name="%s">%s</plastex:arg>\n' % (key, value))
+
+        # Render content
+        if self.childNodes:
+            for value in self.childNodes:
+                if hasattr(value, 'toXML'):
+                    value = value.toXML()
+                else: 
+                    value = xmlstr(value)
+                s.append(value)
+        s.append('</%s>' % name)
+        return ''.join(s)
+
     def childNodes(self):
         if not(hasattr(self, '_childNodes')):
             self._childNodes = []
         return self._childNodes
     childNodes = property(childNodes)
-
-    def __repr__(self):
-        children = ''
-        if self.childNodes:
-            children = repr(self.childNodes)
-        return '<%s>%s</%s>' % (self.nodeName, children, self.nodeName)
 
     def firstChild(self):
         """ Return the first child in the list """
@@ -1349,6 +1424,9 @@ class CharacterData(unicode, Node):
     deleteData, etc. impossible.
 
     """
+    def toXML(self):
+        return xmlstr(self)
+
     def nodeValue(self):
         return self
     nodeValue = property(nodeValue)

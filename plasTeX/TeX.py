@@ -964,7 +964,8 @@ class TeX(object):
         self.readOptionalSpaces()
         # internal unit
         for t in self:
-            if t.nodeType == Node.ELEMENT_NODE:
+            if t.nodeType == Node.ELEMENT_NODE and \
+               isinstance(t, Parameter):
                 return dimen(t)
             self.pushtoken(t)
             break
@@ -1064,6 +1065,13 @@ class TeX(object):
             # integer constant
             elif t in string.digits:
                 num = number(sign * int(t + self.readSequence(string.digits)))
+                for t in self:
+                    if t.nodeType == Node.ELEMENT_NODE and \
+                       isinstance(t, Parameter):
+                        num = number(num * number(t))
+                    else:
+                        self.pushtoken(t)
+                    break
             # octal constant
             elif t == "'":
                 num = number(sign * int('0' + self.readSequence(string.octdigits, default='0'), 8))

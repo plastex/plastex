@@ -124,6 +124,7 @@ class document(Environment):
 
 class StartSection(Command):
     args = '* [ toc ] title'
+    labelable = True
 
     def digest(self, tokens):
         # Absorb the tokens that belong to us
@@ -166,4 +167,4 @@ class pagebreak(Command):
     pass
 
 class label(Command):
-    args = 'label:label'
+    args = 'label:id'

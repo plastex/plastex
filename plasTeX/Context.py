@@ -63,43 +63,6 @@ class ContextItem(dict):
              return '%s -> %s' % (self.parent, self.name)
         return self.name
 
-class Registry(dict):
-    """
-    Dictionary to hold TeX registers
-
-    """
-    def __init__(self, data={}, cls=None):
-        """
-        Initialize the register dictionary
-
-        Keyword Arguments:
-        data -- dictionary to initialize content with
-        cls -- class to use for missing keys.  If supplied, 
-            when a key is missing, a new register entry is
-            created with an instance of this class
-
-        """
-        dict.__init__(self, data)
-        self.cls = cls
-
-    def __getitem__(self, key):
-        """
-        Retrieve the requested register
-
-        If the key does not exist and self.cls is not None,
-        create a new register entry with an instance of self.cls
-
-        """
-        try: 
-            return dict.__getitem__(self, key)
-        except KeyError:
-            if self.cls is not None:
-                self[key] = self.cls()
-        return dict.__getitem__(self, key)
-
-    def get(self, key, default=None):
-        return self[key]
-
 
 class Context(object):
     """
@@ -137,18 +100,6 @@ class Context(object):
 
         # LaTeX counters
         self.counters = {}
-
-        # TeX registers
-#       self.counters = Registry(cls=plasTeX.Counter)
-#       self.dimens = Registry(cls=plasTeX.Dimen)
-#       self.skips = Registry(cls=plasTeX.Glue)
-#       self.muskips = Registry(cls=plasTeX.MuGlue)
-#       self.boxes = {}
-#       self.toks = {}
-#       self.reads = {}
-#       self.writes = {}
-#       self.fams = {}
-#       self.inserts = {}
 
         # Create a global namespace
         self.push()

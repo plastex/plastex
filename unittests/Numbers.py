@@ -105,7 +105,65 @@ class Numbers(TestCase):
 
         tokens = [x for x in t.itertokens()]
         assert tokens == [EscapeSequence('foo')], tokens
+
+class Parameters(TestCase):
+
+    def testParameters(self):
+        t = TeX(r'\newcount\foo\foo=\tolerance')
+        t.parse()
+        foo = t.context['foo'].value
+        tolerance = t.context['tolerance'].value
+        assert foo == tolerance, '"%s" != "%s"' % (foo, tolerance)
+
+        t = TeX(r'\newcount\foo\foo=7\tolerance')
+        t.parse()
+        foo = t.context['foo'].value
+        tolerance = t.context['tolerance'].value
+        assert foo == (7*tolerance), '"%s" != "%s"' % (foo, 7*tolerance)
+
+        t = TeX(r'\newcount\foo\foo=-3\tolerance')
+        t.parse()
+        foo = t.context['foo'].value
+        tolerance = t.context['tolerance'].value
+        assert foo == (-3*tolerance), '"%s" != "%s"' % (foo, -3*tolerance)
+
+    def testDimenParameters(self):
+        t = TeX(r'\newdimen\foo\foo=\hsize')
+        t.parse()
+        foo = t.context['foo'].value
+        hsize = t.context['hsize'].value
+        assert foo == hsize, '"%s" != "%s"' % (foo, hsize)
         
+        t = TeX(r'\newdimen\foo\foo=7.6\hsize')
+        t.parse()
+        foo = t.context['foo'].value
+        hsize = t.context['hsize'].value
+        assert foo == (7.6*hsize), '"%s" != "%s"' % (foo, 7.6*hsize)
+        
+        t = TeX(r'\newdimen\foo\foo=-4\hsize')
+        t.parse()
+        foo = t.context['foo'].value
+        hsize = t.context['hsize'].value
+        assert foo == (-4*hsize), '"%s" != "%s"' % (foo, (-4*hsize))
+        
+    def testGlueParameters(self):
+        t = TeX(r'\newskip\foo\foo=\baselineskip')
+        t.parse()
+        foo = t.context['foo'].value
+        baselineskip = t.context['baselineskip'].value
+        assert foo == baselineskip, '"%s" != "%s"' % (foo, baselineskip)
+        
+        t = TeX(r'\newskip\foo\foo=7.6\baselineskip')
+        t.parse()
+        foo = t.context['foo'].value
+        baselineskip = t.context['baselineskip'].value
+        assert foo == (7.6*baselineskip), '"%s" != "%s"' % (foo, 7.6*baselineskip)
+        
+        t = TeX(r'\newskip\foo\foo=-4\baselineskip')
+        t.parse()
+        foo = t.context['foo'].value
+        baselineskip = t.context['baselineskip'].value
+        assert foo == (-4*baselineskip), '"%s" != "%s"' % (foo, (-4*baselineskip))
 
 if __name__ == '__main__':
     unittest.main()
