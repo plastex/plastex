@@ -305,10 +305,10 @@ class iffalse(IfCommand):
     def invoke(self, tex):
         return tex.readIfContent(False)
 
-class ifpdf(iffalse): pass
-class pdffalse(Command): pass
-class pdftrue(Command): pass
-class pdfoutput(Command): pass
+#class ifpdf(iffalse): pass
+#class pdffalse(Command): pass
+#class pdftrue(Command): pass
+#class pdfoutput(Command): pass
 
 class ifcase(IfCommand):
     """ Cases """

@@ -25,3 +25,11 @@ name: list trivlist
 </tr>
 </table>
 
+name: list
+type: xml
+<dl class="description">
+<metal:block tal:repeat="item self">
+    <dt tal:content="item/attributes/term"></dt>
+    <dd tal:content="item"></dd>
+</metal:block>
+</dl>

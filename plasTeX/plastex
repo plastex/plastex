@@ -38,18 +38,36 @@ def main(argv):
     s.parse(document)
     
     # Write expanded source file
-#   sourcefile = '%s.source' % basename
-#   open(sourcefile,'w').write(document.source.encode('utf-8'))
+    sourcefile = '%s.source' % basename
+    open(sourcefile,'w').write(document.source.encode('utf-8'))
     
     # Write XML dump
-#   outfile = '%s.xml' % basename
-#   open(outfile,'w').write(document.toXML().encode('utf-8'))
+    outfile = '%s.xml' % basename
+    open(outfile,'w').write(document.toXML().encode('utf-8'))
     
     # Apply renderer
     from plasTeX.renderers.xhtml import xhtml as renderer
     renderer.render(document)
+
+def info(type, value, tb):
+   if hasattr(sys, 'ps1') or not sys.stderr.isatty():
+      # we are in interactive mode or we don't have a tty-like
+      # device, so we call the default hook
+      sys.__excepthook__(type, value, tb)
+   else:
+      import traceback, pdb
+      # we are NOT in interactive mode, print the exception...
+      traceback.print_exception(type, value, tb)
+      print
+      # ...then start the debugger in post-mortem mode.
+      pdb.pm()
+
+sys.excepthook = info
+
+#sys.setrecursionlimit(10000)
     
-try:
-    main(sys.argv)
-except KeyboardInterrupt:
-    pass
+main(sys.argv)
+#try:
+#    main(sys.argv)
+#except KeyboardInterrupt:
+#    pass

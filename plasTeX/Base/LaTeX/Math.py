@@ -548,6 +548,9 @@ class MediumSpace(Command):
 class ThickSpace(Command):
     macroName = ';'
 
+class ThinSpace_(Command):
+    macroName = '/'
+
 #
 # C.7.8 Changing Style
 #

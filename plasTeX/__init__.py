@@ -452,7 +452,6 @@ class Macro(Element):
         HTML, but it isn't likely to be noticed in a browser.
 
         """
-#       return
         parclass = None
         contentstart = None
         currentpar = None
@@ -598,6 +597,12 @@ class UnrecognizedMacro(Macro):
     class is generated as a placeholder for the missing macro.
 
     """
+    def __cmp__(self, other):
+        if other.nodeName in ['undefined','@undefined']:
+            return 0
+        if isinstance(other, UnrecognizedMacro):
+            return 0
+        return super(UnrecognizedMacro, self).__cmp__(other)
 
 class NewIf(Macro):
     """ Base class for all generated \\newifs """
@@ -631,6 +636,8 @@ class IfFalse(Macro):
 
 def expanddef(definition, params):
     # Walk through the definition and expand parameters
+    if not definition:
+        return []
     output = []
     definition = iter(definition)
     for t in definition:
@@ -658,9 +665,6 @@ class NewCommand(Macro):
     def invoke(self, tex):
         if self.macroMode == Macro.MODE_END:
             return tex.context['end'+self.tagName].invoke(tex)            
-
-        if not self.definition:
-            return []
 
         params = [None]
 

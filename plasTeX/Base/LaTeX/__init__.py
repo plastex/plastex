@@ -48,3 +48,17 @@ class vwritefile_(Command):
 
 class pagelabel(Command):
     args = 'label:nox content:nox'
+
+class verbatiminput(Command):
+    pass
+
+class code(Command):
+    args = 'self'
+    def invoke(self, tex):
+        tex.context.push(self)
+        tex.context.setVerbatimCatcodes()
+        tex.context.catcode('\\', 0)
+        tex.context.catcode('{', 1)
+        tex.context.catcode('}', 2)
+        self.parse(tex)
+        tex.context.pop(self)

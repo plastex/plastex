@@ -27,9 +27,12 @@ class ContextItem(dict):
         self.obj = None
         self.parent = None
         self.owner = None
-        self.name = '{}'
+
+    def name(self):
         if self.obj is not None:
-            self.name = self.obj.nodeName
+            return self.obj.nodeName
+        return '{}'
+    name = property(name)
 
     def __getitem__(self, key):
         try: 
@@ -106,6 +109,8 @@ class Context(object):
 
         # Create a global namespace
         self.push()
+
+        self.warnOnUnrecognized = True
 
         if load:
             self.loadBaseMacros()
@@ -189,7 +194,7 @@ class Context(object):
         except KeyError: pass
 
         # Didn't find it, so generate a new class
-        if not self.isMathMode:
+        if self.warnOnUnrecognized and not self.isMathMode:
             log.warning('unrecognized command/environment: %s', key)
         self[key] = newclass = new.classobj(str(key), (plasTeX.UnrecognizedMacro,), {})
         return newclass()
@@ -296,44 +301,35 @@ class Context(object):
         Returns: ContextItem instance removed from stack
 
         """
-        name = '{}'
-        if obj is not None:
-            name = obj.nodeName
-        stacklog.debug('popping %s from %s', name, self.top)
-
-        # Pop until we find a match, return a list of all of the
-        # popped contexts (excluding `None's)
-        o = c = None
-        while self.contexts:
-            # Don't let them pop off the global namespace.  This should
-            # should probably be an error since we have something 
-            # incorrectly grouped.
-            if len(self.contexts) == 1:
-                stacklog.warning('%s is attempting to pop the global namespace.' % name)
-                break
-
-            # Pop the next context in the stack
-            c = self.contexts.pop()
-            o = c.obj
-
-            # The same instance started and ended the context
-            if obj is o:
-                break
-
-            # Found a matching {...}, break out
-            if obj is None and o is None:
-                stacklog.debug('implicitly pop {} from %s', self.top)
-                break
-
-            # Go to the next one, we don't have a match yet
-            if obj is None or o is None:
-                continue
-
-            # Found the beginning of an environment with the same type.
-            # We can finish popping contexts now.
-            if type(obj) == type(o):
-                stacklog.debug('implicitly pop %s from %s',o.nodeName,self.top)
-                break
+        if obj is None:
+            # Pop until we hit a None in the context
+            while len(self.contexts) > 1:
+                if self.contexts[-1].obj is None:
+                    self.contexts.pop()
+                    break
+                self.contexts.pop()
+        else:
+            while len(self.contexts) > 1:
+                o = self.contexts[-1].obj
+                # If None, keep going
+                if o is None:
+                    pass
+                # Found context pushed by ourself
+                elif o is obj:
+                    self.contexts.pop()
+                    break
+                # Don't pop parent node
+                elif o is obj.parentNode:
+                    break
+                # Found the \begin to our \end
+                elif type(obj) == type(o) and obj.macroMode == obj.MODE_END:
+                    self.contexts.pop()
+                    break
+                # Found the \foo to our \endfoo
+                elif obj.nodeName == ('end%s' % o.nodeName):
+                    self.contexts.pop()
+                    break
+                self.contexts.pop()
 
         self.mapmethods()
 

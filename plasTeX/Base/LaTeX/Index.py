@@ -21,7 +21,7 @@ class makeglossary(Command):
     pass
 
 class index(Command):
-    args = 'entry'
+    args = 'entry:nox'
 
 class glossary(Command):
-    args = 'entry'
+    args = 'entry:nox'

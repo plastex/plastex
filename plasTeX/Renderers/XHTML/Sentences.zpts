@@ -44,7 +44,7 @@ name: qquad
 &#8195;&#8195;
 
 name: thinspace /
-&#8201;
+comment: &#8201;
 
 name: underbar
 <span class="underbar" tal:content="self">underbar</span>

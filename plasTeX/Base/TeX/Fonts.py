@@ -34,3 +34,6 @@ class bf(Font):
 class tt(Font):
     pass
 
+class sc(Font):
+    pass
+

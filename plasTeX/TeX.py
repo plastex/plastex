@@ -16,7 +16,7 @@ Example:
 
 """
 
-import string, os, traceback, sys
+import string, os, traceback, sys, plasTeX
 from Context import Context 
 from Tokenizer import Tokenizer, Token, EscapeSequence, Other
 from plasTeX import TeXFragment, TeXDocument, Node
@@ -58,6 +58,8 @@ class EndTokens(Token):
 
     """
 
+class EndContext(plasTeX.Macro):
+    pass
 
 class TeX(object):
     """
@@ -222,7 +224,6 @@ class TeX(object):
             # We need to expand this one
             elif token.macroName is not None:
                 try:
-#                   log.info('expanding %s', token.macroName)
                     # By default, invoke() should put the macro instance
                     # itself into the output stream.  We'll handle this
                     # automatically here if `None' is received.  If you
@@ -232,8 +233,10 @@ class TeX(object):
                     obj.ownerDocument = self.ownerDocument
                     tokens = obj.invoke(self)
                     if tokens is None:
+#                       log.info('expanding %s %s', token.macroName, obj)
                         pushtoken(obj)
                     elif tokens:
+#                       log.info('expanding %s %s', token.macroName, ''.join([x.source for x in tokens]))
                         pushtokens(tokens)
                     continue
                 except Exception, msg:
@@ -262,7 +265,10 @@ class TeX(object):
         self.pushtoken(EndTokens)
         self.pushtokens(tokens)
 
+        tok = EndContext()
+        self.context.push(tok)
         out = self.parse(TeXFragment())
+        self.context.pop(tok)
         if normalize:
             out.normalize()
         return out
@@ -534,7 +540,9 @@ class TeX(object):
                 return tok, tok.source
 
         if type in ['XTok','XToken']:
+            self.context.warnOnUnrecognized = False
             for tok in self:
+                self.context.warnOnUnrecognized = True
                 Parameter.enable()
                 return tok, tok.source
 
@@ -590,6 +598,11 @@ class TeX(object):
 
         # Re-enable Parameters
         Parameter.enable()
+
+        if False and parentNode is not None:
+            log.warning('%s %s: %s', parentNode.nodeName, name, source)
+            log.warning('categories: %s', self.context.categories)
+            log.warning('stack: %s', self.context.top)
 
         return res, source
 
@@ -1168,6 +1181,8 @@ class TeX(object):
                 self.pushtoken(t)
                 break 
             tokens.append(t)
+        else:
+            self.pushtoken(EndTokens)
         return tokens
 
     def readKeyword(self, words, optspace=True):
@@ -1408,7 +1423,7 @@ class TeX(object):
         Parameter.enable()
         if num is not None:
             return num
-        log.warning('Missing number%s, treating as `0`.', self.lineinfo)
+        log.warning('Missing number%s, treating as `0`. (%s)', self.lineinfo, t)
         return number(0)
 
     readNumber = readInteger

@@ -24,8 +24,11 @@ class List(Environment):
 
         def invoke(self, tex):
             """ Set up counter for this list depth """
-            self.counter = List.counters[List.depth-1]
-            self.position = tex.context.counters[self.counter].value + 1
+            try:
+                self.counter = List.counters[List.depth-1]
+                self.position = tex.context.counters[self.counter].value + 1
+            except (KeyError, IndexError):
+                pass
             return Command.invoke(self, tex)
 
         def digest(self, tokens):
@@ -49,6 +52,11 @@ class List(Environment):
             List.depth += 1
         else:
             List.depth -= 1
+        try:
+            for i in range(List.depth+1, len(List.counters)):
+                tex.context.counters[List.counters[i]].setcounter(0)
+        except (IndexError, KeyError):
+            pass
         return Environment.invoke(self, tex)
 
     def digest(self, tokens):
@@ -56,7 +64,7 @@ class List(Environment):
         for tok in tokens:
             if tok.isElementContentWhitespace:
                 continue
-#           if not isinstance(tok, List.item):
+#           if tok.nodeName != 'item':
 #               log.warning('dropping non-item from beginning of list')
 #               continue
             tokens.push(tok)
