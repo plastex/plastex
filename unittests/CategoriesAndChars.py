@@ -30,11 +30,11 @@ class CategoryCodes(TestCase):
                'All codes should be 10 or 11: %s' % [x.code for x in tokens[0]]
 
         tok = type(tokens[-2])
-        cs = type(s.context['alignmenttab'])
+        cs = type(s.context['core::&'])
         assert tok is cs, '"%s" != "%s"' % (tok, cs)
     
         tok = type(tokens[-1])
-        cs = type(s.context['subscript'])
+        cs = type(s.context['core::_'])
         assert tok is cs, '"%s" != "%s"' % (tok, cs)
 
     def testLocalCatCodes2(self):
@@ -48,11 +48,11 @@ class CategoryCodes(TestCase):
         assert not [x for x in text if x.catcode not in [10,11]], [x.catcode for x in text]
 
         tok = type(tokens[-2])
-        tab = type(s.context['alignmenttab'])
+        tab = type(s.context['core::&'])
         assert tok is tab, '"%s" != "%s"' % (tok, tab)
     
         tok = type(tokens[-1])
-        tab = type(s.context['subscript'])
+        tab = type(s.context['core::_'])
         assert tok is tab, '"%s" != "%s"' % (tok, tab)
 
 

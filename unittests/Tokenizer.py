@@ -40,7 +40,7 @@ class Tokenizing(TestCase):
                     Parameter('#'), Space(' '), 
                     Superscript('^'), Space(' '), 
                     Subscript('_'), Space(' '), 
-                    Active('~'), Space(' ')]
+                    EscapeSequence('active::~'), Space(' ')]
         assert tokens == expected, '%s != %s' % (tokens, expected)
         
         tokens = [x for x in TeX(r'\\ \{ \} \$ \& \# \^ \_ \~ \%').itertokens()]
@@ -78,7 +78,7 @@ class Tokenizing(TestCase):
                     Superscript('^'), 
                     Other('2'), 
                     MathShift('$'), 
-                    Active('~'), 
+                    EscapeSequence('active::~'), 
                     Space(' '), 
                     EscapeSequence('TeX'), 
                     Other('\x03')]

@@ -79,6 +79,7 @@ class EscapeSequence(Token):
     the escape character.
 
     """
+    __slots__ = Token.__slots__
     catcode = Token.CC_ESCAPE
     def source(self):
         if self == 'par':
@@ -91,51 +92,64 @@ class EscapeSequence(Token):
 
 class BeginGroup(Token):
     """ Beginning of a TeX group """
+    __slots__ = Token.__slots__
     catcode = Token.CC_BGROUP
     macroName = 'bgroup'
 
 class EndGroup(Token):
     """ Ending of a TeX group """
+    __slots__ = Token.__slots__
     catcode = Token.CC_EGROUP
     macroName = 'egroup'
 
 class MathShift(Token):
+    __slots__ = Token.__slots__
     catcode = Token.CC_MATHSHIFT
-    macroName = 'mathshift'
+    macroName = 'core::$'
 
 class Alignment(Token):
+    __slots__ = Token.__slots__
     catcode = Token.CC_ALIGNMENT
-    macroName = 'alignmenttab'
+    macroName = 'core::&'
 
 class EndOfLine(Token):
+    __slots__ = Token.__slots__
     catcode = Token.CC_EOL
     isElementContentWhitespace = True
 
 class Parameter(Token):
+    __slots__ = Token.__slots__
     catcode = Token.CC_PARAMETER
 
 class Superscript(Token):
+    __slots__ = Token.__slots__
     catcode = Token.CC_SUPER
-    macroName = 'superscript'
+    macroName = 'core::^'
 
 class Subscript(Token):
+    __slots__ = Token.__slots__
     catcode = Token.CC_SUB
-    macroName = 'subscript'
+    macroName = 'core::_'
 
 class Space(Token):
+    __slots__ = Token.__slots__
     catcode = Token.CC_SPACE
     isElementContentWhitespace = True
 
 class Letter(Token):
+    __slots__ = Token.__slots__
     catcode = Token.CC_LETTER
 
 class Other(Token):
+    __slots__ = Token.__slots__
     catcode = Token.CC_OTHER
 
 class Active(Token):
+    __slots__ = Token.__slots__
     catcode = Token.CC_ACTIVE
 
 class Comment(Token):
+    __slots__ = Token.__slots__
     catcode = Token.CC_COMMENT
     nodeType = Node.COMMENT_NODE
     nodeName = '#comment'
@@ -191,9 +205,17 @@ class Tokenizer(object):
             self.filename = source.name
         self.seek = source.seek
         self.read = source.read
-        self.readline = source.readline
+#       self.readline = source.readline
         self.tell = source.tell
         self.linenumber = 1
+
+# There seems to be a problem with readline in Python 2.4 !!!
+    def readline(self):
+        read = self.read
+        while 1:
+            char = read(1)
+            if not char or ord(char) == 10:
+                break
 
     def iterchars(self):
         """ 
@@ -318,6 +340,7 @@ class Tokenizer(object):
         CC_ESCAPE = Token.CC_ESCAPE
         CC_EOL = Token.CC_EOL
         CC_COMMENT = Token.CC_COMMENT
+        CC_ACTIVE = Token.CC_ACTIVE
 
         while 1:
 
@@ -411,6 +434,10 @@ class Tokenizer(object):
                 self.linenumber += 1
                 self.state = STATE_N
                 continue
+
+            elif code == CC_ACTIVE:
+                token = EscapeSequence('active::%s' % token)
+                self.state = STATE_M
 
             else:
                 self.state = STATE_M

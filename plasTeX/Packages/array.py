@@ -50,8 +50,9 @@ class Array(Environment):
         labelable = True
         counter = 'table'
 
-    class alignmenttab(Command):
+    class ampersand(Command):
         """ Cell delimiter """
+        macroName = 'core::&'
         def invoke(self, tex):
             # Pop and push a new context for each cell, this keeps
             # any formatting changes from the previous cell from
@@ -145,9 +146,9 @@ class Array(Environment):
         endtoken = None
 
         def digest(self, tokens):
-            self.endtoken = self.digestUntil(tokens, (Array.alignmenttab, 
+            self.endtoken = self.digestUntil(tokens, (Array.ampersand, 
                                                       Array.endrow))
-            if isinstance(self.endtoken, Array.alignmenttab):
+            if isinstance(self.endtoken, Array.ampersand):
                 tokens.next()
                 self.endtoken.digest(tokens)
             else:

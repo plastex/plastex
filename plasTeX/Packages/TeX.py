@@ -44,6 +44,7 @@ class mathshift(Macro):
     the latter, a 'displaymath' environment is invoked.
 
     """
+    macroName = 'core::$'
     inenv = []
 
     def invoke(self, tex):
@@ -84,8 +85,9 @@ class mathshift(Macro):
 
         return [current]
 
-class alignmenttab(Macro):
+class ampersand(Macro):
     """ The '&' character in TeX """
+    macroName = 'core::&'
     def source(self): 
         return '&'
     source = property(source)
@@ -98,6 +100,7 @@ class textvisiblespace(Macro):
 
 class superscript(Macro):
     """ The '^' character in TeX """
+    macroName = 'core::^'
     args = 'arg'
     def source(self):
         return '^%s' % sourcearguments(self)
@@ -105,17 +108,10 @@ class superscript(Macro):
 
 class subscript(Macro):
     """ The '_' character in TeX """
+    macroName = 'core::_'
     args = 'arg'
     def source(self):
         return '_%s' % sourcearguments(self)
-    source = property(source)
-
-class macroparameter(Macro):
-    """ Paramaters for macros (i.e. #1, #2, etc.) """
-    def invoke(self, tex):
-        raise ValueError, 'Macro parameters should not be invoked'
-    def source(self): 
-        return '#'
     source = property(source)
 
 class bgroup(Macro):
@@ -150,7 +146,7 @@ class egroup(Macro):
 class _def(Macro):
     """ TeX's \\def command """
     local = True
-    args = 'name:cs args:Args definition:nox'
+    args = 'name:Tok args:Args definition:nox'
     def invoke(self, tex):
         self.parse(tex)
         a = self.attributes
