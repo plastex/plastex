@@ -593,13 +593,19 @@ class Node(object):
     parentNode = None
     attributes = None
 
-    renderer = unicode
+    renderer = None
+    render = unicode
+    style = None
 
     def __str__(self):
         s = []
         for child in self.childNodes:
-            s.append(type(child).renderer(child))
+            s.append(type(child).render(child))
         return u''.join(s)
+
+    def image(self):
+        return self.renderer.imager.newimage(self.source)
+    image = property(image)
 
     def toXML(self):
         """ 

@@ -31,7 +31,6 @@ def sourcearguments(o):
     return o.argsource
 
 def ismacro(o): 
-#   return getattr(o,'nodeType',-1) == Node.ELEMENT_NODE
     return hasattr(o, 'macroName')
 
 def issection(o): 
@@ -44,6 +43,15 @@ def macroname(o):
          return type(o).__name__
      return o.macroName
 
+class oneshotproperty(object):
+    def __init__(self, func):
+        self._func = func
+    def __get__(self, obj, type=None):
+        if obj is None:
+            return self
+        value = self._func(obj)
+        setattr(obj, self._func.func_name, value)
+        return value
 
 class Argument(object):
     """ 

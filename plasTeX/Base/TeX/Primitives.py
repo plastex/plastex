@@ -19,6 +19,16 @@ class protect(Command):
 class global_(Command):
     macroName = 'global'
 
+class textpercent(Command):
+    pass
+class textpercent_(Command):
+    macroName = '%'
+
+class textampersand(Command):
+    pass
+class textampersand_(Command):
+    macroName = '&'
+
 class par(Command):
     """ Paragraph """
     level = Command.PAR_LEVEL

@@ -230,9 +230,10 @@ class Context(object):
                 self.importMacros(value)
 
     def applyRenderer(self, renderer):
+        plasTeX.Macro.renderer = renderer
         macros = self.contexts[0]
         for key, value in macros.items():
-            value.renderer = renderer.get(key, value.renderer) 
+            value.render = renderer.get(key, value.render) 
 
     def pop(self, obj=None):
         """ 

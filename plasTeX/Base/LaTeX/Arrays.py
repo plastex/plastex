@@ -213,6 +213,8 @@ class Array(Environment):
                 if hasattr(item, 'colspec'):
                     self.colspec = item.colspec
 
+            self.paragraphs()
+
         def borders(self):
             """
             Return all of the border control macros
@@ -286,6 +288,10 @@ class Array(Environment):
         def invoke(self, tex):
             Command.invoke(self, tex)
             self.colspec = Array.compileColspec(self.attributes['colspec']).pop(0)
+
+        def digest(self, tokens):
+            Command.digest(self, tokens)
+            self.paragraphs()
 
 
     def invoke(self, tex):
