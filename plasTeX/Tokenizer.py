@@ -84,10 +84,11 @@ class Token(unicode):
     code = None
     macro = None
     depth = 0
+    level = CHARACTER
     def digest(self, tokens):
         return
     def __repr__(self):
-        return str(self)
+        return unicode(self)
     def __cmp__(self, other):
         # Token comparison -- character and code must match
         if isinstance(other, Token):
@@ -246,12 +247,12 @@ class Tokenizer(object):
         if isinstance(source, basestring):
             source = StringIO(source)
             self.filename = '<string>'
-        elif isinstance(source, file):
-            self.filename = source.name
         elif isinstance(source, (tuple,list)):
             self.pushtokens(source)
             source = StringIO('')
             self.filename = '<tokens>'
+        else:
+            self.filename = source.name
         self.seek = source.seek
         self.read = source.read
         self.readline = source.readline

@@ -23,6 +23,7 @@ class Array(Environment):
         def invoke(self, tex):
             tex.context.pop()
             tex.context.push()
+            return
         def __repr__(self):
             return '&'
 
@@ -34,6 +35,7 @@ class Array(Environment):
             tex.context.pop()
             self.parse(tex)
             tex.context.push()
+            return
         def __repr__(self):
             return '\\\\'
 
@@ -84,7 +86,7 @@ class Array(Environment):
     def invoke(self, tex):
         if self.mode == MODE_END:
             tex.context.pop(self) # End of table, row, and cell
-            return 
+            return
         Environment.invoke(self, tex)
         tex.context.push() # Beginning of cell
 

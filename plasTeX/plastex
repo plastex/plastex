@@ -2,6 +2,7 @@
 
 import os, sys
 import plasTeX
+import codecs
 from plasTeX.TeX import TeX
 from plasTeX.TALUtils import *
 from plasTeX.Tokenizer import CC_EXPANDED
@@ -19,7 +20,7 @@ file = sys.argv[1]
 
 # Parse document
 #TeX.disableLogging()
-s = TeX(open(file,'r'))
+s = TeX(codecs.open(file,'r','utf-8'))
 #print [(x, x.depth) for x in s]
 document = s.parse()
 #for i, item in enumerate(s.sourcetokens):
@@ -32,7 +33,8 @@ document = s.parse()
 #    else:
 #        print item,
 document = [x for x in document if x.code == CC_EXPANDED and x.nodeName == 'document'].pop()
-print document.toXML()
+outfile = '%s.xml' % os.path.splitext(file)[0]
+codecs.open(outfile,'w','utf-8').write(document.toXML())
 #print s.source(document)
 sys.exit()
 

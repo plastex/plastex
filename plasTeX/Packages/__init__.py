@@ -4,7 +4,6 @@ from array import *
 from crossref import *
 from formatting import *
 from lists import *
-from sections import *
 from verbatim import *
 from texmath import *
 

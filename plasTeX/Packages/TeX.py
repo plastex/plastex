@@ -14,10 +14,10 @@ mathshiftlog = getLogger('parse.mathshift')
 class par(Macro):
     """ Paragraph """
     level = PARAGRAPH
+
     def invoke(self, tex):
         status.dot()
-    def digest(self, tokens):
-        return
+
     def __repr__(self): return '\n\n'
 
 class mbox(Command):

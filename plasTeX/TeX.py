@@ -239,6 +239,12 @@ class TeX(object):
         """
         return [x for x in Tokenizer(s, self.context)]
 
+    def begingroup(self):
+        self.pushtoken(BeginGroup('{'))
+
+    def endgroup(self):
+        self.pushtoken(EndGroup('}'))
+
     def pushtoken(self, token):
         """
         Push a token back into the token buffer to be re-read
