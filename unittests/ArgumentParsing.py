@@ -63,43 +63,43 @@ class ArgumentParsing(TestCase):
 
     def testStringArgument(self):
         s = TeX('{foo {bar} one}')
-        arg, source = s.getArgument(type='str')
+        arg = s.getArgument(type='str')
         output = 'foo bar one'
         assert arg == output, '"%s" != "%s"' % (arg, output)
 
     def testIntegerArgument(self):
         s = TeX('{1{0}2}')
-        arg, source = s.getArgument(type='int')
+        arg = s.getArgument(type='int')
         output = 102
         assert arg == output, '"%s" != "%s"' % (arg, output)
 
     def testIntegerArgument(self):
         s = TeX('{ -1{0}2.67 }')
-        arg, source = s.getArgument(type='float')
+        arg = s.getArgument(type='float')
         output = -102.67
         assert (output - arg) < 0.000001, '"%s" != "%s"' % (arg, output)
 
     def testListArgument(self):
         s = TeX('{foo, {bar}, one}')
-        arg, source = s.getArgument(type='list')
+        arg = s.getArgument(type='list')
         output = ['foo','bar','one']
         assert arg == output, '"%s" != "%s"' % (arg, output)
 
     def testListArgument2(self):
         s = TeX('{foo; {bar}; one}')
-        arg, source = s.getArgument(type='list', delim=';')
+        arg = s.getArgument(type='list', delim=';')
         output = ['foo','bar','one']
         assert arg == output, '"%s" != "%s"' % (arg, output)
 
     def testDictArgument(self):
         s = TeX('{one=1, two={2}, three=3}')
-        arg, source = s.getArgument(type='dict')
+        arg = s.getArgument(type='dict')
         output = {'one':'1', 'two':'2', 'three':'3'}
         assert arg == output, '"%s" != "%s"' % (arg, output)
 
     def testDictArgument2(self):
         s = TeX('{one=1, two={\par}, three={$(x,y)$}, four=4}')
-        arg, source = s.getArgument(type='dict')
+        arg = s.getArgument(type='dict')
         keys = arg.keys()
         keys.sort()
         expectkeys = ['four','one','three','two']

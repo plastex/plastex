@@ -27,6 +27,7 @@ try: from cStringIO import StringIO
 except: from StringIO import StringIO
 
 log = getLogger()
+tokenlog = getLogger('parse.tokens')
 
 # Tokenizer states
 STATE_S = 1
@@ -82,6 +83,7 @@ class Tokenizer(object):
         self.read = source.read
         self.readline = source.readline
         self.tell = source.tell
+        self.linenumber = 1
 
     def nextchar(self):
         """ 
@@ -107,6 +109,9 @@ class Tokenizer(object):
 
             if not token:
                 raise StopIteration
+
+            if token == '\n':
+                self.linenumber += 1
 
             code = self.context.whichCode(token)
 
@@ -244,6 +249,7 @@ class Tokenizer(object):
                     self.state = STATE_N
                 elif self.state == STATE_N: 
                     if token != '\n':
+                        self.linenumber += 1
                         self.readline()
                     token = EscapeSequence('par')
                     code = CC_ESCAPE
@@ -256,6 +262,7 @@ class Tokenizer(object):
 
             elif code == CC_COMMENT:
                 self.readline() 
+                self.linenumber += 1
                 self.state = STATE_N
                 continue
 
@@ -297,13 +304,10 @@ class TeX(object):
     """
 
     def __init__(self, source=None):
-        self.context = Context
+        self.context = Context(self)
 
         # Input source stack
         self.inputs = []
-
-        # Output token stream
-        self.output = []
 
         # TeX arguments types and their casting functions
         self.argtypes = {
@@ -343,6 +347,14 @@ class TeX(object):
         """ Pop the most recent input source from the stack """
         self.inputs.pop()
 
+    def filename(self):
+        return self.inputs[-1].filename 
+    filename = property(filename)
+
+    def linenumber(self):
+        return self.inputs[-1].linenumber
+    linenumber = property(linenumber)
+
     def disableLogging(cls):
         """ Turn off logging """
         disableLogging()
@@ -366,11 +378,11 @@ class TeX(object):
         next unexpanded token in the stream
 
         """
-        if not self.inputs:
-            raise StopIteration
-        for t in self.inputs[-1]:
-            return t
-        self.endinput()
+        while self.inputs:
+            for t in self.inputs[-1]:
+                return t
+            self.endinput()
+        raise StopIteration
 
     def __iter__(self):
         """
@@ -391,6 +403,9 @@ class TeX(object):
 
         """
         for token in self.itertokens():
+            if token is not None:
+                tokenlog.debug('input (%s, %s)', token, token.code, 
+                                                 len(self.inputs))
             if token is None or token == '':
                 continue
             elif token.code == CC_ENDTOKENS:
@@ -398,9 +413,22 @@ class TeX(object):
             elif token.code == CC_EXPANDED:
                 pass
             elif token.macro is not None:
-                self.pushtokens(self.context[token.macro].invoke(self))
+                try:
+                    # By default, invoke() should put the macro instance
+                    # itself into the output stream.  We'll handle this
+                    # automatically here if `None' is received.  If you
+                    # really don't want anything in the output stream,
+                    # just return `[ ]'.
+                    obj = self.context[token.macro]
+                    tokens = obj.invoke(self)
+                    if tokens is None:
+                        tokens = [obj]
+                    self.pushtokens(tokens)
+                except:
+                    log.error('Error while expanding "%s" in %s on line %s' 
+                              % (token.macro, self.filename, self.linenumber))
+                    raise
                 continue
-            self.output.append(token)
             return token
         raise StopIteration
 
@@ -417,10 +445,8 @@ class TeX(object):
         """
         self.pushtoken(EndTokens)
         self.pushtokens(tokens)
-        output = []
-        for token in self:
-            output.append(token)
-        return output
+        tokenlog.debug('expand %s', tokens)
+        return [x for x in self]
 
     def pushtoken(self, token):
         """
@@ -433,9 +459,10 @@ class TeX(object):
 
         """
         if token is not None:
-            if self.output:
-                self.output.pop()
-            self.inputs[-1].pushtoken(token)
+            if not self.inputs:
+                self.input([token])
+            else:
+                self.inputs[-1].pushtoken(token)
 
     def pushtokens(self, tokens):
         """
@@ -446,11 +473,10 @@ class TeX(object):
 
         """
         if tokens:
-            tokens = list(tokens)
-            tokens.reverse()
-            top = self.inputs[-1]
-            for t in tokens:
-                top.pushtoken(t)
+            if not self.inputs:
+                self.input(tokens)
+            else:
+                self.inputs[-1].pushtokens(tokens)
 
     def source(self, tokens):
         """ 

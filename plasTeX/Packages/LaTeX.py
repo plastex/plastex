@@ -8,7 +8,6 @@ log = getLogger()
 status = getLogger('status')
 deflog = getLogger('parse.definitions')
 envlog = getLogger('parse.environments')
-mathshiftlog = getLogger('parse.mathshift')
 
 class begin(Macro):
     """ Beginning of an environment """
@@ -17,7 +16,6 @@ class begin(Macro):
         """ Parse the \\begin{...} """
         name = tex.getArgument(type='str')
         envlog.debug(name)
-        tex.context.push()
         obj = tex.context[name]
         obj.mode = MODE_BEGIN
         return obj.invoke(tex)
@@ -31,9 +29,7 @@ class end(Macro):
         envlog.debug(name)
         obj = tex.context[name]
         obj.mode = MODE_END
-        output = obj.invoke(tex)
-        tex.context.pop()
-        return output
+        return obj.invoke(tex)
 
 class newcommand(Command):
     """ \\newcommand """
@@ -52,7 +48,7 @@ class providecommand(newcommand): pass
 
 class newenvironment(Command):
     """ \\newenvironment """
-    args = 'name:str [ nargs:int ] [ opt ] begin end'
+    args = 'name:str [ nargs:int ] [ opt:nox ] begin:nox end:nox'
     def invoke(self, tex):
         Command.parse(self, tex)
         a = self.attributes
@@ -64,7 +60,7 @@ class newenvironment(Command):
 
 class usepackage(Command):
     """ \\usepackage """
-    args = '[ %options ] $name'
+    args = '[ %options ] name:str'
     loaded = {}
     def invoke(self, tex):
         attrs = self.attributes
@@ -85,7 +81,8 @@ class usepackage(Command):
             except ImportError:
                 log.warning('No Python version of %s was found' % attrs['name'])
 
-            path = kpsewhich(attrs['name'])
+            #path = kpsewhich(attrs['name'])
+            path = attrs['name']
 
             status.info(' ( %s.sty ' % attrs['name'])
             type(tex)(open(path)).parse()
@@ -101,7 +98,7 @@ class usepackage(Command):
 class documentclass(usepackage):
     """ \\documentclass """
     def invoke(self, tex):
-        usepackage.parse(self, tex)
+        usepackage.invoke(self, tex)
         from plasTeX import packages
         tex.context.importMacros(vars(packages))
         return [self]

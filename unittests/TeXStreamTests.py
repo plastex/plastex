@@ -16,23 +16,21 @@ class Dimensions(TestCase):
 
     def testLength(self):
         s = TeX('-6.00 pt +2 in 3.0mm')
-        length = s.getLength()
+        length = s.readDimen()
         assert (length - (-6.0)) < 0.01, '"%s" != "%s"' % (length, -6.0)
-        length = s.getLength()
+        length = s.readDimen()
         assert (length - 144.54) < 0.01, '"%s" != "%s"' % (length, 144.54)
-        length = s.getLength()
+        length = s.readDimen()
         assert (length - 8.5358) < 0.01, '"%s" != "%s"' % (length, 8.5358)
 
 class Glue(TestCase):
  
     def testGlue(self):
         s = TeX('-6 pt plus 4in foo')
-        glue = s.getGlue()
+        glue = s.readGlue()
         assert (glue - (-6.0)) < 0.01, '"%s" != "%s"' % (glue, -6.0)
-        assert (glue.plus - 289.079) < 0.01, '"%s" != "%s"' % (glue.plus, 289.079)
-        assert (glue.minus - 0.0) < 0.01, '"%s" != "%s"' % (glue.minus, 0.0)
-        output = s.read()
-        assert output == ' foo', '"%s" != "%s"' % (output, ' foo')
+        assert (glue.stretch - 289.079) < 0.01, '"%s" != "%s"' % (glue.stretch, 289.079)
+        assert (glue.shrink - 0.0) < 0.01, '"%s" != "%s"' % (glue.shrink, 0.0)
 
 class SimpleParsing(TestCase):
 

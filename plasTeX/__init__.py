@@ -217,9 +217,9 @@ class RenderMixIn(object):
     __repr__ = __str__
 
 
-class Macro(Element, RenderMixIn):
+class MacroInterface(object):
     """
-    Base class for all macros
+    Interface that all macro-type objects must support
 
     """
     level = COMMAND    # hierarchical level in the document
@@ -229,8 +229,69 @@ class Macro(Element, RenderMixIn):
     texname = None     # TeX macro name (instead of class name)
 
     code = CC_EXPANDED # Special code for TeX to recognized expanded tokens
-    mode = MODE_NONE
+    mode = MODE_NONE   # begin, end, or none
 
+    autoclose = False  # Close the element automatically (e.g. \section, \item)
+
+    def source(self): 
+        raise NotImplementedError
+    source = property(source)
+
+    def id(self):
+        return id(self)
+    id = property(id)
+
+    def invoke(self, tex):
+        # Just pop the context if this is a \end token
+        if self.mode == MODE_END:
+            tex.context.pop(self)
+            return [self]
+
+        # If this is a \begin token or the element needs to be
+        # closed automatically (i.e. \section, \item, etc.), just 
+        # push the new context and return the instance.
+        elif self.mode == MODE_BEGIN:
+            tex.context.push(self)
+            self.parse(tex)
+            return [self]
+
+        # Push, parse, and pop.  The command doesn't need to stay on
+        # the context stack.
+        tex.context.push(self)
+        self.parse(tex)
+        tex.context.pop(self)
+
+        return [self]
+
+    def digest(self, tokens): 
+        pass
+
+    def tagName(self):
+        if self.texname: return self.texname
+        return classname(self)
+    nodeName = tagName = property(tagName)
+
+    def __repr__(self):
+        argsource = ''
+        if hasattr(self, 'argsource'):
+            argsource = self.argsource
+        if self.tagName == 'par':
+            return '\n\n'
+        if self.mode == MODE_BEGIN:
+            return '\\begin{%s}%s\n' % (self.tagName, argsource)
+        if self.mode == MODE_END:
+            return '\n\\end{%s}' % (self.tagName)
+        space = ' '
+        if argsource:
+            space = ''
+        return '\\%s%s%s' % (self.tagName, argsource, space)
+
+
+class Macro(MacroInterface, Element, RenderMixIn):
+    """
+    Base class for all macros
+
+    """
     def __init__(self, data=[]):
         Element.__init__(self, data)
         self.style = CSSStyles()
@@ -247,16 +308,6 @@ class Macro(Element, RenderMixIn):
         """ Return the LaTeX source for this macro instance """
         return str(self._source)
     source = property(source)
-
-    def id(self):
-        """ Unique ID """
-        return id(self)
-
-    def invoke(self, tex):
-        tex.context.push(self)
-        obj = self.parse(tex)
-        tex.context.pop()
-        return [obj]
 
     def resolve(self):
         """ 
@@ -276,32 +327,25 @@ class Macro(Element, RenderMixIn):
         Required Arguments:
         tex -- the TeX stream to parse from
 
-        Returns:
-        tokens to be put into the output stream
-
         """
         # Compile argument string
         compiledargs = self.compileArgumentString()
 
-        if not [x for x in compiledargs if x.name == 'modifier']:
-            self.resolve()
-
-        self.argsource = ''
-
         # Parse the arguments
-        for arg in compiledargs:
+        for i, arg in enumerate(compiledargs):
             output, source = tex.getArgumentAndSource(**arg)
             self.argsource += source
-            if arg.name == 'modifier':
-                if output == None:
+            if i == 0 and arg.name != '*modifier*':
+                self.resolve()
+            if arg.name == '*modifier*':
+                if output is None:
                     self.resolve() 
-            if arg.name == 'self':
+            elif arg.name == 'self':
                 if not isinstance(output, list):
                     output = [output]
                 self[:] = output
             else:
                 self.attributes[arg.name] = output
-        return self
 
     def digest(self, tokens):
         """ 
@@ -321,27 +365,9 @@ class Macro(Element, RenderMixIn):
         self
 
         """
-        # Commands don't digest
-        if self.level is None:
-            return self
-
-        for item in tokens:
-            # Found self again, we're done
-            if item is self:
-                break
-            else:
-                # Let children digest first
-                if hasattr(item, 'digest'):
-                    obj = item.digest(tokens)
-                    if obj is not None:
-                        if type(obj) is list:
-                            self.extend(obj)
-                        else:
-                            self.append(obj)
-                else:
-                    self.append(item)
-
-        return self
+        for t in tokens:
+            self.append(t)
+        return
 
     def compileArgumentString(self):
         """ 
@@ -362,6 +388,7 @@ class Macro(Element, RenderMixIn):
             self.__compiled_arguments = []
             return self.__compiled_arguments
 
+        # Split the arguments into their primary components
         args = iter([x.strip() for x in re.split(r'([\'"]\w+[\'"]|\w+(?::\w+)*|\W|\s+)', type(self).args) if x is not None and x.strip()])
 
         groupings = {'[':'[]','(':'()','<':'<>','{':'{}'}
@@ -371,22 +398,22 @@ class Macro(Element, RenderMixIn):
         for item in args:
 
             # Modifier argument
-            if item in ['*','+','-']:
+            if item in '*+-':
                 if argdict:
                     raise ValueError, \
                         'Improperly placed "%s" in argument string "%s"' % \
                         (item, type(self).args)
                 argdict.clear()
-                macroargs.append(CompiledArgument('modifier', {'spec':item}))
+                macroargs.append(CompiledArgument('*modifier*', {'spec':item}))
 
             # Optional relations
-            elif item in ['=']:
+            elif item in '=':
                 if argdict:
                     raise ValueError, \
                         'Improperly placed "%s" in argument string "%s"' % \
                         (item, type(self).args)
                 argdict.clear()
-                macroargs.append(CompiledArgument('equals', {'spec':item}))
+                macroargs.append(CompiledArgument('*equals*', {'spec':item}))
 
             # Beginning of group
             elif item in '[(<{':
@@ -413,7 +440,7 @@ class Macro(Element, RenderMixIn):
                 argdict['type'] = 'dict'
 
             # List delimiter
-            elif item in [',',';','.']:
+            elif item in ',;.':
                 argtype = argdict.get('type', None)
                 if argtype in ['list', 'dict']:
                     argdict['delim'] = item
@@ -446,27 +473,6 @@ class Macro(Element, RenderMixIn):
         self.__compiled_arguments = macroargs
         return macroargs
 
-    def nodeName(self):
-        if self.texname: return self.texname
-        return classname(self)
-    nodeName = property(nodeName)
-
-    def tagName(self):
-        return self.nodeName
-    tagName = property(tagName)
-
-    def __repr__(self):
-        if self.tagName == 'par':
-            return '\n\n'
-        if self.mode == MODE_BEGIN:
-            return '\\begin{%s}%s' % (self.tagName, self.argsource)
-        if self.mode == MODE_END:
-            return '\\end{%s}' % self.tagName
-        space = ' '
-        if self.argsource:
-            space = ''
-        return '\\%s%s%s' % (self.tagName, self.argsource, space)
-
 
 class TeXFragment(DocumentFragment, RenderMixIn):
     """ TeX document fragment """
@@ -476,7 +482,7 @@ class TeXFragment(DocumentFragment, RenderMixIn):
         self.style = CSSStyles()
 
 
-class StringMacro(Macro):
+class StringMacro(MacroInterface, unicode):
     """ 
     Convenience class for macros that are simply strings
 
@@ -488,9 +494,9 @@ class StringMacro(Macro):
 
     """
     def __init__(self, data=''):
-        Macro.__init__(self, [data])
-    def parse(self, tex): 
-        return ''.join(self)
+        MacroInterface.__init__(self, data)
+    def invoke(self, tex): 
+        return [self]
     def __call__(self):
         return self
                 
@@ -500,12 +506,20 @@ class Command(Macro):
 class Environment(Macro): 
     """ Base class for all Python-based LaTeX environments """
     level = ENVIRONMENT
+    def invoke(self, tex):
+        if self.mode == MODE_END:
+            tex.context.pop()
+            return [self]
+        tex.context.push()
+        tex.context.push(self)
+        self.parse(tex)
+        return [self]
     
-class UnrecognizedMacro(Macro):
+class UnrecognizedMacro(MacroInterface):
     def invoke(self, tex):
        return [self]
 
-class NewIf(Macro):
+class NewIf(MacroInterface):
     """ Base class for all generated \\newifs """
 
     state = False
@@ -525,13 +539,13 @@ class NewIf(Macro):
         cls.state = False
     setFalse = classmethod(setFalse)
 
-class IfTrue(Macro):
+class IfTrue(MacroInterface):
     """ Base class for all generated \\iftrues """
     def invoke(self, tex):
         type(self).ifclass.setTrue()
         return [self]
 
-class IfFalse(Macro):
+class IfFalse(MacroInterface):
     """ Base class for all generated \\iffalses """
     def invoke(self, tex):
         type(self).ifclass.setFalse()
@@ -557,8 +571,12 @@ def expanddef(definition, params):
             output.append(t)
     return output
 
-class NewCommand(Macro):
-    """ Superclass for all \newcommand type commands """
+class NewCommand(MacroInterface):
+    """ Superclass for all \newcommand/\newenvironment type commands """
+    nargs = 0
+    opt = None
+    definition = None
+
     def invoke(self, tex):
         if self.mode == MODE_END:
             return tex.context['end'+self.tagName].invoke(tex)            
@@ -582,8 +600,11 @@ class NewCommand(Macro):
 
         return expanddef(self.definition, params)
 
-class Definition(Macro):
+class Definition(MacroInterface):
     """ Superclass for all \\def-type commands """
+    args = None
+    definition = None
+
     def invoke(self, tex):
         if not self.args: return self.definition
 
@@ -649,10 +670,10 @@ class Definition(Macro):
         return expanddef(self.definition, params)
 
 
-class Counter(Macro):
+class Counter(MacroInterface):
     """ Base class for all LaTeX counters """
 
-    reset_by = None
+    resetby = None
     number = 0
 
     def __init__(self, number):
@@ -693,7 +714,7 @@ class Counter(Macro):
 
     def resetcounters(self):
         reset = [x for x in type(self).context.counters.values()
-                         if x.reset_by == type(self).__name__] 
+                         if x.resetby == type(self).__name__] 
         for counter in reset:
             counter.setcounter(0)
             counter.resetcounters()
@@ -774,11 +795,11 @@ class Counter(Macro):
         """ Return the symbol representation """
         return '*'
 
-class TheCounter(Macro):
+class TheCounter(MacroInterface):
     """ Base class for counter formats """
     format = ''
 
-class Dimen(float):
+class Dimen(MacroInterface, float):
 
     units = ['pt','pc','in','bp','cm','mm','dd','cc','sp','ex','em']
 
@@ -808,16 +829,16 @@ class Dimen(float):
                 v *= (1238.0 * 12 * 65536) / 1157
             elif units == 'sp':
                 pass
-            # Encode fil(ll)s by adding 1, 2, and 3 billion
+            # Encode fil(ll)s by adding 2, 4, and 6 billion
             elif units == 'fil':
-                if v < 0: v -= 1e9
-                else: v += 1e9
-            elif units == 'fill':
                 if v < 0: v -= 2e9
                 else: v += 2e9
+            elif units == 'fill':
+                if v < 0: v -= 4e9
+                else: v += 4e9
             elif units == 'filll':
-                if v < 0: v -= 3e9
-                else: v += 3e9
+                if v < 0: v -= 6e9
+                else: v += 6e9
             elif units == 'mu':
                 pass
             # Just estimates, since I don't know the actual font size
@@ -833,12 +854,12 @@ class Dimen(float):
         sign = 1
         if self < 0:
             sign = -1
-        if abs(self) >= 3e9:
-            return repr(sign * (abs(self)-3e9)) + 'filll'
+        if abs(self) >= 6e9:
+            return repr(sign * (abs(self)-6e9)) + 'filll'
+        if abs(self) >= 4e9:
+            return repr(sign * (abs(self)-4e9)) + 'fill'
         if abs(self) >= 2e9:
-            return repr(sign * (abs(self)-2e9)) + 'fill'
-        if abs(self) >= 1e9:
-            return repr(sign * (abs(self)-1e9)) + 'fil'
+            return repr(sign * (abs(self)-2e9)) + 'fil'
         return repr(float(self)) + 'sp'
 
     def pt(self): 
@@ -889,12 +910,12 @@ class Dimen(float):
         sign = 1
         if self < 0:
             sign = -1
-        if abs(self) >= 3e9:
-            return sign * (abs(self)-3e9)
+        if abs(self) >= 6e9:
+            return sign * (abs(self)-6e9)
+        if abs(self) >= 4e9:
+            return sign * (abs(self)-4e9)
         if abs(self) >= 2e9:
             return sign * (abs(self)-2e9)
-        if abs(self) >= 1e9:
-            return sign * (abs(self)-1e9)
         raise ValueError, 'This is not a fil(ll) dimension'
     fil = fill = filll = property(fill)
 

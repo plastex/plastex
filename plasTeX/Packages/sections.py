@@ -31,21 +31,6 @@ class _Section:
 class document(Environment, _Section):
     level = DOCUMENT
 
-    def __init__(self, *args, **kwargs):
-        Environment.__init__(self, *args, **kwargs)
-        self.preamble = None
-
-    def parse(self, tex):
-        # Save the preamble for use later
-#       self.preamble = type(tex).persistent.getSource(0,self._source.start)
-        return Environment.parse(self, tex)
-
-    def digest(self, tokens):
-        Environment.digest(self, tokens)
-        self[:] = paragraphs(self, type(type(self).context['par']),
-                             allow_single=True)
-        return self
-
     def toXML(self):
         return '<?xml version="1.0"?>\n%s' % Environment.toXML(self)
 
@@ -53,12 +38,7 @@ class chapter(Command, _Section):
     section = True
     level = 0
     args = '* [ toc ] title'
-
-    def digest(self, tokens):
-        Command.digest(self, tokens)
-        self[:] = paragraphs(self, type(type(self).context['par']),
-                             allow_single=True)
-        return self
+    autoclose = True
 
 class section(chapter):
     level = 1

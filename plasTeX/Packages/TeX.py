@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from plasTeX.Utils import *
 from plasTeX.Token import *
 from plasTeX import Macro, Command, Environment
 from plasTeX.Logging import getLogger
@@ -12,9 +13,11 @@ mathshiftlog = getLogger('parse.mathshift')
 
 class par(Macro):
     """ Paragraph """
+    level = PARAGRAPH
     def invoke(self, tex):
         status.dot()
-        return Macro.invoke(self, tex)
+#       tex.context.push(self)
+        return [self]
     def __repr__(self): return '\n\n'
 
 class mbox(Command):
@@ -57,7 +60,7 @@ class mathshift(Macro):
             env = inenv.pop()
             if type(env) is type(displaymath):
                 tex.next()
-            tex.context.pop()
+            tex.context.pop(env)
             return [env]
 
         for t in tex.itertokens():
@@ -122,11 +125,10 @@ class _def(Macro):
     TeX's \\def command
 
     """
-    args = 'name:cs'
     local = True
     def invoke(self, tex):
 
-        name = self.attributes['name']
+        name = tex.getArgument(type='cs')
 
         # Get argument string
         args = []
@@ -282,8 +284,9 @@ class ifcase(_if):
 
 class let(Macro):
     """ \\let """
-    args = 'name:cs = def'
-    def parse(self, tex):
+    args = 'name:cs = value'
+    def invoke(self, tex):
+        Macro.parse(self, tex)
         a = self.attributes
         tex.context[a['name']] = type(tex.context[a['value']])
         return [self]

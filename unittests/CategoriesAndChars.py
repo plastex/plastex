@@ -50,7 +50,7 @@ class CategoryCodes(TestCase):
         s.context['code'] = code
         tokens = s.parse()
 
-        text = tokens[2:-4]
+        text = tokens[6:-4]
         assert not [x for x in text if x.code not in [10,11]], [x.code for x in text]
 
         tok = type(tokens[-2])

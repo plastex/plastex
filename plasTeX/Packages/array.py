@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from plasTeX.Token import *
 from plasTeX.Utils import *
 from plasTeX import Environment, Command
 
@@ -23,7 +24,7 @@ class Array(Environment):
         def invoke(self, tex):
             tex.context.pop()
             tex.context.push()
-            return self
+            return [self]
 
     class cr(Command):
         """ End of a row """
@@ -33,18 +34,18 @@ class Array(Environment):
             tex.context.pop()
             Command.parse(self, tex)
             tex.context.push()
-            return self
+            return [self]
 
     class cline(Command):
         """ Partial horizontal line """
-        args = 'span'
-        def parse(self, tex):
+        args = 'span:str'
+        def invoke(self, tex):
             attrs = self.attributes
             Command.parse(self, tex)
-            attrs['span'] = [int(x) for x in str(attrs['span']).split('-')]
+            attrs['span'] = [int(x) for x in attrs['span'].split('-')]
             if len(attrs['span']) == 1:
                 attrs['span'] *= 2
-            return self
+            return [self]
 
     class hline(Command):
         """ Full horizontal line """
@@ -80,24 +81,16 @@ class Array(Environment):
         """ Column spanning cell """
         args = 'colspan:int colspec self'
 
-    def parse(self, tex):
-        Environment.parse(self, tex)
-        tex.context.push() # Beginning of cell
-        return self
+    def invoke(self, tex):
+        if self.mode == MODE_END:
+            tex.context.pop() # End of table
+        else:
+            tex.context.push() # Beginning of cell
+            Environment.invoke(self, tex)
+        return [self]
 
     def digest(self, tokens):
-        # Make sure that we don't try to digest more than once
-        if len(self): return self
-
-        # Grab all of the tokens that belong to us
-        for tok in tokens:
-            if tok is self:
-                break
-            # Process nested tables before going on
-            elif isinstance(tok, Array):
-                tok.digest(tokens) 
-            self.append(tok)
-
+        Environment.digest(self, tokens)
         header, footer = self.getHeaderAndFooter()
         body = self.getRowsAndCells()
 
@@ -391,11 +384,11 @@ class Array(Environment):
         return borders
 
 class tabular(Array):
-    args = '^colspec'
+    args = 'colspec'
     block = True
 
 class longtable(Array):
-    args = '[ loc ] ^colspec'
+    args = '[ loc ] colspec'
     block = True
 
 class cr(Command):

@@ -10,8 +10,3 @@ from texmath import *
 
 from color import *
 from fancyvrb import *
-
-from plasTeX.Context import Context
-
-#Context.newcommand('[', 0, r'\begin{displaymath}')
-#Context.newcommand(']', 0, r'\end{displaymath}')

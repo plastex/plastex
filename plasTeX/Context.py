@@ -9,7 +9,6 @@ from Categories import *
 
 # Set up loggers
 log = getLogger()
-grouplog = getLogger('context.groups')
 stacklog = getLogger('context.stack')
 macrolog = getLogger('context.macros')
 
@@ -19,6 +18,7 @@ class ContextItem(dict):
     def __init__(self, data={}):
         dict.__init__(self, data)
         self.categories = None
+        self.obj = None
 
 
 class Context(object):
@@ -33,9 +33,12 @@ class Context(object):
 
     """
 
-    def __init__(self):
+    def __init__(self, tex=None):
         # Reference to renderer (default is empty)
         self.renderer = {}
+
+        # Handle to the TeX instance that the context belongs to
+        self.tex = tex
 
         # Stack of ContextItems
         c = ContextItem()
@@ -61,6 +64,13 @@ class Context(object):
         # Macro dictionary
         self.macros = self
 
+        # Import all builtin macros
+        from plasTeX.packages import TeX as _macros
+        self.importMacros(vars(_macros))
+
+        from plasTeX.packages import LaTeX as _macros
+        self.importMacros(vars(_macros))
+
     def __getitem__(self, key):
         """ 
         Look through the stack of macros and return the requested one 
@@ -82,6 +92,15 @@ class Context(object):
         log.warning('unrecognized macro %s', key)
         self[key] = newclass = new.classobj(key, (UnrecognizedMacro,), {})
         return newclass()
+
+    def contextNames(self):
+        c = []
+        for item in self.contexts:
+            if item.obj is None:
+                c.append('{}')
+            else:
+                c.append(item.obj.nodeName)
+        return '->'.join(c)
 
     def __delitem__(self, key):
         """ 
@@ -122,7 +141,10 @@ class Context(object):
             an empty context is created.
 
         """
-        stacklog.debug('pushing %s %s', len(self.contexts), type(context))
+        name = '{}'
+        if context is not None:
+            name = context.nodeName 
+        stacklog.debug('pushing %s onto %s', name, self.contextNames())
         self.contexts.append(self.createContext(context))
         self.categories = self.contexts[-1].categories
 
@@ -143,6 +165,7 @@ class Context(object):
         """
         newcontext = ContextItem()
         newcontext.categories = self.categories
+        newcontext.obj = context
 
         if context is not None:
 
@@ -211,7 +234,7 @@ class Context(object):
             value.renderer = renderer.get(key, default)
         Macro.renderer = renderer
 
-    def pop(self, index=-1):
+    def pop(self, obj=None):
         """ 
         Remove a context from the stack 
 
@@ -221,10 +244,44 @@ class Context(object):
         Returns: ContextItem instance removed from stack
 
         """
-        c = self.contexts.pop(index)
+        name = '{}'
+        if obj is not None:
+            name = obj.nodeName
+        stacklog.debug('popping %s from %s', name, self.contextNames())
+
+        # Pop until we find a match, return a list of all of the
+        # popped contexts (excluding `None's)
+        o = c = None
+        while self.contexts:
+            # Don't let them pop off the global namespace.  This should
+            # should probably be an error since we have something 
+            # incorrectly grouped.
+            if len(self.contexts) == 1:
+                stacklog.warning('Attempting to pop the global namespace.')
+                break
+
+            # Pop the next context in the stack
+            c = self.contexts.pop()
+            o = c.obj
+
+            # Found a matching {...}, break out
+            if obj is None and o is None:
+                stacklog.debug('implicitly pop {} from %s', self.contextNames())
+                break
+
+            # Go to the next one, we don't have a match yet
+            if obj is None or o is None:
+               continue
+
+            # Found the beginning of an environment with the same name.
+            if obj.nodeName == o.nodeName:
+                stacklog.debug('implicitly pop %s from %s', o.nodeName, 
+                               self.contextNames())
+                break
+
         self.categories = self.contexts[-1].categories
-        stacklog.debug('popping %s (%s)', len(self.contexts), index)
-        return c
+
+        return o
 
     def addGlobal(self, key, value):
         """ 
@@ -310,7 +367,7 @@ class Context(object):
 
     def __delitem__(self, key):
         """
-        Deletes the first occurrence of the macro with name `key`
+        Deletes the all occurrences of the macro with name `key`
 
         Required Arguments:
         key -- the name of the macro to delete
@@ -379,7 +436,7 @@ class Context(object):
         if code != 12:
             c[code] += char
 
-    def newcounter(self, name, initial=0, reset_by=None, format=None):
+    def newcounter(self, name, initial=0, resetby=None, format=None):
         """ 
         Create a new counter 
 
@@ -392,7 +449,7 @@ class Context(object):
 
         Keyword Arguments:
         initial -- initial value for the counter
-        reset_by -- the name of the counter that this counter is reset by
+        resetby -- the name of the counter that this counter is reset by
         format -- the presentation format for the counter 
 
         """
@@ -405,7 +462,7 @@ class Context(object):
         # Generate a new counter class
         macrolog.debug('creating counter %s', name)
         newclass = new.classobj(name, (plasTeX.Counter,), 
-            {'reset_by':reset_by,'number':initial,'counters':self.counters})
+            {'resetby':resetby,'number':initial,'counters':self.counters})
 
         self.addGlobal(name, newclass)
         self.counters[name] = newclass()
@@ -413,8 +470,8 @@ class Context(object):
         # Set up the default format
         if format is None:
             format = '%%(%s)s' % name
-            if reset_by is not None: 
-                format = '%%(the%s)s.%s' % (reset_by, format)
+            if resetby is not None: 
+                format = '%%(the%s)s.%s' % (resetby, format)
 
         newclass = new.classobj('the'+name, (plasTeX.TheCounter,), 
                                 {'format':format})
@@ -566,14 +623,3 @@ class Context(object):
             self.addLocal(name, newclass)
         else:
             self.addGlobal(name, newclass)
-
-
-# Create single instance
-Context = Context()
-
-from plasTeX.packages import TeX as _TeX
-from plasTeX.packages import LaTeX as _LaTeX
-
-# Import all builtin macros
-Context.importMacros(vars(_TeX))
-Context.importMacros(vars(_LaTeX))

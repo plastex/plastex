@@ -17,9 +17,6 @@ class ssyni(Command):
                              None,
                              self.attributes['term2']))
 
-    def digest(self,tokens):
-        return None
-
 
 class ssbji(Command):
     args = ' term1 term2 '
@@ -30,8 +27,3 @@ class ssbji(Command):
                              self.attributes['term1'], 
                              None,
                              self.attributes['term2']))
-
-    def digest(self,tokens):
-        return None
-
-

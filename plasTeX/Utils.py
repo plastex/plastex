@@ -3,8 +3,17 @@
 import sys, os, new
 
 DOCUMENT = -sys.maxint
+VOLUME = -1
+PART = 0
+SECTION = 1
+SUBSECTION = 2
+SUBSUBSECTION = 3
+PARAGRAPH = 4
+SUBPARAGRAPH = 5
+SUBSUBPARAGRAPH = 6
 ENVIRONMENT = 10
-COMMAND = None
+PARAGRAPH = 100
+COMMAND = 200
 
 def classname(obj):
     if type(obj) is type:

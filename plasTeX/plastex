@@ -10,7 +10,7 @@ from plasTeX.TALUtils import *
 print >>sys.stderr, 'plasTeX version 1.0'
 file = sys.argv[1]
 
-#s = TeX(open(file,'r').read())
+#s = TeX(open(file,'r'))
 #for item in s:
 #    print item.code, item
 #print s.source(s)
@@ -18,9 +18,12 @@ file = sys.argv[1]
 
 # Parse document
 #TeX.disableLogging()
-s = TeX(open(file,'r').read())
+s = TeX(open(file,'r'))
 document = s.parse()
-print s.source(document)
+#for item in document:
+#    print item.code, repr(item)
+print document
+#print s.source(document)
 sys.exit()
 
 basename = os.path.splitext(os.path.basename(file))[0]

@@ -2,7 +2,6 @@
 
 from plasTeX.Utils import *
 from plasTeX import Command, Environment
-from plasTeX.Context import Context
 
 class math(Environment): 
     def __repr__(self): return '$'
