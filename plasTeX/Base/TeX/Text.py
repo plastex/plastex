@@ -50,6 +50,7 @@ class bgroup(Command):
                     break
                 item.digest(tokens)
             self.appendChild(item)
+        self.paragraphs()
 
     def source(self):
         if self.hasChildNodes():

@@ -196,6 +196,7 @@ class Array(Environment):
     class ArrayCell(Macro):
         """ Table cell class """
         endtoken = None
+        isheader = False
 
         def digest(self, tokens):
             self.endtoken = self.digestUntil(tokens, (Array.CellDelimiter, 

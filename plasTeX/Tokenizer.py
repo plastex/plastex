@@ -421,11 +421,16 @@ class Tokenizer(object):
 # Because we can implement macros both in LaTeX and Python, we don't 
 # always want the whitespace to be eaten.  For example, implementing
 # \chardef\%=`% would be \char{`%} in TeX, but in Python it's just 
-# another macro class that would eat whitspace incorrectly.
+# another macro class that would eat whitspace incorrectly.  So we
+# have to do this kind of thing in the parse() method of Macro.
 #
                     if token.catcode != CC_EOL:
-                        # Absorb following whitespace
-                        self.state = STATE_S
+# HACK: I couldn't get the parse() thing to work so I'm just not
+#       going to parse whitespace after EscapeSequences that end in
+#       non-letter characters as a half-assed solution.
+                        if token[-1] in string.letters:
+                            # Absorb following whitespace
+                            self.state = STATE_S
 #
 
                     break

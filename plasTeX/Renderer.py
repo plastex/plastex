@@ -68,15 +68,25 @@ class Renderer(dict):
 
     def __init__(self, data={}):
         dict.__init__(self, data)
+
+        # List of files created during rendering process
+        self.files = []
+
+        # Image generator
         if config['images']['enabled']:
             self.imager = DVIPNG()
 #           self.imager = DVI2Bitmap()
         else:
             self.imager = Imager()
-        self.filenames = self._filenames()
 
-    def _filenames(self):
-        """ Filename generator """
+        # Filename generator
+        self.newfilename = self._newfilename()
+
+    def _newfilename(self):
+        """ 
+        Filename generator 
+
+        """
         # Get the template and extension for output filenames
         ext = config['filenames']['extension']
         template = config['filenames'].get('template', raw=True) + ext
@@ -91,6 +101,16 @@ class Renderer(dict):
             v['num'] += 1
 
     def render(self, document):
+        """
+        Invoke the rendering process
+
+        This method invokes the rendering process as well as handling
+        the setup and shutdown of image processing.
+
+        Required Arguments:
+        document -- the document object to render
+
+        """
         # Mix in required methods and members
         mixin(Node, Renderable)
         Node.renderer = self
@@ -104,15 +124,32 @@ class Renderer(dict):
         # Close imager so it can finish processing
         self.imager.close()
 
+        # Run any cleanup activities
+        self.cleanup()
+
         # Remove mixins
         del Node.renderer
         unmix(Node, Renderable)
 
         return result
 
+    def write(self, outputfile, content):
+        """ Write `content` to file `outputfile` """
+        open(outputfile, 'w').write(content)
+        self.files.append(outputfile)
+
+    def cleanup(self):
+        """ Do any post-rending cleanup """
+        pass
+
+
 class Renderable(object):
 
     def __unicode__(self):
+        """
+        Render the object and all of the child nodes
+
+        """
         if not self.hasChildNodes():
             return u''
 
@@ -135,13 +172,23 @@ class Renderable(object):
         return r.outputtype(u''.join(s))
 
     def __str__(self):
-        return Node.renderer.outputtype(self)
+        return unicode(self)
 
     def image(self):
+        """ Generate an image and return the image filename """
         return Node.renderer.imager.newimage(self.source)
     image = property(image)
 
     def url(self):
+        """
+        Return the relative URL of the object
+
+        If the object actually creates a file, just the filename will
+        be returned (e.g. foo.html).  If the object is within a file, 
+        both the filename and the anchor will be returned 
+        (e.g. foo.html#bar).
+
+        """
         if self.filename:
             return self.filename
         node = self.parentNode
@@ -154,15 +201,21 @@ class Renderable(object):
     url = property(url)
 
     def filename(self):
+        """
+        The filename that this object should create
+
+        Objects that don't create new files should simply return `None`.
+
+        """
         try:
             return getattr(self, '@filename')
         except AttributeError:
             if self.level > Node.ENDSECTIONS_LEVEL:
                 filename = None
-            elif useids and self.id != id(self):
+            elif useids and self.id != ('a%s' % id(self)):
                 filename = '%s%s' % (self.id, ext)
             else:
-                filename = Node.renderer.filenames.next()
+                filename = Node.renderer.newfilename.next()
             setattr(self, '@filename', filename)
         return filename
     filename = property(filename)

@@ -155,16 +155,17 @@ class gdef(DefCommand):
     local = False
 
 class IfCommand(Command):
-    """ Test if character codes agree """
+    pass
+
+class if_(IfCommand): 
+    """ \\if """
     args = 'a:Tok b:Tok'
+    macroName = 'if'
+    """ Test if character codes agree """
     def invoke(self, tex):
         self.parse(tex)
         a = self.attributes
         return tex.readIfContent(a['a'] == a['b'])
-
-class if_(IfCommand): 
-    """ \\if """
-    macroName = 'if'
 
 class else_(Command):
     macroName = 'else'
@@ -221,16 +222,19 @@ class ifeven(IfCommand):
 class ifvmode(IfCommand):
     """ Test for vertical mode """
     def invoke(self, tex):
+        self.parse(tex)
         return tex.readIfContent(False)
 
 class ifhmode(IfCommand):
     """ Test for horizontal mode """
     def invoke(self, tex):
+        self.parse(tex)
         return tex.readIfContent(True)
 
 class ifmmode(IfCommand):
     """ Test for math mode """
     def invoke(self, tex):
+        self.parse(tex)
         return tex.readIfContent(False)
 
 class ifinner(IfCommand):
@@ -285,6 +289,7 @@ class ifeof(IfCommand):
 class iftrue(IfCommand):
     """ Always true """
     def invoke(self, tex):
+        self.parse(tex)
         return tex.readIfContent(True)
 
 class ifplastex(iftrue): pass

@@ -114,6 +114,9 @@ class Macro(Element):
     # Source of the TeX macro arguments
     argsource = ''
 
+    # LaTeX argument template
+    args = ''
+
     def title():
         """ Retrieve title from variable or attributes dictionary """
         def fget(self):
@@ -170,7 +173,7 @@ class Macro(Element):
             else:
                 delattr(self, '@id')
         def fget(self):
-            return getattr(self, '@id', id(self))
+            return getattr(self, '@id', 'a%s' % id(self))
         return locals()
     id = property(**id())
 
@@ -255,6 +258,11 @@ class Macro(Element):
         """
         if self.macroMode == Macro.MODE_END:
             return
+
+        # args is empty, don't do anything
+        if not self.args:
+            return
+
         self.argsource = ''
         arg = None
         try:
@@ -274,7 +282,8 @@ class Macro(Element):
                 self.attributes[arg.name] = output
         except:
             raise
-            log.error('Error while parsing argument "%s" of "%s"' % (arg.name, self.nodeName))
+            log.error('Error while parsing argument "%s" of "%s"' % 
+                       (arg.name, self.nodeName))
         self.postparse(tex)
         return self.attributes
 
@@ -318,7 +327,7 @@ class Macro(Element):
         if vars(tself).has_key('@arguments'):
             return vars(tself)['@arguments']
 
-        if not(getattr(tself, 'args', None)):
+        if not tself.args:
             setattr(tself, '@arguments', [])
             return getattr(tself, '@arguments')
 
@@ -426,6 +435,7 @@ class Macro(Element):
         Group content into paragraphs
 
         """
+#       return
         parclass = None
         contentstart = None
         currentpar = None
@@ -456,7 +466,7 @@ class Macro(Element):
 
                 contentstart = None
                 currentpar = item
-                            
+
             # Found paragraph content
             elif item.level > Node.PAR_LEVEL and contentstart is None:
                 contentstart = i

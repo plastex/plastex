@@ -121,7 +121,7 @@ images['latex-file'] = StringOption(
 images['baseline-padding'] = IntegerOption(
     """ Amount to pad the image below the baseline """,
     options = '--image-baseline-padding',
-    default = 10,
+    default = 0,
 )
 
 images['smoothing-factor'] = IntegerOption(

@@ -10,7 +10,6 @@ class Tokenizing(TestCase):
 
     def testTokens(self):
         tokens = [x for x in TeX('{\hskip 36 pt}').itertokens()]
-        assert len(tokens) == 8, tokens
         expected = [BeginGroup('{'), 
                     EscapeSequence('hskip'), 
                     Other('3'),
@@ -32,7 +31,7 @@ class Tokenizing(TestCase):
 
     def testSymbols(self):
         tokens = [x for x in TeX('\\ { } $ & # ^ _ ~ %').itertokens()]
-        expected = [EscapeSequence(' '), 
+        expected = [EscapeSequence(' '),
                     BeginGroup('{'), Space(' '), 
                     EndGroup('}'), Space(' '), 
                     MathShift('$'), Space(' '), 
@@ -44,15 +43,15 @@ class Tokenizing(TestCase):
         assert tokens == expected, '%s != %s' % (tokens, expected)
         
         tokens = [x for x in TeX(r'\\ \{ \} \$ \& \# \^ \_ \~ \%').itertokens()]
-        expected = [EscapeSequence('\\'),
-                    EscapeSequence('{'),
-                    EscapeSequence('}'),
-                    EscapeSequence('$'),
-                    EscapeSequence('&'),
-                    EscapeSequence('#'),
-                    EscapeSequence('^'),
-                    EscapeSequence('_'),
-                    EscapeSequence('~'),
+        expected = [EscapeSequence('\\'), Space(' '),
+                    EscapeSequence('{'), Space(' '),
+                    EscapeSequence('}'), Space(' '),
+                    EscapeSequence('$'), Space(' '),
+                    EscapeSequence('&'), Space(' '),
+                    EscapeSequence('#'), Space(' '),
+                    EscapeSequence('^'), Space(' '),
+                    EscapeSequence('_'), Space(' '),
+                    EscapeSequence('~'), Space(' '),
                     EscapeSequence('%')]
         assert tokens == expected, '%s != %s' % (tokens, expected)
 

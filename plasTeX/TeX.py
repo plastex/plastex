@@ -29,7 +29,7 @@ __all__ = ['TeX']
 log = getLogger()
 tokenlog = getLogger('parse.tokens')
 digestlog = getLogger('parse.digest')
-
+_type = type
 
 class bufferediter(object):
     """ Buffered iterator """
@@ -278,6 +278,8 @@ class TeX(object):
                 item.parentNode = output
                 item.digest(tokens)
             output.append(item)
+        if output.nodeType == Macro.DOCUMENT_NODE:
+            output.normalize()
         return output
 
     def texttokens(self, text):
@@ -411,13 +413,16 @@ class TeX(object):
                 nesting += 1
             elif t == 'fi':
                 if not nesting:
+                    self.readOptionalSpaces()
                     break
                 nesting -= 1
             elif not(nesting) and t == 'else':
+                self.readOptionalSpaces()
                 cases.append([])
                 elsefound = True
                 continue
             elif not(nesting) and t == 'or':
+                self.readOptionalSpaces()
                 cases.append([])
                 continue
             cases[-1].append(t)
@@ -512,11 +517,8 @@ class TeX(object):
                 return tok, tok.source
 
         if type in ['XTok','XToken']:
-            for tok in self.itertokens():
-                tok = self.expandtokens([tok])
+            for tok in self:
                 Parameter.enable()
-                if len(tok) == 1:
-                    return tok[0], tok[0].source
                 return tok, tok.source
 
         # Definition argument string

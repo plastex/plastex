@@ -620,7 +620,7 @@ class Node(object):
 
         label = ''
         try:
-            if self.id != id(self):
+            if self.id != ('a%s' % id(self)):
                 lid = xmlstr(self.id).strip()
                 if lid:
                     label = ' id="%s"' % lid

@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
 import sys, os, re, codecs
+from plasTeX.Config import config
 from plasTeX.Renderer import Renderer
 from plasTeX.TALUtils import htmltemplate, xmltemplate
 
+encoding = config['encoding']['output']
 
 # Regular expressions for multi-zpt files
 templatere = re.compile(r'(<zpt:page-template\s+[^>]+>.*?</zpt:page-template>)', re.S)
@@ -11,13 +13,12 @@ attrsre = re.compile(r'<zpt:page-template\s+([^>]+)?\s*>')
 parseattrsre = re.compile(r'\s*(\w+)\s*=\s*["\']([^"\']+)?["\']')
 contentre = re.compile(r'<zpt:page-template\s+[^>]+>(.*?)</zpt:page-template>', re.S)
 
-
 class htmlunicode(unicode):
     """ Helper for strings output from renderer """
 
     def plaintext(self):
         """ Strip markup from string """
-        return type(self)(re.sub(r'<\w+[^>]*>', r''))
+        return type(self)(re.sub(r'</?\w+[^>]*>', r'', self))
 
 
 class XHTML(Renderer):
@@ -42,6 +43,64 @@ class XHTML(Renderer):
         for before, after in type(self).entitysubs:
             s = s.replace(before, after)
         return unicode(s)
+
+    def cleanup(self):
+        """ Cleanup method called at the end of rendering """
+        for file in self.files:
+            s = codecs.open(file, 'r', encoding).read()
+
+            # Clean up empty paragraphs and table cells
+            s = re.compile(r'(<p\b[^>]*>)\s*(</p>)', re.I).sub(r'', s)
+            s = re.compile(r'(<td\b[^>]*>)\s*(</td>)', re.I).sub(r'\1&nbsp;\2', s)
+            
+            # Add width, height, and depth to images
+            s = re.compile(r'<img\b[^>]+>', re.I).sub(self.setImageData, s) 
+
+            open(file, 'w').write(unicode.encode(s, encoding)) 
+
+    def setImageData(self, m):
+        """
+        Substitute in #width, #height, and #depth parameters in image tags
+
+        The width, height, and depth parameters aren't known until after
+        all of the output has been generated.  We have to post-process
+        the files to insert this information.  This method replaces
+        the #width, #height, and #depth placeholders with their appropriate
+        values.
+
+        Note: #depth is actually replaced with a class name called 
+              "voffset<depth>" where <depth> is the numberic value.
+              In the case of negative values, the '-' is replaced 
+              with '_'.
+
+        Required Arguments:
+        m -- regular expression match object that contains an img tag
+
+        """
+        tag = m.group()
+
+        # If the tag doesn't contain any of these, we're done
+        if not re.search(r'#(width|height|depth)', tag):
+            return tag
+
+        # Get the filename
+        src = re.compile(r'\bsrc\s*=\s*(\'|\")\s*([^\1]+?)\s*\1', 
+                         re.I).search(tag)
+        if not src:
+            return tag
+
+        src = src.group(2)
+
+        # Make sure we have the information we need in the imager
+        if not self.imager.images.has_key(src):
+            return tag
+
+        img = self.imager.images[src]
+        tag = tag.replace('#width', str(img.width))
+        tag = tag.replace('#height', str(img.height))
+        tag = tag.replace('#depth', ('voffset%s' % img.depth).replace('-','_'))
+
+        return tag
 
     def importDirectory(self, templatedir):
         """ Compile all ZPT files in the given directory """

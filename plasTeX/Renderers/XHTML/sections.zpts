@@ -6,7 +6,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html tal:define="nav self/navigation">
 <head>
-<span tal:replace="python:self.__class__.__name__"></span>
 <meta http-equiv="content-type" 
       tal:attributes="content string:text/html;; charset=${config/encoding/output}" />
 <title tal:content="self/title">Morbi metus pede, imperdiet vitae</title>
@@ -15,18 +14,6 @@
 <link tal:condition="nav/up" rel="up" tal:attributes="href nav/up/url; title nav/up/title" />
 <link rel="stylesheet" href="styles.css" />
 <link rel="stylesheet" href="pyldriver-styles.css" />
-<style type="text/css">
-<!--
-.ieqn {
-    margin-bottom: -4px;
-}
-.displaymath,.eqnarray {
-    margin-top: 15px;
-    margin-bottom: 11px;
-    margin-left: 30px;
-}
--->
-</style>
 </head>
 <body>
 

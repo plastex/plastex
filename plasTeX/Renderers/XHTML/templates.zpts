@@ -20,7 +20,7 @@
 <zpt:page-template name="bf bfseries textbf"><b tal:content="self">bold text</b></zpt:page-template>
 
 <zpt:page-template name="emph em">
-<emph tal:content="self">emphasized text</emph>
+<em tal:content="self">emphasized text</em>
 </zpt:page-template>
 
 <zpt:page-template name="strong">
@@ -53,7 +53,7 @@
 <zpt:page-template name="ssbeleven"><b style="font-family: sans-serif" tal:content="self"></b></zpt:page-template>
 
 <zpt:page-template name="sasstmts reference" type="xml">
-<dl>
+<dl class="sasstmts">
 <metal:block tal:repeat="item self">
     <dt></dt>
     <dd tal:content="item"></dd>
@@ -114,9 +114,11 @@
 </zpt:page-template>
 
 <zpt:page-template name="sasop">
-<div class="sasop"><a tal:attributes="name self/attributes/label" tal:content="self/title"></a></div>
+<a class="sasop" tal:attributes="name self/attributes/label" tal:content="self/title"></a><br />
 </zpt:page-template>
 
+<zpt:page-template name="ssiten ssbten ssieleven ssbeleven hv hvs ssbifourteen"><span tal:attributes="class self/nodeName" tal:content="self></span></zpt:page-template>
 
+<zpt:page-template name="hspace"><span tal:attributes="style string:width:${self/attributes/len}"></span></zpt:page-template>
 
 </zpt:page-templates>
