@@ -28,13 +28,13 @@ class TextBoxCommand(Command):
 #    args = 'text'
 
 class makebox(TextBoxCommand):
-    args = '[ width:dimen ] [ pos:str ] text'
+    args = '[ width:dimen ] [ pos:str ] self'
 
 class fbox(Command):
-    args = 'text'
+    args = 'self'
 
 class framebox(TextBoxCommand):
-    args = '[ width:dimen ] [ pos:str ] text'
+    args = '[ width:dimen ] [ pos:str ] self'
 
 class newsavebox(Command):
     args = 'name:cs'
@@ -52,7 +52,7 @@ class usebox(Command):
     args = 'name:cs'
 
 class parbox(Command):
-    args = '[ pos:str ] width:dimen text'
+    args = '[ pos:str ] width:dimen self'
 
 class minipage(Environment):
     args = '[ pos:str ] width:dimen'
@@ -61,7 +61,7 @@ class rule(Command):
     args = '[ raise:dimen ] width:dimen height:dimen'
 
 class raisebox(TextBoxCommand):
-    args = 'raise:dimen [ height:dimen ] [ depth:dimen ] text'
+    args = 'raise:dimen [ height:dimen ] [ depth:dimen ] self'
 
 # Style Parameters
 

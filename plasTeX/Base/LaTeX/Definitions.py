@@ -34,6 +34,12 @@ class renewcommand(newcommand):
 class providecommand(newcommand): 
     pass
 
+class DeclareRobustCommand(newcommand):
+    pass
+
+class DeclareTextCommandDefault(newcommand):
+    pass
+
 #
 # C.8.2 Defining Environments
 #

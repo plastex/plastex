@@ -497,7 +497,7 @@ def xmlstr(obj):
     if isinstance(obj, basestring):
         return obj.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;')
     else:
-        return str(obj)
+        return xmlstr(str(obj))
 
 class Node(object):
     """
@@ -589,6 +589,8 @@ class Node(object):
         name = self.nodeName
         name = name.replace('@','-')
         name = name.replace('#','dom-')
+        if name.startswith('-'):
+            name = 'x%s' % name
 
         modifier = ''
         if '::' in name:
@@ -1193,11 +1195,14 @@ class Element(Node):
         return '<%s element at 0x%s>' % (self.nodeName, id(self))
 
     def attributes(self):
-        if not hasattr(self, '@attributes'):
-            nnm = NamedNodeMap()
-            nnm.parentNode = self
-            setattr(self, '@attributes', nnm)
-        return getattr(self, '@attributes')
+        try:
+            return getattr(self, '@attributes')
+        except AttributeError:
+            pass
+        nnm = NamedNodeMap()
+        nnm.parentNode = self
+        setattr(self, '@attributes', nnm)
+        return nnm
     attributes = property(attributes)
 
     def tagName():

@@ -2,13 +2,36 @@
 
 import codecs
 from plasTeX.Config import config
+from plasTeX.Logging import getLogger, ERROR
 from simpletal import simpleTAL, simpleTALES
 from simpletal.simpleTALES import Context as TALContext
 from simpletal.simpleTALUtils import FastStringOutput as StringIO
 
+stlog = getLogger('simpleTAL')
+stelog = getLogger('simpleTALES')
+
+stlog.setLevel(ERROR)
+stelog.setLevel(ERROR)
+
 __all__ = ['htmltemplate', 'xmltemplate']
 
 encoding = config['encoding']['output']
+
+def applyTemplates(obj):
+    if not self.hasChildNodes():
+        return u''
+    if self.filename:
+        status.info(' [ %s ', self.filename)
+    s = []
+    for child in self.childNodes:
+        val = Node.renderer.get(child.nodeName, unicode)(child)
+        if type(val) is unicode:
+            s.append(val)
+        else:
+            s.append(unicode(val,encoding))
+    if self.filename:
+        status.info(' ] ')
+    return u''.join(s)
 
 def _render(self, obj, outputFile=None, outputEncoding=encoding, interpreter=None):
     """ New rendering method for HTML templates """

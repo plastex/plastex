@@ -9,10 +9,10 @@
 <span tal:replace="python:self.__class__.__name__"></span>
 <meta http-equiv="content-type" 
       tal:attributes="content string:text/html;; charset=${config/encoding/output}" />
-<title tal:content="self/attributes/title">Morbi metus pede, imperdiet vitae</title>
-<link tal:condition="nav/next" rel="next" tal:attributes="href nav/next/url; title nav/next/attributes/title" />
-<link tal:condition="nav/prev" rel="prev" tal:attributes="href nav/prev/url; title nav/prev/attributes/title" />
-<link tal:condition="nav/up" rel="up" tal:attributes="href nav/up/url; title nav/up/attributes/title" />
+<title tal:content="self/title">Morbi metus pede, imperdiet vitae</title>
+<link tal:condition="nav/next" rel="next" tal:attributes="href nav/next/url; title nav/next/title" />
+<link tal:condition="nav/prev" rel="prev" tal:attributes="href nav/prev/url; title nav/prev/title" />
+<link tal:condition="nav/up" rel="up" tal:attributes="href nav/up/url; title nav/up/title" />
 <link rel="stylesheet" href="styles.css" />
 <link rel="stylesheet" href="pyldriver-styles.css" />
 <style type="text/css">
@@ -33,13 +33,13 @@
 <div class="navigation" metal:define-macro="navigation">
 <table cellspacing="2" cellpadding="0" width="100%">
 <tr>
-<td tal:condition="nav/prev"><a tal:attributes="href nav/prev/url; title nav/prev/attributes/title"><img border="0" tal:attributes="alt string:Previous: ${nav/prev/attributes/title}" src="previous.gif" width="32" height="32" /></a></td>
+<td tal:condition="nav/prev"><a tal:attributes="href nav/prev/url; title nav/prev/title"><img border="0" tal:attributes="alt string:Previous: ${nav/prev/title}" src="previous.gif" width="32" height="32" /></a></td>
 <td tal:condition="not:nav/prev"><img border="0" alt="" src="blank.gif" width="32" height="32" /></td>
-<td tal:condition="nav/up"><a tal:attributes="href nav/up/url; title nav/up/attributes/title"><img border="0" tal:attributes="alt string:Up: ${nav/up/attributes/title}" src="up.gif" width="32" height="32" /></a></td>
+<td tal:condition="nav/up"><a tal:attributes="href nav/up/url; title nav/up/title"><img border="0" tal:attributes="alt string:Up: ${nav/up/title}" src="up.gif" width="32" height="32" /></a></td>
 <td tal:condition="not:nav/up"><img border="0" alt="" src="blank.gif" width="32" height="32" /></td>
-<td tal:condition="nav/next"><a tal:attributes="href nav/next/url; title nav/next/attributes/title"><img border="0" tal:attributes="alt string:Next: ${nav/next/attributes/title}" src="next.gif" width="32" height="32" /></a></td>
+<td tal:condition="nav/next"><a tal:attributes="href nav/next/url; title nav/next/title"><img border="0" tal:attributes="alt string:Next: ${nav/next/title}" src="next.gif" width="32" height="32" /></a></td>
 <td tal:condition="not:nav/next"><img border="0" alt="" src="blank.gif" width="32" height="32" /></td>
-<td class="navtitle" align="center" tal:content="self/attributes/title">Section Title</td>
+<td class="navtitle" align="center" tal:content="self/title">Section Title</td>
 <td tal:condition="nav/contents"><a tal:attributes="href nav/contents/url" title="Table of Contents"><img border="0" alt="" src="contents.gif" width="32" height="32" /></a></td>
 <td tal:condition="not:nav/contents"><img border="0" alt="" src="blank.gif" width="32" height="32" /></td>
 <td><img border="0" alt="" src="blank.gif" width="32" height="32" /></td>
@@ -51,10 +51,10 @@
 <div class="breadcrumbs">
 <span tal:repeat="crumb nav/breadcrumbs">
 <span tal:condition="not:repeat/crumb/end">
-<a href="." tal:attributes="href crumb/url" tal:content="crumb/attributes/title">Parent Section</a> <b>:</b>
+<a href="." tal:attributes="href crumb/url" tal:content="crumb/title">Parent Section</a> <b>:</b>
 </span>
 <span tal:condition="repeat/crumb/end">
-<b class="current" tal:content="crumb/attributes/title">Current Section</b>
+<b class="current" tal:content="crumb/title">Current Section</b>
 </span>
 </span>
 <hr />
@@ -62,7 +62,7 @@
 
 <div tal:condition="python:path('self/level') &lt;= 1">
 
-<h1 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/attributes/title">Morbi metus pede, imperdiet vitae</a></h1>
+<h1 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/title">Morbi metus pede, imperdiet vitae</a></h1>
 
 <p tal:replace="self">
 Phasellus gravida dolor ut risus. Vestibulum volutpat mollis elit. Suspendisse placerat dolor et dui. Integer metus. Cras lacus sem, pellentesque sit amet, pellentesque vel, blandit in, eros. Cras turpis justo, posuere vitae, tincidunt ac, molestie eu, quam. Aenean consequat tincidunt elit. Cras rutrum fringilla ipsum. Vivamus ut ipsum id massa elementum tincidunt. Donec posuere leo. Phasellus facilisis risus sed ligula.
@@ -72,7 +72,7 @@ Phasellus gravida dolor ut risus. Vestibulum volutpat mollis elit. Suspendisse p
 
 <div tal:condition="python:path('self/level') == 2">
 
-<h2 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/attributes/title">Cras dignissim</a></h2>
+<h2 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/title">Cras dignissim</a></h2>
 
 <p tal:replace="self">
 Pellentesque lobortis tellus eu metus. Etiam bibendum ante nec quam auctor pulvinar. Mauris dictum bibendum mauris. Aenean viverra cursus justo. Praesent tellus. Donec mollis, quam sit amet commodo imperdiet, enim tortor vulputate eros, ut euismod tortor ipsum ac orci. Integer eu mauris sit amet nulla sodales scelerisque. Proin sed elit. Nullam et urna. Donec elementum imperdiet orci. Mauris viverra, justo at viverra suscipit, augue sapien ornare justo, nec faucibus neque lectus quis lorem.
@@ -82,7 +82,7 @@ Pellentesque lobortis tellus eu metus. Etiam bibendum ante nec quam auctor pulvi
 
 <div tal:condition="python:path('self/level') == 3">
 
-<h3 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/attributes/title">Velit id pharetra</a></h3>
+<h3 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/title">Velit id pharetra</a></h3>
 
 <p tal:replace="self">
 Donec at sapien. Integer lacus wisi, egestas eu, fringilla ut, condimentum vitae, velit. Pellentesque vitae risus sit amet nulla interdum sollicitudin. Sed dapibus, urna sit amet pulvinar scelerisque, turpis lorem pretium magna, id malesuada metus dolor non sapien. In hac habitasse platea dictumst. Cras tempor. Mauris sed nunc. Vestibulum quis enim. Donec consectetuer neque eget tortor. Pellentesque consequat, dui in consectetuer vehicula, enim orci elementum urna, a consectetuer magna tellus et quam. Sed non augue. Maecenas ut nunc. Mauris non turpis. Integer lectus diam, gravida id, pellentesque sit amet, pellentesque sed, sem. Pellentesque molestie mattis diam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. In hac habitasse platea dictumst.
@@ -92,7 +92,7 @@ Donec at sapien. Integer lacus wisi, egestas eu, fringilla ut, condimentum vitae
 
 <div tal:condition="python:path('self/level') == 4">
 
-<h4 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/attributes/title">Donec elementum mauris vel urna</a></h4>
+<h4 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/title">Donec elementum mauris vel urna</a></h4>
 
 <p tal:replace="self">
 Quisque dolor metus, mattis vel, congue id, volutpat vel, risus. Aenean turpis nulla, commodo sed, pretium vitae, feugiat vel, dui. Aliquam adipiscing tellus porttitor risus. Donec ullamcorper cursus sem. Etiam eget quam eu diam vulputate blandit. Nunc metus. Vestibulum urna tellus, interdum in, blandit sed, egestas a, magna. Sed bibendum wisi ac dolor. Sed a tortor non tortor facilisis volutpat. Phasellus cursus scelerisque justo. Duis mattis ultrices ligula. Maecenas erat purus, iaculis vitae, eleifend eu, aliquet sit amet, ipsum. Vivamus vel nulla quis risus interdum suscipit. Vivamus non lorem. Donec lobortis, felis ut cursus volutpat, dui velit imperdiet mi, eu scelerisque tellus lectus et lacus. Proin sit amet diam eget nisl laoreet vulputate. Nam sit amet velit sit amet quam pulvinar malesuada. Cras ipsum lacus, dictum sit amet, mattis a, dignissim ut, quam.
@@ -102,7 +102,7 @@ Quisque dolor metus, mattis vel, congue id, volutpat vel, risus. Aenean turpis n
 
 <div tal:condition="python:path('self/level') == 5">
 
-<h5 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/attributes/title">Duis orci</a></h5>
+<h5 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/title">Duis orci</a></h5>
 
 <p tal:replace="self">
 Curabitur quam elit, placerat ac, euismod sit amet, sollicitudin sed, orci. Cras lorem lorem, lobortis in, rutrum at, egestas non, nibh. Suspendisse eget magna. Phasellus viverra, est non convallis convallis, est elit ullamcorper dolor, et ullamcorper erat augue in purus. Cras non justo. Proin dui risus, convallis vitae, adipiscing in, dignissim a, metus. Suspendisse faucibus, metus quis dictum pulvinar, velit massa dictum nibh, nec viverra felis est sit amet mauris. Sed in tortor vel magna volutpat ultrices. Duis pellentesque. Fusce eu urna. Aenean leo ligula, porttitor gravida, hendrerit non, porttitor non, erat. Duis eget augue. Cras metus. Cras ac wisi. Fusce rhoncus magna id nulla. Quisque dolor lacus, volutpat eu, eleifend eget, accumsan consectetuer, elit. Praesent gravida. In euismod. Duis pulvinar nulla nec dui. Etiam tristique.
@@ -112,7 +112,7 @@ Curabitur quam elit, placerat ac, euismod sit amet, sollicitudin sed, orci. Cras
 
 <div tal:condition="python:path('self/level') &gt; 5">
 
-<h6 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/attributes/title">Mauris fringilla, metus</a></h6>
+<h6 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/title">Mauris fringilla, metus</a></h6>
 
 <p tal:replace="self">
 Donec enim eros, malesuada ut, faucibus id, elementum non, tellus. In nibh. Proin turpis lectus, hendrerit non, mollis auctor, porttitor sed, elit. In ornare. Pellentesque id nunc pulvinar neque semper pellentesque. Nunc aliquam wisi eu eros. Nulla diam tortor, ullamcorper tincidunt, blandit quis, tristique ut, libero. Etiam sem. Vivamus sit amet augue non diam posuere ultricies. Donec nunc leo, dictum vel, sollicitudin sit amet, lobortis ut, mi. Nullam tempus, odio non tincidunt sodales, tellus risus fermentum sem, id dictum urna pede suscipit ligula. Fusce adipiscing lacus. Fusce auctor. Nam quis quam. Pellentesque varius. Fusce lectus erat, fermentum id, consequat vel, lacinia vitae, lorem. Proin sapien ligula, pulvinar vitae, vehicula vitae, tristique id, odio.
@@ -122,9 +122,9 @@ Donec enim eros, malesuada ut, faucibus id, elementum non, tellus. In nibh. Proi
 
 <div tal:condition="self/subsections" class="contents"><strong>Subsections</strong>
 <ul>
-<li tal:repeat="item self/subsections"><a href="." tal:attributes="href item/url" tal:content="item/attributes/title">Aliquam est. Aliquam fringilla pede</a>
+<li tal:repeat="item self/subsections"><a href="." tal:attributes="href item/url" tal:content="item/title">Aliquam est. Aliquam fringilla pede</a>
    <ul tal:condition="item/subsections">
-   <li tal:repeat="item2 item/subsections"><a href="." tal:attributes="href item2/url" tal:content="item2/attributes/title"></a></li>
+   <li tal:repeat="item2 item/subsections"><a href="." tal:attributes="href item2/url" tal:content="item2/title"></a></li>
    </ul>
 </li>
 <li tal:replace="nothing"><a href=".">Maecenas id purus</a></li>
@@ -136,14 +136,14 @@ Donec enim eros, malesuada ut, faucibus id, elementum non, tellus. In nibh. Proi
 <div class="navigation" metal:use-macro="template/macros/navigation">
 <table cellspacing="2" cellpadding="0" width="100%">
 <tr>
-<td tal:condition="nav/prev"><a tal:attributes="href nav/prev/url"><img border="0" tal:attributes="alt string:Previous: ${nav/prev/attributes/title}" src="previous.gif" width="32" height="32" /></a></td>
+<td tal:condition="nav/prev"><a tal:attributes="href nav/prev/url"><img border="0" tal:attributes="alt string:Previous: ${nav/prev/title}" src="previous.gif" width="32" height="32" /></a></td>
 <td tal:condition="not:nav/prev"><img border="0" alt="" src="blank.gif" width="32" height="32" /></td>
-<td tal:condition="nav/up"><a tal:attributes="href nav/up/url"><img border="0" tal:attributes="alt string:Up: ${nav/up/attributes/title}" src="up.gif" width="32" height="32" /></a></td>
+<td tal:condition="nav/up"><a tal:attributes="href nav/up/url"><img border="0" tal:attributes="alt string:Up: ${nav/up/title}" src="up.gif" width="32" height="32" /></a></td>
 <td tal:condition="not:nav/up"><img border="0" alt="" src="blank.gif" width="32" height="32" /></td>
-<td tal:condition="nav/next"><a tal:attributes="href nav/next/url"><img border="0" tal:attributes="alt string:Next: ${nav/next/attributes/title}" src="next.gif" width="32" height="32" /></a></td>
+<td tal:condition="nav/next"><a tal:attributes="href nav/next/url"><img border="0" tal:attributes="alt string:Next: ${nav/next/title}" src="next.gif" width="32" height="32" /></a></td>
 <td tal:condition="not:nav/next"><img border="0" alt="" src="blank.gif" width="32" height="32" /></td>
-<td class="navtitle" align="center" tal:content="self/attributes/title">Section Title</td>
-<td tal:condition="nav/contents"><a tal:attributes="href nav/contents/attributes/title"><img border="0" alt="" src="contents.gif" width="32" height="32" /></a></td>
+<td class="navtitle" align="center" tal:content="self/title">Section Title</td>
+<td tal:condition="nav/contents"><a tal:attributes="href nav/contents/title"><img border="0" alt="" src="contents.gif" width="32" height="32" /></a></td>
 <td tal:condition="not:nav/contents"><img border="0" alt="" src="blank.gif" width="32" height="32" /></td>
 <td><img border="0" alt="" src="blank.gif" width="32" height="32" /></td>
 <td><img border="0" alt="" src="blank.gif" width="32" height="32" /></td>

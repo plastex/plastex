@@ -34,12 +34,12 @@ class addtolength(Command):
 #       tex.context[a['name']].addtolength(a['len'])
 
 class settowidth(Command):
-    args = 'name:cs text'
+    args = 'name:cs text:nox'
     
 class settoheight(Command):
-    args = 'name:cs text'
+    args = 'name:cs text:nox'
 
 class settodepth(Command):
-    args = 'name:cs text'
+    args = 'name:cs text:nox'
     
 

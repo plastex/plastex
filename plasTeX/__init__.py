@@ -107,10 +107,31 @@ class Macro(Element):
     # Value to return when macro is referred to by \ref
     ref = None
 
+    # Element that this element links to (i.e. args = 'label:idref')
+    # Only one idref attribute is allowed in the args string
+    idrefs = None
+
     # Source of the TeX macro arguments
     argsource = ''
 
+    def title():
+        """ Retrieve title from variable or attributes dictionary """
+        def fget(self):
+            try:
+                return getattr(self, '@title')
+            except AttributeError:
+                try:
+                    return self.attributes['title']
+                except KeyError:
+                    pass
+            raise AttributeError, 'could not find attribute "title"'
+        def fset(self, value):
+            setattr(self, '@title', value)
+        return locals()
+    title = property(**title())
+
     def style(self):
+        """ CSS styles """
         try:
             return getattr(self, '@style')
         except AttributeError:
@@ -185,7 +206,7 @@ class Macro(Element):
 
         # Automatically revert internal names like "active::~"
         escape = '\\'
-        if name.count('::'):
+        if '::' in name:
             name = name.split('::').pop()
             escape = ''
 
@@ -236,7 +257,7 @@ class Macro(Element):
         arg = None
         try:
             for i, arg in enumerate(self.arguments):
-                output, source = tex.readArgumentAndSource(**arg.options)
+                output, source = tex.readArgumentAndSource(slot=(self, arg.name), **arg.options)
                 # Check for a '*' type argument at the beginning of the
                 # argument list.  If there is one, don't increment counters
                 # or set labels.  This must be done immediately since
@@ -484,6 +505,9 @@ class Environment(Macro):
             return
         # Absorb the tokens that belong to us
         for item in tokens:
+            if item.level < self.level:
+                tokens.push(item)
+                break
             if item.nodeType == Node.ELEMENT_NODE:
                 if item.macroMode == Macro.MODE_END and type(item) is type(self):
                     break
@@ -587,11 +611,11 @@ class NewCommand(Macro):
         nargs = self.nargs
         if self.opt is not None:
             nargs -= 1
-            params.append(tex.readArgument('[]', default=self.opt))
+            params.append(tex.readArgument('[]', default=self.opt, slot=(self,'#%s'%len(params))))
 
         # Get mandatory arguments
         for i in range(nargs):
-            params.append(tex.readArgument())
+            params.append(tex.readArgument(slot=(self,'#%s'%len(params))))
 
         deflog.debug2('expanding %s %s', self.definition, params)
 
@@ -616,7 +640,7 @@ class Definition(Macro):
 
                 # Adjacent parameters, just get the next token
                 if inparam:
-                    params.append(tex.readArgument())
+                    params.append(tex.readArgument(slot=(self,'#%s'%len(params))))
 
                 # Get the parameter number
                 for a in argiter:
@@ -661,7 +685,7 @@ class Definition(Macro):
                         break
 
         if inparam:
-            params.append(tex.readArgument())
+            params.append(tex.readArgument(slot=(self,'#%s'%len(params))))
 
         deflog.debug2('expanding %s %s', self.definition, params)
 
@@ -948,6 +972,10 @@ class Counter(object):
 
     def addtocounter(self, other):
         self.value += int(other)
+        self.resetcounters()
+
+    def setcounter(self, other):
+        self.value = int(other)
         self.resetcounters()
 
     def stepcounter(self):

@@ -83,6 +83,12 @@ files['use-ids'] = BooleanOption(
 
 images = c.add_section('images')
 
+images['enabled'] = BooleanOption(
+    """ Enable/disable image generation """,
+    options = '--enable-images !--disable-images',
+    default = True,
+)
+
 images['image-format'] = StringOption(
     """ PIL image format name """,
     options = '--image-format',

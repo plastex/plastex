@@ -165,6 +165,12 @@ class IfCommand(Command):
 class if_(IfCommand): 
     """ \\if """
     macroName = 'if'
+
+class else_(Command):
+    macroName = 'else'
+
+class fi(Command): 
+    pass
         
 class ifnum(IfCommand):
     """ Compare two integers """
@@ -281,10 +287,23 @@ class iftrue(IfCommand):
     def invoke(self, tex):
         return tex.readIfContent(True)
 
+class ifplastex(iftrue): pass
+class plastexfalse(Command): pass
+class plastextrue(Command): pass
+
+class ifhtml(iftrue): pass
+class htmlfalse(Command): pass
+class htmltrue(Command): pass
+
 class iffalse(IfCommand):
     """ Always false """
     def invoke(self, tex):
         return tex.readIfContent(False)
+
+class ifpdf(iffalse): pass
+class pdffalse(Command): pass
+class pdftrue(Command): pass
+class pdfoutput(Command): pass
 
 class ifcase(IfCommand):
     """ Cases """
@@ -338,8 +357,8 @@ class csname(Command):
     """ \\csname """
     def invoke(self, tex):
         name = []
-        for t in tex.itertokens():
-            if t == 'endcsname':
+        for t in tex:
+            if t.nodeType == Command.ELEMENT_NODE and t.nodeName == 'endcsname':
                 break
             name.append(t)
         return [EscapeSequence(''.join(name))]
@@ -354,14 +373,14 @@ class input(Command):
     def invoke(self, tex):
         a = self.parse(tex)
         try: 
-            path = tex.kpsewhich(attrs['name'])
+            path = tex.kpsewhich(a['name'])
 
-            status.info(' ( %s.tex ' % path)
+            status.info(' ( %s ' % path)
             tex.input(open(path, 'r'))
             status.info(' ) ')
 
-        except (OSError, IOError):
-            log.warning('Could not open file "%s"', path)
+        except (OSError, IOError), msg:
+            log.warning(msg)
             status.info(' ) ')
 
 class endinput(Command):
@@ -379,3 +398,22 @@ class showthe(Command):
 
 class active(Count):
     value = count(13)
+
+class advance(Command):
+    def invoke(self, tex):
+        tex.readArgument(type='Number')
+        tex.readKeyword(['by'])
+        tex.readArgument(type='Number')
+
+class leavevmode(Command): pass
+class kern(Command): pass
+class hrule(Command): pass
+class jobname(Command): pass
+class long(Command): pass
+class undefined(Command): pass
+class undefined_(Command):
+    macroName = '@undefined'
+class vobeyspaces_(Command):
+    macroName = '@vobeyspaces'
+class noligs_(Command):
+    macroName = '@noligs'

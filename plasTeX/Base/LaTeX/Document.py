@@ -14,3 +14,9 @@ class document(Environment, SectionUtils):
     def digest(self, tex):
         Environment.digest(self, tex)
         self.paragraphs()
+
+class AtEndDocument(Command):
+    args = 'commands:nox'
+
+class AtBeginDocument(Command):
+    args = 'commands:nox'

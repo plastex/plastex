@@ -89,6 +89,9 @@ class Context(object):
         # Labeled objects
         self.labels = {}
 
+        # Unresolved refs
+        self.refs = {}
+
         # Tokens aliased by \let
         self.lets = {}
 
@@ -116,13 +119,49 @@ class Context(object):
         Required Arguments:
         label -- string that contains the label
 
+        See Also:
+        self.ref()
+
         """
         label = label.strip()
         if not label:
             return
+
         if self.currentlabel is not None:
             self.labels[label] = self.currentlabel
             self.currentlabel.id = label
+
+        # Resolve any outstanding references to this object
+        if self.refs.has_key(label) and self.labels.has_key(label):
+            for obj in self.refs[label]:
+                obj.idref = self.labels[label]
+            del self.refs[label]
+
+    def ref(self, obj, label):
+        """
+        Set up a ref for resolution
+
+        Required Arguments:
+        obj -- object to put the referenced object onto
+        label -- label to resolve
+
+        See Also:
+        self.label()
+
+        """
+        label = label.strip()
+        if not label:
+            return
+
+        # Resolve ref if label already exists
+        if self.labels.has_key(label):
+            obj.idref = self.labels[label]
+            return 
+
+        # If the label doesn't exist, store away the object for later
+        if not self.refs.has_key(label):
+            self.refs[label] = []
+        self.refs[label].append(obj)
 
     def __getitem__(self, key):
         """ 

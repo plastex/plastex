@@ -3,6 +3,7 @@
 from plasTeX.DOM import Node
 #from imagers.dvi2bitmap import DVI2Bitmap
 from imagers.dvipng import DVIPNG
+from imagers import Imager
 from StringIO import StringIO
 from plasTeX.Config import config
 from plasTeX.Logging import getLogger
@@ -62,9 +63,11 @@ def unmix(base, mix=None):
 class Renderer(dict):
     def __init__(self, data={}):
         dict.__init__(self, data)
-        self.imager = DVIPNG()
-        self.imager = StringIO()
-#       self.imager = DVI2Bitmap()
+        if config['images']['enabled']:
+            self.imager = DVIPNG()
+#           self.imager = DVI2Bitmap()
+        else:
+            self.imager = Imager()
         self.filenames = self._filenames()
 
     def _filenames(self):
@@ -128,7 +131,13 @@ class Renderable(object):
     def url(self):
         if self.filename:
             return self.filename
-        return '%s#%s' % (self.filename, self.id)
+        node = self.parentNode
+        while node is not None and node.filename is None:
+            node = node.parentNode
+        filename = ''
+        if node is not None:
+            filename = node.filename
+        return '%s#%s' % (filename, self.id)
     url = property(url)
 
     def filename(self):

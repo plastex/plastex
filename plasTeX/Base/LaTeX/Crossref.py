@@ -13,7 +13,7 @@ class label(Command):
     args = 'label:id'
 
 class ref(Command):
-    args = 'label:str'
+    args = 'label:idref'
 
 class pageref(Command):
-    args = 'label:str'
+    args = 'label:idref'

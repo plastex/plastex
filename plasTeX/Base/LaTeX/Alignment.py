@@ -24,3 +24,6 @@ class flushright(Environment):
 
 class raggedleft(flushright):
     pass
+
+class raggedbottom(Environment):
+    pass

@@ -173,6 +173,9 @@ class TeX(object):
             try:
                 while 1:
                     t = inputs[-1][-1].next()
+                    # Magical EndTokens flag telling us to bail out
+                    if t is EndTokens:
+                        return
                     # Save context depth of each token for use in digestion
                     t.contextDepth = context.depth
                     yield t
@@ -207,10 +210,6 @@ class TeX(object):
             if token is None:
                 continue
 
-            # Magical EndTokens flag telling us to bail out
-            elif token is EndTokens:
-                return
-
             # Macro that has already been expanded
             elif token.nodeType == ELEMENT_NODE:
                 pass
@@ -218,6 +217,7 @@ class TeX(object):
             # We need to expand this one
             elif token.macroName is not None:
                 try:
+#                   log.info('expanding %s', token.macroName)
                     # By default, invoke() should put the macro instance
                     # itself into the output stream.  We'll handle this
                     # automatically here if `None' is received.  If you
@@ -437,7 +437,7 @@ class TeX(object):
         return self.readArgumentAndSource(*args, **kwargs)[0]
 
     def readArgumentAndSource(self, spec=None, type=None, subtype=None, 
-                             delim=',', expanded=False, default=None):
+                    delim=',', expanded=False, default=None, slot=None):
         """ 
         Get an argument and the TeX source that created it
 
@@ -461,6 +461,10 @@ class TeX(object):
         expanded -- boolean indicating whether the argument content
             should be expanded or just returned as an unexpanded 
             text string
+        default -- value to return if the argument doesn't exist
+        slot -- tuple containing the macro instance and the argument name
+            currently being retrieved.  This is useful for printing
+            nice error messages and is also needed to resolved \\refs.
 
         Returns:
         tuple where the first argument is:
@@ -532,21 +536,40 @@ class TeX(object):
         if type in ['cs']:
             expanded = False
 
-        # Get a TeX token (i.e. {...})
-        if spec is None:
-            toks, source = self.readToken()
+        try:
 
-        # Get a single character argument
-        elif len(spec) == 1:
-            toks, source = self.readCharacter(spec)
+            # Get a TeX token (i.e. {...})
+            if spec is None:
+                toks, source = self.readToken()
+                # If we only get back a single token that is an escape sequence
+                # go ahead and expand it.  If we let self.expandtokens do it
+                # it won't work properly.
+                if expanded and toks is not None and \
+                   len(toks)==1 and toks[0].catcode==Token.CC_ESCAPE:
+                    self.pushtoken(toks.pop())
+                    for toks in self:
+                        break
+                    source = toks.source
+                    expanded = False
+    
+            # Get a single character argument
+            elif len(spec) == 1:
+                expanded = False
+                toks, source = self.readCharacter(spec)
+    
+            # Get an argument grouped by the given characters (e.g. [...], (...))
+            elif len(spec) == 2:
+                toks, source = self.readGrouping(spec)
+    
+            # This isn't a correct value
+            else:
+                raise ValueError, 'Unrecognized specifier "%s"' % spec
 
-        # Get an argument grouped by the given characters (e.g. [...], (...))
-        elif len(spec) == 2:
-            toks, source = self.readGrouping(spec)
-
-        # This isn't a correct value
-        else:
-            raise ValueError, 'Unrecognized specifier "%s"' % spec
+        except Exception, msg:
+            if slot:
+                log.error('error while reading argument "%s" of %s%s' % \
+                          (slot[1], slot[0].nodeName, self.lineinfo))
+            raise 
 
         if toks is None:
             Parameter.enable()
@@ -555,7 +578,7 @@ class TeX(object):
         if expanded:
             toks = self.expandtokens(toks)
 
-        res = self.cast(toks, type, subtype, delim)
+        res = self.cast(toks, type, subtype, delim, slot)
  
         # Re-enable Parameters
         Parameter.enable()
@@ -595,10 +618,6 @@ class TeX(object):
                         toks.append(t)
                     else:
                         toks.append(t)
-            elif t.catcode == Token.CC_ESCAPE:
-                self.pushtoken(t)
-                for t in self:
-                    return [t], t.source
             else:
                 toks.append(t)
             return toks, self.source(source)
@@ -691,7 +710,7 @@ class TeX(object):
 
         return result
 
-    def cast(self, tokens, dtype, subtype=None, delim=','):
+    def cast(self, tokens, dtype, subtype=None, delim=',', slot=None):
         """ 
         Cast the tokens to the appropriate type
 
@@ -719,7 +738,7 @@ class TeX(object):
             log.warning('Could not find datatype "%s"' % dtype)
             return tokens
 
-        return self.argtypes[dtype](tokens, subtype=subtype, delim=delim)
+        return self.argtypes[dtype](tokens, subtype=subtype, delim=delim, slot=slot)
 
     def castControlSequence(self, tokens, **kwargs):
         """
@@ -757,7 +776,7 @@ class TeX(object):
 
     def castLabel(self, tokens, **kwargs):
         """
-        Join the tokens into a string a set a label in the context
+        Join the tokens into a string and set a label in the context
 
         Required Arguments:
         tokens -- list of tokens to cast
@@ -768,6 +787,7 @@ class TeX(object):
         See Also:
         self.readArgument()
         self.cast()
+        self.castRef()
 
         """
         label = self.castString(tokens, **kwargs)
@@ -775,7 +795,25 @@ class TeX(object):
         return label
 
     def castRef(self, tokens, **kwargs):
-        self.castString(self, tokens, **kwargs)
+        """
+        Join the tokens into a string and set a reference in the context
+
+        Required Arguments:
+        tokens -- list of tokens to cast
+
+        Returns:
+        string
+
+        See Also:
+        self.readArgument()
+        self.cast()
+        self.castLabel()
+
+        """
+        ref = self.castString(tokens, **kwargs)
+        obj, key = kwargs['slot']
+        self.context.ref(obj, ref)
+        return ref
         
     def castNumber(self, tokens, **kwargs):
         """
@@ -795,6 +833,8 @@ class TeX(object):
         self.cast()
 
         """
+#       try: return number(self.castString(tokens, **kwargs))
+#       except: return number(0)
         return self.readInternalType(tokens, self.readNumber)
         
     def castDecimal(self, tokens, **kwargs):
@@ -815,6 +855,8 @@ class TeX(object):
         self.cast()
 
         """
+#       try: return self.castString(tokens, **kwargs)
+#       except: return decimal(0)
         return self.readInternalType(tokens, self.readDecimal)
 
     def castDimen(self, tokens, **kwargs):
@@ -832,6 +874,8 @@ class TeX(object):
         self.cast()
 
         """
+#       try: return dimen(self.castString(tokens, **kwargs))
+#       except: return dimen(0)
         return self.readInternalType(tokens, self.readDimen)
 
     def castMuDimen(self, tokens, **kwargs):
@@ -849,6 +893,8 @@ class TeX(object):
         self.cast()
 
         """
+#       try: return mudimen(self.castString(tokens, **kwargs))
+#       except: return mudimen(0)
         return self.readInternalType(tokens, self.readMuDimen)
 
     def castGlue(self, tokens, **kwargs):
@@ -866,6 +912,8 @@ class TeX(object):
         self.cast()
 
         """
+#       try: return glue(self.castString(tokens, **kwargs))
+#       except: return glue(0)
         return self.readInternalType(tokens, self.readGlue)
  
     def castMuGlue(self, tokens, **kwargs):
@@ -883,6 +931,8 @@ class TeX(object):
         self.cast()
 
         """
+#       try: return muglue(self.castString(tokens, **kwargs))
+#       except: return muglue(0)
         return self.readInternalType(tokens, self.readMuGlue)
                              
     def castList(self, tokens, type=list, **kwargs):
@@ -1027,13 +1077,15 @@ class TeX(object):
         `None' -- if it is not found
 
         """
-        plastexinputs = os.environ.get('PLASTEXINPUTS', '.')
+        plastexinputs = os.environ.get('TEXINPUTS', '.')
         extensions = ['.sty','.tex','.cls']
         for path in plastexinputs.split(':'):
            for ext in extensions:
                fullpath = os.path.join(path, name+ext)
                if os.path.isfile(fullpath):
                    return fullpath
+        raise OSError, 'could not find file "%s" with extension in %s' % \
+                       (name, ', '.join(extensions))
 
 #
 # Parsing helper methods for parsing numbers, spaces, dimens, etc.

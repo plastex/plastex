@@ -8,6 +8,9 @@ C.6.3 The list and trivlist Enviroments
 
 from plasTeX import Environment, Command, Counter, TheCounter
 from plasTeX import Dimen, dimen
+from plasTeX import Logging
+
+log = Logging.getLogger()
 
 class List(Environment):
     """ Base class for all list-based environments """
@@ -30,6 +33,9 @@ class List(Environment):
         for tok in tokens:
             if tok.isElementContentWhitespace:
                 continue
+#           if not isinstance(tok, List.item):
+#               log.warning('dropping non-item from beginning of list')
+#               continue
             tokens.push(tok)
             break
         Environment.digest(self, tokens) 
@@ -75,7 +81,7 @@ class trivlist(List):
 
 class ConfigurableList(List):
     macroName = 'list'
-    args = 'defaultlabel decls'
+    args = 'defaultlabel decls:nox'
 
 class topsep(Dimen):
     value = dimen(0)

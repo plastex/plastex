@@ -41,11 +41,11 @@
 
 <zpt:page-template name="par" type="xml"><p tal:content="self"></p></zpt:page-template>
 
-<zpt:page-template name="description" type="xml">
+<zpt:page-template name="list description deflist" type="xml">
 <dl>
 <metal:block tal:repeat="item self">
-    <dt tal:content="structure item/term"></dt>
-    <dd tal:content="structure item"></dd>
+    <dt tal:content="item/attributes/term"></dt>
+    <dd tal:content="item"></dd>
 </metal:block>
 </dl>
 </zpt:page-template>
@@ -56,17 +56,39 @@
 <dl>
 <metal:block tal:repeat="item self">
     <dt></dt>
-    <dd tal:content="structure item"></dd>
+    <dd tal:content="item"></dd>
 </metal:block>
 </dl>
 </zpt:page-template>
 
+<zpt:page-template name="itemize jitemize">
+<ul>
+<li tal:repeat="item self" tal:content="item"></li>
+</ul>
+</zpt:page-template>
+
+<zpt:page-template name="enumerate jenumerate">
+<ol>
+<li tal:repeat="item self" tal:content="item"></li>
+</ol>
+</zpt:page-template>
+
 <zpt:page-template name="htmlref">
-<a tal:attributes="href string:#${self/attributes/label}" tal:content="self"></a>
+<a tal:attributes="href self/idref/url" tal:content="self"></a>
+</zpt:page-template>
+
+<zpt:page-template name="ref">
+<a tal:attributes="href self/idref/url" tal:content="self/idref/title"></a>
 </zpt:page-template>
 
 <zpt:page-template name="alltt jverbatim cverbatim kverbatim tverbatim">
 <pre tal:content="self"></pre>
 </zpt:page-template>
+
+<zpt:page-template name="sasop">
+<div class="sasop"><a tal:attributes="name self/attributes/label" tal:content="self/title"></a></div>
+</zpt:page-template>
+
+
 
 </zpt:page-templates>

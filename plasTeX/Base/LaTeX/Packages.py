@@ -23,7 +23,7 @@ class PackageLoader(Command):
     def load(self, tex, file, options={}):
         # See if it has already been loaded
         if tex.context.packages.has_key(file):
-            return
+            return True
 
         try: 
             # Try to import a Python package by that name
@@ -32,23 +32,23 @@ class PackageLoader(Command):
             tex.context.importMacros(vars(m))
             tex.context.packages[file] = options
             status.info(' ) ')
-            return
+            return True
 
         except ImportError, msg:
             # No Python module
             if 'No module' in str(msg):
                 pass
                 # Failed to load Python package
-                log.warning('No Python version of %s was found' % file)
+#               log.warning('No Python version of %s was found' % file)
             # Error while importing
             else:
                 raise
 
-        path = tex.kpsewhich(file)
-
-        if not path:
-            log.warning('Could not find file for package "%s"' % file)
-            return
+        try:
+            path = tex.kpsewhich(file)
+        except OSError, msg:
+            log.warning(msg)
+            return False
 
         # Try to load the actual LaTeX style file
         status.info(' ( %s ' % path)
@@ -68,8 +68,12 @@ class PackageLoader(Command):
         except (OSError, IOError, TypeError):
             # Failed to load LaTeX style file
             log.warning('Error opening package "%s"' % file)
+            status.info(' ) ')
+            return False
 
         status.info(' ) ')
+
+        return True
 
 #
 # C.5.1 Document Class
@@ -210,3 +214,39 @@ class abstract(Environment):
 
 class titlepage(Environment):
     pass
+
+
+#
+# Extras...
+#
+class ProvidesPackage(Command): 
+    args = 'name [ message ]'
+
+class ProvidesClass(Command):
+    pass
+
+class DeclareOption(Command):
+    args = 'name:str [ default:nox ] value:nox'
+
+class PackageWarning(Command):
+    args = 'name:str message:str'
+
+class ProcessOptions(Command):
+    args = '*'
+
+class LoadClass(Command):
+    args = '[ options:dict ] names:list(,):str'
+
+class NeedsTeXFormat(Command):
+    args = 'name:str date:str'
+
+class InputIfFileExists(Command):
+    args = 'file:str true:nox false:nox'
+    def invoke(self, tex):
+        a = self.parse(tex)
+        try: 
+            tex.input(tex.kpsewhich(a['file']))
+            tex.pushtokens(a['true'])
+        except (IOError, OSError):
+            tex.pushtokens(a['false'])
+        return []

@@ -46,7 +46,7 @@ class bgroup(Command):
         # Absorb the tokens that belong to us
         for item in tokens:
             if item.nodeType == Command.ELEMENT_NODE:
-                if type(item) is egroup:
+                if isinstance(item, (egroup,endgroup)):
                     break
                 item.digest(tokens)
             self.appendChild(item)
@@ -56,6 +56,9 @@ class bgroup(Command):
             return '{%s}' % sourcechildren(self)
         return '{'
     source = property(source)
+
+class begingroup(bgroup):
+    pass
 
 class egroup(Command):
 
@@ -68,6 +71,9 @@ class egroup(Command):
 
     def digest(self, tokens):
         return
+
+class endgroup(egroup):
+    pass
 
 class obeyspaces(Command):
     pass
