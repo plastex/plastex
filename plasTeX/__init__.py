@@ -139,8 +139,13 @@ class Macro(Element, RenderMixIn):
     nodeName = tagName = property(tagName)
 
     def source(self):
-        if self.tagName == 'par':
-            return '\n\n'
+        name = self.tagName
+
+        # Automatically revert internal names like "active::~" and "core::&"
+        escape = '\\'
+        if name.count('::'):
+            name = name.split('::').pop()
+            escape = ''
 
         # \begin environment
         # If self.childNodes is not empty, print out the entire environment
@@ -148,24 +153,25 @@ class Macro(Element, RenderMixIn):
             argsource = sourcearguments(self)
             if not argsource: 
                 argsource = ' '
-            s = '\\begin{%s}%s' % (self.tagName, argsource)
+            s = '%sbegin{%s}%s' % (escape, name, argsource)
             if self.childNodes:
-                s += '%s\\end{%s}' % (sourcechildren(self), self.tagName)
+                s += '%s%send{%s}' % (sourcechildren(self), escape, name)
             return s
 
         # \end environment
         if self.macroMode == Macro.MODE_END:
-            return '\\end{%s}' % (self.tagName)
+            return '%send{%s}' % (escape, name)
 
         argsource = sourcearguments(self)
         if not argsource: 
             argsource = ' '
-        s = '\\%s%s' % (self.tagName, argsource)
+        s = '%s%s%s' % (escape, name, argsource)
 
         # If self.childNodes is not empty, print out the contents
         if self.childNodes:
             s += sourcechildren(self)
         return s
+
     source = property(source)
 
     def parse(self, tex): 
@@ -182,17 +188,22 @@ class Macro(Element, RenderMixIn):
         if self.macroMode == Macro.MODE_END:
             return
         self.argsource = ''
-        for i, arg in enumerate(self.arguments):
-            output, source = tex.getArgumentAndSource(**arg.options)
-            # Check for a '*' type argument at the beginning of the
-            # argument list.  If there is one, don't increment counters
-            # or set labels.  This must be done immediately since
-            # the following arguments may contain labels.
-            if i == 0:
-                if not(arg.name == '*modifier*' and output is None):
-                    self.resolve(tex)
-            self.argsource += source
-            self.attributes[arg.name] = output
+        arg = None
+        try:
+            for i, arg in enumerate(self.arguments):
+                output, source = tex.getArgumentAndSource(**arg.options)
+                # Check for a '*' type argument at the beginning of the
+                # argument list.  If there is one, don't increment counters
+                # or set labels.  This must be done immediately since
+                # the following arguments may contain labels.
+                if i == 0:
+                    if not(arg.name == '*modifier*' and output is None):
+                        self.resolve(tex)
+                self.argsource += source
+                self.attributes[arg.name] = output
+        except:
+            log.error('Error while parsing argument "%s" of "%s"' % (arg.name, self.nodeName))
+            raise
         return self.attributes
 
     def resolve(self, tex):
@@ -647,7 +658,7 @@ class TheCounter(Macro):
 
 
 class number(int):
-
+    """ Class used for parameter and count values """
     def __new__(cls, v):
         if isinstance(v, Macro):
             return v.__count__()
@@ -660,6 +671,7 @@ class number(int):
 class count(number): pass
 
 class dimen(float):
+    """ Class used for dimen values """
 
     units = ['pt','pc','in','bp','cm','mm','dd','cc','sp','ex','em']
 
@@ -789,16 +801,21 @@ class dimen(float):
         return self.source
 
 class mudimen(dimen):
+    """ Class used for mudimen values """
     units = ['mu']
 
 class glue(dimen):
-    def __new__(cls, g, stretch=None, shrink=None):
+    """ Class used for glue values """
+    def __new__(cls, g, plus=None, minus=None):
         return dimen.__new__(cls, g)
         
-    def __init__(self, g, stretch=None, shrink=None):
+    def __init__(self, g, plus=None, minus=None):
         dimen.__init__(self, g)
-        self.stretch = stretch
-        self.shrink = shrink
+        self.stretch = self.shrink = None
+        if plus is not None:
+            self.stretch = dimen(plus)
+        if minus is not None:
+            self.shrink = dimen(minus)
 
     def source(self):
         s = [dimen(self).source]
@@ -812,6 +829,7 @@ class glue(dimen):
     source = property(source)
 
 class muglue(glue): 
+    """ Class used for muglue values """
     units = ['mu']
 
 
@@ -826,8 +844,7 @@ class Parameter(Command):
             # Disable invoke() in parameters nested in our arguments.
             # We don't want them to invoke, we want them to set our value.
             Parameter.enabled = False
-            self.parse(tex)
-            type(self).value = self.attributes['value']
+            type(self).value = self.parse(tex)['value']
             Parameter.enabled = True
 
     def __dimen__(self):

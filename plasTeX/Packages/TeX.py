@@ -92,31 +92,22 @@ class mathshift(Macro):
 class ampersand(Macro):
     """ The '&' character in TeX """
     macroName = 'core::&'
-    def source(self): 
-        return '&'
-    source = property(source)
 
-class textvisiblespace(Macro):
+class textvisiblespace(Macro): pass
+
+class _textvisiblespace(textvisiblespace):
     """ The '~' character in TeX """
-    def source(self): 
-        return '~'
-    source = property(source)
+    macroName = 'active::~'
 
 class superscript(Macro):
     """ The '^' character in TeX """
     macroName = 'core::^'
     args = 'arg'
-    def source(self):
-        return '^%s' % sourcearguments(self)
-    source = property(source)
 
 class subscript(Macro):
     """ The '_' character in TeX """
     macroName = 'core::_'
     args = 'arg'
-    def source(self):
-        return '_%s' % sourcearguments(self)
-    source = property(source)
 
 class bgroup(Macro):
 
@@ -309,31 +300,27 @@ class ifcase(_if):
     """ Cases """
     args = 'value:Number'
     def invoke(self, tex):
-        self.parse(tex)
-        return tex.getCase(self.attributes['value'])
+        return tex.getCase(self.parse(tex)['value'])
 
 
 class let(Macro):
     """ \\let """
     args = 'name:Tok = value:Tok'
     def invoke(self, tex):
-        self.parse(tex)
-        a = self.attributes
+        a = self.parse(tex)
         tex.context.let(a['name'], a['value'])
 
 class char(Macro):
     """ \\char """
     args = 'char:Number'
     def invoke(self, tex):
-        self.parse(tex)
-        return [chr(self.attributes['char'])]
+        return [chr(self.parse(tex)['char'])]
 
 class catcode(Macro):
     """ \\catcode """
     args = 'char:Number = code:Number'
     def invoke(self, tex):
-        self.parse(tex)
-        a = self.attributes
+        a = self.parse(tex)
         tex.context.catcode(chr(a['char']), a['code'])
     def source(self):
         return '\\catcode`\%s=%s' % (chr(self.attributes['char']), 
@@ -388,13 +375,28 @@ class include(input):
 class showthe(Command):
     args = 'arg:cs'
     def invoke(self, tex):
-        print tex.context[self.parse(tex)['arg']].the()
+        log.info(tex.context[self.parse(tex)['arg']].the())
 
 
 class newdimen(Command):
     args = 'arg:cs'
     def invoke(self, tex):
         tex.context.newdimen(self.parse(tex)['arg'])
+
+class newcount(Command):
+    args = 'arg:cs'
+    def invoke(self, tex):
+        tex.context.newcount(self.parse(tex)['arg'])
+
+class newskip(Command):
+    args = 'arg:cs'
+    def invoke(self, tex):
+        tex.context.newskip(self.parse(tex)['arg'])
+
+class newmuskip(Command):
+    args = 'arg:cs'
+    def invoke(self, tex):
+        tex.context.newmuskip(self.parse(tex)['arg'])
 
 #
 # TeX parameters (see The TeXbook, page 272)
@@ -444,10 +446,10 @@ class defaultskewchar(Parameter): value = count(-1)
 class escapechar(Parameter): value = count(ord('\\'))
 class endlinechar(Parameter): value = count(ord('\n'))
 class newlinechar(Parameter): value = count(-1)
-class maxdeadcycles(Parameter): value = count(0)
-class hangafter(Parameter): value = count(0)
+class maxdeadcycles(Parameter): value = count(25)
+class hangafter(Parameter): value = count(1)
 class fam(Parameter): value = count(0)
-class mag(Parameter): value = count(0)
+class mag(Parameter): value = count(1000)
 class delimiterfactor(Parameter): value = count(901)
 class time(Parameter): value = count((datetime.now().hour*60) + datetime.now().minute)
 class day(Parameter): value = count(datetime.now().day)
@@ -481,26 +483,26 @@ class hoffset(Dimen): value = dimen(0)
 class voffset(Dimen): value = dimen(0)
 
 # Glue parameters
-class baselineskip(Glue): value = glue(0)
-class lineskip(Glue): value = glue(0)
-class parskip(Glue): value = glue(0)
-class abovedisplayskip(Glue): value = glue(0)
-class abovedisplayshortskip(Glue): value = glue(0)
-class belowdisplayskip(Glue): value = glue(0)
-class belowdisplayshortskip(Glue): value = glue(0)
+class baselineskip(Glue): value = glue('12pt')
+class lineskip(Glue): value = glue('1pt')
+class parskip(Glue): value = glue('0pt', plus='1pt')
+class abovedisplayskip(Glue): value = glue('0pt', plus='3pt', minus='9pt')
+class abovedisplayshortskip(Glue): value = glue('0pt', plus='3pt')
+class belowdisplayskip(Glue): value = glue('12pt', plus='3pt', minus='9pt')
+class belowdisplayshortskip(Glue): value = glue('7pt', plus='3pt', minus='4pt')
 class leftskip(Glue): value = glue(0)
 class rightskip(Glue): value = glue(0)
-class topskip(Glue): value = glue(0)
-class splittopskip(Glue): value = glue(0)
+class topskip(Glue): value = glue('10pt')
+class splittopskip(Glue): value = glue('10pt')
 class tabskip(Glue): value = glue(0)
 class spaceskip(Glue): value = glue(0)
 class xspaceskip(Glue): value = glue(0)
-class parfillskip(Glue): value = glue(0)
+class parfillskip(Glue): value = glue('0pt', plus='1fil')
 
 # MuGlue parameters
-class thinmuskip(MuGlue): value = muglue(0)
-class medmuskip(MuGlue): value = muglue(0)
-class thickmuskip(MuGlue): value = muglue(0)
+class thinmuskip(MuGlue): value = muglue('3mu')
+class medmuskip(MuGlue): value = muglue('4mu', plus='2mu', minus='4mu')
+class thickmuskip(MuGlue): value = muglue('5mu', plus='5mu')
 
 # Token parameters
 #class output(Parameter): pass
@@ -512,3 +514,5 @@ class thickmuskip(MuGlue): value = muglue(0)
 #class everyjob(Parameter): pass
 #class everycr(Parameter): pass
 #class errhelp(Parameter): pass
+
+class active(Count): value = count(13)

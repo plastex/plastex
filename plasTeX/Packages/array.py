@@ -62,10 +62,6 @@ class Array(Environment):
             # Add a phantom cell to absorb the appropriate tokens
             return [self, Array.ArrayCell()]
 
-        def source(self):
-            return '&'
-        source = property(source)
-
     class endrow(Command):
         """ End of a row """
         macroName = '\\'

@@ -21,7 +21,7 @@ from Utils import *
 from Context import Context 
 from Tokenizer import Tokenizer, Token
 from plasTeX import TeXFragment, TeXDocument
-from plasTeX import Macro, glue, muglue, mudimen, dimen, number
+from plasTeX import Parameter, Macro, glue, muglue, mudimen, dimen, number
 from plasTeX.Logging import getLogger, disableLogging
 
 # Only export the TeX class
@@ -935,14 +935,16 @@ class TeX(object):
         `dimen' instance
 
         """
+        Parameter.enabled = False
         sign = self.readOptionalSigns()
         for t in self:
             if t.nodeType == Node.ELEMENT_NODE:
                 return dimen(sign * dimen(t))
             self.pushtoken(t)
             break
-        return dimen(sign * self.readDecimal() * self.readUnitOfMeasure(units=units))
-
+        num = dimen(sign * self.readDecimal() * self.readUnitOfMeasure(units=units))
+        Parameter.enabled = True
+        return num
 
     def readMuDimen(self):
         """ Read a mudimen from the stream """
@@ -1052,31 +1054,38 @@ class TeX(object):
         `number' instance
 
         """
+        Parameter.enabled = False
+        num = None
         sign = self.readOptionalSigns()
         for t in self:
             # internal/coerced integers
             if t.nodeType == Node.ELEMENT_NODE:
-                return number(sign * int(t))
+                num = number(sign * number(t))
             # integer constant
-            if t in string.digits:
-                return number(sign * int(t + self.readSequence(string.digits)))
+            elif t in string.digits:
+                num = number(sign * int(t + self.readSequence(string.digits)))
             # octal constant
-            if t == "'":
-                return number(sign * int('0' + self.readSequence(string.octdigits, default='0'), 8))
+            elif t == "'":
+                num = number(sign * int('0' + self.readSequence(string.octdigits, default='0'), 8))
             # hex constant
-            if t == '"':
-                return number(sign * int('0x' + self.readSequence(string.hexdigits, default='0'), 16))
+            elif t == '"':
+                num = number(sign * int('0x' + self.readSequence(string.hexdigits, default='0'), 16))
             # character token
-            if t == '`':
+            elif t == '`':
                 for t in self.itertokens():
-                    return number(sign * ord(t))
+                    num = number(sign * ord(t))
+                    break
             break
+        Parameter.enabled = True
+        if num is not None:
+            return num
         raise ValueError, 'Could not find integer'
 
     readNumber = readInteger
 
     def readGlue(self):
         """ Read a glue parameter from the stream """
+        Parameter.enabled = False
         sign = self.readOptionalSigns()
         # internal/coerced glue
         for t in self:
@@ -1087,6 +1096,7 @@ class TeX(object):
         dim = self.readDimen()
         stretch = self.readStretch()
         shrink = self.readShrink()
+        Parameter.enabled = True
         return glue(sign*dim, stretch, shrink)
 
     def readStretch(self):
@@ -1103,6 +1113,7 @@ class TeX(object):
 
     def readMuGlue(self):
         """ Read a muglue parameter from the stream """
+        Parameter.enabled = False
         sign = self.readOptionalSigns()
         # internal/coerced muglue
         for t in self:
@@ -1113,6 +1124,7 @@ class TeX(object):
         dim = self.readMuDimen()
         stretch = self.readMuStretch()
         shrink = self.readMuShrink()
+        Parameter.enabled = True
         return muglue(sign*dim, stretch, shrink)
 
     def readMuStretch(self):
