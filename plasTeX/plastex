@@ -32,19 +32,18 @@ def main(argv):
     
     # Create document instance that output will be put into
     document = plasTeX.TeXDocument()
-    document.userdata['title'] = 'SAS/STAT'
     
     # Parse document
     s = TeX(codecs.open(file,'r',inencoding))
     s.parse(document)
     
     # Write expanded source file
-    sourcefile = '%s.source' % basename
-    open(sourcefile,'w').write(document.source.encode('utf-8'))
+#   sourcefile = '%s.source' % basename
+#   open(sourcefile,'w').write(document.source.encode('utf-8'))
     
     # Write XML dump
-    outfile = '%s.xml' % basename
-    open(outfile,'w').write(document.toXML().encode('utf-8'))
+#   outfile = '%s.xml' % basename
+#   open(outfile,'w').write(document.toXML().encode('utf-8'))
     
     # Apply renderer
     from plasTeX.renderers.xhtml import xhtml as renderer
