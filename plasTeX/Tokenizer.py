@@ -421,8 +421,8 @@ class Tokenizer(object):
                         for t in chariter:
                             if t.catcode == CC_SPACE:
                                 continue
-                            elif t.catcode == CC_EOL:
-                                continue
+#                           elif t.catcode == CC_EOL:
+#                               continue
                             pushchar(t)
                             break
 

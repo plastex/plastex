@@ -39,7 +39,7 @@
 <span tal:content="self" style="font-family: serif">serif text</span>
 </zpt:page-template>
 
-<zpt:page-template name="par" type="xml"><p /></zpt:page-template>
+<zpt:page-template name="par" type="xml"><p tal:content="self"></p></zpt:page-template>
 
 <zpt:page-template name="description" type="xml">
 <dl>

@@ -372,6 +372,47 @@ class Macro(Element):
                 break
             self.appendChild(tok)
         
+    def paragraphs(self):
+        parclass = None
+        contentstart = None
+        currentpar = None
+    
+        for i in range(len(self)-1, -1, -1):
+    
+            item = self[i]
+    
+            if item.nodeType == Node.ELEMENT_NODE and item.nodeName == 'par':
+    
+                if parclass is None:
+                    parclass = type(item)
+    
+                # We don't have a paragraph yet, but we have some
+                # content that belongs in a paragraph, so make one...
+                if currentpar is None and contentstart is not None:
+                    currentpar = parclass()
+                    self.insert(contentstart+1, currentpar)
+    
+                # We don't have any paragraph content yet
+                if contentstart is None:
+                    currentpar = item
+                    continue
+
+                # Move contents from self into the paragraph
+                for j in range(contentstart, i, -1):
+                    currentpar.insert(0, self.pop(j))
+
+                contentstart = None
+                currentpar = item
+                            
+            # Found paragraph content
+            elif item.level > Node.PAR_LEVEL and contentstart is None:
+                contentstart = i
+    
+        # We hit the end of the content, so it needs to be absorbed
+        if contentstart is not None and currentpar is not None:
+            for j in range(contentstart, -1, -1):
+                currentpar.insert(0, self.pop(j))
+
 
 class TeXFragment(DocumentFragment):
     def source(self):

@@ -22,7 +22,8 @@ class List(Environment):
             more useful for the resulting document object.
 
             """
-            return self.digestUntil(tokens, type(self))
+            self.digestUntil(tokens, type(self))
+            self.paragraphs()
 
     def digest(self, tokens):
         # Drop any whitespace before the first item

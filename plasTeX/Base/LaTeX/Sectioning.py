@@ -24,6 +24,7 @@ class StartSection(Command):
             if item.nodeType == Command.ELEMENT_NODE:
                 item.digest(tokens)
             self.appendChild(item)
+        self.paragraphs()
 
 Counter('part','volume')
 Counter('chapter','part')
