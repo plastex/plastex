@@ -16,12 +16,15 @@ Example:
 
 """
 
-import string, re
+import string
 from Utils import *
 from Context import Context 
-from Tokenizer import *
+from Tokenizer import Tokenizer, Token
 from plasTeX import TeXFragment, Macro, Glue, Muglue, Mudimen, Dimen
 from plasTeX.Logging import getLogger, disableLogging
+
+# Only export the TeX class
+__all__ = ['TeX']
 
 log = getLogger()
 tokenlog = getLogger('parse.tokens')
@@ -33,8 +36,9 @@ class tokiter(object):
         self.obj = obj
     def __iter__(self):
         return self
-    def next(self):
-        return self.obj.nexttok()
+    next = lambda self: self.obj.nexttok()
+#   def next(self):
+#       return self.obj.nexttok()
 
 class nodeiter(object):
     """ Node iterator """
@@ -42,8 +46,9 @@ class nodeiter(object):
         self.obj = obj
     def __iter__(self):
         return self
-    def next(self):
-        return self.obj.nextnode()
+    next = lambda self: self.obj.nextnode()
+#   def next(self):
+#       return self.obj.nextnode()
 
 class bufferediter(object):
     """ Buffered iterator """
@@ -199,23 +204,23 @@ class TeX(object):
 
         """
         for token in self.itertokens():
-            if token is not None:
-                tokenlog.debug('input %s (%s, %s)', repr(token), token.catcode, 
-                                                 len(self.inputs))
+#           if token is not None:
+#               tokenlog.debug('input %s (%s, %s)', repr(token), token.catcode, 
+#                                                len(self.inputs))
             if token is None:
                 continue
             elif token is EndTokens:
                 break
             elif token.nodeType == Node.ELEMENT_NODE:
                 pass
-            elif token.macro is not None:
+            elif token.macroName is not None:
                 try:
                     # By default, invoke() should put the macro instance
                     # itself into the output stream.  We'll handle this
                     # automatically here if `None' is received.  If you
                     # really don't want anything in the output stream,
                     # just return `[ ]'.
-                    obj = self.context[token.macro]
+                    obj = self.context[token.macroName]
                     tokens = obj.invoke(self)
                     if tokens is None:
                         self.pushtoken(obj)
@@ -224,7 +229,7 @@ class TeX(object):
                     continue
                 except:
                     log.error('Error while expanding "%s"%s'
-                              % (token.macro, self.lineinfo))
+                              % (token.macroName, self.lineinfo))
                     raise
             return token
         raise StopIteration
@@ -242,7 +247,7 @@ class TeX(object):
         """
         self.pushtoken(EndTokens)
         self.pushtokens(tokens)
-        return TeXFragment(self.parse([x for x in self]))
+        return self.parse([x for x in self])
 
     def tokenize(self, s):
         """
@@ -319,11 +324,13 @@ class TeX(object):
         if tokens is None:
             return tokens
         for t in tokens:
-            if t.catcode not in [CC_LETTER, CC_OTHER, CC_EGROUP, 
-                                 CC_BGROUP, CC_SPACE]:
+            if t.catcode not in [Token.CC_LETTER, Token.CC_OTHER, 
+                                 Token.CC_EGROUP, Token.CC_BGROUP, 
+                                 Token.CC_SPACE]:
                 return tokens
         return (u''.join([x for x in tokens 
-                          if x.catcode not in [CC_EGROUP, CC_BGROUP]])).strip()
+                          if x.catcode not in [Token.CC_EGROUP, 
+                                               Token.CC_BGROUP]])).strip()
 
     def getCase(self, which):
         """
@@ -456,7 +463,7 @@ class TeX(object):
         if type in ['args']:
             args = []
             for t in self.itertokens():
-                if t.catcode == CC_BGROUP:
+                if t.catcode == Token.CC_BGROUP:
                     self.pushtoken(t)
                     break
                 else:
@@ -472,14 +479,14 @@ class TeX(object):
                 toks = []
                 source = [t]
                 # A { ... } grouping was found
-                if t.catcode == CC_BGROUP:
+                if t.catcode == Token.CC_BGROUP:
                     level = 1
                     for t in tokens:
                         source.append(t)
-                        if t.catcode == CC_BGROUP:
+                        if t.catcode == Token.CC_BGROUP:
                             toks.append(t)
                             level += 1
-                        elif t.catcode == CC_EGROUP:
+                        elif t.catcode == Token.CC_EGROUP:
                             level -= 1
                             if level == 0:
                                 break
@@ -578,7 +585,7 @@ class TeX(object):
         self.cast()
 
         """
-        return [x for x in tokens if x.catcode == CC_ESCAPE].pop(0)
+        return [x for x in tokens if x.catcode == Token.CC_ESCAPE].pop(0)
 
     def castString(self, tokens, type=unicode, **kwargs):
         """
@@ -670,14 +677,14 @@ class TeX(object):
                 listarg.append([])
 
             # Found grouping
-            elif current.catcode == CC_BGROUP:
+            elif current.catcode == Token.CC_BGROUP:
                 level = 1
                 listarg[-1].append(current)
                 while tokens:
                     current = tokens.pop(0)
-                    if current.catcode == CC_BGROUP:
+                    if current.catcode == Token.CC_BGROUP:
                         level += 1
-                    elif current.catcode == CC_EGROUP:
+                    elif current.catcode == Token.CC_EGROUP:
                         level -= 1
                         if not level:
                             break
@@ -717,14 +724,14 @@ class TeX(object):
             current = tokens.pop(0)
 
             # Found grouping
-            if current.catcode == CC_BGROUP:
+            if current.catcode == Token.CC_BGROUP:
                 level = 1
                 currentvalue.append(current)
                 while tokens:
                     current = tokens.pop(0)
-                    if current.catcode == CC_BGROUP:
+                    if current.catcode == Token.CC_BGROUP:
                         level += 1
-                    elif current.catcode == CC_EGROUP:
+                    elif current.catcode == Token.CC_EGROUP:
                         level -= 1
                         if not level:
                             break
@@ -768,7 +775,7 @@ class TeX(object):
         for item in tokens:
             item.digest(tokens)
             output.append(item)
-        return output
+        return TeXFragment(output)
 
 #
 # Parsing helper methods for parsing numbers, spaces, dimens, etc.
@@ -780,7 +787,7 @@ class TeX(object):
         for t in self.itertokens():
             if t is None or t == '':
                 continue
-            elif t.catcode != CC_SPACE:
+            elif t.catcode != Token.CC_SPACE:
                 self.pushtoken(t)
                 break 
             tokens.append(t)
@@ -859,7 +866,7 @@ class TeX(object):
                 pass
             elif t == '-':
                 sign = -sign
-            elif t is None or t == '' or t.catcode == CC_SPACE:
+            elif t is None or t == '' or t.catcode == Token.CC_SPACE:
                 continue
             else:
                 self.pushtoken(t)
@@ -870,7 +877,7 @@ class TeX(object):
         for t in self.itertokens():
             if t is None or t == '':
                 continue
-            if t.catcode == CC_SPACE:
+            if t.catcode == Token.CC_SPACE:
                 return t
             self.pushtoken(t)
             return None
@@ -882,7 +889,7 @@ class TeX(object):
                 self.pushtoken(t)
                 break 
             if t not in chars:
-                if optspace and t.catcode == CC_SPACE:
+                if optspace and t.catcode == Token.CC_SPACE:
                     pass
                 else:
                     self.pushtoken(t)

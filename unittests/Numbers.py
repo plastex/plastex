@@ -2,6 +2,7 @@
 
 import unittest, sys
 from unittest import TestCase
+from plasTeX.Tokenizer import *
 from plasTeX.TeX import *
 
 class Numbers(TestCase):

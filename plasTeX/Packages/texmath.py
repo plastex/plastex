@@ -21,4 +21,4 @@ class eqnarray(Array):
     block = True
 
 class x_eqnarray(eqnarray): 
-    texname = 'eqnarray*'
+    macroName = 'eqnarray*'

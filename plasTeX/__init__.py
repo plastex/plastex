@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
-import string, new, re
+import string, re
 from Utils import *
 from Tokenizer import Token, Node
 from plasTeX.Logging import getLogger
-from Tokenizer import CC_PARAMETER
 from Renderer import RenderMixIn
 
 log = getLogger()
@@ -14,31 +13,28 @@ envlog = getLogger('parse.environments')
 mathshiftlog = getLogger('parse.mathshift')
 digestlog = getLogger('parse.digest')
 
-class Attributes(dict):
-    def __init__(self, *args, **kwargs):
-        dict.__init__(self, *args, **kwargs)
-        self.source = ''
-
-class CompiledArgument(dict):
+class Argument(object):
     """ 
-    Compiled macro argument
+    Macro argument
 
-    Argument strings in macros are compiled into CompiledArguments
+    Argument strings in macros are compiled into Arguments
     once.  Then the compiled arguments can be used to get the 
     arguments thereafter.
 
     """
-    def __init__(self, name, data={}):
+    def __init__(self, name, options={}):
         self.name = name
-        self.update(data)
+        self.source = ''
+        self.options = options.copy()
+
     def __repr__(self):
-        return '%s: %s' % (self.name, dict.__repr__(self))
+        return '%s: %s' % (self.name, self.options)
+
     def __cmp__(self, other):
-        if self.name < other.name:
-            return -1
-        elif self.name > other.name:
-            return 1
-        return dict.__cmp__(self, other)
+        c = cmp(self.name, other.name)
+        if c: return c
+        return cmp(self.options, other.options)
+
 
 class CSSStyles(dict):
     """ CSS Style object """
@@ -63,14 +59,20 @@ class Macro(Token, RenderMixIn):
     MODE_BEGIN = 1
     MODE_END = 2
 
-    texname = None     # TeX macro name (instead of class name)
-    categories = None  # category codes local to this macro
-    cmdmode = MODE_NONE   # begin, end, or none
+    macroName = None        # TeX macro name (instead of class name)
+    macroMode = MODE_NONE   # begin, end, or none
+    categories = None       # category codes local to this macro
 
     # Node variables
     level = Node.COMMAND_LEVEL
     nodeType = Node.ELEMENT_NODE
     nodeValue = None
+
+    argsource = ''
+
+    def source(self):
+        return repr(self)
+    source = property(source)
 
     def locals(self):
         """ Retrieve all macros local to this namespace """
@@ -94,14 +96,14 @@ class Macro(Token, RenderMixIn):
 
     def invoke(self, tex):
         # Just pop the context if this is a \end token
-        if self.cmdmode == Macro.MODE_END:
+        if self.macroMode == Macro.MODE_END:
             tex.context.pop(self)
             return
 
         # If this is a \begin token or the element needs to be
         # closed automatically (i.e. \section, \item, etc.), just 
         # push the new context and return the instance.
-        elif self.cmdmode == Macro.MODE_BEGIN:
+        elif self.macroMode == Macro.MODE_BEGIN:
             tex.context.push(self)
             self.parse(tex)
             return
@@ -116,9 +118,9 @@ class Macro(Token, RenderMixIn):
 
     def tagName(self):
         t = type(self)
-        if t.texname is None:
+        if t.macroName is None:
             return t.__name__
-        return t.texname
+        return t.macroName
     nodeName = tagName = property(tagName)
 
     def __repr__(self):
@@ -127,22 +129,23 @@ class Macro(Token, RenderMixIn):
 
         # \begin environment
         # If self.childNodes is not none, print out the entire environment
-        if self.cmdmode == Macro.MODE_BEGIN:
-            s = '\\begin{%s}%s\n' % (self.tagName, self.attributes.source)
+        if self.macroMode == Macro.MODE_BEGIN:
+            argsource = reprarguments(self)
+            if not argsource: 
+                argsource = ' '
+            s = '\\begin{%s}%s' % (self.tagName, argsource)
             if self.childNodes is not None:
-                s += '%s\n\\end{%s}' % (reprchildren(self), self.tagName)
+                s += '%s\\end{%s}' % (reprchildren(self), self.tagName)
             return s
 
         # \end environment
-        if self.cmdmode == Macro.MODE_END:
-            return '\n\\end{%s}' % (self.tagName)
+        if self.macroMode == Macro.MODE_END:
+            return '\\end{%s}' % (self.tagName)
 
-        space = ' '
-        attrsource = ''
-        if self.attributes and self.attributes.source:
-            attrsource = self.attributes.source
-            space = ''
-        s = '\\%s%s%s' % (self.tagName, attrsource, space)
+        argsource = reprarguments(self)
+        if not argsource: 
+            argsource = ' '
+        s = '\\%s%s' % (self.tagName, argsource)
 
         # If self.childNodes is not none, print out the contents
         if self.childNodes is not None:
@@ -157,13 +160,14 @@ class Macro(Token, RenderMixIn):
         tex -- the TeX stream to parse from
 
         """
-        if self.cmdmode == Macro.MODE_END:
+        if self.macroMode == Macro.MODE_END:
             return
-        self.attributes = Attributes()
-        for i, arg in enumerate(self.arguments):
-            output, source = tex.getArgumentAndSource(**arg)
+        self.attributes = {}
+        self.argsource = ''
+        for arg in self.arguments:
+            output, source = tex.getArgumentAndSource(**arg.options)
+            self.argsource += source
             self.attributes[arg.name] = output
-            self.attributes.source += source
 
     def style(self):
         if not hasattr(self, '__style'):
@@ -179,19 +183,17 @@ class Macro(Token, RenderMixIn):
         arguments as compiled entities
 
         """
-        if hasattr(self, '__arguments'):
-            return self.__arguments
+        t = type(self)
 
-        if not hasattr(type(self), 'args'):
-            self.__arguments = []
-            return self.__arguments
+        if hasattr(t, '__arguments'):
+            return t.__arguments
 
-        if not type(self).args: 
-            self.__arguments = []
-            return self.__arguments
+        if not(getattr(t, 'args', None)):
+            t.__arguments = []
+            return t.__arguments
 
         # Split the arguments into their primary components
-        args = iter([x.strip() for x in re.split(r'(<=>|[\'"]\w+[\'"]|\w+(?::\w+)*|\W|\s+)', type(self).args) if x is not None and x.strip()])
+        args = iter([x.strip() for x in re.split(r'(<=>|[\'"]\w+[\'"]|\w+(?::\w+)*|\W|\s+)', t.args) if x is not None and x.strip()])
 
         groupings = {'[':'[]','(':'()','<':'<>','{':'{}'}
 
@@ -204,14 +206,14 @@ class Macro(Token, RenderMixIn):
                 if argdict:
                     raise ValueError, \
                         'Improperly placed "%s" in argument string "%s"' % \
-                        (item, type(self).args)
+                        (item, t.args)
                 argdict.clear()
-                macroargs.append(CompiledArgument('*modifier*', {'spec':item}))
+                macroargs.append(Argument('*modifier*', {'spec':item}))
 
             # Optional equals
             elif item in '=':
                 argdict.clear()
-                macroargs.append(CompiledArgument('*equals*', {'spec':item}))
+                macroargs.append(Argument('*equals*', {'spec':item}))
 
             # Beginning of group
             elif item in '[(<{':
@@ -249,7 +251,7 @@ class Macro(Token, RenderMixIn):
                 else:
                     raise ValueError, \
                         'Improperly placed "%s" in argument string "%s"' % \
-                        (item, type(self).args)
+                        (item, t.args)
 
             # Argument name (and possibly type)
             elif item[0] in string.letters or item[0] in '\'"':
@@ -266,13 +268,13 @@ class Macro(Token, RenderMixIn):
                     argdict['expanded'] = False
                 else:
                     argdict['expanded'] = True
-                macroargs.append(CompiledArgument(item, argdict))
+                macroargs.append(Argument(item, argdict))
                 argdict.clear()
 
             else:
-                raise ValueError, 'Could not parse argument string "%s", reached unexpected "%s"' % (type(self).args, item)
+                raise ValueError, 'Could not parse argument string "%s", reached unexpected "%s"' % (t.args, item)
 
-        self.__arguments = macroargs
+        t.__arguments = macroargs
         return macroargs
 
     arguments = property(arguments)
@@ -286,7 +288,41 @@ class TeXFragment(list, Node, RenderMixIn):
         list.__init__(self, *args, **kwargs)
         self.childNodes = self
 
+    def source(self):
+        return u''.join([repr(x) for x in self])
+    source = property(source)
 
+
+class Command(Macro): 
+    """ Base class for all Python-based LaTeX commands """
+
+class Environment(Macro): 
+    """ Base class for all Python-based LaTeX environments """
+    level = Node.ENVIRONMENT_LEVEL
+
+    def invoke(self, tex):
+        if self.macroMode == Macro.MODE_END:
+            tex.context.pop(self)
+            return
+        tex.context.push(self)
+        self.parse(tex)
+
+    def digest(self, tokens):
+        if self.macroMode == Macro.MODE_END:
+            return
+        self.childNodes = []
+        # Absorb the tokens that belong to us
+        for item in tokens:
+            if item.nodeType == Node.ELEMENT_NODE:
+                if item.macroMode == Macro.MODE_END and type(item) is type(self):
+                    break
+                item.digest(tokens)
+            if item.contextDepth < self.contextDepth:
+                tokens.push(item)
+                break
+            self.childNodes.append(item)
+            item.parentNode = self
+    
 class StringMacro(Macro):
     """ 
     Convenience class for macros that are simply strings
@@ -301,37 +337,14 @@ class StringMacro(Macro):
     def invoke(self, tex): 
         return
                 
-class Command(Macro): 
-    """ Base class for all Python-based LaTeX commands """
+class UnrecognizedMacro(Macro):
+    """
+    Base class for unrecognized macros
 
-class Environment(Macro): 
-    """ Base class for all Python-based LaTeX environments """
-    level = Node.ENVIRONMENT_LEVEL
+    When an unrecognized macro is requested, an instance of this 
+    class is generated as a placeholder for the missing macro.
 
-    def invoke(self, tex):
-        if self.cmdmode == Macro.MODE_END:
-            tex.context.pop(self)
-            return
-        tex.context.push(self)
-        self.parse(tex)
-
-    def digest(self, tokens):
-        if self.cmdmode == Macro.MODE_END:
-            return
-        self.childNodes = []
-        # Absorb the tokens that belong to us
-        for item in tokens:
-            if item.nodeType == Node.ELEMENT_NODE:
-                if item.cmdmode == Macro.MODE_END and type(item) is type(self):
-                    break
-                item.digest(tokens)
-            if item.contextDepth < self.contextDepth:
-                tokens.push(item)
-                break
-            self.childNodes.append(item)
-            item.parentNode = self
-    
-class UnrecognizedMacro(Macro): pass
+    """
 
 class NewIf(Macro):
     """ Base class for all generated \\newifs """
@@ -369,10 +382,10 @@ def expanddef(definition, params):
     definition = iter(definition)
     for t in definition:
         # Expand parameters
-        if t.catcode == CC_PARAMETER:
+        if t.catcode == Token.CC_PARAMETER:
             for t in definition:
                 # Double '#'
-                if t.catcode == CC_PARAMETER:
+                if t.catcode == Token.CC_PARAMETER:
                     output.append(t)
                 else:
                     if params[int(t)] is not None:
@@ -390,7 +403,7 @@ class NewCommand(Macro):
     definition = None
 
     def invoke(self, tex):
-        if self.cmdmode == Macro.MODE_END:
+        if self.macroMode == Macro.MODE_END:
             return tex.context['end'+self.tagName].invoke(tex)            
 
         if not self.definition:
@@ -426,7 +439,7 @@ class Definition(Macro):
         for a in argiter:
 
             # Beginning a new parameter
-            if a.catcode == CC_PARAMETER:
+            if a.catcode == Token.CC_PARAMETER:
 
                 # Adjacent parameters, just get the next token
                 if inparam:
@@ -439,10 +452,10 @@ class Definition(Macro):
                         inparam = True
 
                     # Handle #{ case here
-                    elif t.catcode == CC_BGROUP:
+                    elif t.catcode == Token.CC_BGROUP:
                         param = []
                         for t in tex.itertokens():
-                            if t.catcode == CC_BGROUP:
+                            if t.catcode == Token.CC_BGROUP:
                                 tex.pushtoken(t)
                             else:
                                 param.append(t)

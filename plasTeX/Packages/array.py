@@ -29,7 +29,7 @@ class Array(Environment):
 
     class cr(Command):
         """ End of a row """
-        texname = '\\'
+        macroName = '\\'
         args = '* [ space ]'
         def invoke(self, tex):
             tex.context.pop()
@@ -37,7 +37,7 @@ class Array(Environment):
             tex.context.push()
             return
         def __repr__(self):
-            return '\\\\'
+            return '\\\\%s' % reprarguments(self)
 
     class cline(Command):
         """ Partial horizontal line """
@@ -84,7 +84,7 @@ class Array(Environment):
         args = 'colspan:int colspec self'
 
     def invoke(self, tex):
-        if self.cmdmode == Macro.MODE_END:
+        if self.macroMode == Macro.MODE_END:
             tex.context.pop(self) # End of table, row, and cell
             return
         Environment.invoke(self, tex)
@@ -391,7 +391,7 @@ class longtable(Array):
     block = True
 
 class cr(Command):
-    texname = '\\'
+    macroName = '\\'
     args = '* [ space ]'
 
 class array(Array):

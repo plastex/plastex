@@ -1,18 +1,19 @@
 #!/usr/bin/env python
 
-import sys, os, new
+import os
 from Node import Node
 
 def reprchildren(o): return ''.join([repr(x) for x in o.childNodes])
-def ismacro(o): return hasattr(o, 'texname')
+def reprarguments(o): return o.argsource
+def ismacro(o): return hasattr(o, 'macroName')
 def issection(o): return level > Node.DOCUMENT_LEVEL and level < Node.ENVIRONMENT_LEVEL 
 def isenv(o): return level == Node.ENVIRONMENT_LEVEL
 def macroname(o):
-     if o.texname is None:
+     if o.macroName is None:
          if type(o) is type:
              return o.__name__
          return type(o).__name__
-     return o.texname
+     return o.macroName
 
 def paragraphs(toklist, par, allow_single=False):
     """ Group content into paragraphs """

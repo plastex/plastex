@@ -132,7 +132,7 @@ class Node(object):
 
     nextSibling = property(nextSibling)
 
-    def _compareDocumentPosition(self, other):
+    def compareDocumentPosition(self, other):
         """
         Compare the position of the current node to `other`
     
@@ -148,8 +148,8 @@ class Node(object):
         DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC -- unknown
     
         """
-#       if self.ownerDocument is not other.ownerDocument:
-#           return Node.DOCUMENT_POSITION_DISCONNECTED
+        if self.ownerDocument is not other.ownerDocument:
+            return Node.DOCUMENT_POSITION_DISCONNECTED
     
         if self.previousSibling is other:
             return Node.DOCUMENT_POSITION_PRECEDING

@@ -2,7 +2,7 @@
 
 import unittest
 from unittest import TestCase
-from plasTeX import Macro, CompiledArgument
+from plasTeX import Macro, Argument
 from plasTeX.TeX import TeX
 
 class ArgumentParsing(TestCase):
@@ -11,40 +11,40 @@ class ArgumentParsing(TestCase):
         class foobar(Macro):
             args = 'arg1'
         arg = foobar().arguments
-        expected = [CompiledArgument('arg1', {'expanded':True})]
+        expected = [Argument('arg1', {'expanded':True})]
         assert arg == expected, '"%s" != "%s"' % (arg, expected)
     
     def testArgumentString2(self):
         class foobar(Macro):
             args = '* [ opt ] arg1'
         arg = foobar().arguments
-        expected = [CompiledArgument('modifier', {'spec':'*'}),
-                    CompiledArgument('opt', {'spec':'[]','expanded':True}), 
-                    CompiledArgument('arg1', {'expanded':True})]
+        expected = [Argument('*modifier*', {'spec':'*'}),
+                    Argument('opt', {'spec':'[]','expanded':True}), 
+                    Argument('arg1', {'expanded':True})]
         assert arg == expected, '"%s" != "%s"' % (arg, expected)
     
     def testArgumentString3(self):
         class foobar(Macro):
             args = '[ %opt ] @arg1'
         arg = foobar().arguments
-        expected = [CompiledArgument('opt', {'spec':'[]','type':'dict','expanded':True}), 
-                    CompiledArgument('arg1', {'type':'list','expanded':True})]
+        expected = [Argument('opt', {'spec':'[]','type':'dict','expanded':True}), 
+                    Argument('arg1', {'type':'list','expanded':True})]
         assert arg == expected, '"%s" != "%s"' % (arg, expected)
     
     def testArgumentString4(self):
         class foobar(Macro):
             args = '[ %;opt ] @arg1'
         arg = foobar().arguments
-        expected = [CompiledArgument('opt', {'spec':'[]','type':'dict','delim':';','expanded':True}), 
-                    CompiledArgument('arg1', {'type':'list','expanded':True})]
+        expected = [Argument('opt', {'spec':'[]','type':'dict','delim':';','expanded':True}), 
+                    Argument('arg1', {'type':'list','expanded':True})]
         assert arg == expected, '"%s" != "%s"' % (arg, expected)
     
     def testArgumentString5(self):
         class foobar(Macro):
             args = '[ %;opt ] < "arg1" >'
         arg = foobar().arguments
-        expected = [CompiledArgument('opt', {'spec':'[]','type':'dict','delim':';','expanded':True}), 
-                    CompiledArgument('arg1', {'type':'str','spec':'<>','expanded':True})]
+        expected = [Argument('opt', {'spec':'[]','type':'dict','delim':';','expanded':True}), 
+                    Argument('arg1', {'type':'str','spec':'<>','expanded':True})]
         assert arg == expected, '"%s" != "%s"' % (arg, expected)
     
     def testInvalidArgumentString(self):

@@ -5,26 +5,8 @@ from Node import Node
 try: from cStringIO import StringIO
 except: from StringIO import StringIO
 
-# The 16 category codes defined by TeX
-CC_ESCAPE = 0
-CC_BGROUP = 1
-CC_EGROUP = 2
-CC_MATHSHIFT = 3
-CC_ALIGNMENT = 4
-CC_EOL = 5
-CC_PARAMETER = 6
-CC_SUPER = 7
-CC_SUB = 8
-CC_IGNORED = 9
-CC_SPACE = 10
-CC_LETTER = 11
-CC_OTHER = 12
-CC_ACTIVE = 13
-CC_COMMENT = 14
-CC_INVALID = 15
-
 # Default TeX categories
-CATEGORIES = [
+DEFAULT_CATEGORIES = [
    '\\',  # 0  - Escape character
    '{',   # 1  - Beginning of group
    '}',   # 2  - End of group
@@ -46,12 +28,28 @@ CATEGORIES = [
 ]
 
 class Token(unicode, Node):
-    """
-    Base class for all unexpanded TeX tokens
+    """ Base class for all TeX tokens """
 
-    """
+    # The 16 category codes defined by TeX
+    CC_ESCAPE = 0
+    CC_BGROUP = 1
+    CC_EGROUP = 2
+    CC_MATHSHIFT = 3
+    CC_ALIGNMENT = 4
+    CC_EOL = 5
+    CC_PARAMETER = 6
+    CC_SUPER = 7
+    CC_SUB = 8
+    CC_IGNORED = 9
+    CC_SPACE = 10
+    CC_LETTER = 11
+    CC_OTHER = 12
+    CC_ACTIVE = 13
+    CC_COMMENT = 14
+    CC_INVALID = 15
+    
     catcode = None       # TeX category code
-    macro = None         # Macro to invoke in place of this token
+    macroName = None     # Macro to invoke in place of this token
 
     nodeType = Node.TEXT_NODE
 
@@ -79,91 +77,91 @@ class EscapeSequence(Token):
     the escape character.
 
     """
-    catcode = CC_ESCAPE
+    catcode = Token.CC_ESCAPE
     def __repr__(self):
         if self == 'par':
             return '\n\n'
         return '\\%s ' % self
-    def macro(self):
+    def macroName(self):
         return self
-    macro = property(macro)
+    macroName = property(macroName)
 
-TOKENCLASSES[CC_ESCAPE] = EscapeSequence
+TOKENCLASSES[Token.CC_ESCAPE] = EscapeSequence
 
 class BeginGroup(Token):
     """ Beginning of a TeX group """
-    catcode = CC_BGROUP
-    macro = 'bgroup'
+    catcode = Token.CC_BGROUP
+    macroName = 'bgroup'
 
-TOKENCLASSES[CC_BGROUP] = BeginGroup
+TOKENCLASSES[Token.CC_BGROUP] = BeginGroup
 
 class EndGroup(Token):
     """ Ending of a TeX group """
-    catcode = CC_EGROUP
-    macro = 'egroup'
+    catcode = Token.CC_EGROUP
+    macroName = 'egroup'
 
-TOKENCLASSES[CC_EGROUP] = EndGroup
+TOKENCLASSES[Token.CC_EGROUP] = EndGroup
 
 class MathShift(Token):
-    catcode = CC_MATHSHIFT
-    macro = 'mathshift'
+    catcode = Token.CC_MATHSHIFT
+    macroName = 'mathshift'
 
-TOKENCLASSES[CC_MATHSHIFT] = MathShift
+TOKENCLASSES[Token.CC_MATHSHIFT] = MathShift
 
 class Alignment(Token):
-    catcode = CC_ALIGNMENT
-    macro = 'alignmenttab'
+    catcode = Token.CC_ALIGNMENT
+    macroName = 'alignmenttab'
 
-TOKENCLASSES[CC_ALIGNMENT] = Alignment
+TOKENCLASSES[Token.CC_ALIGNMENT] = Alignment
 
 class EndOfLine(Token):
-    catcode = CC_EOL
+    catcode = Token.CC_EOL
 
-TOKENCLASSES[CC_EOL] = EndOfLine
+TOKENCLASSES[Token.CC_EOL] = EndOfLine
 
 class Parameter(Token):
-    catcode = CC_PARAMETER
+    catcode = Token.CC_PARAMETER
 
-TOKENCLASSES[CC_PARAMETER] = Parameter
+TOKENCLASSES[Token.CC_PARAMETER] = Parameter
 
 class Superscript(Token):
-    catcode = CC_SUPER
-    macro = 'superscript'
+    catcode = Token.CC_SUPER
+    macroName = 'superscript'
 
-TOKENCLASSES[CC_SUPER] = Superscript
+TOKENCLASSES[Token.CC_SUPER] = Superscript
 
 class Subscript(Token):
-    catcode = CC_SUB
-    macro = 'subscript'
+    catcode = Token.CC_SUB
+    macroName = 'subscript'
 
-TOKENCLASSES[CC_SUB] = Subscript
+TOKENCLASSES[Token.CC_SUB] = Subscript
 
 class Space(Token):
-    catcode = CC_SPACE
+    catcode = Token.CC_SPACE
 
-TOKENCLASSES[CC_SPACE] = Space
+TOKENCLASSES[Token.CC_SPACE] = Space
 
 class Letter(Token):
-    catcode = CC_LETTER
+    catcode = Token.CC_LETTER
 
-TOKENCLASSES[CC_LETTER] = Letter
+TOKENCLASSES[Token.CC_LETTER] = Letter
 
 class Other(Token):
-    catcode = CC_OTHER
+    catcode = Token.CC_OTHER
 
-TOKENCLASSES[CC_OTHER] = Other
+TOKENCLASSES[Token.CC_OTHER] = Other
 
 class Active(Token):
-    catcode = CC_ACTIVE
+    catcode = Token.CC_ACTIVE
 
-TOKENCLASSES[CC_ACTIVE] = Active
+TOKENCLASSES[Token.CC_ACTIVE] = Active
 
 class Comment(Token):
-    catcode = CC_COMMENT
+    catcode = Token.CC_COMMENT
     nodeType = Node.COMMENT_NODE
     nodeName = '#comment'
 
-TOKENCLASSES[CC_COMMENT] = Comment
+TOKENCLASSES[Token.CC_COMMENT] = Comment
 
 class chariter(object):
     """ Character iterator """
@@ -241,7 +239,7 @@ class Tokenizer(object):
 
             code = self.context.whichCode(token)
 
-            if code == CC_SUPER:
+            if code == Token.CC_SUPER:
 
                 # Handle characters like ^^M, ^^@, etc.
                 char = self.read(1)
@@ -257,9 +255,9 @@ class Tokenizer(object):
                     self.seek(-1,1)
 
             # Just keep going if you see one of these...
-            if code == CC_IGNORED:
+            if code == Token.CC_IGNORED:
                 continue
-            elif code == CC_INVALID:
+            elif code == Token.CC_INVALID:
                 continue
 
             break
@@ -325,21 +323,21 @@ class Tokenizer(object):
             code = token.catcode
  
             # Escape sequence
-            if code == CC_ESCAPE:
+            if code == Token.CC_ESCAPE:
 
                 # Get name of command sequence
                 self.state = Tokenizer.STATE_M
 
                 for token in chiter:
  
-                    if token.catcode == CC_EOL:
+                    if token.catcode == Token.CC_EOL:
                         self.pushchar(token)
                         token = EscapeSequence()
 
-                    elif token.catcode == CC_LETTER:
+                    elif token.catcode == Token.CC_LETTER:
                         word = [token]
                         for t in chiter:
-                            if t.catcode == CC_LETTER:
+                            if t.catcode == Token.CC_LETTER:
                                 word.append(t) 
                             else:
                                 self.pushchar(t)
@@ -349,13 +347,13 @@ class Tokenizer(object):
                     else:
                         token = EscapeSequence(token)
 
-                    if token.catcode != CC_EOL:
+                    if token.catcode != Token.CC_EOL:
                         # Absorb following whitespace
                         self.state = Tokenizer.STATE_S
                         for t in chiter:
-                            if t.catcode == CC_SPACE:
+                            if t.catcode == Token.CC_SPACE:
                                 continue
-                            elif t.catcode == CC_EOL:
+                            elif t.catcode == Token.CC_EOL:
                                 continue
                             self.pushchar(t)
                             break
@@ -368,28 +366,28 @@ class Tokenizer(object):
                 token = self.context.lets.get(token, token)
 
             # End of line
-            elif code == CC_EOL:
+            elif code == Token.CC_EOL:
                 if self.state == Tokenizer.STATE_S:
                     self.state = Tokenizer.STATE_N
                     continue
                 elif self.state == Tokenizer.STATE_M:
                     token = Space(' ')
-                    code = CC_SPACE
+                    code = Token.CC_SPACE
                     self.state = Tokenizer.STATE_N
                 elif self.state == Tokenizer.STATE_N: 
                     if token != '\n':
                         self.linenumber += 1
                         self.readline()
                     token = EscapeSequence('par')
-                    code = CC_ESCAPE
+                    code = Token.CC_ESCAPE
 
-            elif code == CC_SPACE:
+            elif code == Token.CC_SPACE:
                 if self.state in [Tokenizer.STATE_S, Tokenizer.STATE_N]:
                     continue
                 self.state = Tokenizer.STATE_S
                 token = Space(u' ')
 
-            elif code == CC_COMMENT:
+            elif code == Token.CC_COMMENT:
                 self.readline() 
                 self.linenumber += 1
                 self.state = Tokenizer.STATE_N

@@ -40,7 +40,9 @@ class RenderMixIn(object):
             for value in self:
                 if hasattr(value, 'toXML'):
                     value = value.toXML()
-                s.append('%s' % value)
+                else:
+                    value = xmlstr(value)
+                s.append(value)
             return ''.join(s)
 
         # Remap name into valid XML tag name
@@ -55,12 +57,7 @@ class RenderMixIn(object):
         if not name:
             name = 'unknown'
 
-        source = ''
-#       if self._source.start is not None and self._source.end is not None:
-#           source = ' source="%s,%s"' % (self._source.start, self._source.end)
-#       if self._position:
-            #source = ' source="%s,%s"' % (self._position[0], self._position[1])
-#           source = ' source="%s"' % xmlstr(self.source)
+        source = ' source="%s"' % xmlstr(self.source)
 
         # Bail out early if the element is empty
         if not(self.attributes) and not(self.childNodes):
@@ -70,7 +67,6 @@ class RenderMixIn(object):
             
         # Render attributes
         if self.attributes:
-#           s.append('<args>\n')
             for key, value in self.attributes.items():
                 if value is None:
                     s.append('    <plastex:arg name="%s"/>\n' % key)
@@ -80,18 +76,15 @@ class RenderMixIn(object):
                     else:
                         value = xmlstr(value)
                     s.append('    <plastex:arg name="%s">%s</plastex:arg>\n' % (key, value))
-#           s.append('</args>\n')
 
         # Render content
         if self.childNodes:
-#           s.append('<content>')
             for value in self.childNodes:
                 if hasattr(value, 'toXML'):
                     value = value.toXML()
                 else: 
                     value = xmlstr(value)
                 s.append(value)
-#           s.append('</content>\n')
         s.append('</%s>' % name)
         return ''.join(s)
         

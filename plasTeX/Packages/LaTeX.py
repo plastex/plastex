@@ -18,7 +18,7 @@ class begin(Macro):
         name = tex.getArgument(type='str')
         envlog.debug(name)
         obj = tex.context[name]
-        obj.cmdmode = Macro.MODE_BEGIN
+        obj.macroMode = Macro.MODE_BEGIN
         out = obj.invoke(tex)
         if out is None:
             out = [obj]
@@ -32,7 +32,7 @@ class end(Macro):
         name = tex.getArgument(type='str')
         envlog.debug(name)
         obj = tex.context[name]
-        obj.cmdmode = Macro.MODE_END
+        obj.macroMode = Macro.MODE_END
         out = obj.invoke(tex)
         if out is None:
             out = [obj]
@@ -104,7 +104,7 @@ class RequirePackage(usepackage):
     """ \\RequirePackage """
 
 class x_ifnextchar(Command):
-    texname = '@ifnextchar'
+    macroName = '@ifnextchar'
     args = 'char:tok true:nox false:nox'
     def invoke(self, tex):
         self.parse(tex)

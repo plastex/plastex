@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from plasTeX.Utils import *
-from plasTeX.Tokenizer import CC_MATHSHIFT, Node
+from plasTeX.Tokenizer import Node, Token
 from plasTeX import Macro, Command, Environment
 from plasTeX.Logging import getLogger
 
@@ -60,15 +60,15 @@ class mathshift(Macro):
             if type(env) is type(displaymath):
                 for t in tex.itertokens():
                     break
-                displaymath.cmdmode = Macro.MODE_END
+                displaymath.macroMode = Macro.MODE_END
                 tex.context.pop(displaymath)
             else:
-                math.cmdmode = Macro.MODE_END
+                math.macroMode = Macro.MODE_END
                 tex.context.pop(math)
             return []
 
         for t in tex.itertokens():
-            if t.catcode == CC_MATHSHIFT:
+            if t.catcode == Token.CC_MATHSHIFT:
                 inenv.append(displaymath)
             else:
                 inenv.append(math)
@@ -95,13 +95,13 @@ class superscript(Macro):
     """ The '^' character in TeX """
     args = 'self'
     def __repr__(self):
-        return '^%s' % self.attributes.source
+        return '^%s' % reprarguments(self)
 
 class subscript(Macro):
     """ The '_' character in TeX """
     args = 'self'
     def __repr__(self):
-        return '_%s' % self.attributes.source
+        return '_%s' % reprarguments(self)
 
 class macroparameter(Macro):
     """ Paramaters for macros (i.e. #1, #2, etc.) """
@@ -111,10 +111,13 @@ class macroparameter(Macro):
         return '#'
 
 class bgroup(Macro):
+
     def invoke(self, tex):
         tex.context.push()
+
     def __repr__(self):
         return '{'
+
     def digest(self, tokens):
         self.childNodes = []
         # Absorb the tokens that belong to us
@@ -125,6 +128,7 @@ class bgroup(Macro):
                 item.digest(tokens)
             self.childNodes.append(item)
             item.parentNode = self
+
     def __repr__(self):
         if self.childNodes is not None:
             return '{%s}' % ''.join([repr(x) for x in self.childNodes])
@@ -149,7 +153,7 @@ class _def(Macro):
         tex.context.newdef(a['name'], a['args'], a['definition'], local=self.local)
 
 class x_def(_def): 
-    texname = 'def'
+    macroName = 'def'
 class edef(_def):
     local = True
 class xdef(_def):
@@ -174,7 +178,7 @@ class _if(Macro):
 
 class x_if(_if): 
     """ \\if """
-    texname = 'if'
+    macroName = 'if'
         
 class ifnum(_if):
     """ Compare two integers """

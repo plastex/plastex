@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
-import sys, string, new, re, os
-import plasTeX
+import new, plasTeX
 from plasTeX import Macro, StringMacro, UnrecognizedMacro
 from plasTeX.Logging import getLogger
+from Tokenizer import Tokenizer, Token, DEFAULT_CATEGORIES
 from Utils import *
-from Tokenizer import *
+
+# Only export the Context class
+__all__ = ['Context']
 
 # Set up loggers
 log = getLogger()
@@ -124,7 +126,7 @@ class Context(object):
         except KeyError: pass
 
         # Didn't find it, so generate a new class
-        log.warning('unrecognized macro %s', key)
+        log.warning('unrecognized command/environment: %s', key)
         self[key] = newclass = new.classobj(str(key), (UnrecognizedMacro,), {})
         return newclass()
 
@@ -145,7 +147,7 @@ class Context(object):
         """
         if not self.contexts:
             context = ContextItem()
-            context.categories = CATEGORIES[:]
+            context.categories = DEFAULT_CATEGORIES[:]
             self.contexts.append(context)
 
         else:
@@ -331,37 +333,37 @@ class Context(object):
 
         """
         c = self.categories
-        if char in c[CC_LETTER]:
-            return CC_LETTER
-        if char in c[CC_SPACE]:
-            return CC_SPACE
-        if char in c[CC_EOL]:
-            return CC_EOL
-        if char in c[CC_BGROUP]:
-            return CC_BGROUP
-        if char in c[CC_EGROUP]:
-            return CC_EGROUP 
-        if char in c[CC_ESCAPE]:
-            return CC_ESCAPE 
-        if char in c[CC_SUPER]:
-            return CC_SUPER
-        if char in c[CC_SUB]:
-            return CC_SUB 
-        if char in c[CC_MATHSHIFT]:
-            return CC_MATHSHIFT
-        if char in c[CC_ALIGNMENT]:
-            return CC_ALIGNMENT 
-        if char in c[CC_COMMENT]:
-            return CC_COMMENT
-        if char in c[CC_ACTIVE]:
-            return CC_ACTIVE
-        if char in c[CC_PARAMETER]:
-            return CC_PARAMETER
-        if char in c[CC_IGNORED]:
-            return CC_IGNORED 
-        if char in c[CC_INVALID]:
-            return CC_INVALID
-        return CC_OTHER
+        if char in c[Token.CC_LETTER]:
+            return Token.CC_LETTER
+        if char in c[Token.CC_SPACE]:
+            return Token.CC_SPACE
+        if char in c[Token.CC_EOL]:
+            return Token.CC_EOL
+        if char in c[Token.CC_BGROUP]:
+            return Token.CC_BGROUP
+        if char in c[Token.CC_EGROUP]:
+            return Token.CC_EGROUP 
+        if char in c[Token.CC_ESCAPE]:
+            return Token.CC_ESCAPE 
+        if char in c[Token.CC_SUPER]:
+            return Token.CC_SUPER
+        if char in c[Token.CC_SUB]:
+            return Token.CC_SUB 
+        if char in c[Token.CC_MATHSHIFT]:
+            return Token.CC_MATHSHIFT
+        if char in c[Token.CC_ALIGNMENT]:
+            return Token.CC_ALIGNMENT 
+        if char in c[Token.CC_COMMENT]:
+            return Token.CC_COMMENT
+        if char in c[Token.CC_ACTIVE]:
+            return Token.CC_ACTIVE
+        if char in c[Token.CC_PARAMETER]:
+            return Token.CC_PARAMETER
+        if char in c[Token.CC_IGNORED]:
+            return Token.CC_IGNORED 
+        if char in c[Token.CC_INVALID]:
+            return Token.CC_INVALID
+        return Token.CC_OTHER
 
     def catcode(self, char, code):
         """
