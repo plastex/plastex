@@ -11,7 +11,7 @@ def latex2htmlcolor(arg):
     else:
         try: 
             red = green = blue = float(arg)
-        except TypeError:
+        except ValueError:
             return arg.strip()
     return '#%.2X%.2X%.2X' % (red, green, blue)
 

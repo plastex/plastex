@@ -28,6 +28,7 @@ DEFAULT_CATEGORIES = [
 ]
 
 VERBATIM_CATEGORIES = [''] * 16
+VERBATIM_CATEGORIES[11] = string.letters
 
 class Token(Text):
     """ Base class for all TeX tokens """

@@ -72,6 +72,8 @@ class TeX(object):
         self.context = Context(load=True)
         self.context.loadBaseMacros()
 
+        self.ownerDocument = None
+
         # Input source stack
         self.inputs = []
 
@@ -224,6 +226,7 @@ class TeX(object):
                     # really don't want anything in the output stream,
                     # just return `[ ]'.
                     obj = context[token.macroName]
+                    obj.ownerDocument = self.ownerDocument
                     tokens = obj.invoke(self)
                     if tokens is None:
                         pushtoken(obj)
@@ -273,6 +276,8 @@ class TeX(object):
         tokens = bufferediter(self)
         if output is None:
             output = TeXDocument()
+        if output.nodeType == Macro.DOCUMENT_NODE:
+            self.ownerDocument = output
         try:
             for item in tokens:
                 if item.nodeType == Macro.ELEMENT_NODE:

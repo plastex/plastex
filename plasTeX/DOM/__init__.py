@@ -699,12 +699,18 @@ class Node(object):
 
     nextSibling = property(_nextSibling)
 
-    def ownerDocument(self):
-        if self.parentNode:
-            return self.parentNode.ownerDocument
-        return
-
-    ownerDocument = property(ownerDocument)
+    def ownerDocument():
+        def fget(self):
+            try:
+                return getattr(self, '@ownerDocument')
+            except AttributeError:
+                if self.parentNode:
+                    return self.parentNode.ownerDocument
+                return
+        def fset(self, value):
+            setattr(self, '@ownerDocument', value)
+        return locals()
+    ownerDocument = property(**ownerDocument())
 
     compareDocumentPosition = _compareDocumentPosition
 

@@ -94,7 +94,7 @@ class Macro(Element):
 
     macroName = None        # TeX macro name (instead of class name)
     macroMode = MODE_NONE   # begin, end, or none
-    categories = None       # category codes local to this macro
+#   categories = None       # category codes local to this macro
     mathMode = None
 
     # Node variables

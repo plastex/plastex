@@ -189,7 +189,8 @@ class Context(object):
         except KeyError: pass
 
         # Didn't find it, so generate a new class
-        log.warning('unrecognized command/environment: %s', key)
+        if not self.isMathMode:
+            log.warning('unrecognized command/environment: %s', key)
         self[key] = newclass = new.classobj(str(key), (plasTeX.UnrecognizedMacro,), {})
         return newclass()
 
@@ -264,8 +265,8 @@ class Context(object):
         if obj is not None:
 
             # Get the local category codes and macros
-            if obj.categories is not None:
-                newcontext.categories = obj.categories
+#           if obj.categories is not None:
+#               newcontext.categories = obj.categories
 
             newcontext.update(obj.locals())
 

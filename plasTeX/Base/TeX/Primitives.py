@@ -108,7 +108,7 @@ class MathShift(Command):
 
         return [current]
 
-class Ampersand(Command):
+class AlignmentChar(Command):
     """ The '&' character in TeX """
     macroName = 'active::&'
 
@@ -422,3 +422,16 @@ class vobeyspaces_(Command):
     macroName = '@vobeyspaces'
 class noligs_(Command):
     macroName = '@noligs'
+
+class expandafter(Command):
+    def invoke(self, tex):
+        nexttok = None
+        for tok in tex.itertokens():
+            nextok = tok
+            break
+        for tok in tex:
+            aftertok = tok
+            break
+        tex.pushtoken(aftertok)
+        tex.pushtoken(nexttok)
+        return []

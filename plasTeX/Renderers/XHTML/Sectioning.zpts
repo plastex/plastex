@@ -11,14 +11,14 @@ name: maketitle
 
 name: part chapter section subsection subsubsection paragraph \
       subparagraph chaphead headi headii headiii headiv headv \
-      headvi examplehead
+      headvi examplehead bibliography
 type: xml
 <div metal:use-macro="templates/document/macros/content"></div>
 
 name: document part-file chapter-file section-file subsection-file \
       subsubsection-file paragraph-file subparagraph-file chaphead-file \
       headi-file headii-file headiii-file headiv-file headv-file \
-      headvi-file examplehead-file
+      headvi-file examplehead-file bibliography-file
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html tal:define="nav self/navigation">
 <head>
@@ -128,7 +128,7 @@ Donec enim eros, malesuada ut, faucibus id, elementum non, tellus. In nibh. Proi
 
 </div>
 
-<div tal:condition="self/subsections" class="contents"><strong>Subsections</strong>
+<div tal:condition="self/subsections" class="contents"><!--<strong>Subsections</strong>-->
 <ul>
 <li tal:repeat="item self/subsections"><a href="." tal:attributes="href item/url" tal:content="item/title">Aliquam est. Aliquam fringilla pede</a>
    <ul tal:condition="item/subsections">

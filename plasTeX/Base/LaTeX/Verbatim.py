@@ -15,6 +15,7 @@ class verbatim(Environment):
         bgroup = tex.context.categories[1][0]
         egroup = tex.context.categories[2][0]
         tex.context.push(self)
+        self.parse(tex)
         tex.context.setVerbatimCatcodes()
         tokens = [self]
 

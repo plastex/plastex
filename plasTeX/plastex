@@ -33,6 +33,7 @@ def main(argv):
     # Create document instance that output will be put into
     document = plasTeX.TeXDocument()
     document.userdata['title'] = 'SAS/STAT'
+    document.userdata['jobname'] = basename
     
     # Parse document
     s = TeX(codecs.open(file,'r',inencoding))

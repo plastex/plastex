@@ -1,19 +1,16 @@
 #!/usr/bin/env python
 
-import string
-from plasTeX.Utils import *
 from plasTeX import Command, Environment
-from verbatim import verbatim
+from plasTeX.Base.LaTeX.Verbatim import verbatim
 
 class Verbatim(verbatim):
-    args = '[ %options ]'
+    args = '[ options:dict ]'
+
     def parse(self, tex):
+        verbatim.parse(self, tex)
+
         options = self.attributes['options']
-        tex.context.categories = ['','','','','','','','','','',
-                                  '', string.letters,'','','','']
-        Environment.parse(self, tex)
-        del tex.context.categories
-        content = tex.getVerbatim(r'\end{%s}' % type(self).__name__)
+        print options
 
         if options is None:
             options = {}
@@ -21,9 +18,7 @@ class Verbatim(verbatim):
         # Format command
         formatcom = None
         if options.has_key('formatcom'):
-            tex.context.push()
-            formatcom = type(tex)(options['formatcom'].strip()).getToken()
-            tex.context.pop()
+            formatcom = options['formatcom']
 
         # Frame width
         framerule = '1px'
@@ -33,10 +28,7 @@ class Verbatim(verbatim):
         # Frame color
         rulecolor = 'black'
         if options.has_key('rulecolor'):
-            tex.context.push()
-            token = type(tex)(options['rulecolor'].strip()).getToken()
-            tex.context.pop()
-            rulecolor = token.style['color']
+            rulecolor = options['rulecolor'].style['color']
 
         # Frames
         if options.has_key('frame'):
@@ -64,7 +56,7 @@ class Verbatim(verbatim):
 
         # Font size
         if options.has_key('fontsize'):
-            fontsize = options['fontsize'].strip()[1:]
+            fontsize = options['fontsize'].strip()
             if fontsize == 'tiny':
                 self.style['font-size'] = 'xx-small'
             elif fontsize == 'footnotesize':
@@ -103,30 +95,17 @@ class Verbatim(verbatim):
                 except: content[i] = ''
             content = '\n'.join(content)
 
-        tex.context.categories = ['\\','{','}','','','','','','','',
-                                  '', string.letters,'','','','']
-
         # Command chars
         if options.has_key('commandchars'):
-            chars = str(options['commandchars'])
-            tex.context.categories[0] = chars[0]
-            tex.context.categories[1] = chars[1]
-            tex.context.categories[2] = chars[2]
+            chars = options['commandchars']
+            tex.context.catcode(chars[0], Token.CC_ESCAPE)
+            tex.context.catcode(chars[1], Token.CC_BGROUP)
+            tex.context.catcode(chars[2], Token.CC_EGROUP)
 
         # Comment char
         if options.has_key('commentchar'):
-            char = str(options['commentchar'])
-            tex.context.categories[14] = char
+            char = options['commentchar']
+            tex.context.catcode(char, Token.CC_COMMENT)
 
-        content = type(tex)(content).parse()
-
-        # Apply format command
-        if formatcom is not None:
-            formatcom[:] = content
-            self.append(formatcom)
-        else:
-            self[:] = content
-
-        del tex.context.categories
-
-        return self 
+        print self.style
+        return self.attributes
