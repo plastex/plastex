@@ -2,9 +2,9 @@
 
 import string, new, re
 from Utils import *
-from Tokenizer import Token
+from Tokenizer import Token, Node
 from plasTeX.Logging import getLogger
-from Tokenizer import CC_EXPANDED, CC_PARAMETER, CC_ENDCONTEXT
+from Tokenizer import CC_PARAMETER
 from Renderer import RenderMixIn
 
 log = getLogger()
@@ -14,9 +14,9 @@ envlog = getLogger('parse.environments')
 mathshiftlog = getLogger('parse.mathshift')
 digestlog = getLogger('parse.digest')
 
-MODE_NONE = 0
-MODE_BEGIN = 1
-MODE_END = 2
+CMDMODE_NONE = 0
+CMDMODE_BEGIN = 1
+CMDMODE_END = 2
 
 class Attributes(dict):
     def __init__(self, *args, **kwargs):
@@ -59,22 +59,18 @@ class CSSStyles(dict):
         return '; '.join(['%s:%s' % (x[0],x[1]) for x in self.items()])
 
 class Macro(Token, RenderMixIn):
-#class Macro(Token):
     """
     Base class for all macros
 
     """
-    level = COMMAND    # hierarchical level in the document
-    categories = None  # category codes local to this macro
-    counter = None     # counter corresponding to this macro
-    section = False    # is this macro a section heading?
     texname = None     # TeX macro name (instead of class name)
+    categories = None  # category codes local to this macro
+    cmdmode = CMDMODE_NONE   # begin, end, or none
 
-    code = CC_EXPANDED # Special code for TeX to recognized expanded tokens
-    mode = MODE_NONE   # begin, end, or none
+    level = Node.COMMAND_LEVEL    # hierarchical level in the document
 
-    children = None
-    attributes = None
+    nodeType = Node.ELEMENT_NODE
+    nodeValue = None
 
     def locals(self):
         """ Retrieve all macros local to this namespace """
@@ -98,14 +94,14 @@ class Macro(Token, RenderMixIn):
 
     def invoke(self, tex):
         # Just pop the context if this is a \end token
-        if self.mode == MODE_END:
+        if self.cmdmode == CMDMODE_END:
             tex.context.pop(self)
             return
 
         # If this is a \begin token or the element needs to be
         # closed automatically (i.e. \section, \item, etc.), just 
         # push the new context and return the instance.
-        elif self.mode == MODE_BEGIN:
+        elif self.cmdmode == CMDMODE_BEGIN:
             tex.context.push(self)
             self.parse(tex)
             return
@@ -114,17 +110,15 @@ class Macro(Token, RenderMixIn):
         # the context stack.  We push an empty context so that the
         # `self' token doesn't get put into the output stream twice
         # (once here and once with the pop).
-#       tex.context.push()
         tex.context.push(self)
         self.parse(tex)
         tex.context.pop(self)
 
-    def digest(self, tokens):
-        return 
-
     def tagName(self):
-        if self.texname: return self.texname
-        return classname(self)
+        t = type(self)
+        if t.texname is None:
+            return t.__name__
+        return t.texname
     nodeName = tagName = property(tagName)
 
     def __repr__(self):
@@ -132,15 +126,15 @@ class Macro(Token, RenderMixIn):
             return '\n\n'
 
         # \begin environment
-        # If self.children is not none, print out the entire environment
-        if self.mode == MODE_BEGIN:
+        # If self.childNodes is not none, print out the entire environment
+        if self.cmdmode == CMDMODE_BEGIN:
             s = '\\begin{%s}%s\n' % (self.tagName, self.attributes.source)
-            if self.children is not None:
+            if self.childNodes is not None:
                 s += '%s\n\\end{%s}' % (reprchildren(self), self.tagName)
             return s
 
         # \end environment
-        if self.mode == MODE_END:
+        if self.cmdmode == CMDMODE_END:
             return '\n\\end{%s}' % (self.tagName)
 
         space = ' '
@@ -150,8 +144,8 @@ class Macro(Token, RenderMixIn):
             space = ''
         s = '\\%s%s%s' % (self.tagName, attrsource, space)
 
-        # If self.children is not none, print out the contents
-        if self.children is not None:
+        # If self.childNodes is not none, print out the contents
+        if self.childNodes is not None:
             s += reprchildren(self)
         return s
 
@@ -163,17 +157,13 @@ class Macro(Token, RenderMixIn):
         tex -- the TeX stream to parse from
 
         """
+        if self.cmdmode == CMDMODE_END:
+            return
         self.attributes = Attributes()
         for i, arg in enumerate(self.arguments):
             output, source = tex.getArgumentAndSource(**arg)
             self.attributes[arg.name] = output
             self.attributes.source += source
-
-    def position(self):
-        if not hasattr(self, '__position'):
-            self.__position = [None, None]
-        return self.__position
-    position = property(position)
 
     def style(self):
         if not hasattr(self, '__style'):
@@ -287,13 +277,13 @@ class Macro(Token, RenderMixIn):
 
     arguments = property(arguments)
 
-class TeXFragment(list, RenderMixIn):
-    nodeName = tagName = 'tex-fragment'
-    attributes = None
+class TeXFragment(list, RenderMixIn, Node):
+    nodeName = tagName = '#document-fragment'
+    nodeType = Node.DOCUMENT_FRAGMENT_NODE
  
     def __init__(self, *args, **kwargs):
         list.__init__(self, *args, **kwargs)
-        self.children = self
+        self.childNodes = self
 
 
 class StringMacro(Macro):
@@ -315,28 +305,29 @@ class Command(Macro):
 
 class Environment(Macro): 
     """ Base class for all Python-based LaTeX environments """
-    level = ENVIRONMENT
+    level = Node.ENVIRONMENT_LEVEL
+
     def invoke(self, tex):
-        if self.mode == MODE_END:
+        if self.cmdmode == CMDMODE_END:
             tex.context.pop(self)
             return
         tex.context.push(self)
         self.parse(tex)
 
     def digest(self, tokens):
-        if self.mode == MODE_END:
+        if self.cmdmode == CMDMODE_END:
             return
-        self.children = []
+        self.childNodes = []
         # Absorb the tokens that belong to us
         for item in tokens:
-            if item.code == CC_EXPANDED:
-                if item.mode == MODE_END and type(item) is type(self):
+            if item.nodeType == Node.ELEMENT_NODE:
+                if item.cmdmode == CMDMODE_END and type(item) is type(self):
                     break
                 item.digest(tokens)
-            if item.depth < self.depth:
+            if item.contextDepth < self.contextDepth:
                 tokens.push(item)
                 break
-            self.children.append(item)
+            self.childNodes.append(item)
     
 class UnrecognizedMacro(Macro): pass
 
@@ -376,10 +367,10 @@ def expanddef(definition, params):
     definition = iter(definition)
     for t in definition:
         # Expand parameters
-        if t.code == CC_PARAMETER:
+        if t.catcode == CC_PARAMETER:
             for t in definition:
                 # Double '#'
-                if t.code == CC_PARAMETER:
+                if t.catcode == CC_PARAMETER:
                     output.append(t)
                 else:
                     if params[int(t)] is not None:
@@ -397,7 +388,7 @@ class NewCommand(Macro):
     definition = None
 
     def invoke(self, tex):
-        if self.mode == MODE_END:
+        if self.cmdmode == CMDMODE_END:
             return tex.context['end'+self.tagName].invoke(tex)            
 
         if not self.definition:
@@ -433,7 +424,7 @@ class Definition(Macro):
         for a in argiter:
 
             # Beginning a new parameter
-            if a.code == CC_PARAMETER:
+            if a.catcode == CC_PARAMETER:
 
                 # Adjacent parameters, just get the next token
                 if inparam:
@@ -446,10 +437,10 @@ class Definition(Macro):
                         inparam = True
 
                     # Handle #{ case here
-                    elif t.code == CC_BGROUP:
+                    elif t.catcode == CC_BGROUP:
                         param = []
                         for t in tex.itertokens():
-                            if t.code == CC_BGROUP:
+                            if t.catcode == CC_BGROUP:
                                 tex.pushtoken(t)
                             else:
                                 param.append(t)
@@ -618,7 +609,7 @@ class TheCounter(Macro):
     """ Base class for counter formats """
     format = ''
 
-class Dimen(float):
+class Dimen(float, Node):
 
     units = ['pt','pc','in','bp','cm','mm','dd','cc','sp','ex','em']
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 from plasTeX.Utils import *
-from plasTeX.Tokenizer import CC_MATHSHIFT, CC_EXPANDED
-from plasTeX import Macro, Command, Environment, MODE_END
+from plasTeX.Tokenizer import CC_MATHSHIFT, Node
+from plasTeX import Macro, Command, Environment, CMDMODE_END
 from plasTeX.Logging import getLogger
 
 log = getLogger()
@@ -13,7 +13,7 @@ mathshiftlog = getLogger('parse.mathshift')
 
 class par(Macro):
     """ Paragraph """
-    level = PARAGRAPH
+    level = Node.PARAGRAPH_LEVEL
 
     def invoke(self, tex):
         status.dot()
@@ -60,15 +60,15 @@ class mathshift(Macro):
             if type(env) is type(displaymath):
                 for t in tex.itertokens():
                     break
-                displaymath.mode = MODE_END
+                displaymath.cmdmode = CMDMODE_END
                 tex.context.pop(displaymath)
             else:
-                math.mode = MODE_END
+                math.cmdmode = CMDMODE_END
                 tex.context.pop(math)
             return []
 
         for t in tex.itertokens():
-            if t.code == CC_MATHSHIFT:
+            if t.catcode == CC_MATHSHIFT:
                 inenv.append(displaymath)
             else:
                 inenv.append(math)
@@ -116,17 +116,17 @@ class bgroup(Macro):
     def __repr__(self):
         return '{'
     def digest(self, tokens):
-        self.children = []
+        self.childNodes = []
         # Absorb the tokens that belong to us
         for item in tokens:
-            if item.code == CC_EXPANDED:
+            if item.nodeType == Node.ELEMENT_NODE:
                 if type(item) is egroup:
                     break
                 item.digest(tokens)
-            self.children.append(item)
+            self.childNodes.append(item)
     def __repr__(self):
-        if self.children is not None:
-            return '{%s}' % ''.join([repr(x) for x in self.children])
+        if self.childNodes is not None:
+            return '{%s}' % ''.join([repr(x) for x in self.childNodes])
         return '{'
 
 class egroup(Macro):
@@ -247,7 +247,7 @@ class ifcat(_if):
     def invoke(self, tex):
         self.parse(tex)
         a = self.attributes
-        return tex.getCase(a['a'].code == a['b'].code)
+        return tex.getCase(a['a'].catcode == a['b'].catcode)
 
 class ifx(_if):
     """ Test if tokens agree """

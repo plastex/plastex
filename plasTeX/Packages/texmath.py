@@ -6,14 +6,14 @@ from array import Array
 
 class math(Environment): 
     def __repr__(self): 
-        if self.children is not None:
+        if self.childNodes is not None:
             return '$%s$' % reprchildren(self)
         return ''
 
 class displaymath(math):
     block = True
     def __repr__(self):
-        if self.children is not None:
+        if self.childNodes is not None:
             return '$$%s$$' % reprchildren(self)
         return ''
 

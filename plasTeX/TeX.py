@@ -60,6 +60,18 @@ class bufferediter(object):
         self.buffer.append(value)
 
 
+class EndTokens(Token):
+    """
+    Demarcates the end of a stream of tokens to be processed
+
+    When this token is reached, the TeX processor should throw
+    a StopIteration exception.  This is used to process short
+    sub-streams of tokens.  These tokens should never make it to
+    the output stream.
+
+    """
+
+
 class TeX(object):
     """
     TeX Stream
@@ -163,7 +175,7 @@ class TeX(object):
         """
         while self.inputs:
             for t in self.inputs[-1]:
-                t.depth = self.context.depth
+                t.contextDepth = self.context.depth
                 return t
             self.endinput()
         raise StopIteration
@@ -188,13 +200,13 @@ class TeX(object):
         """
         for token in self.itertokens():
             if token is not None:
-                tokenlog.debug('input %s (%s, %s)', repr(token), token.code, 
+                tokenlog.debug('input %s (%s, %s)', repr(token), token.catcode, 
                                                  len(self.inputs))
             if token is None:
                 continue
-            elif token.code == CC_ENDTOKENS:
+            elif token is EndTokens:
                 break
-            elif token.code == CC_EXPANDED:
+            elif token.nodeType == Node.ELEMENT_NODE:
                 pass
             elif token.macro is not None:
                 try:
@@ -286,7 +298,7 @@ class TeX(object):
         string containing the TeX source
 
         """
-        return u''.join([repr(x) for x in tokens if x.code is not CC_ENDCONTEXT])
+        return u''.join([repr(x) for x in tokens])
 
     def normalize(self, tokens, strip=False):
         """
@@ -307,11 +319,11 @@ class TeX(object):
         if tokens is None:
             return tokens
         for t in tokens:
-            if t.code not in [CC_LETTER, CC_OTHER, CC_EGROUP, 
-                              CC_BGROUP, CC_SPACE]:
+            if t.catcode not in [CC_LETTER, CC_OTHER, CC_EGROUP, 
+                                 CC_BGROUP, CC_SPACE]:
                 return tokens
         return (u''.join([x for x in tokens 
-                          if x.code not in [CC_EGROUP, CC_BGROUP]])).strip()
+                          if x.catcode not in [CC_EGROUP, CC_BGROUP]])).strip()
 
     def getCase(self, which):
         """
@@ -444,7 +456,7 @@ class TeX(object):
         if type in ['args']:
             args = []
             for t in self.itertokens():
-                if t.code == CC_BGROUP:
+                if t.catcode == CC_BGROUP:
                     self.pushtoken(t)
                     break
                 else:
@@ -460,14 +472,14 @@ class TeX(object):
                 toks = []
                 source = [t]
                 # A { ... } grouping was found
-                if t.code == CC_BGROUP:
+                if t.catcode == CC_BGROUP:
                     level = 1
                     for t in tokens:
                         source.append(t)
-                        if t.code == CC_BGROUP:
+                        if t.catcode == CC_BGROUP:
                             toks.append(t)
                             level += 1
-                        elif t.code == CC_EGROUP:
+                        elif t.catcode == CC_EGROUP:
                             level -= 1
                             if level == 0:
                                 break
@@ -566,7 +578,7 @@ class TeX(object):
         self.cast()
 
         """
-        return [x for x in tokens if x.code == CC_ESCAPE].pop(0)
+        return [x for x in tokens if x.catcode == CC_ESCAPE].pop(0)
 
     def castString(self, tokens, type=unicode, **kwargs):
         """
@@ -658,14 +670,14 @@ class TeX(object):
                 listarg.append([])
 
             # Found grouping
-            elif current.code == CC_BGROUP:
+            elif current.catcode == CC_BGROUP:
                 level = 1
                 listarg[-1].append(current)
                 while tokens:
                     current = tokens.pop(0)
-                    if current.code == CC_BGROUP:
+                    if current.catcode == CC_BGROUP:
                         level += 1
-                    elif current.code == CC_EGROUP:
+                    elif current.catcode == CC_EGROUP:
                         level -= 1
                         if not level:
                             break
@@ -705,14 +717,14 @@ class TeX(object):
             current = tokens.pop(0)
 
             # Found grouping
-            if current.code == CC_BGROUP:
+            if current.catcode == CC_BGROUP:
                 level = 1
                 currentvalue.append(current)
                 while tokens:
                     current = tokens.pop(0)
-                    if current.code == CC_BGROUP:
+                    if current.catcode == CC_BGROUP:
                         level += 1
-                    elif current.code == CC_EGROUP:
+                    elif current.catcode == CC_EGROUP:
                         level -= 1
                         if not level:
                             break
@@ -768,7 +780,7 @@ class TeX(object):
         for t in self.itertokens():
             if t is None or t == '':
                 continue
-            elif t.code != CC_SPACE:
+            elif t.catcode != CC_SPACE:
                 self.pushtoken(t)
                 break 
             tokens.append(t)
@@ -816,7 +828,7 @@ class TeX(object):
     def readDimen(self, units=Dimen.units):
         sign = self.readOptionalSigns()
         for t in self:
-            if t.code == CC_EXPANDED:
+            if t.nodeType == Node.ELEMENT_NODE:
                 return Dimen(sign * dimen(t))
             self.pushtoken(t)
             break
@@ -829,7 +841,7 @@ class TeX(object):
         self.readOptionalSpaces()
         # internal unit
         for t in self:
-            if t.code == CC_EXPANDED:
+            if t.nodeType == Node.ELEMENT_NODE:
                 return dimen(t)
             self.pushtoken(t)
             break
@@ -847,7 +859,7 @@ class TeX(object):
                 pass
             elif t == '-':
                 sign = -sign
-            elif t is None or t == '' or t.code == CC_SPACE:
+            elif t is None or t == '' or t.catcode == CC_SPACE:
                 continue
             else:
                 self.pushtoken(t)
@@ -858,7 +870,7 @@ class TeX(object):
         for t in self.itertokens():
             if t is None or t == '':
                 continue
-            if t.code == CC_SPACE:
+            if t.catcode == CC_SPACE:
                 return t
             self.pushtoken(t)
             return None
@@ -866,11 +878,11 @@ class TeX(object):
     def readSequence(self, chars, optspace=True, default=''):
         output = []
         for t in self:
-            if t.code == CC_EXPANDED:
+            if t.nodeType == Node.ELEMENT_NODE:
                 self.pushtoken(t)
                 break 
             if t not in chars:
-                if optspace and t.code == CC_SPACE:
+                if optspace and t.catcode == CC_SPACE:
                     pass
                 else:
                     self.pushtoken(t)
@@ -884,7 +896,7 @@ class TeX(object):
         sign = self.readOptionalSigns()
         for t in self:
             # internal/coerced integers
-            if t.code == CC_EXPANDED:
+            if t.nodeType == Node.ELEMENT_NODE:
                 return sign * int(t)
             # integer constant
             if t in string.digits:
@@ -908,7 +920,7 @@ class TeX(object):
         sign = self.readOptionalSigns()
         # internal/coerced glue
         for t in self:
-            if t.code == CC_EXPANDED:
+            if t.nodeType == Node.ELEMENT_NODE:
                 return Glue(sign * glue(t))
             self.pushtoken(t)
             break
@@ -931,7 +943,7 @@ class TeX(object):
         sign = self.readOptionalSigns()
         # internal/coerced muglue
         for t in self:
-            if t.code == CC_EXPANDED:
+            if t.nodeType == Node.ELEMENT_NODE:
                 return Muglue(sign * muglue(t))
             self.pushtoken(t)
             break

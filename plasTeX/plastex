@@ -5,42 +5,23 @@ import plasTeX
 import codecs
 from plasTeX.TeX import TeX
 from plasTeX.TALUtils import *
-from plasTeX.Tokenizer import CC_EXPANDED
+from plasTeX.Tokenizer import Node
 
-#sys.path.insert(0, os.path.join(os.path.dirname(plasTeX.__file__), 'packages'))
+encoding = 'utf-8'
 
 print >>sys.stderr, 'plasTeX version 1.0'
 file = sys.argv[1]
-
-#s = TeX(open(file,'r'))
-#for item in s:
-#    print item.code, item
-#print s.source(s)
-#sys.exit()
+basename = os.path.splitext(file)[0]
 
 # Parse document
-#TeX.disableLogging()
-s = TeX(codecs.open(file,'r','utf-8'))
-#print [(x, x.depth) for x in s]
+s = TeX(codecs.open(file,'r',encoding))
 document = s.parse()
-#for i, item in enumerate(s.sourcetokens):
-#    print i, repr(item)
-#print ''.join([repr(x) for x in document])
-#output = []
-#for item in document:
-#    if item.code == 100:
-#        print repr(item), id(item)
-#    else:
-#        print item,
-document = [x for x in document if x.code == CC_EXPANDED and x.nodeName == 'document'].pop()
-outfile = '%s.xml' % os.path.splitext(file)[0]
-codecs.open(outfile,'w','utf-8').write(document.toXML())
-#print s.source(document)
+sourcefile = '%s.source' % basename
+codecs.open(sourcefile,'w',encoding).write(s.source(document))
+document = [x for x in document if x.nodeType == Node.ELEMENT_NODE and x.nodeName == 'document'].pop()
+outfile = '%s.xml' % basename
+codecs.open(outfile,'w',encoding).write(document.toXML())
 sys.exit()
-
-basename = os.path.splitext(os.path.basename(file))[0]
-
-open(basename+'.xml', 'w').write(document.toXML())
 
 # Apply renderer
 from plasTeX.renderers.xhtml import xhtml as renderer
@@ -50,7 +31,3 @@ s.context.applyRenderer(renderer)
 renderer.imager.addtopreamble(document.preamble)
 print document.render(file=basename+'.html')
 renderer.imager.close()
-
-# Expanded source
-s.persistent.seek(0)
-open(basename+'.source','w').write(s.persistent.read())

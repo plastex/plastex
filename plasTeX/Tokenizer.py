@@ -1,30 +1,9 @@
 #!/usr/bin/env python
 
-"""
-TeX
-
-This module contains the facilities for parsing TeX and LaTeX source.
-The `TeX' class is an iterator interface to (La)TeX source.  Simply
-feed a `TeX' instance using the input method, then iterate over the 
-expanded tokens through the standard Python iterator interface.
-
-Example:
-    tex = TeX()
-    tex.input(open('foo.tex','r'))
-    for token in tex:
-        print token
-
-"""
-
-import string, re
-from Utils import *
+import string
+from Node import Node
 try: from cStringIO import StringIO
 except: from StringIO import StringIO
-
-# Tokenizer states
-STATE_S = 1
-STATE_M = 2
-STATE_N = 4
 
 class category(int): pass
 
@@ -45,14 +24,6 @@ CC_OTHER = category(12)
 CC_ACTIVE = category(13)
 CC_COMMENT = category(14)
 CC_INVALID = category(15)
-
-# Special category codes for internal use
-CC_EXPANDED = category(100)
-
-# Super-special codes that are used for internal processing and
-# should be ignored in the output stream
-CC_ENDTOKENS = category(500)
-CC_ENDCONTEXT = category(501)
 
 # Default TeX categories
 CATEGORIES = [
@@ -76,54 +47,30 @@ CATEGORIES = [
    ''     # 15 - Invalid character
 ]
 
-class Token(unicode):
+class Token(unicode, Node):
     """
     Base class for all unexpanded TeX tokens
 
     """
-    code = None
-    macro = None
-    depth = 0
-    level = CHARACTER
-    def digest(self, tokens):
-        return
+    catcode = None       # TeX category code
+    macro = None         # Macro to invoke in place of this token
+
+    nodeType = Node.TEXT_NODE
+
     def __repr__(self):
         return unicode(self)
+
     def __cmp__(self, other):
         # Token comparison -- character and code must match
         if isinstance(other, Token):
-            if self.code == other.code:
+            if self.catcode == other.catcode:
                 return unicode.__cmp__(self, other)
-            return category.__cmp__(self.code, other.code)
+            return category.__cmp__(self.catcode, other.catcode)
         # Not comparing to token, just do a string match
         return unicode.__cmp__(self, unicode(other))
 
 # Array for getting token class for the corresponding catcode
 TOKENCLASSES = [None] * 16
-
-class EndTokens(Token):
-    """
-    Demarcates the end of a stream of tokens to be processed
-
-    When this token is reached, the TeX processor should throw
-    a StopIteration exception.  This is used to process short
-    sub-streams of tokens.  These tokens should never make it to
-    the output stream.
-
-    """
-    code = CC_ENDTOKENS
-
-class EndContext(Token):
-    """
-    Demarcates the end of a context 
-
-    This is used to finish macros that should end at the end of the
-    context whether it is ended by a surrounding environment or
-    an end group (i.e. { ).  These tokens are for internal processing
-    only and should be ignored in the output stream.
-
-    """
-    code = CC_ENDCONTEXT
 
 class EscapeSequence(Token):
     """
@@ -134,7 +81,7 @@ class EscapeSequence(Token):
     the escape character.
 
     """
-    code = CC_ESCAPE
+    catcode = CC_ESCAPE
     def __repr__(self):
         if self == 'par':
             return '\n\n'
@@ -147,74 +94,76 @@ TOKENCLASSES[CC_ESCAPE] = EscapeSequence
 
 class BeginGroup(Token):
     """ Beginning of a TeX group """
-    code = CC_BGROUP
+    catcode = CC_BGROUP
     macro = 'bgroup'
 
 TOKENCLASSES[CC_BGROUP] = BeginGroup
 
 class EndGroup(Token):
     """ Ending of a TeX group """
-    code = CC_EGROUP
+    catcode = CC_EGROUP
     macro = 'egroup'
 
 TOKENCLASSES[CC_EGROUP] = EndGroup
 
 class MathShift(Token):
-    code = CC_MATHSHIFT
+    catcode = CC_MATHSHIFT
     macro = 'mathshift'
 
 TOKENCLASSES[CC_MATHSHIFT] = MathShift
 
 class Alignment(Token):
-    code = CC_ALIGNMENT
+    catcode = CC_ALIGNMENT
     macro = 'alignmenttab'
 
 TOKENCLASSES[CC_ALIGNMENT] = Alignment
 
 class EndOfLine(Token):
-    code = CC_EOL
+    catcode = CC_EOL
 
 TOKENCLASSES[CC_EOL] = EndOfLine
 
 class Parameter(Token):
-    code = CC_PARAMETER
+    catcode = CC_PARAMETER
 
 TOKENCLASSES[CC_PARAMETER] = Parameter
 
 class Superscript(Token):
-    code = CC_SUPER
+    catcode = CC_SUPER
     macro = 'superscript'
 
 TOKENCLASSES[CC_SUPER] = Superscript
 
 class Subscript(Token):
-    code = CC_SUB
+    catcode = CC_SUB
     macro = 'subscript'
 
 TOKENCLASSES[CC_SUB] = Subscript
 
 class Space(Token):
-    code = CC_SPACE
+    catcode = CC_SPACE
 
 TOKENCLASSES[CC_SPACE] = Space
 
 class Letter(Token):
-    code = CC_LETTER
+    catcode = CC_LETTER
 
 TOKENCLASSES[CC_LETTER] = Letter
 
 class Other(Token):
-    code = CC_OTHER
+    catcode = CC_OTHER
 
 TOKENCLASSES[CC_OTHER] = Other
 
 class Active(Token):
-    code = CC_ACTIVE
+    catcode = CC_ACTIVE
 
 TOKENCLASSES[CC_ACTIVE] = Active
 
 class Comment(Token):
-    code = CC_COMMENT
+    catcode = CC_COMMENT
+    nodeType = Node.COMMENT_NODE
+    nodeName = '#comment'
 
 TOKENCLASSES[CC_COMMENT] = Comment
 
@@ -229,6 +178,11 @@ class chariter(object):
 
 class Tokenizer(object):
 
+    # Tokenizer states
+    STATE_S = 1
+    STATE_M = 2
+    STATE_N = 4
+
     def __init__(self, source, context):
         """
         Instantiate a tokenizer
@@ -241,7 +195,7 @@ class Tokenizer(object):
 
         """
         self.context = context
-        self.state = STATE_N
+        self.state = Tokenizer.STATE_N
         self._charbuffer = []
         self._tokbuffer = []
         if isinstance(source, basestring):
@@ -367,27 +321,27 @@ class Tokenizer(object):
 
         for token in chiter:
 
-            code = token.code
- 
-            if code == CC_EXPANDED:
+            if token.nodeType == Node.ELEMENT_NODE:
                 raise ValueError, 'Expanded tokens should never make it here'
 
+            code = token.catcode
+ 
             # Escape sequence
-            elif code == CC_ESCAPE:
+            if code == CC_ESCAPE:
 
                 # Get name of command sequence
-                self.state = STATE_M
+                self.state = Tokenizer.STATE_M
 
                 for token in chiter:
  
-                    if token.code == CC_EOL:
+                    if token.catcode == CC_EOL:
                         self.pushchar(token)
                         token = EscapeSequence()
 
-                    elif token.code == CC_LETTER:
+                    elif token.catcode == CC_LETTER:
                         word = [token]
                         for t in chiter:
-                            if t.code == CC_LETTER:
+                            if t.catcode == CC_LETTER:
                                 word.append(t) 
                             else:
                                 self.pushchar(t)
@@ -397,13 +351,13 @@ class Tokenizer(object):
                     else:
                         token = EscapeSequence(token)
 
-                    if token.code != CC_EOL:
+                    if token.catcode != CC_EOL:
                         # Absorb following whitespace
-                        self.state = STATE_S
+                        self.state = Tokenizer.STATE_S
                         for t in chiter:
-                            if t.code == CC_SPACE:
+                            if t.catcode == CC_SPACE:
                                 continue
-                            elif t.code == CC_EOL:
+                            elif t.catcode == CC_EOL:
                                 continue
                             self.pushchar(t)
                             break
@@ -417,14 +371,14 @@ class Tokenizer(object):
 
             # End of line
             elif code == CC_EOL:
-                if self.state == STATE_S:
-                    self.state = STATE_N
+                if self.state == Tokenizer.STATE_S:
+                    self.state = Tokenizer.STATE_N
                     continue
-                elif self.state == STATE_M:
+                elif self.state == Tokenizer.STATE_M:
                     token = Space(' ')
                     code = CC_SPACE
-                    self.state = STATE_N
-                elif self.state == STATE_N: 
+                    self.state = Tokenizer.STATE_N
+                elif self.state == Tokenizer.STATE_N: 
                     if token != '\n':
                         self.linenumber += 1
                         self.readline()
@@ -432,19 +386,19 @@ class Tokenizer(object):
                     code = CC_ESCAPE
 
             elif code == CC_SPACE:
-                if self.state in [STATE_S, STATE_N]:
+                if self.state in [Tokenizer.STATE_S, Tokenizer.STATE_N]:
                     continue
-                self.state = STATE_S
+                self.state = Tokenizer.STATE_S
                 token = Space(u' ')
 
             elif code == CC_COMMENT:
                 self.readline() 
                 self.linenumber += 1
-                self.state = STATE_N
+                self.state = Tokenizer.STATE_N
                 continue
 
             else:
-                self.state = STATE_M
+                self.state = Tokenizer.STATE_M
 
             return token
 

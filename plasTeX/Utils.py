@@ -1,45 +1,18 @@
 #!/usr/bin/env python
 
 import sys, os, new
+from Node import Node
 
-DOCUMENT = -sys.maxint
-VOLUME = -2
-PART = -1
-CHAPTER = 0
-SECTION = 1
-SUBSECTION = 2
-SUBSUBSECTION = 3
-PARAGRAPH = 4
-SUBPARAGRAPH = 5
-SUBSUBPARAGRAPH = 6
-PAR = 20
-ENVIRONMENT = 20
-CHARACTER = COMMAND = 100
-
-reprchildren = lambda o: ''.join([repr(x) for x in o.children])
-isexpanded = lambda o: o.code > 99   # See Tokenizer.py
-isinternal = lambda o: o.code > 499   # See Tokenizer.py
-ismacro = lambda o: hasattr(o, 'texname')
-issection = lambda o: level > DOCUMENT and level < ENVIRONMENT 
-isenv = lambda o: level == ENVIRONMENT
-
-def classname(obj):
-    if type(obj) is type:
-        return obj.__name__
-    else:
-        return type(obj).__name__
-
-def macroname(obj):
-     if obj.texname is None:
-         return classname(obj)
-     return obj.texname
-
-def xmlstr(obj):
-    """ Escape special characters to create a legal xml string """
-    if isinstance(obj, basestring):
-        return obj.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;')
-    else:
-        return str(obj)
+def reprchildren(o): return ''.join([repr(x) for x in o.childNodes])
+def ismacro(o): return hasattr(o, 'texname')
+def issection(o): return level > Node.DOCUMENT_LEVEL and level < Node.ENVIRONMENT_LEVEL 
+def isenv(o): return level == Node.ENVIRONMENT_LEVEL
+def macroname(o):
+     if o.texname is None:
+         if type(o) is type:
+             return o.__name__
+         return type(o).__name__
+     return o.texname
 
 def paragraphs(toklist, par, allow_single=False):
     """ Group content into paragraphs """

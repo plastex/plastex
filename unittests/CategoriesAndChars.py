@@ -28,7 +28,7 @@ class CategoryCodes(TestCase):
         cs = type(s.context['code'])
         assert tok is cs, '"%s" != "%s"' % (tok, cs)
 
-        assert not [x.code for x in tokens[0].attributes['self'] if x.code not in [10,11]], \
+        assert not [x.catcode for x in tokens[0].attributes['self'] if x.catcode not in [10,11]], \
                'All codes should be 10 or 11: %s' % [x.code for x in tokens[0]]
 
         tok = type(tokens[-2])
@@ -49,7 +49,7 @@ class CategoryCodes(TestCase):
         tokens = [x for x in s]
 
         text = tokens[6:-5]
-        assert not [x for x in text if x.code not in [10,11]], [x.code for x in text]
+        assert not [x for x in text if x.catcode not in [10,11]], [x.catcode for x in text]
 
         tok = type(tokens[-2])
         tab = type(s.context['alignmenttab'])

@@ -5,12 +5,18 @@ from Utils import *
 from imagers.dvi2bitmap import DVI2Bitmap
 from imagers.dvipng import DVIPNG
 
+def xmlstr(obj):
+    """ Escape special characters to create a legal xml string """
+    if isinstance(obj, basestring):
+        return obj.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;')
+    else:
+        return str(obj)
+
 class Renderer(dict):
     def __init__(self, data={}):
         dict.__init__(self, data)
         self.imager = DVIPNG()
 #       self.imager = DVI2Bitmap()
-
 
 class RenderMixIn(object):
     """
@@ -57,7 +63,7 @@ class RenderMixIn(object):
 #           source = ' source="%s"' % xmlstr(self.source)
 
         # Bail out early if the element is empty
-        if not(self.attributes) and not(self.children):
+        if not(self.attributes) and not(self.childNodes):
             return '<%s%s%s/>' % (name, modifier, source)
 
         s = ['<%s%s%s>\n' % (name, modifier, source)]
@@ -77,9 +83,9 @@ class RenderMixIn(object):
 #           s.append('</args>\n')
 
         # Render content
-        if self.children:
+        if self.childNodes:
 #           s.append('<content>')
-            for value in self.children:
+            for value in self.childNodes:
                 if hasattr(value, 'toXML'):
                     value = value.toXML()
                 else: 
@@ -141,7 +147,7 @@ class RenderMixIn(object):
 
     def __str__(self):
         s = []
-        for child in self.children:
+        for child in self.childNodes:
             if isinstance(child, basestring):
                 s.append(child)
             else:

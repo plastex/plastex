@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from plasTeX.Utils import *
-from plasTeX import Environment, Command, MODE_END
+from plasTeX import Environment, Command, CMDMODE_END
 
 Node = Command
 
@@ -84,7 +84,7 @@ class Array(Environment):
         args = 'colspan:int colspec self'
 
     def invoke(self, tex):
-        if self.mode == MODE_END:
+        if self.cmdmode == CMDMODE_END:
             tex.context.pop(self) # End of table, row, and cell
             return
         Environment.invoke(self, tex)

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 from plasTeX.Utils import *
-from plasTeX.Tokenizer import CC_EXPANDED
-from plasTeX import Macro, Command, Environment, MODE_BEGIN, MODE_END
+from plasTeX.Tokenizer import Node
+from plasTeX import Macro, Command, Environment, CMDMODE_BEGIN, CMDMODE_END
 from plasTeX.Logging import getLogger
 
 log = getLogger()
@@ -18,7 +18,7 @@ class begin(Macro):
         name = tex.getArgument(type='str')
         envlog.debug(name)
         obj = tex.context[name]
-        obj.mode = MODE_BEGIN
+        obj.cmdmode = CMDMODE_BEGIN
         out = obj.invoke(tex)
         if out is None:
             out = [obj]
@@ -32,7 +32,7 @@ class end(Macro):
         name = tex.getArgument(type='str')
         envlog.debug(name)
         obj = tex.context[name]
-        obj.mode = MODE_END
+        obj.cmdmode = CMDMODE_END
         out = obj.invoke(tex)
         if out is None:
             out = [obj]
@@ -118,7 +118,7 @@ class x_ifnextchar(Command):
 
 
 class document(Environment):
-    level = DOCUMENT
+    level = Node.DOCUMENT_LEVEL
     def toXML(self):
         return '<?xml version="1.0"?>\n%s' % Environment.toXML(self)
 
@@ -126,161 +126,42 @@ class StartSection(Command):
     args = '* [ toc ] title'
 
     def digest(self, tokens):
-        self.children = []
+        self.childNodes = []
         # Absorb the tokens that belong to us
         for item in tokens:
             if item.level <= self.level:
                 tokens.push(item)
                 break
-            if item.code == CC_EXPANDED:
+            if item.nodeType == Node.ELEMENT_NODE:
                 item.digest(tokens)
-            self.children.append(item)
+            self.childNodes.append(item)
     
 class chapter(StartSection):
-    level = CHAPTER
+    level = Node.CHAPTER_LEVEL
 
 class section(StartSection):
-    level = SECTION
+    level = Node.SECTION_LEVEL
 
 class subsection(StartSection):
-    level = SUBSECTION
+    level = Node.SUBSECTION_LEVEL
 
 class subsubsection(StartSection):
-    level = SUBSUBSECTION 
+    level = Node.SUBSUBSECTION_LEVEL
 
 class paragraph(StartSection):
-    level = PARAGRAPH
+    level = Node.PARAGRAPH_LEVEL
 
 class subparagraph(StartSection):
-    level = SUBPARAGRAPH
+    level = Node.SUBPARAGRAPH_LEVEL
 
 class subsubparagraph(StartSection):
-    level = SUBSUBPARAGRAPH
+    level = Node.SUBSUBPARAGRAPH_LEVEL
 
+class vspace(Command):
+    args = '* length:str'
 
-class chaphead(chapter):
-    args = '[ toc ] ( helptag:str ) label:str title'
+class hspace(Command):
+    args = '* length:str'
 
-class headi(section):
-    args = '[ toc ] ( helptag:str ) label:str title'
-
-class headii(subsection):
-    args = '[ toc ] ( helptag:str ) label:str title'
-
-class headiii(subsubsection):
-    args = '[ toc ] ( helptag:str ) label:str title'
-
-class headiv(paragraph):
-    args = '[ toc ] ( helptag:str ) label:str title'
-
-class headv(subparagraph):
-    args = '[ toc ] ( helptag:str ) label:str title'
-
-class headvi(subsubparagraph):
-    args = '[ toc ] ( helptag:str ) label:str title'
-
-class syni(Command):
-    args = 'entry'
-class sbji(Command):
-    args = 'entry'
-class ssbji(Command):
-    args = 'entry subentry'
-class ssyni(Command):
-    args = 'entry subentry'
-class sbjsee(Command):
-    args = 'entry see'
-class datastep(Command):
-    args = 'file:str'
-class sascode(Command):
-    args = 'file:str'
-class sasout(Command):
-    args = 'width:str file:str [ %options ]'
-class sasop(Command):
-    args = '( helptag:str ) label:str title'
-class sasstmt(Command):
-    args = '* statement options'
-class help(Command):
-    args = 'text'
-class xhelp(Command):
-    args = 'text'
-class ssbifourteen(Environment):
+class pagebreak(Command): 
     pass
-class hv(Environment):
-    pass
-class fref(Command):
-    args = '[ type:str ] label:str'
-class quotes(Command):
-    args = 'text'
-class ssbeleven(Environment):
-    pass
-class ssiten(Environment):
-    pass
-class colon(Command):
-    pass
-class sref(Command):
-    args = '[ type:str ] label:str'
-class chapref(Command):
-    args = '[ type:str ] label:str'
-class oref(Command):
-    args = '[ type:str ] label:str'
-class tablehead(Command):
-    args = 'label:str title'
-class examplehead(Command):
-    args = 'label:str title'
-class textpercent(Command):
-    texname = '%'
-class alpha(Command): pass
-class textdollar(Command):
-    texname = '$'
-class sigma(Command): pass
-class prime(Command): pass
-class htmlref(Command):
-    args = 'text label:str'
-class fsbji(Command):
-    args = 'key entry'
-class setlength(Command):
-    args = 'length:cs value:str'
-class textunderscore(Command):
-    texname = '_'
-class fssbji(Command):
-    args = 'key entry1 entry2'
-class frac(Command):
-    args = 'numerator denominator'
-class bar(Command):
-    args = 'text'
-class displaystyle(Command): pass
-class sqrt(Command):
-    args = 'text'
-class max(Command): pass
-class min(Command): pass
-class quad(Command): pass
-class ne(Command): pass
-class left(Command):
-    args = 'char'
-class right(Command):
-    args = 'char'
-class pm(Command): pass
-class mu(Command): pass
-class lbrace(Command): pass
-class _lbrace(Command): 
-    texname = '{'
-class rbrace(Command): pass
-class _rbrace(Command): 
-    texname = '}'
-class chi(Command): pass
-class leq(Command): pass
-class int(Command): pass
-class geq(Command): pass
-class dashtwo(Command): pass
-class textampersand(Command):
-    texname = '&'
-
-class sasstmts(Environment):
-    class item(Command): pass
-class reference(Environment):
-    class item(Command): pass
-
-#class begindisplaymath(Definition):
-#    definition = r'\begin{displaymath}'
-#class enddisplaymath(Definition):
-#    definition = r'\end{displaymath}'
