@@ -54,9 +54,6 @@ class Token(Text):
     catcode = None       # TeX category code
     macroName = None     # Macro to invoke in place of this token
 
-    # Prevent the creation of an instance variable dictionary
-    __slots__ = []
-
     def __cmp__(self, other):
         # Token comparison -- character and code must match
         if isinstance(other, Token):
@@ -80,7 +77,6 @@ class EscapeSequence(Token):
     the escape character.
 
     """
-    __slots__ = Token.__slots__
     catcode = Token.CC_ESCAPE
     def source(self):
         if self == 'par':
@@ -96,64 +92,51 @@ class EscapeSequence(Token):
 
 class BeginGroup(Token):
     """ Beginning of a TeX group """
-    __slots__ = Token.__slots__
     catcode = Token.CC_BGROUP
     macroName = 'bgroup'
 
 class EndGroup(Token):
     """ Ending of a TeX group """
-    __slots__ = Token.__slots__
     catcode = Token.CC_EGROUP
     macroName = 'egroup'
 
 class MathShift(Token):
-    __slots__ = Token.__slots__
     catcode = Token.CC_MATHSHIFT
     macroName = 'active::$'
 
 class Alignment(Token):
-    __slots__ = Token.__slots__
     catcode = Token.CC_ALIGNMENT
     macroName = 'active::&'
 
 class EndOfLine(Token):
-    __slots__ = Token.__slots__
     catcode = Token.CC_EOL
     isElementContentWhitespace = True
 
 class Parameter(Token):
-    __slots__ = Token.__slots__
     catcode = Token.CC_PARAMETER
 
 class Superscript(Token):
-    __slots__ = Token.__slots__
     catcode = Token.CC_SUPER
     macroName = 'active::^'
 
 class Subscript(Token):
-    __slots__ = Token.__slots__
     catcode = Token.CC_SUB
     macroName = 'active::_'
 
 class Space(Token):
-    __slots__ = Token.__slots__
     catcode = Token.CC_SPACE
     isElementContentWhitespace = True
 
 class Letter(Token):
-    __slots__ = Token.__slots__
     catcode = Token.CC_LETTER
 
 class Other(Token):
-    __slots__ = Token.__slots__
     catcode = Token.CC_OTHER
 
 class Active(Token):
-    __slots__ = Token.__slots__
     catcode = Token.CC_ACTIVE
 
 class Comment(Token):
-    __slots__ = Token.__slots__
     catcode = Token.CC_COMMENT
     nodeType = Node.COMMENT_NODE
     nodeName = '#comment'

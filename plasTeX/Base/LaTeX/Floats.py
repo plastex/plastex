@@ -19,8 +19,11 @@ class Caption(Command):
 Counter('figure','chapter')
 Counter('table','chapter')
 
-class thefigure(TheCounter): pass
-class thetable(TheCounter): pass
+class thefigure(TheCounter):
+    format = '%(thechapter)s.%(figure)s'
+
+class thetable(TheCounter):
+    format = '%(thechapter)s.%(table)s'
 
 class figure(Environment):
     args = 'loc:str'

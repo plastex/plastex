@@ -22,12 +22,9 @@ class bibliography(chapter):
     def invoke(self, tex):
         res = super(bibliography, self).invoke(tex)
         self.attributes['title'] = bibliography.title
-
-        tex.loadAuxiliaryFile()
-
         # Load bibtex file
         try:
-            file = tex.kpsewhich(self.ownerDocument.userdata['jobname'], ['.bbl'])
+            file = tex.kpsewhich(tex.jobname, ['.bbl'])
             tex.input(open(file))
         except OSError, msg:
             log.warning(msg)
@@ -44,10 +41,18 @@ class thebibliography(List):
 
         def invoke(self, tex):
             res = List.item.invoke(self, tex)
+            a = self.attributes
             # Put the entry into the global bibliography
-            bibliography.bibitems[self.attributes['key']] = self
+            bibliography.bibitems[a['key']] = self
             thebibliography.bibitem.numitems += 1
             self.ref = str(thebibliography.bibitem.numitems)
+            key = a['key']
+            label = a.get('label')
+            if not bibcite.citations.has_key(key):
+                if label is None:
+                    label = TeXFragment()
+                    label.extend(self.ref)
+                bibcite.citations[key] = label
             return res
 
         def id(self):

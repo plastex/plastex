@@ -669,21 +669,25 @@ class Node(object):
         try:
             return getattr(self, '@childNodes')
         except AttributeError:
-            # Allow the `self` key of attributes to act as the `childNodes`
-            if self.attributes and self.attributes.has_key('self'):
-                setattr(self, '@childNodes', self.attributes['self'])
-            else:
-                setattr(self, '@childNodes', [])
-        return getattr(self, '@childNodes')
+            pass
+        # Allow the `self` key of attributes to act as the `childNodes`
+        a = self.attributes
+        if a and a.has_key('self'):
+            nodes = a['self']
+            setattr(self, '@childNodes', nodes)
+            return nodes
+        else:
+            nodes = []
+            setattr(self, '@childNodes', nodes)
+            return nodes
     childNodes = property(childNodes)
 
     def hasChildNodes(self):
         """ Do we have any child nodes? """
-        try:
-            return not(not(getattr(self, '@childNodes')))
-        except AttributeError:
-            pass
-        return self.attributes and self.attributes.has_key('self')
+        if hasattr(self, '@childNodes'):
+            return True
+        a = self.attributes
+        return a and a.has_key('self')
 
     def firstChild(self):
         """ Return the first child in the list """
@@ -790,9 +794,8 @@ class Node(object):
         the item removed from the list
 
         """
-        if self.hasChildNodes():
-            return self.childNodes.pop(index)
-        raise IndexError, 'object has no childNodes'
+        try: return self.childNodes.pop(index)
+        except: raise IndexError, 'object has no childNodes'
 
     def append(self, newChild):
         """ 
@@ -812,7 +815,10 @@ class Node(object):
                 self.append(item)
         else:
             self.childNodes.append(newChild) 
-        newChild.parentNode = self
+        if self.nodeType == self.DOCUMENT_FRAGMENT_NODE:
+            newChild.parentNode = self.parentNode
+        else:
+            newChild.parentNode = self
         return newChild
 
     appendChild = append
@@ -837,7 +843,10 @@ class Node(object):
                 i += 1
         else:
             self.childNodes.insert(i, newChild)
-        newChild.parentNode = self
+        if self.nodeType == self.DOCUMENT_FRAGMENT_NODE:
+            newChild.parentNode = self.parentNode
+        else:
+            newChild.parentNode = self
         return newChild
 
     def __setitem__(self, i, node):
@@ -924,25 +933,40 @@ class Node(object):
     def normalize(self):
         """ Combine consecutive text nodes and remove comments """
         # Remove all Comment nodes first
-        items = []
-        for i, item in enumerate(self): 
-            if item.nodeType == Node.COMMENT_NODE:
-                items.insert(0,i)
-        for i in items:
-            self.pop(i)
+#       items = []
+#       for i, item in enumerate(self): 
+#           if item.nodeType == Node.COMMENT_NODE:
+#               items.insert(0,i)
+#       for i in items:
+#           self.pop(i)
+
+        if not self.hasChildNodes():
+            return
 
         # Now merge Text nodes
-        i = 0
-        while i < len(self):
-            if self[i].nodeType == Node.TEXT_NODE:
-                group = [self[i]]
-                while i < (len(self)-1) and self[i+1].nodeType == Node.TEXT_NODE:
-                    group.append(self.pop(i+1)) 
-                if len(group) > 1:
-                    self[i] = type(group[0])(u''.join(group))
-            elif hasattr(self[i], 'normalize'):
-                self[i].normalize()
-            i += 1
+        newnodes = []
+        childNodes = self.childNodes
+        TEXT_NODE = Node.TEXT_NODE
+        while childNodes:
+            node = childNodes.pop()
+            if node.nodeType == TEXT_NODE:
+                firstnode = node
+                group = [node]
+                appendNode = False
+                while childNodes:
+                    node = childNodes.pop()
+                    if node.nodeType == TEXT_NODE:
+                        group.insert(0,node) 
+                        continue
+                    appendNode = True
+                    break
+                newnodes.append(type(firstnode)(u''.join(group)))
+                if not appendNode:
+                    continue
+            node.normalize()
+            newnodes.append(node)
+        newnodes.reverse()
+        childNodes.extend(newnodes)
 
     def isSupported(self, feature, version):
         """ Is the requested feature supported? """
@@ -1071,9 +1095,8 @@ class Node(object):
         return 0
 
     def __getitem__(self, i):
-        if self.hasChildNodes():
-            return self.childNodes[i]
-        raise IndexError, 'object has no childNodes'
+        try: return self.childNodes[i]
+        except: raise IndexError, 'object has no childNodes'
 
 
 class DocumentFragment(Node):
@@ -2020,11 +2043,7 @@ class Document(Node):
         self.append(source)
         return source
 
-    def normalizeDocument(self):
-        """ Normalize comments and text nodes in entire document """
-        for item in self:
-            if hasattr(item, 'normalize'):
-                item.normalize()
+    normalizeDocument = Node.normalize
 
     def renameNode(self, n, namespaceURI, qualifiedName):
         """

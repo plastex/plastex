@@ -458,7 +458,8 @@ class TeX(object):
         return self.readArgumentAndSource(*args, **kwargs)[0]
 
     def readArgumentAndSource(self, spec=None, type=None, subtype=None, 
-                    delim=',', expanded=False, default=None, slot=None):
+                    delim=',', expanded=False, default=None, parentNode=None,
+                    name=None):
         """ 
         Get an argument and the TeX source that created it
 
@@ -483,9 +484,8 @@ class TeX(object):
             should be expanded or just returned as an unexpanded 
             text string
         default -- value to return if the argument doesn't exist
-        slot -- tuple containing the macro instance and the argument name
-            currently being retrieved.  This is useful for printing
-            nice error messages and is also needed to resolved \\refs.
+        parentNode -- the node that the argument belongs to
+        name -- the name of the argument being parsed
 
         Returns:
         tuple where the first argument is:
@@ -573,16 +573,15 @@ class TeX(object):
                 raise ValueError, 'Unrecognized specifier "%s"' % spec
 
         except Exception, msg:
-            if slot:
-                log.error('Error while reading argument "%s" of %s%s (%s)' % \
-                          (slot[1], slot[0].nodeName, self.lineinfo, msg))
+            log.error('Error while reading argument "%s" of %s%s (%s)' % \
+                          (name, parentNode.nodeName, self.lineinfo, msg))
             raise 
 
         if toks is None:
             Parameter.enable()
             return default, ''
 
-        res = self.cast(toks, type, subtype, delim, slot)
+        res = self.cast(toks, type, subtype, delim, parentNode, name)
 
         # Normalize any document fragments
         if expanded and \
@@ -753,7 +752,8 @@ class TeX(object):
 
         return result
 
-    def cast(self, tokens, dtype, subtype=None, delim=',', slot=None):
+    def cast(self, tokens, dtype, subtype=None, delim=',', 
+                   parentNode=None, name=None):
         """ 
         Cast the tokens to the appropriate type
 
@@ -774,14 +774,25 @@ class TeX(object):
         object of the specified type
 
         """
+        # No type specified
         if dtype is None:
-            return tokens
+            pass
 
-        if not self.argtypes.has_key(dtype):
+        # Could not find specified type
+        elif not self.argtypes.has_key(dtype):
             log.warning('Could not find datatype "%s"' % dtype)
-            return tokens
+            pass
 
-        return self.argtypes[dtype](tokens, subtype=subtype, delim=delim, slot=slot)
+        # Casting to specified type
+        else:
+            tokens = self.argtypes[dtype](tokens, subtype=subtype, 
+                     delim=delim, parentNode=parentNode, name=name)
+
+        # Set parent node as needed 
+        if getattr(tokens,'nodeType',None) == Macro.DOCUMENT_FRAGMENT_NODE:
+            tokens.parentNode = parentNode
+
+        return tokens
 
     def castControlSequence(self, tokens, **kwargs):
         """
@@ -854,8 +865,7 @@ class TeX(object):
 
         """
         ref = self.castString(tokens, **kwargs)
-        obj, key = kwargs['slot']
-        self.context.ref(obj, ref)
+        self.context.ref(kwargs['parentNode'], ref)
         return ref
         
     def castNumber(self, tokens, **kwargs):
@@ -1465,12 +1475,11 @@ class TeX(object):
 
     def loadAuxiliaryFile(self):
         """ Read in an auxiliary file (only once) """
-        file = os.path.splitext(self.inputs[0][0].filename)[0]
-        if file in self.auxfiles:
+        if self.jobname in self.auxfiles:
             return
-        self.auxfiles.append(file)
+        self.auxfiles.append(self.jobname)
         try:
-            file = self.kpsewhich(file, ['.aux'])
+            file = self.kpsewhich(self.jobname, ['.aux'])
             self.pushtoken(EndTokens)
             self.input(open(file))
             for item in self:
@@ -1478,4 +1487,9 @@ class TeX(object):
                     break
         except OSError, msg:
             log.warning(msg)
+
+    def jobname(self):
+        """ Return the basename of the main input file """
+        return os.path.basename(os.path.splitext(self.inputs[0][0].filename)[0])
+    jobname = property(jobname)
 

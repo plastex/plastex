@@ -3,40 +3,43 @@
 import string, re
 from DOM import Element, Text, Node, DocumentFragment, Document
 from Tokenizer import Token
-from plasTeX.Logging import getLogger
+from plasTeX import Logging
 
-log = getLogger()
-status = getLogger('status')
-deflog = getLogger('parse.definitions')
-envlog = getLogger('parse.environments')
-mathshiftlog = getLogger('parse.mathshift')
-digestlog = getLogger('parse.digest')
+log = Logging.getLogger()
+status = Logging.getLogger('status')
+deflog = Logging.getLogger('parse.definitions')
 
 #
 # Utility functions
 #
 
 def subclasses(o):
+    """ Return all subclasses of the given class """
     output = [o]
     for item in o.__subclasses__():
         output.extend(subclasses(item))
     return output
 
 def sourcechildren(o): 
+    """ Return the LaTeX source of the child nodes """
     if o.hasChildNodes():
         return u''.join([x.source for x in o.childNodes])
     return u''
 
 def sourcearguments(o): 
+    """ Return the LaTeX source of the arguments """
     return o.argsource
 
 def ismacro(o): 
+    """ Is the given object a macro? """
     return hasattr(o, 'macroName')
 
 def issection(o): 
+    """ Is the given object a section? """
     return level > Node.DOCUMENT_LEVEL and level < Node.ENVIRONMENT_LEVEL 
 
 def macroname(o):
+     """ Return the macro name of the given object """
      if o.macroName is None:
          if type(o) is type:
              return o.__name__
@@ -94,7 +97,6 @@ class Macro(Element):
 
     macroName = None        # TeX macro name (instead of class name)
     macroMode = MODE_NONE   # begin, end, or none
-#   categories = None       # category codes local to this macro
     mathMode = None
 
     # Node variables
@@ -270,7 +272,9 @@ class Macro(Element):
         arg = None
         try:
             for i, arg in enumerate(self.arguments):
-                output, source = tex.readArgumentAndSource(slot=(self, arg.name), **arg.options)
+                output, source = tex.readArgumentAndSource(parentNode=self, 
+                                                           name=arg.name, 
+                                                           **arg.options)
                 # Check for a '*' type argument at the beginning of the
                 # argument list.  If there is one, don't increment counters
                 # or set labels.  This must be done immediately since
@@ -327,9 +331,11 @@ class Macro(Element):
         """
         tself = type(self)
 
+        # Check for cached version first
         if vars(tself).has_key('@arguments'):
             return vars(tself)['@arguments']
 
+        # If the argument string is empty, short circuit
         if not tself.args:
             setattr(tself, '@arguments', [])
             return getattr(tself, '@arguments')
@@ -394,6 +400,7 @@ class Macro(Element):
             else:
                 raise ValueError, 'Could not parse argument string "%s", reached unexpected "%s"' % (tself.args, item)
 
+        # Cache the result
         setattr(tself, '@arguments', macroargs)
 
         return macroargs
@@ -428,6 +435,7 @@ class Macro(Element):
                     return tok
                 tok.parentNode = self
                 tok.digest(tokens)
+            # Stay within our context
             if tok.contextDepth < self.contextDepth:
                 tokens.push(tok)
                 break
@@ -436,6 +444,12 @@ class Macro(Element):
     def paragraphs(self):
         """
         Group content into paragraphs
+
+        This algorithm is based on TeX's paragraph grouping algorithm.
+        This has the downside that it isn't the same paragraph algorithm
+        as HTML which doesn't allow block-level elements (e.g. table,
+        ol, ul, etc.) inside paragraphs.  This will result in invalid
+        HTML, but it isn't likely to be noticed in a browser.
 
         """
 #       return
@@ -447,7 +461,7 @@ class Macro(Element):
     
             item = self[i]
     
-            if item.nodeType == Node.ELEMENT_NODE and item.nodeName == 'par':
+            if item.level == Node.PAR_LEVEL:
     
                 if parclass is None:
                     parclass = type(item)
@@ -481,7 +495,7 @@ class Macro(Element):
 
         try:
             first = self[0]
-            if first.nodeType == Node.ELEMENT_NODE and first.nodeName == 'par':
+            if first.level == Node.PAR_LEVEL:
                 whitespace = True
                 for item in first:
                     if item.isElementContentWhitespace:
@@ -492,13 +506,18 @@ class Macro(Element):
                     self.pop(0)
         except IndexError: pass 
 
+        for i in self:
+            i.parentNode = self
+
 
 class TeXFragment(DocumentFragment):
+    """ Document fragment node """
     def source(self):
         return sourcechildren(self)
     source = property(source)
 
 class TeXDocument(Document):
+    """ TeX Document node """
     def preamble(self):
         output = TeXFragment()
         for item in self:
@@ -527,23 +546,28 @@ class Environment(Macro):
         self.parse(tex)
 
     def digest(self, tokens):
+        """ Absorb all of the tokens that belong to the environment """
         if self.macroMode == Macro.MODE_END:
             return
         # Absorb the tokens that belong to us
         dopars = False
         for item in tokens:
+            # Make sure that we know to group paragraphs if one is found
             if item.level == Node.PAR_LEVEL:
                 self.appendChild(item)
                 dopars = True
                 continue
+            # Don't absorb objects with a higher precedence
             if item.level < self.level:
                 tokens.push(item)
                 break
+            # Absorb macros until the end of this environment is found
             if item.nodeType == Node.ELEMENT_NODE:
                 if item.macroMode == Macro.MODE_END and type(item) is type(self):
                     break
                 item.parentNode = self
                 item.digest(tokens)
+            # Stay within our context depth
             if item.contextDepth < self.contextDepth:
                 tokens.push(item)
                 break
@@ -644,11 +668,14 @@ class NewCommand(Macro):
         nargs = self.nargs
         if self.opt is not None:
             nargs -= 1
-            params.append(tex.readArgument('[]', default=self.opt, slot=(self,'#%s'%len(params))))
+            params.append(tex.readArgument('[]', default=self.opt, 
+                                           parentNode=self, 
+                                           name='#%s' % len(params)))
 
         # Get mandatory arguments
         for i in range(nargs):
-            params.append(tex.readArgument(slot=(self,'#%s'%len(params))))
+            params.append(tex.readArgument(parentNode=self, 
+                                           name='#%s' % len(params)))
 
         deflog.debug2('expanding %s %s', self.definition, params)
 
@@ -673,7 +700,8 @@ class Definition(Macro):
 
                 # Adjacent parameters, just get the next token
                 if inparam:
-                    params.append(tex.readArgument(slot=(self,'#%s'%len(params))))
+                    params.append(tex.readArgument(parentNode=self,
+                                                   name='#%s' % len(params)))
 
                 # Get the parameter number
                 for a in argiter:
@@ -718,7 +746,8 @@ class Definition(Macro):
                         break
 
         if inparam:
-            params.append(tex.readArgument(slot=(self,'#%s'%len(params))))
+            params.append(tex.readArgument(parentNode=self, 
+                                           name='#%s' % len(params)))
 
         deflog.debug2('expanding %s %s', self.definition, params)
 

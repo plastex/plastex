@@ -59,6 +59,12 @@ def ProcessOptions(options):
         elif key == 'nonamebreak':
             pass
 
+class bibliography(Base.bibliography):
+
+    def invoke(self, tex):
+        tex.loadAuxiliaryFile()
+        return super(bibliography, self).invoke(tex)
+
 class bibstyle(Base.Command):
     args = 'style:str'
 

@@ -73,6 +73,7 @@ class XHTML(Renderer):
     def default(self, s):
         """ Default renderer """
         if isinstance(s, unicode):
+#           print type(s.parentNode), s
             for before, after in type(self).entitysubs:
                 s = s.replace(before, after)
             return s

@@ -28,10 +28,10 @@ class Document(TestCase):
         assert children is fooself
 
         # Check parents
-        assert fooself[0].parentNode is foo
-        assert foo.parentNode is myenv
-        assert myenv.parentNode is output
-        assert output.parentNode is None
+        assert fooself[0].parentNode is foo, fooself[0].parentNode
+        assert foo.parentNode is myenv, foo.parentNode
+        assert myenv.parentNode is output, myenv.parentNode
+        assert output.parentNode is None, output.parentNode
 
         # Check owner document
         assert fooself[0].ownerDocument is output
