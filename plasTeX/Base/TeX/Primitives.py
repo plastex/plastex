@@ -103,7 +103,7 @@ class SubScript(Command):
     macroName = 'active::_'
     args = 'arg'
 
-class _def(Command):
+class DefCommand(Command):
     """ TeX's \\def command """
     local = True
     args = 'name:Tok args:Args definition:nox'
@@ -113,28 +113,28 @@ class _def(Command):
         deflog.debug('def %s %s %s', a['name'], a['args'], a['definition'])
         tex.context.newdef(a['name'], a['args'], a['definition'], local=self.local)
 
-class x_def(_def): 
+class def_(DefCommand): 
     macroName = 'def'
-class edef(_def):
+class edef(DefCommand):
     local = True
-class xdef(_def):
+class xdef(DefCommand):
     local = False
-class gdef(_def):
+class gdef(DefCommand):
     local = False
 
-class _if(Command):
+class IfCommand(Command):
     """ Test if character codes agree """
     args = 'a:Tok b:Tok'
     def invoke(self, tex):
         self.parse(tex)
         a = self.attributes
-        return tex.getCase(a['a'] == a['b'])
+        return tex.readIfContent(a['a'] == a['b'])
 
-class x_if(_if): 
+class if_(IfCommand): 
     """ \\if """
     macroName = 'if'
         
-class ifnum(_if):
+class ifnum(IfCommand):
     """ Compare two integers """
     args = 'a:Number rel:Tok b:Number'
     def invoke(self, tex):
@@ -143,14 +143,14 @@ class ifnum(_if):
         relation = attrs['rel']
         a, b = attrs['a'], attrs['b']
         if relation == '<':
-            return tex.getCase(a < b)
+            return tex.readIfContent(a < b)
         elif relation == '>':
-            return tex.getCase(a > b)
+            return tex.readIfContent(a > b)
         elif relation == '=':
-            return tex.getCase(a == b)
+            return tex.readIfContent(a == b)
         raise ValueError, '"%s" is not a valid relation' % relation
 
-class ifdim(_if):
+class ifdim(IfCommand):
     """ Compare two dimensions """
     args = 'a:Dimen rel:Tok b:Dimen'
     def invoke(self, tex):
@@ -159,106 +159,106 @@ class ifdim(_if):
         relation = attrs['rel']
         a, b = attrs['a'], attrs['b']
         if relation == '<':
-            return tex.getCase(a < b)
+            return tex.readIfContent(a < b)
         elif relation == '>':
-            return tex.getCase(a > b)
+            return tex.readIfContent(a > b)
         elif relation == '=':
-            return tex.getCase(a == b)
+            return tex.readIfContent(a == b)
         raise ValueError, '"%s" is not a valid relation' % relation
 
-class ifodd(_if):
+class ifodd(IfCommand):
     """ Test for odd integer """   
     args = 'value:Number'
     def invoke(self, tex):
         self.parse(tex)
-        return tex.getCase(not(not(self.attributes['value'] % 2)))
+        return tex.readIfContent(not(not(self.attributes['value'] % 2)))
 
-class ifeven(_if):
+class ifeven(IfCommand):
     """ Test for even integer """
     args = 'value:Number'
     def invoke(self, tex):
         self.parse(tex)
-        return tex.getCase(not(self.attributes['value'] % 2))
+        return tex.readIfContent(not(self.attributes['value'] % 2))
 
-class ifvmode(_if):
+class ifvmode(IfCommand):
     """ Test for vertical mode """
     def invoke(self, tex):
-        return tex.getCase(False)
+        return tex.readIfContent(False)
 
-class ifhmode(_if):
+class ifhmode(IfCommand):
     """ Test for horizontal mode """
     def invoke(self, tex):
-        return tex.getCase(True)
+        return tex.readIfContent(True)
 
-class ifmmode(_if):
+class ifmmode(IfCommand):
     """ Test for math mode """
     def invoke(self, tex):
-        return tex.getCase(False)
+        return tex.readIfContent(False)
 
-class ifinner(_if):
+class ifinner(IfCommand):
     """ Test for internal mode """
     def invoke(self, tex):
-        return tex.getCase(False)
+        return tex.readIfContent(False)
 
-class ifcat(_if):
+class ifcat(IfCommand):
     """ Test if category codes agree """
     args = 'a:Tok b:Tok'
     def invoke(self, tex):
         self.parse(tex)
         a = self.attributes
-        return tex.getCase(a['a'].catcode == a['b'].catcode)
+        return tex.readIfContent(a['a'].catcode == a['b'].catcode)
 
-class ifx(_if):
+class ifx(IfCommand):
     """ Test if tokens agree """
     args = 'a:XTok b:XTok'
     def invoke(self, tex):
         self.parse(tex)
         a = self.attributes
-        return tex.getCase(a['a'] == a['b'])
+        return tex.readIfContent(a['a'] == a['b'])
 
-class ifvoid(_if):
+class ifvoid(IfCommand):
     """ Test a box register """
     args = 'value:Number'
     def invoke(self, tex):
         self.parse(tex)
-        return tex.getCase(False)
+        return tex.readIfContent(False)
 
-class ifhbox(_if):
+class ifhbox(IfCommand):
     """ Test a box register """
     args = 'value:Number'
     def invoke(self, tex):
         self.parse(tex)
-        return tex.getCase(False)
+        return tex.readIfContent(False)
 
-class ifvbox(_if):
+class ifvbox(IfCommand):
     """ Test a box register """
     args = 'value:Number'
     def invoke(self, tex):
         self.parse(tex)
-        return tex.getCase(False)
+        return tex.readIfContent(False)
 
-class ifeof(_if):
+class ifeof(IfCommand):
     """ Test for end of file """
     args = 'value:Number'
     def invoke(self, tex):
         self.parse(tex)
-        return tex.getCase(False)
+        return tex.readIfContent(False)
 
-class iftrue(_if):
+class iftrue(IfCommand):
     """ Always true """
     def invoke(self, tex):
-        return tex.getCase(True)
+        return tex.readIfContent(True)
 
-class iffalse(_if):
+class iffalse(IfCommand):
     """ Always false """
     def invoke(self, tex):
-        return tex.getCase(False)
+        return tex.readIfContent(False)
 
-class ifcase(_if):
+class ifcase(IfCommand):
     """ Cases """
     args = 'value:Number'
     def invoke(self, tex):
-        return tex.getCase(self.parse(tex)['value'])
+        return tex.readIfContent(self.parse(tex)['value'])
 
 
 class let(Command):
@@ -278,8 +278,8 @@ class chardef(Command):
     args = 'command:cs = num:Number'
     def invoke(self, tex):
         a = self.parse(tex)
-        tex.context.newdef(a['command'], definition=str(a['num']))
-
+        tex.context.chardef(a['command'], a['num'])
+      
 class NameDef(Command):
     macroName = '@namedef'
     args = 'name:str value:nox'

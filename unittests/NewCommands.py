@@ -2,7 +2,7 @@
 
 import unittest, sys
 from unittest import TestCase
-from plasTeX import Macro, Environment, Node
+from plasTeX import Macro, Environment, Node, StringCommand
 from plasTeX.TeX import TeX
 from plasTeX.Context import Context
 
@@ -164,6 +164,22 @@ class NewCommands(TestCase):
         s = TeX(r'\let\bgroup={\bgroup')
         output = [x for x in s]
         assert output[1].source == '{', '"%s" != "%s"' % (output[1].source, '{')
+
+    def testChardef(self):
+        s = TeX(r'\chardef\foo=65\relax\foo')
+        output = [x for x in s]
+        assert output[-1] == 'A', output
+
+
+class Python(TestCase):
+
+    def testStringCommand(self):
+        class figurename(StringCommand): value = 'Figure'
+        s = TeX(r'\figurename')
+        s.context['figurename'] = figurename
+        output = u''.join([x for x in s])
+        assert output == 'Figure', output
+       
 
 if __name__ == '__main__':
     unittest.main()

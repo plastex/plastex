@@ -647,7 +647,9 @@ class Node(object):
         label = ''
         try:
             if self.id != id(self):
-                label = ' id="%s"' % xmlstr(self.id)
+                lid = xmlstr(self.id).strip()
+                if lid:
+                    label = ' id="%s"' % lid
         except AttributeError: pass
 
         # Bail out early if the element is empty

@@ -63,43 +63,43 @@ class ArgumentParsing(TestCase):
 
     def testStringArgument(self):
         s = TeX('{foo {bar} one}')
-        arg = s.getArgument(type='str')
+        arg = s.readArgument(type='str')
         output = 'foo bar one'
         assert arg == output, '"%s" != "%s"' % (arg, output)
 
     def testIntegerArgument(self):
         s = TeX('{1{0}2}')
-        arg = s.getArgument(type='int')
+        arg = s.readArgument(type='int')
         output = 102
         assert arg == output, '"%s" != "%s"' % (arg, output)
 
     def testIntegerArgument(self):
         s = TeX('{ -1{0}2.67 }')
-        arg = s.getArgument(type='float')
+        arg = s.readArgument(type='float')
         output = -102.67
         assert (output - arg) < 0.000001, '"%s" != "%s"' % (arg, output)
 
     def testListArgument(self):
         s = TeX('{foo, {bar}, one}')
-        arg = s.getArgument(type='list')
+        arg = s.readArgument(type='list')
         output = ['foo','bar','one']
         assert arg == output, '"%s" != "%s"' % (arg, output)
 
     def testListArgument2(self):
         s = TeX('{foo; {bar}; one}')
-        arg = s.getArgument(type='list', delim=';')
+        arg = s.readArgument(type='list', delim=';')
         output = ['foo','bar','one']
         assert arg == output, '"%s" != "%s"' % (arg, output)
 
     def testDictArgument(self):
         s = TeX('{one=1, two={2}, three=3}')
-        arg = s.getArgument(type='dict')
+        arg = s.readArgument(type='dict')
         output = {'one':'1', 'two':'2', 'three':'3'}
         assert arg == output, '"%s" != "%s"' % (arg, output)
 
     def testDictArgument2(self):
         s = TeX('{one=1, two={\par}, three={$(x,y)$}, four=4}')
-        arg = s.getArgument(type='dict')
+        arg = s.readArgument(type='dict')
         keys = arg.keys()
         keys.sort()
         expectkeys = ['four','one','three','two']
@@ -109,18 +109,18 @@ class ArgumentParsing(TestCase):
 
     def testTokenArgument(self):
         s = TeX(r'\foo a ')
-        arg = s.getArgument(type='Tok')
+        arg = s.readArgument(type='Tok')
         assert arg == 'foo'
-        arg = s.getArgument(type='Tok')
+        arg = s.readArgument(type='Tok')
         assert arg == 'a'
 
     def testXTokenArgument(self):
         s = TeX(r'\newcommand{\foo}{\it}')
         [x for x in s]
         s.input(r'\foo a ')
-        arg = s.getArgument(type='XTok')
+        arg = s.readArgument(type='XTok')
         assert arg.nodeName == 'it', arg.nodeName
-        arg = s.getArgument(type='XTok')
+        arg = s.readArgument(type='XTok')
         assert arg == 'a', arg
 
     def testDimen(self):
@@ -138,48 +138,85 @@ class ArgumentParsing(TestCase):
 
         # Literal dimension, this will only parse the `3`
         s.input(r'3.5pt')
-        arg = s.getArgument(type='dimen')
+        arg = s.readArgument(type='dimen')
         assert arg == dimen('3.0pt'), arg
 
         # Literal dimension
         s.input(r'{3.5pt}')
-        arg = s.getArgument(type='dimen')
+        arg = s.readArgument(type='dimen')
         assert arg == dimen('3.5pt'), arg
 
         # Set by other dimension
         s.input(r'\mydimen')
-        arg = s.getArgument(type='dimen')
+        arg = s.readArgument(type='dimen')
         assert arg == dimen('12sp'), arg
 
         # Set by other dimension
         s.input(r'{\mydimen}')
-        arg = s.getArgument(type='dimen')
+        arg = s.readArgument(type='dimen')
         assert arg == dimen('12sp'), arg
 
         # Multiply by other dimension
         s.input(r'{3.0\mydimen}')
-        arg = s.getArgument(type='dimen')
+        arg = s.readArgument(type='dimen')
         assert arg == dimen('36sp'), arg
 
         # No number
         s.input('{a}')
-        arg = s.getArgument(type='dimen')
+        arg = s.readArgument(type='dimen')
         assert arg == dimen(0), arg 
         
         # No number
         s.input('b')
-        arg = s.getArgument(type='dimen')
+        arg = s.readArgument(type='dimen')
         assert arg == dimen(0), arg 
 
         # Coerced dimen
         s.input('{\mycount}')
-        arg = s.getArgument(type='dimen')
+        arg = s.readArgument(type='dimen')
         assert arg == dimen(120), arg
 
         # Coerced glue
         s.input('{\myglue}')
-        arg = s.getArgument(type='dimen')
+        arg = s.readArgument(type='dimen')
         assert arg == dimen(10), arg
+
+        assert Parameter._enablelevel == 0
+
+    def testTeXDimen(self):
+        s = TeX(r'''\newcount\mycount\mycount=120
+                    \newdimen\mydimen\mydimen=12sp
+                    \newskip\myglue\myglue=10sp plus1pt minus2pt''')
+        s.parse()
+
+        value = s.context['mycount'].value
+        assert value == count(120), value
+        value = s.context['mydimen'].value
+        assert value == dimen('12sp'), value
+        value = s.context['myglue'].value
+        assert value == glue('10sp', plus='1pt', minus='2pt'), value
+
+        # Literal number
+        s.input('100pt')
+        arg = s.readArgument(type='Dimen')
+        assert arg == dimen('100pt'), arg
+
+        # Set by other dimen
+        s.input('\mydimen')
+        arg = s.readArgument(type='Dimen')
+        assert arg == dimen('12sp'), arg
+
+        # Multiply by other dimen
+        s.input('3\mydimen')
+        arg = s.readArgument(type='Dimen')
+        assert arg == dimen('36sp'), arg
+
+        # No number
+        s.input('{0}')
+        arg = s.readArgument(type='Dimen')
+        assert arg == dimen(0), arg
+
+        assert Parameter._enablelevel == 0
 
     def testNumber(self):
         s = TeX(r'''\newcount\mycount\mycount=120
@@ -196,48 +233,50 @@ class ArgumentParsing(TestCase):
 
         # Literal number, this will only parse the `1`
         s.input('100')
-        arg = s.getArgument(type='number')
+        arg = s.readArgument(type='number')
         assert arg == count(1), arg
 
         # Literal number
         s.input('{100}')
-        arg = s.getArgument(type='number')
+        arg = s.readArgument(type='number')
         assert arg == count(100), arg
 
         # Set by other number
         s.input(r'\mycount')
-        arg = s.getArgument(type='number')
+        arg = s.readArgument(type='number')
         assert arg == count(120), arg
 
         # Set by other number
         s.input(r'{\mycount}')
-        arg = s.getArgument(type='number')
+        arg = s.readArgument(type='number')
         assert arg == count(120), arg
 
         # Multiply by other number
         s.input(r'{5\mycount}')
-        arg = s.getArgument(type='number')
+        arg = s.readArgument(type='number')
         assert arg == count(600), arg
 
         # No number
         s.input('{a}')
-        arg = s.getArgument(type='number')
+        arg = s.readArgument(type='number')
         assert arg == count(0), arg 
         
         # No number
         s.input('b')
-        arg = s.getArgument(type='number')
+        arg = s.readArgument(type='number')
         assert arg == count(0), arg 
 
         # Coerced dimen
         s.input('{\mydimen}')
-        arg = s.getArgument(type='number')
+        arg = s.readArgument(type='number')
         assert arg == count(12), arg
 
         # Coerced glue
         s.input('{\myglue}')
-        arg = s.getArgument(type='number')
+        arg = s.readArgument(type='number')
         assert arg == count(10), arg
+
+        assert Parameter._enablelevel == 0
 
     def testTeXDimen(self):
         s = TeX(r'''\newcount\mycount\mycount=120
@@ -254,23 +293,60 @@ class ArgumentParsing(TestCase):
 
         # Literal dimension
         s.input(r'3.5pt')
-        arg = s.getArgument(type='Dimen')
+        arg = s.readArgument(type='Dimen')
         assert arg == dimen('3.5pt'), arg
 
         # Literal dimension, {...} aren't allowed
         s.input(r'{3.5pt}')
-        arg = s.getArgument(type='Dimen')
+        arg = s.readArgument(type='Dimen')
         assert arg == dimen(0), arg
 
         # Set by other dimension
         s.input(r'\mydimen')
-        arg = s.getArgument(type='Dimen')
+        arg = s.readArgument(type='Dimen')
         assert arg == dimen('12sp'), arg
 
         # Set by count
         s.input(r'\mycount')
-        arg = s.getArgument(type='Dimen')
+        arg = s.readArgument(type='Dimen')
         assert arg == dimen('120sp'), arg
+
+        assert Parameter._enablelevel == 0
+
+    def testTeXNumber(self):
+        s = TeX(r'''\newcount\mycount\mycount=120
+                    \newdimen\mydimen\mydimen=12sp
+                    \newskip\myglue\myglue=10sp plus1pt minus2pt''')
+        s.parse()
+
+        value = s.context['mycount'].value
+        assert value == count(120), value
+        value = s.context['mydimen'].value
+        assert value == dimen('12sp'), value
+        value = s.context['myglue'].value
+        assert value == glue('10sp', plus='1pt', minus='2pt'), value
+
+        # Literal number
+        s.input('100')
+        arg = s.readArgument(type='Number')
+        assert arg == count('100'), arg
+
+        # Set by other dimen
+        s.input('\mycount')
+        arg = s.readArgument(type='Number')
+        assert arg == count('120'), arg
+
+        # Multiply by other dimen
+        s.input('3\mycount')
+        arg = s.readArgument(type='Number')
+        assert arg == count('360'), arg
+
+        # No number
+        s.input('{0}')
+        arg = s.readArgument(type='Number')
+        assert arg == count(0), arg
+
+        assert Parameter._enablelevel == 0
 
     def testListTypes(self):
         s = TeX(r'''\newcount\mycount\mycount=120
@@ -279,9 +355,21 @@ class ArgumentParsing(TestCase):
         s.parse()
 
         s.input('{1, \mycount, 3}')
-        arg = s.getArgument(type='list', subtype='int')
+        arg = s.readArgument(type='list', subtype='int')
         assert arg == [1, 120, 3], arg
     
+    def testDictTypes(self):
+        s = TeX(r'''\newcount\mycount\mycount=120
+                    \newdimen\mydimen\mydimen=12sp
+                    \newskip\myglue\myglue=10sp plus1pt minus2pt''')
+        s.parse()
+
+        s.input('{one=1, two={\mycount} , three={3}}')
+        arg = s.readArgument(type='dict', expanded=True)
+        keys = arg.keys()
+        keys.sort()
+        assert keys == ['one', 'three', 'two']
+
 
 if __name__ == '__main__':
     unittest.main()

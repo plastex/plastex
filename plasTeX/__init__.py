@@ -84,9 +84,9 @@ class Macro(Element):
     def locals(self):
         """ Retrieve all macros local to this namespace """
         tself = type(self)
-        localsname = '%s@locals' % id(tself)
+        localsname = '@locals'
         # Check for cached versions first
-        if hasattr(tself, localsname):
+        if vars(tself).has_key(localsname):
             return getattr(tself, localsname)
         mro = list(tself.__mro__)
         mro.reverse()
@@ -189,7 +189,7 @@ class Macro(Element):
         arg = None
         try:
             for i, arg in enumerate(self.arguments):
-                output, source = tex.getArgumentAndSource(**arg.options)
+                output, source = tex.readArgumentAndSource(**arg.options)
                 # Check for a '*' type argument at the beginning of the
                 # argument list.  If there is one, don't increment counters
                 # or set labels.  This must be done immediately since
@@ -228,19 +228,20 @@ class Macro(Element):
         arguments as compiled entities
 
         """
-        t = type(self)
+        tself = type(self)
+        argsname = '@arguments'
 
-        if hasattr(t, '__arguments'):
-            return t.__arguments
+        if vars(tself).has_key(argsname):
+            return getattr(tself, argsname)
 
-        if not(getattr(t, 'args', None)):
-            t.__arguments = []
-            return t.__arguments
+        if not(getattr(tself, 'args', None)):
+            setattr(tself, argsname, [])
+            return getattr(tself, argsname)
 
         # Split the arguments into their primary components
         args = iter([x.strip() for x in 
                      re.split(r'(<=>|\w+(?::\w+)*|\W|\s+)', 
-                              t.args) if x is not None and x.strip()])
+                              tself.args) if x is not None and x.strip()])
 
         groupings = {'[':'[]','(':'()','<':'<>','{':'{}'}
 
@@ -253,7 +254,7 @@ class Macro(Element):
                 if argdict:
                     raise ValueError, \
                         'Improperly placed "%s" in argument string "%s"' % \
-                        (item, t.args)
+                        (item, tself.args)
                 argdict.clear()
                 macroargs.append(Argument('*modifier*', {'spec':item}))
 
@@ -318,8 +319,8 @@ class Macro(Element):
                 argdict.clear()
 
             else:
-                raise ValueError, 'Could not parse argument string "%s", reached unexpected "%s"' % (t.args, item)
-        t.__arguments = macroargs
+                raise ValueError, 'Could not parse argument string "%s", reached unexpected "%s"' % (tself.args, item)
+        setattr(tself, argsname, macroargs)
         return macroargs
 
     arguments = property(arguments)
@@ -417,7 +418,7 @@ class StringCommand(Command):
     """
     value = ''
     def invoke(self, tex): 
-        return [Other(type(self).value)]
+        return tex.texttokens(type(self).value)
                 
 class UnrecognizedMacro(Macro):
     """
@@ -434,7 +435,7 @@ class NewIf(Macro):
     state = False
 
     def invoke(self, tex):
-        return tex.getCase(type(self).state)
+        return tex.readIfContent(type(self).state)
 
     def setState(cls, state):
         cls.state = state
@@ -497,11 +498,11 @@ class NewCommand(Macro):
         nargs = self.nargs
         if self.opt is not None:
             nargs -= 1
-            params.append(tex.getArgument('[]', default=self.opt))
+            params.append(tex.readArgument('[]', default=self.opt))
 
         # Get mandatory arguments
         for i in range(nargs):
-            params.append(tex.getArgument())
+            params.append(tex.readArgument())
 
         deflog.debug2('expanding %s %s', self.definition, params)
 
@@ -526,7 +527,7 @@ class Definition(Macro):
 
                 # Adjacent parameters, just get the next token
                 if inparam:
-                    params.append(tex.getArgument())
+                    params.append(tex.readArgument())
 
                 # Get the parameter number
                 for a in argiter:
@@ -571,7 +572,7 @@ class Definition(Macro):
                         break
 
         if inparam:
-            params.append(tex.getArgument())
+            params.append(tex.readArgument())
 
         deflog.debug2('expanding %s %s', self.definition, params)
 

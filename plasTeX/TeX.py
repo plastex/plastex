@@ -19,7 +19,7 @@ Example:
 import string
 from Utils import *
 from Context import Context 
-from Tokenizer import Tokenizer, Token, EscapeSequence
+from Tokenizer import Tokenizer, Token, EscapeSequence, Other
 from plasTeX import TeXFragment, TeXDocument
 from plasTeX import Parameter, Macro, glue, muglue, mudimen, dimen, number
 from plasTeX.Logging import getLogger, disableLogging
@@ -177,8 +177,13 @@ class TeX(object):
                     # Save context depth of each token for use in digestion
                     t.contextDepth = context.depth
                     yield t
+
             except StopIteration:
                 endinput()
+
+            # This really shouldn't happen, but just in case...
+            except IndexError:
+                break
 
     def __iter__(self):
         """ 
@@ -276,6 +281,16 @@ class TeX(object):
             output.append(item)
         return output
 
+    def texttokens(self, text):
+        """
+        Return a list of `Other` tokens from a string
+
+        Required Arguments:
+        text -- string containing text to be tokenized
+
+        """
+        return [Other(x) for x in unicode(text)]
+
     def pushtoken(self, token):
         """
         Push a token back into the token buffer to be re-read
@@ -328,7 +343,8 @@ class TeX(object):
 
         Returns:
         string unless the tokens contain values that cannot be casted
-        to a string.  In that case, the original tokens are returned.
+        to a string.  In that case, the original tokens are returned
+        in a TeXFragment instance
 
         """
         if tokens is None:
@@ -349,17 +365,21 @@ class TeX(object):
             if t.nodeType == Macro.ELEMENT_NODE:
                 if len(tokens) == 1:
                     return tokens.pop()
-                return tokens
+                t = TeXFragment()
+                t.extend(tokens)
+                return t
             if t.catcode not in texttokens:
                 if len(tokens) == 1:
                     return tokens.pop()
-                return tokens
+                t = TeXFragment()
+                t.extend(tokens)
+                return t
 
         return (u''.join([x for x in tokens 
                           if getattr(x, 'catcode', Token.CC_OTHER) 
                              not in grouptokens])).strip()
 
-    def getCase(self, which):
+    def readIfContent(self, which):
         """
         Return the requested portion of the `if' block
 
@@ -406,17 +426,17 @@ class TeX(object):
             cases.append([])
         return cases[which]
 
-    def getArgument(self, *args, **kwargs):
+    def readArgument(self, *args, **kwargs):
         """
         Return and argument without the TeX source that created it
 
         See Also:
-        self.getArgumentAndSource()
+        self.readArgumentAndSource()
 
         """
-        return self.getArgumentAndSource(*args, **kwargs)[0]
+        return self.readArgumentAndSource(*args, **kwargs)[0]
 
-    def getArgumentAndSource(self, spec=None, type=None, subtype=None, 
+    def readArgumentAndSource(self, spec=None, type=None, subtype=None, 
                              delim=',', expanded=False, default=None):
         """ 
         Get an argument and the TeX source that created it
@@ -705,7 +725,7 @@ class TeX(object):
         tokens -- list of tokens to cast
 
         See Also:
-        self.getArgument()
+        self.readArgument()
         self.cast()
 
         """
@@ -725,7 +745,7 @@ class TeX(object):
         string
 
         See Also:
-        self.getArgument()
+        self.readArgument()
         self.cast()
 
         """
@@ -742,7 +762,7 @@ class TeX(object):
         string
 
         See Also:
-        self.getArgument()
+        self.readArgument()
         self.cast()
 
         """
@@ -767,7 +787,7 @@ class TeX(object):
         integer
 
         See Also:
-        self.getArgument()
+        self.readArgument()
         self.cast()
 
         """
@@ -787,7 +807,7 @@ class TeX(object):
         float
 
         See Also:
-        self.getArgument()
+        self.readArgument()
         self.cast()
 
         """
@@ -804,7 +824,7 @@ class TeX(object):
         `Dimen` instance
 
         See Also:
-        self.getArgument()
+        self.readArgument()
         self.cast()
 
         """
@@ -821,7 +841,7 @@ class TeX(object):
         `MuDimen` instance
 
         See Also:
-        self.getArgument()
+        self.readArgument()
         self.cast()
 
         """
@@ -838,7 +858,7 @@ class TeX(object):
         `Glue` instance
 
         See Also:
-        self.getArgument()
+        self.readArgument()
         self.cast()
 
         """
@@ -855,7 +875,7 @@ class TeX(object):
         `MuGlue` instance
 
         See Also:
-        self.getArgument()
+        self.readArgument()
         self.cast()
 
         """
@@ -877,7 +897,7 @@ class TeX(object):
         list
 
         See Also:
-        self.getArgument()
+        self.readArgument()
         self.cast()
 
         """
@@ -927,7 +947,7 @@ class TeX(object):
         dictionary
 
         See Also:
-        self.getArgument()
+        self.readArgument()
         self.cast()
 
         """      
@@ -983,6 +1003,11 @@ class TeX(object):
                 dictarg[currentkey] = currentvalue
                 currentkey = []
                 currentvalue = None
+
+        if currentkey:
+            currentkey = self.normalize(currentkey)
+            currentvalue = self.normalize(self.cast(currentvalue, subtype))
+            dictarg[currentkey] = currentvalue
 
         return dictarg
 
@@ -1086,7 +1111,7 @@ class TeX(object):
                 self.pushtoken(t)
                 return sign * self.readInteger()
             break
-        log.warning('Could not find decimal%s, returning `0`.', self.lineinfo)
+        log.warning('Missing decimal%s, treating as `0`.', self.lineinfo)
         return float(0)
 
     def readDimen(self, units=dimen.units):
@@ -1141,7 +1166,7 @@ class TeX(object):
         true = self.readKeyword(['true'])
         unit = self.readKeyword(units)
         if unit is None:
-            log.warning('Could not find unit from list %s %s, returning `%s`', 
+            log.warning('Missing unit (expecting %s)%s, treating as `%s`', 
                         ', '.join(units), self.lineinfo, units[0])
             unit = units[0]
         Parameter.enable()
@@ -1233,7 +1258,11 @@ class TeX(object):
         for t in self:
             # internal/coerced integers
             if t.nodeType == Node.ELEMENT_NODE:
-                num = number(sign * number(t))
+                if isinstance(t, Parameter):
+                    num = number(sign * number(t))
+                else:
+                    self.pushtoken(t)
+                    break
             # integer constant
             elif t in string.digits:
                 num = number(sign * int(t + self.readSequence(string.digits)))
@@ -1259,7 +1288,7 @@ class TeX(object):
         Parameter.enable()
         if num is not None:
             return num
-        log.warning('Could not find integer%s, returning `0`.', self.lineinfo)
+        log.warning('Missing number%s, treating as `0`.', self.lineinfo)
         return number(0)
 
     readNumber = readInteger

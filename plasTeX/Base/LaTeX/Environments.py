@@ -17,7 +17,7 @@ class begin(Command):
     def invoke(self, tex):
         """ Parse the \\begin{...} """
 #       name = self.parse(tex)['name']
-        name = tex.getArgument(type=str)
+        name = tex.readArgument(type=str)
         envlog.debug(name)
 
         # Instantiate the correct macro and let it know
@@ -39,7 +39,7 @@ class end(Command):
     def invoke(self, tex):
         """ Parse the \\end{...} """
 #       name = self.parse(tex)['name']
-        name = tex.getArgument(type=str)
+        name = tex.readArgument(type=str)
         envlog.debug(name)
 
         # Instantiate the correct macro and let it know

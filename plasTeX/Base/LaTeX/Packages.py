@@ -54,14 +54,22 @@ class PackageLoader(Command):
         status.info(' ( %s ' % path)
 
         try:
-            tex.input(open(path, 'r'))
+            file = open(path, 'r')
+            # Put `self` in as a flag so that we can parse past our own
+            # package tokens and throw them away, we don't want them in
+            # the output document.
+            tex.pushtoken(self)
+            tex.input(file)
             tex.context.packages[file] = options
-            status.info(' ) ')
+            for tok in tex:
+                if tok is self:
+                    break
 
         except (OSError, IOError, TypeError):
             # Failed to load LaTeX style file
             log.warning('Error opening package "%s"' % file)
-            status.info(' ) ')
+
+        status.info(' ) ')
 
 #
 # C.5.1 Document Class

@@ -5,7 +5,6 @@ C.8.4 Numbering (p194)
 
 """
 
-from plasTeX.Tokenizer import Other
 from plasTeX import Command, Environment
 from plasTeX.Logging import getLogger
 
@@ -30,13 +29,13 @@ class addtocounter(Command):
 class value(Command):
     args = 'name:str'
     def invoke(self, tex):
-        return [Other(tex.context.counters[self.parse(tex)['name']])]
+        return tex.texttokens(tex.context.counters[self.parse(tex)['name']])
 
 class arabic(Command):
     """ Return arabic representation """
     args = 'name:str'
     def invoke(self, tex):
-        return [Other(tex.context.counters[self.parse(tex)['name']])]
+        return tex.texttokens(tex.context.counters[self.parse(tex)['name']])
 
 class Roman(Command):
     """ Return uppercase roman representation """
@@ -81,29 +80,29 @@ class Roman(Command):
         while number > 0:
             roman = roman + "I"
             number = number - 1
-        return [Other(roman)]
+        return tex.texttokens(roman)
 
 class roman(Roman):
     """ Return the lowercase roman representation """
     def invoke(self, tex):
-        return [Other(x.lower()) for x in Roman.invoke()]
+        return tex.texttokens(u''.join(Roman.invoke()).lower())
 
 class Alph(Command):
     """ Return the uppercase letter representation """
     args = 'name:str'
     def invoke(self, tex):
-        return [Other(tex.context.counters[self.parse(tex)['name']]-1).upper()]
+        return tex.texttokens(unicode(tex.context.counters[self.parse(tex)['name']]-1).upper())
 
 class alph(Alph):
     """ Return the lowercase letter representation """
     def invoke(self, tex):
-        return [Other(x.lower()) for x in Alph.invoke()]
+        tex.texttokens(u''.join(Alph.invoke()).lower())
 
 class fnsymbol(Command):
     """ Return the symbol representation """
     args = 'name:str'
     def invoke(self, tex):
-        return [Other('*' * self.value)]
+        return tex.texttokens('*' * self.value)
 
 class stepcounter(Command):
     args = 'name:str'

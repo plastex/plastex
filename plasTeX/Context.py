@@ -732,3 +732,19 @@ class Context(object):
 
         """
         self.lets[dest] = source
+
+    def chardef(self, name, num):
+        """ 
+        Create a \\chardef
+
+        Required Arguments:
+        name -- name of command to create
+        num -- character number to use
+      
+        """
+        name = str(name)
+        # Generate a new chardef class
+        macrolog.debug('creating chardef %s', name)
+        newclass = new.classobj(name, (plasTeX.StringCommand,), 
+                                {'value': chr(num)})
+        self.addGlobal(name, newclass)
