@@ -18,21 +18,14 @@ Example:
 
 import string, re
 from Utils import *
-from Categories import *
-from Token import *
 from Context import Context 
+from Tokenizer import *
 from plasTeX import TeXFragment, Macro, Glue, Muglue, Mudimen, Dimen
 from plasTeX.Logging import getLogger, disableLogging
-try: from cStringIO import StringIO
-except: from StringIO import StringIO
 
 log = getLogger()
 tokenlog = getLogger('parse.tokens')
-
-# Tokenizer states
-STATE_S = 1
-STATE_M = 2
-STATE_N = 4
+digestlog = getLogger('parse.digest')
 
 class tokiter(object):
     """ Token iterator """
@@ -43,257 +36,16 @@ class tokiter(object):
     def next(self):
         return self.obj.nexttok()
 
-class chariter(object):
-    """ Character iterator """
+class positer(object):
+    """ Iterator that keeps track of the item number """
     def __init__(self, obj):
-        self.obj = obj
+        self.obj = iter(obj)
+        self.pos = 0
     def __iter__(self):
         return self
     def next(self):
-        return self.obj.nextchar()
-
-
-class Tokenizer(object):
-
-    def __init__(self, source, context):
-        """
-        Instantiate a tokenizer
-
-        Required Arguments:
-        source -- the source to tokenize.  This can be a string containing
-            TeX source, a file object that contains TeX source, or a 
-            list of tokens
-        context -- the document's context object
-
-        """
-        self.context = context
-        self.state = STATE_N
-        self._charbuffer = []
-        self._tokbuffer = []
-        if isinstance(source, basestring):
-            source = StringIO(source)
-            self.filename = '<string>'
-        elif isinstance(source, file):
-            self.filename = source.name
-        elif isinstance(source, (tuple,list)):
-            self.pushtokens(source)
-            source = StringIO('')
-            self.filename = '<tokens>'
-        self.seek = source.seek
-        self.read = source.read
-        self.readline = source.readline
-        self.tell = source.tell
-        self.linenumber = 1
-
-    def nextchar(self):
-        """ 
-        Get the next character in the stream and its category code
-
-        This function handles automatically converts characters like
-        ^^M, ^^@, etc. into the correct character.  It also bypasses
-        ignored and invalid characters. 
-
-        If you are iterating through the characters in a TeX instance
-        and you go too far, you can put the character back with
-        the pushchar() method.
-
-        See Also:
-        self.iterchars()
-
-        """
-        if self._charbuffer:
-            return self._charbuffer.pop(0)
-
-        while 1:
-            token = self.read(1)
-
-            if not token:
-                raise StopIteration
-
-            if token == '\n':
-                self.linenumber += 1
-
-            code = self.context.whichCode(token)
-
-            if code == CC_SUPER:
-
-                # Handle characters like ^^M, ^^@, etc.
-                char = self.read(1)
-
-                if char == token:
-                    char = self.read(1)
-                    num = ord(char)
-                    if num >= 64: token = chr(num-64)
-                    else: token = chr(num+64)
-                    code = self.context.whichCode(token)
-
-                else:
-                    self.seek(-1,1)
-
-            # Just keep going if you see one of these...
-            if code == CC_IGNORED:
-                continue
-            elif code == CC_INVALID:
-                continue
-
-            break
-
-        return TOKENCLASSES[code](token)
-
-    def pushchar(self, char):
-        """ 
-        Push a character back into the stream to be re-read 
-
-        Required Arguments:
-        char -- the character to push back
-
-        """
-        self._charbuffer.insert(0, char)
-
-    def pushtoken(self, token):
-        """
-        Push a token back into the stream to be re-read
-
-        Required Arguments:
-        token -- token to be pushed back
-
-        """
-        if token is not None:
-            self._tokbuffer.insert(0, token)
-
-    def pushtokens(self, tokens):
-        """
-        Push a list of tokens back into the stream to be re-read
-
-        Required Arguments:
-        tokens -- list of tokens to push back
-
-        """
-        if tokens:
-            tokens = list(tokens)
-            tokens.reverse()
-            for t in tokens:
-                self.pushtoken(t)
-
-    def next(self):
-        """ 
-        Iterate over tokens in the input stream
-
-        Returns:
-        next token in the stream
-
-        See Also:
-        self.__iter__()
-
-        """
-        if self._tokbuffer:
-            return self._tokbuffer.pop(0)
-
-        chiter = self.iterchars()
-
-        for token in chiter:
-
-            code = token.code
- 
-            if code == CC_EXPANDED:
-                raise ValueError, 'Expanded tokens should never make it here'
-
-            # Escape sequence
-            elif code == CC_ESCAPE:
-
-                # Get name of command sequence
-                self.state = STATE_M
-
-                for token in chiter:
- 
-                    if token.code == CC_EOL:
-                        self.pushchar(token)
-                        token = EscapeSequence()
-
-                    elif token.code == CC_LETTER:
-                        word = [token]
-                        for t in chiter:
-                            if t.code == CC_LETTER:
-                                word.append(t) 
-                            else:
-                                self.pushchar(t)
-                                break
-                        token = EscapeSequence(u''.join(word))
-
-                    else:
-                        token = EscapeSequence(token)
-
-                    if token.code != CC_EOL:
-                        # Absorb following whitespace
-                        self.state = STATE_S
-                        for t in chiter:
-                            if t.code == CC_SPACE:
-                                continue
-                            elif t.code == CC_EOL:
-                                continue
-                            self.pushchar(t)
-                            break
-
-                    break
-
-                else: token = EscapeSequence()
-
-                token = self.context.lets.get(token, token)
-
-            # End of line
-            elif code == CC_EOL:
-                if self.state == STATE_S:
-                    self.state = STATE_N
-                    continue
-                elif self.state == STATE_M:
-                    token = Space(u' ')
-                    code = CC_SPACE
-                    self.state = STATE_N
-                elif self.state == STATE_N: 
-                    if token != '\n':
-                        self.linenumber += 1
-                        self.readline()
-                    token = EscapeSequence('par')
-                    code = CC_ESCAPE
-
-            elif code == CC_SPACE:
-                if self.state in [STATE_S, STATE_N]:
-                    continue
-                self.state = STATE_S
-                token = Space(u' ')
-
-            elif code == CC_COMMENT:
-                self.readline() 
-                self.linenumber += 1
-                self.state = STATE_N
-                continue
-
-            else:
-                self.state = STATE_M
-
-            return token
-
-        raise StopIteration
-
-    def __iter__(self):
-        """
-        Return an iterator that iterates over the tokens in the input stream
-
-        See Also:
-        self.nexttok()
-
-        """
-        return self
-
-    def iterchars(self):
-        """
-        Return an iterator that iterates over characters in the input stream
-
-        See Also:
-        self.nextchar()
-
-        """
-        return chariter(self)
+        self.pos += 1
+        return self.obj.next()
 
 
 class TeX(object):
@@ -307,6 +59,10 @@ class TeX(object):
 
     def __init__(self, source=None):
         self.context = Context(self)
+        self.context.loadBaseMacros()
+
+        # Source tokens
+        self.sourcetokens = []
 
         # Input source stack
         self.inputs = []
@@ -418,7 +174,7 @@ class TeX(object):
         """
         for token in self.itertokens():
             if token is not None:
-                tokenlog.debug('input (%s, %s)', token, token.code, 
+                tokenlog.debug('input %s (%s, %s)', repr(token), token.code, 
                                                  len(self.inputs))
             if token is None or token == '':
                 continue
@@ -438,11 +194,11 @@ class TeX(object):
                     if tokens is None:
                         tokens = [obj]
                     self.pushtokens(tokens)
+                    continue
                 except:
                     log.error('Error while expanding "%s" in %s on line %s' 
                               % (token.macro, self.filename, self.linenumber))
                     raise
-                continue
             return token
         raise StopIteration
 
@@ -457,10 +213,26 @@ class TeX(object):
         list of expanded tokens
 
         """
+        # Expand given tokens
+        self.context.push()
         self.pushtoken(EndTokens)
         self.pushtokens(tokens)
         tokenlog.debug('expand %s', tokens)
-        return [x for x in self]
+        output = [x for x in self]
+
+        # Get any tokens popped from the context
+        self.pushtoken(EndTokens)
+        self.context.pop()
+        output += [x for x in self]
+
+        return self.parse(output)
+
+    def tokenize(self, s):
+        """
+        Tokenize a string
+
+        """
+        return [x for x in Tokenizer(s, self.context)]
 
     def pushtoken(self, token):
         """
@@ -964,9 +736,19 @@ class TeX(object):
 
         return dictarg
     
-    def parse(self):
+    def parse(self, tokens=None):
         """ Parse stream content until it is empty """
-        return [x for x in self]
+        if tokens is None:
+            tokens = self.sourcetokens = [x for x in self]
+        tokens = positer(tokens)
+        output = []
+        for item in tokens:
+            if item.code in [CC_BGROUP, CC_EGROUP, CC_ENDCONTEXT]:
+                continue
+            if item.code == CC_EXPANDED:
+                item.digest(tokens)
+            output.append(item)
+        return output
 
 #
 # Parsing helper methods for parsing numbers, spaces, dimens, etc.

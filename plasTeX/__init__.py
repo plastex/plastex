@@ -2,16 +2,20 @@
 
 import string, new, re
 from Utils import *
-from Token import *
 from plasTeX.DOM import *
 from plasTeX.Logging import getLogger
+from Tokenizer import CC_EXPANDED, CC_PARAMETER
 
 log = getLogger()
 status = getLogger('status')
 deflog = getLogger('parse.definitions')
 envlog = getLogger('parse.environments')
 mathshiftlog = getLogger('parse.mathshift')
+digestlog = getLogger('parse.digest')
 
+MODE_NONE = 0
+MODE_BEGIN = 1
+MODE_END = 2
 
 class CompiledArgument(dict):
     """ 
@@ -119,8 +123,8 @@ class RenderMixIn(object):
             name = 'unknown'
 
         source = ''
-        if self._source.start is not None and self._source.end is not None:
-            source = ' source="%s,%s"' % (self._source.start, self._source.end)
+#       if self._source.start is not None and self._source.end is not None:
+#           source = ' source="%s,%s"' % (self._source.start, self._source.end)
 
         # Bail out early if the element is empty
         if not(self.attributes) and not(self):
@@ -231,7 +235,26 @@ class MacroInterface(object):
     code = CC_EXPANDED # Special code for TeX to recognized expanded tokens
     mode = MODE_NONE   # begin, end, or none
 
-    autoclose = False  # Close the element automatically (e.g. \section, \item)
+    iscontext = False
+
+    def locals():
+        """ Retrieve all macros local to this namespace """
+        def fget(self):
+            if hasattr(type(self), '_locals'):
+                return type(self)._locals
+            mro = list(type(self).__mro__)
+            mro.reverse()
+            locals = {}
+            for cls in mro:
+                for value in vars(cls).values():
+                    if ismacro(value):
+                        locals[macroname(value)] = value
+            type(self)._locals = locals
+            return locals
+#       def fset(self, value):
+#           self.locals = value
+        return locals()
+    locals = property(**locals())
 
     def source(self): 
         raise NotImplementedError
@@ -245,6 +268,7 @@ class MacroInterface(object):
         # Just pop the context if this is a \end token
         if self.mode == MODE_END:
             tex.context.pop(self)
+#           return []
             return [self]
 
         # If this is a \begin token or the element needs to be
@@ -253,7 +277,7 @@ class MacroInterface(object):
         elif self.mode == MODE_BEGIN:
             tex.context.push(self)
             self.parse(tex)
-            return [self]
+            return
 
         # Push, parse, and pop.  The command doesn't need to stay on
         # the context stack.
@@ -261,10 +285,20 @@ class MacroInterface(object):
         self.parse(tex)
         tex.context.pop(self)
 
-        return [self]
-
-    def digest(self, tokens): 
-        pass
+    def digest(self, tokens):
+        # Macros that never pushed a context don't need to be digested
+        if not self.iscontext:
+            return
+        self._position = [tokens.pos-1,None]
+        # Absorb the tokens that belong to us
+        for item in tokens:
+            if item.code == CC_ENDCONTEXT:
+                break
+            if item.code == CC_EXPANDED:
+                item.digest(tokens)
+            self.append(item)
+        self._position[1] = tokens.pos
+        print 'POS', type(self), self._position
 
     def tagName(self):
         if self.texname: return self.texname
@@ -314,11 +348,12 @@ class Macro(MacroInterface, Element, RenderMixIn):
         Do post parsing operations (usually increment counters) 
 
         """
-        context = type(self).context
-        counter = type(self).counter
-        if counter:
-            context.currentlabel = self 
-            context.counters[counter].refstepcounter()
+#       context = type(self).context
+#       counter = type(self).counter
+#       if counter:
+#           context.currentlabel = self 
+#           context.counters[counter].refstepcounter()
+        pass
 
     def parse(self, tex): 
         """ 
@@ -347,27 +382,27 @@ class Macro(MacroInterface, Element, RenderMixIn):
             else:
                 self.attributes[arg.name] = output
 
-    def digest(self, tokens):
-        """ 
-        Absorb tokens in the stream that belong to us 
+#   def digest(self, tokens):
+#       """ 
+#       Absorb tokens in the stream that belong to us 
 
-        The output stream, `tokens`, contains the entire LaTeX document
-        as Macro objects and strings.  Environments are delimited
-        by the same instance in the stream, so when `self` is found
-        in the stream we know we have reached the end of the contents
-        of the environment.
+#       The output stream, `tokens`, contains the entire LaTeX document
+#       as Macro objects and strings.  Environments are delimited
+#       by the same instance in the stream, so when `self` is found
+#       in the stream we know we have reached the end of the contents
+#       of the environment.
 
-        Required Arguments:
-        tokens -- iterator pointing to the remaining items in the
-            output stream
+#       Required Arguments:
+#       tokens -- iterator pointing to the remaining items in the
+#           output stream
 
-        Returns: 
-        self
+#       Returns: 
+#       self
 
-        """
-        for t in tokens:
-            self.append(t)
-        return
+#       """
+#       for t in tokens:
+#           self.append(t)
+#       return
 
     def compileArgumentString(self):
         """ 
@@ -474,9 +509,9 @@ class Macro(MacroInterface, Element, RenderMixIn):
         return macroargs
 
 
-class TeXFragment(DocumentFragment, RenderMixIn):
+class TeXFragment(MacroInterface, DocumentFragment, RenderMixIn):
     """ TeX document fragment """
-
+    iscontext = True
     def __init__(self, *args, **kwargs):
         DocumentFragment.__init__(self, *args, **kwargs)
         self.style = CSSStyles()
@@ -508,16 +543,13 @@ class Environment(Macro):
     level = ENVIRONMENT
     def invoke(self, tex):
         if self.mode == MODE_END:
-            tex.context.pop()
+            tex.context.pop(self)
+#           return []
             return [self]
-        tex.context.push()
         tex.context.push(self)
         self.parse(tex)
-        return [self]
     
-class UnrecognizedMacro(MacroInterface):
-    def invoke(self, tex):
-       return [self]
+class UnrecognizedMacro(Macro): pass
 
 class NewIf(MacroInterface):
     """ Base class for all generated \\newifs """

@@ -9,6 +9,7 @@ parse.environments=WARNING
 context.stack=WARNING
 context.macros=ERROR
 parse.tokens=ERROR
+parse.absorb=DEBUG
 
 [images]
 file-extension=.png

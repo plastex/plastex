@@ -24,7 +24,8 @@ class Array(Environment):
         def invoke(self, tex):
             tex.context.pop()
             tex.context.push()
-            return [self]
+        def __repr__(self):
+            return '&'
 
     class cr(Command):
         """ End of a row """
@@ -32,20 +33,20 @@ class Array(Environment):
         args = '* [ space ]'
         def invoke(self, tex):
             tex.context.pop()
-            Command.parse(self, tex)
+            self.parse(tex)
             tex.context.push()
-            return [self]
+        def __repr__(self):
+            return '\\\\'
 
     class cline(Command):
         """ Partial horizontal line """
         args = 'span:str'
         def invoke(self, tex):
             attrs = self.attributes
-            Command.parse(self, tex)
+            self.parse(tex)
             attrs['span'] = [int(x) for x in attrs['span'].split('-')]
             if len(attrs['span']) == 1:
                 attrs['span'] *= 2
-            return [self]
 
     class hline(Command):
         """ Full horizontal line """
@@ -83,11 +84,11 @@ class Array(Environment):
 
     def invoke(self, tex):
         if self.mode == MODE_END:
-            tex.context.pop() # End of table
-        else:
-            tex.context.push() # Beginning of cell
-            Environment.invoke(self, tex)
-        return [self]
+            tex.context.pop(self) # End of table
+            return [self]
+            return []
+        Environment.invoke(self, tex)
+        tex.context.push() # Beginning of cell
 
     def digest(self, tokens):
         Environment.digest(self, tokens)
@@ -319,7 +320,7 @@ class Array(Environment):
                            row[i].pop()
                        else: break
                    else: break
-               row[i][:] = paragraphs(tokens2tree(row[i]), par)
+#              row[i][:] = paragraphs(tokens2tree(row[i]), par)
                if row[i].attributes.get('colspan',0) == 1:
                    del row[i].attributes['colspan']
 

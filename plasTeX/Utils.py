@@ -21,9 +21,12 @@ def classname(obj):
     else:
         return type(obj).__name__
 
-def ismacro(obj):
-    """ Is the given object a valid macro? """   
-    return hasattr(obj, 'texname')
+ismacro = lambda o: hasattr(o, 'texname')
+
+def macroname(obj):
+     if obj.texname is None:
+         return classname(obj)
+     return obj.texname
 
 def xmlstr(obj):
     """ Escape special characters to create a legal xml string """

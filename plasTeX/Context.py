@@ -2,10 +2,10 @@
 
 import sys, string, new, re, os
 import plasTeX
-from plasTeX import Macro, DOCUMENT, ENVIRONMENT, StringMacro, UnrecognizedMacro
+from plasTeX import Macro, StringMacro, UnrecognizedMacro
 from plasTeX.Logging import getLogger
 from Utils import *
-from Categories import *
+from Tokenizer import *
 
 # Set up loggers
 log = getLogger()
@@ -14,11 +14,52 @@ macrolog = getLogger('context.macros')
 
 
 class ContextItem(dict):
-    """ Localized macros and category codes """
+    """ 
+    Localized macro/category code stack element
+
+    """
+
     def __init__(self, data={}):
         dict.__init__(self, data)
         self.categories = None
         self.obj = None
+        self.parent = None
+        self.owner = None
+        self.name = '{}'
+        if self.obj is not None:
+            self.name = self.obj.nodeName
+
+    def __getitem__(self, key):
+        try: 
+            return dict.__getitem__(self, key)
+        except KeyError:
+            if self.parent is not None:
+                return self.parent[key]
+            raise
+
+    def get(self, key, default=None):
+        try: return self[key]
+        except KeyError: return default
+
+    def has_key(self, key):
+        if dict.has_key(self, key):
+            return True
+        if self.parent is not None:
+            return self.parent.has_key(key)
+
+    def keys(self):
+        keys = {}
+        for key in dict.keys(self):
+            keys[key] = 0
+        if self.parent is not None:
+            for key in self.parent.keys():
+                keys[key] = 0
+        return keys.keys()
+
+    def __str__(self):
+        if self.parent is not None:
+             return '%s -> %s' % (self.parent, self.name)
+        return self.name
 
 
 class Context(object):
@@ -34,29 +75,14 @@ class Context(object):
     """
 
     def __init__(self, tex=None):
-        # Reference to renderer (default is empty)
-        self.renderer = {}
-
         # Handle to the TeX instance that the context belongs to
         self.tex = tex
 
         # Stack of ContextItems
-        c = ContextItem()
-        c.categories = CATEGORIES[:]
-        self.contexts = [c]
-        self.categories = c.categories
+        self.contexts = []
 
         # Object that the current label points to
         self.currentlabel = None
-
-        # Counter macros
-        self.counters = {}
-
-        # Length macros
-        self.lengths = {}
-
-        # LaTeX boxes
-        self.boxes = {}
 
         # Labeled objects
         self.labels = {}
@@ -67,10 +93,11 @@ class Context(object):
         # Imported packages and their options
         self.packages = {}
 
-        # Macro dictionary
-        self.macros = self
+        # Create a global namespace
+        self.push()
 
-        # Import all builtin macros
+    def loadBaseMacros(self):
+        """ Import all builtin macros """
         from plasTeX import packages as _macros
         self.importMacros(vars(_macros))
 
@@ -90,50 +117,13 @@ class Context(object):
         Returns: instance of requested macro
 
         """
-        key = str(key)
-        # Look for the request macro in the stack (locals first)
-        for i in range(len(self.contexts)-1, -1, -1):
-            c = self.contexts[i]
-            if c.has_key(key):
-                return c[key]()
+        try: return self.top[key]()
+        except KeyError: pass
 
         # Didn't find it, so generate a new class
         log.warning('unrecognized macro %s', key)
-        self[key] = newclass = new.classobj(key, (UnrecognizedMacro,), {})
+        self[key] = newclass = new.classobj(str(key), (UnrecognizedMacro,), {})
         return newclass()
-
-    def contextNames(self):
-        c = []
-        for item in self.contexts:
-            if item.obj is None:
-                c.append('{}')
-            else:
-                c.append(item.obj.nodeName)
-        return '->'.join(c)
-
-    def __delitem__(self, key):
-        """ 
-        Delete first occurrence of a macro with name `key` 
-
-        Required Arguments:
-        key -- name of macro to delete
-
-        """
-        for i in range(len(self.contexts)-1, -1, -1):
-            c = self.contexts[i]
-            if c.has_key(key):
-                del c[key] 
-                break
-
-    def __iadd__(self, other):
-        """ Absorb macros from another context into the globals """
-        macros = self.contexts[0]
-        for key, value in other.items():
-            if ismacro(value):
-                macros[key] = value
-        return self
-
-    update = __add__ = __radd__ = __iadd__
 
     def push(self, context=None):
         """ 
@@ -150,21 +140,47 @@ class Context(object):
             an empty context is created.
 
         """
-        name = '{}'
-        if context is not None:
-            name = context.nodeName 
-        stacklog.debug('pushing %s onto %s', name, self.contextNames())
-        self.contexts.append(self.createContext(context))
-        self.categories = self.contexts[-1].categories
+        if not self.contexts:
+            context = ContextItem()
+            context.categories = CATEGORIES[:]
+            self.contexts.append(context)
+
+        else:
+            name = '{}'
+            if context is not None:
+                name = context.nodeName 
+            stacklog.debug('pushing %s onto %s', name, self.top)
+            self.contexts.append(self.createContext(context))
+
+        # Getter methods use the most local context
+        self.top = top = self.contexts[-1]
+        self.__getitem__ = top.__getitem__
+        self.get = top.get
+        self.keys = top.keys
+        self.has_key = top.has_key
+        self.categories = top.categories
+
+        # Setter methods always use the global namespace
+        globals = self.contexts[0]
+        self.update = top.update
+        self.__setitem__ = globals.__setitem__
+#       self.__add__ = top.__add__
+#       self.__radd__ = top.__radd__
+#       self.__iadd__ = top.__iadd__
+
+        # Set up inheritance attributes
+        self.top.owner = self
+        if len(self.contexts) > 1:
+            self.top.parent = self.contexts[-2]
 
     append = push
 
-    def createContext(self, context=None):
+    def createContext(self, obj=None):
         """
         Create the pieces of a new context (i.e. macros and category codes)
 
         Keyword Arguments:
-        context -- macro instance to use as the basis for a context
+        obj -- macro instance to use as the basis for a context
             grouping.  The local macros and category codes of this
             instance are used.  If this argument isn't supplied,
             an empty context is created.
@@ -174,53 +190,17 @@ class Context(object):
         """
         newcontext = ContextItem()
         newcontext.categories = self.categories
-        newcontext.obj = context
+        newcontext.obj = obj
 
-        if context is not None:
+        if obj is not None:
 
-            # If the new context is a macro, get it's category codes
-            # and locally scoped macros
-            cat = getattr(type(context), 'categories', None)
-            if cat is not None:
-                newcontext.categories = cat
- 
-            # If the context is not a dictionary, use dir to
-            # get the localized macros.
-            if not hasattr(context, 'items'):
-                mro = list(type(context).__mro__)
-                mro.reverse()
-                context = {}
-                for item in mro:
-                    context.update(vars(item))
+            # Get the local category codes and macros
+            if obj.categories is not None:
+                newcontext.categories = obj.categories
 
-            # Add the locally scoped macros to the current context
-            attr = 'texname'
-            for key, value in context.items():
-                if hasattr(value, attr):
-                    if value.texname:
-                        key = value.texname
-                    newcontext[key] = value
+            newcontext.update(obj.locals)
 
         return newcontext
-
-    def insert(self, index, context=None):
-        """ 
-        Insert a new context into the stack 
-
-        Required Arguments:
-        index -- position to put the new context.  If this number 
-            is equal to or greater than the length of the context 
-            stack, the new context is simply appended to the 
-            current stack.
-        context -- the context to insert
-
-        """
-        if index >= len(self.contexts):
-            self.append(context)
-        else:
-            stacklog.debug('inserting %s %s (%s)', 
-                           (len(self.contexts), type(context), index))
-            self.contexts.insert(index, self.createContext(context))
 
     def importMacros(self, context):
         """ 
@@ -230,18 +210,11 @@ class Context(object):
         context -- dictionary of macros to import
 
         """
-        for key, value in context.items():
+        for value in context.values():
             if ismacro(value):
-                self[key] = value
-
-    def applyRenderer(self, renderer):
-        """ Apply rendering methods to top level macros """
-        self.renderer = renderer
-        macros = self.contexts[0]
-        default = renderer.get('_default_', None)
-        for key, value in macros.items():
-            value.renderer = renderer.get(key, default)
-        Macro.renderer = renderer
+                self[macroname(value)] = value
+            elif isinstance(value, Context):
+                self.importMacros(value)
 
     def pop(self, obj=None):
         """ 
@@ -256,11 +229,12 @@ class Context(object):
         name = '{}'
         if obj is not None:
             name = obj.nodeName
-        stacklog.debug('popping %s from %s', name, self.contextNames())
+        stacklog.debug('popping %s from %s', name, self.top)
 
         # Pop until we find a match, return a list of all of the
         # popped contexts (excluding `None's)
         o = c = None
+        pushed = []
         while self.contexts:
             # Don't let them pop off the global namespace.  This should
             # should probably be an error since we have something 
@@ -275,22 +249,27 @@ class Context(object):
 
             # Found a matching {...}, break out
             if obj is None and o is None:
-                stacklog.debug('implicitly pop {} from %s', self.contextNames())
+                stacklog.debug('implicitly pop {} from %s', self.top)
                 break
 
             # Go to the next one, we don't have a match yet
             if obj is None or o is None:
-               continue
+                if o is not None: 
+                    pushed.append(EndContext())
+                continue
 
             # Found the beginning of an environment with the same name.
+            # We can finish popping contexts now.
             if obj.nodeName == o.nodeName:
-                stacklog.debug('implicitly pop %s from %s', o.nodeName, 
-                               self.contextNames())
+                stacklog.debug('implicitly pop %s from %s', o.nodeName, self.top)
+                pushed.append(EndContext())
                 break
 
-        self.categories = self.contexts[-1].categories
+            pushed.append(EndContext())
 
-        return o
+        self.categories = self.contexts[-1].categories
+        stacklog.debug('pushing tokens %s', pushed)
+        self.tex.pushtokens(pushed)
 
     def addGlobal(self, key, value):
         """ 
@@ -311,12 +290,7 @@ class Context(object):
             raise ValueError, \
                   '"%s" does not implement the macro interface' % key
 
-        value.context = self
-
-        if value.texname:
-            key = value.texname
-
-        self.contexts[0][key] = value
+        self.contexts[0][macroname(value)] = value
 
     __setitem__ = addGlobal
 
@@ -339,53 +313,8 @@ class Context(object):
             raise ValueError, \
                   '"%s" does not implement the macro interface' % key
 
-        value.context = self
+        self.contexts[-1][macroname(value)] = value
 
-        if value.texname:
-            key = value.texname
-
-        self.contexts[-1][key] = value
-
-    def has_key(self, key):
-        """
-        Does the name exist in any current context?
-
-        Required Arguments:
-        key -- the macro name to look for
-
-        Returns: boolean indicating whether or not the macro was found
-
-        """
-        for d in self.contexts:
-            if d.has_key(key):
-                return True
-        return False
-
-    def keys(self):
-        """
-        Return the names of all macros in the entire context
-
-        Returns: list of macro names
-
-        """
-        allkeys = {}
-        for d in self.contexts:
-            for key in d.keys():
-                allkeys[key] = 0
-        return allkeys.keys()
-
-    def __delitem__(self, key):
-        """
-        Deletes the all occurrences of the macro with name `key`
-
-        Required Arguments:
-        key -- the name of the macro to delete
-
-        """
-        for d in self.contexts:
-            if d.has_key(key):
-                del d[key]
-        
     def whichCode(self, char):
         """ 
         Return the character code that `char` belongs to 
@@ -471,10 +400,9 @@ class Context(object):
         # Generate a new counter class
         macrolog.debug('creating counter %s', name)
         newclass = new.classobj(name, (plasTeX.Counter,), 
-            {'resetby':resetby,'number':initial,'counters':self.counters})
+            {'resetby':resetby,'number':initial})
 
         self.addGlobal(name, newclass)
-        self.counters[name] = newclass()
 
         # Set up the default format
         if format is None:
@@ -526,7 +454,7 @@ class Context(object):
                                 {'ifclass':ifclass})
         self.addGlobal(falsename, newclass)
 
-    def newcommand(self, name, nargs, definition, opt=None):
+    def newcommand(self, name, nargs=0, definition=None, opt=None):
         """ 
         Create a \\newcommand 
 
@@ -552,13 +480,19 @@ class Context(object):
             nargs = 0
         assert isinstance(nargs, int), 'nargs must be an integer'
 
+        if isinstance(definition, basestring):
+            definition = [x for x in Tokenizer(definition, self)]
+
+        if isinstance(opt, basestring):
+            opt = [x for x in Tokenizer(opt, self)]
+
         macrolog.debug('creating newcommand %s', name)
         newclass = new.classobj(name, (plasTeX.NewCommand,),
                        {'nargs':nargs,'opt':opt,'definition':definition})
 
         self.addGlobal(name, newclass)
 
-    def newenvironment(self, name, nargs, definition, opt=None):
+    def newenvironment(self, name, nargs=0, definition=None, opt=None):
         """ 
         Create a \\newenvironment 
 
@@ -585,9 +519,19 @@ class Context(object):
         if nargs is None:
             nargs = 0
         assert isinstance(nargs, int), 'nargs must be an integer'
-        assert isinstance(definition, (tuple,list)), \
-            'definition must be a list or tuple'
-        assert len(definition) == 2, 'definition must have 2 elements'
+
+        if definition is not None:
+            assert isinstance(definition, (tuple,list)), \
+                'definition must be a list or tuple'
+            assert len(definition) == 2, 'definition must have 2 elements'
+
+            if isinstance(definition[0], basestring):
+                definition[0] = [x for x in Tokenizer(definition[0], self)]
+            if isinstance(definition[1], basestring):
+                definition[1] = [x for x in Tokenizer(definition[1], self)]
+
+        if isinstance(opt, basestring):
+            opt = tex.tokenize(opt)
 
         macrolog.debug('creating newenvironment %s', name)
 
@@ -601,7 +545,7 @@ class Context(object):
                        {'nargs':0,'opt':None,'definition':definition[1]})
         self.addGlobal('end' + name, newclass)
 
-    def newdef(self, name, args, definition, local=True):
+    def newdef(self, name, args=None, definition=None, local=True):
         """ 
         Create a \def 
 
@@ -624,6 +568,9 @@ class Context(object):
             macrolog.debug('def %s already defined', name)
             return
 
+        if isinstance(definition, basestring):
+            definition = [x for x in Tokenizer(definition, self)]
+
         macrolog.debug('creating def %s', name)
         newclass = new.classobj(name, (plasTeX.Definition,),
                        {'args':args,'definition':definition})
@@ -634,4 +581,15 @@ class Context(object):
             self.addGlobal(name, newclass)
 
     def let(self, dest, source):
+        """
+        Create a \let
+
+        Required Arguments:
+        dest -- the command sequence to create
+        source -- the token to set the command sequence equivalent to
+
+        Examples::
+            c.let('bgroup', BeginGroup('{'))
+
+        """
         self.lets[dest] = source

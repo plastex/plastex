@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-from plasTeX.Token import *
-from plasTeX import Macro, Command, Environment
+from plasTeX import Macro, Command, Environment, MODE_BEGIN, MODE_END
 from plasTeX.Logging import getLogger
 
 log = getLogger()
@@ -41,7 +40,7 @@ class newcommand(Command):
     """ \\newcommand """
     args = 'name:cs [ nargs:int ] [ opt:nox ] definition:nox'
     def invoke(self, tex):
-        Command.parse(self, tex)
+        self.parse(tex)
         a = self.attributes
         args = (a['name'], a['nargs'], a['definition'])
         kwargs = {'opt':a['opt']}
@@ -55,7 +54,7 @@ class newenvironment(Command):
     """ \\newenvironment """
     args = 'name:str [ nargs:int ] [ opt:nox ] begin:nox end:nox'
     def invoke(self, tex):
-        Command.parse(self, tex)
+        self.parse(tex)
         a = self.attributes
         args = (a['name'], a['nargs'], [a['begin'], a['end']])
         kwargs = {'opt':a['opt']}
@@ -66,7 +65,7 @@ class usepackage(Command):
     """ \\usepackage """
     args = '[ %options ] name:str'
     def invoke(self, tex):
-        Command.parse(self, tex)
+        self.parse(tex)
         attrs = self.attributes
         try: 
             # See if it has already been loaded
@@ -106,7 +105,7 @@ class x_ifnextchar(Command):
     texname = '@ifnextchar'
     args = 'char:tok true:nox false:nox'
     def invoke(self, tex):
-        Command.parse(self, tex)
+        self.parse(tex)
         a = self.attributes
         for t in tex.itertokens():
             tex.pushtoken(t)

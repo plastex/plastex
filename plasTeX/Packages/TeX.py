@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from plasTeX.Utils import *
-from plasTeX.Token import *
+from plasTeX.Tokenizer import CC_MATHSHIFT
 from plasTeX import Macro, Command, Environment
 from plasTeX.Logging import getLogger
 
@@ -16,6 +16,8 @@ class par(Macro):
     level = PARAGRAPH
     def invoke(self, tex):
         status.dot()
+    def digest(self, tex):
+        return
     def __repr__(self): return '\n\n'
 
 class mbox(Command):
@@ -56,9 +58,13 @@ class mathshift(Macro):
         if inenv and inenv[-1] is not None:
             env = inenv.pop()
             if type(env) is type(displaymath):
-                tex.next()
-            tex.context.pop(env)
-            return [env]
+                for t in tex.itertokens():
+                    break
+                tex.context.pop(displaymath)
+                return [displaymath]
+            else:
+                tex.context.pop(math)
+                return [math]
 
         for t in tex.itertokens():
             if t.code == CC_MATHSHIFT:
@@ -105,22 +111,26 @@ class macroparameter(Macro):
 
 class bgroup(Macro):
     def invoke(self, tex):
-        self.context.push()
+        tex.context.push()
     def __repr__(self):
         return '{'
+    def digest(self, tokens):
+        return
 
 class egroup(Macro):
     def invoke(self, tex):
-        self.context.pop()
+        tex.context.pop()
     def __repr__(self):
         return '}'
+    def digest(self, tokens):
+        return
 
 class _def(Macro):
     """ TeX's \\def command """
     local = True
     args = 'name:cs args:args definition:nox'
     def invoke(self, tex):
-        Macro.parse(self, tex)
+        self.parse(tex)
         a = self.attributes
         deflog.debug('def %s %s %s', a['name'], a['args'], a['definition'])
         tex.context.newdef(a['name'], a['args'], a['definition'], local=self.local)
@@ -138,14 +148,14 @@ class newif(Macro):
     """ \\newif """
     args = 'name:cs'
     def invoke(self, tex):
-        Macro.parse(self, tex)
+        self.parse(tex)
         tex.context.newif(self.attributes['name'])
 
 class _if(Macro):
     """ Test if character codes agree """
     args = 'a:tok b:tok'
     def invoke(self, tex):
-        Macro.parse(self, tex)
+        self.parse(tex)
         a = self.attributes
         return tex.getCase(a['a'] == a['b'])
 
@@ -157,7 +167,7 @@ class ifnum(_if):
     """ Compare two integers """
     args = 'a:number rel:tok b:number'
     def invoke(self, tex):
-        Macro.parse(self, tex)
+        self.parse(tex)
         attrs = self.attributes
         relation = attrs['rel']
         a, b = attrs['a'], attrs['b']
@@ -173,7 +183,7 @@ class ifdim(_if):
     """ Compare two dimensions """
     args = 'a:dimen rel:tok b:dimen'
     def invoke(self, tex):
-        Macro.parse(self, tex)
+        self.parse(tex)
         attrs = self.attributes
         relation = attrs['rel']
         a, b = attrs['a'], attrs['b']
@@ -189,14 +199,14 @@ class ifodd(_if):
     """ Test for odd integer """   
     args = 'value:number'
     def invoke(self, tex):
-        Macro.parse(self, tex)
+        self.parse(tex)
         return tex.getCase(not(not(self.attributes['value'] % 2)))
 
 class ifeven(_if):
     """ Test for even integer """
     args = 'value:number'
     def invoke(self, tex):
-        Macro.parse(self, tex)
+        self.parse(tex)
         return tex.getCase(not(self.attributes['value'] % 2))
 
 class ifvmode(_if):
@@ -223,7 +233,7 @@ class ifcat(_if):
     """ Test if category codes agree """
     args = 'a:tok b:tok'
     def invoke(self, tex):
-        Macro.parse(self, tex)
+        self.parse(tex)
         a = self.attributes
         return tex.getCase(a['a'].code == a['b'].code)
 
@@ -231,7 +241,7 @@ class ifx(_if):
     """ Test if tokens agree """
     args = 'a:xtok b:xtok'
     def invoke(self, tex):
-        Macro.parse(self, tex)
+        self.parse(tex)
         a = self.attributes
         return tex.getCase(a['a'] == a['b'])
 
@@ -239,28 +249,28 @@ class ifvoid(_if):
     """ Test a box register """
     args = 'value:number'
     def invoke(self, tex):
-        Macro.parse(self, tex)
+        self.parse(tex)
         return tex.getCase(False)
 
 class ifhbox(_if):
     """ Test a box register """
     args = 'value:number'
     def invoke(self, tex):
-        Macro.parse(self, tex)
+        self.parse(tex)
         return tex.getCase(False)
 
 class ifvbox(_if):
     """ Test a box register """
     args = 'value:number'
     def invoke(self, tex):
-        Macro.parse(self, tex)
+        self.parse(tex)
         return tex.getCase(False)
 
 class ifeof(_if):
     """ Test for end of file """
     args = 'value:number'
     def invoke(self, tex):
-        Macro.parse(self, tex)
+        self.parse(tex)
         return tex.getCase(False)
 
 class iftrue(_if):
@@ -277,7 +287,7 @@ class ifcase(_if):
     """ Cases """
     args = 'value:number'
     def invoke(self, tex):
-        Macro.parse(self, tex)
+        self.parse(tex)
         return tex.getCase(self.attributes['value'])
 
 
@@ -285,7 +295,7 @@ class let(Macro):
     """ \\let """
     args = 'name:cs = value:tok'
     def invoke(self, tex):
-        Macro.parse(self, tex)
+        self.parse(tex)
         a = self.attributes
         tex.context.let(a['name'], a['value'])
 
@@ -293,14 +303,14 @@ class char(Macro):
     """ \\char """
     args = 'char:number'
     def invoke(self, tex):
-        Macro.parse(self, tex)
+        self.parse(tex)
         return [chr(self.attributes['char'])]
 
 class catcode(Macro):
     """ \\catcode """
     args = 'char:number = code:number'
     def invoke(self, tex):
-        Macro.parse(self, tex)
+        self.parse(tex)
         a = self.attributes
         tex.context.catcode(chr(a['char']), a['code'])
 
@@ -329,7 +339,7 @@ class input(Command):
     """ \\input """
     args = 'name:str'
     def invoke(self, tex):
-        Command.parse(self, tex)
+        self.parse(tex)
         a = self.attributes
         try: 
             #path = kpsewhich(attrs['name'])
