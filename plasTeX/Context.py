@@ -387,6 +387,7 @@ class Context(object):
         Returns: instance of requested macro
 
         """
+        key = str(key)
         # Look for the request macro in the stack (locals first)
         for i in range(len(self.contexts)-1, -1, -1):
             c = self.contexts[i]
@@ -462,6 +463,7 @@ class Context(object):
 
         """
         newcontext = ContextItem()
+        newcontext.categories = self.categories
 
         if context is not None:
 
@@ -469,7 +471,7 @@ class Context(object):
             # and locally scoped macros
             if hasattr(type(context), 'categories') and \
                type(context).categories is not None:
-                newcontext.categories = type(context).categories[:]
+                newcontext.categories = type(context).categories
  
             # If the context is not a dictionary, use dir to
             # get the localized macros.
@@ -481,14 +483,12 @@ class Context(object):
                     context[key] = getattr(ctype, key)
 
             # Add the locally scoped macros to the current context
+            attr = 'texname'
             for key, value in context.items():
-                if ismacro(value):
+                if hasattr(value, attr):
                     if value.texname:
                         key = value.texname
                     newcontext[key] = value
-
-        if not newcontext.categories:
-            newcontext.categories = self.categories[:]
 
         return newcontext
 
@@ -706,7 +706,7 @@ class Context(object):
         Set category codes for macros that define new macros 
 
         """
-        c = self.categories
+        c = self.contexts[-1].categories = self.categories = self.categories[:]
         for i in [0, 3, 4, 5, 6, 7, 8, 11, 12, 13, 14, 15]:
             c[i] = ''
         c[9] = '\000'
@@ -721,7 +721,7 @@ class Context(object):
         code -- the category code number to set `char` to
 
         """
-        c = self.categories 
+        c = self.contexts[-1].categories = self.categories = self.categories[:]
         for i in range(0,16):
             c[i] = c[i].replace(char, '')
         # Don't insert if it's code 12.
@@ -745,6 +745,7 @@ class Context(object):
         format -- the presentation format for the counter 
 
         """
+        name = str(name)
         # Counter already exists
         if self.has_key(name):
             macrolog.debug('counter %s already defined', name)
@@ -785,6 +786,7 @@ class Context(object):
         initial -- initial value of the 'if' command
 
         """        
+        name = str(name)
         # \if already exists
         if self.has_key(name):
             macrolog.debug('if %s already defined', name)
@@ -823,6 +825,7 @@ class Context(object):
             c.newcommand('foo', 2, r'{\\bf #1#2}', opt='myprefix')
 
         """
+        name = str(name)
         # Macro already exists
         if self.has_key(name):
             macrolog.debug('newcommand %s already defined', name)
@@ -854,6 +857,7 @@ class Context(object):
             c.newenvironment('mylist', 0, (r'\\begin{itemize}', r'\\end{itemize}'))
 
         """
+        name = str(name)
         # Macro already exists
         if self.has_key(name):
             macrolog.debug('newenvironment %s already defined', name)
@@ -887,6 +891,7 @@ class Context(object):
             c.newdef('put', '(#1,#2)#3', '\\dostuff{#1}{#2}{#3}')
 
         """
+        name = str(name)
         # Macro already exists
         if self.has_key(name):
             macrolog.debug('def %s already defined', name)

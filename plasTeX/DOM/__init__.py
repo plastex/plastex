@@ -220,9 +220,10 @@ class NamedNodeMap(dict):
         def fget(self):
             return self._parentNode
         def fset(self, value):
-            self._parentNode = value
-            for value in self.values():
-                self._resetPosition(value)
+            if self._parentNode is not value:
+                self._parentNode = value
+                for value in self.values():
+                    value.parentNode = value
         return locals()
     parentNode = property(**parentNode())
 
@@ -238,9 +239,10 @@ class NamedNodeMap(dict):
         def fget(self):
             return self._ownerDocument
         def fset(self, value):
-            self._ownerDocument = value
-            for value in self.values():
-                self._resetPosition(value)
+            if self._ownerDocument is not value:
+                self._ownerDocument = value
+                for value in self.values():
+                    value.ownerDocument = value
         return locals()
     ownerDocument = property(**ownerDocument())
 
@@ -370,7 +372,7 @@ class NamedNodeMap(dict):
             for item in value:
                 self._resetPosition(item)
  
-        elif isinstance(value, Node):
+        elif isinstance(value, Node) or isinstance(value, Text):
             value.parentNode = self.parentNode
             value.ownerDocument = self.ownerDocument
 
@@ -398,6 +400,107 @@ class NamedNodeMap(dict):
         """
         for key, value in other.items():
             self[key] = value
+
+
+def _compareDocumentPosition(self, other):
+    """
+    Compare the position of the current node to `other`
+
+    Required Arguments:
+    other -- the node to compare our position against
+
+    Returns:
+    DOCUMENT_POSITION_DISCONNECTED -- nodes are disconnected
+    DOCUMENT_POSITION_PRECEDING -- `other` precedes this node
+    DOCUMENT_POSITION_FOLLOWING -- `other` follows this node
+    DOCUMENT_POSITION_CONTAINS -- `other` contains this node
+    DOCUMENT_POSITION_CONTAINED_BY -- `other` is contained by this node
+    DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC -- unknown
+
+    """
+    if self.ownerDocument is not other.ownerDocument:
+        return Node.DOCUMENT_POSITION_DISCONNECTED
+
+    if self.previousSibling is other:
+        return Node.DOCUMENT_POSITION_PRECEDING
+
+    if self.nextSibling is other:
+        return Node.DOCUMENT_POSITION_FOLLOWING
+
+    if self is other:
+        return Node.DOCUMENT_IMPLEMENTATION_SPECIFIC
+
+    sparents = []
+    parent = self.parentNode
+    while parent is not None:
+        if parent is other:
+            return Node.DOCUMENT_POSITION_CONTAINS
+        sparents.append(parent)
+        parent = self.parentNode
+        
+    oparents = []
+    parent = other.parentNode
+    while parent is not None:
+        if parent is self:
+            return Node.DOCUMENT_POSITION_CONTAINED_BY
+        oparents.append(parent)
+        parent = other.parentNode
+
+    for i, sparent in enumerate(sparents):
+        for j, oparent in enumerate(oparents):
+            if sparent is oparent:
+                s = sparents[i+1]
+                o = oparents[j+1]
+                for item in sparent:
+                   if item is s:
+                       return Node.DOCUMENT_POSITION_PRECEDING
+                   if item is o:
+                       return Node.DOCUMENT_POSITION_FOLLOWING
+
+    return Node.DOCUMENT_POSITION_DISCONNECTED
+
+
+def _previousSibling(self):
+    """ 
+    Return the previous sibling 
+
+    NOTE: This is fairly inefficient.  The reason that it has 
+    to be done this way is because Text nodes are a subclass of
+    `unicode` which is an immutable object.  This means that 
+    we can't have two references to the same Text object (i.e.
+    `previousSibling` and `nextSibling` can't be variables).
+
+    """ 
+    if not self.parentNode:
+        return None
+    previous = None
+    for i, item in enumerate(self.parentNode):
+        if item is self:
+            return previous
+        previous = item
+    return None
+
+
+def _nextSibling(self):
+    """ 
+    Return the next sibling 
+
+    NOTE: This is fairly inefficient.  The reason that it has 
+    to be done this way is because Text nodes are a subclass of
+    `unicode` which is an immutable object.  This means that 
+    we can't have two references to the same Text object (i.e.
+    `previousSibling` and `nextSibling` can't be variables).
+
+    """ 
+    if not self.parentNode:
+        return None
+    next = False
+    for i, item in enumerate(self.parentNode):
+        if next:
+            return item
+        if item is self:
+            next = True
+    return None
 
 
 class Node(_DOMList):
@@ -438,15 +541,19 @@ class Node(_DOMList):
     parentNode = None
     attributes = None
 
-    previousSibling = None 
-    nextSibling = None
-
-    _parentNode = None
     _ownerDocument = None
 
     def __init__(self, data=[]):
-        _DOMList.__init__(self, data)
+        _DOMList.__init__(self)
         self.attributes = NamedNodeMap()
+        self.attributes.parentNode = self
+        self.attributes.ownerDocument = self.ownerDocument
+        for item in data:
+            self.append(item)
+
+    def __repr__(self):
+        return '<%s>%s</%s>' % \
+               (self.nodeName, list.__repr__(self), self.nodeName)
 
     def firstChild(self):
         """ Return the first child in the list """
@@ -463,57 +570,54 @@ class Node(_DOMList):
         return self
     childNodes = property(childNodes)
 
-    def parentNode():
-        """ Get/Set the parent node """
-        def fget(self):
-            return self._parentNode
-        def fset(self, value):
-            self.attributes.parentNode = self._parentNode = value
-        return locals()
-    parentNode = property(**parentNode())
+    previousSibling = property(_previousSibling)
+
+    nextSibling = property(_nextSibling)
 
     def ownerDocument():
         """ Get/Set the owner document """
         def fget(self):
             return self._ownerDocument
         def fset(self, value):
-            self.attributes.ownerDocument = self._ownerDocument = value
-            for item in self:
-                if hasattr(item, 'ownerDocument'):
-                    item.ownerDocument = value
+            if self._ownerDocument is not value:
+                self.attributes.ownerDocument = self._ownerDocument = value
+                for item in self:
+                    if hasattr(item, 'ownerDocument'):
+                        item.ownerDocument = value
         return locals()
     ownerDocument = property(**ownerDocument())
 
-    def _resetPosition(self, i):
-        """
-        Set sibling, parent, and owner attributes
+    compareDocumentPosition = _compareDocumentPosition
 
-        Required Arguments:
-        i -- position of the item to reset the position of
+#   def _resetPosition(self, i):
+#       """
+#       Set sibling, parent, and owner attributes
 
-        """
-        # Get current, previous, and next nodes
-        current = self[i]
-        next = previous = None
-        if i > 0: previous = self[i-1]
-        if i < (len(self)-1): next = self[i+1]
+#       Required Arguments:
+#       i -- position of the item to reset the position of
 
-        # Reset attributes on the current node
-        if hasattr(current, 'previousSibling'):
-            current.previousSibling = previous
-            current.nextSibling = next
-            current.parentNode = self
-            # This can cause a lot of function calls if called unnecessarily
-            if current.ownerDocument is not self.ownerDocument: 
-                current.ownerDocument = self.ownerDocument
+#       """
+#       # Get current, previous, and next nodes
+#       length = len(self)
+#       if i < 0: i = i + length
+#       current = self[i]
+#       next = previous = None
+#       if i > 0: previous = self[i-1]
+#       if i < (length-1): next = self[i+1]
 
-        # Reset nextSibling on previous node
-        if previous is not None and hasattr(previous, 'nextSibling'):
-            previous.nextSibling = current
+#       # Reset attributes on the current node
+#       current.previousSibling = previous
+#       current.nextSibling = next
+#       current.parentNode = self
+#       current.ownerDocument = self.ownerDocument
 
-        # Reset previousSibling on next node
-        if next is not None and hasattr(next, 'previousSibling'):
-            next.previousSibling = current
+#       # Reset nextSibling on previous node
+#       if previous is not None:
+#           previous.nextSibling = current
+
+#       # Reset previousSibling on next node
+#       if next is not None:
+#           next.previousSibling = current
 
     def insertBefore(self, newChild, refChild):
         """ 
@@ -578,6 +682,8 @@ class Node(_DOMList):
                 return self.pop(i)
         raise NotFoundErr
 
+    remove = removeChild
+
     def pop(self, index=-1):
         """
         Pop an item from the list
@@ -589,13 +695,7 @@ class Node(_DOMList):
         the item removed from the list
 
         """
-        out = _DOMList.pop(self, index)
-        if self:
-            if index < 0:
-                self._resetPosition(len(self)+index)
-            else:
-                self._resetPosition(min(index,len(self)-1))
-        return out
+        return _DOMList.pop(self, index)
 
     def append(self, newChild):
         """ 
@@ -608,14 +708,19 @@ class Node(_DOMList):
         `newChild`
 
         """
-#       list.append(self, newChild) 
         if isinstance(newChild, DocumentFragment):
             for item in newChild:
-                list.append(self, item)
+                self.append(self, item)
         else:
-            list.append(self, newChild) 
-        self._resetPosition(-1)
+            if isinstance(newChild, basestring) and \
+               not(isinstance(newChild, Text)):
+                newChild = Text(newChild)
+            _DOMList.append(self, newChild) 
+        newChild.ownerDocument = self.ownerDocument
+        newChild.parentNode = self
         return newChild
+
+    appendChild = append
 
     def insert(self, i, newChild):
         """ 
@@ -629,14 +734,17 @@ class Node(_DOMList):
         `newChild`
 
         """
-#       list.insert(self, i, newChild)
         if isinstance(newChild, DocumentFragment):
             for item in newChild:
-                list.insert(self, i, item)
+                self.insert(self, i, item)
                 i += 1
         else:
-            list.insert(self, i, newChild)
-        self._resetPosition(i)
+            if isinstance(newChild, basestring) and \
+               not(isinstance(newChild, Text)):
+                newChild = Text(newChild)
+            _DOMList.insert(self, i, newChild)
+        newChild.ownerDocument = self.ownerDocument
+        newChild.parentNode = self
         return newChild
 
     def __setitem__(self, i, node):
@@ -655,22 +763,37 @@ class Node(_DOMList):
                 self.insert(i, item)
                 i += 1
             self.pop(i)
-            return
             
-        _DOMList.__setitem__(self, i, node)
-
-        # Reset sibling positions
-        if isinstance(i, slice):
-            for idx, n in zip(i.indices(), node):
-               self._resetPosition(idx) 
         else:
-           self._resetPosition(index) 
+            self.insert(i, node)
+            self.pop(i+1)
 
     def extend(self, other):
+        """ self += other """
         for item in other:
             self.append(item)
 
-    appendChild = append
+    __iadd__ = extend
+
+    def __radd__(self, other):
+        """ other + self """
+        obj = type(other)()
+        obj.ownerDocument = self.ownerDocument
+        for item in other:
+            obj.append(item)
+        for item in self:
+            obj.append(item)
+        return obj
+
+    def __add__(self, other):
+        """ self + other """
+        obj = type(self)()
+        obj.ownerDocument = self.ownerDocument
+        for item in self:
+            obj.append(item)
+        for item in other:
+            obj.append(item)
+        return obj
 
     def hasChildNodes(self):
         """ Do we have any child nodes? """
@@ -715,63 +838,6 @@ class Node(_DOMList):
         """ Are there any attributes set? """
         return not(not(self.attributes))
 
-    def compareDocumentPosition(self, other):
-        """
-        Compare the position of the current node to `other`
-
-        Required Arguments:
-        other -- the node to compare our position against
-
-        Returns:
-        DOCUMENT_POSITION_DISCONNECTED -- nodes are disconnected
-        DOCUMENT_POSITION_PRECEDING -- `other` precedes this node
-        DOCUMENT_POSITION_FOLLOWING -- `other` follows this node
-        DOCUMENT_POSITION_CONTAINS -- `other` contains this node
-        DOCUMENT_POSITION_CONTAINED_BY -- `other` is contained by this node
-        DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC -- unknown
-
-        """
-        if self.ownerDocument is not other.ownerDocument:
-            return Node.DOCUMENT_POSITION_DISCONNECTED
-
-        if self.previousSibling is other:
-            return Node.DOCUMENT_POSITION_PRECEDING
-
-        if self.nextSibling is other:
-            return Node.DOCUMENT_POSITION_FOLLOWING
-
-        if self is other:
-            return Node.DOCUMENT_IMPLEMENTATION_SPECIFIC
-
-        sparents = []
-        parent = self.parentNode
-        while parent is not None:
-            if parent is other:
-                return Node.DOCUMENT_POSITION_CONTAINS
-            sparents.append(parent)
-            parent = self.parentNode
-            
-        oparents = []
-        parent = other.parentNode
-        while parent is not None:
-            if parent is self:
-                return Node.DOCUMENT_POSITION_CONTAINED_BY
-            oparents.append(parent)
-            parent = other.parentNode
-
-        for i, sparent in enumerate(sparents):
-            for j, oparent in enumerate(oparents):
-                if sparent is oparent:
-                    s = sparents[i+1]
-                    o = oparents[j+1]
-                    for item in sparent:
-                       if item is s:
-                           return Node.DOCUMENT_POSITION_PRECEDING
-                       if item is o:
-                           return Node.DOCUMENT_POSITION_FOLLOWING
-
-        return Node.DOCUMENT_POSITION_DISCONNECTED
-
     def textContent(self):
         """ Get the text content of the current node """
         output = []
@@ -780,7 +846,7 @@ class Node(_DOMList):
                 output.append(item)
             else:
                 output.append(item.textContent)
-        return ''.join(output)
+        return u''.join(output)
     textContent = property(textContent) 
  
     def isSameNode(self, other):
@@ -954,89 +1020,6 @@ def _getElementById(self, elementId):
             e = item.getElementById(elementId) 
             if e is not None:
                 return e
-
-
-class CharacterData(Node):
-    """
-    Character Data
-
-    http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html#ID-FF21A306 
-    """
-
-    def __init__(self, *args, **kwargs):
-        Node.__init__(self, *args, **kwargs)
-        self.data = ''
-
-    def length(self):
-        """ Number of characters in string """
-        return len(self.data)
-    length = property(length)
-
-    def substringData(self, offset, count):
-        """
-        Get a substring of the data
-
-        Required Arguments:
-        offset -- position to start
-        count -- number of characters to retrieve
-
-        Returns:
-        substring
-
-        """
-        return self.data[offset:offset+count]
-
-    def appendData(self, arg):
-        """
-        Add content to data
- 
-        Required Arguments:
-        arg -- content to add
-
-        """
-        self.data += arg
-
-    def insertData(self, offset, arg):
-        """
-        Insert content into data
-
-        Required Arguments:
-        offset -- position to start
-        arg -- content to insert
-
-        """
-        d = list(self.data)
-        d.insert(offset, arg)
-        self.data = ''.join(d) 
-
-    def deleteData(self, offset, count):
-        """
-        Delete content from data
-
-        Required Arguments:
-        offset -- position to start
-        count -- number of characters to delete
-
-        """
-        d = list(self.data)
-        del d[offset:offset+count]
-        self.data = ''.join(d) 
-        
-    def replaceData(self, offset, count, arg):
-        """
-        Replace content in data
-
-        Required Arguments:
-        offset -- position to start
-        count -- number of characters to replace
-        arg -- content to replace with
-
-        """
-        d = list(self.data)
-        del d[offset:offset+count]
-        if offset >= len(d): d.append(arg)
-        else: d.insert(offset, arg)
-        self.data = ''.join(d) 
 
 
 class Attr(Node):
@@ -1289,51 +1272,130 @@ class Element(Node):
         self.setIdAttribute(idAttr.name, isId)
 
 
+class CharacterData(unicode):
+    """
+    Character Data
+
+    http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html#ID-FF21A306 
+
+    This class doesn't follow the entire API.  Instead of being
+    a subclass of Node, it is a subclass of unicode.  Because of 
+    this the data is immutable making methods like insertData,
+    deleteData, etc. impossible.
+
+    """
+    namespaceURI = None
+    prefix = None
+    localName = None
+    baseURI = None
+    attributes = None
+
+    previousSibling = None
+    nextSibling = None
+    parentNode = None
+    ownerDocument = None
+    firstChild = None
+    lastChild = None
+    childNodes = None
+
+    previousSibling = property(_previousSibling)
+
+    nextSibling = property(_nextSibling)
+
+    def nodeValue(self):
+        return self
+    nodeValue = property(nodeValue)
+
+    def data(self):
+        return self
+    data = property(data)
+
+    def _notImplemented(self, *args, **kwargs):
+        raise NotImplementedError
+    
+    def length(self):
+        """ Number of characters in string """
+        return len(self)
+    length = property(length)
+
+    substringData = _notImplemented
+    appendData = _notImplemented
+    insertData = _notImplemented
+    deleteData = _notImplemented
+    replaceData = _notImplemented
+    insertBefore = _notImplemented
+    replaceChild = _notImplemented
+    removeChild = _notImplemented
+    appendChild = _notImplemented
+
+    def hasChildNodes(self):
+        return False
+
+    def normalize(self):
+        pass
+
+    def isSupported(self, feature, version):
+        return True
+
+    def hasAttributes(self):
+        return False
+
+    def textContent(self):
+        return self
+
+    def isSameNode(self, other):
+        return self is other
+
+    def isDefaultNamespace(self, ns):
+        if ns is None: return True
+        return False
+
+    def lookupNamespaceURI(self, ns):
+        return None
+
+    def isEqualNode(self, other):
+        return self == other
+
+    def getFeature(self, feature, version):
+        return None
+
+    def setUserData(self, key, data, handler=None):
+        if not hasattr(self, '_userdata'):
+            self._userdata = {}
+        self._userdata[key] = data
+
+    def getUserData(self, key):
+        try: return self._userdata[key]
+        except (AttributeError, KeyError): return None
+
+    compareDocumentPosition = _compareDocumentPosition
+
+    def getElementsByTagName(self, name):
+        return []
+
+
 class Text(CharacterData):
     """
     Text
 
     http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html#ID-1312295772
     """
+
     nodeName = '#text'
     nodeType = Node.TEXT_NODE
 
-    def nodeValue():
-        def fget(self): return self.data
-        def fset(self, value): self.data = value
-        return locals()
-    nodeValue = property(**nodeValue())
+    replaceWholeText = CharacterData._notImplemented
+    splitText = CharacterData._notImplemented
 
-    def splitText(self, offset):
-        """
-        Split text at `offset`
-
-        Required Arguments:
-        offset -- spot to split the text at
-
-        Returns:
-        text content after `offset`
-
-        """
-        if offset > len(self):
-            raise IndexSizeErr
-        begin = self.data[:offset]
-        end = self.data[offset:]
-        self.data = begin
-        return end
-                                        
     def isElementContentWhitespace(self):
         """ Is this text node completely whitespace? """
-        return not(self.textContent.strip())
+        return not(self.strip())
     isElementContentWhitespace = property(isElementContentWhitespace)
 
     def wholeText(self):
         """ Return text from siblings and self """
         return self.parentNode.textContent
     wholeText = property(wholeText)
-
-    def replaceWholeText(self, content):
-        raise NotImplementedError
 
 
 class Comment(CharacterData):
@@ -1345,12 +1407,6 @@ class Comment(CharacterData):
     nodeName = '#comment'
     nodeType = Node.COMMENT_NODE
 
-    def nodeValue():
-        def fget(self): return self.data
-        def fset(self, value): self.data = value
-        return locals()
-    nodeValue = property(**nodeValue())
- 
 
 class TypeInfo(object):
     """
@@ -1520,12 +1576,6 @@ class CDATASection(Text):
     """
     nodeName = '#cdata-section'
     nodeType = Node.CDATA_SECTION_NODE
-
-    def nodeValue():
-        def fget(self): return self.data
-        def fset(self, value): self.data = value
-        return locals()
-    nodeValue = property(**nodeValue())
 
 
 class DocumentType(Node):
