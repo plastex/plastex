@@ -41,8 +41,8 @@ class Array(Environment):
         """ Partial horizontal line """
         args = 'span:str'
         def invoke(self, tex):
-            attrs = self.attributes
             self.parse(tex)
+            attrs = self.attributes
             attrs['span'] = [int(x) for x in attrs['span'].split('-')]
             if len(attrs['span']) == 1:
                 attrs['span'] *= 2
@@ -83,7 +83,7 @@ class Array(Environment):
 
     def invoke(self, tex):
         if self.mode == MODE_END:
-            tex.context.pop(self) # End of table
+            tex.context.pop(self) # End of table, row, and cell
             return 
         Environment.invoke(self, tex)
         tex.context.push() # Beginning of cell
@@ -390,3 +390,6 @@ class longtable(Array):
 
 class cr(Command):
     args = '* [ space ]'
+
+class array(Array):
+    args = 'colspec'

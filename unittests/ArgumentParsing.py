@@ -119,9 +119,9 @@ class ArgumentParsing(TestCase):
         [x for x in s]
         s.input(r'\foo a ')
         arg = s.getArgument(type='xtok')
-        assert arg.nodeName == 'it'
+        assert arg.nodeName == 'it', arg.nodeName
         arg = s.getArgument(type='xtok')
-        assert arg == 'a'
+        assert arg == 'a', arg
 
 if __name__ == '__main__':
     unittest.main()

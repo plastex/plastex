@@ -36,6 +36,15 @@ class tokiter(object):
     def next(self):
         return self.obj.nexttok()
 
+class nodeiter(object):
+    """ Node iterator """
+    def __init__(self, obj):
+        self.obj = obj
+    def __iter__(self):
+        return self
+    def next(self):
+        return self.obj.nextnode()
+
 class bufferediter(object):
     """ Buffered iterator """
     def __init__(self, obj):
@@ -125,6 +134,10 @@ class TeX(object):
         return self.inputs[-1].linenumber
     linenumber = property(linenumber)
 
+    def lineinfo(self):
+        return ' in %s on line %s' % (self.filename, self.linenumber)
+    lineinfo = property(lineinfo)
+
     def disableLogging(cls):
         """ Turn off logging """
         disableLogging()
@@ -198,8 +211,8 @@ class TeX(object):
                         self.pushtokens(tokens)
                     continue
                 except:
-                    log.error('Error while expanding "%s" in %s on line %s' 
-                              % (token.macro, self.filename, self.linenumber))
+                    log.error('Error while expanding "%s"%s'
+                              % (token.macro, self.lineinfo))
                     raise
             return token
         raise StopIteration
@@ -215,19 +228,9 @@ class TeX(object):
         list of expanded tokens
 
         """
-        # Expand given tokens
-        self.context.push()
         self.pushtoken(EndTokens)
         self.pushtokens(tokens)
-        tokenlog.debug('expand %s', tokens)
-        output = [x for x in self]
-
-        # Get any tokens popped from the context
-        self.pushtoken(EndTokens)
-        self.context.pop()
-        output += [x for x in self]
-
-        return TeXFragment(self.parse(output))
+        return TeXFragment(self.parse([x for x in self]))
 
     def tokenize(self, s):
         """
@@ -737,7 +740,7 @@ class TeX(object):
                 currentvalue = None
 
         return dictarg
-    
+
     def parse(self, tokens=None):
         """ Parse stream content until it is empty """
         if tokens is None:

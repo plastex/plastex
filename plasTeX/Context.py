@@ -248,12 +248,16 @@ class Context(object):
             # should probably be an error since we have something 
             # incorrectly grouped.
             if len(self.contexts) == 1:
-                stacklog.warning('Attempting to pop the global namespace.')
+                stacklog.warning('%s%s is attempting to pop the global namespace.' % (name, self.tex.lineinfo))
                 break
 
             # Pop the next context in the stack
             c = self.contexts.pop()
             o = c.obj
+
+            # The same instance started and ended the context
+            if obj is o:
+                break
 
             # Found a matching {...}, break out
             if obj is None and o is None:

@@ -114,10 +114,10 @@ class Macro(Token, RenderMixIn):
         # the context stack.  We push an empty context so that the
         # `self' token doesn't get put into the output stream twice
         # (once here and once with the pop).
-        tex.context.push()
+#       tex.context.push()
         tex.context.push(self)
         self.parse(tex)
-        tex.context.pop()
+        tex.context.pop(self)
 
     def digest(self, tokens):
         return 

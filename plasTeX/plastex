@@ -4,6 +4,7 @@ import os, sys
 import plasTeX
 from plasTeX.TeX import TeX
 from plasTeX.TALUtils import *
+from plasTeX.Tokenizer import CC_EXPANDED
 
 #sys.path.insert(0, os.path.join(os.path.dirname(plasTeX.__file__), 'packages'))
 
@@ -23,14 +24,15 @@ s = TeX(open(file,'r'))
 document = s.parse()
 #for i, item in enumerate(s.sourcetokens):
 #    print i, repr(item)
-print ''.join([repr(x) for x in document])
+#print ''.join([repr(x) for x in document])
 #output = []
 #for item in document:
 #    if item.code == 100:
 #        print repr(item), id(item)
 #    else:
 #        print item,
-print document[-2].toXML()
+document = [x for x in document if x.code == CC_EXPANDED and x.nodeName == 'document'].pop()
+print document.toXML()
 #print s.source(document)
 sys.exit()
 

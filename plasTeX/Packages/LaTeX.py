@@ -177,3 +177,60 @@ class tablehead(Command):
     args = 'label:str title'
 class examplehead(Command):
     args = 'label:str title'
+class textpercent(Command):
+    texname = '%'
+class alpha(Command): pass
+class textdollar(Command):
+    texname = '$'
+class sigma(Command): pass
+class prime(Command): pass
+class htmlref(Command):
+    args = 'text label:str'
+class fsbji(Command):
+    args = 'key entry'
+class setlength(Command):
+    args = 'length:cs value:str'
+class textunderscore(Command):
+    texname = '_'
+class fssbji(Command):
+    args = 'key entry1 entry2'
+class frac(Command):
+    args = 'numerator denominator'
+class bar(Command):
+    args = 'text'
+class displaystyle(Command): pass
+class sqrt(Command):
+    args = 'text'
+class max(Command): pass
+class min(Command): pass
+class quad(Command): pass
+class ne(Command): pass
+class left(Command):
+    args = 'char'
+class right(Command):
+    args = 'char'
+class pm(Command): pass
+class mu(Command): pass
+class lbrace(Command): pass
+class _lbrace(Command): 
+    texname = '{'
+class rbrace(Command): pass
+class _rbrace(Command): 
+    texname = '}'
+class chi(Command): pass
+class leq(Command): pass
+class int(Command): pass
+class geq(Command): pass
+class dashtwo(Command): pass
+class textampersand(Command):
+    texname = '&'
+
+class sasstmts(Environment):
+    class item(Command): pass
+class reference(Environment):
+    class item(Command): pass
+
+#class begindisplaymath(Definition):
+#    definition = r'\begin{displaymath}'
+#class enddisplaymath(Definition):
+#    definition = r'\end{displaymath}'
