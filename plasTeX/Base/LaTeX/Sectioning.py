@@ -9,6 +9,8 @@ from plasTeX.Config import config
 from plasTeX import Command, Environment, Counter, TheCounter, TeXFragment
 from plasTeX.Logging import getLogger
 
+log = getLogger()
+
 #
 # C.4.1 Sectioning Commands
 #
@@ -74,16 +76,14 @@ class SectionUtils(object):
         parent = None
         if self.level > Command.DOCUMENT_LEVEL:
             item = parent = self.parentNode
-            while item is not None:
+            while item is not None and item.level > Command.DOCUMENT_LEVEL:
                 breadcrumbs.append(item)
                 item = item.parentNode
-                if item.level == Command.DOCUMENT_LEVEL:
-                    breadcrumbs.append(item)
-                    break
+            if item is not None:
+                breadcrumbs.append(item)
         breadcrumbs.reverse()
 
-        top = sections[0]
-        first = sections[0]
+        first = top = breadcrumbs[0]
         last = sections[-1]
         prev = next = None
         breaknext = False
@@ -161,6 +161,7 @@ class StartSection(Command, SectionUtils):
                 tokens.push(item)
                 break
             if item.nodeType == Command.ELEMENT_NODE:
+                item.parentNode = self
                 item.digest(tokens)
             self.appendChild(item)
         self.paragraphs()

@@ -595,6 +595,10 @@ class TeX(object):
                         toks.append(t)
                     else:
                         toks.append(t)
+            elif t.catcode == Token.CC_ESCAPE:
+                self.pushtoken(t)
+                for t in self:
+                    return [t], t.source
             else:
                 toks.append(t)
             return toks, self.source(source)

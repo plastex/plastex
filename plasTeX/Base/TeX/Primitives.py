@@ -43,7 +43,7 @@ class par(Command):
     source = property(source)
 
     def digest(self, tokens):
-        return
+        status.dot()
 
     def isElementContentWhitespace(self):
         if not self.hasChildNodes():

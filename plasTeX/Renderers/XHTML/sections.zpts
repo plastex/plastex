@@ -40,7 +40,7 @@
 <td tal:condition="nav/next"><a tal:attributes="href nav/next/url; title nav/next/attributes/title"><img border="0" tal:attributes="alt string:Next: ${nav/next/attributes/title}" src="next.gif" width="32" height="32" /></a></td>
 <td tal:condition="not:nav/next"><img border="0" alt="" src="blank.gif" width="32" height="32" /></td>
 <td class="navtitle" align="center" tal:content="self/attributes/title">Section Title</td>
-<td tal:condition="nav/contents"><a tal:attributes="href nav/contents/attributes/title" title="Table of Contents"><img border="0" alt="" src="contents.gif" width="32" height="32" /></a></td>
+<td tal:condition="nav/contents"><a tal:attributes="href nav/contents/url" title="Table of Contents"><img border="0" alt="" src="contents.gif" width="32" height="32" /></a></td>
 <td tal:condition="not:nav/contents"><img border="0" alt="" src="blank.gif" width="32" height="32" /></td>
 <td><img border="0" alt="" src="blank.gif" width="32" height="32" /></td>
 <td><img border="0" alt="" src="blank.gif" width="32" height="32" /></td>

@@ -5,6 +5,9 @@ from plasTeX.DOM import Node
 from imagers.dvipng import DVIPNG
 from StringIO import StringIO
 from plasTeX.Config import config
+from plasTeX.Logging import getLogger
+
+status = getLogger('status')
 
 encoding = config['encoding']['output']
 useids = config['filenames']['use-ids']
@@ -91,7 +94,7 @@ class Renderer(dict):
         self.imager.close()
 
         # Remove mixins
-        Node.renderer = None
+        del Node.renderer
         unmix(Node, Renderable)
 
         return result
@@ -99,25 +102,27 @@ class Renderer(dict):
 
 class Renderable(object):
 
-    renderer = None
-
     def __unicode__(self):
         if not self.hasChildNodes():
             return u''
+        if self.filename:
+            status.info(' [ %s ', self.filename)
         s = []
         for child in self.childNodes:
-            val = self.renderer.get(child.nodeName, unicode)(child)
+            val = Node.renderer.get(child.nodeName, unicode)(child)
             if type(val) is unicode:
                 s.append(val)
             else:
                 s.append(unicode(val,encoding))
+        if self.filename:
+            status.info(' ] ')
         return u''.join(s)
 
     def __str__(self):
         return unicode(self)
 
     def image(self):
-        return self.renderer.imager.newimage(self.source)
+        return Node.renderer.imager.newimage(self.source)
     image = property(image)
 
     def url(self):
@@ -135,7 +140,7 @@ class Renderable(object):
             elif useids and self.id != id(self):
                 filename = '%s%s' % (self.id, ext)
             else:
-                filename = self.renderer.filenames.next()
+                filename = Node.renderer.filenames.next()
             setattr(self, '@filename', filename)
         return filename
     filename = property(filename)

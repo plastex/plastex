@@ -380,6 +380,7 @@ class Macro(Element):
                 if isinstance(tok, endclass):
                     tokens.push(tok)
                     return tok
+                tok.parentNode = self
                 tok.digest(tokens)
             if tok.contextDepth < self.contextDepth:
                 tokens.push(tok)
@@ -486,6 +487,7 @@ class Environment(Macro):
             if item.nodeType == Node.ELEMENT_NODE:
                 if item.macroMode == Macro.MODE_END and type(item) is type(self):
                     break
+                item.parentNode = self
                 item.digest(tokens)
             if item.contextDepth < self.contextDepth:
                 tokens.push(item)
