@@ -11,6 +11,9 @@ deflog = getLogger('parse.definitions')
 envlog = getLogger('parse.environments')
 mathshiftlog = getLogger('parse.mathshift')
 
+class relax(Command):
+    pass
+
 class par(Command):
     """ Paragraph """
     level = Command.PARAGRAPH_LEVEL

@@ -19,7 +19,7 @@ Example:
 import string
 from Utils import *
 from Context import Context 
-from Tokenizer import Tokenizer, Token
+from Tokenizer import Tokenizer, Token, EscapeSequence
 from plasTeX import TeXFragment, TeXDocument
 from plasTeX import Parameter, Macro, glue, muglue, mudimen, dimen, number
 from plasTeX.Logging import getLogger, disableLogging
@@ -78,20 +78,11 @@ class TeX(object):
 
         # TeX arguments types and their casting functions
         self.argtypes = {
-            'int': self.castInteger,
-            int: self.castInteger,
-            'float': self.castFloat,
-            float: self.castFloat,
-            'double': self.castFloat,
-            'number': self.castFloat,
             'str': self.castString,
             str: self.castString,
             'chr': self.castString,
             chr: self.castString,
             'char': self.castString,
-            'length': self.castLength,
-            'dimension': self.castLength,
-            'dimen': self.castLength,
             'cs': self.castControlSequence,
             'label': self.castLabel,
             'id': self.castLabel,
@@ -103,20 +94,24 @@ class TeX(object):
             'dict': self.castDictionary,
             dict: self.castDictionary,
 
-            # These TeX primitive types are handled natively
-#           'Args': ...,
-#           'Tok': ...,
-#           'XTok': ...,
-#           'Number': ...,
-#           'Dimen': ...,
-#           'MuDimen': ...,
-#           'Length': ...,
-#           'MuLength': ...,
-#           'Glue': ...,
-#           'MuGlue': ...,
+            # LaTeX versions of TeX internal parameters
+            'dimen': self.castDimen,
+            'dimension': self.castDimen,
+            'length': self.castDimen,
+#           'mudimen': self.castMuDimen,
+#           'glue':  self.castGlue,
+#           'muglue': self.castMuGlue,
+            'number': self.castNumber,
+            'count': self.castNumber,
+            'int': self.castNumber,
+            int: self.castNumber,
+            'float': self.castDecimal,
+            float: self.castDecimal,
+            'double': self.castDecimal,
         }
 
         # Starting parsing if a source was given
+        self.currentinput = (0,0)
         self.input(source)
 
     def input(self, source):
@@ -132,6 +127,7 @@ class TeX(object):
             return
         t = Tokenizer(source, self.context)
         self.inputs.append((t, iter(t)))
+        self.currentinput = self.inputs[-1]
 
     def endinput(self):
         """ 
@@ -140,13 +136,15 @@ class TeX(object):
         """
         if self.inputs:
             self.inputs.pop()
+        if self.inputs:
+            self.currentinput = self.inputs[-1]
 
     def filename(self):
-        return self.inputs[-1][0].filename 
+        return self.currentinput[0].filename
     filename = property(filename)
 
     def linenumber(self):
-        return self.inputs[-1][0].linenumber
+        return self.currentinput[0].linenumber
     linenumber = property(linenumber)
 
     def lineinfo(self):
@@ -335,10 +333,15 @@ class TeX(object):
         """
         if tokens is None:
             return tokens
+
         grouptokens = [Token.CC_EGROUP, Token.CC_BGROUP]
         texttokens = [Token.CC_LETTER, Token.CC_OTHER, 
                       Token.CC_EGROUP, Token.CC_BGROUP, 
                       Token.CC_SPACE]
+
+        try: iter(tokens)
+        except TypeError: return tokens
+
         for t in tokens:
             if isinstance(t, basestring):
                 continue
@@ -351,6 +354,7 @@ class TeX(object):
                 if len(tokens) == 1:
                     return tokens.pop()
                 return tokens
+
         return (u''.join([x for x in tokens 
                           if getattr(x, 'catcode', Token.CC_OTHER) 
                              not in grouptokens])).strip()
@@ -451,34 +455,43 @@ class TeX(object):
         """
         self.readOptionalSpaces()
 
-        # Check for internal TeX types first
-        if type in ['Dimen','Length']:
-            o = self.readDimen()
-            return o, o.source
+        # Disable expansion of parameters
+        Parameter.disable()
+
+        if type in ['Dimen','Length','Dimension']:
+            n = self.readDimen()
+            Parameter.enable()
+            return n, n.source
 
         if type in ['MuDimen','MuLength']:
-            o = self.readMuDimen()
-            return o, o.source
+            n = self.readMuDimen()
+            Parameter.enable()
+            return n, n.source
 
-        if type in ['Glue']:
-            o = self.readGlue()
-            return o, o.source
+        if type in ['Glue','Skip']:
+            n = self.readGlue()
+            Parameter.enable()
+            return n, n.source
 
-        if type in ['MuGlue']:
-            o = self.readMuGlue()
-            return o, o.source
+        if type in ['MuGlue','MuSkip']:
+            n = self.readMuGlue()
+            Parameter.enable()
+            return n, n.source
 
-        if type in ['Number']:
-            o = self.readNumber()
-            return o, o.source
+        if type in ['Number','Int','Integer']:
+            n = self.readNumber()
+            Parameter.enable()
+            return n, n.source
 
-        if type in ['Tok','Tok']:
+        if type in ['Token','Tok']:
             for tok in self.itertokens():
+                Parameter.enable()
                 return tok, tok.source
 
         if type in ['XTok','XToken']:
             for tok in self.itertokens():
                 tok = self.expandtokens([tok])
+                Parameter.enable()
                 if len(tok) == 1:
                     return tok[0], tok[0].source
                 return tok, tok.source
@@ -493,83 +506,166 @@ class TeX(object):
                 else:
                     args.append(t) 
             else: pass
+            Parameter.enable()
             return args, self.source(args)
 
         if type in ['cs']:
             expanded = False
 
-        tokens = self.itertokens()
-
         # Get a TeX token (i.e. {...})
         if spec is None:
-            for t in tokens:
-                toks = []
-                source = [t]
-                # A { ... } grouping was found
-                if t.catcode == Token.CC_BGROUP:
-                    level = 1
-                    for t in tokens:
-                        source.append(t)
-                        if t.catcode == Token.CC_BGROUP:
-                            toks.append(t)
-                            level += 1
-                        elif t.catcode == Token.CC_EGROUP:
-                            level -= 1
-                            if level == 0:
-                                break
-                            toks.append(t)
-                        else:
-                            toks.append(t)
-                else:
-                    toks.append(t)
-                if expanded:
-                    toks = self.expandtokens(toks)
-                return self.cast(toks, type, subtype, delim), self.source(source)
-            else: 
-                return default, ''
+            toks, source = self.readToken()
 
         # Get a single character argument
         elif len(spec) == 1:
-            for t in tokens:
-                if t == spec:
-                    return t, self.source([t])
-                else:
-                    self.pushtoken(t)
-                    break
-            return default, '' 
+            toks, source = self.readCharacter(spec)
 
         # Get an argument grouped by the given characters (e.g. [...], (...))
         elif len(spec) == 2:
-            begin = spec[0]
-            end = spec[1]
-            source = []
-            for t in tokens:
-                toks = []
-                source = [t]
-                # A [ ... ], ( ... ), etc. grouping was found
-                if t == begin:
-                    level = 1
-                    for t in tokens:
-                        source.append(t)
-                        if t == begin:
-                            toks.append(t)
-                            level += 1
-                        elif t == end:
-                            level -= 1
-                            if level == 0:
-                                break
-                            toks.append(t)
-                        else:
-                            toks.append(t)
-                else:
-                    self.pushtoken(t)
-                    return default, ''
-                if expanded:
-                    toks = self.expandtokens(toks)
-                return self.cast(toks, type, subtype, delim), self.source(source)
+            toks, source = self.readGrouping(spec)
+
+        # This isn't a correct value
+        else:
+            raise ValueError, 'Unrecognized specifier "%s"' % spec
+
+        if toks is None:
+            Parameter.enable()
             return default, ''
 
-        raise ValueError, 'Unrecognized specifier "%s"' % spec
+        if expanded:
+            toks = self.expandtokens(toks)
+
+        res = self.cast(toks, type, subtype, delim)
+ 
+        # Re-enable Parameters
+        Parameter.enable()
+
+        return res, source
+
+    def readToken(self):
+        """
+        Read a token or token group
+
+        Returns:
+        two element tuple containing the parsed tokens and the
+        TeX code that they came from
+
+        """
+        tokens = self.itertokens()
+        for t in tokens:
+            toks = []
+            source = [t]
+            #
+            # A { ... } grouping was found
+            #
+            # Normally, this will be an unexpanded token, but if a 
+            # a TeX primitive was read before this, the first one 
+            # will be expanded (hence the t.nodeName == 'bgroup').
+            if t.catcode == Token.CC_BGROUP:
+                level = 1
+                for t in tokens:
+                    source.append(t)
+                    if t.catcode == Token.CC_BGROUP:
+                        toks.append(t)
+                        level += 1
+                    elif t.catcode == Token.CC_EGROUP:
+                        level -= 1
+                        if level == 0:
+                            break
+                        toks.append(t)
+                    else:
+                        toks.append(t)
+            else:
+                toks.append(t)
+            return toks, self.source(source)
+        return None, ''
+
+    def readCharacter(self, char):
+        """
+        Read a character from the stream
+
+        Required Arguments:
+        char -- the character that is expected
+
+        Returns:
+        two element tuple containing the parsed token and the
+        TeX code that it came from
+
+        """
+        for t in self.itertokens():
+            if t == char:
+                return t, self.source([t])
+            else:
+                self.pushtoken(t)
+                break
+        return None, ''
+
+    def readGrouping(self, chars):
+        """
+        Read a group delimited by the given characters
+
+        Keyword Arguments:
+        chars -- the two characters that begin and end the group
+
+        Returns:
+        two element tuple containing the parsed tokens and the
+        TeX code that they came from
+
+        """
+        tokens = self.itertokens()
+        begin, end = chars[0], chars[1]
+        source = []
+        for t in tokens:
+            toks = []
+            source = [t]
+            # A [ ... ], ( ... ), etc. grouping was found
+            if t == begin:
+                level = 1
+                for t in tokens:
+                    source.append(t)
+                    if t == begin:
+                        toks.append(t)
+                        level += 1
+                    elif t == end:
+                        level -= 1
+                        if level == 0:
+                            break
+                        toks.append(t)
+                    else:
+                        toks.append(t)
+            else:
+                self.pushtoken(t)
+                break
+            return toks, self.source(source)
+        return None, ''
+
+    def readInternalType(self, tokens, method):
+        """
+        Read an internal type from the given tokens
+
+        Required Arguments:
+        tokens -- list of tokens that contain the internal value
+        method -- reference to the method to parse the tokens
+
+        Returns:
+        instance of the TeX type
+
+        """
+        # Throw a \relax in here to keep the token after the
+        # argument from being expanded when parsing the internal type
+        self.pushtoken(EscapeSequence('relax'))
+        self.pushtokens(tokens)
+
+        # Call the appropriate parsing method for this type
+        result = method()
+
+        # Get rid of the \relax token inserted above
+        for t in self.itertokens():
+            if (t.nodeType == Token.ELEMENT_NODE and t.nodeName == 'relax') \
+               or t.macroName == 'relax':
+                break
+
+        return result
 
     def cast(self, tokens, dtype, subtype=None, delim=','):
         """ 
@@ -657,7 +753,7 @@ class TeX(object):
     def castRef(self, tokens, **kwargs):
         self.castString(self, tokens, **kwargs)
         
-    def castInteger(self, tokens, type=int, **kwargs):
+    def castNumber(self, tokens, **kwargs):
         """
         Join the tokens into a string and turn the result into an integer
 
@@ -675,9 +771,9 @@ class TeX(object):
         self.cast()
 
         """
-        return type(self.normalize(tokens))
+        return self.readInternalType(tokens, self.readNumber)
         
-    def castFloat(self, tokens, type=float, **kwargs):
+    def castDecimal(self, tokens, **kwargs):
         """
         Join the tokens into a string and turn the result into a float
 
@@ -695,25 +791,76 @@ class TeX(object):
         self.cast()
 
         """
-        return type(self.normalize(tokens))
+        return self.readInternalType(tokens, self.readDecimal)
 
-    def castLength(self, tokens, **kwargs):
+    def castDimen(self, tokens, **kwargs):
         """
-        Jain the tokens into a string and convert the result into a `Dimen'
+        Jain the tokens into a string and convert the result into a `Dimen`
 
         Required Arguments:
         tokens -- list of tokens to cast
 
         Returns:
-        `Dimen' instance
+        `Dimen` instance
 
         See Also:
         self.getArgument()
         self.cast()
 
         """
-        return dimen(self.castString(tokens, **kwargs))
-        
+        return self.readInternalType(tokens, self.readDimen)
+
+    def castMuDimen(self, tokens, **kwargs):
+        """
+        Jain the tokens into a string and convert the result into a `MuDimen`
+
+        Required Arguments:
+        tokens -- list of tokens to cast
+
+        Returns:
+        `MuDimen` instance
+
+        See Also:
+        self.getArgument()
+        self.cast()
+
+        """
+        return self.readInternalType(tokens, self.readMuDimen)
+
+    def castGlue(self, tokens, **kwargs):
+        """
+        Jain the tokens into a string and convert the result into a `Glue`
+
+        Required Arguments:
+        tokens -- list of tokens to cast
+
+        Returns:
+        `Glue` instance
+
+        See Also:
+        self.getArgument()
+        self.cast()
+
+        """
+        return self.readInternalType(tokens, self.readGlue)
+ 
+    def castMuGlue(self, tokens, **kwargs):
+        """
+        Jain the tokens into a string and convert the result into a `MuGlue`
+
+        Required Arguments:
+        tokens -- list of tokens to cast
+
+        Returns:
+        `MuGlue` instance
+
+        See Also:
+        self.getArgument()
+        self.cast()
+
+        """
+        return self.readInternalType(tokens, self.readMuGlue)
+                             
     def castList(self, tokens, type=list, **kwargs):
         """
         Parse items delimited by the given delimiter into a list
@@ -899,6 +1046,8 @@ class TeX(object):
             matched = []
             letters = list(word.upper())
             for t in self.itertokens():
+                if t.nodeType == Token.ELEMENT_NODE:
+                    break
                 matched.append(t)
                 if t.upper() == letters[0]:
                     letters.pop(0)
@@ -915,6 +1064,9 @@ class TeX(object):
         """ Read a decimal number from the stream """
         sign = self.readOptionalSigns()
         for t in self:
+            if t.nodeType == Token.ELEMENT_NODE:
+                self.pushtoken(t)
+                break
             if t in string.digits:
                 num = t + self.readSequence(string.digits, False)
                 for t in self:
@@ -934,7 +1086,8 @@ class TeX(object):
                 self.pushtoken(t)
                 return sign * self.readInteger()
             break
-        raise ValueError, 'Could not find decimal constant'
+        log.warning('Could not find decimal%s, returning `0`.', self.lineinfo)
+        return float(0)
 
     def readDimen(self, units=dimen.units):
         """
@@ -947,15 +1100,17 @@ class TeX(object):
         `dimen' instance
 
         """
-        Parameter.enabled = False
+        Parameter.disable()
         sign = self.readOptionalSigns()
         for t in self:
-            if t.nodeType == Node.ELEMENT_NODE:
+            if t.nodeType == Node.ELEMENT_NODE and \
+               isinstance(t, Parameter):
+                Parameter.enable()
                 return dimen(sign * dimen(t))
             self.pushtoken(t)
             break
         num = dimen(sign * self.readDecimal() * self.readUnitOfMeasure(units=units))
-        Parameter.enabled = True
+        Parameter.enable()
         return num
 
     def readMuDimen(self):
@@ -974,17 +1129,22 @@ class TeX(object):
 
         """
         self.readOptionalSpaces()
+        Parameter.disable()
         # internal unit
         for t in self:
             if t.nodeType == Node.ELEMENT_NODE and \
                isinstance(t, Parameter):
+                Parameter.enable()
                 return dimen(t)
             self.pushtoken(t)
             break
         true = self.readKeyword(['true'])
         unit = self.readKeyword(units)
         if unit is None:
-            raise ValueError, 'Could not find unit from list %s' % units
+            log.warning('Could not find unit from list %s %s, returning `%s`', 
+                        ', '.join(units), self.lineinfo, units[0])
+            unit = units[0]
+        Parameter.enable()
         return dimen('1%s' % unit)
 
     def readOptionalSigns(self):
@@ -1064,10 +1224,10 @@ class TeX(object):
         Read an integer from the stream
 
         Returns:
-        `number' instance
+        `number` instance
 
         """
-        Parameter.enabled = False
+        Parameter.disable()
         num = None
         sign = self.readOptionalSigns()
         for t in self:
@@ -1096,27 +1256,30 @@ class TeX(object):
                     num = number(sign * ord(t))
                     break
             break
-        Parameter.enabled = True
+        Parameter.enable()
         if num is not None:
             return num
-        raise ValueError, 'Could not find integer'
+        log.warning('Could not find integer%s, returning `0`.', self.lineinfo)
+        return number(0)
 
     readNumber = readInteger
 
     def readGlue(self):
         """ Read a glue parameter from the stream """
-        Parameter.enabled = False
+        Parameter.disable()
         sign = self.readOptionalSigns()
         # internal/coerced glue
         for t in self:
-            if t.nodeType == Node.ELEMENT_NODE:
+            if t.nodeType == Node.ELEMENT_NODE and \
+               isinstance(t, Parameter):
+                Parameter.enable()
                 return glue(sign * glue(t))
             self.pushtoken(t)
             break
         dim = self.readDimen()
         stretch = self.readStretch()
         shrink = self.readShrink()
-        Parameter.enabled = True
+        Parameter.enable()
         return glue(sign*dim, stretch, shrink)
 
     def readStretch(self):
@@ -1133,18 +1296,20 @@ class TeX(object):
 
     def readMuGlue(self):
         """ Read a muglue parameter from the stream """
-        Parameter.enabled = False
+        Parameter.disable()
         sign = self.readOptionalSigns()
         # internal/coerced muglue
         for t in self:
-            if t.nodeType == Node.ELEMENT_NODE:
+            if t.nodeType == Node.ELEMENT_NODE and \
+               isinstance(t, Parameter):
+                Parameter.enable()
                 return muglue(sign * muglue(t))
             self.pushtoken(t)
             break
         dim = self.readMuDimen()
         stretch = self.readMuStretch()
         shrink = self.readMuShrink()
-        Parameter.enabled = True
+        Parameter.enable()
         return muglue(sign*dim, stretch, shrink)
 
     def readMuStretch(self):

@@ -760,6 +760,7 @@ class Parameter(Command):
     value = count(0)
 
     enabled = True
+    _enablelevel = 0
     
     def invoke(self, tex):
         if Parameter.enabled:
@@ -768,6 +769,16 @@ class Parameter(Command):
             Parameter.enabled = False
             type(self).value = self.parse(tex)['value']
             Parameter.enabled = True
+
+    def enable(self):
+        Parameter._enablelevel += 1
+        Parameter.enabled = Parameter._enablelevel >= 0 
+    enable = classmethod(enable)
+
+    def disable(self):
+        Parameter._enablelevel -= 1
+        Parameter.enabled = Parameter._enablelevel >= 0 
+    disable = classmethod(disable)
 
     def __dimen__(self):
         return dimen(type(self).value)
