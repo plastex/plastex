@@ -5,16 +5,18 @@ from plasTeX import Command, Environment
 from array import Array
 
 class math(Environment): 
-    def __repr__(self): 
+    def source(self): 
         if self.childNodes:
-            return '$%s$' % reprchildren(self)
+            return '$%s$' % sourcechildren(self)
         return '$'
+    source = property(source)
 
 class displaymath(math):
-    def __repr__(self):
+    def source(self):
         if self.childNodes:
-            return '$$%s$$' % reprchildren(self)
+            return '$$%s$$' % sourcechildren(self)
         return '$$'
+    source = property(source)
 
 class eqnarray(Array): pass
 

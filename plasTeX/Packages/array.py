@@ -56,8 +56,9 @@ class Array(Environment):
             # Add a phantom cell to absorb the appropriate tokens
             return [self, Array.ArrayCell()]
 
-        def __repr__(self):
+        def source(self):
             return '&'
+        source = property(source)
 
     class cr(Command):
         """ End of a row """
@@ -74,8 +75,9 @@ class Array(Environment):
             # Add a phantom row and cell to absorb the appropriate tokens
             return [self, Array.ArrayRow(), Array.ArrayCell()]
 
-        def __repr__(self):
-            return '\\\\%s' % reprarguments(self)
+        def source(self):
+            return '\\\\%s' % sourcearguments(self)
+        source = property(source)
 
     class cline(Command):
         """ Partial horizontal line """
@@ -113,10 +115,11 @@ class Array(Environment):
             if self.endtoken is not None:
                 tokens.next()
                 self.endtoken.digest(tokens)
-        def __repr__(self):
+        def source(self):
             if self.endtoken is not None:
-                return reprchildren(self) + repr(self.endtoken)
-            return reprchildren(self)
+                return sourcechildren(self) + self.endtoken.source
+            return sourcechildren(self)
+        source = property(source)
 
     class ArrayCell(Macro):
         """ Table cell class """
@@ -131,10 +134,11 @@ class Array(Environment):
                 self.endtoken.digest(tokens)
             else:
                 self.endtoken = None
-        def __repr__(self):
+        def source(self):
             if self.endtoken is not None:
-                return reprchildren(self) + repr(self.endtoken)
-            return reprchildren(self)
+                return sourcechildren(self) + self.endtoken.source
+            return sourcechildren(self)
+        source = property(source)
 
     class multicolumn(Command):
         """ Column spanning cell """

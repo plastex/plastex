@@ -18,8 +18,6 @@ class CategoryCodes(TestCase):
                 tex.context.catcode('_',11)
                 tex.context.catcode('$',11)
                 return Macro.parse(self, tex)
-            def __repr__(self):
-                return '<code>%s</code>' % Macro.__repr__(self)
         s = TeX('\code{this # is $ some & nasty _ text}&_2')
         s.context['code'] = code
         tokens = [x for x in s]
@@ -42,8 +40,6 @@ class CategoryCodes(TestCase):
     def testLocalCatCodes2(self):
         class code(Macro):
             args = 'self'
-            def __repr__(self):
-                return '<code>%s</code>' % list.__repr__(self)
         s = TeX("{\catcode`\#=11\catcode`\$=11\catcode`\&=11\catcode`\_=11{this # is $ some & nasty _ text}}&_2")
         s.context['code'] = code
         tokens = [x for x in s]

@@ -3,12 +3,12 @@
 import os
 from DOM import Node
 
-def reprchildren(o): 
+def sourcechildren(o): 
     if o.childNodes:
-        return ''.join([repr(x) for x in o.childNodes])
-    return ''
+        return u''.join([x.source for x in o.childNodes])
+    return u''
 
-def reprarguments(o): 
+def sourcearguments(o): 
     return o.argsource
 
 def ismacro(o): 

@@ -58,8 +58,9 @@ class verb(Command):
                 break
             self.appendChild(tok)
 
-    def __repr__(self):
-        return '\\%s%s%s%s%s' % (self.nodeName, reprarguments(self),
-                                 self.delimiter, reprchildren(self), 
+    def source(self):
+        return '\\%s%s%s%s%s' % (self.nodeName, sourcearguments(self),
+                                 self.delimiter, sourcechildren(self), 
                                  self.delimiter)
+    source = property(source)
 

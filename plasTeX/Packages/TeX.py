@@ -18,7 +18,9 @@ class par(Macro):
     def invoke(self, tex):
         status.dot()
 
-    def __repr__(self): return '\n\n'
+    def source(self): 
+        return '\n\n'
+    source = property(source)
 
 class mbox(Command):
     """ Math box """
@@ -83,40 +85,42 @@ class mathshift(Macro):
 
 class alignmenttab(Macro):
     """ The '&' character in TeX """
-    def __repr__(self): 
+    def source(self): 
         return '&'
+    source = property(source)
 
 class textvisiblespace(Macro):
     """ The '~' character in TeX """
-    def __repr__(self): 
+    def source(self): 
         return '~'
+    source = property(source)
 
 class superscript(Macro):
     """ The '^' character in TeX """
-    args = 'self'
-    def __repr__(self):
-        return '^%s' % reprarguments(self)
+    args = 'arg'
+    def source(self):
+        return '^%s' % sourcearguments(self)
+    source = property(source)
 
 class subscript(Macro):
     """ The '_' character in TeX """
-    args = 'self'
-    def __repr__(self):
-        return '_%s' % reprarguments(self)
+    args = 'arg'
+    def source(self):
+        return '_%s' % sourcearguments(self)
+    source = property(source)
 
 class macroparameter(Macro):
     """ Paramaters for macros (i.e. #1, #2, etc.) """
     def invoke(self, tex):
         raise ValueError, 'Macro parameters should not be invoked'
-    def __repr__(self): 
+    def source(self): 
         return '#'
+    source = property(source)
 
 class bgroup(Macro):
 
     def invoke(self, tex):
         tex.context.push()
-
-    def __repr__(self):
-        return '{'
 
     def digest(self, tokens):
         # Absorb the tokens that belong to us
@@ -127,16 +131,18 @@ class bgroup(Macro):
                 item.digest(tokens)
             self.appendChild(item)
 
-    def __repr__(self):
+    def source(self):
         if self.childNodes:
-            return '{%s}' % reprchildren(self)
+            return '{%s}' % sourcechildren(self)
         return '{'
+    source = property(source)
 
 class egroup(Macro):
     def invoke(self, tex):
         tex.context.pop()
-    def __repr__(self):
+    def source(self):
         return '}'
+    source = property(source)
     def digest(self, tokens):
         return
 
@@ -328,9 +334,10 @@ class catcode(Macro):
         self.parse(tex)
         a = self.attributes
         tex.context.catcode(chr(a['char']), a['code'])
-    def __repr__(self):
+    def source(self):
         return '\\catcode`\%s=%s' % (chr(self.attributes['char']), 
                                      self.attributes['code'])
+    source = property(source)
 
 class advance(Command):
     """ \\advance """

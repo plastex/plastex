@@ -55,9 +55,6 @@ class Token(Text):
 
 #   nodeType = Node.TEXT_NODE
 
-    def __repr__(self):
-        return unicode(self)
-
     def __cmp__(self, other):
         # Token comparison -- character and code must match
         if isinstance(other, Token):
@@ -66,6 +63,10 @@ class Token(Text):
             return cmp(self.catcode, other.catcode)
         # Not comparing to token, just do a string match
         return cmp(unicode(self), unicode(other))
+
+    def source(self):
+        return unicode(self)
+    source = property(source)
 
 # Array for getting token class for the corresponding catcode
 TOKENCLASSES = [None] * 16
@@ -80,10 +81,11 @@ class EscapeSequence(Token):
 
     """
     catcode = Token.CC_ESCAPE
-    def __repr__(self):
+    def source(self):
         if self == 'par':
             return '\n\n'
         return '\\%s ' % self
+    source = property(source)
     def macroName(self):
         return self
     macroName = property(macroName)

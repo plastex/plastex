@@ -75,10 +75,6 @@ class Macro(Element, RenderMixIn):
         Element.__init__(self, *args, **kwargs)
         self.style = CSSStyles()
 
-    def source(self):
-        return repr(self)
-    source = property(source)
-
     def locals(self):
         """ Retrieve all macros local to this namespace """
         tself = type(self)
@@ -128,34 +124,36 @@ class Macro(Element, RenderMixIn):
         return t.macroName
     nodeName = tagName = property(tagName)
 
-    def __repr__(self):
+    def source(self):
         if self.tagName == 'par':
             return '\n\n'
 
         # \begin environment
         # If self.childNodes is not empty, print out the entire environment
         if self.macroMode == Macro.MODE_BEGIN:
-            argsource = reprarguments(self)
+            argsource = sourcearguments(self)
             if not argsource: 
                 argsource = ' '
             s = '\\begin{%s}%s' % (self.tagName, argsource)
             if self.childNodes:
-                s += '%s\\end{%s}' % (reprchildren(self), self.tagName)
+                s += '%s\\end{%s}' % (sourcechildren(self), self.tagName)
             return s
 
         # \end environment
         if self.macroMode == Macro.MODE_END:
             return '\\end{%s}' % (self.tagName)
 
-        argsource = reprarguments(self)
+        argsource = sourcearguments(self)
         if not argsource: 
             argsource = ' '
         s = '\\%s%s' % (self.tagName, argsource)
 
         # If self.childNodes is not empty, print out the contents
         if self.childNodes:
-            s += reprchildren(self)
+            s += sourcechildren(self)
         return s
+
+    source = property(source)
 
     def parse(self, tex): 
         """ 
@@ -314,7 +312,7 @@ class Macro(Element, RenderMixIn):
 
 class TeXFragment(DocumentFragment, RenderMixIn):
     def source(self):
-        return u''.join([repr(x) for x in self])
+        return sourcechildren(self)
     source = property(source)
 
 class TeXDocument(Document):
@@ -328,7 +326,7 @@ class TeXDocument(Document):
     preamble = property(preamble)
 
     def source(self):
-        return u''.join([repr(x) for x in self])
+        return sourcechildren(self)
     source = property(source)
 
 class Command(Macro): 
@@ -660,6 +658,12 @@ class TheCounter(Macro):
     """ Base class for counter formats """
     format = ''
 
+class Number(int, Macro):
+
+    def source(self):
+        return str(self)
+    source = property(source)
+
 class Dimen(float, Macro):
 
     units = ['pt','pc','in','bp','cm','mm','dd','cc','sp','ex','em']
@@ -711,17 +715,18 @@ class Dimen(float, Macro):
                 raise ValueError, 'Unrecognized units: %s' % units
         return float.__new__(cls, v)
 
-    def __repr__(self):
+    def source(self):
         sign = 1
         if self < 0:
             sign = -1
         if abs(self) >= 6e9:
-            return repr(sign * (abs(self)-6e9)) + 'filll'
+            return str(sign * (abs(self)-6e9)) + 'filll'
         if abs(self) >= 4e9:
-            return repr(sign * (abs(self)-4e9)) + 'fill'
+            return str(sign * (abs(self)-4e9)) + 'fill'
         if abs(self) >= 2e9:
-            return repr(sign * (abs(self)-2e9)) + 'fil'
-        return repr(float(self)) + 'sp'
+            return str(sign * (abs(self)-2e9)) + 'fil'
+        return str(float(self)) + 'sp'
+    source = property(source)
 
     def pt(self): 
         return self / 65536
@@ -792,15 +797,16 @@ class Glue(Dimen):
         self.stretch = stretch
         self.shrink = shrink
 
-    def __repr__(self):
-        s = [Dimen.__repr__(self)]
+    def source(self):
+        s = [Dimen(self).source]
         if self.stretch is not None:
             s.append('plus')
-            s.append(repr(self.stretch))
+            s.append(self.stretch.source)
         if self.shrink is not None:
             s.append('minus')
-            s.append(repr(self.shrink))
+            s.append(self.shrink.source)
         return ' '.join(s)
+    source = property(source)
 
 class Muglue(Glue): 
     pass

@@ -21,7 +21,7 @@ from Utils import *
 from Context import Context 
 from Tokenizer import Tokenizer, Token
 from plasTeX import TeXFragment, TeXDocument
-from plasTeX import Macro, Glue, Muglue, Mudimen, Dimen
+from plasTeX import Macro, Glue, Muglue, Mudimen, Dimen, Number
 from plasTeX.Logging import getLogger, disableLogging
 
 # Only export the TeX class
@@ -204,8 +204,8 @@ class TeX(object):
         """
         for token in self.itertokens():
 #           if token is not None:
-#               tokenlog.debug('input %s (%s, %s)', repr(token), token.catcode, 
-#                                                len(self.inputs))
+#               tokenlog.debug('input %s (%s, %s)', token.source, 
+#                               token.catcode, len(self.inputs))
             if token is None:
                 continue
             elif token is EndTokens:
@@ -302,7 +302,7 @@ class TeX(object):
         string containing the TeX source
 
         """
-        return u''.join([repr(x) for x in tokens])
+        return u''.join([x.source for x in tokens])
 
     def normalize(self, tokens, strip=False):
         """
@@ -428,34 +428,34 @@ class TeX(object):
         # Check for internal TeX types first
         if type in ['dimen','length']:
             o = self.readDimen()
-            return o, repr(o)
+            return o, o.source
 
         if type in ['mudimen','mulength']:
             o = self.readMudimen()
-            return o, repr(o)
+            return o, o.source
 
         if type in ['glue']:
             o = self.readGlue()
-            return o, repr(o)
+            return o, o.source
 
         if type in ['muglue']:
             o = self.readMuglue()
-            return o, repr(o)
+            return o, o.source
 
         if type in ['number']:
             o = self.readNumber()
-            return o, repr(o)
+            return o, o.source
 
         if type in ['tok']:
             for tok in self.itertokens():
-                return tok, repr(tok)
+                return tok, tok.source
 
         if type in ['xtok']:
             for tok in self.itertokens():
                 tok = self.expandtokens([tok])
                 if len(tok) == 1:
-                    return tok[0], repr(tok[0])
-                return tok, self.source(tok)
+                    return tok[0], tok[0].source
+                return tok, tok.source
 
         if type in ['cs']:
             expanded = False
@@ -928,20 +928,20 @@ class TeX(object):
         for t in self:
             # internal/coerced integers
             if t.nodeType == Node.ELEMENT_NODE:
-                return sign * int(t)
+                return Number(sign * int(t))
             # integer constant
             if t in string.digits:
-                return sign * int(t + self.readSequence(string.digits))
+                return Number(sign * int(t + self.readSequence(string.digits)))
             # octal constant
             if t == "'":
-                return sign * int('0' + self.readSequence(string.octdigits, default='0'), 8)
+                return Number(sign * int('0' + self.readSequence(string.octdigits, default='0'), 8))
             # hex constant
             if t == '"':
-                return sign * int('0x' + self.readSequence(string.hexdigits, default='0'), 16)
+                return Number(sign * int('0x' + self.readSequence(string.hexdigits, default='0'), 16))
             # character token
             if t == '`':
                 for t in self.itertokens():
-                    return sign * ord(t)
+                    return Number(sign * ord(t))
             break
         raise ValueError, 'Could not find integer'
 

@@ -88,17 +88,17 @@ class Numbers(TestCase):
         j = t.readGlue()
         k = t.readGlue()
 
-#       print repr(i)
+#       print i.source
         assert i.pt == 6, i.pt
         assert i.stretch.pt == 2, i.stretch.pt
         assert i.shrink.pt == 2, i.shrink.pt
 
-#       print repr(j)
+#       print j.source
         assert j.pt == 1.2, i.pt
         assert j.stretch.fil == -1, j.stretch.fil
         assert j.shrink is None
         
-#       print repr(k)
+#       print k.source
         assert k.pt == -1.234, k.pt
         assert k.stretch is None
         assert k.shrink is None

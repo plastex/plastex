@@ -54,12 +54,8 @@ class NewCommands(TestCase):
         self.macros = {}
 
         class it(Environment): pass
-#           def __repr__(self):
-#               return '<it>%s</it>' % ''.join([str(x) for x in self])
 
         class description(Environment): pass
-#           def __repr__(self):
-#               return '<description>%s</description>' % ''.join([str(x) for x in self])
 
         self.macros['it'] = it
         self.macros['description'] = description
@@ -167,7 +163,7 @@ class NewCommands(TestCase):
 
         s = TeX(r'\let\bgroup={\bgroup')
         output = [x for x in s]
-        assert repr(output[1]) == '{'
+        assert output[1].source == '{', '"%s" != "%s"' % (output[1].source, '{')
 
 if __name__ == '__main__':
     unittest.main()
