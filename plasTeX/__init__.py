@@ -269,18 +269,14 @@ class Macro(Element):
 
         """
         tself = type(self)
-        argsname = '@arguments'
-
-        if vars(tself).has_key(argsname):
-            return getattr(tself, argsname)
 
         if not(getattr(tself, 'args', None)):
-            setattr(tself, argsname, [])
-            return getattr(tself, argsname)
+            tself.arguments = []
+            return tself.arguments
 
         # Split the arguments into their primary components
         args = iter([x.strip() for x in 
-                     re.split(r'(<=>|\w+(?::\w+(?:\(\S\))?(?::\w+)?)?|\W|\s+)', 
+                     re.split(r'(\w+(?::\w+(?:\(\S\))?(?::\w+)?)?|\W|\s+)', 
                               tself.args) if x is not None and x.strip()])
 
         groupings = {'[':'[]','(':'()','<':'<>','{':'{}'}
@@ -312,30 +308,6 @@ class Macro(Element):
             elif item in '])>}':
                 pass
 
-            # Command sequence
-            elif item == '\\':
-                argdict['type'] = 'cs'
-
-            # String argument
-            elif item == '$':
-                argdict['type'] = 'str'
-
-            # List argument
-            elif item == '@':
-                argdict['type'] = 'list'
-
-            # Dictionary argument
-            elif item == '%':
-                argdict['type'] = 'dict'
-
-            # Definition arguments
-            elif item == '#':
-                argdict['type'] = 'args'
-
-            # List delimiter
-            elif item in ',;.-':
-                argdict['delim'] = item
-
             # Argument name (and possibly type)
             elif item[0] in string.letters:
                 parts = item.split(':')
@@ -361,7 +333,9 @@ class Macro(Element):
 
             else:
                 raise ValueError, 'Could not parse argument string "%s", reached unexpected "%s"' % (tself.args, item)
-        setattr(tself, argsname, macroargs)
+
+        tself.arguments = macroargs
+
         return macroargs
 
     arguments = property(arguments)

@@ -76,7 +76,7 @@ class PackageLoader(Command):
 #
 
 class documentclass(PackageLoader):
-    args = '[ %options ] name:str'
+    args = '[ options:dict ] name:str'
 
     def invoke(self, tex):
         a = self.parse(tex)
@@ -106,7 +106,7 @@ class mathindent(Dimen):
 #
 
 class usepackage(PackageLoader):
-    args = '[ %options ] names:list:str'
+    args = '[ options:dict ] names:list:str'
     
     def invoke(self, tex):
         a = self.parse(tex)

@@ -13,6 +13,12 @@ mathshiftlog = getLogger('parse.mathshift')
 class relax(Command):
     pass
 
+class protect(Command):
+    pass
+
+class global_(Command):
+    macroName = 'global'
+
 class par(Command):
     """ Paragraph """
     level = Command.PAR_LEVEL
@@ -28,17 +34,6 @@ class par(Command):
 
     def digest(self, tokens):
         return
-        # Absorb the tokens that belong to us
-#       for item in tokens:
-#           if item.nodeType == Command.ELEMENT_NODE:
-#               if item.level <= Command.PAR_LEVEL:
-#                   tokens.push(item)
-#                   break
-#               item.digest(tokens)
-#           if item.contextDepth < self.contextDepth:
-#               tokens.push(item)
-#               break
-#           self.appendChild(item)
 
     def isElementContentWhitespace(self):
         if not self.childNodes:
@@ -46,20 +41,24 @@ class par(Command):
         return False
     isElementContentWhitespace = property(isElementContentWhitespace)
 
-class mbox(Command):
-    """ Math box """
-    args = 'text'
+class BoxCommand(Command):
+    """ Base class for box-type commands """
+    args = 'self'
     def parse(self, tex):
         shifted = 0
-        if mathshift.inenv:
+        if MathShift.inenv:
             shifted = 1
-            mathshift.inenv.append(None)
+            MathShift.inenv.append(None)
         Command.parse(self, tex) 
         if shifted:
-            mathshift.inenv.pop()
+            MathShift.inenv.pop()
         return self.attributes
 
-class mathshift(Command):
+class hbox(BoxCommand): pass
+class vbox(BoxCommand): pass
+class mbox(BoxCommand): pass
+
+class MathShift(Command):
     """ 
     The '$' character in TeX
 
@@ -135,10 +134,13 @@ class DefCommand(Command):
 
 class def_(DefCommand): 
     macroName = 'def'
+
 class edef(DefCommand):
     local = True
+
 class xdef(DefCommand):
     local = False
+
 class gdef(DefCommand):
     local = False
 
@@ -342,15 +344,14 @@ class input(Command):
     def invoke(self, tex):
         a = self.parse(tex)
         try: 
-            #path = kpsewhich(attrs['name'])
-            path = a['name']
+            path = tex.kpsewhich(attrs['name'])
 
             status.info(' ( %s.tex ' % path)
             tex.input(open(path, 'r'))
             status.info(' ) ')
 
         except (OSError, IOError):
-            log.warning('\nProblem opening file "%s"', path)
+            log.warning('Could not open file "%s"', path)
             status.info(' ) ')
 
 class endinput(Command):

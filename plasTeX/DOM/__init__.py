@@ -375,14 +375,16 @@ class NamedNodeMap(dict):
         value -- the object to set the position of
 
         """
+        nodeType = getattr(value, 'nodeType', None)
+
         if value is None:
             return
 
-        elif isinstance(value, DocumentFragment):
+        elif nodeType == Node.DOCUMENT_FRAGMENT_NODE:
             for item in value:
                 self._resetPosition(item)
- 
-        elif isinstance(value, Node) or isinstance(value, Text):
+     
+        elif nodeType is not None:
             value.parentNode = self.parentNode
 #           value.ownerDocument = self.ownerDocument
 
@@ -608,7 +610,7 @@ class Node(object):
 
         """
         # Only the content of DocumentFragments get rendered
-        if isinstance(self, DocumentFragment):
+        if self.nodeType == Node.DOCUMENT_FRAGMENT_NODE:
             s = []
             for value in self:
                 if hasattr(value, 'toXML'):
@@ -832,18 +834,11 @@ class Node(object):
         `newChild`
 
         """
-        if isinstance(newChild, DocumentFragment):
+        if newChild.nodeType == Node.DOCUMENT_FRAGMENT_NODE:
             for item in newChild:
                 self.append(item)
         else:
-#           if isinstance(newChild, basestring) and \
-#              not(isinstance(newChild, Text)):
-#               if self.ownerDocument is not None:
-#                   newChild = self.ownerDocument.createTextNode(newChild)
-#               else:
-#                   newChild = Text(newChild)
             self.childNodes.append(newChild) 
-#       newChild.ownerDocument = self.ownerDocument
         newChild.parentNode = self
         return newChild
 
@@ -861,19 +856,12 @@ class Node(object):
         `newChild`
 
         """
-        if isinstance(newChild, DocumentFragment):
+        if newChild.nodeType == Node.DOCUMENT_FRAGMENT_NODE:
             for item in newChild:
                 self.insert(i, item)
                 i += 1
         else:
-#           if isinstance(newChild, basestring) and \
-#              not(isinstance(newChild, Text)):
-#               if self.ownerDocument is not None:
-#                   newChild = self.ownerDocument.createTextNode(newChild)
-#               else:
-#                   newChild = Text(newChild)
             self.childNodes.insert(i, newChild)
-#       newChild.ownerDocument = self.ownerDocument
         newChild.parentNode = self
         return newChild
 
@@ -888,7 +876,8 @@ class Node(object):
         """
         # If a DocumentFragment is being inserted, but it isn't replacing
         # a slice, we need to put each child in manually.
-        if isinstance(node, DocumentFragment) and not(isinstance(i, slice)):
+        if node.nodeType == Node.DOCUMENT_FRAGMENT_NODE \
+           and not(isinstance(i, slice)):
             for item in node:
                 self.insert(i, item)
                 i += 1
@@ -961,7 +950,7 @@ class Node(object):
         # Remove all Comment nodes first
         items = []
         for i, item in enumerate(self): 
-            if isinstance(item, Comment):
+            if item.nodeType == Node.COMMENT_NODE:
                 items.insert(0,i)
         for i in items:
             self.pop(i)
@@ -969,13 +958,13 @@ class Node(object):
         # Now merge Text nodes
         i = 0
         while i < len(self):
-            if isinstance(self[i], Text):
+            if self[i].nodeType == Node.TEXT_NODE:
                 group = [self[i]]
-                while i < (len(self)-1) and isinstance(self[i+1], Text): 
+                while i < (len(self)-1) and self[i+1].nodeType == Node.TEXT_NODE:
                     group.append(self.pop(i+1)) 
                 if len(group) > 1:
                     self[i] = type(group[0])(u''.join(group))
-            elif isinstance(self[i], Node):
+            elif hasattr(self[i], 'normalize'):
                 self[i].normalize()
             i += 1
 
@@ -991,7 +980,7 @@ class Node(object):
         """ Get the text content of the current node """
         output = []
         for item in self:
-            if isinstance(item, Text):
+            if item.nodeType == Node.TEXT_NODE:
                 output.append(item)
             else:
                 output.append(item.textContent)
