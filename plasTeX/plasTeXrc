@@ -2,7 +2,7 @@
 render.images=WARNING
 parse.mathshift=ERROR
 parse.sections=ERROR
-parse.definitions=DEBUG
+parse.definitions=WARNING
 parse.persistent=ERROR
 parse.commands=WARNING
 parse.environments=WARNING

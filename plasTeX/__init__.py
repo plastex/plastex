@@ -433,7 +433,9 @@ class Macro(Element, RenderMixIn):
                         item = item[:-1]
                 if parts: argdict['type'] = parts[0]
                 # Arguments that are instance variables are always expanded
-                if argdict.get('type') != 'cs':
+                if argdict.get('type') in ['cs','nox']:
+                    argdict['expanded'] = False
+                else:
                     argdict['expanded'] = True
                 macroargs.append(CompiledArgument(item, argdict))
                 argdict.clear()

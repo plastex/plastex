@@ -43,56 +43,26 @@ class chariter(object):
     def next(self):
         return self.obj.nextchar()
 
-class TeX(object):
-    """
-    TeX Stream
+class Tokenizer(object):
 
-    This class is the central TeX engine that does all of the 
-    parsing, invoking of macros, etc.
-
-    """
-
-    def __init__(self, s):
-        if isinstance(s, basestring):
-            self.string = StringIO(s)
-            self.filename = None
-        else:
-            self.string = StringIO(s.read())
-            self.filename = s.name
-
-        self.context = Context
-        self.state = STATE_N          # Tokenizing state
-
+    def __init__(self, s, context):
+        self.context = context
+        self.state = STATE_N
         self._charbuffer = []
         self._tokbuffer = []
-
-        # Mirror stream capabilities
-        self.seek = self.string.seek
-        self.read = self.string.read
-        self.readline = self.string.readline
-        self.tell = self.string.tell
-
-        self.argtypes = {
-            str: unicode,
-            int: int,
-            float: float,
-            list: list,
-            dict: dict,
-            'int': int,
-            'float': float,
-            'number': float,
-            'list': list,
-            'dict': dict,
-            'str': unicode,
-            'chr': unicode,
-            'cs': CC_ESCAPE,
-        }
-
-        self.output = []
-
-    def disableLogging(cls):
-        disableLogging()
-    disableLogging = classmethod(disableLogging)
+        if isinstance(s, basestring):
+            s = StringIO(s)
+            self.filename = '<string>'
+        elif isinstance(s, file):
+            self.filename = s.name
+        elif isinstance(s, (tuple,list)):
+            self.pushtokens(s)
+            s = StringIO('')
+            self.filename = '<tokens>'
+        self.seek = s.seek
+        self.read = s.read
+        self.readline = s.readline
+        self.tell = s.tell
 
     def nextchar(self):
         """ 
@@ -147,9 +117,7 @@ class TeX(object):
         self._charbuffer.insert(0, token)
 
     def pushtoken(self, token):
-        if token:
-            if self.output:
-                self.output.pop()
+        if token is not None:
             self._tokbuffer.insert(0, token)
 
     def pushtokens(self, tokens):
@@ -160,31 +128,6 @@ class TeX(object):
                 self.pushtoken(t)
 
     def next(self):
-        """ Walk through tokens while expanding them """
-        for token in self.itertokens():
-            if token is None or token == '':
-                continue
-            elif token.code == CC_ENDTOKENS:
-                break
-            elif token.code == CC_EXPANDED:
-                pass
-            elif token.macro is not None:
-                for i, item in enumerate(self.context[token.macro].invoke(self)):
-                    self._tokbuffer.insert(i, item)
-                continue
-            self.output.append(token)
-            return token
-        raise StopIteration
-
-    def expandTokens(self, tokens):
-        self.pushtoken(EndTokens)
-        self.pushtokens(tokens)
-        output = []
-        for token in self:
-            output.append(token)
-        return output
-
-    def nexttok(self):
         """ 
         Iterator method - returns next token in the stream 
 
@@ -280,6 +223,100 @@ class TeX(object):
 
         raise StopIteration
 
+    def __iter__(self):
+        return self
+
+    def iterchars(self):
+        return chariter(self)
+
+class TeX(object):
+    """
+    TeX Stream
+
+    This class is the central TeX engine that does all of the 
+    parsing, invoking of macros, etc.
+
+    """
+
+    def __init__(self, s):
+        self.context = Context
+        self.inputs = []
+        self.output = []
+
+        self.argtypes = {
+            str: unicode,
+            int: int,
+            float: float,
+            list: list,
+            dict: dict,
+            'int': int,
+            'float': float,
+            'number': float,
+            'list': list,
+            'dict': dict,
+            'str': unicode,
+            'chr': unicode,
+            'cs': CC_ESCAPE,
+            'nox': None,
+        }
+
+        self.input(s)
+
+    def input(self, s):
+        self.inputs.append(Tokenizer(s, self.context))
+
+    def endinput(self):
+        self.inputs.pop()
+
+    def disableLogging(cls):
+        disableLogging()
+    disableLogging = classmethod(disableLogging)
+
+    def nexttok(self):
+        if not self.inputs:
+            raise StopIteration
+        for t in self.inputs[-1]:
+            return t
+        self.endinput()
+
+    def next(self):
+        """ Walk through tokens while expanding them """
+        for token in self.itertokens():
+            if token is None or token == '':
+                continue
+            elif token.code == CC_ENDTOKENS:
+                break
+            elif token.code == CC_EXPANDED:
+                pass
+            elif token.macro is not None:
+                self.pushtokens(self.context[token.macro].invoke(self))
+                continue
+            self.output.append(token)
+            return token
+        raise StopIteration
+
+    def expandtokens(self, tokens):
+        self.pushtoken(EndTokens)
+        self.pushtokens(tokens)
+        output = []
+        for token in self:
+            output.append(token)
+        return output
+
+    def pushtoken(self, token):
+        if token is not None:
+            if self.output:
+                self.output.pop()
+            self.inputs[-1].pushtoken(token)
+
+    def pushtokens(self, tokens):
+        if tokens:
+            tokens = list(tokens)
+            tokens.reverse()
+            top = self.inputs[-1]
+            for t in tokens:
+                top.pushtoken(t)
+
     def source(self, items):
         return u''.join([repr(x) for x in items])
 
@@ -298,9 +335,6 @@ class TeX(object):
 
     def itertokens(self):
         return tokiter(self)
-
-    def iterchars(self):
-        return chariter(self)
 
     def normalize(self, tokens, strip=False):
         if tokens is None:
@@ -401,7 +435,7 @@ class TeX(object):
                 else:
                     toks.append(t)
                 if expanded:
-                    toks = self.expandTokens(toks)
+                    toks = self.expandtokens(toks)
                 return self.cast(toks, type, delim), self.source(source)
             else: 
                 return default, ''
@@ -443,7 +477,7 @@ class TeX(object):
                     self.pushtoken(t)
                     return default, ''
                 if expanded:
-                    toks = self.expandTokens(toks)
+                    toks = self.expandtokens(toks)
                 return self.cast(toks, type, delim), self.source(source)
             return default, ''
 
@@ -471,11 +505,13 @@ class TeX(object):
         if dtype is None:
             return tokens
 
-        dt = self.argtypes.get(dtype)
-        if dt is None:
+        if not self.argtypes.has_key(dtype):
             log.warning('Could not find datatype "%s"' % dtype)
             return tokens
-        dtype = dt
+        dtype = self.argtypes[dtype]
+
+        if dtype is None:
+            return tokens
 
         # Tokens of a particular category code
         if isinstance(dtype, category):
@@ -573,29 +609,12 @@ class TeX(object):
 
         return tokens
 
-    def parse(self, raw=False):
+    def parse(self):
         """ 
         Parse stream content until it is empty 
 
-        Keyword Arguments:
-        raw -- boolean indicating whether the output should be 
-            returned as a normalized document fragment or 
-            simply a list of tokens
-
-        Returns:
-        list of tokens -- if raw is True
-        document fragment -- if raw is False
-
         """
-        # Continue to get tokens until the content is completely parsed
-        try:
-            output = [x for x in self]
-        except:
-           current = self.tell()
-           self.seek(-min(current,80),1)
-           log.error('%s', self.read(min(current,80)), exc_info=1)
-
-        return output
+        return [x for x in self]
 
 #
 # Parsing helper methods for parsing numbers, spaces, dimens, etc.

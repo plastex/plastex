@@ -37,13 +37,14 @@ class end(Macro):
 
 class newcommand(Command):
     """ \\newcommand """
-    args = 'name:cs [ nargs:int ] [ opt ] definition'
+    args = 'name:cs [ nargs:int ] [ opt:nox ] definition:nox'
     def invoke(self, tex):
         Command.parse(self, tex)
         a = self.attributes
         args = (a['name'], a['nargs'], a['definition'])
         kwargs = {'opt':a['opt']}
         deflog.debug('command %s %s %s', *args)
+        print args
         tex.context.newcommand(*args, **kwargs)
         return [self]
 

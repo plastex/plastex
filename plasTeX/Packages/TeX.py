@@ -336,10 +336,11 @@ class input(Command):
         Command.parse(self, tex)
         tokens = []
         try: 
-            path = kpsewhich(attrs['name'])
+            #path = kpsewhich(attrs['name'])
+            path = attrs['name']
 
             status.info(' ( %s.tex ' % attrs['name'])
-            tokens = type(tex)(open(path)).parse()
+            tex.input(open(path, 'r'))
             status.info(' ) ')
 
         except (OSError, IOError):
