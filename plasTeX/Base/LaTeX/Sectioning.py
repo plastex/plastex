@@ -13,54 +13,29 @@ from plasTeX.Logging import getLogger
 # C.4.1 Sectioning Commands
 #
 
-class TableOfContents(Command): 
-    pass
-
-class TableOfContentsContainer(TeXFragment):
-
-    def top(self):
-        # If 'top' isn't in the list of locations, bail out
-        if 'top' not in config['tableofcontents']['location']:
-            return None
-
-        # See if this level of ToC is too deep to display
-        toc = self[0]
-        if toc and toc[0].level > config['tableofcontents']['depth']:
-            return None
-
-        return self
-    top = property(top)
-
-    def bottom(self):
-        # If 'bottom' isn't in the list of locations, bail out
-        if 'bottom' not in config['tableofcontents']['location']:
-            return None
-
-        # See if this level of ToC is too deep to display
-        toc = self[0]
-        if toc and toc[0].level > config['tableofcontents']['depth']:
-            return None
-
-        return self
-    bottom = property(bottom)
-
+class cachedproperty(object):
+    def __init__(self, func):
+        self._func = func
+    def __get__(self, obj, type=None):
+        if obj is None:
+            return self
+        try: 
+            return getattr(obj, '@%s' % self._func.func_name)
+        except AttributeError:
+            result = self._func(obj)
+            setattr(obj, '@%s' % self._func.func_name, result)
+            return result
 
 class SectionUtils(object):
+    """ General utilities for getting information about sections """
 
     def subsections(self):
         """
         Retrieve a list of all immediate subsections of this section
 
         """
-        sections = []
-        for i in range(len(self)-1, -1, -1):
-            item = self[i]
-            if item.level < 10:
-                sections.insert(0, item)
-            else:
-                break
-        return sections
-    subsections = property(subsections)
+        return [x for x in self if x.level < Command.ENDSECTIONS_LEVEL]
+    subsections = cachedproperty(subsections)
 
     def allSections(self):
         """
@@ -71,7 +46,7 @@ class SectionUtils(object):
         for item in self.subsections:
             sections.extend(item.allSections)
         return sections
-    allSections = property(allSections)
+    allSections = cachedproperty(allSections)
 
     def documentSections(self):
         """
@@ -84,7 +59,7 @@ class SectionUtils(object):
             if document is None:
                 return []
         return document.allSections
-    documentSections = property(documentSections)
+    documentSections = cachedproperty(documentSections)
 
     def navigation(self):
         """
@@ -97,17 +72,16 @@ class SectionUtils(object):
 
         breadcrumbs = [self]
         parent = None
-        if self.level != Command.DOCUMENT_LEVEL:
+        if self.level > Command.DOCUMENT_LEVEL:
             item = parent = self.parentNode
             while item is not None:
                 breadcrumbs.append(item)
                 item = item.parentNode
                 if item.level == Command.DOCUMENT_LEVEL:
+                    breadcrumbs.append(item)
                     break
-        elif len(sections) > 1:
-            next = sections[1]
         breadcrumbs.reverse()
- 
+
         top = sections[0]
         first = sections[0]
         last = sections[-1]
@@ -163,17 +137,10 @@ class SectionUtils(object):
         # Additional related entries
         nav['shortcut icon'] = None
         nav['breadcrumbs'] = breadcrumbs
+
         return nav
 
-    navigation = property(navigation)
-
-    def tableofcontents(self):
-        toc = TableOfContents()
-        toc.extend(self.subsections)
-        frag = TableOfContentsContainer()
-        frag.append(toc)
-        return frag
-    tableofcontents = property(tableofcontents)
+    navigation = cachedproperty(navigation)
 
 Counter('part','volume')
 Counter('chapter','part')

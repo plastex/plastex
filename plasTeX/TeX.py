@@ -209,7 +209,7 @@ class TeX(object):
 
             # Magical EndTokens flag telling us to bail out
             elif token is EndTokens:
-                break
+                return
 
             # Macro that has already been expanded
             elif token.nodeType == ELEMENT_NODE:

@@ -1,11 +1,8 @@
 #!/usr/bin/env python2.4
 
-import os, sys
+import os, sys, codecs
 import plasTeX
-import codecs
 from plasTeX.TeX import TeX
-from plasTeX.TALUtils import *
-from plasTeX.Tokenizer import Node
 from plasTeX.Config import config
 
 inencoding = config['encoding']['input']
@@ -23,20 +20,10 @@ document = s.parse()
 sourcefile = '%s.source' % basename
 codecs.open(sourcefile,'w',outencoding).write(document.source)
 
-# Locate the document element
-#document = [x for x in document if x.level == Node.DOCUMENT_LEVEL].pop()
-
 # Write XML dump
 outfile = '%s.xml' % basename
 codecs.open(outfile,'w',outencoding).write(document.toXML())
 
 # Apply renderer
 from plasTeX.renderers.xhtml import xhtml as renderer
-renderer.applyto(s.context)
-
-# Render output
-#outfile = '%s.html' % basename
-#codecs.open(outfile,'w',outencoding).write(unicode(document))
-print unicode(document)
-
-renderer.imager.close()
+renderer.render(document)

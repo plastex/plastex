@@ -1485,7 +1485,6 @@ class Text(CharacterData):
 
     http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html#ID-1312295772
     """
-
     nodeName = '#text'
     nodeType = Node.TEXT_NODE
 

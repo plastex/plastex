@@ -2,7 +2,7 @@
 
 from plasTeX.DOM import Node
 #from imagers.dvi2bitmap import DVI2Bitmap
-#from imagers.dvipng import DVIPNG
+from imagers.dvipng import DVIPNG
 from StringIO import StringIO
 from plasTeX.Config import config
 
@@ -59,8 +59,8 @@ def unmix(base, mix=None):
 class Renderer(dict):
     def __init__(self, data={}):
         dict.__init__(self, data)
+        self.imager = DVIPNG()
         self.imager = StringIO()
-#       self.imager = DVIPNG()
 #       self.imager = DVI2Bitmap()
         self.filenames = self._filenames()
 
@@ -79,26 +79,34 @@ class Renderer(dict):
             yield template % v
             v['num'] += 1
 
-    def applyto(self, context):
-        # Shove the Renderable Mixin into the Macro base classes
+    def render(self, document):
+        # Mix in required methods and members
         mixin(Node, Renderable)
         Node.renderer = self
-        macros = context.globals()
-        for key, value in macros.items():
-            value.render = self.get(key, unicode) 
+
+        # Invoke the rendering process
+        result = unicode(document)
+
+        # Close imager so it can finish processing
+        self.imager.close()
+
+        # Remove mixins
+        Node.renderer = None
+        unmix(Node, Renderable)
+
+        return result
 
 
 class Renderable(object):
 
     renderer = None
-    render = unicode
 
     def __unicode__(self):
         if not self.hasChildNodes():
             return u''
         s = []
         for child in self.childNodes:
-            val = type(child).render(child)
+            val = self.renderer.get(child.nodeName, unicode)(child)
             if type(val) is unicode:
                 s.append(val)
             else:
