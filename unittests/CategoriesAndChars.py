@@ -31,11 +31,11 @@ class CategoryCodes(TestCase):
         assert not [x.code for x in tokens[0] if x.code not in [10,11]], \
                'All codes should be 10 or 11: %s' % [x.code for x in tokens[0]]
 
-        tok = type(tokens[1])
+        tok = type(tokens[-4])
         cs = type(s.context['alignmenttab'])
         assert tok is cs, '"%s" != "%s"' % (tok, cs)
     
-        tok = type(tokens[2])
+        tok = type(tokens[-2])
         cs = type(s.context['subscript'])
         assert tok is cs, '"%s" != "%s"' % (tok, cs)
 
@@ -48,14 +48,14 @@ class CategoryCodes(TestCase):
         s.context['code'] = code
         tokens = [x for x in s]
 
-        text = tokens[6:-5]
+        text = tokens[6:-6]
         assert not [x for x in text if x.code not in [10,11]], [x.code for x in text]
 
-        tok = type(tokens[-2])
+        tok = type(tokens[-4])
         tab = type(s.context['alignmenttab'])
         assert tok is tab, '"%s" != "%s"' % (tok, tab)
     
-        tok = type(tokens[-1])
+        tok = type(tokens[-2])
         tab = type(s.context['subscript'])
         assert tok is tab, '"%s" != "%s"' % (tok, tab)
 

@@ -2,9 +2,9 @@
 
 import unittest
 from unittest import TestCase
+from plasTeX import Macro
 from plasTeX.TeX import *
-from plasTeX.Context import Macro
-from plasTeX.Categories import *
+from plasTeX.Tokenizer import *
 
 class Tokenizing(TestCase):
 

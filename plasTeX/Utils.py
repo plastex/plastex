@@ -15,13 +15,14 @@ ENVIRONMENT = 10
 PARAGRAPH = 100
 COMMAND = 200
 
+isinternal = lambda o: o.code >= 500   # See Tokenizer.py
+ismacro = lambda o: hasattr(o, 'texname')
+
 def classname(obj):
     if type(obj) is type:
         return obj.__name__
     else:
         return type(obj).__name__
-
-ismacro = lambda o: hasattr(o, 'texname')
 
 def macroname(obj):
      if obj.texname is None:

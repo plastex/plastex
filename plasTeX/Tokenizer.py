@@ -28,6 +28,7 @@ STATE_N = 4
 
 class category(int): pass
 
+# The 16 category codes defined by TeX
 CC_ESCAPE = category(0)
 CC_BGROUP = category(1)
 CC_EGROUP = category(2)
@@ -47,10 +48,13 @@ CC_INVALID = category(15)
 
 # Special category codes for internal use
 CC_EXPANDED = category(100)
-CC_ENDTOKENS = category(101)
-CC_ENDCONTEXT = category(102)
 
-# Default TeX category codes
+# Super-special codes that are used for internal processing and
+# should be ignored in the output stream
+CC_ENDTOKENS = category(500)
+CC_ENDCONTEXT = category(501)
+
+# Default TeX categories
 CATEGORIES = [
    '\\',  # 0  - Escape character
    '{',   # 1  - Beginning of group
@@ -73,13 +77,15 @@ CATEGORIES = [
 ]
 
 class Token(unicode):
+    """
+    Base class for all unexpanded TeX tokens
+
+    """
     code = None
     macro = None
     __slots__ = []
     def __repr__(self):
         return str(self)
-    def __int__(self):
-        return self.code
     def __cmp__(self, other):
         # Token comparison -- character and code must match
         if isinstance(other, Token):
@@ -89,20 +95,47 @@ class Token(unicode):
         # Not comparing to token, just do a string match
         return unicode.__cmp__(self, unicode(other))
 
+# Array for getting token class for the corresponding catcode
 TOKENCLASSES = [None] * 16
 
 class EndTokens(Token):
+    """
+    Demarcates the end of a stream of tokens to be processed
+
+    When this token is reached, the TeX processor should throw
+    a StopIteration exception.  This is used to process short
+    sub-streams of tokens.  These tokens should never make it to
+    the output stream.
+
+    """
     code = CC_ENDTOKENS
+
 class EndContext(Token):
+    """
+    Demarcates the end of a context 
+
+    This is used to finish macros that should end at the end of the
+    context whether it is ended by a surrounding environment or
+    an end group (i.e. { ).  These tokens are for internal processing
+    only and should be ignored in the output stream.
+
+    """
     code = CC_ENDCONTEXT
 
 class EscapeSequence(Token):
+    """
+    Escape sequence token
+
+    This token represents a TeX escape sequence.  Doing str(...)
+    on this token returns the name of the escape sequence without
+    the escape character.
+
+    """
     code = CC_ESCAPE
-    escapechar = '\\'
     def __repr__(self):
         if self == 'par':
             return '\n\n'
-        return '%s%s ' % (self.escapechar, self)
+        return '\\%s ' % self
     def macro(self):
         return self
     macro = property(macro)
@@ -110,12 +143,14 @@ class EscapeSequence(Token):
 TOKENCLASSES[CC_ESCAPE] = EscapeSequence
 
 class BeginGroup(Token):
+    """ Beginning of a TeX group """
     code = CC_BGROUP
     macro = 'bgroup'
 
 TOKENCLASSES[CC_BGROUP] = BeginGroup
 
 class EndGroup(Token):
+    """ Ending of a TeX group """
     code = CC_EGROUP
     macro = 'egroup'
 
@@ -172,7 +207,6 @@ TOKENCLASSES[CC_OTHER] = Other
 
 class Active(Token):
     code = CC_ACTIVE
-    macro = 'active'
 
 TOKENCLASSES[CC_ACTIVE] = Active
 
@@ -355,7 +389,7 @@ class Tokenizer(object):
                             else:
                                 self.pushchar(t)
                                 break
-                        token = EscapeSequence(u''.join(word))
+                        token = EscapeSequence(''.join(word))
 
                     else:
                         token = EscapeSequence(token)
@@ -375,6 +409,7 @@ class Tokenizer(object):
 
                 else: token = EscapeSequence()
 
+                # Check for any \let aliases
                 token = self.context.lets.get(token, token)
 
             # End of line
@@ -383,7 +418,7 @@ class Tokenizer(object):
                     self.state = STATE_N
                     continue
                 elif self.state == STATE_M:
-                    token = Space(u' ')
+                    token = Space(' ')
                     code = CC_SPACE
                     self.state = STATE_N
                 elif self.state == STATE_N: 

@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
-from plasTeX.Token import *
 from plasTeX.Utils import *
-from plasTeX import Environment, Command
+from plasTeX import Environment, Command, MODE_END
 
 Node = Command
 
@@ -85,7 +84,7 @@ class Array(Environment):
     def invoke(self, tex):
         if self.mode == MODE_END:
             tex.context.pop(self) # End of table
-            return [self]
+#           return [self]
             return []
         Environment.invoke(self, tex)
         tex.context.push() # Beginning of cell
@@ -231,7 +230,7 @@ class Array(Environment):
         Cell = type(self).ArrayDataCell
         if cellclass is not None:
             Cell = cellclass
-        par = type(type(self).context['par'])
+#       par = type(type(self).context['par'])
 
         # Create rows and cells
         table = [ArrayRow()]

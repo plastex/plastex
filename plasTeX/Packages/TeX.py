@@ -2,7 +2,7 @@
 
 from plasTeX.Utils import *
 from plasTeX.Tokenizer import CC_MATHSHIFT
-from plasTeX import Macro, Command, Environment
+from plasTeX import Macro, Command, Environment, MODE_END
 from plasTeX.Logging import getLogger
 
 log = getLogger()
@@ -53,6 +53,10 @@ class mathshift(Macro):
         inenv = type(self).inenv
         math = tex.context['math']
         displaymath = tex.context['displaymath']
+# !!!!
+        math.tex = tex
+        displaymath.tex = tex
+# !!!!
 
         # See if this is the end of the environment
         if inenv and inenv[-1] is not None:
@@ -60,10 +64,14 @@ class mathshift(Macro):
             if type(env) is type(displaymath):
                 for t in tex.itertokens():
                     break
+                displaymath.mode = MODE_END
                 tex.context.pop(displaymath)
+                return []
                 return [displaymath]
             else:
+                math.mode = MODE_END
                 tex.context.pop(math)
+                return []
                 return [math]
 
         for t in tex.itertokens():
@@ -313,6 +321,9 @@ class catcode(Macro):
         self.parse(tex)
         a = self.attributes
         tex.context.catcode(chr(a['char']), a['code'])
+    def __repr__(self):
+        return '\\catcode`\%s=%s' % (chr(self.attributes['char']), 
+                                     self.attributes['code'])
 
 class advance(Command):
     """ \\advance """

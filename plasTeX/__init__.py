@@ -4,7 +4,7 @@ import string, new, re
 from Utils import *
 from plasTeX.DOM import *
 from plasTeX.Logging import getLogger
-from Tokenizer import CC_EXPANDED, CC_PARAMETER
+from Tokenizer import CC_EXPANDED, CC_PARAMETER, CC_ENDCONTEXT
 
 log = getLogger()
 status = getLogger('status')
@@ -52,39 +52,6 @@ class CSSStyles(dict):
             return None      
         return '; '.join(['%s:%s' % (x[0],x[1]) for x in self.items()])
 
-class Source(object):
-    """ 
-    Class for retrieving the TeX source code of a macro 
-
-    Each instance contains a reference to the expanded TeX source
-    stream and two integers.  The integers correspond to the 
-    beginning and ending positions in the source stream where
-    the source for the current macro lies.
-
-    """
-    def __init__(self, stream=None):
-        """
-        Initialize Source
-
-        Keyword Arguments:
-        stream -- handle to stream that contains the TeX source
-
-        """
-        self.stream = stream
-        self.start = None
-        self.end = None
-
-    def __str__(self):
-        """ Retrieve the source from the TeX source stream """
-        current = self.stream.tell()
-        self.stream.seek(self.start)
-        value = self.stream.read(self.end-self.start)
-        self.stream.seek(current)
-        return value
-
-    def __repr__(self): return str(self)
-
-
 class RenderMixIn(object):
     """
     MixIn class to make macros renderable
@@ -125,6 +92,9 @@ class RenderMixIn(object):
         source = ''
 #       if self._source.start is not None and self._source.end is not None:
 #           source = ' source="%s,%s"' % (self._source.start, self._source.end)
+#       if self._position:
+            #source = ' source="%s,%s"' % (self._position[0], self._position[1])
+#           source = ' source="%s"' % xmlstr(self.source)
 
         # Bail out early if the element is empty
         if not(self.attributes) and not(self):
@@ -268,7 +238,7 @@ class MacroInterface(object):
         # Just pop the context if this is a \end token
         if self.mode == MODE_END:
             tex.context.pop(self)
-#           return []
+            return []
             return [self]
 
         # If this is a \begin token or the element needs to be
@@ -280,10 +250,13 @@ class MacroInterface(object):
             return
 
         # Push, parse, and pop.  The command doesn't need to stay on
-        # the context stack.
+        # the context stack.  We push an empty context so that the
+        # `self' token doesn't get put into the output stream twice
+        # (once here and once with the pop).
+        tex.context.push()
         tex.context.push(self)
         self.parse(tex)
-        tex.context.pop(self)
+        tex.context.pop()
 
     def digest(self, tokens):
         # Macros that never pushed a context don't need to be digested
@@ -295,10 +268,12 @@ class MacroInterface(object):
             if item.code == CC_ENDCONTEXT:
                 break
             if item.code == CC_EXPANDED:
+                if item.mode == MODE_END and type(item) is type(self):
+                    break
                 item.digest(tokens)
             self.append(item)
         self._position[1] = tokens.pos
-        print 'POS', type(self), self._position
+#       print 'POS', type(self), self._position
 
     def tagName(self):
         if self.texname: return self.texname
@@ -330,18 +305,12 @@ class Macro(MacroInterface, Element, RenderMixIn):
         Element.__init__(self, data)
         self.style = CSSStyles()
         self._position = None  # position in the input stream (internal use)
-        #self._source = Source()
         self.argsource = ''
 
     def image(self):
         """ Render and return an image """
         return Macro.renderer.imager.newimage(self.source)
     image = property(image)
-
-    def source(self):
-        """ Return the LaTeX source for this macro instance """
-        return str(self._source)
-    source = property(source)
 
     def resolve(self):
         """ 
@@ -381,28 +350,6 @@ class Macro(MacroInterface, Element, RenderMixIn):
                 self[:] = output
             else:
                 self.attributes[arg.name] = output
-
-#   def digest(self, tokens):
-#       """ 
-#       Absorb tokens in the stream that belong to us 
-
-#       The output stream, `tokens`, contains the entire LaTeX document
-#       as Macro objects and strings.  Environments are delimited
-#       by the same instance in the stream, so when `self` is found
-#       in the stream we know we have reached the end of the contents
-#       of the environment.
-
-#       Required Arguments:
-#       tokens -- iterator pointing to the remaining items in the
-#           output stream
-
-#       Returns: 
-#       self
-
-#       """
-#       for t in tokens:
-#           self.append(t)
-#       return
 
     def compileArgumentString(self):
         """ 
@@ -544,7 +491,7 @@ class Environment(Macro):
     def invoke(self, tex):
         if self.mode == MODE_END:
             tex.context.pop(self)
-#           return []
+            return []
             return [self]
         tex.context.push(self)
         self.parse(tex)

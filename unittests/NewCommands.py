@@ -5,6 +5,7 @@ from unittest import TestCase
 from plasTeX import Macro, Environment
 from plasTeX.TeX import TeX
 from plasTeX.Context import Context
+from plasTeX.Utils import isinternal
 
 class ContextGenerated(TestCase):
     def testNewcommand(self):
@@ -13,7 +14,7 @@ class ContextGenerated(TestCase):
         c.newcommand('bar', 0, r'\it\bf')
         keys = c.keys()
         keys.sort()
-        assert keys == ['foo','bar'], keys
+        assert keys == ['bar','foo'], keys
 
 
 class NC(TestCase):
@@ -27,7 +28,7 @@ class NC(TestCase):
 
     def testNewenvironment(self):
         s = TeX(r'\newenvironment{foo}{\begin{list}}{\end{list}}\begin{foo}\begin{foo}\item hi\end{foo}\end{foo}')
-        res = [x for x in s]
+        res = [x for x in s if not isinternal(x)]
         assert res[1].nodeName == 'list'
         assert res[2].nodeName == 'list'
         assert res[3].nodeName == 'item'
@@ -147,7 +148,7 @@ class NewCommands(TestCase):
 
     def testDef2(self):
         s = TeX(r"\def\row#1{(#1_1,\ldots,#1_n)}\row{{x'}}")
-        output = [x for x in s]
+        output = [x for x in s if not isinternal(x)]
         text = [x for x in output if isinstance(x, basestring)]
         assert text == list('(x\',,x\')'), text
         assert output[0].nodeName == 'def'

@@ -152,6 +152,11 @@ class Context(object):
             stacklog.debug('pushing %s onto %s', name, self.top)
             self.contexts.append(self.createContext(context))
 
+        self.mapmethods()
+
+    append = push
+
+    def mapmethods(self):
         # Getter methods use the most local context
         self.top = top = self.contexts[-1]
         self.__getitem__ = top.__getitem__
@@ -172,8 +177,6 @@ class Context(object):
         self.top.owner = self
         if len(self.contexts) > 1:
             self.top.parent = self.contexts[-2]
-
-    append = push
 
     def createContext(self, obj=None):
         """
@@ -255,21 +258,24 @@ class Context(object):
             # Go to the next one, we don't have a match yet
             if obj is None or o is None:
                 if o is not None: 
-                    pushed.append(EndContext())
+                    o.iscontext = True
+                    pushed.append(EndContext('<end-context>'))
                 continue
 
             # Found the beginning of an environment with the same name.
             # We can finish popping contexts now.
             if obj.nodeName == o.nodeName:
                 stacklog.debug('implicitly pop %s from %s', o.nodeName, self.top)
-                pushed.append(EndContext())
+                o.iscontext = True
                 break
 
-            pushed.append(EndContext())
+            o.iscontext = True
+            pushed.append(EndContext('<end-context>'))
 
-        self.categories = self.contexts[-1].categories
+        pushed.append(obj)
         stacklog.debug('pushing tokens %s', pushed)
         self.tex.pushtokens(pushed)
+        self.mapmethods()
 
     def addGlobal(self, key, value):
         """ 

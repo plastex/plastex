@@ -275,7 +275,7 @@ class TeX(object):
         string containing the TeX source
 
         """
-        return u''.join([repr(x) for x in tokens])
+        return u''.join([repr(x) for x in tokens if x.code is not CC_ENDCONTEXT])
 
     def normalize(self, tokens, strip=False):
         """
@@ -743,8 +743,6 @@ class TeX(object):
         tokens = positer(tokens)
         output = []
         for item in tokens:
-            if item.code in [CC_BGROUP, CC_EGROUP, CC_ENDCONTEXT]:
-                continue
             if item.code == CC_EXPANDED:
                 item.digest(tokens)
             output.append(item)
