@@ -120,6 +120,7 @@ TOKENCLASSES[Token.CC_ALIGNMENT] = Alignment
 
 class EndOfLine(Token):
     catcode = Token.CC_EOL
+    isElementContentWhitespace = True
 
 TOKENCLASSES[Token.CC_EOL] = EndOfLine
 
@@ -142,6 +143,7 @@ TOKENCLASSES[Token.CC_SUB] = Subscript
 
 class Space(Token):
     catcode = Token.CC_SPACE
+    isElementContentWhitespace = True
 
 TOKENCLASSES[Token.CC_SPACE] = Space
 
@@ -164,6 +166,7 @@ class Comment(Token):
     catcode = Token.CC_COMMENT
     nodeType = Node.COMMENT_NODE
     nodeName = '#comment'
+    isElementContentWhitespace = True
 
 TOKENCLASSES[Token.CC_COMMENT] = Comment
 

@@ -14,6 +14,7 @@ mathshiftlog = getLogger('parse.mathshift')
 class par(Macro):
     """ Paragraph """
     level = Node.PARAGRAPH_LEVEL
+    isElementContentWhitespace = True
 
     def invoke(self, tex):
         status.dot()

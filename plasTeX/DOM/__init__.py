@@ -539,6 +539,9 @@ class Node(object):
 
     contextDepth = 0   # TeX context level of this node (used during digest)
 
+    isElementContentWhitespace = False
+    isWhitespace = False
+
     def digest(self, tokens):
         return
 
@@ -1402,11 +1405,6 @@ class Text(CharacterData):
 
     replaceWholeText = CharacterData._notImplemented
     splitText = CharacterData._notImplemented
-
-    def isElementContentWhitespace(self):
-        """ Is this text node completely whitespace? """
-        return not(self.strip())
-    isElementContentWhitespace = property(isElementContentWhitespace)
 
     def wholeText(self):
         """ Return text from siblings and self """

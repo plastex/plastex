@@ -21,10 +21,7 @@ class List(Environment):
     def digest(self, tokens):
         # Drop any whitespace before the first item
         for tok in tokens:
-            if tok.nodeType == self.ELEMENT_NODE:
-                if tok.nodeName == 'par':
-                    continue
-            elif tok.catcode == Token.CC_SPACE:
+            if tok.isElementContentWhitespace:
                 continue
             tokens.push(tok)
             break

@@ -433,6 +433,26 @@ class Context(object):
 
     newcount = newcounter
 
+    def newdimen(self, name, initial=0):
+        """ NOT FINISHED """
+        name = str(name)
+
+        # Generate a new dimen class
+        macrolog.debug('creating dimen %s', name)
+        newclass = new.classobj(name, (plasTeX.Dimen,))
+
+        self.addGlobal(name, newclass)
+
+    def newskip(self, name, initial=0):
+        """ NOT FINISHED """
+        name = str(name)
+
+        # Generate a new glue class
+        macrolog.debug('creating dimen %s', name)
+        newclass = new.classobj(name, (plasTeX.Glue,))
+
+        self.addGlobal(name, newclass)
+
     def newif(self, name, initial=False):
         """ 
         Create a new \\if (and accompanying) commands 

@@ -317,12 +317,12 @@ class TeXFragment(DocumentFragment, RenderMixIn):
 
 class TeXDocument(Document):
     def preamble(self):
-        output = []
+        output = TeXFragment()
         for item in self:
             if item.nodeName == 'document':
                 break
             output.append(item)
-        return TeXFragment(output)
+        return output
     preamble = property(preamble)
 
     def source(self):

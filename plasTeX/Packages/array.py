@@ -60,7 +60,7 @@ class Array(Environment):
             return '&'
         source = property(source)
 
-    class cr(Command):
+    class endrow(Command):
         """ End of a row """
         macroName = '\\'
         args = '* [ space ]'
@@ -74,10 +74,6 @@ class Array(Environment):
             tex.context.push()
             # Add a phantom row and cell to absorb the appropriate tokens
             return [self, Array.ArrayRow(), Array.ArrayCell()]
-
-        def source(self):
-            return '\\\\%s' % sourcearguments(self)
-        source = property(source)
 
     class cline(Command):
         """ Partial horizontal line """
@@ -95,23 +91,11 @@ class Array(Environment):
     class vline(Command):
         """ Vertical line """
 
-    class endhead(Command):
-        """ End of head section of longtable """
-
-    class endfirsthead(Command):
-        """ End of first head section of longtable """
-
-    class endfoot(Command):
-        """ End of footer section of longtable """
-
-    class endlastfoot(Command):
-        """ End of last footer section of longtable """
-
     class ArrayRow(Macro):
         """ Table row class """
         endtoken = None
         def digest(self, tokens):
-            self.endtoken = self.digestUntil(tokens, Array.cr)
+            self.endtoken = self.digestUntil(tokens, Array.endrow)
             if self.endtoken is not None:
                 tokens.next()
                 self.endtoken.digest(tokens)
@@ -128,7 +112,7 @@ class Array(Environment):
         rowspan = 1
         def digest(self, tokens):
             self.endtoken = self.digestUntil(tokens, (Array.alignmenttab, 
-                                                      Array.cr))
+                                                      Array.endrow))
             if isinstance(self.endtoken, Array.alignmenttab):
                 tokens.next()
                 self.endtoken.digest(tokens)
@@ -164,19 +148,6 @@ class Array(Environment):
         # Add a phantom row and cell to absorb the appropriate tokens
         return [self, Array.ArrayRow(), Array.ArrayCell()]
 
-#   def digest(self, tokens):
-#       Environment.digest(self, tokens)
-#       header, footer = self.getHeaderAndFooter()
-#       body = self.getRowsAndCells()
-
-#       # See if the footer is just a horizontal rule
-#       if footer is type(self).hline and body:
-#           for cell in body[-1]:
-#               cell.style['border-bottom'] = '1px solid black'
-#           footer = []
-
-#       self[:] = header + body + footer
-
     def compileColspec(self, colspec):
         """ Compile colspec into an object """
         colspec = [x for x in colspec if x.nodeType == x.ELEMENT_NODE or x.catcode != x.CC_SPACE]
@@ -209,9 +180,6 @@ class Array(Environment):
 
 class tabular(Array):
     args = 'colspec'
-
-class longtable(Array):
-    args = '[ loc ] colspec'
 
 class cr(Command):
     macroName = '\\'
