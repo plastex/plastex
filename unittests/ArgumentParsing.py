@@ -41,7 +41,7 @@ class ArgumentParsing(TestCase):
     
     def testArgumentString5(self):
         class foobar(Macro):
-            args = '[ %;opt ] < "arg1" >'
+            args = '[ %;opt ] < arg1:str >'
         arg = foobar().arguments
         expected = [Argument('opt', {'spec':'[]','type':'dict','delim':';','expanded':True}), 
                     Argument('arg1', {'type':'str','spec':'<>','expanded':True})]

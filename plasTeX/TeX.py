@@ -136,11 +136,9 @@ class TeX(object):
         """ 
         Pop the most recent input source from the stack 
 
-        Returns:
-        The top item in the input stack, or None if there isn't one
-
         """
-        self.inputs.pop()
+        if self.inputs:
+            self.inputs.pop()
 
     def filename(self):
         return self.inputs[-1].filename 
@@ -174,11 +172,14 @@ class TeX(object):
 
         while inputs:
             # Always get next token from top of input stack
-            for t in inputs[-1]:
-                # Save context depth of each token for use in digestion
-                t.contextDepth = context.depth
-                yield t
-            endinput()
+            try:
+                while 1:
+                    t = iter(inputs[-1]).next()
+                    # Save context depth of each token for use in digestion
+                    t.contextDepth = context.depth
+                    yield t
+            except StopIteration:
+                endinput()
 
     def __iter__(self):
         """ 
@@ -319,16 +320,12 @@ class TeX(object):
         """
         return u''.join([x.source for x in tokens])
 
-    def normalize(self, tokens, strip=False):
+    def normalize(self, tokens):
         """
         Join consecutive character tokens into a string
 
         Required Arguments:
         tokens -- list of tokens
-
-        Keyword Arguments:
-        strip -- boolean indicating whether leading and trailing 
-            whitespace should be stripped
 
         Returns:
         string unless the tokens contain values that cannot be casted
@@ -342,13 +339,20 @@ class TeX(object):
                       Token.CC_EGROUP, Token.CC_BGROUP, 
                       Token.CC_SPACE]
         for t in tokens:
+            if isinstance(t, basestring):
+                continue
             # Element nodes can't be part of normalized text
             if t.nodeType == Macro.ELEMENT_NODE:
+                if len(tokens) == 1:
+                    return tokens.pop()
                 return tokens
             if t.catcode not in texttokens:
+                if len(tokens) == 1:
+                    return tokens.pop()
                 return tokens
         return (u''.join([x for x in tokens 
-                          if x.catcode not in grouptokens])).strip()
+                          if getattr(x, 'catcode', Token.CC_OTHER) 
+                             not in grouptokens])).strip()
 
     def getCase(self, which):
         """
@@ -376,7 +380,10 @@ class TeX(object):
             # This is probably going to cause some trouble, there 
             # are bound to be macros that start with 'if' that aren't
             # actually 'if' constructs...
-            if t.startswith('if'):
+            if t.nodeType == Macro.ELEMENT_NODE:
+                if t.nodeName.startswith('if'):
+                    nesting += 1
+            elif t.startswith('if'):
                 nesting += 1
             elif t == 'fi':
                 if not nesting:
@@ -404,8 +411,8 @@ class TeX(object):
         """
         return self.getArgumentAndSource(*args, **kwargs)[0]
 
-    def getArgumentAndSource(self, spec=None, type=None, delim=',', 
-                             expanded=False, default=None):
+    def getArgumentAndSource(self, spec=None, type=None, subtype=None, 
+                             delim=',', expanded=False, default=None):
         """ 
         Get an argument and the TeX source that created it
 
@@ -424,6 +431,7 @@ class TeX(object):
             object that takes a list of tokens as the first argument
             and a list of unspecified keyword arguments (i.e. **kwargs)
             for type specific information such as list delimiters.
+        subtype -- data type to use for elements of a list or dictionary
         delim -- item delimiter for list and dictionary types
         expanded -- boolean indicating whether the argument content
             should be expanded or just returned as an unexpanded 
@@ -515,7 +523,7 @@ class TeX(object):
                     toks.append(t)
                 if expanded:
                     toks = self.expandtokens(toks)
-                return self.cast(toks, type, delim), self.source(source)
+                return self.cast(toks, type, subtype, delim), self.source(source)
             else: 
                 return default, ''
 
@@ -557,12 +565,12 @@ class TeX(object):
                     return default, ''
                 if expanded:
                     toks = self.expandtokens(toks)
-                return self.cast(toks, type, delim), self.source(source)
+                return self.cast(toks, type, subtype, delim), self.source(source)
             return default, ''
 
         raise ValueError, 'Unrecognized specifier "%s"' % spec
 
-    def cast(self, tokens, dtype, delim=','):
+    def cast(self, tokens, dtype, subtype=None, delim=','):
         """ 
         Cast the tokens to the appropriate type
 
@@ -576,6 +584,7 @@ class TeX(object):
         dtype -- reference to the requested datatype
 
         Optional Arguments:
+        subtype -- data type for elements of a list or dictionary
         delim -- delimiter character for list and dictionary types
 
         Returns:
@@ -589,7 +598,7 @@ class TeX(object):
             log.warning('Could not find datatype "%s"' % dtype)
             return tokens
 
-        return self.argtypes[dtype](tokens, delim=delim)
+        return self.argtypes[dtype](tokens, subtype=subtype, delim=delim)
 
     def castControlSequence(self, tokens, **kwargs):
         """
@@ -623,7 +632,7 @@ class TeX(object):
         self.cast()
 
         """
-        return type(self.normalize(tokens, strip=True))
+        return type(self.normalize(tokens))
 
     def castLabel(self, tokens, **kwargs):
         """
@@ -665,7 +674,7 @@ class TeX(object):
         self.cast()
 
         """
-        return type(self.normalize(tokens, strip=True))
+        return type(self.normalize(tokens))
         
     def castFloat(self, tokens, type=float, **kwargs):
         """
@@ -685,7 +694,7 @@ class TeX(object):
         self.cast()
 
         """
-        return type(self.normalize(tokens, strip=True))
+        return type(self.normalize(tokens))
 
     def castLength(self, tokens, **kwargs):
         """
@@ -702,7 +711,7 @@ class TeX(object):
         self.cast()
 
         """
-        return Dimen(self.castString(tokens, **kwargs))
+        return dimen(self.castString(tokens, **kwargs))
         
     def castList(self, tokens, type=list, **kwargs):
         """
@@ -725,6 +734,7 @@ class TeX(object):
 
         """
         delim = kwargs.get('delim',',')
+        subtype = kwargs.get('subtype',None)
         listarg = [[]]
         while tokens:
             current = tokens.pop(0)
@@ -751,7 +761,7 @@ class TeX(object):
             else:
                 listarg[-1].append(current) 
 
-        return type([self.normalize(x,strip=True) for x in listarg])
+        return type([self.normalize(self.cast(x, subtype)) for x in listarg])
 
     def castDictionary(self, tokens, type=dict, **kwargs):
         """
@@ -774,6 +784,7 @@ class TeX(object):
 
         """      
         delim = kwargs.get('delim',',')
+        subtype = kwargs.get('subtype',',')
         dictarg = type()
         currentkey = []
         currentvalue = None
@@ -819,8 +830,8 @@ class TeX(object):
 
             # Found end-of-value delimiter
             if current == delim or not tokens:
-                currentkey = self.normalize(currentkey, strip=True)
-                currentvalue = self.normalize(currentvalue)
+                currentkey = self.normalize(currentkey)
+                currentvalue = self.normalize(self.cast(currentvalue, subtype))
                 dictarg[currentkey] = currentvalue
                 currentkey = []
                 currentvalue = None

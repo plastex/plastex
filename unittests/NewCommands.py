@@ -26,14 +26,14 @@ class NC(TestCase):
         assert text == expected, '%s != %s' % (text, expected)
 
     def testNewenvironment(self):
-        s = TeX(r'\newenvironment{foo}{\begin{list}}{\end{list}}\begin{foo}\begin{foo}\item hi\end{foo}\end{foo}')
+        s = TeX(r'\newenvironment{foo}{\begin{itemize}}{\end{itemize}}\begin{foo}\begin{foo}\item hi\end{foo}\end{foo}')
         res = [x for x in s]
-        assert res[1].nodeName == 'list'
-        assert res[2].nodeName == 'list'
+        assert res[1].nodeName == 'itemize'
+        assert res[2].nodeName == 'itemize'
         assert res[3].nodeName == 'item'
         assert res[4:6] == list('hi')
-        assert res[6].nodeName == 'list'
-        assert res[7].nodeName == 'list'
+        assert res[6].nodeName == 'itemize'
+        assert res[7].nodeName == 'itemize'
 
     def testReadDecimal(self):
         i = TeX(r'-1.0').readDecimal()

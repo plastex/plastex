@@ -31,15 +31,15 @@ class Source(TestCase):
         assert input == source, '"%s" != "%s"' % (input, source)
 
     def testDisplayMath(self):
-        input = r'a $$ x^{y_3} $$ b'
+        input = r'a \[ x^{y_3} \]b'
         s = TeX(input)
         output = s.parse()
         source = normalize(output.source)
         assert input == source, '"%s" != "%s"' % (input, source)
     
         # \begin{displaymath} ... \end{displaymath} is transformed
-        # into $$ ... $$
-        input2 = r'a \begin{displaymath} x^{y_3} \end{displaymath} b'
+        # into \[ ...\] 
+        input2 = r'a \begin{displaymath} x^{y_3} \end{displaymath}b'
         s = TeX(input2)
         output = s.parse()
         source = normalize(output.source)

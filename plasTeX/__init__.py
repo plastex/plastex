@@ -68,9 +68,6 @@ class Macro(Element):
     nodeType = Node.ELEMENT_NODE
     nodeValue = None
 
-    # Should this macro set currentlabel in the context? 
-    labelable = False
-
     # Counter associated with this macro
     counter = None
 
@@ -204,8 +201,8 @@ class Macro(Element):
                 self.argsource += source
                 self.attributes[arg.name] = output
         except:
-            log.error('Error while parsing argument "%s" of "%s"' % (arg.name, self.nodeName))
             raise
+            log.error('Error while parsing argument "%s" of "%s"' % (arg.name, self.nodeName))
         return self.attributes
 
     def resolve(self, tex):
@@ -216,11 +213,10 @@ class Macro(Element):
         tex -- the TeX instance containing the current context
 
         """
-        if self.labelable:
-            tex.context.currentlabel = self
         if self.counter:
-            tex.context.counters[self.counter] += 1
-            self.ref = tex.context.counters[self.counter]
+            tex.context.currentlabel = self
+            tex.context.counters.stepcounter(self.counter)
+            self.ref = tex.expandtokens(tex.context['the'+self.counter].invoke(tex))
 
     def arguments(self):
         """ 
@@ -241,7 +237,7 @@ class Macro(Element):
 
         # Split the arguments into their primary components
         args = iter([x.strip() for x in 
-                     re.split(r'(<=>|[\'"]\w+[\'"]|\w+(?::\w+)*|\W|\s+)', 
+                     re.split(r'(<=>|\w+(?::\w+)*|\W|\s+)', 
                               t.args) if x is not None and x.strip()])
 
         groupings = {'[':'[]','(':'()','<':'<>','{':'{}'}
@@ -266,6 +262,7 @@ class Macro(Element):
 
             # Beginning of group
             elif item in '[(<{':
+                argdict.clear()
                 argdict['spec'] = groupings[item]
 
             # End of group
@@ -294,24 +291,22 @@ class Macro(Element):
 
             # List delimiter
             elif item in ',;.':
-                argtype = argdict.get('type', None)
-                if argtype in ['list', 'dict']:
-                    argdict['delim'] = item
-                else:
-                    raise ValueError, \
-                        'Improperly placed "%s" in argument string "%s"' % \
-                        (item, t.args)
+                argdict['delim'] = item
 
             # Argument name (and possibly type)
-            elif item[0] in string.letters or item[0] in '\'"':
+            elif item[0] in string.letters:
                 parts = item.split(':')
                 item = parts.pop(0)
-                if item[0] in '\'"':
-                    argdict['type'] = 'str'
-                    item = item[1:]
-                    if item[-1] in '\'"':
-                        item = item[:-1]
-                if parts: argdict['type'] = parts[0]
+                # Parse for types and subtypes
+                if parts: 
+                    # We already have a type, so check for subtypes
+                    # for list items
+                    if argdict.has_key('type'):
+                        argdict['subtype'] = parts.pop(0)
+                    else:
+                        argdict['type'] = parts.pop(0)
+                        if parts:
+                            argdict['subtype'] = parts.pop(0)
                 # Arguments that are instance variables are always expanded
                 if argdict.get('type') in ['cs','nox']:
                     argdict['expanded'] = False
@@ -322,7 +317,6 @@ class Macro(Element):
 
             else:
                 raise ValueError, 'Could not parse argument string "%s", reached unexpected "%s"' % (t.args, item)
-
         t.__arguments = macroargs
         return macroargs
 
@@ -408,15 +402,15 @@ class Environment(Macro):
                 break
             self.appendChild(item)
 
-class StringMacro(Macro):
+class TextCommand(Macro):
     """ 
     Convenience class for macros that are simply strings
 
     This class is used for simple macros that simply contain strings.
 
     Example::
-        figurename = StringMacro('Figure')
-        tablename = StringMacro('Table')
+        figurename = TextCommand('Figure')
+        tablename = TextCommand('Table')
 
     """
     def invoke(self, tex): 
@@ -518,6 +512,7 @@ class Definition(Macro):
     def invoke(self, tex):
         if not self.args: return self.definition
 
+        name = macroname(self)
         argiter = iter(self.args)
         inparam = False
         params = [None]
@@ -569,8 +564,8 @@ class Definition(Macro):
                     if t == a:
                         break
                     else:
-                        raise ValueError, \
-                            'Arguments don\'t match definition: %s %s' % (t, a)
+                        log.info('Arguments of "%s" don\'t match definition. Got "%s" but was expecting "%s" (%s).' % (name, t, a, ''.join(self.args)))
+                        break
 
         if inparam:
             params.append(tex.getArgument())
@@ -578,85 +573,6 @@ class Definition(Macro):
         deflog.debug2('expanding %s %s', self.definition, params)
 
         return expanddef(self.definition, params)
-
-
-class Counter(Macro):
-    """ Base class for all LaTeX counters """
-
-    resetby = None
-
-    def arabic(self):
-        """ Return arabic representation """
-        return str(int(self))
-    arabic = property(arabic)
-
-    def Roman(self):
-        """ Return uppercase roman representation """
-        roman = ""
-        n, number = divmod(int(self), 1000)
-        roman = "M"*n
-        if number >= 900:
-            roman = roman + "CM"
-            number = number - 900
-        while number >= 500:
-            roman = roman + "D"
-            number = number - 500
-        if number >= 400:
-            roman = roman + "CD"
-            number = number - 400
-        while number >= 100:
-            roman = roman + "C"
-            number = number - 100
-        if number >= 90:
-            roman = roman + "XC"
-            number = number - 90
-        while number >= 50:
-            roman = roman + "L"
-            number = number - 50
-        if number >= 40:
-            roman = roman + "XL"
-            number = number - 40
-        while number >= 10:
-            roman = roman + "X"
-            number = number - 10
-        if number >= 9:
-            roman = roman + "IX"
-            number = number - 9
-        while number >= 5:
-            roman = roman + "V"
-            number = number - 5
-        if number >= 4:
-            roman = roman + "IV"
-            number = number - 4
-        while number > 0:
-            roman = roman + "I"
-            number = number - 1
-        return roman
-    Roman = property(Roman)
-
-    def roman(self):
-        """ Return the lowercase roman representation """
-        return self.Roman.lower()
-    roman = property(roman)
-
-    def Alph(self):
-        """ Return the uppercase letter representation """
-        return string.uppercase[int(self)-1]
-    Alph = property(Alph)
-
-    def alph(self):
-        """ Return the lowercase letter representation """
-        return string.lowercase[int(self)-1]
-    alph = property(alph)
-
-    def fnsymbol(self):
-        """ Return the symbol representation """
-        return '*' * int(self)
-    fnsymbol = property(fnsymbol)
-
-class TheCounter(Macro):
-    """ Base class for counter formats """
-    format = ''
 
 
 class number(int):
@@ -680,8 +596,9 @@ class dimen(float):
     def __new__(cls, v):
         if isinstance(v, Macro):
             return v.__dimen__()
-        elif isinstance(v, str) and v[-1] in string.letters:
-            v = list(v)
+        elif isinstance(v, basestring) and v[-1] in string.letters:
+            # Get rid of glue components
+            v = list(v.split('plus').pop(0).split('minus').pop(0).strip())
             units = []
             while v and v[-1] in string.letters:
                 units.insert(0, v.pop())
@@ -875,14 +792,39 @@ class Dimen(Register):
     args = '= value:Dimen'
     value = dimen(0)
 
+    def setlength(self, len):
+        type(self).value = dimen(len)
+
+    def addtolength(self, len):
+        type(self).value = dimen(type(self).value + len)
+
 class MuDimen(Register):
     args = '= value:MuDimen'
     value = mudimen(0)
+
+    def setlength(self, len):
+        type(self).value = mudimen(len)
+
+    def addtolength(self, len):
+        type(self).value = mudimen(type(self).value + len)
 
 class Glue(Register):
     args = '= value:Glue'
     value = glue(0)
 
+    def setlength(self, len):
+        type(self).value = glue(len)
+
+    def addtolength(self, len):
+        type(self).value = glue(type(self).value + len)
+
 class MuGlue(Register):
     args = '= value:MuGlue'
     value = muglue(0)
+
+    def setlength(self, len):
+        type(self).value = muglue(len)
+
+    def addtolength(self, len):
+        type(self).value = muglue(type(self).value + len)
+

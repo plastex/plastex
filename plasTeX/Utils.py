@@ -3,6 +3,12 @@
 import os
 from DOM import Node
 
+def subclasses(o):
+    output = [o]
+    for item in o.__subclasses__():
+        output.extend(subclasses(item))
+    return output
+
 def sourcechildren(o): 
     if o.childNodes:
         return u''.join([x.source for x in o.childNodes])

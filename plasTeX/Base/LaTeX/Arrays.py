@@ -1,8 +1,14 @@
 #!/usr/bin/env python
 
+"""
+C.10.2 The array and tabular Environments
+
+"""
+
 import new
 from plasTeX.Utils import *
-from plasTeX import Macro, Environment, Command
+from plasTeX import Macro, Environment, Command, TextCommand
+from plasTeX import Dimen, dimen
 
 class ColumnType(Macro):
 
@@ -50,7 +56,7 @@ class Array(Environment):
         labelable = True
         counter = 'table'
 
-    class ampersand(Command):
+    class CellDelimiter(Command):
         """ Cell delimiter """
         macroName = 'core::&'
         def invoke(self, tex):
@@ -62,7 +68,7 @@ class Array(Environment):
             # Add a phantom cell to absorb the appropriate tokens
             return [self, Array.ArrayCell()]
 
-    class endrow(Command):
+    class EndRow(Command):
         """ End of a row """
         macroName = '\\'
         args = '* [ space ]'
@@ -77,7 +83,7 @@ class Array(Environment):
             # Add a phantom row and cell to absorb the appropriate tokens
             return [self, Array.ArrayRow(), Array.ArrayCell()]
 
-    class bordercommand(Command):
+    class BorderCommand(Command):
 
         def applyBorders(self, location, cells):
             """
@@ -95,7 +101,7 @@ class Array(Environment):
                 cell.style['border-%s-color' % location] = 'black'
                 cell.style['border-%s-width' % location] = '2px'
 
-    class cline(bordercommand):
+    class cline(BorderCommand):
         """ Partial horizontal line """
         args = 'span:str'
 
@@ -115,10 +121,10 @@ class Array(Environment):
                 cell.style['border-%s-color' % location] = 'black'
                 cell.style['border-%s-width' % location] = '2px'
 
-    class hline(bordercommand):
+    class hline(BorderCommand):
         """ Full horizontal line """
 
-    class vline(bordercommand):
+    class vline(BorderCommand):
         """ Vertical line """
 
     class ArrayRow(Macro):
@@ -126,7 +132,7 @@ class Array(Environment):
         endtoken = None
 
         def digest(self, tokens):
-            self.endtoken = self.digestUntil(tokens, Array.endrow)
+            self.endtoken = self.digestUntil(tokens, Array.EndRow)
             if self.endtoken is not None:
                 tokens.next()
                 self.endtoken.digest(tokens)
@@ -142,9 +148,9 @@ class Array(Environment):
         endtoken = None
 
         def digest(self, tokens):
-            self.endtoken = self.digestUntil(tokens, (Array.ampersand, 
-                                                      Array.endrow))
-            if isinstance(self.endtoken, Array.ampersand):
+            self.endtoken = self.digestUntil(tokens, (Array.CellDelimiter, 
+                                                      Array.EndRow))
+            if isinstance(self.endtoken, Array.CellDelimiter):
                 tokens.next()
                 self.endtoken.digest(tokens)
             else:
@@ -167,7 +173,7 @@ class Array(Environment):
             for item in self:
                 if item.isElementContentWhitespace:
                     continue
-                if isinstance(item, Array.bordercommand):
+                if isinstance(item, Array.BorderCommand):
                     before.append(item)
                     continue
                 break
@@ -177,7 +183,7 @@ class Array(Environment):
                 item = self[i]
                 if item.isElementContentWhitespace:
                     continue
-                if isinstance(item, Array.bordercommand):
+                if isinstance(item, Array.BorderCommand):
                     after.insert(0, item)
                     continue
                 break
@@ -249,12 +255,28 @@ class Array(Environment):
         return output
 
 
-class tabular(Array):
-    args = 'colspec'
-
-class cr(Command):
-    macroName = '\\'
-    args = '* [ space ]'
-
 class array(Array):
-    args = 'colspec'
+    args = '[ pos:str ] colspec'
+
+class tabular(Array):
+    args = '[ pos:str ] colspec'
+
+class TabularStar(tabular):
+    macroName = 'tabular*'
+    args = 'width:dimen [ pos:str ] colspec'
+
+# Style Parameters
+
+class arraycolsep(Dimen):
+    value = dimen(0)
+
+class tabcolsep(Dimen):
+    value = dimen(0)
+
+class arrayrulewidth(Dimen):
+    value = dimen(0)
+
+class doublerulesep(Dimen):
+    value = dimen(0)
+
+arraystretch = TextCommand('1')

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import new, plasTeX
-from plasTeX import Macro, StringMacro, UnrecognizedMacro
+from plasTeX import Macro, TextCommand, UnrecognizedMacro
 from plasTeX.Logging import getLogger
 from Tokenizer import Tokenizer, Token, DEFAULT_CATEGORIES, VERBATIM_CATEGORIES
 from Utils import *
@@ -64,6 +64,66 @@ class ContextItem(dict):
         return self.name
 
 
+class Counters(dict):
+    """
+    Dictionary that handles incrementing and resetting counters
+
+    """
+
+    class Counter(int):
+        resetby = None
+        format = None
+
+    def __init__(self, data={}, context=None):
+        dict.__init__(self, data)
+        self.context = context
+
+    def new(self, name, initial=0, resetby=None, format=None):
+        counter = self.Counter(initial)
+        counter.resetby = resetby
+        if format is None:
+            format = r'\arabic{%s}' % name
+        self.context.newcommand('the'+name, definition=format)
+        self[name] = counter
+
+    def stepcounter(self, name):
+        self[name] += 1
+        self.resetby(name)
+
+    def setcounter(self, name, value):
+        self[name] = value
+        self.resetby(name)
+
+    def addtocounter(self, name, value):
+        self[name] += value
+        self.resetby(name)
+
+    def refstepcounter(self, name):
+        self[name] += 1
+        self.resetby(name)
+
+    def resetby(self, name):
+        resetby = self[name].resetby
+        for key, value in self.items():
+            if key == resetby:
+                self.setcounter(key, 0)
+
+    def __getitem__(self, key):
+        try:
+            return dict.__getitem__(self, key)
+        except KeyError:
+            self.context.newcounter(key) 
+        return dict.__getitem__(self, key)
+
+    def __setitem__(self, key, value):
+        if self.has_key(key):
+            value = self.Counter(value)
+            value.resetby = self[key].resetby
+        else:
+            if not(isinstance(value, self.Counter)):
+                value = self.Counter(value)
+        dict.__setitem__(self, key, value)
+
 class Context(object):
     """
     Object to handle macro contexts within a TeX document
@@ -99,21 +159,15 @@ class Context(object):
         self.depth = 0
 
         # LaTeX counters
-        self.counters = {}
+        self.counters = Counters(context=self)
 
         # Create a global namespace
         self.push()
 
     def loadBaseMacros(self):
         """ Import all builtin macros """
-        from plasTeX import packages as _macros
-        self.importMacros(vars(_macros))
-
-        from plasTeX.packages import TeX as _macros
-        self.importMacros(vars(_macros))
-
-        from plasTeX.packages import LaTeX as _macros
-        self.importMacros(vars(_macros))
+        from plasTeX import Base
+        self.importMacros(vars(Base))
 
     def label(self, label):
         """ 
@@ -189,9 +243,6 @@ class Context(object):
         globals = self.contexts[0]
         self.update = top.update
         self.__setitem__ = globals.__setitem__
-#       self.__add__ = top.__add__
-#       self.__radd__ = top.__radd__
-#       self.__iadd__ = top.__iadd__
 
         # Set up inheritance attributes
         self.top.owner = self
@@ -301,12 +352,12 @@ class Context(object):
         key -- name of macro to add
         value -- item to add to the global namespace.  If the item
             is a macro instance, it is simply added to the namespace.
-            If it is a string, it is converted into a StringMacro
+            If it is a string, it is converted into a TextCommand
             instance before being added.
 
         """
         if isinstance(value, basestring):
-            value = StringMacro(value)
+            value = TextCommand(value)
 
         elif not ismacro(value):
             raise ValueError, \
@@ -324,12 +375,12 @@ class Context(object):
         key -- name of macro to add
         value -- item to add to the global namespace.  If the item
             is a macro instance, it is simply added to the namespace.
-            If it is a string, it is converted into a StringMacro
+            If it is a string, it is converted into a TextCommand
             instance before being added.
 
         """
         if isinstance(value, basestring):
-            value = StringMacro(value)
+            value = TextCommand(value)
 
         elif not ismacro(value):
             raise ValueError, \
@@ -405,7 +456,7 @@ class Context(object):
         """
         self.contexts[-1].categories = self.categories = VERBATIM_CATEGORIES[:]
 
-    def newcounter(self, name, initial=0, resetby=None, format=None):
+    def newcounter(self, name, initial=0, resetby=None):
         """ 
         Create a new counter 
 
@@ -419,71 +470,85 @@ class Context(object):
         Keyword Arguments:
         initial -- initial value for the counter
         resetby -- the name of the counter that this counter is reset by
-        format -- the presentation format for the counter 
 
         """
         name = str(name)
         # Counter already exists
-        if self.has_key(name):
+        if self.counters.has_key(name):
             macrolog.debug('counter %s already defined', name)
             return
-
-        # Generate a new counter class
-        macrolog.debug('creating counter %s', name)
-        newclass = new.classobj(name, (plasTeX.Counter,), 
-            {'resetby':resetby,'number':initial})
-
-        self.addGlobal(name, newclass)
-
-        # Set up the default format
-        if format is None:
-            format = '%%(%s)s' % name
-            if resetby is not None: 
-                format = '%%(the%s)s.%s' % (resetby, format)
-
-        newclass = new.classobj('the'+name, (plasTeX.TheCounter,), 
-                                {'format':format})
-
-        self.addGlobal('the'+name, newclass)
+        self.counters.new(name, initial, resetby)
 
     def newcount(self, name, initial=0):
-        """ NOT FINISHED """
-        name = str(name)
+        """ 
+        Create a new count (like \\newcount)
 
+        Required Arguments:
+        name -- name of count to create
+      
+        Keyword Arguments:
+        initial -- value to initialize to
+
+        """
+        name = str(name)
         # Generate a new count class
         macrolog.debug('creating count %s', name)
-        newclass = new.classobj(name, (plasTeX.Count,), {})
-
+        newclass = new.classobj(name, (plasTeX.Count,), 
+                               {'value': plasTeX.count(initial)})
         self.addGlobal(name, newclass)
 
     def newdimen(self, name, initial=0):
-        """ NOT FINISHED """
-        name = str(name)
+        """ 
+        Create a new dimen (like \\newdimen)
 
+        Required Arguments:
+        name -- name of dimen to create
+      
+        Keyword Arguments:
+        initial -- value to initialize to
+
+        """
+        name = str(name)
         # Generate a new dimen class
         macrolog.debug('creating dimen %s', name)
-        newclass = new.classobj(name, (plasTeX.Dimen,), {})
-
+        newclass = new.classobj(name, (plasTeX.Dimen,), 
+                                {'value': plasTeX.dimen(initial)})
         self.addGlobal(name, newclass)
 
     def newskip(self, name, initial=0):
-        """ NOT FINISHED """
-        name = str(name)
+        """ 
+        Create a new glue (like \\newskip)
 
+        Required Arguments:
+        name -- name of glue to create
+      
+        Keyword Arguments:
+        initial -- value to initialize to
+
+        """
+        name = str(name)
         # Generate a new glue class
         macrolog.debug('creating dimen %s', name)
-        newclass = new.classobj(name, (plasTeX.Glue,), {})
-
+        newclass = new.classobj(name, (plasTeX.Glue,), 
+                                {'value': plasTeX.glue(initial)})
         self.addGlobal(name, newclass)
 
     def newmuskip(self, name, initial=0):
-        """ NOT FINISHED """
-        name = str(name)
+        """ 
+        Create a new muglue (like \\newmuskip)
 
+        Required Arguments:
+        name -- name of muglue to create
+      
+        Keyword Arguments:
+        initial -- value to initialize to
+
+        """
+        name = str(name)
         # Generate a new muglue class
         macrolog.debug('creating muskip %s', name)
-        newclass = new.classobj(name, (plasTeX.MuGlue,), {})
-
+        newclass = new.classobj(name, (plasTeX.MuGlue,), 
+                                {'value': plasTeX.muglue(initial)})
         self.addGlobal(name, newclass)
 
     def newif(self, name, initial=False):

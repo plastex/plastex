@@ -615,6 +615,7 @@ class Node(object):
         # Remap name into valid XML tag name
         name = self.nodeName
         name = name.replace('@','-')
+        name = name.replace('::','-')
 
         modifier = re.search(r'(\W*)$', name).group(1)
         if modifier:
@@ -630,7 +631,7 @@ class Node(object):
         ref = ''
         try:
             if self.ref is not None:
-                ref = ' ref="%s"' % xmlstr(self.ref)
+                ref = ' ref="%s"' % self.ref.toXML()
         except AttributeError: pass
 
         label = ''

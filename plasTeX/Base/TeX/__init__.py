@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from plasTeX.Utils import *
-from plasTeX.Tokenizer import Node, Token
+from plasTeX.Tokenizer import Node, Token, EscapeSequence
 from plasTeX import Macro, Command, Environment
 from plasTeX import Parameter, Count, Dimen, MuDimen, Glue, MuGlue
 from plasTeX import count, dimen, mudimen, glue, muglue
@@ -303,18 +303,35 @@ class ifcase(_if):
         return tex.getCase(self.parse(tex)['value'])
 
 
-class let(Macro):
+class let(Command):
     """ \\let """
     args = 'name:Tok = value:Tok'
     def invoke(self, tex):
         a = self.parse(tex)
         tex.context.let(a['name'], a['value'])
 
-class char(Macro):
+class char(Command):
     """ \\char """
     args = 'char:Number'
     def invoke(self, tex):
         return [chr(self.parse(tex)['char'])]
+
+class chardef(Command):
+    args = 'command:cs = num:Number'
+    def invoke(self, tex):
+        a = self.parse(tex)
+        tex.context.newdef(a['command'], definition=str(a['num']))
+
+class NameDef(Command):
+    macroName = '@namedef'
+    args = 'name:str value:nox'
+
+class makeatletter(Command):
+    def invoke(self, tex):
+        tex.context.catcode('@', Token.CC_LETTER)
+
+class everypar(Command):
+    args = 'tokens:nox'
 
 class catcode(Macro):
     """ \\catcode """
@@ -332,7 +349,7 @@ class advance(Command):
     def invoke(self, tex):
         l = tex.getArgument()
         tex.getArgument('by')
-        by = tex.getDimension()
+        by = tex.readDimen()
 
 class csname(Command):
     """ \\csname """
@@ -516,3 +533,8 @@ class thickmuskip(MuGlue): value = muglue('5mu', plus='5mu')
 #class errhelp(Parameter): pass
 
 class active(Count): value = count(13)
+
+class bf(Environment): pass
+
+class it(Environment): pass
+class tt(Environment): pass

@@ -1,16 +1,14 @@
 #!/usr/bin/env python
 
-from Context import Context
-from array import tabular
-from plasTeX import Environment, Command, Dimen, Counter, Glue
+from plasTeX.Base.LaTeX.Arrays import tabular
+from plasTeX import Command, Dimen, Count, Glue, dimen, glue, count
 
-context = Context()
-context.newskip('LTleft', 0)
-context.newskip('LTright', 0)
-context.newskip('LTpre', 0)
-context.newskip('LTpost', 0)
-context.newdimen('LTchunksize', '4in')
-context.newcounter('LTchunksize', 20)
+class LTleft(Glue): value = glue('1fil')
+class LTright(Glue): value = glue('1fil')
+class LTpre(Glue): value = glue('1fil')
+class LTpost(Glue): value = glue('1fil')
+class LTchunksize(Dimen): value = dimen('4in')
+class LTchunksize(Count): value = count(20)
 
 class setlongtables(Command): pass
 
@@ -19,7 +17,7 @@ class longtable(tabular):
 
     class tabularnewline(Command): pass
 
-    class longtableendrow(tabular.endrow):
+    class LongTableEndRow(tabular.EndRow):
         args = None
         macroName = None
         digested = False
@@ -27,7 +25,7 @@ class longtable(tabular):
             if self.digested:
                 return
 
-            tabular.endrow.digest(self, tokens)
+            tabular.EndRow.digest(self, tokens)
 
             # Push the instance into the stream a second time.
             # This will be used in longtable.digest() to split out
@@ -36,19 +34,19 @@ class longtable(tabular):
 
             self.digested = True
 
-    class endhead(longtableendrow):
+    class endhead(LongTableEndRow):
         """ End of head section """
 
-    class endfirsthead(longtableendrow):
+    class endfirsthead(LongTableEndRow):
         """ End of first head section """
 
-    class endfoot(longtableendrow):
+    class endfoot(LongTableEndRow):
         """ End of footer section """
 
-    class endlastfoot(longtableendrow):
+    class endlastfoot(LongTableEndRow):
         """ End of last footer section """
 
-    class kill(longtableendrow):
+    class kill(LongTableEndRow):
         """ Throw-away row used for measurement """
 
     def digest(self, tokens):
@@ -58,7 +56,7 @@ class longtable(tabular):
             return
 
         # Strip header and footer chunks from the table
-        headers = [x for x in self if isinstance(x, type(self).endrow)]
+        headers = [x for x in self if isinstance(x, type(self).EndRow)]
         header = footer = None
         for current in headers:
             cache = []
