@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<zpt:page-templates>
+
+<zpt:page-template name="_default_">
+<span tal:content="self" class="unknown">children of macro</span>
+</zpt:page-template>
+
+<zpt:page-template name="it itshape textit">
+<i tal:content="self">italic text</i>
+</zpt:page-template>
+
+<zpt:page-template name="tt texttt ttfamily">
+<tt tal:content="self">italic text</tt>
+</zpt:page-template>
+
+<zpt:page-template name="center">
+<div style="text-align:center" tal:content="self"></div>
+</zpt:page-template>
+
+<zpt:page-template name="color textcolor">
+<span tal:attributes="style self/style/inline" tal:content="self"></span>
+</zpt:page-template>
+
+<zpt:page-template name="bf bfseries textbf">
+<b tal:content="self">bold text</b>
+</zpt:page-template>
+
+<zpt:page-template name="emph em">
+<emph tal:content="self">emphasized text</emph>
+</zpt:page-template>
+
+<zpt:page-template name="strong">
+<strong tal:content="self">strong text</strong>
+</zpt:page-template>
+
+<zpt:page-template name="small">
+<small tal:content="self">small text</small>
+</zpt:page-template>
+
+<zpt:page-template name="sffamily textsf">
+<span tal:content="self" style="font-family: sans-serif">sans-serif text</span>
+</zpt:page-template>
+
+<zpt:page-template name="rmfamily textrm">
+<span tal:content="self" style="font-family: serif">serif text</span>
+</zpt:page-template>
+
+<zpt:page-template name="par">
+<p tal:content="self">
+paragraph text
+</p>
+</zpt:page-template>
+
+<zpt:page-template name="description" type="xml">
+<dl>
+<metal:block tal:repeat="item self">
+    <dt tal:content="structure item/term"></dt>
+    <dd tal:content="structure item"></dd>
+</metal:block>
+</dl>
+</zpt:page-template>
+
+</zpt:page-templates>

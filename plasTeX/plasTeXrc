@@ -1,0 +1,16 @@
+[logging]
+render.images=WARNING
+parse.mathshift=ERROR
+parse.sections=ERROR
+parse.definitions=WARNING
+parse.persistent=ERROR
+parse.commands=ERROR
+parse.environments=ERROR
+context.groups=ERROR
+context.stack=ERROR
+context.macros=ERROR
+
+[images]
+file-extension=.png
+image-format=PNG
+cleanup=0

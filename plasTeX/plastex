@@ -1,0 +1,32 @@
+#!/usr/bin/env python2.3
+
+import os, sys
+import plasTeX
+from plasTeX.TeX import TeX
+from plasTeX.TALUtils import *
+
+sys.path.insert(0, os.path.join(os.path.dirname(plasTeX.__file__), 'packages'))
+
+print >>sys.stderr, 'plasTeX version 1.0'
+file = sys.argv[1]
+
+# Parse document
+s = TeX(open(file,'r').read())
+document = s.parse()
+
+basename = os.path.splitext(os.path.basename(file))[0]
+
+open(basename+'.xml', 'w').write(document.toXML())
+
+# Apply renderer
+from plasTeX.renderers.xhtml import xhtml as renderer
+s.context.applyRenderer(renderer)
+
+# Render output
+renderer.imager.addtopreamble(document.preamble)
+print document.render(file=basename+'.html')
+renderer.imager.close()
+
+# Expanded source
+s.persistent.seek(0)
+open(basename+'.source','w').write(s.persistent.read())
