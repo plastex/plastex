@@ -1,5 +1,21 @@
 #!/usr/bin/env python
 
+"""
+TeX
+
+This module contains the facilities for parsing TeX and LaTeX source.
+The `TeX' class is an iterator interface to (La)TeX source.  Simply
+feed a `TeX' instance using the input method, then iterate over the 
+expanded tokens through the standard Python iterator interface.
+
+Example:
+    tex = TeX()
+    tex.input(open('foo.tex','r'))
+    for token in tex:
+        print token
+
+"""
+
 import string, re
 from Utils import *
 from Categories import *
@@ -11,23 +27,14 @@ try: from cStringIO import StringIO
 except: from StringIO import StringIO
 
 log = getLogger()
-sectionlog = getLogger('parse.sections')
-commandlog = getLogger('parse.commands')
-verbatimlog = getLogger('parse.verbatim')
 
 # Tokenizer states
 STATE_S = 1
 STATE_M = 2
 STATE_N = 4
 
-def dimen(o): return o.__dimen__()
-def mudimen(o): return o.__mudimen__()
-def glue(o): return o.__glue__()
-def muglue(o): return o.__muglue__()
-
-class TokenList(list): pass
-
 class tokiter(object):
+    """ Token iterator """
     def __init__(self, obj):
         self.obj = obj
     def __iter__(self):
@@ -36,6 +43,7 @@ class tokiter(object):
         return self.obj.nexttok()
 
 class chariter(object):
+    """ Character iterator """
     def __init__(self, obj):
         self.obj = obj
     def __iter__(self):
@@ -43,26 +51,37 @@ class chariter(object):
     def next(self):
         return self.obj.nextchar()
 
+
 class Tokenizer(object):
 
-    def __init__(self, s, context):
+    def __init__(self, source, context):
+        """
+        Instantiate a tokenizer
+
+        Required Arguments:
+        source -- the source to tokenize.  This can be a string containing
+            TeX source, a file object that contains TeX source, or a 
+            list of tokens
+        context -- the document's context object
+
+        """
         self.context = context
         self.state = STATE_N
         self._charbuffer = []
         self._tokbuffer = []
-        if isinstance(s, basestring):
-            s = StringIO(s)
+        if isinstance(source, basestring):
+            source = StringIO(source)
             self.filename = '<string>'
-        elif isinstance(s, file):
-            self.filename = s.name
-        elif isinstance(s, (tuple,list)):
-            self.pushtokens(s)
-            s = StringIO('')
+        elif isinstance(source, file):
+            self.filename = source.name
+        elif isinstance(source, (tuple,list)):
+            self.pushtokens(source)
+            source = StringIO('')
             self.filename = '<tokens>'
-        self.seek = s.seek
-        self.read = s.read
-        self.readline = s.readline
-        self.tell = s.tell
+        self.seek = source.seek
+        self.read = source.read
+        self.readline = source.readline
+        self.tell = source.tell
 
     def nextchar(self):
         """ 
@@ -75,6 +94,9 @@ class Tokenizer(object):
         If you are iterating through the characters in a TeX instance
         and you go too far, you can put the character back with
         the pushchar() method.
+
+        See Also:
+        self.iterchars()
 
         """
         if self._charbuffer:
@@ -113,14 +135,35 @@ class Tokenizer(object):
 
         return TOKENCLASSES[code](token)
 
-    def pushchar(self, token):
-        self._charbuffer.insert(0, token)
+    def pushchar(self, char):
+        """ 
+        Push a character back into the stream to be re-read 
+
+        Required Arguments:
+        char -- the character to push back
+
+        """
+        self._charbuffer.insert(0, char)
 
     def pushtoken(self, token):
+        """
+        Push a token back into the stream to be re-read
+
+        Required Arguments:
+        token -- token to be pushed back
+
+        """
         if token is not None:
             self._tokbuffer.insert(0, token)
 
     def pushtokens(self, tokens):
+        """
+        Push a list of tokens back into the stream to be re-read
+
+        Required Arguments:
+        tokens -- list of tokens to push back
+
+        """
         if tokens:
             tokens = list(tokens)
             tokens.reverse()
@@ -129,7 +172,7 @@ class Tokenizer(object):
 
     def next(self):
         """ 
-        Iterator method - returns next token in the stream 
+        Iterate over tokens in the input stream
 
         Returns:
         next token in the stream
@@ -224,10 +267,25 @@ class Tokenizer(object):
         raise StopIteration
 
     def __iter__(self):
+        """
+        Return an iterator that iterates over the tokens in the input stream
+
+        See Also:
+        self.nexttok()
+
+        """
         return self
 
     def iterchars(self):
+        """
+        Return an iterator that iterates over characters in the input stream
+
+        See Also:
+        self.nextchar()
+
+        """
         return chariter(self)
+
 
 class TeX(object):
     """
@@ -238,49 +296,100 @@ class TeX(object):
 
     """
 
-    def __init__(self, s):
+    def __init__(self, source=None):
         self.context = Context
+
+        # Input source stack
         self.inputs = []
+
+        # Output token stream
         self.output = []
 
+        # TeX arguments types and their casting functions
         self.argtypes = {
-            str: unicode,
-            int: int,
-            float: float,
-            list: list,
-            dict: dict,
-            'int': int,
-            'float': float,
-            'number': float,
-            'list': list,
-            'dict': dict,
-            'str': unicode,
-            'chr': unicode,
-            'cs': CC_ESCAPE,
-            'nox': None,
+            str: self.castString,
+            int: self.castInteger,
+            float: self.castFloat,
+            list: self.castList,
+            dict: self.castDictionary,
+            'chr': self.castString,
+            'int': self.castInteger,
+            'float': self.castFloat,
+            'number': self.castFloat,
+            'list': self.castList,
+            'dict': self.castDictionary,
+            'str': self.castString,
+            'chr': self.castString,
+            'cs': self.castToken,
+            'nox': lambda x,**y: x,
         }
 
-        self.input(s)
+        # Starting parsing if a source was given
+        if source is not None:
+            self.input(source)
 
-    def input(self, s):
-        self.inputs.append(Tokenizer(s, self.context))
+    def input(self, source):
+        """
+        Add a new input source to the stack
+
+        Required Arguments:
+        source -- can be a string containing TeX source, a file object
+            which contains TeX source, or a list of tokens
+
+        """
+        self.inputs.append(Tokenizer(source, self.context))
 
     def endinput(self):
+        """ Pop the most recent input source from the stack """
         self.inputs.pop()
 
     def disableLogging(cls):
+        """ Turn off logging """
         disableLogging()
     disableLogging = classmethod(disableLogging)
 
+    def itertokens(self):
+        """
+        Create unexpanded token iterator 
+
+        See Also:
+        self.next()
+
+        """      
+        return tokiter(self)
+
     def nexttok(self):
+        """ 
+        Iterate over unexpanded tokens
+
+        Returns:
+        next unexpanded token in the stream
+
+        """
         if not self.inputs:
             raise StopIteration
         for t in self.inputs[-1]:
             return t
         self.endinput()
 
+    def __iter__(self):
+        """
+        Create expanded token iterator 
+
+        See Also:
+        self.next()
+
+        """
+        return self
+
     def next(self):
-        """ Walk through tokens while expanding them """
+        """ 
+        Iterate over tokens while expanding them 
+
+        Returns:
+        next expanded token in the stream
+
+        """
         for token in self.itertokens():
             if token is None or token == '':
                 continue
@@ -296,6 +405,16 @@ class TeX(object):
         raise StopIteration
 
     def expandtokens(self, tokens):
+        """
+        Expand a list of unexpanded tokens
+
+        Required Arguments:
+        tokens -- list of tokens
+
+        Returns:
+        list of expanded tokens
+
+        """
         self.pushtoken(EndTokens)
         self.pushtokens(tokens)
         output = []
@@ -304,12 +423,28 @@ class TeX(object):
         return output
 
     def pushtoken(self, token):
+        """
+        Push a token back into the token buffer to be re-read
+
+        This method also pops an item off of the output token stream.
+
+        Required Arguments:
+        token -- token to push back
+
+        """
         if token is not None:
             if self.output:
                 self.output.pop()
             self.inputs[-1].pushtoken(token)
 
     def pushtokens(self, tokens):
+        """
+        Push a list of tokens back into the token buffer to be re-read
+
+        Required Arguments:
+        tokens -- list of tokens
+
+        """
         if tokens:
             tokens = list(tokens)
             tokens.reverse()
@@ -317,26 +452,35 @@ class TeX(object):
             for t in tokens:
                 top.pushtoken(t)
 
-    def source(self, items):
-        return u''.join([repr(x) for x in items])
+    def source(self, tokens):
+        """ 
+        Return the TeX source representation of the tokens
 
-    def __iter__(self):
-        """
-        Create iterator 
+        Required Arguments:
+        tokens -- list of tokens
 
         Returns:
-        iterator on the TeX stream
-
-        See Also:
-        self.next()
+        string containing the TeX source
 
         """
-        return self
-
-    def itertokens(self):
-        return tokiter(self)
+        return u''.join([repr(x) for x in tokens])
 
     def normalize(self, tokens, strip=False):
+        """
+        Join consecutive character tokens into a string
+
+        Required Arguments:
+        tokens -- list of tokens
+
+        Keyword Arguments:
+        strip -- boolean indicating whether leading and trailing 
+            whitespace should be stripped
+
+        Returns:
+        string unless the tokens contain values that cannot be casted
+        to a string.  In that case, the original tokens are returned.
+
+        """
         if tokens is None:
             return tokens
         for t in tokens:
@@ -347,6 +491,19 @@ class TeX(object):
                           if x.code not in [CC_EGROUP, CC_BGROUP]])).strip()
 
     def getCase(self, which):
+        """
+        Return the requested portion of the `if' block
+
+        Required Arguments:
+        which -- the case to return.  If this is a boolean, a value of 
+            `True' will return the first part of the `if' block.  If it
+            is `False', it will return the `else' portion.  If this is 
+            an integer, the `case' matching this integer will be returned.
+
+        Returns:
+        list of tokens from the requested portion of the `if' block
+
+        """
         # Since the true content always comes first, we need to set
         # True to case 0 and False to case 1.
         elsefound = False
@@ -378,12 +535,19 @@ class TeX(object):
         return cases[which]
 
     def getArgument(self, *args, **kwargs):
+        """
+        Return and argument without the TeX source that created it
+
+        See Also:
+        self.getArgumentAndSource()
+
+        """
         return self.getArgumentAndSource(*args, **kwargs)[0]
 
     def getArgumentAndSource(self, spec=None, type=None, delim=',', 
                              expanded=False, default=None):
         """ 
-        Get an argument 
+        Get an argument and the TeX source that created it
 
         Optional Arguments:
         spec -- string containing information about the type of
@@ -394,18 +558,26 @@ class TeX(object):
             to see if the next character is the one specified.  
             In all cases, if the specified argument is not found,
             'None' is returned.
-        type -- data type to cast the argument to.  The currently 
-            supported types are 'str', 'list', 'dict', 'int', and
-            'float'.  This also includes subclasses of these types.
+        type -- data type to cast the argument to.  New types can be
+            added to the self.argtypes dictionary.  The key should
+            match this 'type' argument and the value should be a callable
+            object that takes a list of tokens as the first argument
+            and a list of unspecified keyword arguments (i.e. **kwargs)
+            for type specific information such as list delimiters.
         delim -- item delimiter for list and dictionary types
         expanded -- boolean indicating whether the argument content
             should be expanded or just returned as an unexpanded 
             text string
 
         Returns:
+        tuple where the first argument is:
+
         None -- if the argument wasn't found
         object of type `type` -- if `type` was specified
-        TeXFragment -- for all other arguments
+        list of tokens -- for all other arguments
+
+        The second argument is a string containing the TeX source 
+        for the argument.
 
         """
         self.readOptionalSpaces()
@@ -489,7 +661,8 @@ class TeX(object):
 
         This method is used to convert tokens into Python objects.
         This happens when the user has specified that a macro argument
-        should be a dictionary (i.e. %foo), a list (i.e. @foo), etc.
+        should be a dictionary (i.e. %foo or foo:dict), 
+        a list (i.e. @foo or foo:list), etc.
 
         Required Arguments:
         tokens -- list of raw, unflattened and unnormalized tokens
@@ -508,112 +681,214 @@ class TeX(object):
         if not self.argtypes.has_key(dtype):
             log.warning('Could not find datatype "%s"' % dtype)
             return tokens
-        dtype = self.argtypes[dtype]
 
-        if dtype is None:
-            return tokens
+        return self.argtypes[dtype](tokens, delim=delim)
 
-        # Tokens of a particular category code
-        if isinstance(dtype, category):
-            arg = [x for x in tokens if x.code == dtype]
-            if len(arg) == 1:
-                return arg.pop(0)
-            return arg
+    def castToken(self, tokens, type=CC_ESCAPE, **kwargs):
+        """
+        Limit the argument to tokens of the requested catcode
 
-        # Cast string, integer, and float types
-        if issubclass(dtype, (basestring,int,float)):
-            arg = self.normalize(tokens, strip=True)
-            try: return dtype(arg)
-            except: return arg
+        Required Arguments:
+        tokens -- list of tokens to cast
 
-        # Cast list types
-        if issubclass(dtype, (list,tuple)):
-            listarg = [[]]
-            while tokens:
-                current = tokens.pop(0)
+        Keyword Arguments:
+        type -- the category code to match tokens against
 
-                # Item delimiter
-                if current == delim:
-                    listarg.append([])
+        Returns:
+        list of tokens matching catcode, or if there is only one
+        token in the list just that token will be returned
 
-                # Found grouping
-                elif current.code == CC_BGROUP:
-                    level = 1
-                    listarg[-1].append(current)
-                    while tokens:
-                        current = tokens.pop(0)
-                        if current.code == CC_BGROUP:
-                            level += 1
-                        elif current.code == CC_EGROUP:
-                            level -= 1
-                            if not level:
-                                break
-                        listarg[-1].append(current)
-                    listarg[-1].append(current)
-
-                else:
-                    listarg[-1].append(current) 
-
-            return dtype([self.normalize(x,strip=True) for x in listarg])
-
-        # Cast dictionary types
-        if issubclass(dtype, dict):
-            dictarg = dtype()
-            currentkey = []
-            currentvalue = None
-            while tokens:
-                current = tokens.pop(0)
-
-                # Found grouping
-                if current.code == CC_BGROUP:
-                    level = 1
-                    currentvalue.append(current)
-                    while tokens:
-                        current = tokens.pop(0)
-                        if current.code == CC_BGROUP:
-                            level += 1
-                        elif current.code == CC_EGROUP:
-                            level -= 1
-                            if not level:
-                                break
-                        currentvalue.append(current)
-                    currentvalue.append(current)
-                    continue
-
-                # Found end-of-key delimiter
-                if current == '=':
-                    currentvalue = []
-
-                # Found end-of-value delimiter
-                elif current == delim:
-                    # Handle this later
-                    pass
-
-                # Extend key
-                elif currentvalue is None:
-                    currentkey.append(current)
-
-                # Extend value
-                else:
-                    currentvalue.append(current)
-
-                # Found end-of-value delimiter
-                if current == delim or not tokens:
-                    currentkey = self.normalize(currentkey, strip=True)
-                    currentvalue = self.normalize(currentvalue)
-                    dictarg[currentkey] = currentvalue
-                    currentkey = []
-                    currentvalue = None
-
-            return dictarg
-
-        return tokens
-
-    def parse(self):
-        """ 
-        Parse stream content until it is empty 
+        See Also:
+        self.getArgument()
+        self.cast()
 
         """
+        arg = [x for x in tokens if x.code == type]
+        if len(arg) == 1:
+            return arg.pop(0)
+        return arg
+
+    def castString(self, tokens, type=unicode, **kwargs):
+        """
+        Join the tokens into a string
+
+        Required Arguments:
+        tokens -- list of tokens to cast
+
+        Keyword Arguments:
+        type -- the string class to use for the returned object
+
+        Returns:
+        string
+
+        See Also:
+        self.getArgument()
+        self.cast()
+
+        """
+        return unicode(self.normalize(tokens, strip=True))
+        
+    def castInteger(self, tokens, type=int, **kwargs):
+        """
+        Join the tokens into a string and turn the result into an integer
+
+        Required Arguments:
+        tokens -- list of tokens to cast
+
+        Keyword Arguments:
+        type -- the integer class to use for the returned object
+
+        Returns:
+        integer
+
+        See Also:
+        self.getArgument()
+        self.cast()
+
+        """
+        return int(self.normalize(tokens, strip=True))
+        
+    def castFloat(self, tokens, type=float, **kwargs):
+        """
+        Join the tokens into a string and turn the result into a float
+
+        Required Arguments:
+        tokens -- list of tokens to cast
+
+        Keyword Arguments:
+        type -- the float class to use for the returned object
+
+        Returns:
+        float
+
+        See Also:
+        self.getArgument()
+        self.cast()
+
+        """
+        return float(self.normalize(tokens, strip=True))
+        
+    def castList(self, tokens, type=list, **kwargs):
+        """
+        Parse items delimited by the given delimiter into a list
+
+        Required Arguments:
+        tokens -- list of tokens to cast
+
+        Keyword Arguments:
+        type -- the list class to use for the returned object
+        delim -- the delimiter that separates each element of the list.
+            The default delimiter is ','.
+
+        Returns:
+        list
+
+        See Also:
+        self.getArgument()
+        self.cast()
+
+        """
+        delim = kwargs.get('delim',',')
+        listarg = [[]]
+        while tokens:
+            current = tokens.pop(0)
+
+            # Item delimiter
+            if current == delim:
+                listarg.append([])
+
+            # Found grouping
+            elif current.code == CC_BGROUP:
+                level = 1
+                listarg[-1].append(current)
+                while tokens:
+                    current = tokens.pop(0)
+                    if current.code == CC_BGROUP:
+                        level += 1
+                    elif current.code == CC_EGROUP:
+                        level -= 1
+                        if not level:
+                            break
+                    listarg[-1].append(current)
+                listarg[-1].append(current)
+
+            else:
+                listarg[-1].append(current) 
+
+        return type([self.normalize(x,strip=True) for x in listarg])
+
+    def castDictionary(self, tokens, type=dict, **kwargs):
+        """
+        Parse key/value pairs into a dictionary
+
+        Required Arguments:
+        tokens -- list of tokens to cast
+
+        Keyword Arguments:
+        type -- the dictionary class to use for the returned object
+        delim -- the delimiter that separates each element of the list.
+            The default delimiter is ','.
+
+        Returns:
+        dictionary
+
+        See Also:
+        self.getArgument()
+        self.cast()
+
+        """      
+        delim = kwargs.get('delim',',')
+        dictarg = type()
+        currentkey = []
+        currentvalue = None
+        while tokens:
+            current = tokens.pop(0)
+
+            # Found grouping
+            if current.code == CC_BGROUP:
+                level = 1
+                currentvalue.append(current)
+                while tokens:
+                    current = tokens.pop(0)
+                    if current.code == CC_BGROUP:
+                        level += 1
+                    elif current.code == CC_EGROUP:
+                        level -= 1
+                        if not level:
+                            break
+                    currentvalue.append(current)
+                currentvalue.append(current)
+                continue
+
+            # Found end-of-key delimiter
+            if current == '=':
+                currentvalue = []
+
+            # Found end-of-value delimiter
+            elif current == delim:
+                # Handle this later
+                pass
+
+            # Extend key
+            elif currentvalue is None:
+                currentkey.append(current)
+
+            # Extend value
+            else:
+                currentvalue.append(current)
+
+            # Found end-of-value delimiter
+            if current == delim or not tokens:
+                currentkey = self.normalize(currentkey, strip=True)
+                currentvalue = self.normalize(currentvalue)
+                dictarg[currentkey] = currentvalue
+                currentkey = []
+                currentvalue = None
+
+        return dictarg
+    
+    def parse(self):
+        """ Parse stream content until it is empty """
         return [x for x in self]
 
 #
@@ -622,7 +897,7 @@ class TeX(object):
 
     def readOptionalSpaces(self):
         """ Remove all whitespace """
-        tokens = TokenList()
+        tokens = []
         for t in self.itertokens():
             if t is None or t == '':
                 continue

@@ -161,7 +161,6 @@ class newif(Macro):
     def invoke(self, tex):
         Macro.parse(self, tex)
         tex.context.newif(self.attributes['name'])
-        print 'newif', self.attributes['name']
         return [self]
 
 class _if(Macro):

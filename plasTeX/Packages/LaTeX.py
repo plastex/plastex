@@ -44,7 +44,6 @@ class newcommand(Command):
         args = (a['name'], a['nargs'], a['definition'])
         kwargs = {'opt':a['opt']}
         deflog.debug('command %s %s %s', *args)
-        print args
         tex.context.newcommand(*args, **kwargs)
         return [self]
 
