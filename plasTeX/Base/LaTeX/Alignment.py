@@ -4,7 +4,7 @@
 
 """
 
-from plasTeX import Command, Environment, TextCommand
+from plasTeX import Command, Environment
 
 
 class center(Environment): 

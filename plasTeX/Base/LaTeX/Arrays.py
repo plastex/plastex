@@ -7,7 +7,7 @@ C.10.2 The array and tabular Environments
 
 import new
 from plasTeX.Utils import *
-from plasTeX import Macro, Environment, Command, TextCommand
+from plasTeX import Macro, Environment, Command, StringCommand
 from plasTeX import Dimen, dimen
 
 class ColumnType(Macro):
@@ -279,4 +279,5 @@ class arrayrulewidth(Dimen):
 class doublerulesep(Dimen):
     value = dimen(0)
 
-arraystretch = TextCommand('1')
+class arraystretch(StringCommand):
+    value = '1'

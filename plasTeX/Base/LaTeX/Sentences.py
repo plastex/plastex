@@ -6,7 +6,7 @@ C.3.1 Making Sentences (p170)
 """
 
 import time
-from plasTeX import Command, Environment, TextCommand
+from plasTeX import Command, Environment, StringCommand
 from plasTeX.Logging import getLogger
 
 #
@@ -84,7 +84,8 @@ class TeX(Command):
 # Misc
 #
 
-today = TextCommand(time.strftime('%A %d, %Y'))
+class today(StringCommand):
+    value = time.strftime('%A %d, %Y')
 
 class emph(Command):
     args = 'text'

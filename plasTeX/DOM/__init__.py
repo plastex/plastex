@@ -615,12 +615,16 @@ class Node(object):
         # Remap name into valid XML tag name
         name = self.nodeName
         name = name.replace('@','-')
-        name = name.replace('::','-')
 
-        modifier = re.search(r'(\W*)$', name).group(1)
-        if modifier:
-            name = re.sub(r'(\W*)$', r'', name)
-            modifier = ' modifier="%s"' % xmlstr(modifier)
+        modifier = ''
+        if '::' in name:
+            name, modifier = name.split('::')
+            modifier = ' char="%s"' % xmlstr(modifier)
+        else:
+            modifier = re.search(r'(\W*)$', name).group(1)
+            if modifier:
+                name = re.sub(r'(\W*)$', r'', name)
+                modifier = ' modifier="%s"' % xmlstr(modifier)
 
         if not name:
             name = 'unknown'
@@ -651,6 +655,14 @@ class Node(object):
             for key, value in self.attributes.items():
                 if value is None:
                     s.append('    <plastex:arg name="%s"/>\n' % key)
+                elif isinstance(value, dict):
+                    newdict = {}
+                    for k, v in value.items():
+                        if hasattr(v, 'toXML'):
+                            newdict[k] = v.toXML()
+                        else:
+                            newdict[k] = xmlstr(v)
+                    s.append('    <plastex:arg name="%s">%s</plastex:arg>\n' % (key, newdict))
                 else:
                     if hasattr(value, 'toXML'):
                         value = value.toXML()

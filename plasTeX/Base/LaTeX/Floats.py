@@ -5,7 +5,7 @@ C.9 Figures and Other Floating Bodies (p196)
 
 """
 
-from plasTeX import Command, Environment, TextCommand
+from plasTeX import Command, Environment, StringCommand
 from plasTeX import Glue, glue, Dimen, dimen
 from plasTeX.Logging import getLogger
 
@@ -39,12 +39,23 @@ class suppressfloats(Command):
 
 # Counter -- topnumber, bottomnumber, totalnumber, dbltopnumber
 
-topfraction = TextCommand('0.25')
-bottomfraction = TextCommand('0.25')
-textfraction = TextCommand('0.25')
-floatpagefraction = TextCommand('0.25')
-dbltopfraction = TextCommand('0.25')
-dblfloatpagefraction = TextCommand('0.25')
+class topfraction(StringCommand):
+    value = '0.25'
+
+class bottomfraction(StringCommand):
+    value = '0.25'
+
+class textfraction(StringCommand):
+    value = '0.25'
+
+class floatpagefraction(StringCommand):
+    value = '0.25'
+
+class dbltopfraction(StringCommand):
+    value = '0.25'
+
+class dblfloatpagefraction(StringCommand):
+    value = '0.25'
 
 class floatsep(Glue):
     value = glue(0)

@@ -130,7 +130,8 @@ class TeX(object):
         """
         if source is None:
             return
-        self.inputs.append(Tokenizer(source, self.context))
+        t = Tokenizer(source, self.context)
+        self.inputs.append((t, iter(t)))
 
     def endinput(self):
         """ 
@@ -141,11 +142,11 @@ class TeX(object):
             self.inputs.pop()
 
     def filename(self):
-        return self.inputs[-1].filename 
+        return self.inputs[-1][0].filename 
     filename = property(filename)
 
     def linenumber(self):
-        return self.inputs[-1].linenumber
+        return self.inputs[-1][0].linenumber
     linenumber = property(linenumber)
 
     def lineinfo(self):
@@ -174,7 +175,7 @@ class TeX(object):
             # Always get next token from top of input stack
             try:
                 while 1:
-                    t = iter(inputs[-1]).next()
+                    t = inputs[-1][-1].next()
                     # Save context depth of each token for use in digestion
                     t.contextDepth = context.depth
                     yield t
@@ -291,7 +292,7 @@ class TeX(object):
             if not self.inputs:
                 self.input([token])
             else:
-                self.inputs[-1].pushtoken(token)
+                self.inputs[-1][0].pushtoken(token)
 
     def pushtokens(self, tokens):
         """
@@ -305,7 +306,7 @@ class TeX(object):
             if not self.inputs:
                 self.input(tokens)
             else:
-                self.inputs[-1].pushtokens(tokens)
+                self.inputs[-1][0].pushtokens(tokens)
 
     def source(self, tokens):
         """

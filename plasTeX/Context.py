@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import new, plasTeX
-from plasTeX import Macro, TextCommand, UnrecognizedMacro
+from plasTeX import Macro, StringCommand, UnrecognizedMacro
 from plasTeX.Logging import getLogger
 from Tokenizer import Tokenizer, Token, DEFAULT_CATEGORIES, VERBATIM_CATEGORIES
 from Utils import *
@@ -352,12 +352,12 @@ class Context(object):
         key -- name of macro to add
         value -- item to add to the global namespace.  If the item
             is a macro instance, it is simply added to the namespace.
-            If it is a string, it is converted into a TextCommand
+            If it is a string, it is converted into a StringCommand
             instance before being added.
 
         """
         if isinstance(value, basestring):
-            value = TextCommand(value)
+            value = StringCommand(value)
 
         elif not ismacro(value):
             raise ValueError, \
@@ -375,12 +375,12 @@ class Context(object):
         key -- name of macro to add
         value -- item to add to the global namespace.  If the item
             is a macro instance, it is simply added to the namespace.
-            If it is a string, it is converted into a TextCommand
+            If it is a string, it is converted into a StringCommand
             instance before being added.
 
         """
         if isinstance(value, basestring):
-            value = TextCommand(value)
+            value = StringCommand(value)
 
         elif not ismacro(value):
             raise ValueError, \

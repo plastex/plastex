@@ -3,7 +3,7 @@
 import string, re
 from Utils import *
 from DOM import Element, Text, Node, DocumentFragment, Document
-from Tokenizer import Token
+from Tokenizer import Token, Other
 from plasTeX.Logging import getLogger
 
 log = getLogger()
@@ -402,19 +402,20 @@ class Environment(Macro):
                 break
             self.appendChild(item)
 
-class TextCommand(Macro):
+class StringCommand(Command):
     """ 
     Convenience class for macros that are simply strings
 
     This class is used for simple macros that simply contain strings.
 
     Example::
-        figurename = TextCommand('Figure')
-        tablename = TextCommand('Table')
+        class figurename(StringCommand): value = 'Figure'
+        class tablename(StringCommand): value = 'Table'
 
     """
+    value = ''
     def invoke(self, tex): 
-        return
+        return [Other(type(self).value)]
                 
 class UnrecognizedMacro(Macro):
     """

@@ -224,6 +224,7 @@ class Not(MathSymbol):
     macroName = 'not'
     args = 'symbol'
 class leq(MathSymbol): pass
+class le(MathSymbol): pass
 class prec(MathSymbol): pass
 class preceq(MathSymbol): pass
 class ll(MathSymbol): pass
@@ -234,6 +235,7 @@ class In(MathSymbol):
     macroName = 'in'
 class vdash(MathSymbol): pass
 class geq(MathSymbol): pass
+class ge(MathSymbol): pass
 class succ(MathSymbol): pass
 class succeq(MathSymbol): pass
 class gg(MathSymbol): pass
@@ -250,6 +252,7 @@ class asymp(MathSymbol): pass
 class approx(MathSymbol): pass
 class cong(MathSymbol): pass
 class neq(MathSymbol): pass
+class ne(MathSymbol): pass
 class doteq(MathSymbol): pass
 class notin(MathSymbol): pass
 class models(MathSymbol): pass
@@ -413,21 +416,66 @@ class left(Command):
 class right(Command):
     args = 'delim'
 
-# Table 3.10: Delimiters
+# Table 3.10: Delimiters and TeXbook (p359)
 
-class lfloor(Command): pass
-class lceil(Command): pass
-class langle(Command): pass
-class rfloor(Command): pass
-class rceil(Command): pass
-class rangle(Command): pass
-class backslash(Command): pass
-class uparrow(Command): pass
-class downarrow(Command): pass
-class updownarrow(Command): pass
-class Uparrow(Command): pass
-class Downarrow(Command): pass
-class Updownarrow(Command): pass
+class Delimiter(Command):
+    pass
+
+class langle(Delimiter): pass
+class rangle(Delimiter): pass
+class lbrace(Delimiter): pass
+class rbrace(Delimiter): pass
+class lceil(Delimiter): pass
+class rceil(Delimiter): pass
+class lfloor(Delimiter): pass
+class rfloor(Delimiter): pass
+class lgroup(Delimiter): pass
+class rgroup(Delimiter): pass
+class lmoustache(Delimiter): pass
+class rmoustache(Delimiter): pass
+class uparrow(Delimiter): pass
+class Uparrow(Delimiter): pass
+class downarrow(Delimiter): pass
+class Downarrow(Delimiter): pass
+class updownarrow(Delimiter): pass
+class Updownarrow(Delimiter): pass
+class arrowvert(Delimiter): pass
+class Arrowvert(Delimiter): pass
+class vert(Delimiter): pass
+class Vert(Delimiter): pass
+class backslash(Delimiter): pass
+class bracevert(Delimiter): pass
+
+class bigl(Delimiter): pass
+class bigm(Delimiter): pass
+class bigr(Delimiter): pass
+class Bigl(Delimiter): pass
+class Bigm(Delimiter): pass
+class Bigr(Delimiter): pass
+class biggl(Delimiter): pass
+class biggr(Delimiter): pass
+class Biggl(Delimiter): pass
+class Biggr(Delimiter): pass
+class biggm(Delimiter): pass
+class Biggm(Delimiter): pass
+class Big(Delimiter):
+    args = 'char'
+class bigg(Delimiter):
+    args = 'char'
+class Bigg(Delimiter):
+    args = 'char'
+
+class choose(Command):
+    pass
+
+class brack(Command):
+    pass
+
+class brace(Command):
+    pass
+
+class sqrt(Command):
+    pass
 
 #
 # C.7.6 Putting One Thing Above Another

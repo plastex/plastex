@@ -5,11 +5,12 @@ C.14.1 The picture Environment (p219)
 
 """
 
-from plasTeX import Command, Environment, TextCommand
+from plasTeX import Command, Environment, StringCommand
 from plasTeX import Dimen, dimen
 from plasTeX.Logging import getLogger
 
-qbeziermax = TextCommand('250')
+class qbeziermax(StringCommand):
+    value = '250'
 
 class unitlength(Dimen):
     value = dimen('1pt')
