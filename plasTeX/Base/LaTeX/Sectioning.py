@@ -70,7 +70,7 @@ class SectionUtils(object):
         See http://fantasai.tripod.com/qref/Appendix/LinkTypes/ltdef.html
 
         """
-        sections = self.documentSections
+        sections = [x for x in self.documentSections if x.filename]
 
         breadcrumbs = [self]
         parent = None

@@ -2,9 +2,8 @@
 <tr tal:repeat="row self">
     <td tal:repeat="cell row" 
         tal:attributes="style cell/style/inline; 
-                        colspan cell/attributes/colspan">
-    <div tal:condition="cell" tal:replace="cell"></div>
-    <div tal:condition="not:cell" tal:replace="string:&amp;#160;"></div>
+                        colspan cell/attributes/colspan"
+        tal:content="cell">
     </td>
 </tr>
 </table>

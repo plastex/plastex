@@ -12,7 +12,7 @@ class Verbatim(TestCase):
         input = 'hi \\begin{verbatim}\n%s\n\\end{verbatim} bye' % intext
         s = TeX(input)
         output = s.parse()
-        text = ''.join(output.childNodes[3].childNodes).strip()
+        text = ''.join(output.childNodes[1].childNodes).strip()
         assert intext == text, '"%s" != "%s"' % (intext, text)
 
     def testVerb(self):
@@ -20,7 +20,7 @@ class Verbatim(TestCase):
         input = r'hi \verb+%s+ bye' % intext
         s = TeX(input)
         output = s.parse()
-        text = ''.join(output.childNodes[3].childNodes)
+        text = ''.join(output.childNodes[1].childNodes)
         assert intext == text, '"%s" != "%s"' % (intext, text)
 
     def testVerbStar(self):
@@ -28,7 +28,7 @@ class Verbatim(TestCase):
         input = r'hi \verb*+%s+ bye' % intext
         s = TeX(input)
         output = s.parse()
-        text = ''.join(output.childNodes[3].childNodes)
+        text = ''.join(output.childNodes[1].childNodes)
         assert intext == text, '"%s" != "%s"' % (intext, text)
 
 

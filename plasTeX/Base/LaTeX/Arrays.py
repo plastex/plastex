@@ -284,11 +284,11 @@ class Array(Environment):
 
     class multicolumn(Command):
         """ Column spanning cell """
-        args = 'colspan:int colspec self'
+        args = 'colspan:int colspec:nox self'
 
         def invoke(self, tex):
             Command.invoke(self, tex)
-            self.colspec = Array.compileColspec(self.attributes['colspec']).pop(0)
+            self.colspec = Array.compileColspec(tex, self.attributes['colspec']).pop(0)
 
         def digest(self, tokens):
             Command.digest(self, tokens)
@@ -309,7 +309,7 @@ class Array(Environment):
 #
 #!!!
         if self.attributes.has_key('colspec'):
-            self.colspec = Array.compileColspec(self.attributes['colspec'])
+            self.colspec = Array.compileColspec(tex, self.attributes['colspec'])
 
         tex.context.push() # Beginning of cell
         # Add a phantom row and cell to absorb the appropriate tokens
@@ -374,7 +374,7 @@ class Array(Environment):
         for i in emptyrows:
             self.pop(i)
 
-    def compileColspec(cls, colspec):
+    def compileColspec(cls, tex, colspec):
         """ 
         Compile colspec into an object 
 
@@ -389,41 +389,49 @@ class Array(Environment):
         colspec = iter(colspec)
         before = None
         leftborder = None
-        for item in colspec:
-            if item.isElementContentWhitespace:
+
+        tex.pushtoken(Array)
+        tex.pushtokens(colspec)
+
+        for tok in tex.itertokens():
+            if tok is Array:
+                break
+
+            if tok.isElementContentWhitespace:
                 continue
 
-            if item.nodeType == item.ELEMENT_NODE: 
-                continue
-
-            if item == '|':
+            if tok == '|':
                 if not output:
                     leftborder = True
                 else:
                     output[-1].style['border-right'] = '1px solid black'
                 continue
 
-            if item in '>':
-                before = colspec.next()
+            if tok == '>':
+                before = tex.readArgument()
                 continue
 
-            if item in '<':
-                output[-1].after = colspec.next()
+            if tok == '<':
+                output[-1].after = tex.readArgument()
                 continue
 
-            if item in '@':
+            if tok == '@':
                 if output:
-                    output[-1].between = colspec.next()
+                    output[-1].between = tex.readArgument()
                 continue
 
-            if item in '*':
-                num = int(colspec.next()[0])
-                spec = colspec.next()[0]
+            if tok == '*':
+                num = tex.readArgument(type=int, expanded=True)
+                spec = tex.readArgument()
                 for i in range(num):
-                    output.append(ColumnType.columnTypes.get(item, ColumnType)())
+                    tex.pushtokens(spec)
                 continue
 
-            output.append(ColumnType.columnTypes.get(item, ColumnType)())
+            output.append(ColumnType.columnTypes.get(tok, ColumnType)())
+
+            if tok in ['p','d']:
+                tex.readArgument()
+
             if before:
                 output[-1].before = before
                 before = None
@@ -437,14 +445,14 @@ class Array(Environment):
 
 
 class array(Array):
-    args = '[ pos:str ] colspec'
+    args = '[ pos:str ] colspec:nox'
 
 class tabular(Array):
-    args = '[ pos:str ] colspec'
+    args = '[ pos:str ] colspec:nox'
 
 class TabularStar(tabular):
     macroName = 'tabular*'
-    args = 'width:dimen [ pos:str ] colspec'
+    args = 'width:dimen [ pos:str ] colspec:nox'
 
 # Style Parameters
 

@@ -368,12 +368,14 @@ class TeX(object):
                     return tokens.pop()
                 t = TeXFragment()
                 t.extend(tokens)
+                t.normalize()
                 return t
             if t.catcode not in texttokens:
                 if len(tokens) == 1:
                     return tokens.pop()
                 t = TeXFragment()
                 t.extend(tokens)
+                t.normalize()
                 return t
 
         return (u''.join([x for x in tokens 
@@ -566,7 +568,12 @@ class TeX(object):
             return default, ''
 
         res = self.cast(toks, type, subtype, delim, slot)
- 
+
+        # Normalize any document fragments
+        if expanded and \
+           getattr(res,'nodeType',None) == Macro.DOCUMENT_FRAGMENT_NODE:
+            res.normalize()
+
         # Re-enable Parameters
         Parameter.enable()
 
@@ -737,8 +744,8 @@ class TeX(object):
 
         This method is used to convert tokens into Python objects.
         This happens when the user has specified that a macro argument
-        should be a dictionary (i.e. %foo or foo:dict), 
-        a list (i.e. @foo or foo:list), etc.
+        should be a dictionary (e.g. foo:dict), 
+        a list (e.g. foo:list), etc.
 
         Required Arguments:
         tokens -- list of raw, unflattened and unnormalized tokens

@@ -1,8 +1,2 @@
-<?xml version="1.0"?>
-<zpt:page-templates>
-
-<zpt:page-template name="citetitle">
+name: citetitle
 <a tal:attributes="href self/url" tal:content="self"></a>
-</zpt:page-template>
-
-</zpt:page-templates>

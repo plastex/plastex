@@ -24,27 +24,15 @@ encoding['output'] = StringOption(
 )
 
 #
-# Table of Contents
+# Sectioning
 #
 
-toc = c.add_section('tableofcontents')
+sections = c.add_section('sections')
 
-toc['depth'] = IntegerOption(
-    """ Maximum number of levels in each table of contents """,
-    options = '--toc-depth',
+sections['split-level'] = IntegerOption(
+    """ Level to split the document into files """,
+    options = '--split-level',
     default = 2,
-)
-
-toc['location'] = MultiOption(
-    """ 
-    Location to place the table of contents 
-
-    Valid Values: 
-    top, bottom
-
-    """,
-    options = '--toc-position',
-    default = ['top'],
 )
 
 #

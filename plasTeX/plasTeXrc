@@ -19,3 +19,7 @@ enabled=1
 
 [filenames]
 use-ids=1
+
+[encoding]
+input=utf-8
+output=utf-8

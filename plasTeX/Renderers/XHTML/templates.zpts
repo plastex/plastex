@@ -1,124 +1,103 @@
-<?xml version="1.0"?>
-<zpt:page-templates>
+name: it itshape textit
+<i tal:content="self">italic text</i>
 
-<zpt:page-template name="_default_">
-<span tal:content="self" class="unknown">children of macro</span>
-</zpt:page-template>
-
-<zpt:page-template name="it itshape textit"><i tal:content="self">italic text</i></zpt:page-template>
-
-<zpt:page-template name="tt texttt ttfamily">
+name: tt texttt ttfamily
 <tt tal:content="self">italic text</tt>
-</zpt:page-template>
 
-<zpt:page-template name="center">
+name: center
 <center tal:content="self"></center>
-</zpt:page-template>
 
-<zpt:page-template name="color textcolor"><span tal:attributes="style self/style/inline" tal:content="self"></span></zpt:page-template>
+name: color textcolor
+<span tal:attributes="style self/style/inline" tal:content="self"></span>
 
-<zpt:page-template name="bf bfseries textbf"><b tal:content="self">bold text</b></zpt:page-template>
+name: bf bfseries textbf
+<b tal:content="self">bold text</b>
 
-<zpt:page-template name="emph em">
+name: emph em
 <em tal:content="self">emphasized text</em>
-</zpt:page-template>
 
-<zpt:page-template name="strong">
+name: strong
 <strong tal:content="self">strong text</strong>
-</zpt:page-template>
 
-<zpt:page-template name="small">
+name: small
 <small tal:content="self">small text</small>
-</zpt:page-template>
 
-<zpt:page-template name="sffamily textsf">
+name: sffamily textsf
 <span tal:content="self" style="font-family: sans-serif">sans-serif text</span>
-</zpt:page-template>
 
-<zpt:page-template name="rmfamily textrm">
+name: rmfamily textrm
 <span tal:content="self" style="font-family: serif">serif text</span>
-</zpt:page-template>
 
-<zpt:page-template name="par" type="xml"><p tal:content="self"></p></zpt:page-template>
+name: par 
+type: xml
+<p tal:content="self"></p>
 
-<zpt:page-template name="list description deflist" type="xml">
+name: list description deflist
+type: xml
 <dl>
 <metal:block tal:repeat="item self">
     <dt tal:content="item/attributes/term"></dt>
     <dd tal:content="item"></dd>
 </metal:block>
 </dl>
-</zpt:page-template>
 
-<zpt:page-template name="ssbeleven"><b style="font-family: sans-serif" tal:content="self"></b></zpt:page-template>
+name: ssbeleven
+<b style="font-family: sans-serif" tal:content="self"></b>
 
-<zpt:page-template name="sasstmts reference" type="xml">
+name: sasstmts reference
+type: xml
 <dl class="sasstmts">
 <metal:block tal:repeat="item self">
     <dt></dt>
     <dd tal:content="item"></dd>
 </metal:block>
 </dl>
-</zpt:page-template>
 
-<zpt:page-template name="itemize jitemize">
+name: itemize jitemize
 <ul>
 <li tal:repeat="item self" tal:content="item"></li>
 </ul>
-</zpt:page-template>
 
-<zpt:page-template name="enumerate jenumerate">
+name: enumerate jenumerate
 <ol>
 <li tal:repeat="item self" tal:content="item"></li>
 </ol>
-</zpt:page-template>
 
-<zpt:page-template name="htmlref">
+name: htmlref
 <a tal:attributes="href self/idref/url" tal:content="self"></a>
-</zpt:page-template>
 
-<zpt:page-template name="ref sref">
+name: ref sref
 <a tal:attributes="href self/idref/url" tal:content="self/idref/title"></a>
-</zpt:page-template>
 
-<zpt:page-template name="oref">
+name: oref
 <a tal:attributes="href self/idref/url" tal:content="string:Output ${self/idref/ref}"></a>
-</zpt:page-template>
 
-<zpt:page-template name="tref">
+name: tref
 <a tal:attributes="href self/idref/url" tal:content="string:Table ${self/idref/ref}"></a>
-</zpt:page-template>
 
-<zpt:page-template name="fref">
+name: fref
 <a tal:attributes="href self/idref/url" tal:content="string:Figure ${self/idref/ref}"></a>
-</zpt:page-template>
 
-<zpt:page-template name="tablehead">
+name: tablehead
 <div class="caption"><a tal:attributes="name self/id"><b>Table <span tal:replace="self/ref"></span>:</b></a> <span tal:replace="self/title"></span></div>
-</zpt:page-template>
 
-<zpt:page-template name="fighead">
+name: fighead
 <div class="caption"><a tal:attributes="name self/id"><b>Figure <span tal:replace="self/ref"></span>:</b></a> <span tal:replace="self/title"></span></div>
-</zpt:page-template>
 
-<zpt:page-template name="outhead">
+name: outhead
 <div class="caption"><a tal:attributes="name self/id"><b>Output <span tal:replace="self/ref"></span>:</b></a> <span tal:replace="self/title"></span></div>
-</zpt:page-template>
 
-<zpt:page-template name="sasout">
+name: sasout
 <div class="caption"><a tal:attributes="name self/id"><b>Output <span tal:replace="self/ref"></span>:</b></a> <span tal:replace="self/attributes/options/caption"></span></div>
-</zpt:page-template>
 
-<zpt:page-template name="alltt jverbatim cverbatim kverbatim tverbatim">
+name: alltt jverbatim cverbatim kverbatim tverbatim
 <pre tal:content="self"></pre>
-</zpt:page-template>
 
-<zpt:page-template name="sasop">
+name: sasop
 <a class="sasop" tal:attributes="name self/attributes/label" tal:content="self/title"></a><br />
-</zpt:page-template>
 
-<zpt:page-template name="ssiten ssbten ssieleven ssbeleven hv hvs ssbifourteen"><span tal:attributes="class self/nodeName" tal:content="self></span></zpt:page-template>
+name: ssiten ssbten ssieleven ssbeleven hv hvs ssbifourteen
+<span tal:attributes="class self/nodeName" tal:content="self></span>
 
-<zpt:page-template name="hspace"><span tal:attributes="style string:width:${self/attributes/len}"></span></zpt:page-template>
-
-</zpt:page-templates>
+name: hspace
+<span tal:attributes="style string:width:${self/attributes/len}"></span>

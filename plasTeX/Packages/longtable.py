@@ -14,7 +14,7 @@ class LTchunksize(Count): value = count(20)
 class setlongtables(Command): pass
 
 class longtable(tabular):
-    args = '[ position:str ] colspec'
+    args = '[ position:str ] colspec:nox'
 
     class tabularnewline(Command): pass
 

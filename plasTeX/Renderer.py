@@ -13,6 +13,7 @@ status = getLogger('status')
 encoding = config['encoding']['output']
 useids = config['filenames']['use-ids']
 ext = config['filenames']['extension']
+splitlevel = config['sections']['split-level']
 
 def mixin(base, mix, overwrite=False):
     """
@@ -154,19 +155,27 @@ class Renderable(object):
             return u''
 
         r = Node.renderer
+        filename = self.filename
 
-        if self.filename:
-            status.info(' [ %s ', self.filename)
+        if filename:
+            status.info(' [ %s ', filename)
 
         s = []
         for child in self.childNodes:
-            val = r.get(child.nodeName, r.default)(child)
+            template = None
+            # If the child is going to generate a new file, we should 
+            # check for a template that has file wrapper content first.
+            if self.nodeType == Node.ELEMENT_NODE and child.filename:
+                template = r.get('%s-file' % child.nodeName, None)
+            if template is None:
+                template = r.get(child.nodeName, r.default)
+            val = template(child)
             if type(val) is unicode:
                 s.append(val)
             else:
                 s.append(unicode(val,encoding))
 
-        if self.filename:
+        if filename:
             status.info(' ] ')
 
         return r.outputtype(u''.join(s))
@@ -208,15 +217,15 @@ class Renderable(object):
 
         """
         try:
-            return getattr(self, '@filename')
+            return getattr(self, 'filenameoverride')
         except AttributeError:
-            if self.level > Node.ENDSECTIONS_LEVEL:
+            if self.level > splitlevel:
                 filename = None
             elif useids and self.id != ('a%s' % id(self)):
                 filename = '%s%s' % (self.id, ext)
             else:
                 filename = Node.renderer.newfilename.next()
-            setattr(self, '@filename', filename)
+            setattr(self, 'filenameoverride', filename)
         return filename
     filename = property(filename)
 

@@ -1,10 +1,4 @@
-<?xml version="1.0"?>
-<zpt:page-templates>
-
-<zpt:page-template name="eqnarray eqnarray*">
+name: eqnarray eqnarray*
 <div class="eqnarray">
 <img tal:attributes="src self/image/filename; alt self/source" class="eqn" />
 </div>
-</zpt:page-template>
-
-</zpt:page-templates>

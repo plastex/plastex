@@ -7,12 +7,6 @@ from plasTeX.TALUtils import htmltemplate, xmltemplate
 
 encoding = config['encoding']['output']
 
-# Regular expressions for multi-zpt files
-templatere = re.compile(r'(<zpt:page-template\s+[^>]+>.*?</zpt:page-template>)', re.S)
-attrsre = re.compile(r'<zpt:page-template\s+([^>]+)?\s*>')
-parseattrsre = re.compile(r'\s*(\w+)\s*=\s*["\']([^"\']+)?["\']')
-contentre = re.compile(r'<zpt:page-template\s+[^>]+>(.*?)</zpt:page-template>', re.S)
-
 class htmlunicode(unicode):
     """ Helper for strings output from renderer """
 
@@ -109,63 +103,106 @@ class XHTML(Renderer):
 
             # Compile multi-zpt files first
             for file in files:
-                file = os.path.join(templatedir, file)
                 ext = os.path.splitext(file)[-1]
+                file = os.path.join(templatedir, file)
+
+                if not os.path.isfile(file):
+                    continue
 
                 # Multi-zpt files
                 if ext.lower() == '.zpts':
-                    content = codecs.open(file,'r').read().strip()
-                    templates = templatere.split(content)
-                    templates.pop()
-                    while templates:
-                        templates.pop(0)
-                        template = templates.pop(0)
- 
-                        # Get macro attributes
-                        attrs = attrsre.search(template).group(1) 
-                        attrs = dict(parseattrsre.findall(attrs))
-
-                        # Get content of macro
-                        content = contentre.search(template).group(1) 
-
-                        # Compile the template
-                        if attrs.get('type','').lower() == 'xml':
-                            try: template = xmltemplate(content) 
-                            except Exception, msg: 
-                                print 'Error in compiling %s (%s)' % (file, msg)
-                        else:
-                            try: template = htmltemplate(content) 
-                            except Exception, msg: 
-                                print 'Error in compiling %s (%s)' % (file, msg)
-
-                        # Get all names in the 'name' attribute
-                        names = [x.strip() for x in attrs['name'].split() 
-                                           if x.strip()]
-                        for name in names:
-                            self[name] = template
+                    self.parseTemplates(file)
 
             # Now compile macros in individual files.  These have
             # a higher precedence than macros found in multi-zpt files.
             for file in files:
+                basename, ext = os.path.splitext(file)
                 file = os.path.join(templatedir, file)
-                ext = os.path.splitext(file)[-1]
 
-                # Single zpt files
-                if ext.lower() in ['.zpt','.html','.htm']:
-                    content = codecs.open(file,'r').read().strip()
-                    key = os.path.splitext(os.path.basename(file))[0]
-                    try: self[key] = htmltemplate(content) 
-                    except Exception, msg: 
-                        print 'Error in compiling %s (%s)' % (file, msg)
-                        
+                if not os.path.isfile(file):
+                    continue
 
-                # XML formatted zpt files
-                elif ext.lower() == '.xml':
-                    content = codecs.open(file,'r').read().strip()
-                    key = os.path.splitext(os.path.basename(file))[0]
-                    try: self[key] = xmltemplate(content) 
-                    except Exception, msg: 
-                        print 'Error in compiling %s (%s)' % (file, msg)
+                options = {'name':basename}
+                if ext.lower() in ['.xml']:
+                    options['type'] = 'xml'
+                elif ext.lower() in ['.zpt','.html','.htm']:
+                    options['type'] = 'html'
+                else:
+                    continue
+
+                self.parseTemplates(file, options)                
+
+    def setTemplate(self, template, options):
+        """ Compile template and set it in the renderer """
+        names = options.get('name','').split()
+
+        # No name found
+        if not names:
+            raise ValueError, 'No name given for template'
+
+        # Compile template and add it to the renderer
+        template = ''.join(template).strip()
+        ttype = options.get('type','html').lower()
+
+        try:
+            if ttype == 'xml':
+                template = xmltemplate(template)
+            else:
+                template = htmltemplate(template)
+        except Exception, msg:
+            raise ValueError, 'Could not compile template "%s"' % names[0]
+
+        for name in names:
+            self[name] = template
+
+    def parseTemplates(self, filename, options={}):
+        """
+        Parse templates from the file and set them in the renderer
+
+        Required Arguments:
+        filename -- file to parse templates from
+
+        Keyword Arguments:
+        options -- dictionary containing initial parameters for templates
+            in the file
+
+        """
+        template = []
+        options = options.copy()
+        file = open(filename, 'r')
+        for i, line in enumerate(file):
+            # Found a meta-data command
+            if re.match(r'\w+:', line):
+
+                # Purge any awaiting templates
+                if template:
+                    try:
+                        self.setTemplate(''.join(template), options)
+                    except ValueError, msg:
+                        print 'ERROR: %s at line %s in file %s' % (msg, i, filename)
+                    options.clear()
+                    template = []
+
+                # Done purging previous template, start a new one
+                name, value = line.split(' ', 1)
+                value = value.rstrip()
+                while value.endswith('\\'):
+                    value = value[:-1] + ' '
+                    for line in file:
+                        value += line.rstrip()
+                        break
+
+                options[name[:-1]] = re.sub(r'\s+', r' ', value.strip())
+                continue
+            
+            template.append(line)
+
+        # Purge any awaiting templates
+        if template:
+            try:
+                self.setTemplate(''.join(template), options)
+            except ValueError, msg:
+                print 'ERROR: %s at line %s in file %s' % (msg, i, filename)
 
 xhtml = XHTML()
 

@@ -44,6 +44,7 @@ def _render(self, obj, outputFile=None, outputEncoding=encoding, interpreter=Non
     context.addGlobal('self', obj)
     context.addGlobal('config', config)
     context.addGlobal('template', self)
+    context.addGlobal('templates', obj.renderer)
     self.expand(context, output, outputEncoding, interpreter)
     if obj.filename:
         obj.renderer.write(obj.filename, output.getvalue())
@@ -63,6 +64,7 @@ def _render(self, obj, outputFile=None, outputEncoding=encoding, docType=None, s
     context.addGlobal('self', obj)
     context.addGlobal('config', config)
     context.addGlobal('template', self)
+    context.addGlobal('templates', obj.renderer)
     self.expand(context, output, outputEncoding, docType, suppressXMLDeclaration, interpreter)
     if obj.filename:
         obj.renderer.write(obj.filename, output.getvalue())

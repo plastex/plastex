@@ -25,11 +25,11 @@ def main(argv):
     
     # Write expanded source file
     sourcefile = '%s.source' % basename
-    codecs.open(sourcefile,'w',outencoding).write(document.source)
+    open(sourcefile,'w').write(document.source.encode('utf-8'))
     
     # Write XML dump
     outfile = '%s.xml' % basename
-    codecs.open(outfile,'w',outencoding).write(document.toXML())
+    open(outfile,'w').write(document.toXML().encode('utf-8'))
     
     # Apply renderer
     from plasTeX.renderers.xhtml import xhtml as renderer

@@ -1,8 +1,3 @@
-<?xml version="1.0"?>
-<zpt:page-templates>
-
-<zpt:page-template name="Verbatim" type="xml">
+name: Verbatim 
+type: xml
 <pre tal:content="self" tal:attributes="style self/style/inline"></pre>
-</zpt:page-template>
-
-</zpt:page-templates>
