@@ -292,6 +292,23 @@ class TeXFragment(list, Node, RenderMixIn):
         return u''.join([repr(x) for x in self])
     source = property(source)
 
+class TeXDocument(TeXFragment):
+    nodeName = tagName = '#document'
+    nodeType = Node.DOCUMENT_NODE
+
+    def __init__(self, *args, **kwargs):
+        TeXFragment.__init__(self, *args, **kwargs)
+        self.documentElement = self
+        self.ownerDocument = self
+
+    def preamble(self):
+        output = []
+        for item in self:
+            if item.nodeName == 'document':
+                break
+            output.append(item)
+        return TeXFragment(output)
+    preamble = property(preamble)
 
 class Command(Macro): 
     """ Base class for all Python-based LaTeX commands """

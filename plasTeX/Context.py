@@ -3,7 +3,7 @@
 import new, plasTeX
 from plasTeX import Macro, StringMacro, UnrecognizedMacro
 from plasTeX.Logging import getLogger
-from Tokenizer import Tokenizer, Token, DEFAULT_CATEGORIES
+from Tokenizer import Tokenizer, Token, DEFAULT_CATEGORIES, VERBATIM_CATEGORIES
 from Utils import *
 
 # Only export the Context class
@@ -380,6 +380,9 @@ class Context(object):
         # Don't insert if it's code 12.
         if code != 12:
             c[code] += char
+
+    def setVerbatimCatcodes(self):
+        self.contexts[-1].categories = self.categories = VERBATIM_CATEGORIES[:]
 
     def newcounter(self, name, initial=0, resetby=None, format=None):
         """ 

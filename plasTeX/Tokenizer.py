@@ -27,6 +27,8 @@ DEFAULT_CATEGORIES = [
    ''     # 15 - Invalid character
 ]
 
+VERBATIM_CATEGORIES = ['','','','','','','','','','','','','','','','']
+
 class Token(unicode, Node):
     """ Base class for all TeX tokens """
 

@@ -16,6 +16,7 @@ basename = os.path.splitext(file)[0]
 # Parse document
 s = TeX(codecs.open(file,'r',encoding))
 document = s.parse()
+print document.preamble.source
 sourcefile = '%s.source' % basename
 codecs.open(sourcefile,'w',encoding).write(s.source(document))
 document = [x for x in document if x.nodeType == Node.ELEMENT_NODE and x.nodeName == 'document'].pop()

@@ -20,7 +20,8 @@ import string
 from Utils import *
 from Context import Context 
 from Tokenizer import Tokenizer, Token
-from plasTeX import TeXFragment, Macro, Glue, Muglue, Mudimen, Dimen
+from plasTeX import TeXFragment, TeXDocument
+from plasTeX import Macro, Glue, Muglue, Mudimen, Dimen
 from plasTeX.Logging import getLogger, disableLogging
 
 # Only export the TeX class
@@ -36,9 +37,8 @@ class tokiter(object):
         self.obj = obj
     def __iter__(self):
         return self
-    next = lambda self: self.obj.nexttok()
-#   def next(self):
-#       return self.obj.nexttok()
+    def next(self):
+        return self.obj.nexttok()
 
 class nodeiter(object):
     """ Node iterator """
@@ -46,9 +46,8 @@ class nodeiter(object):
         self.obj = obj
     def __iter__(self):
         return self
-    next = lambda self: self.obj.nextnode()
-#   def next(self):
-#       return self.obj.nextnode()
+    def next(self):
+        return self.obj.nextnode()
 
 class bufferediter(object):
     """ Buffered iterator """
@@ -768,14 +767,16 @@ class TeX(object):
 
     def parse(self, tokens=None):
         """ Parse stream content until it is empty """
+        outputclass = TeXFragment
         if tokens is None:
+            outputclass = TeXDocument
             tokens = self
         tokens = bufferediter(tokens)
         output = []
         for item in tokens:
             item.digest(tokens)
             output.append(item)
-        return TeXFragment(output)
+        return outputclass(output)
 
 #
 # Parsing helper methods for parsing numbers, spaces, dimens, etc.
