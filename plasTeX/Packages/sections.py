@@ -8,11 +8,7 @@ class _Section:
 
     def subsections(self):
         """ Get a list of all subsections """
-        sections = []
-        for obj in self:
-            if obj.section:
-                sections.append(obj)
-        return TeXFragment(sections)
+        return [x for x in self if x.section]
 
     def sectioncontent(self):
         """ Get all content that doesn't belong to subsections """

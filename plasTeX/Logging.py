@@ -146,6 +146,8 @@ setLoggerClass(Logger)
 
 root = Logger()
 
+_loggers = {None:root}
+
 def getLogger(name=None):
     """
     Return a logger with the specified name, creating it if necessary.
@@ -153,7 +155,13 @@ def getLogger(name=None):
     If no name is specified, return the root logger.
     """
     if name:
-        return Logger.manager.getLogger(name)
+        logger = Logger.manager.getLogger(name)
+        _loggers[name] = logger
+        return logger
     else:
         return root
 
+def disableLogging():
+    """ Disable all logging """
+    for logger in _loggers.values():
+        logger.setLevel(CRITICAL)

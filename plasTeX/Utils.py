@@ -88,6 +88,7 @@ def tokens2tree(toklist):
             document.append(item)
     return document
 
+
 def paragraphs(toklist, par, allow_single=False):
     """ Group content into paragraphs """
     current = par()
@@ -138,3 +139,4 @@ def kpsewhich(name):
            if os.path.isfile(fullpath):
                return fullpath
     raise OSError, name
+

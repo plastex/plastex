@@ -7,12 +7,13 @@ Parsing
 - Finish DOM methods
 - XPath
 - Clean up \def parsing and expanding
-- Use DocumentFragments in document building instead of lists
 - Convert strings to nodes
-- Reduce isinstace usage
 - Write parsers for all LaTeX commands
 - Develop a good LaTeX package API (LaTeX package -> Python package?)
 - Create a LaTeX Document similar to a DOM Document 
+- Clean up table object builder
+- Improve CSS style support
+- Unittests, unittests, unittests
 
 Rendering
 ---------

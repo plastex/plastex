@@ -4,7 +4,7 @@ import string, re
 from Utils import *
 from Context import Context
 from plasTeX import TeXFragment, Glue, str2dimen, Dimension
-from plasTeX.Logging import getLogger
+from plasTeX.Logging import getLogger, disableLogging
 try: from cStringIO import StringIO
 except: from StringIO import StringIO
 
@@ -29,6 +29,7 @@ class EscapeSequence(str): pass
 class MacroParameter(str): pass
 class ParameterToken(str):
     code = 6
+
 
 class Persistent(object):
     """ 
@@ -183,6 +184,10 @@ class TeX(object):
         self.readlines = self.string.readlines
         self.tell = self.string.tell
         self.flush = self.string.flush
+
+    def disableLogging(cls):
+        disableLogging()
+    disableLogging = classmethod(disableLogging)
 
     def disablePersist(self, obj=None):
         """ 
@@ -624,7 +629,7 @@ class TeX(object):
         if raw: return output
 
         # Build the document fragment
-        output = tokens2tree(self.normalize(output))
+        output = TeXFragment(tokens2tree(self.normalize(output)))
 
         # If we have a document environment in the output, return
         # it by itself.  It's the only important thing.

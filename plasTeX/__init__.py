@@ -281,10 +281,9 @@ class Macro(Element, RenderMixIn):
                 if output == None:
                     self.resolve() 
             if arg.name == 'self':
-                if isinstance(output, list):
-                    self[:] = output
-                else:
-                    self[:] = [output]
+                if not isinstance(output, list):
+                    output = [output]
+                self[:] = output
             else:
                 self.attributes[arg.name] = output
 

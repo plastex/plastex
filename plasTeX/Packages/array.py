@@ -1,16 +1,18 @@
 #!/usr/bin/env python
 
 from plasTeX.Utils import *
-from plasTeX import TeXFragment, Environment, Command
+from plasTeX import Environment, Command
+
+Node = Command
 
 BORDERTOP = 1
 BORDERBOTTOM = 2
 BORDERLEFT = 4
 BORDERRIGHT = 8
 
-class ColspecItem(TeXFragment):
+class ColspecItem(Node):
     def __init__(self, data=None):
-        TeXFragment.__init__(self, data)
+        Node.__init__(self, data)
         self.before = []
         self.after = []
 
@@ -61,16 +63,16 @@ class Array(Environment):
     class endlastfoot(Command):
         """ End of last footer section of longtable """
 
-    class ArrayRow(TeXFragment):
+    class ArrayRow(Node):
         """ Class used for array rows """
 
-    class ArrayDataCell(TeXFragment):
+    class ArrayDataCell(Node):
         """ Class used for array data cells """
 
-    class ArrayHeaderCell(TeXFragment):
+    class ArrayHeaderCell(Node):
         """ Class used for array header cells """
 
-    class ArrayFooterCell(TeXFragment):
+    class ArrayFooterCell(Node):
         """ Class used for array footer cells """
 
     class multicolumn(Command):
