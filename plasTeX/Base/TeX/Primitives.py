@@ -45,7 +45,7 @@ class mathshift(Command):
     the latter, a 'displaymath' environment is invoked.
 
     """
-    macroName = 'core::$'
+    macroName = 'active::$'
     inenv = []
 
     def invoke(self, tex):
@@ -88,16 +88,16 @@ class mathshift(Command):
 
 class Ampersand(Command):
     """ The '&' character in TeX """
-    macroName = 'core::&'
+    macroName = 'active::&'
 
 class SuperScript(Command):
     """ The '^' character in TeX """
-    macroName = 'core::^'
+    macroName = 'active::^'
     args = 'arg'
 
 class SubScript(Command):
     """ The '_' character in TeX """
-    macroName = 'core::_'
+    macroName = 'active::_'
     args = 'arg'
 
 class _def(Command):

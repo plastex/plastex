@@ -1,39 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html metal:use-macro="renderer/document_template/macros/maketitle">
-<body metal:fill-slot="body">
+<html>
+<body>
 
 <div tal:content="self"></div>
-
-<div metal:define-macro="tableofcontents">
-<!-- sections -->
-<ul tal:define="sections self/subsections" tal:condition="sections">
-<li tal:repeat="section sections">
-<a tal:attributes="href string:#${section/id}" 
-   tal:content="section/attributes/title"></a>
-
-<!-- subsections -->
-<ul tal:define="subsections section/subsections" 
-    tal:condition="subsections">
-    <li tal:repeat="subsection subsections">
-    <a tal:attributes="href string:#${subsection/id}" 
-       tal:content="subsection/attributes/title"></a>
-
-    <!-- subsubsections -->
-    <ul tal:define="subsubsections subsection/subsections" 
-        tal:condition="subsubsections">
-        <li tal:repeat="subsubsection subsubsections">
-        <a tal:attributes="href string:#${subsubsection/id}"
-           tal:content="subsubsection/attributes/title"></a>
-        </li>
-    </ul>
-
-    </li>
-</ul>
-
-</li>
-</ul>
-</div>
 
 </body>
 </html>

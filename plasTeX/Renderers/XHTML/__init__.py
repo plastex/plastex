@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import sys, os, re
-from plasTeX import DOCUMENT
 from plasTeX.Renderer import Renderer
 from plasTeX.TALUtils import htmltemplate, xmltemplate
 
@@ -17,13 +16,6 @@ class XHTML(Renderer):
         Renderer.__init__(self)
         self.filecount = 0
         self.importDirectory(os.path.dirname(__file__))
-
-    def filename(self, obj):
-        """ Return the filename for the object """
-#       if obj.level > DOCUMENT and obj.level < 3:
-#           self.filecount += 1
-#           return 'sect%.2d.html' % self.filecount
-        return None
 
     def importDirectory(self, templatedir):
         """ Compile all ZPT files in the given directory """

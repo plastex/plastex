@@ -1,25 +1,13 @@
 <?xml version="1.0"?>
 <zpt:page-templates>
 
-<zpt:page-template name="section subsection subsubsection paragraph subparagraph">
-<html metal:use-macro="renderer/document_template/macros/maketitle">
-<body metal:fill-slot="body">
-
-<div class="breadcrumbs">
-<span tal:repeat="section self/sectionpath" 
-      tal:content="string:&gt; ${section/attributes/title}"></span>
+<zpt:page-template name="section subsection subsubsection paragraph subparagraph headi headii headiii headiv headv headvi examplehead">
+<div>
+<h1><span tal:replace="self/ref"></span> <a tal:attributes="name self/id" tal:content="self/attributes/title"></a></h1>
+<div tal:content="self">
+Section Content
 </div>
-
-<h1 tal:content="structure self/attributes/title">Section Title</h1>
-
-<div tal:replace="self/sectioncontent">Current section's content</div>
-
-<div metal:use-macro="renderer/document/macros/tableofcontents"></div>
-
-<div tal:replace="self/subsections">Subsections</div>
-
-</body>
-</html>
+</div>
 </zpt:page-template>
 
 </zpt:page-templates>

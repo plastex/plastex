@@ -58,7 +58,7 @@ class Array(Environment):
 
     class CellDelimiter(Command):
         """ Cell delimiter """
-        macroName = 'core::&'
+        macroName = 'active::&'
         def invoke(self, tex):
             # Pop and push a new context for each cell, this keeps
             # any formatting changes from the previous cell from

@@ -45,11 +45,7 @@
 <span tal:content="self" style="font-family: serif">serif text</span>
 </zpt:page-template>
 
-<zpt:page-template name="par">
-<p tal:content="self">
-paragraph text
-</p>
-</zpt:page-template>
+<zpt:page-template name="par" type="xml"><p /></zpt:page-template>
 
 <zpt:page-template name="description" type="xml">
 <dl>
@@ -58,6 +54,21 @@ paragraph text
     <dd tal:content="structure item"></dd>
 </metal:block>
 </dl>
+</zpt:page-template>
+
+<zpt:page-template name="ssbeleven"><b style="font-family: sans-serif" tal:content="self"></b></zpt:page-template>
+
+<zpt:page-template name="sasstmts reference" type="xml">
+<dl>
+<metal:block tal:repeat="item self">
+    <dt></dt>
+    <dd tal:content="structure item"></dd>
+</metal:block>
+</dl>
+</zpt:page-template>
+
+<zpt:page-template name="htmlref">
+<a tal:attributes="href string:#${self/attributes/label}" tal:content="self"></a>
 </zpt:page-template>
 
 </zpt:page-templates>

@@ -274,7 +274,7 @@ class Context(object):
             if obj.categories is not None:
                 newcontext.categories = obj.categories
 
-            newcontext.update(obj.locals)
+            newcontext.update(obj.locals())
 
         return newcontext
 
@@ -291,6 +291,11 @@ class Context(object):
                 self[macroname(value)] = value
             elif isinstance(value, Context):
                 self.importMacros(value)
+
+    def applyRenderer(self, renderer):
+        macros = self.contexts[0]
+        for key, value in macros.items():
+            value.renderer = renderer.get(key, value.renderer) 
 
     def pop(self, obj=None):
         """ 

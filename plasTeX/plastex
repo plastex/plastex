@@ -16,18 +16,15 @@ basename = os.path.splitext(file)[0]
 # Parse document
 s = TeX(codecs.open(file,'r',encoding))
 document = s.parse()
-sourcefile = '%s.source' % basename
-codecs.open(sourcefile,'w',encoding).write(document.source)
+#sourcefile = '%s.source' % basename
+#codecs.open(sourcefile,'w',encoding).write(document.source)
 document = [x for x in document if x.level == Node.DOCUMENT_LEVEL].pop()
-outfile = '%s.xml' % basename
-codecs.open(outfile,'w',encoding).write(document.toXML())
-sys.exit()
+#outfile = '%s.xml' % basename
+#codecs.open(outfile,'w',encoding).write(document.toXML())
 
 # Apply renderer
 from plasTeX.renderers.xhtml import xhtml as renderer
 s.context.applyRenderer(renderer)
 
 # Render output
-renderer.imager.addtopreamble(document.preamble)
-print document.render(file=basename+'.html')
-renderer.imager.close()
+print str(document)

@@ -17,8 +17,8 @@ def _render(self, obj, outputFile=None, outputEncoding=encoding, interpreter=Non
     context = TALContext()
     context.addGlobal('here', obj)
     context.addGlobal('self', obj)
-    context.addGlobal('context', type(obj).context)
-    context.addGlobal('renderer', type(obj).context.renderer)
+#   context.addGlobal('context', type(obj).context)
+#   context.addGlobal('renderer', type(obj).context.renderer)
     self.expand(context, output, outputEncoding, interpreter)
     if output is not None:
         output.seek(0)
@@ -34,8 +34,8 @@ def _render(self, obj, outputFile=None, outputEncoding=encoding, docType=None, s
     context = TALContext()
     context.addGlobal('here', obj)
     context.addGlobal('self', obj)
-    context.addGlobal('context', type(obj).context)
-    context.addGlobal('renderer', type(obj).context.renderer)
+#   context.addGlobal('context', type(obj).context)
+#   context.addGlobal('renderer', type(obj).context.renderer)
     self.expand(context, output, outputEncoding, docType, suppressXMLDeclaration, interpreter)
     if output is not None:
         output.seek(0)

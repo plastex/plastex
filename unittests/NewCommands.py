@@ -147,7 +147,7 @@ class NewCommands(TestCase):
         text = [x for x in output if x.nodeType == Node.TEXT_NODE]
         assert text == list('(x\',,x\')'), text
         assert output[0].nodeName == 'def'
-        assert output[6].nodeName == 'core::_'
+        assert output[6].nodeName == 'active::_'
         assert output[8].nodeName == 'ldots'
 
     def testDef3(self):

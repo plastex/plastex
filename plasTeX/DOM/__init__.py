@@ -591,7 +591,13 @@ class Node(object):
     parentNode = None
     attributes = None
 
-#   _ownerDocument = None
+    renderer = unicode
+
+    def __str__(self):
+        s = []
+        for child in self.childNodes:
+            s.append(type(child).renderer(child))
+        return u''.join(s)
 
     def toXML(self):
         """ 
@@ -683,7 +689,11 @@ class Node(object):
 
     def childNodes(self):
         if not(hasattr(self, '_childNodes')):
-            self._childNodes = []
+            # Allow the `self` key of attributes to act as the `childNodes`
+            if self.attributes and self.attributes.has_key('self'):
+                self._childNodes = self.attributes['self']
+            else:
+                self._childNodes = []
         return self._childNodes
     childNodes = property(childNodes)
 

@@ -84,8 +84,10 @@ class Macro(Element):
     def locals(self):
         """ Retrieve all macros local to this namespace """
         tself = type(self)
-        if hasattr(tself, '@locals'):
-            return getattr(tself, '@locals')
+        localsname = '%s@locals' % id(tself)
+        # Check for cached versions first
+        if hasattr(tself, localsname):
+            return getattr(tself, localsname)
         mro = list(tself.__mro__)
         mro.reverse()
         locals = {}
@@ -93,9 +95,9 @@ class Macro(Element):
             for value in vars(cls).values():
                 if ismacro(value):
                     locals[macroname(value)] = value
-        setattr(tself, '@locals', locals)
+        # Cache the locals in a unique name
+        setattr(tself, localsname, locals)
         return locals
-    locals = property(locals)
 
     def id():
         def fset(self, value):
@@ -137,7 +139,7 @@ class Macro(Element):
     def source(self):
         name = self.tagName
 
-        # Automatically revert internal names like "active::~" and "core::&"
+        # Automatically revert internal names like "active::~"
         escape = '\\'
         if name.count('::'):
             name = name.split('::').pop()

@@ -105,12 +105,12 @@ class EndGroup(Token):
 class MathShift(Token):
     __slots__ = Token.__slots__
     catcode = Token.CC_MATHSHIFT
-    macroName = 'core::$'
+    macroName = 'active::$'
 
 class Alignment(Token):
     __slots__ = Token.__slots__
     catcode = Token.CC_ALIGNMENT
-    macroName = 'core::&'
+    macroName = 'active::&'
 
 class EndOfLine(Token):
     __slots__ = Token.__slots__
@@ -124,12 +124,12 @@ class Parameter(Token):
 class Superscript(Token):
     __slots__ = Token.__slots__
     catcode = Token.CC_SUPER
-    macroName = 'core::^'
+    macroName = 'active::^'
 
 class Subscript(Token):
     __slots__ = Token.__slots__
     catcode = Token.CC_SUB
-    macroName = 'core::_'
+    macroName = 'active::_'
 
 class Space(Token):
     __slots__ = Token.__slots__
