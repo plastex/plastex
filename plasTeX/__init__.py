@@ -33,7 +33,15 @@ class CompiledArgument(dict):
         return dict.__cmp__(self, other)
 
 class CSSStyles(dict):
+    """ CSS Style object """
     def inline(self):
+        """ 
+        Create an inline style representation
+
+        Returns:
+        string containing inline CSS
+
+        """
         if not self:
             return None      
         return '; '.join(['%s:%s' % (x[0],x[1]) for x in self.items()])
@@ -49,9 +57,17 @@ class Source(object):
 
     """
     def __init__(self, stream=None):
+        """
+        Initialize Source
+
+        Keyword Arguments:
+        stream -- handle to stream that contains the TeX source
+
+        """
         self.stream = stream
         self.start = None
         self.end = None
+
     def __str__(self):
         """ Retrieve the source from the TeX source stream """
         current = self.stream.tell()
@@ -59,15 +75,26 @@ class Source(object):
         value = self.stream.read(self.end-self.start)
         self.stream.seek(current)
         return value
+
     def __repr__(self): return str(self)
 
 
 class RenderMixIn(object):
+    """
+    MixIn class to make macros renderable
+
+    """
 
     renderer = None
 
     def toXML(self):
-        """ Dump the object as XML """
+        """ 
+        Dump the object as XML 
+
+        Returns:
+        string in XML format
+
+        """
         # Only the content of DocumentFragments get rendered
         if isinstance(self, DocumentFragment):
             s = []
@@ -127,7 +154,19 @@ class RenderMixIn(object):
         return ''.join(s)
         
     def render(self, renderer=None, file=None):
-        """ Render the macro """
+        """ 
+        Render the macro 
+
+        Keyword Arguments:
+        renderer -- rendering callable to use instead of the
+            one supplied by the macro itself
+        file -- file write to
+
+        Returns:
+        rendered output -- if no file was specified
+        nothing -- if a file was specified
+
+        """
         # Get filename to use
         if file is None:
             file = type(self).context.renderer.filename(self)
@@ -193,25 +232,25 @@ class Macro(Element, RenderMixIn):
         self._position = None  # position in the input stream (internal use)
         self._source = Source()
 
-    def image():
-        def fget(self):
-            return Macro.renderer.imager.newimage(self.source)
-        return locals()
-    image = property(**image())
+    def image(self):
+        """ Render and return an image """
+        return Macro.renderer.imager.newimage(self.source)
+    image = property(image)
 
-    def source():
-        doc = 'LaTeX source'
-        def fget(self):
-            return str(self._source)
-        return locals()
-    source = property(**source())
+    def source(self):
+        """ Return the LaTeX source for this macro instance """
+        return str(self._source)
+    source = property(source)
 
     def id(self):
         """ Unique ID """
         return id(self)
 
     def resolve(self):
-        """ Do post parsing operations (usually increment counters) """
+        """ 
+        Do post parsing operations (usually increment counters) 
+
+        """
         context = type(self).context
         counter = type(self).counter
         if counter:
@@ -219,10 +258,23 @@ class Macro(Element, RenderMixIn):
             context.counters[counter].refstepcounter()
 
     def parse(self, tex): 
-        """ Parse the arguments defined in the 'args' variable """
+        """ 
+        Parse the arguments defined in the `args` variable 
+
+        Required Arguments:
+        tex -- the TeX stream to parse from
+
+        Returns:
+        tokens to be put into the output stream
+
+        """
+        # Compile argument string
         compiledargs = self.compileArgumentString()
+
         if not [x for x in compiledargs if x.name == 'modifier']:
             self.resolve()
+
+        # Parse the arguments
         for arg in compiledargs:
             output = tex.getArgument(**arg)
             if arg.name == 'modifier':
@@ -235,6 +287,7 @@ class Macro(Element, RenderMixIn):
                     self[:] = [output]
             else:
                 self.attributes[arg.name] = output
+
         return self
 
     def digest(self, tokens):
@@ -251,15 +304,20 @@ class Macro(Element, RenderMixIn):
         tokens -- iterator pointing to the remaining items in the
             output stream
 
-        Returns: self
+        Returns: 
+        self
 
         """
+        # Commands don't digest
         if self.level is None:
             return self
+
         for item in tokens:
+            # Found self again, we're done
             if item is self:
                 break
             else:
+                # Let children digest first
                 if hasattr(item, 'digest'):
                     obj = item.digest(tokens)
                     if obj is not None:
@@ -269,10 +327,17 @@ class Macro(Element, RenderMixIn):
                             self.append(obj)
                 else:
                     self.append(item)
+
         return self
 
     def compileArgumentString(self):
-        """ Compile the argument string into function call arguments """
+        """ 
+        Compile the argument string into function call arguments 
+
+        Returns:
+        arguments as compiled entities
+
+        """
         if hasattr(self, '__compiled_arguments'):
             return self.__compiled_arguments
 
@@ -367,20 +432,18 @@ class Macro(Element, RenderMixIn):
         self.__compiled_arguments = macroargs
         return macroargs
 
-    def nodeName():
-        def fget(self): 
-            if self.texname: return self.texname
-            return self.__class__.__name__
-        return locals()
-    nodeName = property(**nodeName())
+    def nodeName(self):
+        if self.texname: return self.texname
+        return classname(self)
+    nodeName = property(nodeName)
 
-    def tagName():
-        def fget(self): return self.nodeName
-        return locals()
-    tagName = property(**tagName())
+    def tagName(self):
+        return self.nodeName
+    tagName = property(tagName)
 
 
 class TeXFragment(DocumentFragment, RenderMixIn):
+    """ TeX document fragment """
 
     def __init__(self, *args, **kwargs):
         DocumentFragment.__init__(self, *args, **kwargs)
@@ -407,7 +470,6 @@ class StringMacro(Macro):
                 
 class Command(Macro): 
     """ Base class for all Python-based LaTeX commands """
-    pass
 
 class Environment(Macro): 
     """ Base class for all Python-based LaTeX environments """
@@ -441,8 +503,8 @@ class mathshift(Macro):
     the latter, a 'displaymath' environment is invoked.
 
     """
-    image = ''
     inenv = []
+
     def parse(self, tex):
         """
         This gets a bit tricky because we need to keep track of both 
@@ -504,50 +566,80 @@ class macroparameter(Macro):
         raise ValueError, 'Macro parameters should not be parsed'
 
 class begin(Macro):
-    envstack = []
     """ Beginning of an environment """
+
+    # Stack of all environments in the document
+    envstack = []
+
     def parse(self, tex):
+        """ Parse the \\begin{...} """
         # Get environment name, instantiate the proper environment, and
         # tell it to parse it's arguments.
         start = tex.tell() - 6 # Back up before the \begin
         name = tex.getArgument().pop(0).strip()
+
         # Special case for math environments
         if name in '[(':
             start += 5
+
         envlog.debug('begin %s', name)
+
+        # Check for name aliases
         if tex.context.aliases.has_key(name):
             name = tex.context.aliases[name]
+
+        # Add the current environment to the environment stack
         type(self).envstack.append(name)
+
+        # Get the macro class for the given name
         env = tex.context[name]
+
+        # Store stream position information
         env._source.stream = type(tex).persistent
         env._source.start = tex.getSourcePosition(start-tex.tell())
         env._position = start
+
         tex.context.pop()
         tex.context.push(env)
         tex.context.push(env)
         tex.context.push(env)
         tex.context.groups.push(env)
+
+        # Parse the arguments
         output = env.parse(tex)
+
         if hasattr(env, 'resolve'):
             env.resolve()
+
         return output
 
 class end(Macro):
-    envstack = begin.envstack
     """ End of an environment """
+
+    envstack = begin.envstack
+
     def parse(self, tex):
+        """ Parse the \\end{...} """
         # Get the beginning of the environment from the stack and
         # put it into the stream again.  The document tree 
         # builder will take care of it.
         endenv = tex.tell() - 4
         name = tex.getArgument().pop(0).strip()
+
         # Special case for math environments
         if name in '])':
             endenv += 3
+
         envlog.debug('end %s', name)
+
+        # Check for name aliases
         if tex.context.aliases.has_key(name):
             name = tex.context.aliases[name]
+
+        # Get the macro class for the given name
         env = tex.context[name]
+
+        # Store stream position information
         env._position = endenv
 
         # Handle NewEnvironments
@@ -562,21 +654,24 @@ class end(Macro):
         if isinstance(env, NewEnvironment):
             output.pop()
 
+        # Make sure that our environment stack is correct
         beginname = type(self).envstack.pop()
         if name != beginname:
             log.warning('Expecting end of %s but got %s', beginname, name)
 
         tex.context.pop()
         tex.context.pop()
+
         return output
 
 
 class _def(Macro):
     """
-    TeX's \def command
+    TeX's \\def command
 
     """
     def parse(self, tex):
+
         name = str(tex.getDefinitionArgument().strip()[1:])
 
         # Get argument string
@@ -593,7 +688,7 @@ class _def(Macro):
         except StopIteration: pass
         args = ''.join(args)
 
-        # Get definition
+        # Parse definition from stream
         definition = str(tex.getDefinitionArgument())
 
         tex.context.pop()
@@ -608,6 +703,8 @@ class xdef(_def): pass
 class gdef(_def): pass
 
 class NewIf(Macro):
+    """ Base class for all generated \\newifs """
+
     state = False
 
     def parse(self, tex):
@@ -629,15 +726,18 @@ class NewIf(Macro):
     setFalse = classmethod(setFalse)
 
 class newif(Macro):
+    """ \\newif """
     def parse(self, tex):
         name = tex.getDefinitionArgument().strip()[1:]
         tex.context.newif(name)
 
 class IfTrue(Macro):
+    """ Base class for all generated \\iftrues """
     def parse(self, tex):
         type(self).ifclass.setTrue()
 
 class IfFalse(Macro):
+    """ Base class for all generated \\iffalses """
     def parse(self, tex):
         type(self).ifclass.setFalse()
 
@@ -650,7 +750,9 @@ class _if(Macro):
         tex.enablePersist()
         return tex.getIfContent(str(a)==str(b))
 
-class x_if(_if): texname = 'if'
+class x_if(_if): 
+    """ \\if """
+    texname = 'if'
         
 class ifnum(_if):
     """ Compare two integers """
@@ -815,9 +917,11 @@ class let(Macro):
 
 
 class Definition(Macro):
-    """ Superclass for all \def-type commands """
+    """ Superclass for all \\def-type commands """
     def parse(self, tex):
+        # Disable source persistence while parsing arguments
         tex.disablePersist(self)
+
         args = [x for x in re.split(r'(#+\d)', self.args) if x]
         params = []
         for arg in args:
@@ -841,8 +945,10 @@ class Definition(Macro):
                             params.append(''.join(additional))
 
         deflog.debug2('expanding %s %s', self.definition, params)
+
         definition = tex.expandParams(self.definition, params)
 
+        # Re-enable source persistence
         tex.enablePersist()
 
         tokens = type(tex)(definition).parse(raw=True)
@@ -997,8 +1103,11 @@ class catcode(Macro):
             char = tex.next()
         if char == '^':
             return
+
         tex.getArgument('=')
+
         tex.removeWhitespace()
+
         nextchar = tex.peek()
         if nextchar in string.digits:
             number = tex.getInteger() 
@@ -1011,6 +1120,7 @@ class catcode(Macro):
                 raise ValueError, 'Unrecognized category "%s"' % m
         else:
             raise ValueError, 'Could not parse catcode'
+
         # Make sure we are changing the category code for the group below
         # where we are now
         tex.context.pop()

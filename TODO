@@ -1,0 +1,24 @@
+
+Since this package is still in early development, there is a lot to do
+just for basic functionality.
+
+Parsing
+-------
+- Finish DOM methods
+- XPath
+- Clean up \def parsing and expanding
+- Use DocumentFragments in document building instead of lists
+- Convert strings to nodes
+- Reduce isinstace usage
+- Write parsers for all LaTeX commands
+- Develop a good LaTeX package API (LaTeX package -> Python package?)
+- Create a LaTeX Document similar to a DOM Document 
+
+Rendering
+---------
+- Figure out how to attach a renderer to the document
+- Update SimpleTAL (see if it can be pulled out completely)
+- Counters and labels
+- ToCs
+- Indexes
+- Bibliography

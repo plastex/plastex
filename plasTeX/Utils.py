@@ -17,21 +17,25 @@ def ismacro(obj):
     return hasattr(obj, 'texname')
 
 def xmlstr(obj):
+    """ Escape special characters to create a legal xml string """
     if isinstance(obj, basestring):
         return obj.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;')
     else:
         return str(obj)
 
 def isblock(tok):
+    """ Is this token a block-level macro? """
     return getattr(type(tok), 'block', False)
 
 def issection(tok):
+    """ Is this token a section? """
     level = getattr(type(tok), 'level', None)
     if level is None:
         return False
     return level > DOCUMENT and level < ENVIRONMENT 
 
 def isenv(tok):
+    """ Is this token an environment? """
     return hasattr(tok, 'level') and tok.level is not None
 
 def flatten(items, group=None):
@@ -47,14 +51,14 @@ def flatten(items, group=None):
         else:
             yield item
 
-def compress(toklist):
+def normalize(toklist):
     """ Merge all consecutive strings """
     newtoklist = []
     merge = []
     for item in toklist:
         if item is None:
             pass
-        elif isinstance(item, str):
+        elif isinstance(item, basestring):
             merge.append(item)
         else:
             if merge:
@@ -108,7 +112,7 @@ def paragraphs(toklist, par, allow_single=False):
         if isinstance(item, par):
             if not item:
                 pass
-            elif len(item) == 1 and isinstance(item[0], str) \
+            elif len(item) == 1 and isinstance(item[0], basestring) \
                and not item[0].strip():
                 pass
             else:

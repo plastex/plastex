@@ -7,6 +7,8 @@ setup(name="plasTeX",
       author="Kevin Smith",
       author_email="Kevin.Smith@theMorgue.org",
       #url="",
-      packages=['plasTeX'],
+      packages=['plasTeX','plasTeX.ConfigManager','plasTeX.DOM',
+                'plasTeX.imagers','plasTeX.packages','plasTeX.renderers',
+                'plasTeX.renderers.xhtml','plasTeX.simpletal'],
 )
 
