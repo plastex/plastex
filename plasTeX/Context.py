@@ -135,17 +135,20 @@ class Context(object):
         # Depth of the context stack
         self.depth = 0
 
+        # LaTeX counters
+        self.counters = {}
+
         # TeX registers
-        self.counters = Registry(cls=plasTeX.Counter)
-        self.dimens = Registry(cls=plasTeX.Dimen)
-        self.skips = Registry(cls=plasTeX.Glue)
-        self.muskips = Registry(cls=plasTeX.MuGlue)
-        self.boxes = {}
-        self.toks = {}
-        self.reads = {}
-        self.writes = {}
-        self.fams = {}
-        self.inserts = {}
+#       self.counters = Registry(cls=plasTeX.Counter)
+#       self.dimens = Registry(cls=plasTeX.Dimen)
+#       self.skips = Registry(cls=plasTeX.Glue)
+#       self.muskips = Registry(cls=plasTeX.MuGlue)
+#       self.boxes = {}
+#       self.toks = {}
+#       self.reads = {}
+#       self.writes = {}
+#       self.fams = {}
+#       self.inserts = {}
 
         # Create a global namespace
         self.push()
@@ -492,7 +495,15 @@ class Context(object):
 
         self.addGlobal('the'+name, newclass)
 
-    newcount = newcounter
+    def newcount(self, name, initial=0):
+        """ NOT FINISHED """
+        name = str(name)
+
+        # Generate a new count class
+        macrolog.debug('creating count %s', name)
+        newclass = new.classobj(name, (plasTeX.Count,), {})
+
+        self.addGlobal(name, newclass)
 
     def newdimen(self, name, initial=0):
         """ NOT FINISHED """
@@ -511,6 +522,16 @@ class Context(object):
         # Generate a new glue class
         macrolog.debug('creating dimen %s', name)
         newclass = new.classobj(name, (plasTeX.Glue,), {})
+
+        self.addGlobal(name, newclass)
+
+    def newmuskip(self, name, initial=0):
+        """ NOT FINISHED """
+        name = str(name)
+
+        # Generate a new muglue class
+        macrolog.debug('creating muskip %s', name)
+        newclass = new.classobj(name, (plasTeX.MuGlue,), {})
 
         self.addGlobal(name, newclass)
 

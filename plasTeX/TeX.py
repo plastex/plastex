@@ -21,7 +21,7 @@ from Utils import *
 from Context import Context 
 from Tokenizer import Tokenizer, Token
 from plasTeX import TeXFragment, TeXDocument
-from plasTeX import Macro, Glue, MuGlue, MuDimen, Dimen, Number
+from plasTeX import Macro, glue, muglue, mudimen, dimen, number
 from plasTeX.Logging import getLogger, disableLogging
 
 # Only export the TeX class
@@ -855,7 +855,10 @@ class TeX(object):
         """ Remove all whitespace """
         tokens = []
         for t in self.itertokens():
-            if t is None or t == '':
+            if t.nodeType == t.ELEMENT_NODE:
+                self.pushtoken(t)
+                break
+            elif t is None or t == '':
                 continue
             elif t.catcode != Token.CC_SPACE:
                 self.pushtoken(t)
@@ -903,7 +906,10 @@ class TeX(object):
             if t in string.digits:
                 num = t + self.readSequence(string.digits, False)
                 for t in self:
-                    if t in '.,':
+                    if t.nodeType == Token.ELEMENT_NODE:
+                        self.pushtoken(t)
+                        return sign * float(num)
+                    elif t in '.,':
                         num += '.' + self.readSequence(string.digits, default='0')
                     else:
                         self.pushtoken(t)
@@ -918,7 +924,7 @@ class TeX(object):
             break
         raise ValueError, 'Could not find decimal constant'
 
-    def readDimen(self, units=Dimen.units):
+    def readDimen(self, units=dimen.units):
         """
         Read a dimension from the stream
 
@@ -926,20 +932,21 @@ class TeX(object):
         units -- list of acceptable units of measure
 
         Returns:
-        `Dimen' instance
+        `dimen' instance
 
         """
         sign = self.readOptionalSigns()
         for t in self:
             if t.nodeType == Node.ELEMENT_NODE:
-                return Dimen(sign * dimen(t))
+                return dimen(sign * dimen(t))
             self.pushtoken(t)
             break
-        return Dimen(sign * self.readDecimal() * self.readUnitOfMeasure(units=units))
+        return dimen(sign * self.readDecimal() * self.readUnitOfMeasure(units=units))
+
 
     def readMuDimen(self):
         """ Read a mudimen from the stream """
-        return MuDimen(self.readDimen(units=MuDimen.units))
+        return mudimen(self.readDimen(units=mudimen.units))
 
     def readUnitOfMeasure(self, units):
         """
@@ -949,7 +956,7 @@ class TeX(object):
         units -- list of acceptable units of measure
 
         Returns:
-        `Dimen' instance
+        `dimen' instance
 
         """
         self.readOptionalSpaces()
@@ -963,7 +970,7 @@ class TeX(object):
         unit = self.readKeyword(units)
         if unit is None:
             raise ValueError, 'Could not find unit from list %s' % units
-        return Dimen('1%s' % unit)
+        return dimen('1%s' % unit)
 
     def readOptionalSigns(self):
         """ 
@@ -976,7 +983,10 @@ class TeX(object):
         sign = 1
         self.readOptionalSpaces()
         for t in self:
-            if t == '+':
+            if t.nodeType == Token.ELEMENT_NODE:
+                self.pushtoken(t)
+                break
+            elif t == '+':
                 pass
             elif t == '-':
                 sign = -sign
@@ -990,6 +1000,9 @@ class TeX(object):
     def readOneOptionalSpace(self):
         """ Read one optional space from the stream """
         for t in self.itertokens():
+            if t.nodeType == Token.ELEMENT_NODE:
+                self.pushtoken(t)
+                return None
             if t is None or t == '':
                 continue
             if t.catcode == Token.CC_SPACE:
@@ -1036,27 +1049,27 @@ class TeX(object):
         Read an integer from the stream
 
         Returns:
-        `Number' instance
+        `number' instance
 
         """
         sign = self.readOptionalSigns()
         for t in self:
             # internal/coerced integers
             if t.nodeType == Node.ELEMENT_NODE:
-                return Number(sign * int(t))
+                return number(sign * int(t))
             # integer constant
             if t in string.digits:
-                return Number(sign * int(t + self.readSequence(string.digits)))
+                return number(sign * int(t + self.readSequence(string.digits)))
             # octal constant
             if t == "'":
-                return Number(sign * int('0' + self.readSequence(string.octdigits, default='0'), 8))
+                return number(sign * int('0' + self.readSequence(string.octdigits, default='0'), 8))
             # hex constant
             if t == '"':
-                return Number(sign * int('0x' + self.readSequence(string.hexdigits, default='0'), 16))
+                return number(sign * int('0x' + self.readSequence(string.hexdigits, default='0'), 16))
             # character token
             if t == '`':
                 for t in self.itertokens():
-                    return Number(sign * ord(t))
+                    return number(sign * ord(t))
             break
         raise ValueError, 'Could not find integer'
 
@@ -1068,24 +1081,24 @@ class TeX(object):
         # internal/coerced glue
         for t in self:
             if t.nodeType == Node.ELEMENT_NODE:
-                return Glue(sign * glue(t))
+                return glue(sign * glue(t))
             self.pushtoken(t)
             break
         dim = self.readDimen()
         stretch = self.readStretch()
         shrink = self.readShrink()
-        return Glue(sign*dim, stretch, shrink)
+        return glue(sign*dim, stretch, shrink)
 
     def readStretch(self):
         """ Read a stretch parameter from the stream """
         if self.readKeyword(['plus']):
-            return self.readDimen(units=Dimen.units+['filll','fill','fil'])
+            return self.readDimen(units=dimen.units+['filll','fill','fil'])
         return None
             
     def readShrink(self):
         """ Read a shrink parameter from the stream """
         if self.readKeyword(['minus']):
-            return self.readDimen(units=Dimen.units+['filll','fill','fil'])
+            return self.readDimen(units=dimen.units+['filll','fill','fil'])
         return None
 
     def readMuGlue(self):
@@ -1094,22 +1107,22 @@ class TeX(object):
         # internal/coerced muglue
         for t in self:
             if t.nodeType == Node.ELEMENT_NODE:
-                return MuGlue(sign * muglue(t))
+                return muglue(sign * muglue(t))
             self.pushtoken(t)
             break
         dim = self.readMuDimen()
         stretch = self.readMuStretch()
         shrink = self.readMuShrink()
-        return MuGlue(sign*dim, stretch, shrink)
+        return muglue(sign*dim, stretch, shrink)
 
     def readMuStretch(self):
         """ Read a mustretch parameter from the stream """
         if self.readKeyword(['plus']):
-            return self.readDimen(units=MuDimen.units+['filll','fill','fil'])
+            return self.readDimen(units=mudimen.units+['filll','fill','fil'])
         return None
             
     def readMuShrink(self):
         """ Read a mushrink parameter from the stream """
         if self.readKeyword(['minus']):
-            return self.readDimen(units=MuDimen.units+['filll','fill','fil'])
+            return self.readDimen(units=mudimen.units+['filll','fill','fil'])
         return None

@@ -175,6 +175,9 @@ class Macro(Element, RenderMixIn):
         Required Arguments:
         tex -- the TeX stream to parse from
 
+        Returns:
+        self.attributes
+
         """
         if self.macroMode == Macro.MODE_END:
             return
@@ -190,6 +193,7 @@ class Macro(Element, RenderMixIn):
                     self.resolve(tex)
             self.argsource += source
             self.attributes[arg.name] = output
+        return self.attributes
 
     def resolve(self, tex):
         """
@@ -563,7 +567,7 @@ class Definition(Macro):
         return expanddef(self.definition, params)
 
 
-class Counter(int):
+class Counter(Macro):
     """ Base class for all LaTeX counters """
 
     resetby = None
@@ -634,25 +638,35 @@ class Counter(int):
 
     def fnsymbol(self):
         """ Return the symbol representation """
-        return '*'
+        return '*' * int(self)
     fnsymbol = property(fnsymbol)
 
 class TheCounter(Macro):
     """ Base class for counter formats """
     format = ''
 
-class Number(int, Macro):
+
+class number(int):
+
+    def __new__(cls, v):
+        if isinstance(v, Macro):
+            return v.__count__()
+        return int.__new__(cls, v)
 
     def source(self):
         return str(self)
     source = property(source)
 
-class Dimen(float, Macro):
+class count(number): pass
+
+class dimen(float):
 
     units = ['pt','pc','in','bp','cm','mm','dd','cc','sp','ex','em']
 
     def __new__(cls, v):
-        if isinstance(v, str) and v[-1] in string.letters:
+        if isinstance(v, Macro):
+            return v.__dimen__()
+        elif isinstance(v, str) and v[-1] in string.letters:
             v = list(v)
             units = []
             while v and v[-1] in string.letters:
@@ -708,7 +722,7 @@ class Dimen(float, Macro):
             return str(sign * (abs(self)-4e9)) + 'fill'
         if abs(self) >= 2e9:
             return str(sign * (abs(self)-2e9)) + 'fil'
-        return str(float(self)) + 'sp'
+        return '%spt' % self.pt
     source = property(source)
 
     def pt(self): 
@@ -768,20 +782,26 @@ class Dimen(float, Macro):
         raise ValueError, 'This is not a fil(ll) dimension'
     fil = fill = filll = property(fill)
 
-class MuDimen(Dimen):
+    def __repr__(self):
+        return self.source
+
+    def __str__(self):
+        return self.source
+
+class mudimen(dimen):
     units = ['mu']
 
-class Glue(Dimen):
+class glue(dimen):
     def __new__(cls, g, stretch=None, shrink=None):
-        return Dimen.__new__(cls, g)
+        return dimen.__new__(cls, g)
         
     def __init__(self, g, stretch=None, shrink=None):
-        Dimen.__init__(self, g)
+        dimen.__init__(self, g)
         self.stretch = stretch
         self.shrink = shrink
 
     def source(self):
-        s = [Dimen(self).source]
+        s = [dimen(self).source]
         if self.stretch is not None:
             s.append('plus')
             s.append(self.stretch.source)
@@ -791,5 +811,59 @@ class Glue(Dimen):
         return ' '.join(s)
     source = property(source)
 
-class MuGlue(Glue): 
+class muglue(glue): 
     units = ['mu']
+
+
+class Parameter(Command):
+    args = '= value:Number'
+    value = count(0)
+
+    enabled = True
+    
+    def invoke(self, tex):
+        if Parameter.enabled:
+            # Disable invoke() in parameters nested in our arguments.
+            # We don't want them to invoke, we want them to set our value.
+            Parameter.enabled = False
+            self.parse(tex)
+            type(self).value = self.attributes['value']
+            Parameter.enabled = True
+
+    def __dimen__(self):
+        return dimen(type(self).value)
+
+    def __mudimen__(self):
+        return mudimen(type(self).value)
+
+    def __count__(self):
+        return count(type(self).value)
+
+    def __glue__(self):
+        return glue(type(self).value)
+    
+    def __muglue__(self):
+        return muglue(type(self).value)
+
+    def the(self):
+        return type(self).value.source
+
+class Register(Parameter): pass
+
+class Count(Register): pass
+
+class Dimen(Register):
+    args = '= value:Dimen'
+    value = dimen(0)
+
+class MuDimen(Register):
+    args = '= value:MuDimen'
+    value = mudimen(0)
+
+class Glue(Register):
+    args = '= value:Glue'
+    value = glue(0)
+
+class MuGlue(Register):
+    args = '= value:MuGlue'
+    value = muglue(0)
