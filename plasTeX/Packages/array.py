@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from plasTeX.Utils import *
-from plasTeX import Environment, Command, CMDMODE_END
+from plasTeX import Macro, Environment, Command
 
 Node = Command
 
@@ -84,7 +84,7 @@ class Array(Environment):
         args = 'colspan:int colspec self'
 
     def invoke(self, tex):
-        if self.cmdmode == CMDMODE_END:
+        if self.cmdmode == Macro.MODE_END:
             tex.context.pop(self) # End of table, row, and cell
             return
         Environment.invoke(self, tex)
@@ -391,6 +391,7 @@ class longtable(Array):
     block = True
 
 class cr(Command):
+    texname = '\\'
     args = '* [ space ]'
 
 class array(Array):

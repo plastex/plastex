@@ -5,25 +5,23 @@ from Node import Node
 try: from cStringIO import StringIO
 except: from StringIO import StringIO
 
-class category(int): pass
-
 # The 16 category codes defined by TeX
-CC_ESCAPE = category(0)
-CC_BGROUP = category(1)
-CC_EGROUP = category(2)
-CC_MATHSHIFT = category(3)
-CC_ALIGNMENT = category(4)
-CC_EOL = category(5)
-CC_PARAMETER = category(6)
-CC_SUPER = category(7)
-CC_SUB = category(8)
-CC_IGNORED = category(9)
-CC_SPACE = category(10)
-CC_LETTER = category(11)
-CC_OTHER = category(12)
-CC_ACTIVE = category(13)
-CC_COMMENT = category(14)
-CC_INVALID = category(15)
+CC_ESCAPE = 0
+CC_BGROUP = 1
+CC_EGROUP = 2
+CC_MATHSHIFT = 3
+CC_ALIGNMENT = 4
+CC_EOL = 5
+CC_PARAMETER = 6
+CC_SUPER = 7
+CC_SUB = 8
+CC_IGNORED = 9
+CC_SPACE = 10
+CC_LETTER = 11
+CC_OTHER = 12
+CC_ACTIVE = 13
+CC_COMMENT = 14
+CC_INVALID = 15
 
 # Default TeX categories
 CATEGORIES = [
@@ -65,7 +63,7 @@ class Token(unicode, Node):
         if isinstance(other, Token):
             if self.catcode == other.catcode:
                 return unicode.__cmp__(self, other)
-            return category.__cmp__(self.catcode, other.catcode)
+            return self.catcode.__cmp__(other.catcode)
         # Not comparing to token, just do a string match
         return unicode.__cmp__(self, unicode(other))
 

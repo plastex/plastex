@@ -2,7 +2,7 @@
 
 from plasTeX.Utils import *
 from plasTeX.Tokenizer import CC_MATHSHIFT, Node
-from plasTeX import Macro, Command, Environment, CMDMODE_END
+from plasTeX import Macro, Command, Environment
 from plasTeX.Logging import getLogger
 
 log = getLogger()
@@ -60,10 +60,10 @@ class mathshift(Macro):
             if type(env) is type(displaymath):
                 for t in tex.itertokens():
                     break
-                displaymath.cmdmode = CMDMODE_END
+                displaymath.cmdmode = Macro.MODE_END
                 tex.context.pop(displaymath)
             else:
-                math.cmdmode = CMDMODE_END
+                math.cmdmode = Macro.MODE_END
                 tex.context.pop(math)
             return []
 
@@ -124,6 +124,7 @@ class bgroup(Macro):
                     break
                 item.digest(tokens)
             self.childNodes.append(item)
+            item.parentNode = self
     def __repr__(self):
         if self.childNodes is not None:
             return '{%s}' % ''.join([repr(x) for x in self.childNodes])

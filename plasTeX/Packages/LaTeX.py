@@ -2,7 +2,7 @@
 
 from plasTeX.Utils import *
 from plasTeX.Tokenizer import Node
-from plasTeX import Macro, Command, Environment, CMDMODE_BEGIN, CMDMODE_END
+from plasTeX import Macro, Command, Environment
 from plasTeX.Logging import getLogger
 
 log = getLogger()
@@ -18,7 +18,7 @@ class begin(Macro):
         name = tex.getArgument(type='str')
         envlog.debug(name)
         obj = tex.context[name]
-        obj.cmdmode = CMDMODE_BEGIN
+        obj.cmdmode = Macro.MODE_BEGIN
         out = obj.invoke(tex)
         if out is None:
             out = [obj]
@@ -32,7 +32,7 @@ class end(Macro):
         name = tex.getArgument(type='str')
         envlog.debug(name)
         obj = tex.context[name]
-        obj.cmdmode = CMDMODE_END
+        obj.cmdmode = Macro.MODE_END
         out = obj.invoke(tex)
         if out is None:
             out = [obj]
@@ -135,6 +135,7 @@ class StartSection(Command):
             if item.nodeType == Node.ELEMENT_NODE:
                 item.digest(tokens)
             self.childNodes.append(item)
+            item.parentNode = self
     
 class chapter(StartSection):
     level = Node.CHAPTER_LEVEL

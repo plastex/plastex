@@ -14,10 +14,6 @@ envlog = getLogger('parse.environments')
 mathshiftlog = getLogger('parse.mathshift')
 digestlog = getLogger('parse.digest')
 
-CMDMODE_NONE = 0
-CMDMODE_BEGIN = 1
-CMDMODE_END = 2
-
 class Attributes(dict):
     def __init__(self, *args, **kwargs):
         dict.__init__(self, *args, **kwargs)
@@ -63,12 +59,16 @@ class Macro(Token, RenderMixIn):
     Base class for all macros
 
     """
+    MODE_NONE = 0
+    MODE_BEGIN = 1
+    MODE_END = 2
+
     texname = None     # TeX macro name (instead of class name)
     categories = None  # category codes local to this macro
-    cmdmode = CMDMODE_NONE   # begin, end, or none
+    cmdmode = MODE_NONE   # begin, end, or none
 
-    level = Node.COMMAND_LEVEL    # hierarchical level in the document
-
+    # Node variables
+    level = Node.COMMAND_LEVEL
     nodeType = Node.ELEMENT_NODE
     nodeValue = None
 
@@ -94,14 +94,14 @@ class Macro(Token, RenderMixIn):
 
     def invoke(self, tex):
         # Just pop the context if this is a \end token
-        if self.cmdmode == CMDMODE_END:
+        if self.cmdmode == Macro.MODE_END:
             tex.context.pop(self)
             return
 
         # If this is a \begin token or the element needs to be
         # closed automatically (i.e. \section, \item, etc.), just 
         # push the new context and return the instance.
-        elif self.cmdmode == CMDMODE_BEGIN:
+        elif self.cmdmode == Macro.MODE_BEGIN:
             tex.context.push(self)
             self.parse(tex)
             return
@@ -127,14 +127,14 @@ class Macro(Token, RenderMixIn):
 
         # \begin environment
         # If self.childNodes is not none, print out the entire environment
-        if self.cmdmode == CMDMODE_BEGIN:
+        if self.cmdmode == Macro.MODE_BEGIN:
             s = '\\begin{%s}%s\n' % (self.tagName, self.attributes.source)
             if self.childNodes is not None:
                 s += '%s\n\\end{%s}' % (reprchildren(self), self.tagName)
             return s
 
         # \end environment
-        if self.cmdmode == CMDMODE_END:
+        if self.cmdmode == Macro.MODE_END:
             return '\n\\end{%s}' % (self.tagName)
 
         space = ' '
@@ -157,7 +157,7 @@ class Macro(Token, RenderMixIn):
         tex -- the TeX stream to parse from
 
         """
-        if self.cmdmode == CMDMODE_END:
+        if self.cmdmode == Macro.MODE_END:
             return
         self.attributes = Attributes()
         for i, arg in enumerate(self.arguments):
@@ -277,7 +277,8 @@ class Macro(Token, RenderMixIn):
 
     arguments = property(arguments)
 
-class TeXFragment(list, RenderMixIn, Node):
+
+class TeXFragment(list, Node, RenderMixIn):
     nodeName = tagName = '#document-fragment'
     nodeType = Node.DOCUMENT_FRAGMENT_NODE
  
@@ -308,26 +309,27 @@ class Environment(Macro):
     level = Node.ENVIRONMENT_LEVEL
 
     def invoke(self, tex):
-        if self.cmdmode == CMDMODE_END:
+        if self.cmdmode == Macro.MODE_END:
             tex.context.pop(self)
             return
         tex.context.push(self)
         self.parse(tex)
 
     def digest(self, tokens):
-        if self.cmdmode == CMDMODE_END:
+        if self.cmdmode == Macro.MODE_END:
             return
         self.childNodes = []
         # Absorb the tokens that belong to us
         for item in tokens:
             if item.nodeType == Node.ELEMENT_NODE:
-                if item.cmdmode == CMDMODE_END and type(item) is type(self):
+                if item.cmdmode == Macro.MODE_END and type(item) is type(self):
                     break
                 item.digest(tokens)
             if item.contextDepth < self.contextDepth:
                 tokens.push(item)
                 break
             self.childNodes.append(item)
+            item.parentNode = self
     
 class UnrecognizedMacro(Macro): pass
 
@@ -388,7 +390,7 @@ class NewCommand(Macro):
     definition = None
 
     def invoke(self, tex):
-        if self.cmdmode == CMDMODE_END:
+        if self.cmdmode == Macro.MODE_END:
             return tex.context['end'+self.tagName].invoke(tex)            
 
         if not self.definition:
