@@ -2,9 +2,10 @@
 
 import string, new, re
 from Utils import *
-from plasTeX.DOM import *
+from Tokenizer import Token
 from plasTeX.Logging import getLogger
 from Tokenizer import CC_EXPANDED, CC_PARAMETER, CC_ENDCONTEXT
+from Renderer import RenderMixIn
 
 log = getLogger()
 status = getLogger('status')
@@ -16,6 +17,11 @@ digestlog = getLogger('parse.digest')
 MODE_NONE = 0
 MODE_BEGIN = 1
 MODE_END = 2
+
+class Attributes(dict):
+    def __init__(self, *args, **kwargs):
+        dict.__init__(self, *args, **kwargs)
+        self.source = ''
 
 class CompiledArgument(dict):
     """ 
@@ -52,148 +58,10 @@ class CSSStyles(dict):
             return None      
         return '; '.join(['%s:%s' % (x[0],x[1]) for x in self.items()])
 
-class RenderMixIn(object):
+class Macro(Token, RenderMixIn):
+#class Macro(Token):
     """
-    MixIn class to make macros renderable
-
-    """
-
-    renderer = None
-
-    def toXML(self):
-        """ 
-        Dump the object as XML 
-
-        Returns:
-        string in XML format
-
-        """
-        # Only the content of DocumentFragments get rendered
-        if isinstance(self, DocumentFragment):
-            s = []
-            for value in self:
-                if hasattr(value, 'toXML'):
-                    value = value.toXML()
-                s.append('%s' % value)
-            return ''.join(s)
-
-        # Remap name into valid XML tag name
-        name = self.nodeName
-        name = name.replace('@','-')
-
-        modifier = re.search(r'(\W*)$', name).group(1)
-        if modifier:
-            name = re.sub(r'(\W*)$', r'', name)
-            modifier = ' modifier="%s"' % xmlstr(modifier)
-
-        if not name:
-            name = 'unknown'
-
-        source = ''
-#       if self._source.start is not None and self._source.end is not None:
-#           source = ' source="%s,%s"' % (self._source.start, self._source.end)
-#       if self._position:
-            #source = ' source="%s,%s"' % (self._position[0], self._position[1])
-#           source = ' source="%s"' % xmlstr(self.source)
-
-        # Bail out early if the element is empty
-        if not(self.attributes) and not(self):
-            return '<%s%s%s/>' % (name, modifier, source)
-
-        s = ['<%s%s%s>\n' % (name, modifier, source)]
-            
-        # Render attributes
-        if self.attributes:
-#           s.append('<args>\n')
-            for key, value in self.attributes.items():
-                if hasattr(value, 'toXML'):
-                    value = value.toXML()
-                else: 
-                    value = xmlstr(value)
-                if value is None:
-                    s.append('    <plastex:arg name="%s"/>\n' % key)
-                else:
-                    s.append('    <plastex:arg name="%s">%s</plastex:arg>\n' % (key, value))
-#           s.append('</args>\n')
-
-        # Render content
-        if self:
-#           s.append('<content>')
-            for value in self:
-                if hasattr(value, 'toXML'):
-                    value = value.toXML()
-                else: 
-                    value = xmlstr(value)
-                s.append(value)
-#           s.append('</content>\n')
-        s.append('</%s>' % name)
-        return ''.join(s)
-        
-    def render(self, renderer=None, file=None):
-        """ 
-        Render the macro 
-
-        Keyword Arguments:
-        renderer -- rendering callable to use instead of the
-            one supplied by the macro itself
-        file -- file write to
-
-        Returns:
-        rendered output -- if no file was specified
-        nothing -- if a file was specified
-
-        """
-        # Get filename to use
-        if file is None:
-            file = type(self).context.renderer.filename(self)
-
-        if file is not None:
-            status.info(' [%s' % file)
-
-        # If we have a renderer, use it
-        if renderer is not None:
-            output = renderer(self)
-
-        # Use renderer associated with class
-        elif type(self).renderer is not None:
-            output = type(self).renderer(self)
-
-        # No renderer, just make something up
-        else:
-            output = '%s' % self
-#           output = ''.join([str(x) for x in self])
-#           if type(self) is not TeXFragment:
-#               name = re.sub(r'\W', 'W', self.tagName)
-#               output = '<%s>%s</%s>' % (name, output, name)
-
-        # Write to given file
-        if file is not None:
-            if hasattr(file, 'write'):
-                file.write(output)
-            else:
-                open(file,'w').write(output)
-            status.info(']')
-            return ''
-
-        # No files, just return the output
-        else:
-            return output
-
-    def __str__(self):
-        s = []
-        for child in self:
-            if isinstance(child, basestring):
-                s.append(child)
-            else:
-                s.append(child.render())
-        return ''.join(s)
-
-    __repr__ = __str__
-
-
-class MacroInterface(object):
-    """
-    Interface that all macro-type objects must support
+    Base class for all macros
 
     """
     level = COMMAND    # hierarchical level in the document
@@ -205,30 +73,24 @@ class MacroInterface(object):
     code = CC_EXPANDED # Special code for TeX to recognized expanded tokens
     mode = MODE_NONE   # begin, end, or none
 
-    iscontext = False
+    children = None
+    attributes = None
 
-    def locals():
+    def locals(self):
         """ Retrieve all macros local to this namespace """
-        def fget(self):
-            if hasattr(type(self), '_locals'):
-                return type(self)._locals
-            mro = list(type(self).__mro__)
-            mro.reverse()
-            locals = {}
-            for cls in mro:
-                for value in vars(cls).values():
-                    if ismacro(value):
-                        locals[macroname(value)] = value
-            type(self)._locals = locals
-            return locals
-#       def fset(self, value):
-#           self.locals = value
-        return locals()
-    locals = property(**locals())
-
-    def source(self): 
-        raise NotImplementedError
-    source = property(source)
+        tself = type(self)
+        if hasattr(tself, '__locals'):
+            return tself.__locals
+        mro = list(tself.__mro__)
+        mro.reverse()
+        locals = {}
+        for cls in mro:
+            for value in vars(cls).values():
+                if ismacro(value):
+                    locals[macroname(value)] = value
+        tself.__locals = locals
+        return locals
+    locals = property(locals)
 
     def id(self):
         return id(self)
@@ -238,8 +100,7 @@ class MacroInterface(object):
         # Just pop the context if this is a \end token
         if self.mode == MODE_END:
             tex.context.pop(self)
-            return []
-            return [self]
+            return
 
         # If this is a \begin token or the element needs to be
         # closed automatically (i.e. \section, \item, etc.), just 
@@ -259,21 +120,7 @@ class MacroInterface(object):
         tex.context.pop()
 
     def digest(self, tokens):
-        # Macros that never pushed a context don't need to be digested
-        if not self.iscontext:
-            return
-        self._position = [tokens.pos-1,None]
-        # Absorb the tokens that belong to us
-        for item in tokens:
-            if item.code == CC_ENDCONTEXT:
-                break
-            if item.code == CC_EXPANDED:
-                if item.mode == MODE_END and type(item) is type(self):
-                    break
-                item.digest(tokens)
-            self.append(item)
-        self._position[1] = tokens.pos
-#       print 'POS', type(self), self._position
+        return 
 
     def tagName(self):
         if self.texname: return self.texname
@@ -281,48 +128,32 @@ class MacroInterface(object):
     nodeName = tagName = property(tagName)
 
     def __repr__(self):
-        argsource = ''
-        if hasattr(self, 'argsource'):
-            argsource = self.argsource
         if self.tagName == 'par':
             return '\n\n'
+
+        # \begin environment
+        # If self.children is not none, print out the entire environment
         if self.mode == MODE_BEGIN:
-            return '\\begin{%s}%s\n' % (self.tagName, argsource)
+            s = '\\begin{%s}%s\n' % (self.tagName, self.attributes.source)
+            if self.children is not None:
+                s += '%s\n\\end{%s}' % (reprchildren(self), self.tagName)
+            return s
+
+        # \end environment
         if self.mode == MODE_END:
             return '\n\\end{%s}' % (self.tagName)
+
         space = ' '
-        if argsource:
+        attrsource = ''
+        if self.attributes and self.attributes.source:
+            attrsource = self.attributes.source
             space = ''
-        return '\\%s%s%s' % (self.tagName, argsource, space)
+        s = '\\%s%s%s' % (self.tagName, attrsource, space)
 
-
-class Macro(MacroInterface, Element, RenderMixIn):
-    """
-    Base class for all macros
-
-    """
-    def __init__(self, data=[]):
-        Element.__init__(self, data)
-        self.style = CSSStyles()
-        self._position = None  # position in the input stream (internal use)
-        self.argsource = ''
-
-    def image(self):
-        """ Render and return an image """
-        return Macro.renderer.imager.newimage(self.source)
-    image = property(image)
-
-    def resolve(self):
-        """ 
-        Do post parsing operations (usually increment counters) 
-
-        """
-#       context = type(self).context
-#       counter = type(self).counter
-#       if counter:
-#           context.currentlabel = self 
-#           context.counters[counter].refstepcounter()
-        pass
+        # If self.children is not none, print out the contents
+        if self.children is not None:
+            s += reprchildren(self)
+        return s
 
     def parse(self, tex): 
         """ 
@@ -332,26 +163,25 @@ class Macro(MacroInterface, Element, RenderMixIn):
         tex -- the TeX stream to parse from
 
         """
-        # Compile argument string
-        compiledargs = self.compileArgumentString()
-
-        # Parse the arguments
-        for i, arg in enumerate(compiledargs):
+        self.attributes = Attributes()
+        for i, arg in enumerate(self.arguments):
             output, source = tex.getArgumentAndSource(**arg)
-            self.argsource += source
-            if i == 0 and arg.name != '*modifier*':
-                self.resolve()
-            if arg.name == '*modifier*':
-                if output is None:
-                    self.resolve() 
-            elif arg.name == 'self':
-                if not isinstance(output, list):
-                    output = [output]
-                self[:] = output
-            else:
-                self.attributes[arg.name] = output
+            self.attributes[arg.name] = output
+            self.attributes.source += source
 
-    def compileArgumentString(self):
+    def position(self):
+        if not hasattr(self, '__position'):
+            self.__position = [None, None]
+        return self.__position
+    position = property(position)
+
+    def style(self):
+        if not hasattr(self, '__style'):
+            self.__style = CSSStyles()
+        return self.__style
+    style = property(style)
+
+    def arguments(self):
         """ 
         Compile the argument string into function call arguments 
 
@@ -359,16 +189,16 @@ class Macro(MacroInterface, Element, RenderMixIn):
         arguments as compiled entities
 
         """
-        if hasattr(self, '__compiled_arguments'):
-            return self.__compiled_arguments
+        if hasattr(self, '__arguments'):
+            return self.__arguments
 
         if not hasattr(type(self), 'args'):
-            self.__compiled_arguments = []
-            return self.__compiled_arguments
+            self.__arguments = []
+            return self.__arguments
 
         if not type(self).args: 
-            self.__compiled_arguments = []
-            return self.__compiled_arguments
+            self.__arguments = []
+            return self.__arguments
 
         # Split the arguments into their primary components
         args = iter([x.strip() for x in re.split(r'(<=>|[\'"]\w+[\'"]|\w+(?::\w+)*|\W|\s+)', type(self).args) if x is not None and x.strip()])
@@ -452,19 +282,21 @@ class Macro(MacroInterface, Element, RenderMixIn):
             else:
                 raise ValueError, 'Could not parse argument string "%s", reached unexpected "%s"' % (type(self).args, item)
 
-        self.__compiled_arguments = macroargs
+        self.__arguments = macroargs
         return macroargs
 
+    arguments = property(arguments)
 
-class TeXFragment(MacroInterface, DocumentFragment, RenderMixIn):
-    """ TeX document fragment """
-    iscontext = True
+class TeXFragment(list, RenderMixIn):
+    nodeName = tagName = 'tex-fragment'
+    attributes = None
+ 
     def __init__(self, *args, **kwargs):
-        DocumentFragment.__init__(self, *args, **kwargs)
-        self.style = CSSStyles()
+        list.__init__(self, *args, **kwargs)
+        self.children = self
 
 
-class StringMacro(MacroInterface, unicode):
+class StringMacro(Macro):
     """ 
     Convenience class for macros that are simply strings
 
@@ -475,12 +307,8 @@ class StringMacro(MacroInterface, unicode):
         tablename = StringMacro('Table')
 
     """
-    def __init__(self, data=''):
-        MacroInterface.__init__(self, data)
     def invoke(self, tex): 
-        return [self]
-    def __call__(self):
-        return self
+        return
                 
 class Command(Macro): 
     """ Base class for all Python-based LaTeX commands """
@@ -491,14 +319,28 @@ class Environment(Macro):
     def invoke(self, tex):
         if self.mode == MODE_END:
             tex.context.pop(self)
-            return []
-            return [self]
+            return
         tex.context.push(self)
         self.parse(tex)
+
+    def digest(self, tokens):
+        if self.mode == MODE_END:
+            return
+        self.children = []
+        # Absorb the tokens that belong to us
+        for item in tokens:
+            if item.code == CC_EXPANDED:
+                if item.mode == MODE_END and type(item) is type(self):
+                    break
+                item.digest(tokens)
+            if item.depth < self.depth:
+                tokens.push(item)
+                break
+            self.children.append(item)
     
 class UnrecognizedMacro(Macro): pass
 
-class NewIf(MacroInterface):
+class NewIf(Macro):
     """ Base class for all generated \\newifs """
 
     state = False
@@ -518,17 +360,15 @@ class NewIf(MacroInterface):
         cls.state = False
     setFalse = classmethod(setFalse)
 
-class IfTrue(MacroInterface):
+class IfTrue(Macro):
     """ Base class for all generated \\iftrues """
     def invoke(self, tex):
         type(self).ifclass.setTrue()
-        return [self]
 
-class IfFalse(MacroInterface):
+class IfFalse(Macro):
     """ Base class for all generated \\iffalses """
     def invoke(self, tex):
         type(self).ifclass.setFalse()
-        return [self]
 
 def expanddef(definition, params):
     # Walk through the definition and expand parameters
@@ -550,7 +390,7 @@ def expanddef(definition, params):
             output.append(t)
     return output
 
-class NewCommand(MacroInterface):
+class NewCommand(Macro):
     """ Superclass for all \newcommand/\newenvironment type commands """
     nargs = 0
     opt = None
@@ -579,7 +419,7 @@ class NewCommand(MacroInterface):
 
         return expanddef(self.definition, params)
 
-class Definition(MacroInterface):
+class Definition(Macro):
     """ Superclass for all \\def-type commands """
     args = None
     definition = None
@@ -649,7 +489,7 @@ class Definition(MacroInterface):
         return expanddef(self.definition, params)
 
 
-class Counter(MacroInterface):
+class Counter(Macro):
     """ Base class for all LaTeX counters """
 
     resetby = None
@@ -774,11 +614,11 @@ class Counter(MacroInterface):
         """ Return the symbol representation """
         return '*'
 
-class TheCounter(MacroInterface):
+class TheCounter(Macro):
     """ Base class for counter formats """
     format = ''
 
-class Dimen(MacroInterface, float):
+class Dimen(float):
 
     units = ['pt','pc','in','bp','cm','mm','dd','cc','sp','ex','em']
 

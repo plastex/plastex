@@ -113,3 +113,67 @@ class x_ifnextchar(Command):
                 return a['true']
             else:
                 return a['false']
+
+
+class chaphead(Command):
+    args = '[ toc ] ( helptag:str ) label:str title'
+class headi(Command):
+    args = '[ toc ] ( helptag:str ) label:str title'
+class headii(Command):
+    args = '[ toc ] ( helptag:str ) label:str title'
+class headiii(Command):
+    args = '[ toc ] ( helptag:str ) label:str title'
+class headiv(Command):
+    args = '[ toc ] ( helptag:str ) label:str title'
+class headv(Command):
+    args = '[ toc ] ( helptag:str ) label:str title'
+class headvi(Command):
+    args = '[ toc ] ( helptag:str ) label:str title'
+class syni(Command):
+    args = 'entry'
+class sbji(Command):
+    args = 'entry'
+class ssbji(Command):
+    args = 'entry subentry'
+class ssyni(Command):
+    args = 'entry subentry'
+class sbjsee(Command):
+    args = 'entry see'
+class datastep(Command):
+    args = 'file:str'
+class sascode(Command):
+    args = 'file:str'
+class sasout(Command):
+    args = 'width:str file:str [ %options ]'
+class sasop(Command):
+    args = '( helptag:str ) label:str title'
+class sasstmt(Command):
+    args = '* statement options'
+class help(Command):
+    args = 'text'
+class xhelp(Command):
+    args = 'text'
+class ssbifourteen(Environment):
+    pass
+class hv(Environment):
+    pass
+class fref(Command):
+    args = '[ type:str ] label:str'
+class quotes(Command):
+    args = 'text'
+class ssbeleven(Environment):
+    pass
+class ssiten(Environment):
+    pass
+class colon(Command):
+    pass
+class sref(Command):
+    args = '[ type:str ] label:str'
+class chapref(Command):
+    args = '[ type:str ] label:str'
+class oref(Command):
+    args = '[ type:str ] label:str'
+class tablehead(Command):
+    args = 'label:str title'
+class examplehead(Command):
+    args = 'label:str title'

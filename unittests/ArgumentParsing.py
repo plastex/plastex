@@ -10,14 +10,14 @@ class ArgumentParsing(TestCase):
     def testArgumentString(self):
         class foobar(Macro):
             args = 'arg1'
-        arg = foobar().compileArgumentString() 
+        arg = foobar().arguments
         expected = [CompiledArgument('arg1', {'expanded':True})]
         assert arg == expected, '"%s" != "%s"' % (arg, expected)
     
     def testArgumentString2(self):
         class foobar(Macro):
             args = '* [ opt ] arg1'
-        arg = foobar().compileArgumentString() 
+        arg = foobar().arguments
         expected = [CompiledArgument('modifier', {'spec':'*'}),
                     CompiledArgument('opt', {'spec':'[]','expanded':True}), 
                     CompiledArgument('arg1', {'expanded':True})]
@@ -26,7 +26,7 @@ class ArgumentParsing(TestCase):
     def testArgumentString3(self):
         class foobar(Macro):
             args = '[ %opt ] @arg1'
-        arg = foobar().compileArgumentString() 
+        arg = foobar().arguments
         expected = [CompiledArgument('opt', {'spec':'[]','type':'dict','expanded':True}), 
                     CompiledArgument('arg1', {'type':'list','expanded':True})]
         assert arg == expected, '"%s" != "%s"' % (arg, expected)
@@ -34,7 +34,7 @@ class ArgumentParsing(TestCase):
     def testArgumentString4(self):
         class foobar(Macro):
             args = '[ %;opt ] @arg1'
-        arg = foobar().compileArgumentString() 
+        arg = foobar().arguments
         expected = [CompiledArgument('opt', {'spec':'[]','type':'dict','delim':';','expanded':True}), 
                     CompiledArgument('arg1', {'type':'list','expanded':True})]
         assert arg == expected, '"%s" != "%s"' % (arg, expected)
@@ -42,7 +42,7 @@ class ArgumentParsing(TestCase):
     def testArgumentString5(self):
         class foobar(Macro):
             args = '[ %;opt ] < "arg1" >'
-        arg = foobar().compileArgumentString() 
+        arg = foobar().arguments
         expected = [CompiledArgument('opt', {'spec':'[]','type':'dict','delim':';','expanded':True}), 
                     CompiledArgument('arg1', {'type':'str','spec':'<>','expanded':True})]
         assert arg == expected, '"%s" != "%s"' % (arg, expected)
@@ -50,14 +50,14 @@ class ArgumentParsing(TestCase):
     def testInvalidArgumentString(self):
         class foobar(Macro):
             args = '[ %;opt ] < $+arg1 >'
-        try: arg = foobar().compileArgumentString() 
+        try: arg = foobar().arguments
         except ValueError: pass
         else: self.fail("Expected a ValueError")
 
     def testInvalidArgumentString2(self):
         class foobar(Macro):
             args = '[ %;opt ] < $*arg1 >'
-        try: arg = foobar().compileArgumentString() 
+        try: arg = foobar().arguments
         except ValueError: pass
         else: self.fail("Expected a ValueError")
 

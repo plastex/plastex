@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from plasTeX.Utils import *
-from plasTeX.Tokenizer import CC_MATHSHIFT
+from plasTeX.Tokenizer import CC_MATHSHIFT, CC_EXPANDED
 from plasTeX import Macro, Command, Environment, MODE_END
 from plasTeX.Logging import getLogger
 
@@ -16,7 +16,7 @@ class par(Macro):
     level = PARAGRAPH
     def invoke(self, tex):
         status.dot()
-    def digest(self, tex):
+    def digest(self, tokens):
         return
     def __repr__(self): return '\n\n'
 
@@ -53,10 +53,6 @@ class mathshift(Macro):
         inenv = type(self).inenv
         math = tex.context['math']
         displaymath = tex.context['displaymath']
-# !!!!
-        math.tex = tex
-        displaymath.tex = tex
-# !!!!
 
         # See if this is the end of the environment
         if inenv and inenv[-1] is not None:
@@ -66,13 +62,10 @@ class mathshift(Macro):
                     break
                 displaymath.mode = MODE_END
                 tex.context.pop(displaymath)
-                return []
-                return [displaymath]
             else:
                 math.mode = MODE_END
                 tex.context.pop(math)
-                return []
-                return [math]
+            return []
 
         for t in tex.itertokens():
             if t.code == CC_MATHSHIFT:
@@ -101,14 +94,14 @@ class textvisiblespace(Macro):
 class superscript(Macro):
     """ The '^' character in TeX """
     args = 'self'
-    def __repr__(self): 
-        return '^{%s}' % ''.join([repr(x) for x in self])
+    def __repr__(self):
+        return '^%s' % self.attributes.source
 
 class subscript(Macro):
     """ The '_' character in TeX """
     args = 'self'
-    def __repr__(self): 
-        return '_{%s}' % ''.join([repr(x) for x in self])
+    def __repr__(self):
+        return '_%s' % self.attributes.source
 
 class macroparameter(Macro):
     """ Paramaters for macros (i.e. #1, #2, etc.) """
@@ -123,7 +116,18 @@ class bgroup(Macro):
     def __repr__(self):
         return '{'
     def digest(self, tokens):
-        return
+        self.children = []
+        # Absorb the tokens that belong to us
+        for item in tokens:
+            if item.code == CC_EXPANDED:
+                if type(item) is egroup:
+                    break
+                item.digest(tokens)
+            self.children.append(item)
+    def __repr__(self):
+        if self.children is not None:
+            return '{%s}' % ''.join([repr(x) for x in self.children])
+        return '{'
 
 class egroup(Macro):
     def invoke(self, tex):

@@ -36,16 +36,19 @@ class tokiter(object):
     def next(self):
         return self.obj.nexttok()
 
-class positer(object):
-    """ Iterator that keeps track of the item number """
+class bufferediter(object):
+    """ Buffered iterator """
     def __init__(self, obj):
         self.obj = iter(obj)
-        self.pos = 0
+        self.buffer = []
     def __iter__(self):
         return self
     def next(self):
-        self.pos += 1
+        if self.buffer:
+            return self.buffer.pop()
         return self.obj.next()
+    def push(self, value):
+        self.buffer.append(value)
 
 
 class TeX(object):
@@ -60,9 +63,6 @@ class TeX(object):
     def __init__(self, source=None):
         self.context = Context(self)
         self.context.loadBaseMacros()
-
-        # Source tokens
-        self.sourcetokens = []
 
         # Input source stack
         self.inputs = []
@@ -150,6 +150,7 @@ class TeX(object):
         """
         while self.inputs:
             for t in self.inputs[-1]:
+                t.depth = self.context.depth
                 return t
             self.endinput()
         raise StopIteration
@@ -176,7 +177,7 @@ class TeX(object):
             if token is not None:
                 tokenlog.debug('input %s (%s, %s)', repr(token), token.code, 
                                                  len(self.inputs))
-            if token is None or token == '':
+            if token is None:
                 continue
             elif token.code == CC_ENDTOKENS:
                 break
@@ -192,8 +193,9 @@ class TeX(object):
                     obj = self.context[token.macro]
                     tokens = obj.invoke(self)
                     if tokens is None:
-                        tokens = [obj]
-                    self.pushtokens(tokens)
+                        self.pushtoken(obj)
+                    elif tokens:
+                        self.pushtokens(tokens)
                     continue
                 except:
                     log.error('Error while expanding "%s" in %s on line %s' 
@@ -225,7 +227,7 @@ class TeX(object):
         self.context.pop()
         output += [x for x in self]
 
-        return self.parse(output)
+        return TeXFragment(self.parse(output))
 
     def tokenize(self, s):
         """
@@ -739,12 +741,11 @@ class TeX(object):
     def parse(self, tokens=None):
         """ Parse stream content until it is empty """
         if tokens is None:
-            tokens = self.sourcetokens = [x for x in self]
-        tokens = positer(tokens)
+            tokens = self
+        tokens = bufferediter(tokens)
         output = []
         for item in tokens:
-            if item.code == CC_EXPANDED:
-                item.digest(tokens)
+            item.digest(tokens)
             output.append(item)
         return output
 

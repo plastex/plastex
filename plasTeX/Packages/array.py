@@ -84,25 +84,22 @@ class Array(Environment):
     def invoke(self, tex):
         if self.mode == MODE_END:
             tex.context.pop(self) # End of table
-#           return [self]
-            return []
+            return 
         Environment.invoke(self, tex)
         tex.context.push() # Beginning of cell
 
-    def digest(self, tokens):
-        Environment.digest(self, tokens)
-        header, footer = self.getHeaderAndFooter()
-        body = self.getRowsAndCells()
+#   def digest(self, tokens):
+#       Environment.digest(self, tokens)
+#       header, footer = self.getHeaderAndFooter()
+#       body = self.getRowsAndCells()
 
-        # See if the footer is just a horizontal rule
-        if footer is type(self).hline and body:
-            for cell in body[-1]:
-                cell.style['border-bottom'] = '1px solid black'
-            footer = []
+#       # See if the footer is just a horizontal rule
+#       if footer is type(self).hline and body:
+#           for cell in body[-1]:
+#               cell.style['border-bottom'] = '1px solid black'
+#           footer = []
 
-        self[:] = header + body + footer
-
-        return self 
+#       self[:] = header + body + footer
 
     def compileColspec(self, colspec):
         """ Compile colspec into an object """

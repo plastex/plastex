@@ -5,7 +5,7 @@ from unittest import TestCase
 from plasTeX import Macro, Environment
 from plasTeX.TeX import TeX
 from plasTeX.Context import Context
-from plasTeX.Utils import isinternal
+from plasTeX.Utils import isinternal, isexpanded
 
 class ContextGenerated(TestCase):
     def testNewcommand(self):
@@ -22,7 +22,7 @@ class NC(TestCase):
     def testNewcommand(self):
         s = TeX(r'\newcommand\mycommand[2][optional]{\itshape{#1:#2}}\newcommand{ \foo }{{this is foo}}\mycommand[hi]{{\foo}!!!}')
         res = [x for x in s]
-        text = [x for x in res if isinstance(x, basestring)]
+        text = [x for x in res if not isexpanded(x)]
         expected = list('hi:this is foo!!!')
         assert text == expected, '%s != %s' % (text, expected)
 
@@ -54,13 +54,13 @@ class NewCommands(TestCase):
     def setUp(self):
         self.macros = {}
 
-        class it(Environment):
-            def __repr__(self):
-                return '<it>%s</it>' % ''.join([str(x) for x in self])
+        class it(Environment): pass
+#           def __repr__(self):
+#               return '<it>%s</it>' % ''.join([str(x) for x in self])
 
-        class description(Environment):
-            def __repr__(self):
-                return '<description>%s</description>' % ''.join([str(x) for x in self])
+        class description(Environment): pass
+#           def __repr__(self):
+#               return '<description>%s</description>' % ''.join([str(x) for x in self])
 
         self.macros['it'] = it
         self.macros['description'] = description
@@ -80,7 +80,7 @@ class NewCommands(TestCase):
             s.context[key] = value
         output = [x for x in s]
         assert s.context['mycommand'].definition == list('#1:#2')
-        text = [x for x in output if isinstance(x, basestring)]
+        text = [x for x in output if not isexpanded(x)]
         assert text == list('foo:bar'), text
 
     def testNewCommandWithOptional(self):
@@ -90,7 +90,7 @@ class NewCommands(TestCase):
         output = [x for x in s]
         assert s.context['mycommand'].definition == list('#1:#2')
         assert s.context['mycommand'].opt == list('opt'), '"%s" != "opt"' % (s.context['mycommand'].opt)
-        text = [x for x in output if isinstance(x, basestring)]
+        text = [x for x in output if not isexpanded(x)]
         assert text == list('opt:barfoo:bar'), text
 
     def testSimpleNewEnvironment(self):
@@ -110,7 +110,7 @@ class NewCommands(TestCase):
         enddefinition = s.context['endmyenv'].definition
         assert definition == list('#1:#2'), definition
         assert enddefinition == [], enddefinition
-        text = [x for x in output if isinstance(x, basestring)]
+        text = [x for x in output if not isexpanded(x)]
         assert text == list('foo:barhi'), text
 
     def testSimpleNewEnvironmentWithOptional(self):
@@ -123,7 +123,7 @@ class NewCommands(TestCase):
         assert definition == list('#1:#2'), definition
         assert enddefinition == list(';'), enddefinition
         assert s.context['myenv'].opt == list('opt')
-        text = [x for x in output if isinstance(x, basestring)]
+        text = [x for x in output if not isexpanded(x)]
         assert text == list('opt:foohi;one:blahbye;'), text
 
     def testNewEnvironment(self):
@@ -136,20 +136,20 @@ class NewCommands(TestCase):
         assert definition == ['begin'] + list('{description}'), definition
         assert enddefinition == ['end'] + list('{description}'), enddefinition
         assert s.context['myenv'].opt == None
-        text = [x for x in output if isinstance(x, basestring)]
+        text = [x for x in output if not isexpanded(x)]
         assert type(output[8]) == type(s.context['description'])
         assert text == list('before:hi:after'), text
 
     def testDef(self):
         s = TeX(r'\def\mymacro#1#2;#3\endmacro{this #1 is #2 my #3 command}\mymacro{one}x;y\endmacro morestuff')
         output = [x for x in s]
-        text = [x for x in output if isinstance(x, basestring)]
+        text = [x for x in output if not isexpanded(x)]
         assert text == list('this one is x my y commandmorestuff'), text
 
     def testDef2(self):
         s = TeX(r"\def\row#1{(#1_1,\ldots,#1_n)}\row{{x'}}")
         output = [x for x in s if not isinternal(x)]
-        text = [x for x in output if isinstance(x, basestring)]
+        text = [x for x in output if not isexpanded(x)]
         assert text == list('(x\',,x\')'), text
         assert output[0].nodeName == 'def'
         assert output[6].nodeName == 'subscript'
@@ -158,7 +158,7 @@ class NewCommands(TestCase):
     def testDef3(self):
         s = TeX(r'\def\foo#1#2{:#1:#2:}\foo x y')
         output = [x for x in s]
-        text = [x for x in output if isinstance(x, basestring)]
+        text = [x for x in output if not isexpanded(x)]
         assert text == list(':x:y:'), text
 
     def testLet(self):

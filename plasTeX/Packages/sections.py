@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from plasTeX.Utils import *
-from plasTeX import Command, Environment, TeXFragment, DOCUMENT
+from plasTeX import Command, Environment, DOCUMENT
 
 class _Section:
     """ Section utility methods """

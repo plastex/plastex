@@ -93,6 +93,9 @@ class Context(object):
         # Imported packages and their options
         self.packages = {}
 
+        # Depth of the context stack
+        self.depth = 0
+
         # Create a global namespace
         self.push()
 
@@ -178,6 +181,8 @@ class Context(object):
         if len(self.contexts) > 1:
             self.top.parent = self.contexts[-2]
 
+        self.depth = len(self.contexts)
+
     def createContext(self, obj=None):
         """
         Create the pieces of a new context (i.e. macros and category codes)
@@ -257,24 +262,14 @@ class Context(object):
 
             # Go to the next one, we don't have a match yet
             if obj is None or o is None:
-                if o is not None: 
-                    o.iscontext = True
-                    pushed.append(EndContext('<end-context>'))
                 continue
 
-            # Found the beginning of an environment with the same name.
+            # Found the beginning of an environment with the same type.
             # We can finish popping contexts now.
-            if obj.nodeName == o.nodeName:
-                stacklog.debug('implicitly pop %s from %s', o.nodeName, self.top)
-                o.iscontext = True
+            if type(obj) == type(o):
+                stacklog.debug('implicitly pop %s from %s',o.nodeName,self.top)
                 break
 
-            o.iscontext = True
-            pushed.append(EndContext('<end-context>'))
-
-        pushed.append(obj)
-        stacklog.debug('pushing tokens %s', pushed)
-        self.tex.pushtokens(pushed)
         self.mapmethods()
 
     def addGlobal(self, key, value):

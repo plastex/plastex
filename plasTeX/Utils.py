@@ -15,7 +15,9 @@ ENVIRONMENT = 10
 PARAGRAPH = 100
 COMMAND = 200
 
-isinternal = lambda o: o.code >= 500   # See Tokenizer.py
+reprchildren = lambda o: ''.join([repr(x) for x in o.children])
+isexpanded = lambda o: o.code > 99   # See Tokenizer.py
+isinternal = lambda o: o.code > 499   # See Tokenizer.py
 ismacro = lambda o: hasattr(o, 'texname')
 
 def classname(obj):

@@ -19,11 +19,11 @@ file = sys.argv[1]
 # Parse document
 #TeX.disableLogging()
 s = TeX(open(file,'r'))
-#print [x for x in s]
+#print [(x, x.depth) for x in s]
 document = s.parse()
-for i, item in enumerate(s.sourcetokens):
-    print i, repr(item)
-#print document
+#for i, item in enumerate(s.sourcetokens):
+#    print i, repr(item)
+print ''.join([repr(x) for x in document])
 #output = []
 #for item in document:
 #    if item.code == 100:

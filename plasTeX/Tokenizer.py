@@ -83,7 +83,9 @@ class Token(unicode):
     """
     code = None
     macro = None
-    __slots__ = []
+    depth = 0
+    def digest(self, tokens):
+        return
     def __repr__(self):
         return str(self)
     def __cmp__(self, other):
