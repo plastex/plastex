@@ -75,9 +75,28 @@ class Array(Environment):
             # Add a phantom row and cell to absorb the appropriate tokens
             return [self, Array.ArrayRow(), Array.ArrayCell()]
 
-    class cline(Command):
+    class bordercommand(Command):
+
+        def applyBorders(self, location, cells):
+            """
+            Apply borders to the given cells
+
+            Required Arguments:
+            location -- place where the border should be applied. 
+                This should be 'top', 'bottom', 'left', or 'right'
+            cells -- iterable containing cell instances to apply
+                the borders
+
+            """
+            for cell in cells:
+                cell.style['border-%s-style' % location] = 'solid'
+                cell.style['border-%s-color' % location] = 'black'
+                cell.style['border-%s-width' % location] = '2px'
+
+    class cline(bordercommand):
         """ Partial horizontal line """
         args = 'span:str'
+
         def invoke(self, tex):
             self.parse(tex)
             attrs = self.attributes
@@ -85,20 +104,31 @@ class Array(Environment):
             if len(attrs['span']) == 1:
                 attrs['span'] *= 2
 
-    class hline(Command):
+        def applyBorders(self, location, cells):
+            start, end = self.attributes['span']
+            for i, cell in enumerate(cells):
+                if i < start or i > end:
+                    continue
+                cell.style['border-%s-style' % location] = 'solid'
+                cell.style['border-%s-color' % location] = 'black'
+                cell.style['border-%s-width' % location] = '2px'
+
+    class hline(bordercommand):
         """ Full horizontal line """
 
-    class vline(Command):
+    class vline(bordercommand):
         """ Vertical line """
 
     class ArrayRow(Macro):
         """ Table row class """
         endtoken = None
+
         def digest(self, tokens):
             self.endtoken = self.digestUntil(tokens, Array.endrow)
             if self.endtoken is not None:
                 tokens.next()
                 self.endtoken.digest(tokens)
+
         def source(self):
             if self.endtoken is not None:
                 return sourcechildren(self) + self.endtoken.source
@@ -108,8 +138,7 @@ class Array(Environment):
     class ArrayCell(Macro):
         """ Table cell class """
         endtoken = None
-        colspan = 1
-        rowspan = 1
+
         def digest(self, tokens):
             self.endtoken = self.digestUntil(tokens, (Array.alignmenttab, 
                                                       Array.endrow))
@@ -118,6 +147,43 @@ class Array(Environment):
                 self.endtoken.digest(tokens)
             else:
                 self.endtoken = None
+
+        def borders(self):
+            """
+            Return all of the border control macros
+
+            Returns:
+            two element tuple -- the first element is a list of border
+                control elements that come before the content, the
+                second element is a list of border control elements
+                that come after the content
+
+            """
+            before, after = [], []
+
+            # Locate border control macros at the beginning of the cell
+            for item in self:
+                if item.isElementContentWhitespace:
+                    continue
+                if isinstance(item, Array.bordercommand):
+                    before.append(item)
+                    continue
+                break
+
+            # Locate the border control macros at the end of the cell
+            for i in range(len(self)-1, -1, -1):
+                item = self[i]
+                if item.isElementContentWhitespace:
+                    continue
+                if isinstance(item, Array.bordercommand):
+                    after.insert(0, item)
+                    continue
+                break
+
+            return before, after
+
+        borders = property(borders)
+
         def source(self):
             if self.endtoken is not None:
                 return sourcechildren(self) + self.endtoken.source
@@ -147,6 +213,9 @@ class Array(Environment):
         tex.context.push() # Beginning of cell
         # Add a phantom row and cell to absorb the appropriate tokens
         return [self, Array.ArrayRow(), Array.ArrayCell()]
+
+    def digest(self, tokens):
+        Environment.digest(self, tokens)
 
     def compileColspec(self, colspec):
         """ Compile colspec into an object """

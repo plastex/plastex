@@ -53,7 +53,8 @@ class Token(Text):
     catcode = None       # TeX category code
     macroName = None     # Macro to invoke in place of this token
 
-#   nodeType = Node.TEXT_NODE
+    # Prevent the creation of an instance variable dictionary
+    __slots__ = []
 
     def __cmp__(self, other):
         # Token comparison -- character and code must match
@@ -65,11 +66,9 @@ class Token(Text):
         return cmp(unicode(self), unicode(other))
 
     def source(self):
-        return unicode(self)
+        return self
     source = property(source)
 
-# Array for getting token class for the corresponding catcode
-TOKENCLASSES = [None] * 16
 
 class EscapeSequence(Token):
     """
@@ -90,77 +89,51 @@ class EscapeSequence(Token):
         return self
     macroName = property(macroName)
 
-TOKENCLASSES[Token.CC_ESCAPE] = EscapeSequence
-
 class BeginGroup(Token):
     """ Beginning of a TeX group """
     catcode = Token.CC_BGROUP
     macroName = 'bgroup'
-
-TOKENCLASSES[Token.CC_BGROUP] = BeginGroup
 
 class EndGroup(Token):
     """ Ending of a TeX group """
     catcode = Token.CC_EGROUP
     macroName = 'egroup'
 
-TOKENCLASSES[Token.CC_EGROUP] = EndGroup
-
 class MathShift(Token):
     catcode = Token.CC_MATHSHIFT
     macroName = 'mathshift'
-
-TOKENCLASSES[Token.CC_MATHSHIFT] = MathShift
 
 class Alignment(Token):
     catcode = Token.CC_ALIGNMENT
     macroName = 'alignmenttab'
 
-TOKENCLASSES[Token.CC_ALIGNMENT] = Alignment
-
 class EndOfLine(Token):
     catcode = Token.CC_EOL
     isElementContentWhitespace = True
 
-TOKENCLASSES[Token.CC_EOL] = EndOfLine
-
 class Parameter(Token):
     catcode = Token.CC_PARAMETER
-
-TOKENCLASSES[Token.CC_PARAMETER] = Parameter
 
 class Superscript(Token):
     catcode = Token.CC_SUPER
     macroName = 'superscript'
 
-TOKENCLASSES[Token.CC_SUPER] = Superscript
-
 class Subscript(Token):
     catcode = Token.CC_SUB
     macroName = 'subscript'
-
-TOKENCLASSES[Token.CC_SUB] = Subscript
 
 class Space(Token):
     catcode = Token.CC_SPACE
     isElementContentWhitespace = True
 
-TOKENCLASSES[Token.CC_SPACE] = Space
-
 class Letter(Token):
     catcode = Token.CC_LETTER
-
-TOKENCLASSES[Token.CC_LETTER] = Letter
 
 class Other(Token):
     catcode = Token.CC_OTHER
 
-TOKENCLASSES[Token.CC_OTHER] = Other
-
 class Active(Token):
     catcode = Token.CC_ACTIVE
-
-TOKENCLASSES[Token.CC_ACTIVE] = Active
 
 class Comment(Token):
     catcode = Token.CC_COMMENT
@@ -168,23 +141,29 @@ class Comment(Token):
     nodeName = '#comment'
     isElementContentWhitespace = True
 
-TOKENCLASSES[Token.CC_COMMENT] = Comment
-
-class chariter(object):
-    """ Character iterator """
-    def __init__(self, obj):
-        self.obj = obj
-    def __iter__(self):
-        return self
-    def next(self):
-        return self.obj.nextchar()
-
 class Tokenizer(object):
 
     # Tokenizer states
     STATE_S = 1
     STATE_M = 2
     STATE_N = 4
+
+    # Array for getting token class for the corresponding catcode
+    tokenClasses = [None] * 16
+    tokenClasses[Token.CC_ESCAPE] = EscapeSequence
+    tokenClasses[Token.CC_BGROUP] = BeginGroup
+    tokenClasses[Token.CC_EGROUP] = EndGroup
+    tokenClasses[Token.CC_MATHSHIFT] = MathShift
+    tokenClasses[Token.CC_ALIGNMENT] = Alignment
+    tokenClasses[Token.CC_EOL] = EndOfLine
+    tokenClasses[Token.CC_PARAMETER] = Parameter
+    tokenClasses[Token.CC_SUPER] = Superscript
+    tokenClasses[Token.CC_SUB] = Subscript
+    tokenClasses[Token.CC_SPACE] = Space
+    tokenClasses[Token.CC_LETTER] = Letter
+    tokenClasses[Token.CC_OTHER] = Other
+    tokenClasses[Token.CC_ACTIVE] = Active
+    tokenClasses[Token.CC_COMMENT] = Comment
 
     def __init__(self, source, context):
         """
@@ -216,7 +195,7 @@ class Tokenizer(object):
         self.tell = source.tell
         self.linenumber = 1
 
-    def nextchar(self):
+    def iterchars(self):
         """ 
         Get the next character in the stream and its category code
 
@@ -228,48 +207,53 @@ class Tokenizer(object):
         and you go too far, you can put the character back with
         the pushchar() method.
 
-        See Also:
-        self.iterchars()
-
         """
-        if self._charbuffer:
-            return self._charbuffer.pop(0)
+        # Create locals before going into the generator loop
+        buffer = self._charbuffer
+        classes = self.tokenClasses
+        read = self.read
+        seek = self.seek
+        whichCode = self.context.whichCode
+        CC_SUPER = Token.CC_SUPER
+        CC_IGNORED = Token.CC_IGNORED
+        CC_INVALID = Token.CC_INVALID
 
         while 1:
-            token = self.read(1)
+            while buffer:
+                yield buffer.pop(0)
+
+            token = read(1)
 
             if not token:
-                raise StopIteration
+                break
 
-            if token == '\n':
+            # ord(token) == 10 is the same as saying token == '\n'
+            # but it is much faster.
+            if ord(token) == 10:
                 self.linenumber += 1
 
-            code = self.context.whichCode(token)
+            code = whichCode(token)
 
-            if code == Token.CC_SUPER:
+            if code == CC_SUPER:
 
                 # Handle characters like ^^M, ^^@, etc.
-                char = self.read(1)
+                char = read(1)
 
                 if char == token:
-                    char = self.read(1)
+                    char = read(1)
                     num = ord(char)
                     if num >= 64: token = chr(num-64)
                     else: token = chr(num+64)
-                    code = self.context.whichCode(token)
+                    code = whichCode(token)
 
                 else:
-                    self.seek(-1,1)
+                    seek(-1,1)
 
-            # Just keep going if you see one of these...
-            if code == Token.CC_IGNORED:
-                continue
-            elif code == Token.CC_INVALID:
+            # Just go to the next character if you see one of these...
+            if code == CC_IGNORED or code == CC_INVALID:
                 continue
 
-            break
-
-        return TOKENCLASSES[code](token)
+            yield classes[code](token)
 
     def pushchar(self, char):
         """ 
@@ -306,61 +290,109 @@ class Tokenizer(object):
             for t in tokens:
                 self.pushtoken(t)
 
-    def next(self):
+    def __iter__(self):
         """ 
         Iterate over tokens in the input stream
 
         Returns:
         next token in the stream
 
-        See Also:
-        self.__iter__()
-
         """
-        if self._tokbuffer:
-            return self._tokbuffer.pop(0)
+        # Cache variables to prevent globol lookups during generator 
+        global Space, EscapeSequence
+        Space = Space
+        EscapeSequence = EscapeSequence
+        buffer = self._tokbuffer
+        chariter = self.iterchars()
+        next = chariter.next
+        STATE_N = self.STATE_N
+        STATE_M = self.STATE_M
+        STATE_S = self.STATE_S
+        ELEMENT_NODE = Node.ELEMENT_NODE
+        CC_LETTER = Token.CC_LETTER
+        CC_OTHER = Token.CC_OTHER
+        CC_SPACE = Token.CC_SPACE
+        CC_EOL = Token.CC_EOL
+        CC_ESCAPE = Token.CC_ESCAPE
+        CC_EOL = Token.CC_EOL
+        CC_COMMENT = Token.CC_COMMENT
 
-        chiter = self.iterchars()
+        while 1:
 
-        for token in chiter:
+            # Purge buffer first
+            while buffer:
+                yield buffer.pop(0)
 
-            if token.nodeType == Node.ELEMENT_NODE:
+            # Get the next character
+            token = next()
+
+            if token.nodeType == ELEMENT_NODE:
                 raise ValueError, 'Expanded tokens should never make it here'
 
             code = token.catcode
- 
+
+            # Short circuit letters and other since they are so common
+            if code == CC_LETTER or code == CC_OTHER:
+                self.state = STATE_M
+
+            # Whitespace
+            elif code == CC_SPACE:
+                if self.state  == STATE_S or self.state == STATE_N:
+                    continue
+                self.state = STATE_S
+                token = Space(u' ')
+
+            # End of line
+            elif code == CC_EOL:
+                state = self.state
+                if state == STATE_S:
+                    self.state = STATE_N
+                    continue
+                elif state == STATE_M:
+                    token = Space(' ')
+                    code = CC_SPACE
+                    self.state = STATE_N
+                elif state == STATE_N: 
+                    # ord(token) != 10 is the same as saying token != '\n'
+                    # but it is much faster.
+                    if ord(token) != 10:
+                        self.linenumber += 1
+                        self.readline()
+                    token = EscapeSequence('par')
+                    code = CC_ESCAPE
+
             # Escape sequence
-            if code == Token.CC_ESCAPE:
+            elif code == CC_ESCAPE:
 
                 # Get name of command sequence
-                self.state = Tokenizer.STATE_M
+                self.state = STATE_M
 
-                for token in chiter:
+                for token in chariter:
  
-                    if token.catcode == Token.CC_EOL:
-                        self.pushchar(token)
-                        token = EscapeSequence()
-
-                    elif token.catcode == Token.CC_LETTER:
+                    if token.catcode == CC_LETTER:
                         word = [token]
-                        for t in chiter:
-                            if t.catcode == Token.CC_LETTER:
+                        for t in chariter:
+                            if t.catcode == CC_LETTER:
                                 word.append(t) 
                             else:
                                 self.pushchar(t)
                                 break
                         token = EscapeSequence(''.join(word))
 
+                    elif token.catcode == CC_EOL:
+                        self.pushchar(token)
+                        token = EscapeSequence()
+
                     else:
                         token = EscapeSequence(token)
 
-                    if token.catcode != Token.CC_EOL:
+                    if token.catcode != CC_EOL:
                         # Absorb following whitespace
-                        self.state = Tokenizer.STATE_S
-                        for t in chiter:
-                            if t.catcode == Token.CC_SPACE:
+                        self.state = STATE_S
+                        for t in chariter:
+                            if t.catcode == CC_SPACE:
                                 continue
-                            elif t.catcode == Token.CC_EOL:
+                            elif t.catcode == CC_EOL:
                                 continue
                             self.pushchar(t)
                             break
@@ -372,58 +404,13 @@ class Tokenizer(object):
                 # Check for any \let aliases
                 token = self.context.lets.get(token, token)
 
-            # End of line
-            elif code == Token.CC_EOL:
-                if self.state == Tokenizer.STATE_S:
-                    self.state = Tokenizer.STATE_N
-                    continue
-                elif self.state == Tokenizer.STATE_M:
-                    token = Space(' ')
-                    code = Token.CC_SPACE
-                    self.state = Tokenizer.STATE_N
-                elif self.state == Tokenizer.STATE_N: 
-                    if token != '\n':
-                        self.linenumber += 1
-                        self.readline()
-                    token = EscapeSequence('par')
-                    code = Token.CC_ESCAPE
-
-            elif code == Token.CC_SPACE:
-                if self.state in [Tokenizer.STATE_S, Tokenizer.STATE_N]:
-                    continue
-                self.state = Tokenizer.STATE_S
-                token = Space(u' ')
-
-            elif code == Token.CC_COMMENT:
+            elif code == CC_COMMENT:
                 self.readline() 
                 self.linenumber += 1
-                self.state = Tokenizer.STATE_N
+                self.state = STATE_N
                 continue
 
             else:
-                self.state = Tokenizer.STATE_M
+                self.state = STATE_M
 
-            return token
-
-        raise StopIteration
-
-    def __iter__(self):
-        """
-        Return an iterator that iterates over the tokens in the input stream
-
-        See Also:
-        self.nexttok()
-
-        """
-        return self
-
-    def iterchars(self):
-        """
-        Return an iterator that iterates over characters in the input stream
-
-        See Also:
-        self.nextchar()
-
-        """
-        return chariter(self)
-
+            yield token

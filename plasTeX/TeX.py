@@ -33,35 +33,28 @@ digestlog = getLogger('parse.digest')
 
 class tokiter(object):
     """ Token iterator """
+    __slots__ = ['_next']
     def __init__(self, obj):
-        self.obj = obj
+        self._next = obj.nexttok
     def __iter__(self):
         return self
     def next(self):
-        return self.obj.nexttok()
-
-class nodeiter(object):
-    """ Node iterator """
-    def __init__(self, obj):
-        self.obj = obj
-    def __iter__(self):
-        return self
-    def next(self):
-        return self.obj.nextnode()
+        return self._next()
 
 class bufferediter(object):
     """ Buffered iterator """
+    __slots__ = ['_next','_buffer']
     def __init__(self, obj):
-        self.obj = iter(obj)
-        self.buffer = []
+        self._next = iter(obj).next
+        self._buffer = []
     def __iter__(self):
         return self
     def next(self):
-        if self.buffer:
-            return self.buffer.pop()
-        return self.obj.next()
+        if self._buffer:
+            return self._buffer.pop()
+        return self._next()
     def push(self, value):
-        self.buffer.append(value)
+        self._buffer.append(value)
 
 
 class EndTokens(Token):
@@ -127,6 +120,9 @@ class TeX(object):
         if source is not None:
             self.input(source)
 
+#       self.tokiter = self.itertokens()
+        self.tokiter = tokiter(self)
+
     def input(self, source):
         """
         Add a new input source to the stack
@@ -167,7 +163,7 @@ class TeX(object):
         self.next()
 
         """      
-        return tokiter(self)
+        return self.tokiter
 
     def nexttok(self):
         """ 
@@ -177,24 +173,19 @@ class TeX(object):
         next unexpanded token in the stream
 
         """
-        while self.inputs:
-            for t in self.inputs[-1]:
-                t.contextDepth = self.context.depth
+        # Create locals before going into generator loop
+        inputs = self.inputs
+        endinput = self.endinput
+        context = self.context
+
+        while inputs:
+            for t in inputs[-1]:
+                t.contextDepth = context.depth
                 return t
-            self.endinput()
+            endinput()
         raise StopIteration
 
     def __iter__(self):
-        """
-        Create expanded token iterator 
-
-        See Also:
-        self.next()
-
-        """
-        return self
-
-    def next(self):
         """ 
         Iterate over tokens while expanding them 
 
@@ -202,15 +193,19 @@ class TeX(object):
         next expanded token in the stream
 
         """
-        for token in self.itertokens():
-#           if token is not None:
-#               tokenlog.debug('input %s (%s, %s)', token.source, 
-#                               token.catcode, len(self.inputs))
+        next = self.tokiter.next
+        pushtoken = self.pushtoken
+        pushtokens = self.pushtokens
+        context = self.context
+        ELEMENT_NODE = Node.ELEMENT_NODE
+
+        while 1:
+            token = next()
             if token is None:
                 continue
             elif token is EndTokens:
                 break
-            elif token.nodeType == Node.ELEMENT_NODE:
+            elif token.nodeType == ELEMENT_NODE:
                 pass
             elif token.macroName is not None:
                 try:
@@ -219,19 +214,18 @@ class TeX(object):
                     # automatically here if `None' is received.  If you
                     # really don't want anything in the output stream,
                     # just return `[ ]'.
-                    obj = self.context[token.macroName]
+                    obj = context[token.macroName]
                     tokens = obj.invoke(self)
                     if tokens is None:
-                        self.pushtoken(obj)
+                        pushtoken(obj)
                     elif tokens:
-                        self.pushtokens(tokens)
+                        pushtokens(tokens)
                     continue
                 except:
                     log.error('Error while expanding "%s"%s'
                               % (token.macroName, self.lineinfo))
                     raise
-            return token
-        raise StopIteration
+            yield token
 
     def expandtokens(self, tokens):
         """
@@ -355,7 +349,7 @@ class TeX(object):
             else: which = 1
         cases = [[]]
         nesting = 0
-        for t in self.itertokens():
+        for t in self.tokiter:
             # This is probably going to cause some trouble, there 
             # are bound to be macros that start with 'if' that aren't
             # actually 'if' constructs...
@@ -447,11 +441,11 @@ class TeX(object):
             return o, o.source
 
         if type in ['tok']:
-            for tok in self.itertokens():
+            for tok in self.tokiter:
                 return tok, tok.source
 
         if type in ['xtok']:
-            for tok in self.itertokens():
+            for tok in self.tokiter:
                 tok = self.expandtokens([tok])
                 if len(tok) == 1:
                     return tok[0], tok[0].source
@@ -463,7 +457,7 @@ class TeX(object):
         # Definition argument string
         if type in ['args']:
             args = []
-            for t in self.itertokens():
+            for t in self.tokiter:
                 if t.catcode == Token.CC_BGROUP:
                     self.pushtoken(t)
                     break
@@ -472,7 +466,7 @@ class TeX(object):
             else: pass
             return args, self.source(args)
 
-        tokens = self.itertokens()
+        tokens = self.tokiter
 
         # Get a TeX token (i.e. {...})
         if spec is None:
@@ -808,7 +802,7 @@ class TeX(object):
     def readOptionalSpaces(self):
         """ Remove all whitespace """
         tokens = []
-        for t in self.itertokens():
+        for t in self.tokiter:
             if t is None or t == '':
                 continue
             elif t.catcode != Token.CC_SPACE:
@@ -822,7 +816,7 @@ class TeX(object):
         for word in words:
             matched = []
             letters = list(word.upper())
-            for t in self.itertokens():
+            for t in self.tokiter:
                 matched.append(t)
                 if t.upper() == letters[0]:
                     letters.pop(0)
@@ -898,7 +892,7 @@ class TeX(object):
         return sign
 
     def readOneOptionalSpace(self):
-        for t in self.itertokens():
+        for t in self.tokiter:
             if t is None or t == '':
                 continue
             if t.catcode == Token.CC_SPACE:
@@ -940,7 +934,7 @@ class TeX(object):
                 return Number(sign * int('0x' + self.readSequence(string.hexdigits, default='0'), 16))
             # character token
             if t == '`':
-                for t in self.itertokens():
+                for t in self.tokiter:
                     return Number(sign * ord(t))
             break
         raise ValueError, 'Could not find integer'

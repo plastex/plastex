@@ -3,8 +3,8 @@
 import re
 from DOM import DocumentFragment
 from Utils import *
-from imagers.dvi2bitmap import DVI2Bitmap
-from imagers.dvipng import DVIPNG
+#from imagers.dvi2bitmap import DVI2Bitmap
+#from imagers.dvipng import DVIPNG
 
 def xmlstr(obj):
     """ Escape special characters to create a legal xml string """
@@ -16,7 +16,7 @@ def xmlstr(obj):
 class Renderer(dict):
     def __init__(self, data={}):
         dict.__init__(self, data)
-        self.imager = DVIPNG()
+#       self.imager = DVIPNG()
 #       self.imager = DVI2Bitmap()
 
 class RenderMixIn(object):

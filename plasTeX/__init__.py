@@ -152,7 +152,6 @@ class Macro(Element, RenderMixIn):
         if self.childNodes:
             s += sourcechildren(self)
         return s
-
     source = property(source)
 
     def parse(self, tex): 

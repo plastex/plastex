@@ -77,7 +77,8 @@ class NodeTest(TestCase):
         one = doc.createElement('one')
         two = doc.createElement('two')
         three = doc.createElement('three')
-        node = Node([one,two,three])
+        node = Node()
+        node.extend([one,two,three])
         expected = [one,two,three]
         for i, item in enumerate(node):
             assert item is expected[i], '"%s" != "%s"' % (item, expected[i])
@@ -324,7 +325,8 @@ class NodeTest(TestCase):
         one = doc.createElement('one')
         two = doc.createElement('two')
         three = doc.createElement('three')
-        node = Node([one,two,three])
+        node = Node()
+        node.extend([one,two,three])
         i0 = doc.createElement('i0')
         i3 = doc.createTextNode('i3')
         node.insert(0, i0)

@@ -221,31 +221,37 @@ class NamedNodeMap(dict):
             return self._parentNode
         def fset(self, value):
             if self._parentNode is not value:
-                self.ownerDocument = value.ownerDocument
+#               self.ownerDocument = value.ownerDocument
                 self._parentNode = value
                 for value in self.values():
                     self._resetPosition(value.parentNode)
         return locals()
     parentNode = property(**parentNode())
 
-    def ownerDocument():
-        """ 
-        Get/Set owner document
+    def ownerDocument(self):
+        if self.parentNode:
+            return self.parentNode.ownerDocument
+        return
+    ownerDocument = property(ownerDocument)
 
-        Since the children of this object can contain document fragments
-        when it is set we have to reset the ownerDocument of all of 
-        our children.
+#   def ownerDocument():
+#       """ 
+#       Get/Set owner document
 
-        """
-        def fget(self):
-            return self._ownerDocument
-        def fset(self, value):
-            if self._ownerDocument is not value:
-                self._ownerDocument = value
-                for value in self.values():
-                    self._resetPosition(value)
-        return locals()
-    ownerDocument = property(**ownerDocument())
+#       Since the children of this object can contain document fragments
+#       when it is set we have to reset the ownerDocument of all of 
+#       our children.
+
+#       """
+#       def fget(self):
+#           return self._ownerDocument
+#       def fset(self, value):
+#           if self._ownerDocument is not value:
+#               self._ownerDocument = value
+#               for value in self.values():
+#                   self._resetPosition(value)
+#       return locals()
+#   ownerDocument = property(**ownerDocument())
 
     def getNamedItem(self, name):
         """
@@ -378,7 +384,7 @@ class NamedNodeMap(dict):
  
         elif isinstance(value, Node) or isinstance(value, Text):
             value.parentNode = self.parentNode
-            value.ownerDocument = self.ownerDocument
+#           value.ownerDocument = self.ownerDocument
 
         elif isinstance(value, list):
             for item in value:
@@ -391,8 +397,8 @@ class NamedNodeMap(dict):
         else:
             if hasattr(value, 'parentNode'):
                 value.parentNode = self.parentNode
-            if hasattr(value, 'ownerDocument'):
-                value.ownerDocument = self.ownerDocument
+#           if hasattr(value, 'ownerDocument'):
+#               value.ownerDocument = self.ownerDocument
         
     def update(self, other):
         """
@@ -580,7 +586,7 @@ class Node(object):
     parentNode = None
     attributes = None
 
-    _ownerDocument = None
+#   _ownerDocument = None
 
     def childNodes(self):
         if not(hasattr(self, '_childNodes')):
@@ -608,20 +614,27 @@ class Node(object):
 
     nextSibling = property(_nextSibling)
 
-    def ownerDocument():
-        """ Get/Set the owner document """
-        def fget(self):
-            return self._ownerDocument
-        def fset(self, value):
-            if self._ownerDocument is not value:
-                self._ownerDocument = value
-                if self.attributes is not None:
-                    self.attributes.ownerDocument = value
-                for item in self:
-                    if hasattr(item, 'ownerDocument'):
-                        item.ownerDocument = value
-        return locals()
-    ownerDocument = property(**ownerDocument())
+    def ownerDocument(self):
+        if self.parentNode:
+            return self.parentNode.ownerDocument
+        return
+
+    ownerDocument = property(ownerDocument)
+
+#   def ownerDocument():
+#       """ Get/Set the owner document """
+#       def fget(self):
+#           return self._ownerDocument
+#       def fset(self, value):
+#           if self._ownerDocument is not value:
+#               self._ownerDocument = value
+#               if self.attributes is not None:
+#                   self.attributes.ownerDocument = value
+#               for item in self:
+#                   if hasattr(item, 'ownerDocument'):
+#                       item.ownerDocument = value
+#       return locals()
+#   ownerDocument = property(**ownerDocument())
 
     compareDocumentPosition = _compareDocumentPosition
 
@@ -718,14 +731,14 @@ class Node(object):
             for item in newChild:
                 self.append(item)
         else:
-            if isinstance(newChild, basestring) and \
-               not(isinstance(newChild, Text)):
-                if self.ownerDocument is not None:
-                    newChild = self.ownerDocument.createTextNode(newChild)
-                else:
-                    newChild = Text(newChild)
+#           if isinstance(newChild, basestring) and \
+#              not(isinstance(newChild, Text)):
+#               if self.ownerDocument is not None:
+#                   newChild = self.ownerDocument.createTextNode(newChild)
+#               else:
+#                   newChild = Text(newChild)
             self.childNodes.append(newChild) 
-        newChild.ownerDocument = self.ownerDocument
+#       newChild.ownerDocument = self.ownerDocument
         newChild.parentNode = self
         return newChild
 
@@ -748,14 +761,14 @@ class Node(object):
                 self.insert(i, item)
                 i += 1
         else:
-            if isinstance(newChild, basestring) and \
-               not(isinstance(newChild, Text)):
-                if self.ownerDocument is not None:
-                    newChild = self.ownerDocument.createTextNode(newChild)
-                else:
-                    newChild = Text(newChild)
+#           if isinstance(newChild, basestring) and \
+#              not(isinstance(newChild, Text)):
+#               if self.ownerDocument is not None:
+#                   newChild = self.ownerDocument.createTextNode(newChild)
+#               else:
+#                   newChild = Text(newChild)
             self.childNodes.insert(i, newChild)
-        newChild.ownerDocument = self.ownerDocument
+#       newChild.ownerDocument = self.ownerDocument
         newChild.parentNode = self
         return newChild
 
@@ -791,7 +804,7 @@ class Node(object):
     def __radd__(self, other):
         """ other + self """
         obj = type(self)()
-        obj.ownerDocument = self.ownerDocument
+#       obj.ownerDocument = self.ownerDocument
         for item in other:
             obj.append(item)
         for item in self:
@@ -801,7 +814,7 @@ class Node(object):
     def __add__(self, other):
         """ self + other """
         obj = type(self)()
-        obj.ownerDocument = self.ownerDocument
+#       obj.ownerDocument = self.ownerDocument
         for item in self:
             obj.append(item)
         for item in other:
@@ -856,7 +869,7 @@ class Node(object):
                 while i < (len(self)-1) and isinstance(self[i+1], Text): 
                     group.append(self.pop(i+1)) 
                 if len(group) > 1:
-                    self[i] = type(group[0])().join(group)
+                    self[i] = type(group[0])(u''.join(group))
             elif isinstance(self[i], Node):
                 self[i].normalize()
             i += 1
@@ -878,9 +891,9 @@ class Node(object):
             else:
                 output.append(item.textContent)
         if self.ownerDocument is not None:
-            return self.ownerDocument.createTextNode('').join(output)
+            return self.ownerDocument.createTextNode(u''.join(output))
         else:
-            return Text('').join(output)
+            return Text(u''.join(output))
     textContent = property(textContent) 
  
     def isSameNode(self, other):
@@ -1343,7 +1356,7 @@ class CharacterData(unicode, Node):
 
     def cloneNode(self, deep=True):
         o = type(self)(self)
-        o.ownerDocument = self.ownerDocument
+#       o.ownerDocument = self.ownerDocument
         return o
 
     def data(self):
@@ -1720,13 +1733,13 @@ class Document(Node):
         """
         o = self.elementClass()
         o.nodeName = tagName
-        o.ownerDocument = self
+#       o.ownerDocument = self
         return o
 
     def createDocumentFragment(self):
         """ Instantiate a new document fragment """
         o = self.documentFragmentClass()
-        o.ownerDocument = self
+#       o.ownerDocument = self
         return o
          
     def createTextNode(self, data):
@@ -1741,7 +1754,7 @@ class Document(Node):
 
         """
         o = self.textNodeClass(data)
-        o.ownerDocument = self
+#       o.ownerDocument = self
         return o
 
     def createComment(self, data):
@@ -1756,7 +1769,7 @@ class Document(Node):
 
         """
         o = self.commentClass(data)
-        o.ownerDocument = self
+#       o.ownerDocument = self
         return o
 
     def createCDATASection(self, data):
@@ -1771,7 +1784,7 @@ class Document(Node):
 
         """
         o = self.cdataSectionClass(data)
-        o.ownerDocument = self
+#       o.ownerDocument = self
         return o
                          
     def createProcessingInstruction(self, target, data):
@@ -1787,7 +1800,7 @@ class Document(Node):
 
         """
         o = self.processingInstructionClass(data)
-        o.ownerDocument = self
+#       o.ownerDocument = self
         return o
 
     def createAttribute(self, name):
@@ -1803,7 +1816,7 @@ class Document(Node):
         """
         o = self.attributeClass()
         o.name = name
-        o.ownerDocument = self
+#       o.ownerDocument = self
         return o
                    
     def createEntityReference(self, name):
@@ -1819,7 +1832,7 @@ class Document(Node):
         """
         o = self.entityReferenceClass()
         o.name = name
-        o.ownerDocument = self
+#       o.ownerDocument = self
         return o
 
     getElementsByTagName = _getElementsByTagName
@@ -1839,7 +1852,7 @@ class Document(Node):
 
         """
         node = importedNode.cloneNode(deep)
-        node.ownerDocument = self
+#       node.ownerDocument = self
         return node
   
     def createElementNS(self, namespaceURI, qualifiedName):
