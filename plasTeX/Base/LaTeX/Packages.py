@@ -32,6 +32,8 @@ class PackageLoader(Command):
             # Try to import a Python package by that name
             m = __import__(file, globals(), locals())
             status.info(' ( %s ' % m.__file__)
+            if hasattr(m, 'ProcessOptions'):
+                m.ProcessOptions(options)
             tex.context.importMacros(vars(m))
             tex.context.packages[file] = options
             status.info(' ) ')

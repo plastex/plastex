@@ -150,6 +150,12 @@ class Renderer(dict):
         """ Do any post-rending cleanup """
         pass
 
+    def find(self, keys, default=None):
+        for key in keys:
+            if self.has_key(key):
+                return self[key]
+        return default
+
 
 class Renderable(object):
 
@@ -169,14 +175,26 @@ class Renderable(object):
 
         s = []
         for child in self.childNodes:
-            template = None
+            names = []
+            nodeName = child.nodeName
             # If the child is going to generate a new file, we should 
             # check for a template that has file wrapper content first.
-            if self.nodeType == Node.ELEMENT_NODE and child.filename:
-                template = r.get('%s-file' % child.nodeName, None)
-            if template is None:
-                template = r.get(child.nodeName, r.default)
-            val = template(child)
+            if self.nodeType == Node.ELEMENT_NODE:
+                modifier = None
+                # Does the macro have a modifier (i.e. '*')
+                if child.attributes:
+                    modifier = child.attributes.get('*modifier*')
+                if child.filename:
+                    # Filename and modifier
+                    if modifier:
+                        names.append('%s-file%s' % (nodeName, modifier))
+                    # Filename only
+                    names.append('%s-file' % nodeName)
+                # Modifier only
+                elif modifier:
+                    names.append('%s%s' % (nodeName, modifier))
+            names.append(nodeName)
+            val = r.find(names, r.default)(child)
             if type(val) is unicode:
                 s.append(val)
             else:

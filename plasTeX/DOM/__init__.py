@@ -805,6 +805,8 @@ class Node(object):
         `newChild`
 
         """
+        if type(newChild) is str or type(newChild) is unicode:
+            newChild = Text(newChild)
         if newChild.nodeType == Node.DOCUMENT_FRAGMENT_NODE:
             for item in newChild:
                 self.append(item)
@@ -827,6 +829,8 @@ class Node(object):
         `newChild`
 
         """
+        if type(newChild) is str or type(newChild) is unicode:
+            newChild = Text(newChild)
         if newChild.nodeType == Node.DOCUMENT_FRAGMENT_NODE:
             for item in newChild:
                 self.insert(i, item)
@@ -845,6 +849,8 @@ class Node(object):
         node -- the object to put at that index
 
         """
+        if type(node) is str or type(node) is unicode:
+            node = Text(node)
         # If a DocumentFragment is being inserted, but it isn't replacing
         # a slice, we need to put each child in manually.
         if node.nodeType == Node.DOCUMENT_FRAGMENT_NODE \
@@ -896,17 +902,20 @@ class Node(object):
 
         """
         node = type(self)()
-        node.nodeName = self.nodeName
-        node.nodeValue = self.nodeValue
-        node.nodeType = self.nodeType
+        try: node.nodeName = self.nodeName
+        except: pass
+#       node.nodeValue = self.nodeValue
+#       node.nodeType = self.nodeType
         node.parentNode = self.parentNode
         if deep:
-            node.attributes.update(self.attributes)
+            if node.attributes is not None and self.attributes is not None:
+                node.attributes.update(self.attributes)
             if self.hasChildNodes():
                 for x in self.childNodes:
                     node.append(x.cloneNode(deep))
         else:
-            node.attributes.update(self.attributes)
+            if node.attributes is not None and self.attributes is not None:
+                node.attributes.update(self.attributes)
             if self.hasChildNodes():
                 for x in self.childNodes:
                     node.append(x)
@@ -1437,6 +1446,11 @@ class CharacterData(unicode, Node):
     deleteData, etc. impossible.
 
     """
+    # LaTeX extension that allows getting the LaTeX source from a plain string
+    def source(self):
+        return self
+    source = property(source)
+
     def toXML(self):
         return xmlstr(self)
 

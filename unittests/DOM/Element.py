@@ -42,7 +42,7 @@ class ElementTest(TestCase):
         three.extend([four, twoClone])
 
         elems = one.getElementsByTagName('two')
-        assert len(elems) == 2
+        assert len(elems) == 2, elems
         assert elems[0] is two
         assert elems[1] is twoClone
 

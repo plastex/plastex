@@ -41,3 +41,10 @@ class ifundefined_(Command):
         else:
             tex.pushtokens(a['false'])
         return []
+
+class vwritefile_(Command):
+    macroName = '@vwritefile'
+    args = 'file:nox content:nox'
+
+class pagelabel(Command):
+    args = 'label:nox content:nox'

@@ -77,6 +77,9 @@ class TeX(object):
         # Input source stack
         self.inputs = []
 
+        # Auxiliary files loaded
+        self.auxfiles = []
+
         # TeX arguments types and their casting functions
         self.argtypes = {
             'str': self.castString,
@@ -240,7 +243,7 @@ class TeX(object):
 
             yield token
 
-    def expandtokens(self, tokens):
+    def expandtokens(self, tokens, normalize=False):
         """
         Expand a list of unexpanded tokens
 
@@ -259,7 +262,10 @@ class TeX(object):
         self.pushtoken(EndTokens)
         self.pushtokens(tokens)
 
-        return self.parse(TeXFragment())
+        out = self.parse(TeXFragment())
+        if normalize:
+            out.normalize()
+        return out
 
     def parse(self, output=None):
         """ 
@@ -1095,6 +1101,8 @@ class TeX(object):
             if current == delim or not tokens:
                 currentkey = self.normalize(currentkey)
                 currentvalue = self.normalize(self.cast(currentvalue, subtype))
+                if currentvalue is None:
+                    currentvalue = True
                 dictarg[currentkey] = currentvalue
                 currentkey = []
                 currentvalue = None
@@ -1102,6 +1110,8 @@ class TeX(object):
         if currentkey:
             currentkey = self.normalize(currentkey)
             currentvalue = self.normalize(self.cast(currentvalue, subtype))
+            if currentvalue is None:
+                currentvalue = True
             dictarg[currentkey] = currentvalue
 
         return dictarg
@@ -1452,3 +1462,20 @@ class TeX(object):
         if self.readKeyword(['minus']):
             return self.readDimen(units=mudimen.units+['filll','fill','fil'])
         return None
+
+    def loadAuxiliaryFile(self):
+        """ Read in an auxiliary file (only once) """
+        file = os.path.splitext(self.inputs[0][0].filename)[0]
+        if file in self.auxfiles:
+            return
+        self.auxfiles.append(file)
+        try:
+            file = self.kpsewhich(file, ['.aux'])
+            self.pushtoken(EndTokens)
+            self.input(open(file))
+            for item in self:
+                if item is EndTokens:
+                    break
+        except OSError, msg:
+            log.warning(msg)
+

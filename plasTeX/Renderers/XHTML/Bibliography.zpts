@@ -1,12 +1,14 @@
 name: thebibliography
-<ul class="bibliography">
-<li tal:repeat="item self">
-<a tal:attributes="name item/id">
-<span tal:replace="item">information</span>
-</a>
-</li>
-</ul>
+type: xml
+<dl class="bibliography">
+<metal:block tal:repeat="item self">
+<dt>
+[<a tal:attributes="name item/id" tal:content="item/citation"></a>]
+</dt>
+<dd tal:content="item">information</dd>
+</metal:block>
+</dl>
 
 name: cite
-<a class="cite" tal:attributes="href self/idref/url" tal:content="self/idref/ref">citation</a>
+<span tal:repeat="item self/citation"><a class="cite" tal:attributes="href item/idref/url" tal:content="item">citation</a></span>
 

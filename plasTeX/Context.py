@@ -740,3 +740,4 @@ class Context(object):
         newclass = new.classobj(name, (plasTeX.StringCommand,), 
                                 {'value': chr(num)})
         self.addGlobal(name, newclass)
+

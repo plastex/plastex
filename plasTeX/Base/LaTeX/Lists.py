@@ -14,9 +14,19 @@ log = Logging.getLogger()
 
 class List(Environment):
     """ Base class for all list-based environments """
+    depth = 0
+    counters = ['enumi','enumii','enumiii','enumiv']
 
     class item(Command):
         args = '[ term ]'
+        counter = 'enumi'
+        position = 0
+
+        def invoke(self, tex):
+            """ Set up counter for this list depth """
+            self.counter = List.counters[List.depth-1]
+            self.position = tex.context.counters[self.counter].value + 1
+            return Command.invoke(self, tex)
 
         def digest(self, tokens):
             """
@@ -32,6 +42,14 @@ class List(Environment):
                 break
             self.digestUntil(tokens, type(self))
             self.paragraphs()
+
+    def invoke(self, tex):
+        """ Set list nesting depth """
+        if self.macroMode != Environment.MODE_END:
+            List.depth += 1
+        else:
+            List.depth -= 1
+        return Environment.invoke(self, tex)
 
     def digest(self, tokens):
         # Drop any whitespace before the first item
