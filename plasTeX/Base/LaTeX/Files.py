@@ -24,8 +24,7 @@ class input(Command):
     def invoke(self, tex):
         a = self.parse(tex)
         try: 
-            #path = kpsewhich(attrs['name'])
-            path = a['name']
+            path = tex.kpsewhich(attrs['name'])
 
             status.info(' ( %s.tex ' % path)
             tex.input(codecs.open(path, 'r', encoding))

@@ -16,7 +16,7 @@ Example:
 
 """
 
-import string, os
+import string, os, traceback, sys
 from Context import Context 
 from Tokenizer import Tokenizer, Token, EscapeSequence, Other
 from plasTeX import TeXFragment, TeXDocument, Node
@@ -230,9 +230,9 @@ class TeX(object):
                     elif tokens:
                         pushtokens(tokens)
                     continue
-                except:
-                    log.error('Error while expanding "%s"%s'
-                              % (token.macroName, self.lineinfo))
+                except Exception, msg:
+                    log.error('Error while expanding "%s"%s (%s)'
+                              % (token.macroName, self.lineinfo, msg))
                     raise
 
             yield token
@@ -273,11 +273,15 @@ class TeX(object):
         tokens = bufferediter(self)
         if output is None:
             output = TeXDocument()
-        for item in tokens:
-            if item.nodeType == Macro.ELEMENT_NODE:
-                item.parentNode = output
-                item.digest(tokens)
-            output.append(item)
+        try:
+            for item in tokens:
+                if item.nodeType == Macro.ELEMENT_NODE:
+                    item.parentNode = output
+                    item.digest(tokens)
+                output.append(item)
+        except Exception, msg:
+            log.error('An error occurred while building the document object%s (%s)', self.lineinfo, msg)
+            raise
         if output.nodeType == Macro.DOCUMENT_NODE:
             output.normalize()
         return output
@@ -559,8 +563,8 @@ class TeX(object):
 
         except Exception, msg:
             if slot:
-                log.error('error while reading argument "%s" of %s%s' % \
-                          (slot[1], slot[0].nodeName, self.lineinfo))
+                log.error('Error while reading argument "%s" of %s%s (%s)' % \
+                          (slot[1], slot[0].nodeName, self.lineinfo, msg))
             raise 
 
         if toks is None:
@@ -679,7 +683,7 @@ class TeX(object):
 
         """
         tokens = self.itertokens()
-        begin, end = chars[0], chars[1]
+        begin, end = Other(chars[0]), Other(chars[1])
         source = []
         for t in tokens:
             toks = []

@@ -22,16 +22,6 @@ class protect(Command):
 class global_(Command):
     macroName = 'global'
 
-class textpercent(Command):
-    pass
-class textpercent_(Command):
-    macroName = '%'
-
-class textampersand(Command):
-    pass
-class textampersand_(Command):
-    macroName = '&'
-
 class par(Command):
     """ Paragraph """
     level = Command.PAR_LEVEL
@@ -57,6 +47,7 @@ class par(Command):
 class BoxCommand(Command):
     """ Base class for box-type commands """
     args = 'self'
+    mathMode = False
     def parse(self, tex):
         MathShift.inenv.append(None)
         Command.parse(self, tex) 
@@ -65,7 +56,6 @@ class BoxCommand(Command):
 
 class hbox(BoxCommand): pass
 class vbox(BoxCommand): pass
-class mbox(BoxCommand): pass
 
 class MathShift(Command):
     """ 
@@ -126,11 +116,21 @@ class SuperScript(Command):
     """ The '^' character in TeX """
     macroName = 'active::^'
     args = 'arg'
+    def invoke(self, tex):
+        # If we're not in math mode, just treat this as a normal character
+        if not tex.context.isMathMode:
+            return tex.texttokens('^')
+        Command.parse(self, tex)
 
 class SubScript(Command):
     """ The '_' character in TeX """
     macroName = 'active::_'
     args = 'arg'
+    def invoke(self, tex):
+        # If we're not in math mode, just treat this as a normal character
+        if not tex.context.isMathMode:
+            return tex.texttokens('_')
+        Command.parse(self, tex)
 
 class DefCommand(Command):
     """ TeX's \\def command """
@@ -235,7 +235,7 @@ class ifmmode(IfCommand):
     """ Test for math mode """
     def invoke(self, tex):
         self.parse(tex)
-        return tex.readIfContent(False)
+        return tex.readIfContent(tex.context.isMathMode)
 
 class ifinner(IfCommand):
     """ Test for internal mode """

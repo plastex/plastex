@@ -14,7 +14,7 @@ from plasTeX.Logging import getLogger
 #
 
 class Accent(Command):
-    args = 'text'
+    args = 'self'
 
 class Grave(Accent):
     macroName = '`'

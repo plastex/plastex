@@ -1,3 +1,0 @@
-name: Verbatim 
-type: xml
-<pre tal:content="self" tal:attributes="style self/style/inline"></pre>

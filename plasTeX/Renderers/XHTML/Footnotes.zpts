@@ -1,0 +1,5 @@
+name: footnote
+<div class="footnote" tal:content="self">footnote</div>
+
+name: footnotetext
+<div class="footnote" tal:content="self">footnote text</div>

@@ -1,0 +1,8 @@
+name: par 
+<p tal:content="self"></p>
+
+name: active::^
+<sup tal:content="self"></sup>
+
+name: active::_
+<sub tal:content="self"></sub>

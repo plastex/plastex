@@ -25,6 +25,11 @@ class List(Environment):
             more useful for the resulting document object.
 
             """
+            for tok in tokens:
+                if tok.isElementContentWhitespace:
+                    continue
+                tokens.push(tok)
+                break
             self.digestUntil(tokens, type(self))
             self.paragraphs()
 

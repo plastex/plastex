@@ -85,10 +85,10 @@ class TeX(Command):
 #
 
 class today(StringCommand):
-    value = time.strftime('%A %d, %Y')
+    value = time.strftime('%B %d, %Y')
 
 class emph(Command):
-    args = 'text'
+    args = 'self'
 
 class em(Environment):
     pass

@@ -201,16 +201,28 @@ class maketitle(Command):
     pass
 
 class title(Command):
-    args = 'text'
+    args = 'self'
+    def digest(self, tokens):
+        Command.digest(self, tokens)
+        self.ownerDocument.userdata['title'] = self
 
 class author(Command):
-    args = 'names'
+    args = 'self'
+    def digest(self, tokens):
+        Command.digest(self, tokens)
+        self.ownerDocument.userdata['author'] = self
 
 class date(Command):
-    args = 'text'
+    args = 'self'
+    def digest(self, tokens):
+        Command.digest(self, tokens)
+        self.ownerDocument.userdata['date'] = self
 
 class thanks(Command):
-    args = 'text'
+    args = 'self'
+    def digest(self, tokens):
+        Command.digest(self, tokens)
+        self.ownerDocument.userdata['thanks'] = self
 
 class abstract(Environment):
     pass
@@ -237,8 +249,8 @@ class PackageWarning(Command):
 class ProcessOptions(Command):
     args = '*'
 
-class LoadClass(Command):
-    args = '[ options:dict ] names:list(,):str'
+class LoadClass(usepackage):
+    args = '[ options:dict ] names:list:str'
 
 class NeedsTeXFormat(Command):
     args = 'name:str date:str'

@@ -16,36 +16,6 @@ class magstep(Command):
 class Font(Environment):
     pass
 
-class tenrm(Font):
-    pass
-
-class sevenrm(Font):
-    pass
-
-class teni(Font):
-    pass
-
-class seveni(Font):
-    pass
-
-class tensy(Font):
-    pass
-
-class tenbf(Font):
-    pass
-
-class sevenbf(Font):
-    pass
-
-class tensl(Font):
-    pass
-
-class tentt(Font):
-    pass
-
-class tenit(Font):
-    pass
-
 class rm(Font):
     pass
 

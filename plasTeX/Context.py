@@ -110,6 +110,15 @@ class Context(object):
         if load:
             self.loadBaseMacros()
 
+    def isMathMode(self):
+        """ Are we in math mode or not? """
+        for i in range(len(self.contexts)-1, -1, -1):
+            obj = self.contexts[i].obj
+            if obj is not None and obj.mathMode is not None:
+                return obj.mathMode
+        return False
+    isMathMode = property(isMathMode)
+
     def loadBaseMacros(self):
         """ Import all builtin macros """
         from plasTeX import Base

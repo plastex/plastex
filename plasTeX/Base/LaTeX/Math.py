@@ -15,7 +15,7 @@ from plasTeX.Logging import getLogger
 #
 
 class MathEnvironment(Environment):
-    pass
+    mathMode = True
 
 # Need \newcommand\({\begin{math}} and \newcommand\){\end{math}}
 
@@ -40,6 +40,7 @@ class BeginDisplayMath(Command):
     def invoke(self, tex):
         o = displaymath()
         o.macroMode = Command.MODE_BEGIN
+        tex.context.push(o)
         return [o]
 
 class EndDisplayMath(Command):
@@ -47,16 +48,33 @@ class EndDisplayMath(Command):
     def invoke(self, tex):
         o = displaymath()
         o.macroMode = Command.MODE_END
+        tex.context.pop(o)
+        return [o]
+
+class BeginMath(Command):
+    macroName = '('
+    def invoke(self, tex):
+        o = math()
+        o.macroMode = Command.MODE_BEGIN
+        tex.context.push(o)
+        return [o]
+
+class EndMath(Command):
+    macroName = ')'
+    def invoke(self, tex):
+        o = math()
+        o.macroMode = Command.MODE_END
+        tex.context.pop(o)
         return [o]
 
 class ensuremath(Command):
-    args = 'text'
+    args = 'self'
 
 class equation(MathEnvironment):
     counter = 'equation'
 
 class eqnarray(Array):
-    pass
+    mathMode = True
 
 class EqnarrayStar(eqnarray): 
     macroName = 'eqnarray*'
@@ -65,7 +83,7 @@ class nonumber(Command):
     pass
 
 class lefteqn(Command):
-    args = 'text'
+    args = 'self'
 
 #
 # Style Parameters
@@ -102,7 +120,7 @@ class frac(Command):
     args = 'numer denom'
 
 class sqrt(Command):
-    args = '[ n ] text'
+    args = '[ n ] self'
 
 class ldots(Command): 
     pass
@@ -365,7 +383,7 @@ class Logarithm(MathSymbol):
     macroName = 'log'
 class bmod(MathSymbol): pass
 class pmod(MathSymbol):
-    args = 'text'
+    args = 'self'
 class arccos(MathSymbol): pass
 class arcsin(MathSymbol): pass
 class arctan(MathSymbol): pass
@@ -480,21 +498,21 @@ class sqrt(Command):
 #
 
 class overline(Command):
-    args = 'text'
+    args = 'self'
 
 class underline(Command):
-    args = 'text'
+    args = 'self'
 
 class overbrace(Command):
-    args = 'text'
+    args = 'self'
 
 class underbrace(Command):
-    args = 'text'
+    args = 'self'
 
 # Accents
 
 class MathAccent(Command):
-    args = 'text'
+    args = 'self'
 
 class hat(MathAccent): pass
 class check(MathAccent): pass
@@ -537,22 +555,22 @@ class ThickSpace(Command):
 # Type Style
 
 class mathrm(Command):
-    args = 'text'
+    args = 'self'
 
 class mathit(Command):
-    args = 'text'
+    args = 'self'
 
 class mathbf(Command):
-    args = 'text'
+    args = 'self'
 
 class mathsf(Command):
-    args = 'text'
+    args = 'self'
 
 class mathtt(Command):
-    args = 'text'
+    args = 'self'
 
 class mathcal(Command):
-    args = 'text'
+    args = 'self'
 
 class boldmath(Command):
     pass

@@ -95,6 +95,7 @@ class Macro(Element):
     macroName = None        # TeX macro name (instead of class name)
     macroMode = MODE_NONE   # begin, end, or none
     categories = None       # category codes local to this macro
+    mathMode = None
 
     # Node variables
     level = Node.COMMAND_LEVEL
@@ -109,7 +110,7 @@ class Macro(Element):
 
     # Element that this element links to (i.e. args = 'label:idref')
     # Only one idref attribute is allowed in the args string
-    idrefs = None
+    idref = None
 
     # Source of the TeX macro arguments
     argsource = ''
@@ -259,8 +260,10 @@ class Macro(Element):
         if self.macroMode == Macro.MODE_END:
             return
 
-        # args is empty, don't do anything
+        # args is empty, don't parse
         if not self.args:
+            self.resolve(tex)
+            self.postparse(tex)
             return
 
         self.argsource = ''
@@ -527,7 +530,12 @@ class Environment(Macro):
         if self.macroMode == Macro.MODE_END:
             return
         # Absorb the tokens that belong to us
+        dopars = False
         for item in tokens:
+            if item.level == Node.PAR_LEVEL:
+                self.appendChild(item)
+                dopars = True
+                continue
             if item.level < self.level:
                 tokens.push(item)
                 break
@@ -540,6 +548,8 @@ class Environment(Macro):
                 tokens.push(item)
                 break
             self.appendChild(item)
+        if dopars:
+            self.paragraphs()
 
 class StringCommand(Command):
     """ 

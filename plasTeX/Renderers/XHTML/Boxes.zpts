@@ -1,0 +1,18 @@
+name: mbox makebox
+<span class="mbox" tal:attributes="style string:${self/attributes/width}" tal:content="self">make box</span>
+
+name: fbox framebox
+<span class="fbox" tal:attributes="style string:${self/attributes/width}" tal:content="self">frame box</span>
+
+name: parbox
+<span class="parbox" tal:attributes="style string:${self/attributes/width}" tal:content="self">par box</span>
+
+name: minipage
+<div class="minipage" tal:attributes="style string:${self/attributes/width}" tal:content="self">minipage</div>
+
+name: raisebox
+<img tal:attributes="src self/image/filename; alt self/source" width="#width" height="#height" class="#depth" alt="raisebox" />
+
+name: rule
+<img tal:attributes="src self/image/filename; alt self/source" width="#width" height="#height" class="#depth" alt="rule" />
+

@@ -1,6 +1,0 @@
-<dl>
-<metal:block tal:repeat="item self">
-    <dt tal:content="structure item/attributes/term"></dt>
-    <dd tal:content="structure item"></dd>
-</metal:block>
-</dl>

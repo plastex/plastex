@@ -1,0 +1,8 @@
+name: figure figure*
+<div class="figure" tal:content="self">figure</div>
+
+name: table table*
+<div class="table" tal:content="self">table</div>
+
+name: marginpar
+<p class="marginpar" tal:content="self/attributes/right">margin par</p>

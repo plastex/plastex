@@ -145,10 +145,10 @@ class NewCommands(TestCase):
         s = TeX(r"\def\row#1{(#1_1,\ldots,#1_n)}\row{{x'}}")
         output = [x for x in s]
         text = [x for x in output if x.nodeType == Node.TEXT_NODE]
-        assert text == list('(x\',,x\')'), text
+        assert text == list('(x\'_1,,x\'_n)'), text
         assert output[0].nodeName == 'def'
-        assert output[6].nodeName == 'active::_'
-        assert output[8].nodeName == 'ldots'
+        assert output[6] == '_'
+        assert output[9].nodeName == 'ldots'
 
     def testDef3(self):
         s = TeX(r'\def\foo#1#2{:#1:#2:}\foo x y')

@@ -1,0 +1,11 @@
+name: center centering centerline
+<center tal:content="self">centered text</center>
+
+name: flushleft raggedright leftline
+<div class="flushleft" tal:content="self">left-aligned text</div>
+
+name: raggedleft flushright llap
+<div class="flushright" tal:content="self">right-aligned text</div>
+
+name: raggedbottom
+<div class="raggedbottom" tal:content="self">bottom-aligned text</div>

@@ -11,13 +11,13 @@ from plasTeX.Logging import getLogger
 
 
 class footnote(Command):
-    args = '[ num:int ] text'
+    args = '[ num:int ] self'
 
 class footnotemark(Command):
     args = '[ num:int ]'
 
 class footnotetext(Command):
-    args = '[ num:int ] text'
+    args = '[ num:int ] self'
 
 
 #

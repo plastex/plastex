@@ -1,0 +1,12 @@
+name: thebibliography
+type: xml
+<dt>
+<metal:block tal:repeat="item self">
+<dt tal:content="self/attributes/label">label</dt>
+<dd tal:content="self">information</dd>
+</metal:block>
+</dt>
+
+name: cite
+<span class="cite" tal:content="self/attributes/key">citation</span>
+

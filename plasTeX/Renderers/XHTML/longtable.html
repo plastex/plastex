@@ -1,9 +1,0 @@
-<table cellspacing="0" cellpadding="3">
-<tr tal:repeat="row self">
-    <td tal:repeat="cell row" 
-        tal:attributes="style cell/style/inline; 
-                        colspan cell/attributes/colspan"
-        tal:content="cell">
-    </td>
-</tr>
-</table>

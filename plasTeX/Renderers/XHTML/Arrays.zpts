@@ -1,0 +1,18 @@
+name: tabular array tabular* longtable tabularx
+type: xml
+<table class="tabular" cellspacing="0">
+<tr tal:repeat="row self">
+<metal:block tal:repeat="cell row">
+    <th tal:condition="cell/isheader"
+        tal:attributes="style cell/style/inline; 
+                        colspan cell/attributes/colspan"
+        tal:content="cell">
+    </th>
+    <td tal:condition="not:cell/isheader"
+        tal:attributes="style cell/style/inline; 
+                        colspan cell/attributes/colspan"
+        tal:content="cell">
+    </td>
+</metal:block>
+</tr>
+</table>

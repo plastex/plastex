@@ -1,2 +1,0 @@
-name: citetitle
-<a tal:attributes="href self/url" tal:content="self"></a>

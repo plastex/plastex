@@ -71,8 +71,8 @@ class maxdimen(Dimen):
 class hideskip(Glue):
     value = glue('-1000pt plus 1fill')
 
-class centering(Glue):
-    value = glue('0pt plus 1000pt minus 1000pt')
+#class centering(Glue):
+#    value = glue('0pt plus 1000pt minus 1000pt')
 
 class newif(Command):
     args = 'name:cs'

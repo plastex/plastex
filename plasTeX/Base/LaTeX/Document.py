@@ -11,10 +11,11 @@ from Sectioning import SectionUtils
 class document(Environment, SectionUtils):
     level = Environment.DOCUMENT_LEVEL
 
-    def digest(self, tex):
-        Environment.digest(self, tex)
+    def digest(self, tokens):
+        Environment.digest(self, tokens)
         self.paragraphs()
-        self.attributes['title'] = self.ownerDocument.userdata['title']
+        for key, value in self.ownerDocument.userdata.items():
+            self.attributes[key] = value
 
 class AtEndDocument(Command):
     args = 'commands:nox'

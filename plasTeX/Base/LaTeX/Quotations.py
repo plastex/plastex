@@ -9,11 +9,11 @@ from plasTeX import Command, Environment
 from plasTeX.Logging import getLogger
 
 
-class quote(Command):
+class quote(Environment): 
     pass
 
-class quotation(Command):
+class quotation(Environment):
     pass
 
-class verse(Command):
+class verse(Environment):
     pass

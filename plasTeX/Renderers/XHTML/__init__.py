@@ -3,23 +3,62 @@
 import sys, os, re, codecs
 from plasTeX.Config import config
 from plasTeX.Renderer import Renderer
-from plasTeX.TALUtils import htmltemplate, xmltemplate
+from simpletal import simpleTAL, simpleTALES
+from simpletal.simpleTALES import Context as TALContext
+from simpletal.simpleTALUtils import FastStringOutput as StringIO
 
 encoding = config['encoding']['output']
 
-class htmlunicode(unicode):
-    """ Helper for strings output from renderer """
+def _render(self, obj, outputFile=None, outputEncoding=encoding, interpreter=None):
+    """ New rendering method for HTML templates """
+    output = outputFile
+    if obj.filename or outputFile is None:
+        output = StringIO()
+    context = TALContext(allowPythonPath=1)
+    context.addGlobal('here', obj)
+    context.addGlobal('self', obj)
+    context.addGlobal('config', config)
+    context.addGlobal('template', self)
+    context.addGlobal('templates', obj.renderer)
+    self.expand(context, output, outputEncoding, interpreter)
+    if obj.filename:
+        obj.renderer.write(obj.filename, output.getvalue())
+        return u''
+    else:
+        return output.getvalue()
+simpleTAL.HTMLTemplate.__call__ = _render
 
-    def plaintext(self):
-        """ Strip markup from string """
-        return type(self)(re.sub(r'</?\w+[^>]*>', r'', self))
+def _render(self, obj, outputFile=None, outputEncoding=encoding, docType=None, suppressXMLDeclaration=1, interpreter=None):
+    """ New rendering method for XML templates """
+    output = outputFile
+    if obj.filename or outputFile is None:
+        output = StringIO()
+    context = TALContext(allowPythonPath=1)
+    context.addGlobal('here', obj)
+    context.addGlobal('self', obj)
+    context.addGlobal('config', config)
+    context.addGlobal('template', self)
+    context.addGlobal('templates', obj.renderer)
+    self.expand(context, output, outputEncoding, docType, suppressXMLDeclaration, interpreter)
+    if obj.filename:
+        obj.renderer.write(obj.filename, output.getvalue())
+        return u''
+    else:
+        return output.getvalue()
+simpleTAL.XMLTemplate.__call__ = _render
 
+# shortcuts
+htmltemplate = simpleTAL.compileHTMLTemplate
+xmltemplate = simpleTAL.compileXMLTemplate
 
 class XHTML(Renderer):
 
-    outputtype = htmlunicode
+    outputtype = unicode
 
     entitysubs = [ 
+#       ('&', '&amp;'),
+#       ('<', '&lt;'),
+#       ('>', '&gt;'),
         # Pretty quotation marks
         ('``', '&#8220;'),
         ("''", '&#8221;'),
@@ -33,9 +72,10 @@ class XHTML(Renderer):
 
     def default(self, s):
         """ Default renderer """
-        s = unicode(s)
-        for before, after in type(self).entitysubs:
-            s = s.replace(before, after)
+        if isinstance(s, unicode):
+            for before, after in type(self).entitysubs:
+                s = s.replace(before, after)
+            return s
         return unicode(s)
 
     def cleanup(self):
@@ -49,6 +89,9 @@ class XHTML(Renderer):
             
             # Add width, height, and depth to images
             s = re.compile(r'<img\b[^>]+>', re.I).sub(self.setImageData, s) 
+
+            # Force XHTML syntax on empty tags
+            s = re.compile(r'(<(?:br|img|link|meta)\b[^>]*)/?(>)', re.I).sub(r'\1 /\2', s)
 
             open(file, 'w').write(unicode.encode(s, encoding)) 
 
@@ -92,7 +135,10 @@ class XHTML(Renderer):
         img = self.imager.images[src]
         tag = tag.replace('#width', str(img.width))
         tag = tag.replace('#height', str(img.height))
-        tag = tag.replace('#depth', ('voffset%s' % img.depth).replace('-','_'))
+        if img.depth >= 0:
+            tag = tag.replace('#depth', ('raise%s' % img.depth))
+        else:
+            tag = tag.replace('#depth', ('lower%s' % -img.depth))
 
         return tag
 
@@ -123,7 +169,7 @@ class XHTML(Renderer):
                     continue
 
                 options = {'name':basename}
-                if ext.lower() in ['.xml']:
+                if ext.lower() in ['.xml','.xhtml','.xhtm']:
                     options['type'] = 'xml'
                 elif ext.lower() in ['.zpt','.html','.htm']:
                     options['type'] = 'html'
@@ -134,10 +180,13 @@ class XHTML(Renderer):
 
     def setTemplate(self, template, options):
         """ Compile template and set it in the renderer """
-        names = options.get('name','').split()
 
-        # No name found
-        if not names:
+        # Get name
+        try:
+            names = options['name'].split()
+            if not names:
+                names = [' ']
+        except KeyError:
             raise ValueError, 'No name given for template'
 
         # Compile template and add it to the renderer
@@ -184,7 +233,8 @@ class XHTML(Renderer):
                     template = []
 
                 # Done purging previous template, start a new one
-                name, value = line.split(' ', 1)
+                name, value = line.split(':', 1)
+                name = name.strip()
                 value = value.rstrip()
                 while value.endswith('\\'):
                     value = value[:-1] + ' '
@@ -192,7 +242,7 @@ class XHTML(Renderer):
                         value += line.rstrip()
                         break
 
-                options[name[:-1]] = re.sub(r'\s+', r' ', value.strip())
+                options[name] = re.sub(r'\s+', r' ', value.strip())
                 continue
             
             template.append(line)
