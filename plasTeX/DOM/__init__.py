@@ -524,6 +524,9 @@ def xmlstr(obj):
     else:
         return str(obj)
 
+import codecs
+debug = codecs.open('debug.log', 'w', 'utf-8')
+
 class Node(object):
     """
     Node
@@ -597,11 +600,18 @@ class Node(object):
     render = unicode
     style = None
 
-    def __str__(self):
+    def __unicode__(self):
         s = []
         for child in self.childNodes:
-            s.append(type(child).render(child))
+            val = type(child).render(child)
+            if type(val) is unicode:
+                s.append(val)
+            else:
+                s.append(unicode(val,'utf-8'))
         return u''.join(s)
+
+    def __str__(self):
+        return unicode(self)
 
     def image(self):
         return self.renderer.imager.newimage(self.source)
@@ -629,6 +639,7 @@ class Node(object):
         # Remap name into valid XML tag name
         name = self.nodeName
         name = name.replace('@','-')
+        name = name.replace('#','dom-')
 
         modifier = ''
         if '::' in name:
@@ -1508,6 +1519,12 @@ class CharacterData(unicode, Node):
 
     def __getitem__(self, i):
         return unicode(self)[i]
+
+    def __str__(self):
+        return self
+
+    def __unicode__(self):
+        return self
 
 class Text(CharacterData):
     """

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys, os, re
+import sys, os, re, codecs
 from plasTeX.Renderer import Renderer
 from plasTeX.TALUtils import htmltemplate, xmltemplate
 
@@ -9,6 +9,8 @@ templatere = re.compile(r'(<zpt:page-template\s+[^>]+>.*?</zpt:page-template>)',
 attrsre = re.compile(r'<zpt:page-template\s+([^>]+)?\s*>')
 parseattrsre = re.compile(r'\s*(\w+)\s*=\s*["\']([^"\']+)?["\']')
 contentre = re.compile(r'<zpt:page-template\s+[^>]+>(.*?)</zpt:page-template>', re.S)
+
+encoding = 'ISO-8859-1'
 
 class XHTML(Renderer):
     
@@ -29,7 +31,7 @@ class XHTML(Renderer):
 
                 # Multi-zpt files
                 if ext.lower() == '.zpts':
-                    content = open(file,'r').read().strip()
+                    content = codecs.open(file,'r').read().strip()
                     templates = templatere.split(content)
                     templates.pop()
                     while templates:
@@ -63,13 +65,13 @@ class XHTML(Renderer):
 
                 # Single zpt files
                 if ext.lower() in ['.zpt','.html','.htm']:
-                    content = open(file,'r').read().strip()
+                    content = codecs.open(file,'r').read().strip()
                     key = os.path.splitext(os.path.basename(file))[0]
                     self[key] = htmltemplate(content) 
 
                 # XML formatted zpt files
                 elif ext.lower() == '.xml':
-                    content = open(file,'r').read().strip()
+                    content = codecs.open(file,'r').read().strip()
                     key = os.path.splitext(os.path.basename(file))[0]
                     self[key] = xmltemplate(content) 
 

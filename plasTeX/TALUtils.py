@@ -2,8 +2,10 @@
 
 from simpletal import simpleTAL, simpleTALES
 from simpletal.simpleTALES import Context as TALContext
-try: from cStringIO import StringIO
-except: from StringIO import StringIO
+#try: from cStringIO import StringIO
+#except: from StringIO import StringIO
+#from StringIO import StringIO
+from simpletal.simpleTALUtils import FastStringOutput as StringIO
 
 __all__ = ['htmltemplate', 'xmltemplate']
 
@@ -21,8 +23,9 @@ def _render(self, obj, outputFile=None, outputEncoding=encoding, interpreter=Non
 #   context.addGlobal('renderer', type(obj).context.renderer)
     self.expand(context, output, outputEncoding, interpreter)
     if output is not None:
-        output.seek(0)
-        return output.read()
+        return output.getvalue()
+#       output.seek(0)
+#       return output.read()
 simpleTAL.HTMLTemplate.__call__ = _render
 del _render
 
@@ -38,8 +41,9 @@ def _render(self, obj, outputFile=None, outputEncoding=encoding, docType=None, s
 #   context.addGlobal('renderer', type(obj).context.renderer)
     self.expand(context, output, outputEncoding, docType, suppressXMLDeclaration, interpreter)
     if output is not None:
-        output.seek(0)
-        return output.read()
+        return output.getvalue()
+#       output.seek(0)
+#       return output.read()
 simpleTAL.XMLTemplate.__call__ = _render
 del _render
 

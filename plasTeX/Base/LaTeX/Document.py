@@ -9,3 +9,7 @@ from plasTeX import Command, Environment
 
 class document(Environment):
     level = Environment.DOCUMENT_LEVEL
+
+    def digest(self, tex):
+        Environment.digest(self, tex)
+        self.paragraphs()

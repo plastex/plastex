@@ -34,6 +34,6 @@ s.context.applyRenderer(renderer)
 
 # Render output
 outfile = '%s.html' % basename
-codecs.open(outfile,'w',encoding).write(str(document))
+codecs.open(outfile,'w',encoding).write(unicode(document))
 
 renderer.imager.close()

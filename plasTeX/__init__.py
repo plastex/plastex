@@ -88,7 +88,7 @@ class CSSStyles(dict):
         """
         if not self:
             return None      
-        return '; '.join(['%s:%s' % (x[0],x[1]) for x in self.items()])
+        return u'; '.join([u'%s:%s' % (x[0],x[1]) for x in self.items()])
     inline = property(inline)
 
 class Macro(Element):
@@ -210,8 +210,11 @@ class Macro(Element):
         s = '%s%s%s' % (escape, name, argsource)
 
         # If self.childNodes is not empty, print out the contents
-        if self.childNodes:
-            s += sourcechildren(self)
+        if self.attributes and self.attributes.has_key('self'):
+            pass
+        else:
+            if self.childNodes:
+                s += sourcechildren(self)
         return s
 
     source = property(source)
@@ -381,6 +384,10 @@ class Macro(Element):
             self.appendChild(tok)
         
     def paragraphs(self):
+        """
+        Group content into paragraphs
+
+        """
         parclass = None
         contentstart = None
         currentpar = None
@@ -420,6 +427,19 @@ class Macro(Element):
         if contentstart is not None and currentpar is not None:
             for j in range(contentstart, -1, -1):
                 currentpar.insert(0, self.pop(j))
+
+        try:
+            first = self[0]
+            if first.nodeType == Node.ELEMENT_NODE and first.nodeName == 'par':
+                whitespace = True
+                for item in first:
+                    if item.isElementContentWhitespace:
+                        continue
+                    whitespace = False
+                    break
+                if whitespace:
+                    self.pop(0)
+        except IndexError: pass 
 
 
 class TeXFragment(DocumentFragment):
@@ -651,7 +671,7 @@ class number(int):
         return int.__new__(cls, v)
 
     def source(self):
-        return str(self)
+        return unicode(self)
     source = property(source)
 
 class count(number): pass
@@ -716,11 +736,11 @@ class dimen(float):
         if self < 0:
             sign = -1
         if abs(self) >= 6e9:
-            return str(sign * (abs(self)-6e9)) + 'filll'
+            return unicode(sign * (abs(self)-6e9)) + 'filll'
         if abs(self) >= 4e9:
-            return str(sign * (abs(self)-4e9)) + 'fill'
+            return unicode(sign * (abs(self)-4e9)) + 'fill'
         if abs(self) >= 2e9:
-            return str(sign * (abs(self)-2e9)) + 'fil'
+            return unicode(sign * (abs(self)-2e9)) + 'fil'
         return '%spt' % self.pt
     source = property(source)
 
