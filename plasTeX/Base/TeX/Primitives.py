@@ -37,7 +37,7 @@ class par(Command):
         status.dot()
 
     def source(self): 
-        if self.childNodes:
+        if self.hasChildNodes():
             return '%s\n\n' % sourcechildren(self)
         return '\n\n'
     source = property(source)
@@ -46,7 +46,7 @@ class par(Command):
         return
 
     def isElementContentWhitespace(self):
-        if not self.childNodes:
+        if not self.hasChildNodes():
             return True
         return False
     isElementContentWhitespace = property(isElementContentWhitespace)

@@ -21,14 +21,14 @@ class MathEnvironment(Environment):
 
 class math(MathEnvironment): 
     def source(self): 
-        if self.childNodes:
+        if self.hasChildNodes():
             return '$%s$' % sourcechildren(self)
         return '$'
     source = property(source)
 
 class displaymath(MathEnvironment):
     def source(self):
-        if self.childNodes:
+        if self.hasChildNodes():
             return r'\[ %s \]' % sourcechildren(self)
         if self.macroMode == Command.MODE_END:
             return r'\]'

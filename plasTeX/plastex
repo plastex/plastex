@@ -32,11 +32,11 @@ codecs.open(outfile,'w',outencoding).write(document.toXML())
 
 # Apply renderer
 from plasTeX.renderers.xhtml import xhtml as renderer
-s.context.applyRenderer(renderer)
+renderer.applyto(s.context)
 
 # Render output
 #outfile = '%s.html' % basename
 #codecs.open(outfile,'w',outencoding).write(unicode(document))
-unicode(document)
+print unicode(document)
 
 renderer.imager.close()

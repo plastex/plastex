@@ -52,7 +52,7 @@ class bgroup(Command):
             self.appendChild(item)
 
     def source(self):
-        if self.childNodes:
+        if self.hasChildNodes():
             return '{%s}' % sourcechildren(self)
         return '{'
     source = property(source)

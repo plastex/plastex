@@ -259,7 +259,8 @@ class TeX(object):
         tokens = bufferediter(self)
         output = TeXFragment()
         for item in tokens:
-            item.digest(tokens)
+            if item.nodeType == Macro.ELEMENT_NODE:
+                item.digest(tokens)
             output.append(item)
 
         return output
@@ -275,7 +276,8 @@ class TeX(object):
         tokens = bufferediter(self)
         output = TeXDocument()
         for item in tokens:
-            item.digest(tokens)
+            if item.nodeType == Macro.ELEMENT_NODE:
+                item.digest(tokens)
             output.append(item)
         return output
 

@@ -23,7 +23,7 @@ def subclasses(o):
     return output
 
 def sourcechildren(o): 
-    if o.childNodes:
+    if o.hasChildNodes():
         return u''.join([x.source for x in o.childNodes])
     return u''
 
@@ -43,46 +43,6 @@ def macroname(o):
          return type(o).__name__
      return o.macroName
 
-from Config import config
-def filenames():
-    # Get the template and extension for output filenames
-    ext = config['filenames']['extension']
-    template = config['filenames'].get('template', raw=True) + ext
-
-    # Return the index filename on the first pass
-    yield config['filenames'].get('index', raw=True) + ext
-
-    # Generate new filenames
-    v = {'num':1}
-    while 1:
-        yield template % v
-        v['num'] += 1
-filenames = filenames()
-
-class cachedproperty(object):
-    """ Property that caches it's value for subsequent calls """
-    def __init__(self, func, mode='w', cachedname='@%s'):
-        self._func = func
-        self._name = cachedname % func.func_name
-        self._func_name = func.func_name
-        self._readonly = 'w' not in mode
-    def __set__(self, obj, value):
-        if self._readonly:
-            raise AttributeError, 'can\'t set attribute "%s"' % self._func_name
-        setattr(obj, self._name)
-    def __delete__(self, obj):
-        if self._readonly:
-            raise AttributeError, 'can\'t delete attribute "%s"' % self._func_name
-        delattr(obj, self._name)
-    def __get__(self, obj, type=None):
-        if obj is None:
-            return self
-        try:
-            value = getattr(obj, self._name)
-        except AttributeError:
-            value = self._func(obj)
-            setattr(obj, self._name, value)
-        return value
 
 class Argument(object):
     """ 
@@ -122,6 +82,7 @@ class CSSStyles(dict):
         return u'; '.join([u'%s:%s' % (x[0],x[1]) for x in self.items()])
     inline = property(inline)
 
+
 class Macro(Element):
     """
     Base class for all macros
@@ -149,29 +110,17 @@ class Macro(Element):
     # Source of the TeX macro arguments
     argsource = ''
 
-    def __init__(self, *args, **kwargs):
-        Element.__init__(self, *args, **kwargs)
-        self.style = CSSStyles()
-
-    def url(self):
-        if self.filename:
-            return self.filename
-        return '%s#%s' % (self.filename, self.id)
-    url = property(url)
-
-    def filename(self):
+    def style(self):
         try:
-            return getattr(self, '@filename')
-        except:
-            if self.level > 10:
-                filename = None
-            if self.id == id(self):
-                filename = filenames.next()
-            else:
-                filename = '%s.html' % self.id
-            setattr(self, '@filename', filename)
-        return filename
-    filename = property(filename)
+            return getattr(self, '@style')
+        except AttributeError:
+            style = CSSStyles()
+            setattr(self, '@style', style)
+        return style
+    style = property(style)
+
+    def digest(self, tokens):
+        pass
 
     def locals(self):
         """ Retrieve all macros local to this namespace """
@@ -247,7 +196,7 @@ class Macro(Element):
             if not argsource: 
                 argsource = ' '
             s = '%sbegin{%s}%s' % (escape, name, argsource)
-            if self.childNodes:
+            if self.hasChildNodes():
                 s += '%s%send{%s}' % (sourcechildren(self), escape, name)
             return s
 
@@ -264,7 +213,7 @@ class Macro(Element):
         if self.attributes and self.attributes.has_key('self'):
             pass
         else:
-            if self.childNodes:
+            if self.hasChildNodes():
                 s += sourcechildren(self)
         return s
 

@@ -76,6 +76,9 @@ class Context(object):
 
     """
 
+    def globals(self):
+        return self.contexts[0]
+
     def __init__(self, load=False):
         # Stack of ContextItems
         self.contexts = []
@@ -230,12 +233,6 @@ class Context(object):
                 self[macroname(value)] = value
             elif isinstance(value, Context):
                 self.importMacros(value)
-
-    def applyRenderer(self, renderer):
-        plasTeX.Macro.renderer = renderer
-        macros = self.contexts[0]
-        for key, value in macros.items():
-            value.render = renderer.get(key, value.render) 
 
     def pop(self, obj=None):
         """ 

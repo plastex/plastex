@@ -9,8 +9,8 @@ from plasTeX import Command, Environment
 from plasTeX import Dimen, Glue, MuGlue, MuDimen
 from plasTeX import dimen, glue, muglue, mudimen
 
-class dimen(Command):
-    pass
+class dimen_(Command):
+    macroName = 'dimen'
 
 class toks(Command):
     pass

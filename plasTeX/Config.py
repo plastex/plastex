@@ -71,7 +71,7 @@ files['extension'] = StringOption(
     default = '.html',
 )
 
-files['use-ids'] = StringOption(
+files['use-ids'] = BooleanOption(
     """ Use IDs (i.e. \\label{...}) as filename """,
     options = '--use-id-filenames',
     default = True,
