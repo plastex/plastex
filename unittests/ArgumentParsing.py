@@ -109,18 +109,18 @@ class ArgumentParsing(TestCase):
 
     def testTokenArgument(self):
         s = TeX(r'\foo a ')
-        arg = s.getArgument(type='tok')
+        arg = s.getArgument(type='Tok')
         assert arg == 'foo'
-        arg = s.getArgument(type='tok')
+        arg = s.getArgument(type='Tok')
         assert arg == 'a'
 
     def testXTokenArgument(self):
         s = TeX(r'\newcommand{\foo}{\it}')
         [x for x in s]
         s.input(r'\foo a ')
-        arg = s.getArgument(type='xtok')
+        arg = s.getArgument(type='XTok')
         assert arg.nodeName == 'it', arg.nodeName
-        arg = s.getArgument(type='xtok')
+        arg = s.getArgument(type='XTok')
         assert arg == 'a', arg
 
 if __name__ == '__main__':

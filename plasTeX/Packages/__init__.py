@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from array import *
-from crossref import *
 from formatting import *
 from lists import *
 from verbatim import *

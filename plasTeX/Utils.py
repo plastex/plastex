@@ -12,6 +12,7 @@ def sourcearguments(o):
     return o.argsource
 
 def ismacro(o): 
+#   return getattr(o,'nodeType',-1) == Node.ELEMENT_NODE
     return hasattr(o, 'macroName')
 
 def issection(o): 

@@ -69,6 +69,16 @@ class Macro(Element, RenderMixIn):
     nodeType = Node.ELEMENT_NODE
     nodeValue = None
 
+    # Should this macro set currentlabel in the context? 
+    labelable = False
+
+    # Counter associated with this macro
+    counter = None
+
+    # Value to return when macro is referred to by \ref
+    ref = None
+
+    # Source of the TeX macro arguments
     argsource = ''
 
     def __init__(self, *args, **kwargs):
@@ -78,8 +88,8 @@ class Macro(Element, RenderMixIn):
     def locals(self):
         """ Retrieve all macros local to this namespace """
         tself = type(self)
-        if hasattr(tself, '__locals'):
-            return tself.__locals
+        if hasattr(tself, '@locals'):
+            return getattr(tself, '@locals')
         mro = list(tself.__mro__)
         mro.reverse()
         locals = {}
@@ -87,13 +97,17 @@ class Macro(Element, RenderMixIn):
             for value in vars(cls).values():
                 if ismacro(value):
                     locals[macroname(value)] = value
-        tself.__locals = locals
+        setattr(tself, '@locals', locals)
         return locals
     locals = property(locals)
 
-    def id(self):
-        return id(self)
-    id = property(id)
+    def id():
+        def fset(self, value):
+            setattr(self, '@id', value)
+        def fget(self):
+            return getattr(self, '@id', id(self))
+        return locals()
+    id = property(**id())
 
     def invoke(self, tex):
         # Just pop the context if this is a \end token
@@ -165,10 +179,31 @@ class Macro(Element, RenderMixIn):
         if self.macroMode == Macro.MODE_END:
             return
         self.argsource = ''
-        for arg in self.arguments:
+        for i, arg in enumerate(self.arguments):
             output, source = tex.getArgumentAndSource(**arg.options)
+            # Check for a '*' type argument at the beginning of the
+            # argument list.  If there is one, don't increment counters
+            # or set labels.  This must be done immediately since
+            # the following arguments may contain labels.
+            if i == 0:
+                if not(arg.name == '*modifier*' and output is None):
+                    self.resolve(tex)
             self.argsource += source
             self.attributes[arg.name] = output
+
+    def resolve(self, tex):
+        """
+        Set macro up for labelling, increment counters, etc.
+
+        Required Arguments:
+        tex -- the TeX instance containing the current context
+
+        """
+        if self.labelable:
+            tex.context.currentlabel = self
+        if self.counter:
+            tex.context.counters[self.counter] += 1
+            self.ref = tex.context.counters[self.counter]
 
     def arguments(self):
         """ 
@@ -528,71 +563,15 @@ class Definition(Macro):
         return expanddef(self.definition, params)
 
 
-class Counter(Macro):
+class Counter(int):
     """ Base class for all LaTeX counters """
 
     resetby = None
-    number = 0
-
-    def __init__(self, number):
-        type(self).number = int(number)
-
-    def __int__(self):
-        return type(self).number
-
-    def __float__(self):
-        return float(type(self).number)
-
-    def __str__(self):
-        return str(type(self).number)
-
-    def __add__(self, other):
-        return type(self)(int(self) + other)
-
-    def __iadd__(self, other):
-        type(self).number += other
-
-    def __sub__(self, other):
-        return type(self)(int(self) - other)
-
-    def __isub__(self, other):
-        type(self).number -= other
-
-    def __mul__(self, other):
-        return type(self)(int(self) * other)
-
-    def __imul__(self, other):
-        type(self).number *= other
-
-    def __div__(self, other):
-        return type(self)(int(self) / other)
-
-    def __idiv__(self, other):
-        type(self).number /= other
-
-    def resetcounters(self):
-        reset = [x for x in type(self).context.counters.values()
-                         if x.resetby == type(self).__name__] 
-        for counter in reset:
-            counter.setcounter(0)
-            counter.resetcounters()
-
-    def stepcounter(self):
-        type(self).number += 1
-        self.resetcounters()
-
-    def setcounter(self, number):
-        type(self).number = int(number)
-
-    def addtocounter(self, number):
-        type(self).number += int(number)
-
-    def refstepcounter(self):
-        self.stepcounter()
 
     def arabic(self):
         """ Return arabic representation """
         return str(int(self))
+    arabic = property(arabic)
 
     def Roman(self):
         """ Return uppercase roman representation """
@@ -636,22 +615,27 @@ class Counter(Macro):
             roman = roman + "I"
             number = number - 1
         return roman
+    Roman = property(Roman)
 
     def roman(self):
         """ Return the lowercase roman representation """
         return self.Roman.lower()
+    roman = property(roman)
 
     def Alph(self):
         """ Return the uppercase letter representation """
         return string.uppercase[int(self)-1]
+    Alph = property(Alph)
 
     def alph(self):
         """ Return the lowercase letter representation """
         return string.lowercase[int(self)-1]
+    alph = property(alph)
 
     def fnsymbol(self):
         """ Return the symbol representation """
         return '*'
+    fnsymbol = property(fnsymbol)
 
 class TheCounter(Macro):
     """ Base class for counter formats """
@@ -784,7 +768,7 @@ class Dimen(float, Macro):
         raise ValueError, 'This is not a fil(ll) dimension'
     fil = fill = filll = property(fill)
 
-class Mudimen(Dimen):
+class MuDimen(Dimen):
     units = ['mu']
 
 class Glue(Dimen):
@@ -807,5 +791,5 @@ class Glue(Dimen):
         return ' '.join(s)
     source = property(source)
 
-class Muglue(Glue): 
-    pass
+class MuGlue(Glue): 
+    units = ['mu']

@@ -1,25 +1,25 @@
 #!/usr/bin/env python
 
 from Context import Context
-from array import Array
+from array import tabular
 from plasTeX import Environment, Command, Dimen, Counter, Glue
 
 context = Context()
-context.newglue('LTleft', 0)
-context.newglue('LTright', 0)
-context.newglue('LTpre', 0)
-context.newglue('LTpost', 0)
+context.newskip('LTleft', 0)
+context.newskip('LTright', 0)
+context.newskip('LTpre', 0)
+context.newskip('LTpost', 0)
 context.newdimen('LTchunksize', '4in')
 context.newcounter('LTchunksize', 20)
 
 class setlongtables(Command): pass
 
-class longtable(Array):
+class longtable(tabular):
     args = '[ position:str ] colspec'
 
     class tabularnewline(Command): pass
 
-    class longtableendrow(Array.endrow):
+    class longtableendrow(tabular.endrow):
         args = None
         macroName = None
         digested = False
@@ -27,7 +27,7 @@ class longtable(Array):
             if self.digested:
                 return
 
-            Array.endrow.digest(self, tokens)
+            tabular.endrow.digest(self, tokens)
 
             # Push the instance into the stream a second time.
             # This will be used in longtable.digest() to split out
@@ -52,7 +52,7 @@ class longtable(Array):
         """ Throw-away row used for measurement """
 
     def digest(self, tokens):
-        Array.digest(self, tokens)
+        tabular.digest(self, tokens)
 
         if self.macroMode == self.MODE_END:
             return

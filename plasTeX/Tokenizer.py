@@ -295,7 +295,7 @@ class Tokenizer(object):
         Iterate over tokens in the input stream
 
         Returns:
-        next token in the stream
+        generator that iterates through tokens in the stream
 
         """
         # Cache variables to prevent globol lookups during generator 
@@ -305,6 +305,8 @@ class Tokenizer(object):
         buffer = self._tokbuffer
         chariter = self.iterchars()
         next = chariter.next
+        context = self.context
+        pushchar = self.pushchar
         STATE_N = self.STATE_N
         STATE_M = self.STATE_M
         STATE_S = self.STATE_S
@@ -375,12 +377,12 @@ class Tokenizer(object):
                             if t.catcode == CC_LETTER:
                                 word.append(t) 
                             else:
-                                self.pushchar(t)
+                                pushchar(t)
                                 break
                         token = EscapeSequence(''.join(word))
 
                     elif token.catcode == CC_EOL:
-                        self.pushchar(token)
+                        pushchar(token)
                         token = EscapeSequence()
 
                     else:
@@ -394,7 +396,7 @@ class Tokenizer(object):
                                 continue
                             elif t.catcode == CC_EOL:
                                 continue
-                            self.pushchar(t)
+                            pushchar(t)
                             break
 
                     break
@@ -402,7 +404,7 @@ class Tokenizer(object):
                 else: token = EscapeSequence()
 
                 # Check for any \let aliases
-                token = self.context.lets.get(token, token)
+                token = context.lets.get(token, token)
 
             elif code == CC_COMMENT:
                 self.readline() 

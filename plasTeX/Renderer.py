@@ -58,13 +58,22 @@ class RenderMixIn(object):
         if not name:
             name = 'unknown'
 
-        source = ' source="%s"' % xmlstr(self.source)
+        source = ''
+        #source = ' source="%s"' % xmlstr(self.source)
+
+        ref = ''
+        if self.ref is not None:
+            ref = ' ref="%s"' % xmlstr(self.ref)
+
+        label = ''
+        if self.id != id(self):
+            label = ' id="%s"' % xmlstr(self.id)
 
         # Bail out early if the element is empty
         if not(self.attributes) and not(self.childNodes):
-            return '<%s%s%s/>' % (name, modifier, source)
+            return '<%s%s%s%s%s/>' % (name, modifier, source, ref, label)
 
-        s = ['<%s%s%s>\n' % (name, modifier, source)]
+        s = ['<%s%s%s%s%s>\n' % (name, modifier, source, ref, label)]
             
         # Render attributes
         if self.attributes:

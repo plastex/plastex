@@ -45,6 +45,11 @@ ColumnType.new('d', {'text-align':'right'}, args='delim:str')
 
 class Array(Environment):
 
+    class caption(Command):
+        args = '* [ toc ] title'
+        labelable = True
+        counter = 'table'
+
     class alignmenttab(Command):
         """ Cell delimiter """
         def invoke(self, tex):

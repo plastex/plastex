@@ -21,7 +21,7 @@ from Utils import *
 from Context import Context 
 from Tokenizer import Tokenizer, Token
 from plasTeX import TeXFragment, TeXDocument
-from plasTeX import Macro, Glue, Muglue, Mudimen, Dimen, Number
+from plasTeX import Macro, Glue, MuGlue, MuDimen, Dimen, Number
 from plasTeX.Logging import getLogger, disableLogging
 
 # Only export the TeX class
@@ -31,15 +31,6 @@ log = getLogger()
 tokenlog = getLogger('parse.tokens')
 digestlog = getLogger('parse.digest')
 
-class tokiter(object):
-    """ Token iterator """
-    __slots__ = ['_next']
-    def __init__(self, obj):
-        self._next = obj.nexttok
-    def __iter__(self):
-        return self
-    def next(self):
-        return self._next()
 
 class bufferediter(object):
     """ Buffered iterator """
@@ -87,41 +78,46 @@ class TeX(object):
 
         # TeX arguments types and their casting functions
         self.argtypes = {
-            str: self.castString,
-            int: self.castInteger,
-            float: self.castFloat,
-            list: self.castList,
-            dict: self.castDictionary,
-            'chr': self.castString,
             'int': self.castInteger,
+            int: self.castInteger,
             'float': self.castFloat,
+            float: self.castFloat,
+            'double': self.castFloat,
             'number': self.castFloat,
-            'list': self.castList,
-            'dict': self.castDictionary,
             'str': self.castString,
+            str: self.castString,
             'chr': self.castString,
+            chr: self.castString,
+            'char': self.castString,
+            'length': self.castLength,
+            'dimension': self.castLength,
+            'dimen': self.castLength,
             'cs': self.castControlSequence,
+            'label': self.castLabel,
+            'id': self.castLabel,
+            'idref': self.castRef,
+            'ref': self.castRef,
             'nox': lambda x,**y: x,
+            'list': self.castList,
+            list: self.castList,
+            'dict': self.castDictionary,
+            dict: self.castDictionary,
 
-            # These are handled natively
-#           'args': ...,
-#           'tok': ...,
-#           'xtok': ...,
-#           'dimen': ...,
-#           'number': ...,
-#           'length': ...,
-#           'glue': ...,
-#           'muglue': ...,
-#           'mudimen': ...,
-#           'mulength': ...,
+            # These TeX primitive types are handled natively
+#           'Args': ...,
+#           'Tok': ...,
+#           'XTok': ...,
+#           'Number': ...,
+#           'Dimen': ...,
+#           'MuDimen': ...,
+#           'Length': ...,
+#           'MuLength': ...,
+#           'Glue': ...,
+#           'MuGlue': ...,
         }
 
         # Starting parsing if a source was given
-        if source is not None:
-            self.input(source)
-
-#       self.tokiter = self.itertokens()
-        self.tokiter = tokiter(self)
+        self.input(source)
 
     def input(self, source):
         """
@@ -132,10 +128,18 @@ class TeX(object):
             which contains TeX source, or a list of tokens
 
         """
+        if source is None:
+            return
         self.inputs.append(Tokenizer(source, self.context))
 
     def endinput(self):
-        """ Pop the most recent input source from the stack """
+        """ 
+        Pop the most recent input source from the stack 
+
+        Returns:
+        The top item in the input stack, or None if there isn't one
+
+        """
         self.inputs.pop()
 
     def filename(self):
@@ -156,57 +160,58 @@ class TeX(object):
     disableLogging = classmethod(disableLogging)
 
     def itertokens(self):
-        """
-        Create unexpanded token iterator 
-
-        See Also:
-        self.next()
-
-        """      
-        return self.tokiter
-
-    def nexttok(self):
         """ 
         Iterate over unexpanded tokens
 
         Returns:
-        next unexpanded token in the stream
+        generator that iterates through the unexpanded tokens
 
         """
         # Create locals before going into generator loop
         inputs = self.inputs
-        endinput = self.endinput
         context = self.context
+        endinput = self.endinput
 
         while inputs:
+            # Always get next token from top of input stack
             for t in inputs[-1]:
+                # Save context depth of each token for use in digestion
                 t.contextDepth = context.depth
-                return t
+                yield t
             endinput()
-        raise StopIteration
 
     def __iter__(self):
         """ 
         Iterate over tokens while expanding them 
 
         Returns:
-        next expanded token in the stream
+        generator that iterates through the expanded tokens
 
         """
-        next = self.tokiter.next
+        # Cache variables before starting the generator
+        next = self.itertokens().next
         pushtoken = self.pushtoken
         pushtokens = self.pushtokens
         context = self.context
         ELEMENT_NODE = Node.ELEMENT_NODE
 
         while 1:
+            # Get the next token
             token = next()
+
+            # Token is null, ignore it
             if token is None:
                 continue
+
+            # Magical EndTokens flag telling us to bail out
             elif token is EndTokens:
                 break
+
+            # Macro that has already been expanded
             elif token.nodeType == ELEMENT_NODE:
                 pass
+
+            # We need to expand this one
             elif token.macroName is not None:
                 try:
                     # By default, invoke() should put the macro instance
@@ -225,35 +230,50 @@ class TeX(object):
                     log.error('Error while expanding "%s"%s'
                               % (token.macroName, self.lineinfo))
                     raise
+
             yield token
 
     def expandtokens(self, tokens):
         """
         Expand a list of unexpanded tokens
 
+        This can be used to expand tokens in a macro argument without
+        having them sent to the output stream.
+
         Required Arguments:
         tokens -- list of tokens
 
         Returns:
-        list of expanded tokens
+        `TeXFragment' populated with expanded tokens
 
         """
+        # EndTokens is a special token that tells the token iterator
+        # to stop the iteration
         self.pushtoken(EndTokens)
         self.pushtokens(tokens)
-        return self.parse([x for x in self])
 
-    def tokenize(self, s):
+        tokens = bufferediter(self)
+        output = TeXFragment()
+        for item in tokens:
+            item.digest(tokens)
+            output.append(item)
+
+        return output
+
+    def parse(self):
+        """ 
+        Parse stream content until it is empty 
+
+        Returns:
+        `TeXDocument' instance
+
         """
-        Tokenize a string
-
-        """
-        return [x for x in Tokenizer(s, self.context)]
-
-    def begingroup(self):
-        self.pushtoken(BeginGroup('{'))
-
-    def endgroup(self):
-        self.pushtoken(EndGroup('}'))
+        tokens = bufferediter(self)
+        output = TeXDocument()
+        for item in tokens:
+            item.digest(tokens)
+            output.append(item)
+        return output
 
     def pushtoken(self, token):
         """
@@ -286,7 +306,7 @@ class TeX(object):
                 self.inputs[-1].pushtokens(tokens)
 
     def source(self, tokens):
-        """ 
+        """
         Return the TeX source representation of the tokens
 
         Required Arguments:
@@ -316,16 +336,18 @@ class TeX(object):
         """
         if tokens is None:
             return tokens
+        grouptokens = [Token.CC_EGROUP, Token.CC_BGROUP]
+        texttokens = [Token.CC_LETTER, Token.CC_OTHER, 
+                      Token.CC_EGROUP, Token.CC_BGROUP, 
+                      Token.CC_SPACE]
         for t in tokens:
+            # Element nodes can't be part of normalized text
             if t.nodeType == Macro.ELEMENT_NODE:
                 return tokens
-            if t.catcode not in [Token.CC_LETTER, Token.CC_OTHER, 
-                                 Token.CC_EGROUP, Token.CC_BGROUP, 
-                                 Token.CC_SPACE]:
+            if t.catcode not in texttokens:
                 return tokens
         return (u''.join([x for x in tokens 
-                          if x.catcode not in [Token.CC_EGROUP, 
-                                               Token.CC_BGROUP]])).strip()
+                          if x.catcode not in grouptokens])).strip()
 
     def getCase(self, which):
         """
@@ -349,7 +371,7 @@ class TeX(object):
             else: which = 1
         cases = [[]]
         nesting = 0
-        for t in self.tokiter:
+        for t in self.itertokens():
             # This is probably going to cause some trouble, there 
             # are bound to be macros that start with 'if' that aren't
             # actually 'if' constructs...
@@ -420,44 +442,41 @@ class TeX(object):
         self.readOptionalSpaces()
 
         # Check for internal TeX types first
-        if type in ['dimen','length']:
+        if type in ['Dimen','Length']:
             o = self.readDimen()
             return o, o.source
 
-        if type in ['mudimen','mulength']:
-            o = self.readMudimen()
+        if type in ['MuDimen','MuLength']:
+            o = self.readMuDimen()
             return o, o.source
 
-        if type in ['glue']:
+        if type in ['Glue']:
             o = self.readGlue()
             return o, o.source
 
-        if type in ['muglue']:
-            o = self.readMuglue()
+        if type in ['MuGlue']:
+            o = self.readMuGlue()
             return o, o.source
 
-        if type in ['number']:
+        if type in ['Number']:
             o = self.readNumber()
             return o, o.source
 
-        if type in ['tok']:
-            for tok in self.tokiter:
+        if type in ['Tok','Tok']:
+            for tok in self.itertokens():
                 return tok, tok.source
 
-        if type in ['xtok']:
-            for tok in self.tokiter:
+        if type in ['XTok','XToken']:
+            for tok in self.itertokens():
                 tok = self.expandtokens([tok])
                 if len(tok) == 1:
                     return tok[0], tok[0].source
                 return tok, tok.source
 
-        if type in ['cs']:
-            expanded = False
-
         # Definition argument string
-        if type in ['args']:
+        if type in ['Args']:
             args = []
-            for t in self.tokiter:
+            for t in self.itertokens():
                 if t.catcode == Token.CC_BGROUP:
                     self.pushtoken(t)
                     break
@@ -466,7 +485,10 @@ class TeX(object):
             else: pass
             return args, self.source(args)
 
-        tokens = self.tokiter
+        if type in ['cs']:
+            expanded = False
+
+        tokens = self.itertokens()
 
         # Get a TeX token (i.e. {...})
         if spec is None:
@@ -600,7 +622,29 @@ class TeX(object):
         self.cast()
 
         """
-        return unicode(self.normalize(tokens, strip=True))
+        return type(self.normalize(tokens, strip=True))
+
+    def castLabel(self, tokens, **kwargs):
+        """
+        Join the tokens into a string a set a label in the context
+
+        Required Arguments:
+        tokens -- list of tokens to cast
+
+        Returns:
+        string
+
+        See Also:
+        self.getArgument()
+        self.cast()
+
+        """
+        label = self.castString(tokens, **kwargs)
+        self.context.label(label)
+        return label
+
+    def castRef(self, tokens, **kwargs):
+        self.castString(self, tokens, **kwargs)
         
     def castInteger(self, tokens, type=int, **kwargs):
         """
@@ -620,7 +664,7 @@ class TeX(object):
         self.cast()
 
         """
-        return int(self.normalize(tokens, strip=True))
+        return type(self.normalize(tokens, strip=True))
         
     def castFloat(self, tokens, type=float, **kwargs):
         """
@@ -640,7 +684,24 @@ class TeX(object):
         self.cast()
 
         """
-        return float(self.normalize(tokens, strip=True))
+        return type(self.normalize(tokens, strip=True))
+
+    def castLength(self, tokens, **kwargs):
+        """
+        Jain the tokens into a string and convert the result into a `Dimen'
+
+        Required Arguments:
+        tokens -- list of tokens to cast
+
+        Returns:
+        `Dimen' instance
+
+        See Also:
+        self.getArgument()
+        self.cast()
+
+        """
+        return Dimen(self.castString(tokens, **kwargs))
         
     def castList(self, tokens, type=list, **kwargs):
         """
@@ -765,27 +826,18 @@ class TeX(object):
 
         return dictarg
 
-    def parse(self, tokens=None):
-        """ Parse stream content until it is empty """
-        # If no tokens are supplied, we'll assume that this is a top-level
-        # call to parse() and that we should return a full document
-        # instead of a document fragment.
-        outputclass = TeXFragment
-        if tokens is None:
-            outputclass = TeXDocument
-            tokens = self
-        tokens = bufferediter(tokens)
-
-        # Invoke the digestion process on each token to convert
-        # the token stream into a document object
-        output = outputclass()
-        for item in tokens:
-            item.digest(tokens)
-            output.append(item)
-
-        return output
-
     def kpsewhich(self, name):
+        """ 
+        Locate the given file in a kpsewhich-like manner 
+
+        Required Arguments:
+        name -- name of file to find
+
+        Returns:
+        full path to file -- if it is found
+        `None' -- if it is not found
+
+        """
         plastexinputs = os.environ.get('PLASTEXINPUTS', '.')
         extensions = ['.sty','.tex','.cls']
         for path in plastexinputs.split(':'):
@@ -793,7 +845,6 @@ class TeX(object):
                fullpath = os.path.join(path, name+ext)
                if os.path.isfile(fullpath):
                    return fullpath
-        raise OSError, name
 
 #
 # Parsing helper methods for parsing numbers, spaces, dimens, etc.
@@ -802,7 +853,7 @@ class TeX(object):
     def readOptionalSpaces(self):
         """ Remove all whitespace """
         tokens = []
-        for t in self.tokiter:
+        for t in self.itertokens():
             if t is None or t == '':
                 continue
             elif t.catcode != Token.CC_SPACE:
@@ -812,11 +863,26 @@ class TeX(object):
         return tokens
 
     def readKeyword(self, words, optspace=True):
+        """ 
+        Read keyword from the stream
+
+        Required Arguments:
+        words -- list of possible keywords to get from the stream
+
+        Keyword Arguments:
+        optspace -- boolean indicating if it should eat an optional
+            space token after a matched keyword
+
+        Returns:
+        matched keyword -- if one is found
+        `None' -- if none of the keywords are found
+
+        """
         self.readOptionalSpaces()
         for word in words:
             matched = []
             letters = list(word.upper())
-            for t in self.tokiter:
+            for t in self.itertokens():
                 matched.append(t)
                 if t.upper() == letters[0]:
                     letters.pop(0)
@@ -830,6 +896,7 @@ class TeX(object):
         return None
 
     def readDecimal(self):
+        """ Read a decimal number from the stream """
         sign = self.readOptionalSigns()
         for t in self:
             if t in string.digits:
@@ -851,6 +918,16 @@ class TeX(object):
         raise ValueError, 'Could not find decimal constant'
 
     def readDimen(self, units=Dimen.units):
+        """
+        Read a dimension from the stream
+
+        Keyword Arguments:
+        units -- list of acceptable units of measure
+
+        Returns:
+        `Dimen' instance
+
+        """
         sign = self.readOptionalSigns()
         for t in self:
             if t.nodeType == Node.ELEMENT_NODE:
@@ -859,10 +936,21 @@ class TeX(object):
             break
         return Dimen(sign * self.readDecimal() * self.readUnitOfMeasure(units=units))
 
-    def readMudimen(self):
-        return Mudimen(self.readDimen(units=Mudimen.units))
+    def readMuDimen(self):
+        """ Read a mudimen from the stream """
+        return MuDimen(self.readDimen(units=MuDimen.units))
 
     def readUnitOfMeasure(self, units):
+        """
+        Read a unit of measure from the stream
+
+        Required Arguments:
+        units -- list of acceptable units of measure
+
+        Returns:
+        `Dimen' instance
+
+        """
         self.readOptionalSpaces()
         # internal unit
         for t in self:
@@ -877,6 +965,13 @@ class TeX(object):
         return Dimen('1%s' % unit)
 
     def readOptionalSigns(self):
+        """ 
+        Read optional + and - signs 
+
+        Returns:
+        +1 or -1 
+
+        """
         sign = 1
         self.readOptionalSpaces()
         for t in self:
@@ -892,7 +987,8 @@ class TeX(object):
         return sign
 
     def readOneOptionalSpace(self):
-        for t in self.tokiter:
+        """ Read one optional space from the stream """
+        for t in self.itertokens():
             if t is None or t == '':
                 continue
             if t.catcode == Token.CC_SPACE:
@@ -901,6 +997,23 @@ class TeX(object):
             return None
 
     def readSequence(self, chars, optspace=True, default=''):
+        """
+        Read a sequence of characters from a given set
+
+        Required Arguments:
+        chars -- sequence of characters that should be accepted
+        
+        Keyword Arguments:
+        optspace -- boolean indicating if an optional space should 
+            be absorbed after the sequence of characters
+        default -- string to return if none of the characters in 
+            the given set are found
+
+        Returns:
+        string of characters matching those in the sequence `chars'
+        or `default' if none are found
+
+        """
         output = []
         for t in self:
             if t.nodeType == Node.ELEMENT_NODE:
@@ -915,9 +1028,16 @@ class TeX(object):
             output.append(t)
         if not output:
             return default
-        return ''.join(output)
+        return u''.join(output)
 
     def readInteger(self):
+        """
+        Read an integer from the stream
+
+        Returns:
+        `Number' instance
+
+        """
         sign = self.readOptionalSigns()
         for t in self:
             # internal/coerced integers
@@ -934,7 +1054,7 @@ class TeX(object):
                 return Number(sign * int('0x' + self.readSequence(string.hexdigits, default='0'), 16))
             # character token
             if t == '`':
-                for t in self.tokiter:
+                for t in self.itertokens():
                     return Number(sign * ord(t))
             break
         raise ValueError, 'Could not find integer'
@@ -942,6 +1062,7 @@ class TeX(object):
     readNumber = readInteger
 
     def readGlue(self):
+        """ Read a glue parameter from the stream """
         sign = self.readOptionalSigns()
         # internal/coerced glue
         for t in self:
@@ -955,34 +1076,39 @@ class TeX(object):
         return Glue(sign*dim, stretch, shrink)
 
     def readStretch(self):
+        """ Read a stretch parameter from the stream """
         if self.readKeyword(['plus']):
             return self.readDimen(units=Dimen.units+['filll','fill','fil'])
         return None
             
     def readShrink(self):
+        """ Read a shrink parameter from the stream """
         if self.readKeyword(['minus']):
             return self.readDimen(units=Dimen.units+['filll','fill','fil'])
         return None
 
-    def readMuglue(self):
+    def readMuGlue(self):
+        """ Read a muglue parameter from the stream """
         sign = self.readOptionalSigns()
         # internal/coerced muglue
         for t in self:
             if t.nodeType == Node.ELEMENT_NODE:
-                return Muglue(sign * muglue(t))
+                return MuGlue(sign * muglue(t))
             self.pushtoken(t)
             break
-        dim = self.readMudimen()
-        stretch = self.readMustretch()
-        shrink = self.readMushrink()
-        return Muglue(sign*dim, stretch, shrink)
+        dim = self.readMuDimen()
+        stretch = self.readMuStretch()
+        shrink = self.readMuShrink()
+        return MuGlue(sign*dim, stretch, shrink)
 
-    def readMustretch(self):
+    def readMuStretch(self):
+        """ Read a mustretch parameter from the stream """
         if self.readKeyword(['plus']):
-            return self.readDimen(units=Mudimen.units+['filll','fill','fil'])
+            return self.readDimen(units=MuDimen.units+['filll','fill','fil'])
         return None
             
-    def readMushrink(self):
+    def readMuShrink(self):
+        """ Read a mushrink parameter from the stream """
         if self.readKeyword(['minus']):
-            return self.readDimen(units=Mudimen.units+['filll','fill','fil'])
+            return self.readDimen(units=MuDimen.units+['filll','fill','fil'])
         return None

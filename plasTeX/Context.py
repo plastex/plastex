@@ -63,6 +63,43 @@ class ContextItem(dict):
              return '%s -> %s' % (self.parent, self.name)
         return self.name
 
+class Registry(dict):
+    """
+    Dictionary to hold TeX registers
+
+    """
+    def __init__(self, data={}, cls=None):
+        """
+        Initialize the register dictionary
+
+        Keyword Arguments:
+        data -- dictionary to initialize content with
+        cls -- class to use for missing keys.  If supplied, 
+            when a key is missing, a new register entry is
+            created with an instance of this class
+
+        """
+        dict.__init__(self, data)
+        self.cls = cls
+
+    def __getitem__(self, key):
+        """
+        Retrieve the requested register
+
+        If the key does not exist and self.cls is not None,
+        create a new register entry with an instance of self.cls
+
+        """
+        try: 
+            return dict.__getitem__(self, key)
+        except KeyError:
+            if self.cls is not None:
+                self[key] = self.cls()
+        return dict.__getitem__(self, key)
+
+    def get(self, key, default=None):
+        return self[key]
+
 
 class Context(object):
     """
@@ -98,6 +135,18 @@ class Context(object):
         # Depth of the context stack
         self.depth = 0
 
+        # TeX registers
+        self.counters = Registry(cls=plasTeX.Counter)
+        self.dimens = Registry(cls=plasTeX.Dimen)
+        self.skips = Registry(cls=plasTeX.Glue)
+        self.muskips = Registry(cls=plasTeX.MuGlue)
+        self.boxes = {}
+        self.toks = {}
+        self.reads = {}
+        self.writes = {}
+        self.fams = {}
+        self.inserts = {}
+
         # Create a global namespace
         self.push()
 
@@ -111,6 +160,18 @@ class Context(object):
 
         from plasTeX.packages import LaTeX as _macros
         self.importMacros(vars(_macros))
+
+    def label(self, label):
+        """ 
+        Set a label to the current labelable object
+
+        Required Arguments:
+        label -- string that contains the label
+
+        """
+        if self.currentlabel is not None:
+            self.labels[label] = self.currentlabel
+            self.currentlabel.id = label
 
     def __getitem__(self, key):
         """ 
@@ -439,7 +500,7 @@ class Context(object):
 
         # Generate a new dimen class
         macrolog.debug('creating dimen %s', name)
-        newclass = new.classobj(name, (plasTeX.Dimen,))
+        newclass = new.classobj(name, (plasTeX.Dimen,), {})
 
         self.addGlobal(name, newclass)
 
@@ -449,7 +510,7 @@ class Context(object):
 
         # Generate a new glue class
         macrolog.debug('creating dimen %s', name)
-        newclass = new.classobj(name, (plasTeX.Glue,))
+        newclass = new.classobj(name, (plasTeX.Glue,), {})
 
         self.addGlobal(name, newclass)
 
@@ -567,7 +628,7 @@ class Context(object):
                 definition[1] = [x for x in Tokenizer(definition[1], self)]
 
         if isinstance(opt, basestring):
-            opt = tex.tokenize(opt)
+            opt = [x for x in Tokenizer(opt, self)]
 
         macrolog.debug('creating newenvironment %s', name)
 

@@ -105,7 +105,7 @@ class RequirePackage(usepackage):
 
 class x_ifnextchar(Command):
     macroName = '@ifnextchar'
-    args = 'char:tok true:nox false:nox'
+    args = 'char:Tok true:nox false:nox'
     def invoke(self, tex):
         self.parse(tex)
         a = self.attributes
@@ -164,3 +164,6 @@ class hspace(Command):
 
 class pagebreak(Command): 
     pass
+
+class label(Command):
+    args = 'label:label'
