@@ -61,6 +61,9 @@ class Context(object):
         # Labeled objects
         self.labels = {}
 
+        # Tokens aliased by \let
+        self.lets = {}
+
         # Macro dictionary
         self.macros = self
 
@@ -623,3 +626,6 @@ class Context(object):
             self.addLocal(name, newclass)
         else:
             self.addGlobal(name, newclass)
+
+    def let(self, dest, source):
+        self.lets[dest] = source

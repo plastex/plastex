@@ -238,6 +238,8 @@ class Tokenizer(object):
 
                 else: token = EscapeSequence()
 
+                token = self.context.lets.get(token, token)
+
             # End of line
             elif code == CC_EOL:
                 if self.state == STATE_S:
@@ -324,8 +326,19 @@ class TeX(object):
             'dict': self.castDictionary,
             'str': self.castString,
             'chr': self.castString,
-            'cs': self.castToken,
+            'cs': self.castControlSequence,
             'nox': lambda x,**y: x,
+
+            # These are handled natively
+#           'tok': ...,
+#           'xtok': ...,
+#           'dimen': ...,
+#           'number': ...,
+#           'length': ...,
+#           'glue': ...,
+#           'muglue': ...,
+#           'mudimen': ...,
+#           'mulength': ...,
         }
 
         # Starting parsing if a source was given
@@ -608,6 +621,41 @@ class TeX(object):
         """
         self.readOptionalSpaces()
 
+        # Check for internal TeX types first
+        if type in ['dimen','length']:
+            o = self.readDimen()
+            return o, repr(o)
+
+        if type in ['mudimen','mulength']:
+            o = self.readMudimen()
+            return o, repr(o)
+
+        if type in ['glue']:
+            o = self.readGlue()
+            return o, repr(o)
+
+        if type in ['muglue']:
+            o = self.readMuglue()
+            return o, repr(o)
+
+        if type in ['number']:
+            o = self.readNumber()
+            return o, repr(o)
+
+        if type in ['tok']:
+            for tok in self.itertokens():
+                return tok, repr(tok)
+
+        if type in ['xtok']:
+            for tok in self.itertokens():
+                tok = self.expandtokens([tok])
+                if len(tok) == 1:
+                    return tok[0], repr(tok[0])
+                return tok, self.source(tok)
+
+        if type in ['cs']:
+            expanded = False
+
         tokens = self.itertokens()
 
         # Get a TeX token (i.e. {...})
@@ -710,29 +758,19 @@ class TeX(object):
 
         return self.argtypes[dtype](tokens, delim=delim)
 
-    def castToken(self, tokens, type=CC_ESCAPE, **kwargs):
+    def castControlSequence(self, tokens, **kwargs):
         """
-        Limit the argument to tokens of the requested catcode
+        Limit the argument to a single non-space token
 
         Required Arguments:
         tokens -- list of tokens to cast
-
-        Keyword Arguments:
-        type -- the category code to match tokens against
-
-        Returns:
-        list of tokens matching catcode, or if there is only one
-        token in the list just that token will be returned
 
         See Also:
         self.getArgument()
         self.cast()
 
         """
-        arg = [x for x in tokens if x.code == type]
-        if len(arg) == 1:
-            return arg.pop(0)
-        return arg
+        return [x for x in tokens if x.code == CC_ESCAPE].pop(0)
 
     def castString(self, tokens, type=unicode, **kwargs):
         """
@@ -1056,13 +1094,12 @@ class TeX(object):
                 return sign * int('0x' + self.readSequence(string.hexdigits, default='0'), 16)
             # character token
             if t == '`':
-                digits = []
-                for t in self:
-                    digits.append(t)
-                    break
-                return sign * int(ord(''.join(digits)))
+                for t in self.itertokens():
+                    return sign * ord(t)
             break
         raise ValueError, 'Could not find integer'
+
+    readNumber = readInteger
 
     def readGlue(self):
         sign = self.readOptionalSigns()

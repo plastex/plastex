@@ -284,29 +284,26 @@ class ifcase(_if):
 
 class let(Macro):
     """ \\let """
-    args = 'name:cs = value'
+    args = 'name:cs = value:tok'
     def invoke(self, tex):
         Macro.parse(self, tex)
         a = self.attributes
-        tex.context[a['name']] = type(tex.context[a['value']])
-        return [self]
+        tex.context.let(a['name'], a['value'])
 
 class char(Macro):
     """ \\char """
+    args = 'char:number'
     def invoke(self, tex):
-        return [chr(tex.readInteger())]
+        Macro.parse(self, tex)
+        return [chr(self.attributes['char'])]
 
 class catcode(Macro):
     """ \\catcode """
+    args = 'char:number = code:number'
     def invoke(self, tex):
-        for t in tex.itertokens():
-            if t == '`':
-                continue
-            break
-        tex.getArgument('=')
-        number = tex.readInteger() 
-        tex.context.catcode(t,number)
-        return [self]
+        Macro.parse(self, tex)
+        a = self.attributes
+        tex.context.catcode(chr(a['char']), a['code'])
 
 class advance(Command):
     """ \\advance """
@@ -314,7 +311,6 @@ class advance(Command):
         l = tex.getArgument()
         tex.getArgument('by')
         by = tex.getDimension()
-        return [self]
 
 class csname(Command):
     """ \\csname """

@@ -155,6 +155,10 @@ class NewCommands(TestCase):
         output = [x for x in s]
         assert type(output[1]) == type(s.context['it']) 
 
+        s = TeX(r'\let\bgroup={\bgroup')
+        output = [x for x in s]
+        assert repr(output[1]) == '{'
+
 if __name__ == '__main__':
     unittest.main()
 

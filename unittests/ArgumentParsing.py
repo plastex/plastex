@@ -107,6 +107,21 @@ class ArgumentParsing(TestCase):
         assert arg['one'] == '1'
         assert arg['four'] == '4'
 
+    def testTokenArgument(self):
+        s = TeX(r'\foo a ')
+        arg = s.getArgument(type='tok')
+        assert arg == 'foo'
+        arg = s.getArgument(type='tok')
+        assert arg == 'a'
+
+    def testXTokenArgument(self):
+        s = TeX(r'\newcommand{\foo}{\it}')
+        [x for x in s]
+        s.input(r'\foo a ')
+        arg = s.getArgument(type='xtok')
+        assert arg.nodeName == 'it'
+        arg = s.getArgument(type='xtok')
+        assert arg == 'a'
 
 if __name__ == '__main__':
     unittest.main()
