@@ -1,13 +1,22 @@
 #!/usr/bin/env python
 
 import os
-from Node import Node
+from DOM import Node
 
-def reprchildren(o): return ''.join([repr(x) for x in o.childNodes])
-def reprarguments(o): return o.argsource
-def ismacro(o): return hasattr(o, 'macroName')
-def issection(o): return level > Node.DOCUMENT_LEVEL and level < Node.ENVIRONMENT_LEVEL 
-def isenv(o): return level == Node.ENVIRONMENT_LEVEL
+def reprchildren(o): 
+    if o.childNodes:
+        return ''.join([repr(x) for x in o.childNodes])
+    return ''
+
+def reprarguments(o): 
+    return o.argsource
+
+def ismacro(o): 
+    return hasattr(o, 'macroName')
+
+def issection(o): 
+    return level > Node.DOCUMENT_LEVEL and level < Node.ENVIRONMENT_LEVEL 
+
 def macroname(o):
      if o.macroName is None:
          if type(o) is type:
@@ -54,15 +63,3 @@ def paragraphs(toklist, par, allow_single=False):
             return final[0]
 
     return final
-
-PLASTEXINPUTS = '.'
-
-def kpsewhich(name):
-    extensions = ['.sty','.tex','.cls']
-    for path in PLASTEXINPUTS.split(':'):
-       for ext in extensions:
-           fullpath = os.path.join(path, name+ext)
-           if os.path.isfile(fullpath):
-               return fullpath
-    raise OSError, name
-

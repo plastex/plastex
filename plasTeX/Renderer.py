@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import re
+from DOM import DocumentFragment
 from Utils import *
 from imagers.dvi2bitmap import DVI2Bitmap
 from imagers.dvipng import DVIPNG
@@ -35,7 +36,7 @@ class RenderMixIn(object):
 
         """
         # Only the content of DocumentFragments get rendered
-        if isinstance(self, list):
+        if isinstance(self, DocumentFragment):
             s = []
             for value in self:
                 if hasattr(value, 'toXML'):
@@ -138,13 +139,13 @@ class RenderMixIn(object):
         else:
             return output
 
-    def __str__(self):
-        s = []
-        for child in self.childNodes:
-            if isinstance(child, basestring):
-                s.append(child)
-            else:
-                s.append(child.render())
-        return ''.join(s)
+#   def __str__(self):
+#       s = []
+#       for child in self.childNodes:
+#           if isinstance(child, basestring):
+#               s.append(child)
+#           else:
+#               s.append(child.render())
+#       return ''.join(s)
 
-    __repr__ = __str__
+#   __repr__ = __str__

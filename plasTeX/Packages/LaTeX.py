@@ -126,7 +126,6 @@ class StartSection(Command):
     args = '* [ toc ] title'
 
     def digest(self, tokens):
-        self.childNodes = []
         # Absorb the tokens that belong to us
         for item in tokens:
             if item.level <= self.level:
@@ -134,8 +133,7 @@ class StartSection(Command):
                 break
             if item.nodeType == Node.ELEMENT_NODE:
                 item.digest(tokens)
-            self.childNodes.append(item)
-            item.parentNode = self
+            self.appendChild(item)
     
 class chapter(StartSection):
     level = Node.CHAPTER_LEVEL

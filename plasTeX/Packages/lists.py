@@ -16,25 +16,15 @@ class List(Environment):
             more useful for the resulting document object.
 
             """
-            self.childNodes = []
-            # Absorb the tokens that belong to us
-            for tok in tokens:
-                if tok.nodeType == Node.ELEMENT_NODE:
-                    # Hit next item in the list...
-                    if type(tok) is type(self):
-                        tokens.push(tok)
-                        break
-                    tok.digest(tokens)
-                if tok.contextDepth < self.contextDepth:
-                    tokens.push(tok)
-                    break
-                self.childNodes.append(tok)
-                tok.parentNode = self
+            return self.digestUntil(tokens, type(self))
 
     def digest(self, tokens):
         # Drop any whitespace before the first item
         for tok in tokens:
-            if tok.catcode == Token.CC_SPACE or tok.nodeName == 'par':
+            if tok.nodeType == self.ELEMENT_NODE:
+                if tok.nodeName == 'par':
+                    continue
+            elif tok.catcode == Token.CC_SPACE:
                 continue
             tokens.push(tok)
             break

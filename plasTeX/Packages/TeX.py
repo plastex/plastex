@@ -119,19 +119,17 @@ class bgroup(Macro):
         return '{'
 
     def digest(self, tokens):
-        self.childNodes = []
         # Absorb the tokens that belong to us
         for item in tokens:
             if item.nodeType == Node.ELEMENT_NODE:
                 if type(item) is egroup:
                     break
                 item.digest(tokens)
-            self.childNodes.append(item)
-            item.parentNode = self
+            self.appendChild(item)
 
     def __repr__(self):
-        if self.childNodes is not None:
-            return '{%s}' % ''.join([repr(x) for x in self.childNodes])
+        if self.childNodes:
+            return '{%s}' % reprchildren(self)
         return '{'
 
 class egroup(Macro):

@@ -382,6 +382,12 @@ class Context(object):
             c[code] += char
 
     def setVerbatimCatcodes(self):
+        """
+        Set the category codes up for parsing verbatims
+
+        This method turns the category codes for all characters to CC_OTHER
+
+        """
         self.contexts[-1].categories = self.categories = VERBATIM_CATEGORIES[:]
 
     def newcounter(self, name, initial=0, resetby=None, format=None):

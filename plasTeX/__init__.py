@@ -2,7 +2,8 @@
 
 import string, re
 from Utils import *
-from Tokenizer import Token, Node
+from DOM import Element, Text, Node, DocumentFragment, Document
+from Tokenizer import Token
 from plasTeX.Logging import getLogger
 from Renderer import RenderMixIn
 
@@ -50,7 +51,7 @@ class CSSStyles(dict):
             return None      
         return '; '.join(['%s:%s' % (x[0],x[1]) for x in self.items()])
 
-class Macro(Token, RenderMixIn):
+class Macro(Element, RenderMixIn):
     """
     Base class for all macros
 
@@ -69,6 +70,10 @@ class Macro(Token, RenderMixIn):
     nodeValue = None
 
     argsource = ''
+
+    def __init__(self, *args, **kwargs):
+        Element.__init__(self, *args, **kwargs)
+        self.style = CSSStyles()
 
     def source(self):
         return repr(self)
@@ -128,13 +133,13 @@ class Macro(Token, RenderMixIn):
             return '\n\n'
 
         # \begin environment
-        # If self.childNodes is not none, print out the entire environment
+        # If self.childNodes is not empty, print out the entire environment
         if self.macroMode == Macro.MODE_BEGIN:
             argsource = reprarguments(self)
             if not argsource: 
                 argsource = ' '
             s = '\\begin{%s}%s' % (self.tagName, argsource)
-            if self.childNodes is not None:
+            if self.childNodes:
                 s += '%s\\end{%s}' % (reprchildren(self), self.tagName)
             return s
 
@@ -147,8 +152,8 @@ class Macro(Token, RenderMixIn):
             argsource = ' '
         s = '\\%s%s' % (self.tagName, argsource)
 
-        # If self.childNodes is not none, print out the contents
-        if self.childNodes is not None:
+        # If self.childNodes is not empty, print out the contents
+        if self.childNodes:
             s += reprchildren(self)
         return s
 
@@ -162,18 +167,11 @@ class Macro(Token, RenderMixIn):
         """
         if self.macroMode == Macro.MODE_END:
             return
-        self.attributes = {}
         self.argsource = ''
         for arg in self.arguments:
             output, source = tex.getArgumentAndSource(**arg.options)
             self.argsource += source
             self.attributes[arg.name] = output
-
-    def style(self):
-        if not hasattr(self, '__style'):
-            self.__style = CSSStyles()
-        return self.__style
-    style = property(style)
 
     def arguments(self):
         """ 
@@ -193,7 +191,9 @@ class Macro(Token, RenderMixIn):
             return t.__arguments
 
         # Split the arguments into their primary components
-        args = iter([x.strip() for x in re.split(r'(<=>|[\'"]\w+[\'"]|\w+(?::\w+)*|\W|\s+)', t.args) if x is not None and x.strip()])
+        args = iter([x.strip() for x in 
+                     re.split(r'(<=>|[\'"]\w+[\'"]|\w+(?::\w+)*|\W|\s+)', 
+                              t.args) if x is not None and x.strip()])
 
         groupings = {'[':'[]','(':'()','<':'<>','{':'{}'}
 
@@ -279,28 +279,45 @@ class Macro(Token, RenderMixIn):
 
     arguments = property(arguments)
 
+    def digestUntil(self, tokens, endclass):
+        """
+        Absorb tokens until a token of the given class is given
 
-class TeXFragment(list, Node, RenderMixIn):
-    nodeName = tagName = '#document-fragment'
-    nodeType = Node.DOCUMENT_FRAGMENT_NODE
- 
-    def __init__(self, *args, **kwargs):
-        list.__init__(self, *args, **kwargs)
-        self.childNodes = self
+        This method is useful for things like lists and tables 
+        when one element is actually ended by the occurrence of 
+        another (i.e. \\item ended by \\item, array cell ended by 
+        array cell, array cell ended by array row, etc.).
 
+        Required Arguments:
+        tokens -- iterator of tokens in the stream
+        endclass -- class reference or tuple of class references
+            that, when a token of that type is reached, stops
+            the digestion process
+
+        Returns:
+        None -- if the context ended without reaching a token of
+            the requested type
+        token -- the token of the requested type if it was found
+
+        """
+        for tok in tokens:
+            if tok.nodeType == Node.ELEMENT_NODE:
+                if isinstance(tok, endclass):
+                    tokens.push(tok)
+                    return tok
+                tok.digest(tokens)
+            if tok.contextDepth < self.contextDepth:
+                tokens.push(tok)
+                break
+            self.appendChild(tok)
+        
+
+class TeXFragment(DocumentFragment, RenderMixIn):
     def source(self):
         return u''.join([repr(x) for x in self])
     source = property(source)
 
-class TeXDocument(TeXFragment):
-    nodeName = tagName = '#document'
-    nodeType = Node.DOCUMENT_NODE
-
-    def __init__(self, *args, **kwargs):
-        TeXFragment.__init__(self, *args, **kwargs)
-        self.documentElement = self
-        self.ownerDocument = self
-
+class TeXDocument(Document):
     def preamble(self):
         output = []
         for item in self:
@@ -309,6 +326,10 @@ class TeXDocument(TeXFragment):
             output.append(item)
         return TeXFragment(output)
     preamble = property(preamble)
+
+    def source(self):
+        return u''.join([repr(x) for x in self])
+    source = property(source)
 
 class Command(Macro): 
     """ Base class for all Python-based LaTeX commands """
@@ -327,7 +348,6 @@ class Environment(Macro):
     def digest(self, tokens):
         if self.macroMode == Macro.MODE_END:
             return
-        self.childNodes = []
         # Absorb the tokens that belong to us
         for item in tokens:
             if item.nodeType == Node.ELEMENT_NODE:
@@ -337,9 +357,8 @@ class Environment(Macro):
             if item.contextDepth < self.contextDepth:
                 tokens.push(item)
                 break
-            self.childNodes.append(item)
-            item.parentNode = self
-    
+            self.appendChild(item)
+
 class StringMacro(Macro):
     """ 
     Convenience class for macros that are simply strings
@@ -641,7 +660,7 @@ class TheCounter(Macro):
     """ Base class for counter formats """
     format = ''
 
-class Dimen(float, Node):
+class Dimen(float, Macro):
 
     units = ['pt','pc','in','bp','cm','mm','dd','cc','sp','ex','em']
 

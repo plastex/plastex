@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import string
-from Node import Node
+from DOM import Node, Text
 try: from cStringIO import StringIO
 except: from StringIO import StringIO
 
@@ -27,9 +27,9 @@ DEFAULT_CATEGORIES = [
    ''     # 15 - Invalid character
 ]
 
-VERBATIM_CATEGORIES = ['','','','','','','','','','','','','','','','']
+VERBATIM_CATEGORIES = [''] * 16
 
-class Token(unicode, Node):
+class Token(Text):
     """ Base class for all TeX tokens """
 
     # The 16 category codes defined by TeX
@@ -53,7 +53,7 @@ class Token(unicode, Node):
     catcode = None       # TeX category code
     macroName = None     # Macro to invoke in place of this token
 
-    nodeType = Node.TEXT_NODE
+#   nodeType = Node.TEXT_NODE
 
     def __repr__(self):
         return unicode(self)
@@ -62,10 +62,10 @@ class Token(unicode, Node):
         # Token comparison -- character and code must match
         if isinstance(other, Token):
             if self.catcode == other.catcode:
-                return unicode.__cmp__(self, other)
-            return self.catcode.__cmp__(other.catcode)
+                return cmp(unicode(self), unicode(other))
+            return cmp(self.catcode, other.catcode)
         # Not comparing to token, just do a string match
-        return unicode.__cmp__(self, unicode(other))
+        return cmp(unicode(self), unicode(other))
 
 # Array for getting token class for the corresponding catcode
 TOKENCLASSES = [None] * 16

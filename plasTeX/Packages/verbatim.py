@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from plasTeX.Utils import *
-from Tokenizer import VERBATIM_CATEGORIES
 from plasTeX import Macro, Environment, Command
 
 class verbatim(Environment):
@@ -52,14 +51,12 @@ class verb(Command):
         return tokens
 
     def digest(self, tokens):
-        self.childNodes = []
         for endpattern in tokens:
             break
         for tok in tokens:
             if tok == endpattern:
                 break
-            self.childNodes.append(tok)
-            tok.parentNode = self
+            self.appendChild(tok)
 
     def __repr__(self):
         return '\\%s%s%s%s%s' % (self.nodeName, reprarguments(self),

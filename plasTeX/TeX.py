@@ -323,6 +323,8 @@ class TeX(object):
         if tokens is None:
             return tokens
         for t in tokens:
+            if t.nodeType == Macro.ELEMENT_NODE:
+                return tokens
             if t.catcode not in [Token.CC_LETTER, Token.CC_OTHER, 
                                  Token.CC_EGROUP, Token.CC_BGROUP, 
                                  Token.CC_SPACE]:
@@ -722,8 +724,12 @@ class TeX(object):
         while tokens:
             current = tokens.pop(0)
 
+            if current.nodeType == Macro.ELEMENT_NODE:
+                currentvalue.append(current)
+                continue
+
             # Found grouping
-            if current.catcode == Token.CC_BGROUP:
+            elif current.catcode == Token.CC_BGROUP:
                 level = 1
                 currentvalue.append(current)
                 while tokens:
@@ -767,16 +773,33 @@ class TeX(object):
 
     def parse(self, tokens=None):
         """ Parse stream content until it is empty """
+        # If no tokens are supplied, we'll assume that this is a top-level
+        # call to parse() and that we should return a full document
+        # instead of a document fragment.
         outputclass = TeXFragment
         if tokens is None:
             outputclass = TeXDocument
             tokens = self
         tokens = bufferediter(tokens)
-        output = []
+
+        # Invoke the digestion process on each token to convert
+        # the token stream into a document object
+        output = outputclass()
         for item in tokens:
             item.digest(tokens)
             output.append(item)
-        return outputclass(output)
+
+        return output
+
+    def kpsewhich(self, name):
+        plastexinputs = os.environ.get('PLASTEXINPUTS', '.')
+        extensions = ['.sty','.tex','.cls']
+        for path in plastexinputs.split(':'):
+           for ext in extensions:
+               fullpath = os.path.join(path, name+ext)
+               if os.path.isfile(fullpath):
+                   return fullpath
+        raise OSError, name
 
 #
 # Parsing helper methods for parsing numbers, spaces, dimens, etc.

@@ -6,19 +6,17 @@ from array import Array
 
 class math(Environment): 
     def __repr__(self): 
-        if self.childNodes is not None:
+        if self.childNodes:
             return '$%s$' % reprchildren(self)
-        return ''
+        return '$'
 
 class displaymath(math):
-    block = True
     def __repr__(self):
-        if self.childNodes is not None:
+        if self.childNodes:
             return '$$%s$$' % reprchildren(self)
-        return ''
+        return '$$'
 
-class eqnarray(Array):
-    block = True
+class eqnarray(Array): pass
 
 class x_eqnarray(eqnarray): 
     macroName = 'eqnarray*'
