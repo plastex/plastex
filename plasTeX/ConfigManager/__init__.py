@@ -1009,7 +1009,7 @@ class ConfigManager(UserDict, object):
 
         return shortopts, longopts
 
-    def __call__(self, args=None, merge=1):
+    def getopt(self, args=None, merge=1):
         """
         Parse the command line
 
@@ -1162,8 +1162,6 @@ class ConfigManager(UserDict, object):
                 else:
                     option.occurrences += 1
                     option.setValue(value)
-
-    getopt = __call__
 
     def get_prefixes(cls):
         """ Prepare option prefixes to make sure that they are always lists """
@@ -1539,7 +1537,7 @@ class CommandLineManager(ordereddict):
              if item.mandatory:
                  return 1
 
-   def __call__(self, args=None):
+   def getopt(self, args=None):
       if args == None:
          args = sys.argv[1:]
       else:
@@ -1589,7 +1587,6 @@ class CommandLineManager(ordereddict):
       else:
          return item.getValue()
 
-   getopt = __call__
 
 
 # These must be loaded last because they depend on variables

@@ -30,7 +30,7 @@ class Logger(_Logger):
         _Logger.__init__(self, name, *args, **kwargs)
         self.propagate = 0
         try: level = eval(_config['logging'][name])
-        except: level = WARNING
+        except: level = None
         if not name:
             handler = StreamHandler()
             handler.setFormatter(StreamFormatter(ROOT_LOG_FORMAT))
@@ -42,7 +42,8 @@ class Logger(_Logger):
             handler = StreamHandler()
             handler.setFormatter(StreamFormatter(LOG_FORMAT))
         self.addHandler(handler)
-        self.setLevel(level)
+        if level is not None:
+            self.setLevel(level)
 
     def debug1(self, *args, **kwargs): 
         return self.log(DEBUG1, *args, **kwargs)

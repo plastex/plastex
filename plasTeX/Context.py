@@ -114,6 +114,9 @@ class Context(object):
         label -- string that contains the label
 
         """
+        label = label.strip()
+        if not label:
+            return
         if self.currentlabel is not None:
             self.labels[label] = self.currentlabel
             self.currentlabel.id = label

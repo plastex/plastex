@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
 import sys, re
+from plasTeX.Config import config as _config
+
+encoding = _config['encoding']['output']
 
 class DOMString(unicode):
     """
@@ -524,9 +527,6 @@ def xmlstr(obj):
     else:
         return str(obj)
 
-import codecs
-debug = codecs.open('debug.log', 'w', 'utf-8')
-
 class Node(object):
     """
     Node
@@ -607,7 +607,7 @@ class Node(object):
             if type(val) is unicode:
                 s.append(val)
             else:
-                s.append(unicode(val,'utf-8'))
+                s.append(unicode(val,encoding))
         return u''.join(s)
 
     def __str__(self):
@@ -1103,6 +1103,7 @@ class Node(object):
 
     def __getitem__(self, i):
         return self.childNodes[i]
+
 
 class DocumentFragment(Node):
     """

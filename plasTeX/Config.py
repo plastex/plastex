@@ -6,6 +6,78 @@ from ConfigManager import *
 c = config = ConfigManager()
 
 #
+# Encodings
+#
+
+encoding = c.add_section('encoding')
+
+encoding['input'] = StringOption(
+    """ Input encoding """,
+    options = '--input-encoding',
+    default = 'utf-8',
+)
+
+encoding['output'] = StringOption(
+    """ Output encoding """,
+    options = '--output-encoding',
+    default = 'utf-8',
+)
+
+#
+# Table of Contents
+#
+
+toc = c.add_section('tableofcontents')
+
+toc['depth'] = IntegerOption(
+    """ Maximum number of levels in each table of contents """,
+    options = '--toc-depth',
+    default = 2,
+)
+
+toc['location'] = MultiOption(
+    """ 
+    Location to place the table of contents 
+
+    Valid Values: 
+    top, bottom
+
+    """,
+    options = '--toc-position',
+    default = ['top'],
+)
+
+#
+# Filenames
+#
+
+files = c.add_section('filenames')
+
+files['index'] = StringOption(
+    """ Name of the first file in the document """,
+    options = '--index-file',
+    default = 'index',
+)
+
+files['template'] = StringOption(
+    """ Template to use for non-index filenames """,
+    options = '--filename-template',
+    default = 'sect%(num).4d',
+)
+
+files['extension'] = StringOption(
+    """ File extension for output files """,
+    options = '--file-extension',
+    default = '.html',
+)
+
+files['use-ids'] = StringOption(
+    """ Use IDs (i.e. \\label{...}) as filename """,
+    options = '--use-id-filenames',
+    default = True,
+)
+
+#
 # Images
 #
 

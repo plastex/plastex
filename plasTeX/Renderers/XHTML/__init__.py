@@ -4,13 +4,12 @@ import sys, os, re, codecs
 from plasTeX.Renderer import Renderer
 from plasTeX.TALUtils import htmltemplate, xmltemplate
 
+
 # Regular expressions for multi-zpt files
 templatere = re.compile(r'(<zpt:page-template\s+[^>]+>.*?</zpt:page-template>)', re.S)
 attrsre = re.compile(r'<zpt:page-template\s+([^>]+)?\s*>')
 parseattrsre = re.compile(r'\s*(\w+)\s*=\s*["\']([^"\']+)?["\']')
 contentre = re.compile(r'<zpt:page-template\s+[^>]+>(.*?)</zpt:page-template>', re.S)
-
-encoding = 'ISO-8859-1'
 
 class XHTML(Renderer):
     
@@ -47,9 +46,13 @@ class XHTML(Renderer):
 
                         # Compile the template
                         if attrs.get('type','').lower() == 'xml':
-                            template = xmltemplate(content) 
+                            try: template = xmltemplate(content) 
+                            except Exception, msg: 
+                                print 'Error in compiling %s (%s)' % (file, msg)
                         else:
-                            template = htmltemplate(content) 
+                            try: template = htmltemplate(content) 
+                            except Exception, msg: 
+                                print 'Error in compiling %s (%s)' % (file, msg)
 
                         # Get all names in the 'name' attribute
                         names = [x.strip() for x in attrs['name'].split() 
@@ -67,13 +70,18 @@ class XHTML(Renderer):
                 if ext.lower() in ['.zpt','.html','.htm']:
                     content = codecs.open(file,'r').read().strip()
                     key = os.path.splitext(os.path.basename(file))[0]
-                    self[key] = htmltemplate(content) 
+                    try: self[key] = htmltemplate(content) 
+                    except Exception, msg: 
+                        print 'Error in compiling %s (%s)' % (file, msg)
+                        
 
                 # XML formatted zpt files
                 elif ext.lower() == '.xml':
                     content = codecs.open(file,'r').read().strip()
                     key = os.path.splitext(os.path.basename(file))[0]
-                    self[key] = xmltemplate(content) 
+                    try: self[key] = xmltemplate(content) 
+                    except Exception, msg: 
+                        print 'Error in compiling %s (%s)' % (file, msg)
 
 xhtml = XHTML()
 
