@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-import new, plasTeX
-from plasTeX import Macro, StringCommand, UnrecognizedMacro
+import new 
+import plasTeX
+from plasTeX import Macro, StringCommand, UnrecognizedMacro, ismacro, macroname
 from plasTeX.Logging import getLogger
 from Tokenizer import Tokenizer, Token, DEFAULT_CATEGORIES, VERBATIM_CATEGORIES
-from Utils import *
 
 # Only export the Context class
 __all__ = ['Context']

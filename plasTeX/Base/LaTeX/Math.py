@@ -6,11 +6,9 @@ C.7 Mathematical Formulas (p187)
 """
 
 from Arrays import Array
-from plasTeX import Command, Environment
+from plasTeX import Command, Environment, sourcechildren
 from plasTeX import Dimen, dimen, Glue, glue
 from plasTeX.Logging import getLogger
-
-from plasTeX.Utils import sourcechildren
 
 #
 # C.7.1

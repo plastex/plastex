@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import sys
 from plasTeX.Base.LaTeX.Arrays import tabular
 from plasTeX import Command, Dimen, Count, Glue, dimen, glue, count
 
@@ -49,16 +50,11 @@ class longtable(tabular):
     class kill(LongTableEndRow):
         """ Throw-away row used for measurement """
 
-    def digest(self, tokens):
-        tabular.digest(self, tokens)
-
-        if self.macroMode == self.MODE_END:
-            return
-
+    def processRows(self):
         # Strip header and footer chunks from the table
-        headers = [x for x in self if isinstance(x, type(self).EndRow)]
+        delims = [x for x in self if isinstance(x, type(self).EndRow)]
         header = footer = None
-        for current in headers:
+        for current in delims:
             cache = []
             while 1:
                 node = self.pop(0)
@@ -79,6 +75,7 @@ class longtable(tabular):
 
         # Re-insert only the first header and last footer
         if header is not None:
+            header.reverse()
             for item in header:
                 self.insert(0, item)
 

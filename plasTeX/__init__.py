@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
 import string, re
-from Utils import *
 from DOM import Element, Text, Node, DocumentFragment, Document
-from Tokenizer import Token, Other
+from Tokenizer import Token
 from plasTeX.Logging import getLogger
 
 log = getLogger()
@@ -12,6 +11,39 @@ deflog = getLogger('parse.definitions')
 envlog = getLogger('parse.environments')
 mathshiftlog = getLogger('parse.mathshift')
 digestlog = getLogger('parse.digest')
+
+#
+# Utility functions
+#
+
+def subclasses(o):
+    output = [o]
+    for item in o.__subclasses__():
+        output.extend(subclasses(item))
+    return output
+
+def sourcechildren(o): 
+    if o.childNodes:
+        return u''.join([x.source for x in o.childNodes])
+    return u''
+
+def sourcearguments(o): 
+    return o.argsource
+
+def ismacro(o): 
+#   return getattr(o,'nodeType',-1) == Node.ELEMENT_NODE
+    return hasattr(o, 'macroName')
+
+def issection(o): 
+    return level > Node.DOCUMENT_LEVEL and level < Node.ENVIRONMENT_LEVEL 
+
+def macroname(o):
+     if o.macroName is None:
+         if type(o) is type:
+             return o.__name__
+         return type(o).__name__
+     return o.macroName
+
 
 class Argument(object):
     """ 
@@ -49,6 +81,7 @@ class CSSStyles(dict):
         if not self:
             return None      
         return '; '.join(['%s:%s' % (x[0],x[1]) for x in self.items()])
+    inline = property(inline)
 
 class Macro(Element):
     """
@@ -76,6 +109,9 @@ class Macro(Element):
 
     # Source of the TeX macro arguments
     argsource = ''
+
+    # Flag indicating whether the context should be grouped by paragraphs or not
+    paragraphs = False
 
     def __init__(self, *args, **kwargs):
         Element.__init__(self, *args, **kwargs)
@@ -240,7 +276,7 @@ class Macro(Element):
 
         # Split the arguments into their primary components
         args = iter([x.strip() for x in 
-                     re.split(r'(<=>|\w+(?::\w+)*|\W|\s+)', 
+                     re.split(r'(<=>|\w+(?::\w+(?:\(\S\))?(?::\w+)?)?|\W|\s+)', 
                               tself.args) if x is not None and x.strip()])
 
         groupings = {'[':'[]','(':'()','<':'<>','{':'{}'}
@@ -293,7 +329,7 @@ class Macro(Element):
                 argdict['type'] = 'args'
 
             # List delimiter
-            elif item in ',;.':
+            elif item in ',;.-':
                 argdict['delim'] = item
 
             # Argument name (and possibly type)
@@ -307,7 +343,8 @@ class Macro(Element):
                     if argdict.has_key('type'):
                         argdict['subtype'] = parts.pop(0)
                     else:
-                        argdict['type'] = parts.pop(0)
+                        # Split type and possible delimiter
+                        argdict['type'], argdict['delim'] = re.search(r'(\w+)(?:\((\W)\))?', parts.pop(0)).groups()
                         if parts:
                             argdict['subtype'] = parts.pop(0)
                 # Arguments that are instance variables are always expanded

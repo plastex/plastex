@@ -543,13 +543,13 @@ class Node(object):
     PARAGRAPH_LEVEL = 4
     SUBPARAGRAPH_LEVEL = 5
     SUBSUBPARAGRAPH_LEVEL = 6
-    PAR_LEVEL = 10
-    ENVIRONMENT_LEVEL = 20
-    CHARACTER_LEVEL = COMMAND_LEVEL = 100
+    PAR_LEVEL = 101
+    ENVIRONMENT_LEVEL = 201
+    CHARACTER_LEVEL = COMMAND_LEVEL = 1001
 
     level = CHARACTER_LEVEL    # Document hierarchy level of the node
 
-    contextDepth = 0   # TeX context level of this node (used during digest)
+    contextDepth = 1000   # TeX context level of this node (used during digest)
 
     isElementContentWhitespace = False
 
@@ -638,6 +638,10 @@ class Node(object):
         source = ''
         #source = ' source="%s"' % xmlstr(self.source)
 
+        style = ''
+        if self.style:
+            style = ' style="%s"' % xmlstr(self.style.inline)
+
         ref = ''
         try:
             if self.ref is not None:
@@ -654,9 +658,9 @@ class Node(object):
 
         # Bail out early if the element is empty
         if not(self.attributes) and not(self.childNodes):
-            return '<%s%s%s%s%s/>' % (name, modifier, source, ref, label)
+            return '<%s%s%s%s%s%s/>' % (name, modifier, style, source, ref, label)
 
-        s = ['<%s%s%s%s%s>\n' % (name, modifier, source, ref, label)]
+        s = ['<%s%s%s%s%s%s>\n' % (name, modifier, style, source, ref, label)]
             
         # Render attributes
         if self.attributes:
@@ -686,7 +690,9 @@ class Node(object):
                 else: 
                     value = xmlstr(value)
                 s.append(value)
+
         s.append('</%s>' % name)
+
         return ''.join(s)
 
     def childNodes(self):

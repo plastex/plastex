@@ -6,7 +6,6 @@ C.6.3 The list and trivlist Enviroments
 
 """
 
-from plasTeX.Utils import *
 from plasTeX import Environment, Command
 from plasTeX import Dimen, dimen
 

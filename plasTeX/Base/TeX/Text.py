@@ -5,8 +5,7 @@ B.5 Macros for text
 
 """
 
-from plasTeX.Utils import sourcechildren
-from plasTeX import Command, Environment, StringCommand
+from plasTeX import Command, Environment, StringCommand, sourcechildren
 
 class frenchspacing(Command):
     pass

@@ -5,8 +5,7 @@ C.6.4 Verbatim
 
 """
 
-from plasTeX.Utils import *
-from plasTeX import Macro, Environment, Command
+from plasTeX import Macro, Environment, Command, sourcearguments, sourcechildren
 
 class verbatim(Environment):
 

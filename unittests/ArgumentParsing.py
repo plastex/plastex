@@ -44,7 +44,7 @@ class ArgumentParsing(TestCase):
             args = '[ %;opt ] < arg1:str >'
         arg = foobar().arguments
         expected = [Argument('opt', {'spec':'[]','type':'dict','delim':';','expanded':True}), 
-                    Argument('arg1', {'type':'str','spec':'<>','expanded':True})]
+                    Argument('arg1', {'type':'str','spec':'<>','expanded':True, 'delim':None})]
         assert arg == expected, '"%s" != "%s"' % (arg, expected)
     
     def testInvalidArgumentString(self):

@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
-from plasTeX.Utils import *
 from plasTeX.Tokenizer import Token, EscapeSequence
-from plasTeX import Command, Environment, Count, count
+from plasTeX import Command, Environment, Count, count, sourcechildren
 from plasTeX.Logging import getLogger
 
 log = getLogger()
@@ -16,15 +15,36 @@ class relax(Command):
 
 class par(Command):
     """ Paragraph """
-    level = Command.PARAGRAPH_LEVEL
-    isElementContentWhitespace = True
+    level = Command.PAR_LEVEL
 
     def invoke(self, tex):
         status.dot()
 
     def source(self): 
+        if self.childNodes:
+            return '%s\n\n' % sourcechildren(self)
         return '\n\n'
     source = property(source)
+
+    def digest(self, tokens):
+        return
+        # Absorb the tokens that belong to us
+#       for item in tokens:
+#           if item.nodeType == Command.ELEMENT_NODE:
+#               if item.level <= Command.PAR_LEVEL:
+#                   tokens.push(item)
+#                   break
+#               item.digest(tokens)
+#           if item.contextDepth < self.contextDepth:
+#               tokens.push(item)
+#               break
+#           self.appendChild(item)
+
+    def isElementContentWhitespace(self):
+        if not self.childNodes:
+            return True
+        return False
+    isElementContentWhitespace = property(isElementContentWhitespace)
 
 class mbox(Command):
     """ Math box """

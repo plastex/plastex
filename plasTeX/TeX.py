@@ -16,11 +16,10 @@ Example:
 
 """
 
-import string
-from Utils import *
+import string, os
 from Context import Context 
 from Tokenizer import Tokenizer, Token, EscapeSequence, Other
-from plasTeX import TeXFragment, TeXDocument
+from plasTeX import TeXFragment, TeXDocument, Node
 from plasTeX import Parameter, Macro, glue, muglue, mudimen, dimen, number
 from plasTeX.Logging import getLogger, disableLogging
 

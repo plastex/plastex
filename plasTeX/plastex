@@ -21,7 +21,6 @@ codecs.open(sourcefile,'w',encoding).write(document.source)
 document = [x for x in document if x.level == Node.DOCUMENT_LEVEL].pop()
 outfile = '%s.xml' % basename
 codecs.open(outfile,'w',encoding).write(document.toXML())
-sys.exit()
 
 # Apply renderer
 from plasTeX.renderers.xhtml import xhtml as renderer
