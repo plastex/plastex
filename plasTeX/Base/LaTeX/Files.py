@@ -7,9 +7,12 @@ C.11.6 Terminal Input and Output
 
 """
 
+import codecs
 from plasTeX import Command, Environment
+from plasTeX.Config import config
 from plasTeX.Logging import getLogger
 
+encoding = config['encoding']['input']
 log = getLogger()
 
 class nofiles(Command):
@@ -25,7 +28,7 @@ class input(Command):
             path = a['name']
 
             status.info(' ( %s.tex ' % path)
-            tex.input(open(path, 'r'))
+            tex.input(codecs.open(path, 'r', encoding))
             status.info(' ) ')
 
         except (OSError, IOError):

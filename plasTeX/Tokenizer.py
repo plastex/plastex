@@ -84,6 +84,9 @@ class EscapeSequence(Token):
     def source(self):
         if self == 'par':
             return '\n\n'
+        # Handle active character format
+        if '::' in self:
+            return self.split('::').pop()
         return '\\%s ' % self
     source = property(source)
     def macroName(self):
@@ -414,17 +417,16 @@ class Tokenizer(object):
 
                     else:
                         token = EscapeSequence(token)
-
+#
+# Because we can implement macros both in LaTeX and Python, we don't 
+# always want the whitespace to be eaten.  For example, implementing
+# \chardef\%=`% would be \char{`%} in TeX, but in Python it's just 
+# another macro class that would eat whitspace incorrectly.
+#
                     if token.catcode != CC_EOL:
                         # Absorb following whitespace
                         self.state = STATE_S
-                        for t in chariter:
-                            if t.catcode == CC_SPACE:
-                                continue
-#                           elif t.catcode == CC_EOL:
-#                               continue
-                            pushchar(t)
-                            break
+#
 
                     break
 

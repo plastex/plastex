@@ -1,14 +1,17 @@
 #!/usr/bin/env python
 
+import codecs
 from plasTeX.Tokenizer import Token, EscapeSequence
 from plasTeX import Command, Environment, Count, count, sourcechildren
 from plasTeX.Logging import getLogger
+from plasTeX.Config import config
 
 log = getLogger()
 status = getLogger('status')
 deflog = getLogger('parse.definitions')
 envlog = getLogger('parse.environments')
 mathshiftlog = getLogger('parse.mathshift')
+encoding = config['encoding']['input']
 
 class relax(Command):
     pass
@@ -55,13 +58,9 @@ class BoxCommand(Command):
     """ Base class for box-type commands """
     args = 'self'
     def parse(self, tex):
-        shifted = 0
-        if MathShift.inenv:
-            shifted = 1
-            MathShift.inenv.append(None)
+        MathShift.inenv.append(None)
         Command.parse(self, tex) 
-        if shifted:
-            MathShift.inenv.pop()
+        MathShift.inenv.pop()
         return self.attributes
 
 class hbox(BoxCommand): pass
@@ -99,10 +98,11 @@ class MathShift(Command):
                     break
                 displaymath.macroMode = Command.MODE_END
                 tex.context.pop(displaymath)
+                return [displaymath]
             else:
                 math.macroMode = Command.MODE_END
                 tex.context.pop(math)
-            return []
+                return [math]
 
         for t in tex.itertokens():
             if t.catcode == Token.CC_MATHSHIFT:
@@ -376,7 +376,7 @@ class input(Command):
             path = tex.kpsewhich(a['name'])
 
             status.info(' ( %s ' % path)
-            tex.input(open(path, 'r'))
+            tex.input(codecs.open(path, 'r', encoding))
             status.info(' ) ')
 
         except (OSError, IOError), msg:

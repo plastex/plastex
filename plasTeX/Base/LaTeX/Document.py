@@ -14,6 +14,7 @@ class document(Environment, SectionUtils):
     def digest(self, tex):
         Environment.digest(self, tex)
         self.paragraphs()
+        self.attributes['title'] = self.ownerDocument.userdata['title']
 
 class AtEndDocument(Command):
     args = 'commands:nox'

@@ -15,7 +15,8 @@ parse.absorb=DEBUG
 file-extension=.png
 image-format=PNG
 cleanup=0
-enabled=0
+enabled=1
+baseline-padding=4
 
 [filenames]
 use-ids=1

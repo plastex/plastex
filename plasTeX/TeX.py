@@ -256,27 +256,26 @@ class TeX(object):
         self.pushtoken(EndTokens)
         self.pushtokens(tokens)
 
-        tokens = bufferediter(self)
-        output = TeXFragment()
-        for item in tokens:
-            if item.nodeType == Macro.ELEMENT_NODE:
-                item.digest(tokens)
-            output.append(item)
+        return self.parse(TeXFragment())
 
-        return output
-
-    def parse(self):
+    def parse(self, output=None):
         """ 
         Parse stream content until it is empty 
+
+        Keyword Arguments:
+        output -- object to put the content in.  This should be either
+            a TeXDocument or a TeXFragment
 
         Returns:
         `TeXDocument' instance
 
         """
         tokens = bufferediter(self)
-        output = TeXDocument()
+        if output is None:
+            output = TeXDocument()
         for item in tokens:
             if item.nodeType == Macro.ELEMENT_NODE:
+                item.parentNode = output
                 item.digest(tokens)
             output.append(item)
         return output
@@ -540,26 +539,15 @@ class TeX(object):
 
             # Get a TeX token (i.e. {...})
             if spec is None:
-                toks, source = self.readToken()
-                # If we only get back a single token that is an escape sequence
-                # go ahead and expand it.  If we let self.expandtokens do it
-                # it won't work properly.
-                if expanded and toks is not None and \
-                   len(toks)==1 and toks[0].catcode==Token.CC_ESCAPE:
-                    self.pushtoken(toks.pop())
-                    for toks in self:
-                        break
-                    source = toks.source
-                    expanded = False
-    
+                toks, source = self.readToken(expanded)
+
             # Get a single character argument
             elif len(spec) == 1:
-                expanded = False
                 toks, source = self.readCharacter(spec)
     
             # Get an argument grouped by the given characters (e.g. [...], (...))
             elif len(spec) == 2:
-                toks, source = self.readGrouping(spec)
+                toks, source = self.readGrouping(spec, expanded)
     
             # This isn't a correct value
             else:
@@ -575,9 +563,6 @@ class TeX(object):
             Parameter.enable()
             return default, ''
 
-        if expanded:
-            toks = self.expandtokens(toks)
-
         res = self.cast(toks, type, subtype, delim, slot)
  
         # Re-enable Parameters
@@ -585,7 +570,7 @@ class TeX(object):
 
         return res, source
 
-    def readToken(self):
+    def readToken(self, expanded=False):
         """
         Read a token or token group
 
@@ -595,6 +580,7 @@ class TeX(object):
 
         """
         tokens = self.itertokens()
+        isgroup = False
         for t in tokens:
             toks = []
             source = [t]
@@ -605,6 +591,7 @@ class TeX(object):
             # a TeX primitive was read before this, the first one 
             # will be expanded (hence the t.nodeName == 'bgroup').
             if t.catcode == Token.CC_BGROUP:
+                isgroup = True
                 level = 1
                 for t in tokens:
                     source.append(t)
@@ -620,7 +607,34 @@ class TeX(object):
                         toks.append(t)
             else:
                 toks.append(t)
-            return toks, self.source(source)
+
+            # Expand macros and get the argument source string
+            if expanded:
+
+                # If we only get back a single token that is an escape sequence
+                # go ahead and expand it.  If we let self.expandtokens do it
+                # it won't work properly.
+                if not(isgroup) and len(toks)==1 and \
+                   toks[0].catcode==Token.CC_ESCAPE:
+                    self.pushtoken(toks.pop())
+                    for toks in self:
+                        break
+                    source = toks.source
+    
+                # Expand groupings and all other types
+                else:
+                    toks = self.expandtokens(toks)
+                    if isgroup:
+                        s = self.source(toks)
+                        source = u'%s%s%s' % (source[0].source, s, 
+                                              source[-1].source)
+                    else:
+                        source = self.source(toks)
+            else:
+                source = self.source(source)
+
+            return toks, source
+
         return None, ''
 
     def readCharacter(self, char):
@@ -643,7 +657,7 @@ class TeX(object):
                 break
         return None, ''
 
-    def readGrouping(self, chars):
+    def readGrouping(self, chars, expanded=False):
         """
         Read a group delimited by the given characters
 
@@ -679,7 +693,12 @@ class TeX(object):
             else:
                 self.pushtoken(t)
                 break
-            return toks, self.source(source)
+            if expanded:
+                toks = self.expandtokens(toks)
+                source = begin + self.source(toks) + end
+            else:
+                source = self.source(source)
+            return toks, source
         return None, ''
 
     def readInternalType(self, tokens, method):
@@ -940,7 +959,7 @@ class TeX(object):
         Parse items delimited by the given delimiter into a list
 
         Required Arguments:
-        tokens -- list of tokens to cast
+        tokens -- TeXFragment of tokens to cast
 
         Keyword Arguments:
         type -- the list class to use for the returned object
@@ -955,8 +974,10 @@ class TeX(object):
         self.cast()
 
         """
-        delim = kwargs.get('delim',',')
-        subtype = kwargs.get('subtype',None)
+        delim = kwargs.get('delim')
+        if delim is None:
+            delim = ','
+        subtype = kwargs.get('subtype')
         listarg = [[]]
         while tokens:
             current = tokens.pop(0)
@@ -990,7 +1011,7 @@ class TeX(object):
         Parse key/value pairs into a dictionary
 
         Required Arguments:
-        tokens -- list of tokens to cast
+        tokens -- TeXFragment of tokens to cast
 
         Keyword Arguments:
         type -- the dictionary class to use for the returned object
@@ -1005,8 +1026,10 @@ class TeX(object):
         self.cast()
 
         """      
-        delim = kwargs.get('delim',',')
-        subtype = kwargs.get('subtype',',')
+        delim = kwargs.get('delim')
+        if delim is None:
+            delim = ','
+        subtype = kwargs.get('subtype')
         dictarg = type()
         currentkey = []
         currentvalue = None

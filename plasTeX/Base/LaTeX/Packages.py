@@ -5,9 +5,11 @@ C.5 Classes, Packages, and Page Styles (p176)
 
 """
 
+import codecs
 from plasTeX import Command, Environment
 from plasTeX import Dimen, dimen
 from plasTeX.Logging import getLogger
+from plasTeX.Config import config
 
 # Put the plasTeX packages into the path
 import sys, os
@@ -17,6 +19,7 @@ del packages
 
 log = getLogger()
 status = getLogger('status')
+encoding = config['encoding']['input']
 
 class PackageLoader(Command):
 
@@ -54,7 +57,7 @@ class PackageLoader(Command):
         status.info(' ( %s ' % path)
 
         try:
-            file = open(path, 'r')
+            file = codecs.open(path, 'r', encoding)
             # Put `self` in as a flag so that we can parse past our own
             # package tokens and throw them away, we don't want them in
             # the output document.

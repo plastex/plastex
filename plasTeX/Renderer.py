@@ -60,7 +60,12 @@ def unmix(base, mix=None):
         if not base._mixed_:
             del base._mixed_
 
+
 class Renderer(dict):
+
+    default = unicode
+    outputtype = unicode
+
     def __init__(self, data={}):
         dict.__init__(self, data)
         if config['images']['enabled']:
@@ -90,6 +95,9 @@ class Renderer(dict):
         mixin(Node, Renderable)
         Node.renderer = self
 
+        # Add document preamble to image document
+        self.imager.addtopreamble(document.preamble.source)
+
         # Invoke the rendering process
         result = unicode(document)
 
@@ -102,27 +110,32 @@ class Renderer(dict):
 
         return result
 
-
 class Renderable(object):
 
     def __unicode__(self):
         if not self.hasChildNodes():
             return u''
+
+        r = Node.renderer
+
         if self.filename:
             status.info(' [ %s ', self.filename)
+
         s = []
         for child in self.childNodes:
-            val = Node.renderer.get(child.nodeName, unicode)(child)
+            val = r.get(child.nodeName, r.default)(child)
             if type(val) is unicode:
                 s.append(val)
             else:
                 s.append(unicode(val,encoding))
+
         if self.filename:
             status.info(' ] ')
-        return u''.join(s)
+
+        return r.outputtype(u''.join(s))
 
     def __str__(self):
-        return unicode(self)
+        return Node.renderer.outputtype(self)
 
     def image(self):
         return Node.renderer.imager.newimage(self.source)

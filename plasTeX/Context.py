@@ -92,6 +92,9 @@ class Context(object):
         # Unresolved refs
         self.refs = {}
 
+        # LaTeX counters
+        self.counters = plasTeX.Counter.counters
+
         # Tokens aliased by \let
         self.lets = {}
 
@@ -458,6 +461,10 @@ class Context(object):
             macrolog.debug('counter %s already defined', name)
             return
         plasTeX.Counter(name, resetby, initial)
+
+        newclass = new.classobj('the'+name, (plasTeX.TheCounter,), 
+                               {'format': '%%(%s)s' % name})
+        self.addGlobal('the'+name, newclass)
 
     def newcount(self, name, initial=0):
         """ 

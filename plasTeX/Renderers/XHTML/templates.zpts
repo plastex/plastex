@@ -12,7 +12,7 @@
 </zpt:page-template>
 
 <zpt:page-template name="center">
-<div style="text-align:center" tal:content="self"></div>
+<center tal:content="self"></center>
 </zpt:page-template>
 
 <zpt:page-template name="color textcolor"><span tal:attributes="style self/style/inline" tal:content="self"></span></zpt:page-template>
@@ -77,8 +77,36 @@
 <a tal:attributes="href self/idref/url" tal:content="self"></a>
 </zpt:page-template>
 
-<zpt:page-template name="ref">
+<zpt:page-template name="ref sref">
 <a tal:attributes="href self/idref/url" tal:content="self/idref/title"></a>
+</zpt:page-template>
+
+<zpt:page-template name="oref">
+<a tal:attributes="href self/idref/url" tal:content="string:Output ${self/idref/ref}"></a>
+</zpt:page-template>
+
+<zpt:page-template name="tref">
+<a tal:attributes="href self/idref/url" tal:content="string:Table ${self/idref/ref}"></a>
+</zpt:page-template>
+
+<zpt:page-template name="fref">
+<a tal:attributes="href self/idref/url" tal:content="string:Figure ${self/idref/ref}"></a>
+</zpt:page-template>
+
+<zpt:page-template name="tablehead">
+<div class="caption"><a tal:attributes="name self/id"><b>Table <span tal:replace="self/ref"></span>:</b></a> <span tal:replace="self/title"></span></div>
+</zpt:page-template>
+
+<zpt:page-template name="fighead">
+<div class="caption"><a tal:attributes="name self/id"><b>Figure <span tal:replace="self/ref"></span>:</b></a> <span tal:replace="self/title"></span></div>
+</zpt:page-template>
+
+<zpt:page-template name="outhead">
+<div class="caption"><a tal:attributes="name self/id"><b>Output <span tal:replace="self/ref"></span>:</b></a> <span tal:replace="self/title"></span></div>
+</zpt:page-template>
+
+<zpt:page-template name="sasout">
+<div class="caption"><a tal:attributes="name self/id"><b>Output <span tal:replace="self/ref"></span>:</b></a> <span tal:replace="self/attributes/options/caption"></span></div>
 </zpt:page-template>
 
 <zpt:page-template name="alltt jverbatim cverbatim kverbatim tverbatim">

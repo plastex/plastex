@@ -148,8 +148,10 @@ class Macro(Element):
         tself = type(self)
         localsname = '@locals'
         # Check for cached versions first
-        if vars(tself).has_key(localsname):
-            return getattr(tself, localsname)
+        try:
+            return vars(tself)[localsname]
+        except KeyError:
+            pass
         mro = list(tself.__mro__)
         mro.reverse()
         loc = {}
@@ -202,7 +204,7 @@ class Macro(Element):
     nodeName = tagName = property(tagName)
 
     def source(self):
-        name = self.tagName
+        name = self.nodeName
 
         # Automatically revert internal names like "active::~"
         escape = '\\'
@@ -273,6 +275,7 @@ class Macro(Element):
         except:
             raise
             log.error('Error while parsing argument "%s" of "%s"' % (arg.name, self.nodeName))
+        self.postparse(tex)
         return self.attributes
 
     def resolve(self, tex):
@@ -289,7 +292,17 @@ class Macro(Element):
                 Counter.counters[self.counter].stepcounter()
             except KeyError:
                 log.warning('Could not find counter "%s"', self.counter)
-                tex.context.newcounter(self.counter,1)
+                tex.context.newcounter(self.counter,initial=1)
+
+    def postparse(self, tex):
+        """
+        Do operations that must be done immediately after parsing arguments
+
+        Required Arguments:
+        tex -- the TeX instance containing the current context
+
+        """
+        if self.counter:
             self.ref = tex.expandtokens(tex.context['the'+self.counter].invoke(tex))
 
     def arguments(self):
@@ -476,7 +489,7 @@ class TeXDocument(Document):
     def preamble(self):
         output = TeXFragment()
         for item in self:
-            if item.nodeName == 'document':
+            if item.level == Macro.DOCUMENT_LEVEL:
                 break
             output.append(item)
         return output

@@ -226,7 +226,7 @@ class NamedNodeMap(dict):
     parentNode = property(**parentNode())
 
     def ownerDocument(self):
-        if self.parentNode:
+        if self.parentNode is not None:
             return self.parentNode.ownerDocument
         return
     ownerDocument = property(ownerDocument)
@@ -679,8 +679,11 @@ class Node(object):
 
     def hasChildNodes(self):
         """ Do we have any child nodes? """
-        return hasattr(self, '@childNodes') or \
-               (self.attributes and self.attributes.has_key('self'))
+        try:
+            return not(not(getattr(self, '@childNodes')))
+        except AttributeError:
+            pass
+        return self.attributes and self.attributes.has_key('self')
 
     def firstChild(self):
         """ Return the first child in the list """
@@ -1015,9 +1018,7 @@ class Node(object):
         handler -- data handler
 
         """
-        if not hasattr(self, '@userdata'):
-            setattr(self, '@userdata', {})
-        getattr(self, '@userdata')[key] = data
+        self.userdata[key] = data
 
     def getUserData(self, key):
         """
@@ -1030,9 +1031,19 @@ class Node(object):
         the stored value, or None if it wasn't set
 
         """
-        try: return getattr(self, '@userdata')[key]
+        try: return self.userdata[key]
         except (AttributeError, KeyError): pass
         return None
+
+    def userdata(self):
+        try:
+            return getattr(self, '@userdata')
+        except AttributeError:
+            pass
+        userdata = {}
+        setattr(self, '@userdata', userdata)
+        return userdata
+    userdata = property(userdata)
 
     def __iter__(self):
         if self.hasChildNodes():

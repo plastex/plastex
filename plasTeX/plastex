@@ -5,25 +5,37 @@ import plasTeX
 from plasTeX.TeX import TeX
 from plasTeX.Config import config
 
-inencoding = config['encoding']['input']
-outencoding = config['encoding']['output']
 
-print >>sys.stderr, 'plasTeX version 1.0'
-file = sys.argv[1]
-basename = os.path.splitext(file)[0]
+def main(argv):
+    """ Main program routine """
+    inencoding = config['encoding']['input']
+    outencoding = config['encoding']['output']
 
-# Parse document
-s = TeX(codecs.open(file,'r',inencoding))
-document = s.parse()
+    print >>sys.stderr, 'plasTeX version 1.0'
+    file = argv[1]
+    basename = os.path.splitext(file)[0]
+    
+    # Create document instance that output will be put into
+    document = plasTeX.TeXDocument()
+    document.userdata['title'] = 'SAS/STAT'
+    
+    # Parse document
+    s = TeX(codecs.open(file,'r',inencoding))
+    s.parse(document)
+    
+    # Write expanded source file
+    sourcefile = '%s.source' % basename
+    codecs.open(sourcefile,'w',outencoding).write(document.source)
+    
+    # Write XML dump
+    outfile = '%s.xml' % basename
+    codecs.open(outfile,'w',outencoding).write(document.toXML())
+    
+    # Apply renderer
+    from plasTeX.renderers.xhtml import xhtml as renderer
+    renderer.render(document)
 
-# Write expanded source file
-sourcefile = '%s.source' % basename
-codecs.open(sourcefile,'w',outencoding).write(document.source)
-
-# Write XML dump
-outfile = '%s.xml' % basename
-codecs.open(outfile,'w',outencoding).write(document.toXML())
-
-# Apply renderer
-from plasTeX.renderers.xhtml import xhtml as renderer
-renderer.render(document)
+try:
+    main(sys.argv)
+except KeyboardInterrupt:
+    pass

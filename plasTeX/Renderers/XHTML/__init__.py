@@ -11,12 +11,37 @@ attrsre = re.compile(r'<zpt:page-template\s+([^>]+)?\s*>')
 parseattrsre = re.compile(r'\s*(\w+)\s*=\s*["\']([^"\']+)?["\']')
 contentre = re.compile(r'<zpt:page-template\s+[^>]+>(.*?)</zpt:page-template>', re.S)
 
+
+class htmlunicode(unicode):
+    """ Helper for strings output from renderer """
+
+    def plaintext(self):
+        """ Strip markup from string """
+        return type(self)(re.sub(r'<\w+[^>]*>', r''))
+
+
 class XHTML(Renderer):
-    
+
+    outputtype = htmlunicode
+
+    entitysubs = [ 
+        # Pretty quotation marks
+        ('``', '&#8220;'),
+        ("''", '&#8221;'),
+        ('`',  '&#8216;'),
+        ("'",  '&#8217;'),
+    ]
+
     def __init__(self):
         Renderer.__init__(self)
-        self.filecount = 0
         self.importDirectory(os.path.dirname(__file__))
+
+    def default(self, s):
+        """ Default renderer """
+        s = unicode(s)
+        for before, after in type(self).entitysubs:
+            s = s.replace(before, after)
+        return unicode(s)
 
     def importDirectory(self, templatedir):
         """ Compile all ZPT files in the given directory """

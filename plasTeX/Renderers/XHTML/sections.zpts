@@ -18,11 +18,11 @@
 <style type="text/css">
 <!--
 .ieqn {
-    margin-bottom: -10px;
+    margin-bottom: -4px;
 }
 .displaymath,.eqnarray {
     margin-top: 15px;
-    margin-bottom: 5px;
+    margin-bottom: 11px;
     margin-left: 30px;
 }
 -->
