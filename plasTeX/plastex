@@ -4,7 +4,7 @@ import os, sys, codecs
 import plasTeX
 from plasTeX.TeX import TeX
 from plasTeX.Config import config
-
+from plasTeX.ConfigManager import *
 
 def main(argv):
     """ Main program routine """
@@ -12,7 +12,22 @@ def main(argv):
     outencoding = config['encoding']['output']
 
     print >>sys.stderr, 'plasTeX version 1.0'
-    file = argv[1]
+
+    # Parse the command line options
+    clm = CommandLineManager()
+    clm['options'] = config
+    clm['file'] = StringArgument()
+    try: 
+        clm.getopt(argv[1:])
+    except Exception, msg:
+        print >>sys.stderr, clm.usage()
+        sys.exit(1)
+
+    try:
+        file = TeX.kpsewhich(clm['file'], ['.tex','.ltx'])
+    except OSError, msg:
+        print >>sys.stderr, msg
+        sys.exit(1)
     basename = os.path.splitext(file)[0]
     
     # Create document instance that output will be put into
@@ -34,7 +49,7 @@ def main(argv):
     # Apply renderer
     from plasTeX.renderers.xhtml import xhtml as renderer
     renderer.render(document)
-
+    
 try:
     main(sys.argv)
 except KeyboardInterrupt:

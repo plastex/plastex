@@ -1,19 +1,20 @@
 #!/usr/bin/env python
 
 from plasTeX.DOM import Node
-#from imagers.dvi2bitmap import DVI2Bitmap
+from imagers.dvi2bitmap import DVI2Bitmap
 from imagers.dvipng import DVIPNG
 from imagers import Imager
 from StringIO import StringIO
 from plasTeX.Config import config
 from plasTeX.Logging import getLogger
 
+log = getLogger()
 status = getLogger('status')
 
 encoding = config['encoding']['output']
-useids = config['filenames']['use-ids']
-ext = config['filenames']['extension']
-splitlevel = config['sections']['split-level']
+useids = config['files']['use-ids']
+ext = config['files']['extension']
+splitlevel = config['files']['split-level']
 
 def mixin(base, mix, overwrite=False):
     """
@@ -75,8 +76,14 @@ class Renderer(dict):
 
         # Image generator
         if config['images']['enabled']:
-            self.imager = DVIPNG()
-#           self.imager = DVI2Bitmap()
+            program = config['images']['program']
+            if program == 'dvipng':
+                self.imager = DVIPNG()
+            elif program == 'dvi2bitmap':
+                self.imager = DVI2Bitmap()
+            else:
+                log.warning('Unrecognized imager "%s"', program)
+                self.imager = Imager()
         else:
             self.imager = Imager()
 
@@ -89,11 +96,11 @@ class Renderer(dict):
 
         """
         # Get the template and extension for output filenames
-        ext = config['filenames']['extension']
-        template = config['filenames'].get('template', raw=True) + ext
+        ext = config['files']['extension']
+        template = config['files'].get('template', raw=True) + ext
     
         # Return the index filename on the first pass
-        yield config['filenames'].get('index', raw=True) + ext
+        yield config['files'].get('index', raw=True) + ext
     
         # Generate new filenames
         v = {'num':1}

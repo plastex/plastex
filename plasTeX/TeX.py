@@ -1097,7 +1097,7 @@ class TeX(object):
 
         return dictarg
 
-    def kpsewhich(self, name):
+    def kpsewhich(cls, name, extensions=['.sty','.tex','.ltx','.cls']):
         """ 
         Locate the given file in a kpsewhich-like manner 
 
@@ -1110,15 +1110,18 @@ class TeX(object):
 
         """
         plastexinputs = os.environ.get('TEXINPUTS', '.')
-        extensions = ['.sty','.tex','.cls']
         for path in plastexinputs.split(':'):
+           fullpath = os.path.join(path, name)
+           if os.path.isfile(fullpath):
+               return fullpath
            for ext in extensions:
                fullpath = os.path.join(path, name+ext)
                if os.path.isfile(fullpath):
                    return fullpath
-        raise OSError, 'could not find file "%s" with extension in %s' % \
-                       (name, ', '.join(extensions))
+        raise OSError, 'Could not find any file named: %s' % \
+                       (', '.join(['%s%s' % (name, x) for x in extensions]))
 
+    kpsewhich = classmethod(kpsewhich)
 #
 # Parsing helper methods for parsing numbers, spaces, dimens, etc.
 #

@@ -16,6 +16,7 @@ file-extension=.png
 image-format=PNG
 cleanup=0
 enabled=1
+program=dvipng
 
 [filenames]
 use-ids=1

@@ -1497,8 +1497,7 @@ class ConfigManager(UserDict, object):
            for name, summary, option in options:
               length = len(name)
               summary = wrap(summary, summary_len)
-              summary = ('\n%s' % (' '*(PREPAD+name_len+GUTTER))).join(
-                                                        summary.split('\n'))
+              summary = ('\n%s' % (' '*(PREPAD+name_len+GUTTER))).join(summary)
               # Be lenient on the gutter if we are really close to
               # fitting in the allocated space
               format = '%s%s%s%s\n'
