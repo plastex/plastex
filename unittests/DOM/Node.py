@@ -452,19 +452,51 @@ class Construction(TestCase):
         assert one[0] is not res[0]
 
     def testNormalize(self):
-        pass
+        doc = Document()
+        node = doc.createElement('node')
+        one = doc.createElement('one')
+        two = doc.createTextNode('two')
+        three = doc.createTextNode('three')
+        four = doc.createTextNode('four')
+        node.extend([one,two,three,four])
+        node.normalize()
+        assert len(node) == 2, '"%s" != "%s"' % (len(node), 2)
+        assert node[1] == 'twothreefour', '"%s" != "%s"' % (node[1], 'twothreefour')
 
     def testIsSupported(self):
         pass
    
     def testHasAttributes(self):
-        pass
+        doc = Document()
+        node = doc.createElement('node')
+        one = doc.createElement('one')
+        assert not node.hasAttributes()
+
+        node.attributes['one'] = one
+        assert node.hasAttributes()
 
     def testTextContent(self):
-        pass
+        doc = Document()
+        node = doc.createElement('node')
+        one = doc.createTextNode('one')
+        two = doc.createElement('two')
+        three = doc.createTextNode('three')
+        four = doc.createTextNode('four')
+        node.append(one)
+        node.append(two)
+        two.extend([three, four])
+
+        res = node.textContent
+        expected = 'onethreefour'
+        assert res == expected, '"%s" != "%s"' % (res, expected)
 
     def testIsSameNode(self):
-        pass
+        doc = Document()
+        node = doc.createElement('node')
+        assert node.isSameNode(node)
+
+        clone = node.cloneNode()
+        assert not node.isSameNode(clone)
 
     def testLookupPrefix(self):
         pass
@@ -476,16 +508,24 @@ class Construction(TestCase):
         pass
 
     def testIsEqualNode(self):
-        pass
+        doc = Document()
+        node = doc.createElement('node')
+        one = doc.createElement('one')
+        two = doc.createElement('two')
+        node.extend([one, two])
+        node2 = node.cloneNode(deep=True)
+        assert node.isEqualNode(node2)
 
     def testGetFeature(self):
         pass
 
-    def testSetUserData(self):
-        pass
+    def testGetSetUserData(self):
+        doc = Document()
+        node = doc.createElement('node')
+        node.setUserData('foo', 'bar')
+        res = node.getUserData('foo')
+        assert res == 'bar'
 
-    def testGetUserData(self):
-        pass
 
 if __name__ == '__main__':
     unittest.main()
