@@ -2,9 +2,19 @@
 
 import unittest, sys
 from unittest import TestCase
-from plasTeX import Environment
+from plasTeX import Macro, Environment
 from plasTeX.TeX import TeX
-from plasTeX.Context import Macro
+from plasTeX.Context import Context
+
+class ContextGenerated(TestCase):
+    def testNewcommand(self):
+        c = Context()
+        c.newcommand('foo')
+        c.newcommand('bar', 0, r'\it\bf')
+        keys = c.keys()
+        keys.sort()
+        assert keys == ['foo','bar'], keys
+
 
 class NC(TestCase):
 
@@ -35,7 +45,7 @@ class NC(TestCase):
 
     def testCatcode(self):
         s = TeX(r'\catcode`<=2')
-        s.parse()
+        output = [x for x in s]
         assert '<' in s.context.categories[2]
 
 class NewCommands(TestCase):

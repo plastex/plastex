@@ -22,9 +22,7 @@ class CategoryCodes(TestCase):
                 return '<code>%s</code>' % list.__repr__(self)
         s = TeX('\code{this # is $ some & nasty _ text}&_2')
         s.context['code'] = code
-        tokens = s.parse()
-
-        assert len(tokens) == 3
+        tokens = [x for x in s]
 
         tok = type(tokens[0])
         cs = type(s.context['code'])
@@ -48,9 +46,9 @@ class CategoryCodes(TestCase):
                 return '<code>%s</code>' % list.__repr__(self)
         s = TeX("{\catcode`\#=11\catcode`\$=11\catcode`\&=11\catcode`\_=11{this # is $ some & nasty _ text}}&_2")
         s.context['code'] = code
-        tokens = s.parse()
+        tokens = [x for x in s]
 
-        text = tokens[6:-4]
+        text = tokens[6:-5]
         assert not [x for x in text if x.code not in [10,11]], [x.code for x in text]
 
         tok = type(tokens[-2])
