@@ -37,7 +37,7 @@ class document(Environment, _Section):
 
     def parse(self, tex):
         # Save the preamble for use later
-        self.preamble = type(tex).persistent.getSource(0,self._source.start)
+#       self.preamble = type(tex).persistent.getSource(0,self._source.start)
         return Environment.parse(self, tex)
 
     def digest(self, tokens):

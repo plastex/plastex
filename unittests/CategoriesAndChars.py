@@ -12,11 +12,11 @@ class CategoryCodes(TestCase):
         class code(Macro):
             args = 'self'
             def parse(self, tex):
-                tex.context.setCategoryCode('#',11)
-                tex.context.setCategoryCode('&',11)
-                tex.context.setCategoryCode('^',11)
-                tex.context.setCategoryCode('_',11)
-                tex.context.setCategoryCode('$',11)
+                tex.context.catcode('#',11)
+                tex.context.catcode('&',11)
+                tex.context.catcode('^',11)
+                tex.context.catcode('_',11)
+                tex.context.catcode('$',11)
                 return Macro.parse(self, tex)
             def __repr__(self):
                 return '<code>%s</code>' % list.__repr__(self)
@@ -26,40 +26,40 @@ class CategoryCodes(TestCase):
 
         assert len(tokens) == 3
 
-        assert type(tokens[0]) is code, '"%s" != "%s"' % (type(tokens[0]), code)
+        tok = type(tokens[0])
+        cs = type(s.context['code'])
+        assert tok is cs, '"%s" != "%s"' % (tok, cs)
 
-        text = 'this # is $ some & nasty _ text'
-        assert tokens[0][0] == text, '"%s" != "%s"' % (tokens[0][0], text)
+        assert not [x.code for x in tokens[0] if x.code not in [10,11]], \
+               'All codes should be 10 or 11: %s' % [x.code for x in tokens[0]]
 
         tok = type(tokens[1])
-        tab = type(s.context['alignmenttab'])
-        assert type(tok) is type(tab), '"%s" != "%s"' % (tok, tab)
+        cs = type(s.context['alignmenttab'])
+        assert tok is cs, '"%s" != "%s"' % (tok, cs)
     
         tok = type(tokens[2])
-        tab = type(s.context['subscript'])
-        assert type(tok) is type(tab), '"%s" != "%s"' % (tok, tab)
+        cs = type(s.context['subscript'])
+        assert tok is cs, '"%s" != "%s"' % (tok, cs)
 
     def testLocalCatCodes2(self):
         class code(Macro):
             args = 'self'
-        s = TeX("\code{\catcode`\#=11\catcode`\$=11\catcode`\&=11\catcode`\_=11this # is $ some & nasty _ text}&_2")
+            def __repr__(self):
+                return '<code>%s</code>' % list.__repr__(self)
+        s = TeX("{\catcode`\#=11\catcode`\$=11\catcode`\&=11\catcode`\_=11{this # is $ some & nasty _ text}}&_2")
         s.context['code'] = code
         tokens = s.parse()
 
-        assert len(tokens) == 3
+        text = tokens[2:-4]
+        assert not [x for x in text if x.code not in [10,11]], [x.code for x in text]
 
-        assert type(tokens[0]) is code, '"%s" != "%s"' % (type(tokens[0]), code)
-
-        text = 'this # is $ some & nasty _ text'
-        assert tokens[0][0] == text, '"%s" != "%s"' % (tokens[0][0], text)
-
-        tok = type(tokens[1])
+        tok = type(tokens[-2])
         tab = type(s.context['alignmenttab'])
-        assert type(tok) is type(tab), '"%s" != "%s"' % (tok, tab)
+        assert tok is tab, '"%s" != "%s"' % (tok, tab)
     
-        tok = type(tokens[2])
+        tok = type(tokens[-1])
         tab = type(s.context['subscript'])
-        assert type(tok) is type(tab), '"%s" != "%s"' % (tok, tab)
+        assert tok is tab, '"%s" != "%s"' % (tok, tab)
 
 
 if __name__ == '__main__':

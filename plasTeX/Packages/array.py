@@ -20,18 +20,19 @@ class Array(Environment):
 
     class alignmenttab(Command):
         """ Cell delimiter """
-        def parse(self, tex):
-            tex.context.groups.popGrouping(tex)
-            tex.context.groups.pushGrouping()
+        def invoke(self, tex):
+            tex.context.pop()
+            tex.context.push()
             return self
 
     class cr(Command):
         """ End of a row """
+        texname = '\\'
         args = '* [ space ]'
-        def parse(self, tex):
-            tex.context.groups.popGrouping(tex)
+        def invoke(self, tex):
+            tex.context.pop()
             Command.parse(self, tex)
-            tex.context.groups.pushGrouping()
+            tex.context.push()
             return self
 
     class cline(Command):
@@ -77,11 +78,11 @@ class Array(Environment):
 
     class multicolumn(Command):
         """ Column spanning cell """
-        args = '#colspan ^colspec self'
+        args = 'colspan:int colspec self'
 
     def parse(self, tex):
         Environment.parse(self, tex)
-        tex.context.groups.pushGrouping()
+        tex.context.push() # Beginning of cell
         return self
 
     def digest(self, tokens):

@@ -2,157 +2,46 @@
 
 import string, re
 from Utils import *
-from Context import Context
-from plasTeX import TeXFragment, Glue, str2dimen, Dimension
+from Categories import *
+from Token import *
+from Context import Context 
+from plasTeX import TeXFragment, Macro, Glue, Muglue, Mudimen, Dimen
 from plasTeX.Logging import getLogger, disableLogging
 try: from cStringIO import StringIO
 except: from StringIO import StringIO
 
 log = getLogger()
 sectionlog = getLogger('parse.sections')
-persistlog = getLogger('parse.persistent')
-marklog = getLogger('parse.persistent.marks')
 commandlog = getLogger('parse.commands')
 verbatimlog = getLogger('parse.verbatim')
 
-class EndGroup(Exception):
-    """ Internal Use Only: Used for parsing TeX groups (i.e {...}) """
+# Tokenizer states
+STATE_S = 1
+STATE_M = 2
+STATE_N = 4
 
-class EndOfFile(Exception):
-    """ Internal Use Only: Reached end of input exception """
+def dimen(o): return o.__dimen__()
+def mudimen(o): return o.__mudimen__()
+def glue(o): return o.__glue__()
+def muglue(o): return o.__muglue__()
 
-class Token(str):
-    def __int__(self):
-        try: return self.code
-        except AttributeError: return int(str(self))
-class EscapeSequence(str): pass
-class MacroParameter(str): pass
-class ParameterToken(str):
-    code = 6
+class TokenList(list): pass
 
+class tokiter(object):
+    def __init__(self, obj):
+        self.obj = obj
+    def __iter__(self):
+        return self
+    def next(self):
+        return self.obj.nexttok()
 
-class Persistent(object):
-    """ 
-    Stream object for persisting TeX source 
-
-    This stream is kept in sync with the source being read.
-    When something defined by a \\def, \\newcommand, or \\newenvironment
-    is reached, the definition, not the actual TeX source, is
-    put into this stream.  This allows you to get the TeX source
-    an command or environment in the document later.  This is 
-    generally used in creating images for math or unknown environments.
-
-    """
-
-    def __init__(self):
-        self.string = StringIO()
-        self.seek = self.string.seek
-        self.read = self.string.read
-        self.write = self.string.write
-        self.getvalue = self.string.getvalue
-        self.close = self.string.close
-        self.readline = self.string.readline
-        self.readlines = self.string.readlines
-        self.tell = self.string.tell
-        self.flush = self.string.flush
-
-    def _backup(self, howmany):
-        """
-        Back the stream cursor up by `howmany` characters
-
-        Required Arguments:
-        howmany -- number of characters to back up
-
-        """
-        self.seek(-howmany,1)
-
-    backup = _backup
-
-    def isEnabled(self):
-        """ 
-        Is persistence enabled? 
-
-        Returns: boolean indicating whether the persistence mechanism
-            is currently enabled or not
-
-        """
-        return self.write is self.string.write
-
-    def enable(self, offset=0):
-        """ 
-        Enable persistence 
-
-        Keyword Arguments:
-        offset -- the number of characters to shift the cursor
-            before enabling persistence again
-
-        """
-        if offset: 
-            self.seek(offset,1)
-        persistlog.debug2('enable %s', offset)
-        self.write = self.string.write
-        self.backup = self._backup
-
-    def disable(self, offset=0):
-        """ 
-        Disable persistence
-
-        Keyword Arguments:
-        offset -- the number of characters to shift the cursor
-            before disabling persistence
-
-        """
-        if offset: 
-            self.seek(offset,1)
-        persistlog.debug2('disable %s', offset)
-        self.write = self.devnull
-        self.backup = self.devnull
-
-    def devnull(self, *args, **kwargs):
-        """ Functional equivalent to /dev/null """
-        pass
-
-    def getPosition(self, offset=0):
-        """ 
-        Get the current position of the stream 
-
-        Keyword Arguments:
-        offset -- number of characters to add to the current position
-            before returning the result
-
-        Returns: the current position of the stream cursor
-
-        """
-        return self.tell() + offset
-
-    def getSource(self, start, end=None):
-        """ 
-        Get the source corresponding to the given object 
-
-        Required Arguments:
-        start -- either an integer starting position where reading 
-            should start in the stream, or an instance of a macro.
-            If a macro instance is given, no end position should
-            be given; both beginning and ending positions will be
-            extracted from the macro instance.
-
-        Keyword Arguments:
-        end -- position to quit reading
-
-        Returns: string containing source from `start` to `end`, or 
-            the string containing the source for the given macro instance
-
-        """
-        current = self.tell()
-        if end is None:
-            self.seek(start._source.start)
-            value = self.read(start._source.end-start._source.start)
-        else:
-            self.seek(start)
-            value = self.read(end-start)
-        self.seek(current)
-        return value
-
+class chariter(object):
+    def __init__(self, obj):
+        self.obj = obj
+    def __iter__(self):
+        return self
+    def next(self):
+        return self.obj.nextchar()
 
 class TeX(object):
     """
@@ -163,8 +52,6 @@ class TeX(object):
 
     """
 
-    persistent = Persistent()
-
     def __init__(self, s):
         if isinstance(s, basestring):
             self.string = StringIO(s)
@@ -174,123 +61,227 @@ class TeX(object):
             self.filename = s.name
 
         self.context = Context
+        self.state = STATE_N          # Tokenizing state
+
+        self._charbuffer = []
+        self._tokbuffer = []
 
         # Mirror stream capabilities
         self.seek = self.string.seek
         self.read = self.string.read
-        self.getvalue = self.string.getvalue
-        self.close = self.string.close
         self.readline = self.string.readline
-        self.readlines = self.string.readlines
         self.tell = self.string.tell
-        self.flush = self.string.flush
+
+        self.argtypes = {
+            str: unicode,
+            int: int,
+            float: float,
+            list: list,
+            dict: dict,
+            'int': int,
+            'float': float,
+            'number': float,
+            'list': list,
+            'dict': dict,
+            'str': unicode,
+            'chr': unicode,
+            'cs': CC_ESCAPE,
+        }
+
+        self.output = []
 
     def disableLogging(cls):
         disableLogging()
     disableLogging = classmethod(disableLogging)
 
-    def disablePersist(self, obj=None):
+    def nextchar(self):
         """ 
-        Temporarily disable the source persistence mechanism 
+        Get the next character in the stream and its category code
 
-        Keyword Arguments:
-        obj -- if given, the stream is reset to the point in the 
-            stream where the macro instance `obj` began
+        This function handles automatically converts characters like
+        ^^M, ^^@, etc. into the correct character.  It also bypasses
+        ignored and invalid characters. 
+
+        If you are iterating through the characters in a TeX instance
+        and you go too far, you can put the character back with
+        the pushchar() method.
 
         """
-        if obj is None:
-            offset = 0
-        else:
-            persistlog.debug3('disable position %s %s', obj._position, self.tell())
-            offset = obj._position - self.tell()
-        type(self).persistent.disable(offset)
+        if self._charbuffer:
+            return self._charbuffer.pop(0)
 
-    def enablePersist(self, obj=None):
-        """ 
-        Re-enable the persistence mechanism 
+        while 1:
+            token = self.read(1)
 
-        Keyword Arguments:
-        obj -- if given, the stream is reset to the point in the 
-            stream where the macro instance `obj` began
+            if not token:
+                raise StopIteration
 
-        """
-        if obj is None:
-            offset = 0
-        else:
-            persistlog.debug3('enable position %s %s', obj._position, self.tell())
-            offset = obj._position - self.tell()
-        type(self).persistent.enable(offset)
+            code = self.context.whichCode(token)
 
-    def getSource(self, begin, end):
-        """ 
-        Get the source from `begin` to `end` without modifying the stream 
+            if code == CC_SUPER:
 
-        Required Arguments:
-        begin -- starting position
-        end -- ending position
+                # Handle characters like ^^M, ^^@, etc.
+                char = self.read(1)
 
-        Returns:
-        string containing LaTeX source
+                if char == token:
+                    char = self.read(1)
+                    num = ord(char)
+                    if num >= 64: token = chr(num-64)
+                    else: token = chr(num+64)
+                    code = self.context.whichCode(token)
 
-        """
-        current = self.string.tell()
-        self.string.seek(begin)
-        content = self.string.read(end-begin) 
-        self.string.seek(current)
-        return content
+                else:
+                    self.seek(-1,1)
 
-    def getSourcePosition(self, offset=0):
-        """ 
-        Get the current position of the source stream 
+            # Just keep going if you see one of these...
+            if code == CC_IGNORED:
+                continue
+            elif code == CC_INVALID:
+                continue
 
-        Keyword Arguments:
-        offset -- number of characters to add to returned position
+            break
 
-        Returns:
-        position in the stream plus `offset`
+        return TOKENCLASSES[code](token)
 
-        """
-        return type(self).persistent.getPosition(offset)
+    def pushchar(self, token):
+        self._charbuffer.insert(0, token)
 
-    def peek(self):
-        """ 
-        Sneak a peek at the next character 
+    def pushtoken(self, token):
+        if token:
+            if self.output:
+                self.output.pop()
+            self._tokbuffer.insert(0, token)
 
-        Returns:
-        next character in the stream
-
-        """
-        char = self.read(1) 
-        self.seek(-1,1)
-        return char
-
-    def backup(self, howmany=1):
-        """ 
-        Back the stream cursor up by `howmany` characters
-
-        Keyword Arguments:
-        howmany -- number of characters to back up
-
-        """
-        self.seek(-howmany,1)
-        type(self).persistent.backup(howmany)
+    def pushtokens(self, tokens):
+        if tokens:
+            tokens = list(tokens)
+            tokens.reverse()
+            for t in tokens:
+                self.pushtoken(t)
 
     def next(self):
+        """ Walk through tokens while expanding them """
+        for token in self.itertokens():
+            if token is None or token == '':
+                continue
+            elif token.code == CC_ENDTOKENS:
+                break
+            elif token.code == CC_EXPANDED:
+                pass
+            elif token.macro is not None:
+                for i, item in enumerate(self.context[token.macro].invoke(self)):
+                    self._tokbuffer.insert(i, item)
+                continue
+            self.output.append(token)
+            return token
+        raise StopIteration
+
+    def expandTokens(self, tokens):
+        self.pushtoken(EndTokens)
+        self.pushtokens(tokens)
+        output = []
+        for token in self:
+            output.append(token)
+        return output
+
+    def nexttok(self):
         """ 
-        Iterator method - returns next character in stream 
+        Iterator method - returns next token in the stream 
 
         Returns:
-        next character in the stream
+        next token in the stream
 
         See Also:
         self.__iter__()
 
         """
-        char = self.read(1) 
-        if not char:
-            raise StopIteration
-        type(self).persistent.write(char)
-        return char
+        if self._tokbuffer:
+            return self._tokbuffer.pop(0)
+
+        chiter = self.iterchars()
+
+        for token in chiter:
+
+            code = token.code
+ 
+            if code == CC_EXPANDED:
+                raise ValueError, 'Expanded tokens should never make it here'
+
+            # Escape sequence
+            elif code == CC_ESCAPE:
+
+                # Get name of command sequence
+                self.state = STATE_M
+
+                for token in chiter:
+ 
+                    if token.code == CC_EOL:
+                        self.pushchar(token)
+                        token = EscapeSequence()
+
+                    elif token.code == CC_LETTER:
+                        word = [token]
+                        for t in chiter:
+                            if t.code == CC_LETTER:
+                                word.append(t) 
+                            else:
+                                self.pushchar(t)
+                                break
+                        token = EscapeSequence(u''.join(word))
+
+                    else:
+                        token = EscapeSequence(token)
+
+                    if token.code != CC_EOL:
+                        # Absorb following whitespace
+                        self.state = STATE_S
+                        for t in chiter:
+                            if t.code == CC_SPACE:
+                                continue
+                            elif t.code == CC_EOL:
+                                continue
+                            self.pushchar(t)
+                            break
+
+                    break
+
+                else: token = EscapeSequence()
+
+            # End of line
+            elif code == CC_EOL:
+                if self.state == STATE_S:
+                    self.state = STATE_N
+                    continue
+                elif self.state == STATE_M:
+                    token = Space(u' ')
+                    code = CC_SPACE
+                    self.state = STATE_N
+                elif self.state == STATE_N: 
+                    if token != '\n':
+                        self.readline()
+                    token = EscapeSequence('par')
+                    code = CC_ESCAPE
+
+            elif code == CC_SPACE:
+                if self.state in [STATE_S, STATE_N]:
+                    continue
+                self.state = STATE_S
+                token = Space(u' ')
+
+            elif code == CC_COMMENT:
+                self.readline() 
+                self.state = STATE_N
+                continue
+
+            else:
+                self.state = STATE_M
+
+            return token
+
+        raise StopIteration
+
+    def source(self, items):
+        return u''.join([repr(x) for x in items])
 
     def __iter__(self):
         """
@@ -305,130 +296,58 @@ class TeX(object):
         """
         return self
 
-    #
-    # TeX specific methods
-    #
+    def itertokens(self):
+        return tokiter(self)
 
-    def removeWhitespace(self, newlines=False):
-        """ 
-        Remove all whitespace
+    def iterchars(self):
+        return chariter(self)
 
-        Keyword Arguments:
-        newlines -- boolean indicating whether newlines should be
-            absorbed as a whitespace character
+    def normalize(self, tokens, strip=False):
+        if tokens is None:
+            return tokens
+        for t in tokens:
+            if t.code not in [CC_LETTER, CC_OTHER, CC_EGROUP, 
+                              CC_BGROUP, CC_SPACE]:
+                return tokens
+        return (u''.join([x for x in tokens 
+                          if x.code not in [CC_EGROUP, CC_BGROUP]])).strip()
 
-        Returns:
-        two-element tuple containing the total number of whitespace
-        characters and the total number of newlines absorbed 
+    def getCase(self, which):
+        # Since the true content always comes first, we need to set
+        # True to case 0 and False to case 1.
+        elsefound = False
+        if isinstance(which, bool):
+            if which: which = 0
+            else: which = 1
+        cases = [[]]
+        nesting = 0
+        for t in self.itertokens():
+            # This is probably going to cause some trouble, there 
+            # are bound to be macros that start with 'if' that aren't
+            # actually 'if' constructs...
+            if t.startswith('if'):
+                nesting += 1
+            elif t == 'fi':
+                if not nesting:
+                    break
+                nesting -= 1
+            elif not(nesting) and t == 'else':
+                cases.append([])
+                elsefound = True
+                continue
+            elif not(nesting) and t == 'or':
+                cases.append([])
+                continue
+            cases[-1].append(t)
+        if not elsefound:
+            cases.append([])
+        return cases[which]
 
-        """
-        # Compile a list of all whitespace characters
-        comment = self.context.categories[14]
-        whitespace = self.context.categories[10]
-        if newlines:
-            whitespace += self.context.categories[5]
+    def getArgument(self, *args, **kwargs):
+        return self.getArgumentAndSource(*args, **kwargs)[0]
 
-        total_whitespace = total_newlines = 0
-        for char in self:
-            if char == '\n':
-                total_newlines += 1
-            if char in comment:
-                w,n = self.removeComment()
-                total_whitespace += w
-            elif char not in whitespace: 
-                self.backup()    
-                break
-            total_whitespace += 1
-
-        return total_whitespace, total_newlines
-
-    def removeComment(self):
-        """ 
-        Remove the rest of the line and all trailing whitespace
-
-        Returns:
-        result of self.removeWhitespace() after removing the comment line
-
-        See Also:
-        self.removeWhitespace()
-
-        """
-        self.backup()
-        start = self.tell()
-
-        # We have to put the comment into the persisted source
-        # in order to keep the streams in sync.
-        type(self).persistent.write(self.readline())
-
-        end = self.tell()
-
-        return self.removeWhitespace()
-
-    def normalize(self, tokens):
-        """ 
-        Combine consecutive strings and consecutive empty paragraphs 
-
-        Required Arguments:
-        tokens -- list of macro instances and strings
-
-        Returns:
-        list of tokens with strings and paragraphs normalized
-
-        """
-        # Locate the paragraph class
-        par = type(self.context['par'])
-
-        # Flatten and normalize using utility functions
-        tokens = normalize(flatten(tokens))
-
-        in_par = 0
-        for i in range(len(tokens)):
-            current = tokens[i]
-            if isinstance(current, par):
-                if in_par: 
-                    tokens[i] = None
-                in_par = 1 
-            elif in_par and isinstance(current, basestring):
-                tok = current.lstrip()
-                if not tok:
-                    tokens[i] = None
-                else:
-                    tokens[i] = tok
-                    in_par = 0
-            else:
-                in_par = 0
-
-        return [x for x in tokens if x is not None]
-
-    def getUnexpandedArgument(self, spec=None, type=None, delim=',', raw=False):
-        """
-        Get an argument without expanding it into tokens
-
-        See Also: self.getArgument()
-
-        """
-        self.context.push() 
-        self.context.setCategoryCodesForDef()
-        tokens = self.getArgument(spec=spec, type=type, delim=delim, raw=True)
-        # I never quite figured out why, but this line has to be here
-        self.persistent.read(1)
-        if spec and len(spec) > 1:
-            self.persistent.read(len(spec))
-        self.context.pop()
-        if tokens is not None:
-            begin = self.context.categories[1][0]
-            end = self.context.categories[2][0]
-            tokens = normalize(flatten(tokens, begin+end))
-            if tokens:
-                if tokens[0] in self.context.categories[0]:
-                    return tokens[0] + self.getWord()
-                return tokens[0]
-            else:
-                return ''
-        return None
-
-    def getArgument(self, spec=None, type=None, delim=',', 
-                          raw=False, expanded=True):
+    def getArgumentAndSource(self, spec=None, type=None, delim=',', 
+                             expanded=False, default=None):
         """ 
         Get an argument 
 
@@ -445,8 +364,6 @@ class TeX(object):
             supported types are 'str', 'list', 'dict', 'int', and
             'float'.  This also includes subclasses of these types.
         delim -- item delimiter for list and dictionary types
-        raw -- boolean indicating whether the raw token tree should
-            be returned instead of a flattened list
         expanded -- boolean indicating whether the argument content
             should be expanded or just returned as an unexpanded 
             text string
@@ -454,58 +371,91 @@ class TeX(object):
         Returns:
         None -- if the argument wasn't found
         object of type `type` -- if `type` was specified
-        raw tokens -- if `raw` is true
         TeXFragment -- for all other arguments
 
         """
-        # Essentially get the argument as a verbatim string
-        if not expanded:
-            return self.getUnexpandedArgument(spec=spec, type=type, delim=delim)
+        self.readOptionalSpaces()
 
-        if type is not None and raw == True:
-            raise ValueError, 'Datatype cannot be specified if raw=True'
-
-        self.removeWhitespace(True)
+        tokens = self.itertokens()
 
         # Get a TeX token (i.e. {...})
         if spec is None:
-            tok = self.getToken(raw=True) 
-            if tok is not None and type is not None:
-                return self.cast(tok, type, delim)
-            elif tok is None:
-                return None
-            else:
-                if raw:
-                    return tok
-                return TeXFragment(tokens2tree(self.normalize(tok)))
+            for t in tokens:
+                toks = []
+                source = [t]
+                # A { ... } grouping was found
+                if t.code == CC_BGROUP:
+                    level = 1
+                    for t in tokens:
+                        source.append(t)
+                        if t.code == CC_BGROUP:
+                            toks.append(t)
+                            level += 1
+                        elif t.code == CC_EGROUP:
+                            level -= 1
+                            if level == 0:
+                                break
+                            toks.append(t)
+                        else:
+                            toks.append(t)
+                else:
+                    toks.append(t)
+                if expanded:
+                    toks = self.expandTokens(toks)
+                return self.cast(toks, type, delim), self.source(source)
+            else: 
+                return default, ''
 
         # Get a single character argument
         elif len(spec) == 1:
-            try: char = self.next()
-            except StopIteration: return None
-            if char == spec:
-                return char
-            else:
-                self.backup()
-                return None
+            for t in tokens:
+                if t == spec:
+                    return t, self.source([t])
+                else:
+                    self.pushtoken(t)
+                    break
+            return default, '' 
 
         # Get an argument grouped by the given characters (e.g. [...], (...))
         elif len(spec) == 2:
-            tok = self.getGroup(spec, raw=True)
-            if tok is not None and type is not None:
-                return self.cast(tok, type, delim)
-            elif tok is None:
-                return None
-            else:
-                if raw:
-                    return tok
-                return TeXFragment(tokens2tree(self.normalize(tok)))
+            begin = spec[0]
+            end = spec[1]
+            source = []
+            for t in tokens:
+                toks = []
+                source = [t]
+                # A [ ... ], ( ... ), etc. grouping was found
+                if t == begin:
+                    level = 1
+                    for t in tokens:
+                        source.append(t)
+                        if t == begin:
+                            toks.append(t)
+                            level += 1
+                        elif t == end:
+                            level -= 1
+                            if level == 0:
+                                break
+                            toks.append(t)
+                        else:
+                            toks.append(t)
+                else:
+                    self.pushtoken(t)
+                    return default, ''
+                if expanded:
+                    toks = self.expandTokens(toks)
+                return self.cast(toks, type, delim), self.source(source)
+            return default, ''
 
         raise ValueError, 'Unrecognized specifier "%s"' % spec
 
     def cast(self, tokens, dtype, delim=','):
         """ 
         Cast the tokens to the appropriate type
+
+        This method is used to convert tokens into Python objects.
+        This happens when the user has specified that a macro argument
+        should be a dictionary (i.e. %foo), a list (i.e. @foo), etc.
 
         Required Arguments:
         tokens -- list of raw, unflattened and unnormalized tokens
@@ -518,35 +468,57 @@ class TeX(object):
         object of the specified type
 
         """
-        # Cast string, integer, and float types
-        if issubclass(dtype, basestring) or issubclass(dtype, int) or \
-           issubclass(dtype, float):
-            arg = self.normalize(tokens)
+        if dtype is None:
+            return tokens
+
+        dt = self.argtypes.get(dtype)
+        if dt is None:
+            log.warning('Could not find datatype "%s"' % dtype)
+            return tokens
+        dtype = dt
+
+        # Tokens of a particular category code
+        if isinstance(dtype, category):
+            arg = [x for x in tokens if x.code == dtype]
             if len(arg) == 1:
-                try: return dtype(arg[0])
-                except: return arg[0]
-            else: 
-                return arg
+                return arg.pop(0)
+            return arg
+
+        # Cast string, integer, and float types
+        if issubclass(dtype, (basestring,int,float)):
+            arg = self.normalize(tokens, strip=True)
+            try: return dtype(arg)
+            except: return arg
 
         # Cast list types
-        if issubclass(dtype, list) or issubclass(dtype, tuple):
+        if issubclass(dtype, (list,tuple)):
             listarg = [[]]
             while tokens:
                 current = tokens.pop(0)
+
+                # Item delimiter
                 if current == delim:
                     listarg.append([])
+
+                # Found grouping
+                elif current.code == CC_BGROUP:
+                    level = 1
+                    listarg[-1].append(current)
+                    while tokens:
+                        current = tokens.pop(0)
+                        if current.code == CC_BGROUP:
+                            level += 1
+                        elif current.code == CC_EGROUP:
+                            level -= 1
+                            if not level:
+                                break
+                        listarg[-1].append(current)
+                    listarg[-1].append(current)
+
                 else:
                     listarg[-1].append(current) 
-            listarg = [self.normalize(x) for x in listarg]
-            # Strip leading whitespace from the first items.
-            # If there is only one item, flatten it.
-            for i in range(len(listarg)):
-                if listarg[i] and hasattr(listarg[i][0], 'lstrip'):
-                    try: listarg[i][0] = listarg[i][0].lstrip()
-                    except: pass
-                if len(listarg[i]) == 1:
-                    listarg[i] = listarg[i][0]
-            return dtype(listarg)
+
+            return dtype([self.normalize(x,strip=True) for x in listarg])
 
         # Cast dictionary types
         if issubclass(dtype, dict):
@@ -555,6 +527,22 @@ class TeX(object):
             currentvalue = None
             while tokens:
                 current = tokens.pop(0)
+
+                # Found grouping
+                if current.code == CC_BGROUP:
+                    level = 1
+                    currentvalue.append(current)
+                    while tokens:
+                        current = tokens.pop(0)
+                        if current.code == CC_BGROUP:
+                            level += 1
+                        elif current.code == CC_EGROUP:
+                            level -= 1
+                            if not level:
+                                break
+                        currentvalue.append(current)
+                    currentvalue.append(current)
+                    continue
 
                 # Found end-of-key delimiter
                 if current == '=':
@@ -575,27 +563,15 @@ class TeX(object):
 
                 # Found end-of-value delimiter
                 if current == delim or not tokens:
-                    # Flatten key
-                    currentkey = self.normalize(currentkey)
-                    if len(currentkey) == 1 and \
-                       hasattr(currentkey[0], 'lstrip'):
-                        currentkey = currentkey[0].lstrip()
-                    else:
-                       currentkey = tuple(currentkey)
-
-                    # Flatten value
-                    if currentvalue is not None:
-                        currentvalue = self.normalize(currentvalue)
-                        if len(currentvalue) == 1:
-                            currentvalue = currentvalue[0]
-
+                    currentkey = self.normalize(currentkey, strip=True)
+                    currentvalue = self.normalize(currentvalue)
                     dictarg[currentkey] = currentvalue
                     currentkey = []
                     currentvalue = None
 
             return dictarg
 
-        return self.normalize(tokens)
+        return tokens
 
     def parse(self, raw=False):
         """ 
@@ -611,906 +587,205 @@ class TeX(object):
         document fragment -- if raw is False
 
         """
-        output = []
-
         # Continue to get tokens until the content is completely parsed
         try:
-            while 1:
-                try: 
-                    output.append(self.getToken())
-                except EndOfFile: 
-                    break
+            output = [x for x in self]
         except:
            current = self.tell()
            self.seek(-min(current,80),1)
            log.error('%s', self.read(min(current,80)), exc_info=1)
 
-        # Return raw tokens if requested
-        if raw: return output
+        return output
 
-        # Build the document fragment
-        output = TeXFragment(tokens2tree(self.normalize(output)))
-
-        # If we have a document environment in the output, return
-        # it by itself.  It's the only important thing.
-        document = type(self.context['document'])
-        doconly = [x for x in output if type(x) is document] 
-        if doconly and len(doconly) == 1:
-            return doconly[0]
-        else:
-            return output
-
-#   def detokenizeArgument(self, tokens, params=None, categories=None):
-#       """ 
-#       Convert a tokenized argument back into a string 
 #
-#       Required Arguments:
-#       tokens -- list of tokens as returned by self.getTokenizedArgument()
-#     
-#       Optional Arguments:
-#       params -- list of tokenized arguments to be inserted into 
-#           the macro parameter slots.  This list is zero-indexed,
-#           not one-indexed like macro parameters.
-#       categories -- alternate list of category codes to use
+# Parsing helper methods for parsing numbers, spaces, dimens, etc.
 #
-#       See Also: self.getTokenizedArgument()
-#
-#       """
-#       if categories is None:
-#           categories = self.context.categories
-#       letters = categories[11]
-#       try: escape = categories[0][0]
-#       except IndexError: escape = None
-#       try: param = categories[6][0]
-#       except IndexError: param = None
-#
-#       if params is not None:
-#           params = ['']+[self.detokenizeArgument(x, categories=categories) 
-#                     for x in params]
-#
-#       previous = None
-#       output = []
-#       for item in iter(tokens):
-#           # True tokens
-#           if type(item) is Token:
-#               try: output.append(categories[item.code][0])
-#               except IndexError: output.append(item)
-#
-#           # Escape sequences
-#           elif type(item) is EscapeSequence:
-#               if escape is None:
-#                   output.append(item)
-#               else:
-#                   output.append(escape)
-#                   output.append(item[1:])
-#
-#           # Macro parameters
-#           elif type(item) is MacroParameter: 
-#               if params is None:
-#                   if param is None:
-#                       output.append(item)
-#                   else:
-#                       output.append(param)
-#                       output.append(item[1:])
-#               else:
-#                   which = int(item[1:])
-#                   if type(previous) is EscapeSequence:
-#                      if previous[-1] in letters and \
-#                         params[which] and params[which][0] in letters:
-#                          output.append(' ')
-#                   output.append(params[which])
-#
-#           # Character tokens
-#           else:
-#               output.append(item)
-#
-#           previous = item
-#
-#       return ''.join(output)
 
-    def expandParams(self, definition, params=None):
-        """
-        Parse and substitute parameters into definition
+    def readOptionalSpaces(self):
+        """ Remove all whitespace """
+        tokens = TokenList()
+        for t in self.itertokens():
+            if t is None or t == '':
+                continue
+            elif t.code != CC_SPACE:
+                self.pushtoken(t)
+                break 
+            tokens.append(t)
+        return tokens
 
-        Required Arguments:
-        definition -- string containing the definition to parse
-        params -- parameters to substitute in place of arguments
-
-        Returns:
-        string contaning definition with parameters substituted
-
-        """
-        return str(self.getDefinitionArgument(params=params, definition=definition))
-
-    def getDefinitionArgument(self, spec=None, params=None, definition=None):
-        """ 
-        Get argument as a series of tokens 
-
-        Keyword Arguments:
-        spec -- type of argument grouping to get (e.g. *, [...], (...))
-        params -- list of parameters to substitute in place of 
-            MacroParameter instances
-        definition -- macro definition to parse
-
-        Returns:
-        argument of specified type
-
-        Note:
-        This whole definition expansion thing needs some work.  It
-        doesn't work well when cat codes are switched around.
-
-        """
-        if definition is not None:
-            self = type(self)(definition)
-
-        output = []
-        stack = 0
-        begin_char = None
-        end_char = None
-        group_stack = 0
-
-        self.removeWhitespace(True)
-
-        # Check for groupings
-        if spec is not None:
-
-            # Single character argument
-            if len(spec) == 1:
-                try: next = self.next()
-                except StopIteration: return
-                if spec != next:
-                    self.backup()
-                    return None
-                return next
-
-            # Check for grouping arguments
-            elif len(spec) == 2:
-                try: next = self.next()
-                except StopIteration: return
-                if next != spec[0]:
-                    self.backup()
-                    return None
-                begin_char = spec[0]
-                end_char = spec[1]
-                group_stack = 1
-
-        self.context.push()
-
-        first_char = True
-        while True:
-
-            try: token = self.next()
-            except StopIteration: break
-            code = self.context.whichCode(token)
-
-            token = Token(token)
-            token.code = code
-
-            # Check for specified groupings
-            if begin_char is not None:
-                if token == begin_char:
-                    group_stack += 1
-                elif token == end_char:
-                    group_stack -= 1
-                    if group_stack == 0 and stack == 0:
-                        break
-
-            # Plain characters
-            if code in [11, 12, 10, 5, 9, 15]:
-                output.append(token) 
-
-            # Begin group
-            elif code == 1:
-                stack += 1
-                if not first_char:
-                    output.append(token) 
-                elif definition is not None:
-                    output.append(token) 
-
-            # End group
-            elif code == 2:
-                stack -= 1
-                if stack:
-                    output.append(token) 
-                elif definition is not None:
-                    output.append(token) 
-
-            # Escope character
-            elif code == 0:
-                command = '%s%s' % (token, self.getWord())
-                output.append(EscapeSequence(command))
-
-            # Macro parameters
-            elif code == 6:
-                try: next = self.next()
-                except StopIteration: next = None
-
-                # Convert macro parameters to an object
-                if next in string.digits:
-                    if params is None:
-                        output.append(MacroParameter(token+next))
-                    else:
-                        param = params[int(next)-1]
-                        # Don't allow escape sequences before us to 
-                        # run into parameters
-                        try: previous = output[-1]
-                        except IndexError: previous = None
-                        if type(previous) is EscapeSequence and \
-                           previous[-1] in string.letters and \
-                           param and param[0] in string.letters:
-                            output.append(' ') 
-                        output.append(params[int(next)-1])
-
-                # Let nested parameters pass through
-                elif self.context.isCode(next,6):
-
-                    # If we aren't doing parameter substitution, put
-                    # the extra macro parameter charater back
-                    if params is None:
-                        token = ParameterToken(token)
-                        output.append(token)
-
-                    token = ParameterToken(next)
-                    output.append(token)
-                    while 1:
-                        char = None
-                        try: char = self.next()  
-                        except StopIteration: break
-                        if self.context.isCode(char,6):
-                            token = ParameterToken(char)
-                            output.append(token)
-                        else:
-                            break
-                    if char is not None:
-                        self.backup()
-
-                # I don't know what this is, I'll just put it back
+    def readKeyword(self, words, optspace=True):
+        self.readOptionalSpaces()
+        for word in words:
+            matched = []
+            letters = list(word.upper())
+            for t in self.itertokens():
+                matched.append(t)
+                if t.upper() == letters[0]:
+                    letters.pop(0)
+                    if not letters:
+                        if optspace: 
+                            self.readOneOptionalSpace()
+                        return word
                 else:
-                    if next:
-                        self.backup()
-                    output.append(token)
+                    break
+            self.pushtokens(matched)
+        return None
 
-            # Everything else
-            else:
-                output.append(token)
+    def readDecimal(self):
+        sign = self.readOptionalSigns()
+        for t in self:
+            if t in string.digits:
+                num = t + self.readSequence(string.digits, False)
+                for t in self:
+                    if t in '.,':
+                        num += '.' + self.readSequence(string.digits, default='0')
+                    else:
+                        self.pushtoken(t)
+                        return sign * float(num)
+                    break
+                return sign * float(num)
+            if t in '.,':
+                return sign * float('.' + self.readSequence(string.digits, default='0'))
+            if t in '\'"`':
+                self.pushtoken(t)
+                return sign * self.readInteger()
+            break
+        raise ValueError, 'Could not find decimal constant'
 
-            first_char = False
+    def readDimen(self, units=Dimen.units):
+        sign = self.readOptionalSigns()
+        for t in self:
+            if t.code == CC_EXPANDED:
+                return Dimen(sign * dimen(t))
+            self.pushtoken(t)
+            break
+        return Dimen(sign * self.readDecimal() * self.readUnitOfMeasure(units=units))
 
-            if definition is not None:
+    def readMudimen(self):
+        return Mudimen(self.readDimen(units=Mudimen.units))
+
+    def readUnitOfMeasure(self, units):
+        self.readOptionalSpaces()
+        # internal unit
+        for t in self:
+            if t.code == CC_EXPANDED:
+                return dimen(t)
+            self.pushtoken(t)
+            break
+        true = self.readKeyword(['true'])
+        unit = self.readKeyword(units)
+        if unit is None:
+            raise ValueError, 'Could not find unit from list %s' % units
+        return Dimen('1%s' % unit)
+
+    def readOptionalSigns(self):
+        sign = 1
+        self.readOptionalSpaces()
+        for t in self:
+            if t == '+':
                 pass
-            elif stack == 0 and group_stack == 0:
+            elif t == '-':
+                sign = -sign
+            elif t is None or t == '' or t.code == CC_SPACE:
+                continue
+            else:
+                self.pushtoken(t)
                 break
+        return sign
 
-        self.context.pop()
+    def readOneOptionalSpace(self):
+        for t in self.itertokens():
+            if t is None or t == '':
+                continue
+            if t.code == CC_SPACE:
+                return t
+            self.pushtoken(t)
+            return None
 
+    def readSequence(self, chars, optspace=True, default=''):
+        output = []
+        for t in self:
+            if t.code == CC_EXPANDED:
+                self.pushtoken(t)
+                break 
+            if t not in chars:
+                if optspace and t.code == CC_SPACE:
+                    pass
+                else:
+                    self.pushtoken(t)
+                break
+            output.append(t)
+        if not output:
+            return default
         return ''.join(output)
 
-    def getToken(self, absorb_space=False, raw=False):
-        """ 
-        Get the next token in the stream 
-
-        Optional Arguments:
-        absorb_space -- remove whitespace before searching for next token
-        raw -- return raw, unflattened and unnormalized token if True
-
-        Returns:
-        the next TeX token in the stream
-
-        """
-        if absorb_space: self.removeWhitespace(newlines=True)
-
-        try: token = self.next()
-        except StopIteration: raise EndOfFile, 'End of content was reached'
-
-        code = self.context.whichCode(token)
-
-        # Plain characters
-        if code in [11, 12]:
-            return token 
-
-        # Whitespace
-        elif code == 10:
-            whitespace, newlines = self.removeWhitespace(newlines=True)
-            if newlines > 1:
-                return self.invokeMacro('par')
-            return ' '
-
-        # Newlines
-        elif code == 5:
-            whitespace, newlines = self.removeWhitespace(newlines=True)
-            if newlines > 0:
-                return self.invokeMacro('par')
-            return ' '
-
-        # Begin group
-        elif code == 1:
-            self.context.groups.pushGrouping()
-            tokens = []
-            try:
-                while 1:
-                    tokens.append(self.getToken(raw=raw))
-            except EndGroup: 
-                tokens += self.context.groups.popGrouping(self)
-            if raw: return tokens
-            else: return self.normalize(tokens)
-
-        # End group
-        elif code == 2:
-            raise EndGroup, 'An end grouping (%s) was reached' % token
-
-        # Escope character
-        elif code == 0:
-            return self.invokeMacro()
-
-        # Superscript
-        elif code == 7:
-            return self.invokeMacro('superscript')
-
-        # Subscript
-        elif code == 8:
-            return self.invokeMacro('subscript')
-
-        # Math shift
-        elif code == 3:
-            return self.invokeMacro('mathshift')
-
-        # Alignment tab
-        elif code == 4:
-            return self.invokeMacro('alignmenttab')
-
-        # Comment
-        elif code == 14:
-            self.removeComment()
-            self.removeWhitespace()
-            return self.getToken(raw=raw) 
-
-        # Active character
-        elif code == 13:
-            return self.invokeMacro('textvisiblespace')
-
-        # Macro parameter
-        elif code == 6:
-            return self.invokeMacro('macroparameter')
-
-        elif code in [9,15]:
-            pass
-
-        raise ValueError, 'Did not recognize character "%s"' % token
-
-    def invokeMacro(self, command=None):
-        """ 
-        Invoke a macro
-
-        Keyword Arguments:
-        command -- the name of the macro to invoke.  If this argument
-            is missing, the name is read from the TeX stream.
-
-        Returns:
-        tokens as a result of invoking the macro 
-
-        """
-        # Get stream position information
-        start = self.tell() - 1
-        pstart = self.getSourcePosition(-1)
-
-        # A name wasn't specified, so we need to parse it from the stream
-        if command is None:
-            command = self.getWord()
-            # Short circuit \[ \] and \( \), they are the same as 
-            # \begin{displaymath/math} and \end{displaymath/math}.  This
-            # code works in conjunction with the [ ] and ( ) aliases
-            # in Context and also in the `begin` and `end` classes. (yuck)
-            if command in '[(': 
-                command = 'begin'
-                self.backup()
-            elif command in '])': 
-                command = 'end'
-                self.backup()
-            self.removeWhitespace(True)
-
-        commandlog.debug('parsing command %s %s', command, start)
-
-        # Get the Python macro class from the context for the given name
-        command = self.context[command]
-
-        # Set stream position information
-        command._position = start
-        command._source.stream = type(self).persistent
-        command._source.start = pstart
-
-        # Push the command's localized context onto the stack
-        self.context.push(command)
-
-        # Handle some of the document tree building related to sections
-        tokens = []
-        groups = self.context.groups
-        if issection(command):
-            sections = groups.sections
-            sectionlog.debug('%s sections: %s' % (command.tagName, 
-                                    [x.tagName for x in sections]))
-
-            # No sections currently in the context, so we can 
-            # just create a new grouping
-            if not sections:
-                sectionlog.debug('%s stack: %s' % (command.tagName, groups))
-                groups.push(command)
-
-            else:
-                lower = [x for x in sections 
-                                 if type(x).level >= type(command).level] 
-                sectionlog.debug('%s lower sections: %s' % (command.tagName, 
-                                                 [x.tagName for x in lower]))
-                # There are no sections currently in the document
-                # that are lower than us, hierarchically.
-                if not lower:
-                    groups.push(command)
-
-                # There are sections in the document that are lower
-                # (or equal) to us in the hierarchy.  They must be
-                # popped from the context. 
-                else:
-                    sectionlog.debug('%s before: %s' % (command.tagName, groups))
-                    tokens += groups.popLevel(type(command).level, self)
-                    sectionlog.debug('%s after: %s' % (command.tagName, groups))
-                    groups.push(command)
-                
-        # Environments should create new groupings
-        elif isenv(command):
-            groups.push(command)
-
-        # Parse the command's arguments
-        obj = command.parse(self)
-        if hasattr(command, 'resolve'):
-            command.resolve()
-
-        # Removed the command's localized context
-        self.context.pop()
-
-        # Set stream position information
-        command._source.end = self.getSourcePosition()
-
-        # If tokens were popped off from lower level sections, append
-        # this new macro onto those tokens.  Otherwise, just return
-        # the new macro instance by itself.
-        if tokens:
-            tokens.append(obj)
-            return tokens
-        else:
-            return obj
-
-    def getWord(self):
-        """ 
-        Return a consecutive group of letters 
-
-        Returns:
-        string containing the following word in the stream
-
-        """
-        isCode = self.context.isCode
-        try: word = self.next()
-        except StopIteration: return ''
-        if isCode(word, 11):
-            word = [word]
-            for char in self:
-                if isCode(char, 11):
-                    word.append(char)
-                else:
-                    self.backup()
+    def readInteger(self):
+        sign = self.readOptionalSigns()
+        for t in self:
+            # internal/coerced integers
+            if t.code == CC_EXPANDED:
+                return sign * int(t)
+            # integer constant
+            if t in string.digits:
+                return sign * int(t + self.readSequence(string.digits))
+            # octal constant
+            if t == "'":
+                return sign * int('0' + self.readSequence(string.octdigits, default='0'), 8)
+            # hex constant
+            if t == '"':
+                return sign * int('0x' + self.readSequence(string.hexdigits, default='0'), 16)
+            # character token
+            if t == '`':
+                digits = []
+                for t in self:
+                    digits.append(t)
                     break
-            return ''.join(word)
-        return word
-
-#   def getSourceUntil(self, end, start=None):
-#       current = self.tell()
-#
-#       if start is not None:
-#           self.seek(start)
-#
-#       content = self.read()
-#
-#       # Find the first occurrence of the ending delimiter
-#       position = content.find(end) + len(end)
-#
-#       # Get the content
-#       if start is not None:
-#           self.seek(start)
-#       else:
-#           self.seek(current)
-#       content = self.read(position)
-#       self.seek(current)
-#       verbatimlog.debug('Source until %s %s', end, content)
-#       return content
-#
-#   def getSourceUntilEndEnvironment(self, name, start=None):
-#       end = '%send%s%s%s' % (self.context.categories[0][0], 
-#                              self.context.categories[1][0],
-#                              name,
-#                              self.context.categories[2][0])
-#       return self.getSourceUntil(end, start)
-
-    def getVerbatim(self, end, strip_end=False):
-        """
-        Get verbatim text
-
-        Required Arguments:
-        end -- the string or list of strings that terminates 
-            the verbatim text
-        strip_end -- boolean indicating whether the string that
-            terminated the verbatim text should be stripped
-            from the returned string
-
-        Returns:
-        string containing text until `end`
-
-        """
-        if not (isinstance(end, list) or isinstance(end, tuple)):
-            end = [end] 
-
-        current = self.tell()
-        content = self.read()
-
-        # Find the first occurrence of the ending delimiter
-        position = [content.find(x)+1 for x in end]
-        try: minimum = min([x for x in position if x])
-        except ValueError:
-            self.seek(current,0)
-            return ''
-        index = position.index(minimum)
-
-        # Reset the stream to where we started
-        self.seek(current,0)
-
-        # Get the verbatim content
-        content = self.read(minimum-1)
-
-        # Get rid of the ending delimiter
-        if strip_end:
-            self.read(len(end[index]))
-
-        return content
-
-    def getIfContent(self, which):
-        """ 
-        Get the content of an \\if block 
-
-        Required Arguments:
-        which -- boolean indicating which part of the \\if block
-            to return.  True means to return the true portion; 
-            False means to return the false portion.
-
-        Returns:
-        parsed tokens for the requested part of the \\if block
-
-        """
-        escape = self.context.categories[0][0]
-        begin = re.sub(r'(\W)',r'\\\1',escape+'if')
-        end = re.sub(r'(\W)',r'\\\1',escape+'fi')
-        el = re.sub(r'(\W)',r'\\\1',escape+'else')
-        orr = re.sub(r'(\W)',r'\\\1',escape+'or')
-
-        # Which content to return 1 = false, 0 = true, any other
-        # integer is for \ifcase.  I know this seems backwards, but
-        # the output is put into a list and the true content comes
-        # before the false content.
-        if which:
-            if type(which) is not int:
-                which = 0
-        else:
-            which = 1
-
-        current = self.tell()
-        content = self.read()
-
-        total = len(content)
-
-        # Set up output array
-        output = [[]]
-        currentcontent = output[0]
-
-        # Stack to keep track of nested \ifs
-        stack = 1
-
-        # Get all content before \fi
-        splitter = re.compile(r'(%s|%s|%s)\b' % (end, el, orr))
-        before, delim, after = splitter.split(content,1)
-        currentcontent.append(before)
-        inelse = False
-
-        # Found \fi
-        if re.match(end,delim):
-            stack += len(re.findall(begin, before)) - 1
-            if stack:
-                currentcontent.append(delim)
-
-        # Found \else or \or
-        elif re.match(el,delim) or re.match(orr,delim):
-            stack += len(re.findall(begin, before))
-            if stack > 1:
-                currentcontent.append(delim)
-            else:
-                output.append([])
-                currentcontent = output[-1]
-
-        content = after
-        while stack:
-            before, delim, after = splitter.split(content,1)
-            currentcontent.append(before)
-
-            # Found a \fi
-            if re.match(end,delim):
-                stack -= 1
-                if stack == 0:
-                    content = after 
-                    break
-                currentcontent.append(delim)
-
-            # Found a top-level \else or \or
-            elif stack == 1:
-                output.append([])
-                currentcontent = output[-1]
-
-            # Found a nested \else
-            else:
-                currentcontent.append(delim)
-
-            # Increment the stack to keep track of how many
-            # levels of nested \ifs we have.
-            if re.search(begin, before):
-                stack += len(re.findall(begin, before))
-
-            content = after 
-
-        # Pick out the requested piece
-        try: output = ''.join(output[which]).lstrip()
-        except IndexError: output = ''
-
-        # Put the stream back to the end of the \if block
-        self.seek(current)
-        self.seek(total-len(content),1)
-
-        if output:
-            return type(self)(output).parse(raw=True)
-        else:
-            return []
-
-    def getGroup(self, group='[]', raw=False):
-        """ 
-        Get a series of tokens delimited by the given grouping chars 
-
-        Keyword Arguments:
-        group -- characters that delimit the requested group
-        raw -- boolean indicating whether the output should be 
-            an raw unnormalized list of tokens or a document fragment.
-
-        Returns:
-        None -- if the argument doesn't exist
-        list of tokens or document fragment -- if the argument does exist
-
-        """
-        self.removeWhitespace(True)
-
-        # Look for the beginning of the group
-        try: char = self.next()
-        except StopIteration: return
-        if char != group[0]:
-            self.backup()
-            return 
-
-        # Add an implicit grouping to the context
-        self.context.groups.pushGrouping()
-
-        tokens = []
-        stack = 0
-        self.removeWhitespace()
-        while 1:
-            char = self.getToken()
-            if char == group[0]:
-                stack += 1
-            if not stack and char == group[1]:
-                break
-            if char == group[1]:
-                stack -= 1
-            tokens.append(char)
-
-        # Pop the implicit context grouping
-        tokens += self.context.groups.popGrouping(self)
-
-        if raw: return tokens
-        else: return self.normalize(tokens)
-
-    def getSequence(self, code):
-        """ 
-        Get a string of characters from the given character code 
-
-        Required Arguments:
-        code -- numeric code of token to get the sequence of
-
-        Returns:
-        string containing characters of given code
-
-        """
-        isCode = self.context.isCode
-        sequence = []
-        for char in self:
-            if isCode(char):
-                sequence.append(char)
-            else:
-                self.backup()
-                break
-        return ''.join(sequence)
-
-    def getSequenceWithTemplate(self, template):
-        """ 
-        Get a string of characters contained in template 
-
-        Required Arguments:
-        template -- characters to allow in the sequence
-
-        Returns:
-        string containing sequence of characters given in `template`
-
-        """
-        sequence = []
-        for char in self:
-            if char in template:
-                sequence.append(char)
-            else:
-                self.backup()
-                break
-        return ''.join(sequence)
-
-    def getFloat(self):
-        """ 
-        Get a decimal number from the stream 
-
-        Returns:
-        float parsed from the stream
-
-        """
-        multiplier = 1
-        parts = []
-        obj = self.getToken(absorb_space=True)
-        if obj == '-':
-            multiplier = -1
-            obj = self.getToken(absorb_space=True)
-        elif obj == '+':
-            obj = self.getToken(absorb_space=True)
-
-        if obj is None: return
-
-        # Hard-coded number
-        if obj in string.digits:
-            parts.append(obj)
-            parts.append(self.getSequenceWithTemplate(string.digits))
-            try:
-                if self.next() == '.':
-                    parts.append('.')
-                    if self.next() in string.digits:
-                        self.backup()
-                        parts.append(self.getSequenceWithTemplate(string.digits))
-                    else:
-                        self.backup()
-                else:
-                    self.backup()
-            except StopIteration: pass
-
-        # Command-sequence that holds a number
-        else:
-           parts.append('%s' % obj)
-
-        return multiplier * float(''.join(parts))
-
-    def getInteger(self):
-        """ 
-        Get an integer from the stream 
-
-        Returns:
-        integer parsed from the stream
-
-        """
-        multiplier = 1
-        parts = []
-        obj = self.getToken(absorb_space=True)
-        if obj == '-':
-            multiplier = -1
-            obj = self.getToken(absorb_space=True)
-        elif obj == '+':
-            obj = self.getToken(absorb_space=True)
-
-        if obj is None: return
-
-        # Command-sequence that holds a number
-        if ismacro(obj):
-           parts.append('%s' % obj)
-           if not parts[-1]:
-               parts[-1] = '0'
-
-        # Hard-coded number
-        if str(obj) in string.digits:
-            parts.append(obj)
-            parts.append(self.getSequenceWithTemplate(string.digits))
-
-        try: return multiplier * int(''.join([str(x) for x in parts]))
-        except ValueError: return 0
-
-    def getDimension(self):
-        """ 
-        Get a dimension from the stream 
-
-        Returns:
-        dimension parsed from the stream
-
-        """ 
-        self.removeWhitespace()
-        parts = []
-        obj = self.getToken(absorb_space=True)
-        if ismacro(obj):
-            return str(obj)
-        elif obj == '-':
-            parts.append('-')
-            obj = self.getToken(absorb_space=True)
-        elif obj == '+':
-            obj = self.getToken(absorb_space=True)
-
-        if obj is None: 
-            return
-
-        # Command-sequence that holds a number
-        if ismacro(obj):
-           parts.append('%s' % obj)
-           if not parts[-1]:
-               parts[-1] = '0pt'
-
-        # Hard-coded number
-        elif obj in string.digits:
-            parts.append(obj)
-            parts.append(self.getSequenceWithTemplate(string.digits))
-            try:
-                if self.next() == '.':
-                    parts.append('.')
-                    if self.next() in string.digits:
-                        self.backup()
-                        parts.append(self.getToken(absorb_space=True))
-                        parts.append(self.getSequenceWithTemplate(string.digits))
-                    else:
-                        self.backup()
-                else:
-                    self.backup()
-                self.removeWhitespace()
-                parts.append(self.next())
-                parts.append(self.next())
-            except StopIteration: pass
-
-        return str2dimen(''.join([str(x) for x in parts]))
-
-    getLength = getDimension
-
-    def getGlue(self):
-        """ 
-        Get a glue parameter from the stream 
-
-        Returns:
-        glue parsed from the stream 
-
-        """ 
-        glue = Glue(self.getDimension())
-
-        # Get 'plus' if it exists
-        position = self.tell()
-        self.removeWhitespace()
-        word = self.getWord()
-        if word != 'plus':
-            self.backup(self.tell()-position)
-        else:
-            glue.plus = self.getDimension()
-
-        # Get 'minus' if it exists
-        position = self.tell()
-        self.removeWhitespace()
-        word = self.getWord()
-        if word != 'minus':
-            self.backup(self.tell()-position)
-        else:
-            glue.minus = self.getDimension()
-
-        return glue
+                return sign * int(ord(''.join(digits)))
+            break
+        raise ValueError, 'Could not find integer'
+
+    def readGlue(self):
+        sign = self.readOptionalSigns()
+        # internal/coerced glue
+        for t in self:
+            if t.code == CC_EXPANDED:
+                return Glue(sign * glue(t))
+            self.pushtoken(t)
+            break
+        dim = self.readDimen()
+        stretch = self.readStretch()
+        shrink = self.readShrink()
+        return Glue(sign*dim, stretch, shrink)
+
+    def readStretch(self):
+        if self.readKeyword(['plus']):
+            return self.readDimen(units=Dimen.units+['filll','fill','fil'])
+        return None
+            
+    def readShrink(self):
+        if self.readKeyword(['minus']):
+            return self.readDimen(units=Dimen.units+['filll','fill','fil'])
+        return None
+
+    def readMuglue(self):
+        sign = self.readOptionalSigns()
+        # internal/coerced muglue
+        for t in self:
+            if t.code == CC_EXPANDED:
+                return Muglue(sign * muglue(t))
+            self.pushtoken(t)
+            break
+        dim = self.readMudimen()
+        stretch = self.readMustretch()
+        shrink = self.readMushrink()
+        return Muglue(sign*dim, stretch, shrink)
+
+    def readMustretch(self):
+        if self.readKeyword(['plus']):
+            return self.readDimen(units=Mudimen.units+['filll','fill','fil'])
+        return None
+            
+    def readMushrink(self):
+        if self.readKeyword(['minus']):
+            return self.readDimen(units=Mudimen.units+['filll','fill','fil'])
+        return None

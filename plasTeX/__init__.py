@@ -2,6 +2,7 @@
 
 import string, new, re
 from Utils import *
+from Token import *
 from plasTeX.DOM import *
 from plasTeX.Logging import getLogger
 
@@ -10,6 +11,7 @@ status = getLogger('status')
 deflog = getLogger('parse.definitions')
 envlog = getLogger('parse.environments')
 mathshiftlog = getLogger('parse.mathshift')
+
 
 class CompiledArgument(dict):
     """ 
@@ -226,11 +228,15 @@ class Macro(Element, RenderMixIn):
     section = False    # is this macro a section heading?
     texname = None     # TeX macro name (instead of class name)
 
+    code = CC_EXPANDED # Special code for TeX to recognized expanded tokens
+    mode = MODE_NONE
+
     def __init__(self, data=[]):
         Element.__init__(self, data)
         self.style = CSSStyles()
         self._position = None  # position in the input stream (internal use)
-        self._source = Source()
+        #self._source = Source()
+        self.argsource = ''
 
     def image(self):
         """ Render and return an image """
@@ -245,6 +251,12 @@ class Macro(Element, RenderMixIn):
     def id(self):
         """ Unique ID """
         return id(self)
+
+    def invoke(self, tex):
+        tex.context.push(self)
+        obj = self.parse(tex)
+        tex.context.pop()
+        return [obj]
 
     def resolve(self):
         """ 
@@ -274,9 +286,12 @@ class Macro(Element, RenderMixIn):
         if not [x for x in compiledargs if x.name == 'modifier']:
             self.resolve()
 
+        self.argsource = ''
+
         # Parse the arguments
         for arg in compiledargs:
-            output = tex.getArgument(**arg)
+            output, source = tex.getArgumentAndSource(**arg)
+            self.argsource += source
             if arg.name == 'modifier':
                 if output == None:
                     self.resolve() 
@@ -286,7 +301,6 @@ class Macro(Element, RenderMixIn):
                 self[:] = output
             else:
                 self.attributes[arg.name] = output
-
         return self
 
     def digest(self, tokens):
@@ -348,8 +362,7 @@ class Macro(Element, RenderMixIn):
             self.__compiled_arguments = []
             return self.__compiled_arguments
 
-        args = iter([x.strip() for x in re.split(r'(\W|\s+)', type(self).args) 
-                                     if x.strip()])
+        args = iter([x.strip() for x in re.split(r'([\'"]\w+[\'"]|\w+(?::\w+)*|\W|\s+)', type(self).args) if x is not None and x.strip()])
 
         groupings = {'[':'[]','(':'()','<':'<>','{':'{}'}
 
@@ -357,13 +370,8 @@ class Macro(Element, RenderMixIn):
         argdict = {}
         for item in args:
 
-            # Plain argument
-            if item == '$':
-                if argdict.has_key('type'):
-                    del argdict['type']
-
             # Modifier argument
-            elif item in ['*','+','-']:
+            if item in ['*','+','-']:
                 if argdict:
                     raise ValueError, \
                         'Improperly placed "%s" in argument string "%s"' % \
@@ -371,62 +379,67 @@ class Macro(Element, RenderMixIn):
                 argdict.clear()
                 macroargs.append(CompiledArgument('modifier', {'spec':item}))
 
+            # Optional relations
+            elif item in ['=']:
+                if argdict:
+                    raise ValueError, \
+                        'Improperly placed "%s" in argument string "%s"' % \
+                        (item, type(self).args)
+                argdict.clear()
+                macroargs.append(CompiledArgument('equals', {'spec':item}))
+
             # Beginning of group
-            elif item in ['[','(','<', '{']:
+            elif item in '[(<{':
                 argdict['spec'] = groupings[item]
 
             # End of group
-            elif item in [']',')','>','}']:
+            elif item in '])>}':
                 pass
+
+            # Command sequence
+            elif item == '\\':
+                argdict['type'] = 'cs'
+
+            # String argument
+            elif item == '$':
+                argdict['type'] = 'str'
 
             # List argument
             elif item == '@':
-                argdict['type'] = list
-                if argdict.has_key('raw'):
-                    del argdict['raw']
+                argdict['type'] = 'list'
 
             # Dictionary argument
             elif item == '%':
-                argdict['type'] = dict
-                if argdict.has_key('raw'):
-                    del argdict['raw']
-
-            # Unflattened 
-            elif item == '^':
-                argdict['raw'] = True
-                if argdict.has_key('type'):
-                    del argdict['type']
-
-            # Numbers
-            elif item == '#':
-                argdict['type'] = int
-                if argdict.has_key('raw'):
-                    del argdict['raw']
-
-            # Unexpanded argument
-            elif item == '&':
-                argdict['expanded'] = False
+                argdict['type'] = 'dict'
 
             # List delimiter
             elif item in [',',';','.']:
                 argtype = argdict.get('type', None)
-                if argtype is int and item == '.':
-                    argdict['type'] = float 
-                elif argtype in [list, dict]:
+                if argtype in ['list', 'dict']:
                     argdict['delim'] = item
                 else:
                     raise ValueError, \
                         'Improperly placed "%s" in argument string "%s"' % \
                         (item, type(self).args)
 
-            # Argument name
-            elif item[0] in string.letters:
+            # Argument name (and possibly type)
+            elif item[0] in string.letters or item[0] in '\'"':
+                parts = item.split(':')
+                item = parts.pop(0)
+                if item[0] in '\'"':
+                    argdict['type'] = 'str'
+                    item = item[1:]
+                    if item[-1] in '\'"':
+                        item = item[:-1]
+                if parts: argdict['type'] = parts[0]
+                # Arguments that are instance variables are always expanded
+                if argdict.get('type') != 'cs':
+                    argdict['expanded'] = True
                 macroargs.append(CompiledArgument(item, argdict))
                 argdict.clear()
 
             else:
-                raise ValueError, \
-                    'Could not parse argument string "%s", reached unexpected "%s"' % (type(self).args, item)
+                raise ValueError, 'Could not parse argument string "%s", reached unexpected "%s"' % (type(self).args, item)
 
         self.__compiled_arguments = macroargs
         return macroargs
@@ -439,6 +452,18 @@ class Macro(Element, RenderMixIn):
     def tagName(self):
         return self.nodeName
     tagName = property(tagName)
+
+    def __repr__(self):
+        if self.tagName == 'par':
+            return '\n\n'
+        if self.mode == MODE_BEGIN:
+            return '\\begin{%s}%s' % (self.tagName, self.argsource)
+        if self.mode == MODE_END:
+            return '\\end{%s}' % self.tagName
+        space = ' '
+        if self.argsource:
+            space = ''
+        return '\\%s%s%s' % (self.tagName, self.argsource, space)
 
 
 class TeXFragment(DocumentFragment, RenderMixIn):
@@ -473,244 +498,18 @@ class Command(Macro):
 class Environment(Macro): 
     """ Base class for all Python-based LaTeX environments """
     level = ENVIRONMENT
-
-class par(Macro):
-    """ Paragraph """
-    def parse(self, tex):
-        status.dot()
-        return Macro.parse(self, tex)
-
-class mbox(Command):
-    """ Math box """
-    args = 'self'
-    def parse(self, tex):
-        shifted = 0
-        if mathshift.inenv:
-            shifted = 1
-            mathshift.inenv.append(None)
-        tokens = Command.parse(self, tex) 
-        if shifted:
-            mathshift.inenv.pop()
-        return tokens
-
-class mathshift(Macro):
-    """ 
-    The '$' character in TeX
-
-    This macro detects whether this is a '$' or '$$' grouping.  If 
-    it is the former, a 'math' environment is invoked.  If it is 
-    the latter, a 'displaymath' environment is invoked.
-
-    """
-    inenv = []
-
-    def parse(self, tex):
-        """
-        This gets a bit tricky because we need to keep track of both 
-        our beginning and ending.  In addition, we need to make sure 
-        that the image source isn't messed up.  We also have to take 
-        into account \mbox{}es.
-
-        """
-        inenv = type(self).inenv
-        math = tex.context['math']
-        displaymath = tex.context['displaymath']
-
-        # See if this is the end of the environment
-        if inenv and inenv[-1] is not None:
-            env = inenv.pop()
-            if type(env) is type(displaymath):
-                tex.next()
-            return tex.context.groups.popObject(env, tex)
-
-        # This must be the beginning of the environment
-        if tex.peek() in tex.context.categories[3]:
-            tex.next()
-            self._source.stream = type(tex).persistent
-            self._source.start = tex.getSourcePosition(-2)
-            inenv.append(displaymath)
-        else:
-            self._source.stream = type(tex).persistent
-            self._source.start = tex.getSourcePosition(-1)
-            inenv.append(math)
-
-        current = inenv[-1]
-        mathshiftlog.debug('%s (%s): %s' % (current.tagName, id(current), 
-                                            tex.context.groups))
-        current._position = self._position
-        current._source.stream = self._source.stream
-        current._source.start = self._source.start
-        current._source.end = self._source.end
-        tex.context.groups.push(current)
-
-        return current
-
-class alignmenttab(Macro):
-    """ The '&' character in TeX """
-
-class textvisiblespace(Macro):
-    """ The '~' character in TeX """
-
-class superscript(Macro):
-    """ The '^' character in TeX """
-    args = 'self'
-
-class subscript(Macro):
-    """ The '_' character in TeX """
-    args = 'self'
-
-class macroparameter(Macro):
-    """ Paramaters for macros (i.e. #1, #2, etc.) """
-    def parse(self, tex):
-        raise ValueError, 'Macro parameters should not be parsed'
-
-class begin(Macro):
-    """ Beginning of an environment """
-
-    # Stack of all environments in the document
-    envstack = []
-
-    def parse(self, tex):
-        """ Parse the \\begin{...} """
-        # Get environment name, instantiate the proper environment, and
-        # tell it to parse it's arguments.
-        start = tex.tell() - 6 # Back up before the \begin
-        name = tex.getArgument().pop(0).strip()
-
-        # Special case for math environments
-        if name in '[(':
-            start += 5
-
-        envlog.debug('begin %s', name)
-
-        # Check for name aliases
-        if tex.context.aliases.has_key(name):
-            name = tex.context.aliases[name]
-
-        # Add the current environment to the environment stack
-        type(self).envstack.append(name)
-
-        # Get the macro class for the given name
-        env = tex.context[name]
-
-        # Store stream position information
-        env._source.stream = type(tex).persistent
-        env._source.start = tex.getSourcePosition(start-tex.tell())
-        env._position = start
-
-        tex.context.pop()
-        tex.context.push(env)
-        tex.context.push(env)
-        tex.context.push(env)
-        tex.context.groups.push(env)
-
-        # Parse the arguments
-        output = env.parse(tex)
-
-        if hasattr(env, 'resolve'):
-            env.resolve()
-
-        return output
-
-class end(Macro):
-    """ End of an environment """
-
-    envstack = begin.envstack
-
-    def parse(self, tex):
-        """ Parse the \\end{...} """
-        # Get the beginning of the environment from the stack and
-        # put it into the stream again.  The document tree 
-        # builder will take care of it.
-        endenv = tex.tell() - 4
-        name = tex.getArgument().pop(0).strip()
-
-        # Special case for math environments
-        if name in '])':
-            endenv += 3
-
-        envlog.debug('end %s', name)
-
-        # Check for name aliases
-        if tex.context.aliases.has_key(name):
-            name = tex.context.aliases[name]
-
-        # Get the macro class for the given name
-        env = tex.context[name]
-
-        # Store stream position information
-        env._position = endenv
-
-        # Handle NewEnvironments
-        output = []
-        if isinstance(env, NewEnvironment):
-            output = env.parseEnd(tex)
-            if output is None:
-                output = []
-
-        output += tex.context.groups.popName(env.tagName, tex)
-
-        if isinstance(env, NewEnvironment):
-            output.pop()
-
-        # Make sure that our environment stack is correct
-        beginname = type(self).envstack.pop()
-        if name != beginname:
-            log.warning('Expecting end of %s but got %s', beginname, name)
-
-        tex.context.pop()
-        tex.context.pop()
-
-        return output
-
-
-class _def(Macro):
-    """
-    TeX's \\def command
-
-    """
-    def parse(self, tex):
-
-        name = str(tex.getDefinitionArgument().strip()[1:])
-
-        # Get argument string
-        args = []
-        begingroup = tex.context.categories[1]
-        try:
-            while 1:
-                char = tex.next()
-                if char in begingroup:
-                    tex.backup()
-                    break
-                else:
-                    args.append(char) 
-        except StopIteration: pass
-        args = ''.join(args)
-
-        # Parse definition from stream
-        definition = str(tex.getDefinitionArgument())
-
-        tex.context.pop()
-        local = type(self).__name__ in ['def','edef']
-        deflog.debug('def %s %s %s', name, args, definition)
-        tex.context.newdef(name, args, definition, local=local)
-        tex.context.push(self)
-
-class x_def(_def): texname = 'def'
-class edef(_def): pass
-class xdef(_def): pass
-class gdef(_def): pass
+    
+class UnrecognizedMacro(Macro):
+    def invoke(self, tex):
+       return [self]
 
 class NewIf(Macro):
     """ Base class for all generated \\newifs """
 
     state = False
 
-    def parse(self, tex):
-        tex.disablePersist(self)
-        tokens = tex.getIfContent(type(self).state)
-        tex.enablePersist()
-        return tokens
+    def invoke(self, tex):
+        return tex.getCase(type(self).state)
 
     def setState(cls, state):
         cls.state = state
@@ -724,407 +523,128 @@ class NewIf(Macro):
         cls.state = False
     setFalse = classmethod(setFalse)
 
-class newif(Macro):
-    """ \\newif """
-    def parse(self, tex):
-        name = tex.getDefinitionArgument().strip()[1:]
-        tex.context.newif(name)
-
 class IfTrue(Macro):
     """ Base class for all generated \\iftrues """
-    def parse(self, tex):
+    def invoke(self, tex):
         type(self).ifclass.setTrue()
+        return [self]
 
 class IfFalse(Macro):
     """ Base class for all generated \\iffalses """
-    def parse(self, tex):
+    def invoke(self, tex):
         type(self).ifclass.setFalse()
+        return [self]
 
-class _if(Macro):
-    """ Test if character codes agree """
-    def parse(self, tex):
-        tex.disablePersist(self)
-        a = tex.getArgument()
-        b = tex.getArgument()
-        tex.enablePersist()
-        return tex.getIfContent(str(a)==str(b))
-
-class x_if(_if): 
-    """ \\if """
-    texname = 'if'
-        
-class ifnum(_if):
-    """ Compare two integers """
-    def parse(self, tex):
-        tex.disablePersist(self)
-        a = tex.getInteger()
-        relation = str(tex.getArgument()).strip()
-        b = tex.getInteger()
-        tex.enablePersist()
-        if relation == '<':
-            return tex.getIfContent(a < b)
-        elif relation == '>':
-            return tex.getIfContent(a > b)
-        elif relation == '=':
-            return tex.getIfContent(a == b)
-        raise ValueError, '"%s" is not a valid relation' % relation
-
-class ifdim(_if):
-    """ Compare two dimensions """
-    def parse(self, tex):
-        tex.disablePersist(self)
-        a = tex.getDimension()
-        relation = str(tex.getArgument()).strip()
-        b = tex.getDimension()
-        tex.enablePersist()
-        if relation == '<':
-            return tex.getIfContent(a < b)
-        elif relation == '>':
-            return tex.getIfContent(a > b)
-        elif relation == '=':
-            return tex.getIfContent(a == b)
-        raise ValueError, '"%s" is not a valid relation' % relation
-
-class ifodd(_if):
-    """ Test for odd integer """
-    def parse(self, tex):
-        tex.disablePersist(self)
-        a = tex.getInteger()
-        tex.enablePersist()
-        return tex.getIfContent(not(not(a % 2)))
-
-class ifeven(_if):
-    """ Test for even integer """
-    def parse(self, tex):
-        tex.disablePersist(self)
-        a = tex.getInteger()
-        tex.enablePersist()
-        return tex.getIfContent(not(a % 2))
-
-class ifvmode(_if):
-    """ Test for vertical mode """
-    def parse(self, tex):
-        tex.disablePersist(self)
-        tex.enablePersist()
-        return tex.getIfContent(False)
-
-class ifhmode(_if):
-    """ Test for horizontal mode """
-    def parse(self, tex):
-        tex.disablePersist(self)
-        tex.enablePersist()
-        return tex.getIfContent(True)
-
-class ifmmode(_if):
-    """ Test for math mode """
-    def parse(self, tex):
-        tex.disablePersist(self)
-        tex.enablePersist()
-        return tex.getIfContent(False)
-
-class ifinner(_if):
-    """ Test for internal mode """
-    def parse(self, tex):
-        tex.disablePersist(self)
-        tex.enablePersist()
-        return tex.getIfContent(False)
-
-class ifcat(_if):
-    """ Test if category codes agree """
-    def parse(self, tex):
-        tex.disablePersist(self)
-        a = tex.context.whichCode(str(tex.getArgument()))
-        b = tex.context.whichCode(str(tex.getArgument()))
-        tex.enablePersist()
-        return tex.getIfContent(a == b)
-
-class ifx(_if):
-    """ Test if tokens agree """
-    def parse(self, tex):
-        tex.disablePersist(self)
-        a = tex.getToken()
-        b = tex.getToken()
-        tex.enablePersist()
-        return tex.getIfContent(a == b)
-
-class ifvoid(_if):
-    """ Test a box register """
-    def parse(self, tex):
-        tex.disablePersist(self)
-        a = tex.getInteger()
-        tex.enablePersist()
-        return tex.getIfContent(False)
-
-class ifhbox(_if):
-    """ Test a box register """
-    def parse(self, tex):
-        tex.disablePersist(self)
-        a = tex.getInteger()
-        tex.enablePersist()
-        return tex.getIfContent(False)
-
-class ifvbox(_if):
-    """ Test a box register """
-    def parse(self, tex):
-        tex.disablePersist(self)
-        a = tex.getInteger()
-        tex.enablePersist()
-        return tex.getIfContent(False)
-
-class ifeof(_if):
-    """ Test for end of file """
-    def parse(self, tex):
-        tex.disablePersist(self)
-        a = tex.getInteger()
-        tex.enablePersist()
-        return tex.getIfContent(False)
-
-class iftrue(_if):
-    """ Always true """
-    def parse(self, tex):
-        tex.disablePersist(self)
-        tex.enablePersist()
-        return tex.getIfContent(True)
-
-class iffalse(_if):
-    """ Always false """
-    def parse(self, tex):
-        tex.disablePersist(self)
-        tex.enablePersist()
-        return tex.getIfContent(False)
-
-class ifcase(_if):
-    """ Cases """
-    def parse(self, tex):
-        tex.disablePersist(self)
-        a = tex.getInteger()
-        tex.enablePersist()
-        return tex.getIfContent(a)
-
-class fi(Macro): pass
-class x_or(Macro): texname = 'or'
-class x_else(Macro): texname = 'else'
-
-
-class let(Macro):
-    """ \\let """
-    def parse(self, tex):
-        name = tex.getDefinitionArgument().strip()[1:]
-        tex.getArgument('=')
-        value = tex.getDefinitionArgument().strip()[1:]
-        tex.context[name] = type(tex.context[value])
-
-
-class Definition(Macro):
-    """ Superclass for all \\def-type commands """
-    def parse(self, tex):
-        # Disable source persistence while parsing arguments
-        tex.disablePersist(self)
-
-        args = [x for x in re.split(r'(#+\d)', self.args) if x]
-        params = []
-        for arg in args:
-            if arg.startswith('#'):
-                params.append(tex.getDefinitionArgument())
-            else:
-                for char in arg:
-                    next = tex.next()
-                    if char == ' ' and next == ' ':
-                        pass
-                    elif char != next:
-                        additional = []
-                        while char != next:
-                            additional.append(next)
-                            next = tex.next()
-                            if next == '\n':
-                                raise ValueError, 'Use of %s does not match its definition' % self.tagName
-                        if len(params) > 1:
-                            params[-1] += ''.join(additional)
-                        else:
-                            params.append(''.join(additional))
-
-        deflog.debug2('expanding %s %s', self.definition, params)
-
-        definition = tex.expandParams(self.definition, params)
-
-        # Re-enable source persistence
-        tex.enablePersist()
-
-        tokens = type(tex)(definition).parse(raw=True)
-
-        return tokens
-
-
-class newcommand(Macro):
-    """ \\newcommand """
-    def parse(self, tex):
-        name = str(tex.getDefinitionArgument().strip()[1:])
-
-        # Get number of arguments
-        nargs = tex.getDefinitionArgument('[]')
-        if nargs is None:
-            nargs = 0
+def expanddef(definition, params):
+    # Walk through the definition and expand parameters
+    output = []
+    definition = iter(definition)
+    for t in definition:
+        # Expand parameters
+        if t.code == CC_PARAMETER:
+            for t in definition:
+                # Double '#'
+                if t.code == CC_PARAMETER:
+                    output.append(t)
+                else:
+                    if params[int(t)] is not None:
+                        output.extend(params[int(t)])
+                break
+        # Just append other tokens to the output
         else:
-            nargs = int(nargs)
-
-        # See if there is an optional argument
-        opt = None
-        if nargs:
-            opt = tex.getDefinitionArgument('[]')
-
-        # Get the macro definition
-        definition = str(tex.getDefinitionArgument())
-        if definition is None:
-            definition = ''
-
-        deflog.debug('command %s %s %s', name, nargs, definition)
-        tex.context.newcommand(name, nargs, definition, opt=opt)
-
-class renewcommand(newcommand): pass
-class providecommand(newcommand): pass
-
-class newenvironment(Macro):
-    """ \\newenvironment """
-    def parse(self, tex):
-        name = str(tex.getDefinitionArgument().strip())
-
-        # Get number of arguments
-        nargs = tex.getDefinitionArgument('[]')
-        if nargs is None:
-            nargs = 0
-        else:
-            nargs = int(nargs)
-
-        # See if there is an optional argument
-        opt = None
-        if nargs:
-            opt = tex.getDefinitionArgument('[]')
-
-        # Get the macro definition
-        begin = str(tex.getDefinitionArgument())
-        if begin is None:
-            begin = ''
-        end = str(tex.getDefinitionArgument())
-        if end is None:
-            end = ''
-        definition = (begin,end)
-        
-        deflog.debug('environment %s %s %s', name, nargs, definition)
-        tex.context.newenvironment(name, nargs, definition, opt=opt)
-
+            output.append(t)
+    return output
 
 class NewCommand(Macro):
     """ Superclass for all \newcommand type commands """
-    def parse(self, tex):
-        params = []
-        tex.disablePersist(self)
+    def invoke(self, tex):
+        if self.mode == MODE_END:
+            return tex.context['end'+self.tagName].invoke(tex)            
+
+        if not self.definition:
+            return []
+
+        params = [None]
 
         # Get optional argument, if needed
         nargs = self.nargs
         if self.opt is not None:
             nargs -= 1
-            opt = tex.getDefinitionArgument('[]')
-            if opt is None:
-                params.append(self.opt)
-            else:
-                params.append(opt)
+            params.append(tex.getArgument('[]', default=self.opt))
 
         # Get mandatory arguments
         for i in range(nargs):
-            params.append(tex.getDefinitionArgument())
+            params.append(tex.getArgument())
 
         deflog.debug2('expanding %s %s', self.definition, params)
-        definition = tex.expandParams(self.definition, params)
 
-        tex.enablePersist()
+        return expanddef(self.definition, params)
 
-        tokens = type(tex)(definition).parse(raw=True)
+class Definition(Macro):
+    """ Superclass for all \\def-type commands """
+    def invoke(self, tex):
+        if not self.args: return self.definition
 
-        return tokens
+        argiter = iter(self.args)
+        inparam = False
+        params = [None]
+        for a in argiter:
 
+            # Beginning a new parameter
+            if a.code == CC_PARAMETER:
 
-class NewEnvironment(NewCommand):
-    """ Superclass for all \newenvironment type commands """
-    def parse(self, tex):
-        params = []
-        tex.disablePersist(self)
+                # Adjacent parameters, just get the next token
+                if inparam:
+                    params.append(tex.getArgument())
 
-        # Get optional argument, if needed
-        nargs = self.nargs
-        if self.opt is not None:
-            nargs -= 1
-            opt = tex.getDefinitionArgument('[]')
-            if opt is None:
-                params.append(self.opt)
+                # Get the parameter number
+                for a in argiter:
+                    # Numbered parameter
+                    if a in string.digits:
+                        inparam = True
+
+                    # Handle #{ case here
+                    elif t.code == CC_BGROUP:
+                        param = []
+                        for t in tex.itertokens():
+                            if t.code == CC_BGROUP:
+                                tex.pushtoken(t)
+                            else:
+                                param.append(t)
+                        inparam = False
+                        params.append(param)
+
+                    else:
+                        raise ValueError, \
+                              'Invalid arg string: %s' % ''.join(self.args)
+                    break
+
+            # In a parameter, so get everything up to a token that matches `a`
+            elif inparam:
+                param = []
+                for t in tex.itertokens():
+                    if t == a:
+                        break
+                    else:
+                        param.append(t)
+                inparam = False
+                params.append(param)
+
+            # Not in a parameter, just make sure the token matches
             else:
-                params.append(opt)
+                for t in tex.itertokens():
+                    if t == a:
+                        break
+                    else:
+                        raise ValueError, \
+                            'Arguments don\'t match definition: %s %s' % (t, a)
 
-        # Get mandatory arguments
-        for i in range(nargs):
-            params.append(tex.getDefinitionArgument())
+        if inparam:
+            params.append(tex.getArgument())
 
         deflog.debug2('expanding %s %s', self.definition, params)
-        definition = tex.expandParams(self.definition[0], params)
 
-        tex.enablePersist()
-
-        tokens = type(tex)(definition).parse(raw=True)
-
-        return tokens
-
-    def parseEnd(self, tex):
-        tex.disablePersist(self)
-        tex.enablePersist()
-        tokens = type(tex)(self.definition[1]).parse(raw=True)
-        return tokens
-
-
-class char(Macro):
-    """ \\char """
-    def parse(self, tex):
-        try:
-            char = tex.next()
-            if char == "`":
-                char = tex.next()
-            if char == '\\':
-                char = tex.next()
-            char = tex.next() 
-        except StopIteration: pass
-        return char
-
-class catcode(Macro):
-    """ \\catcode """
-    def parse(self, tex):
-        char = tex.next()
-        if char == "`":
-            char = tex.next()
-        if char == '\\':
-            char = tex.next()
-        if char == '^':
-            return
-
-        tex.getArgument('=')
-
-        tex.removeWhitespace()
-
-        nextchar = tex.peek()
-        if nextchar in string.digits:
-            number = tex.getInteger() 
-        elif nextchar in tex.context.categories[0]:
-            tex.next()
-            m = tex.getWord()
-            if m == 'active':
-                number = 13
-            else:
-                raise ValueError, 'Unrecognized category "%s"' % m
-        else:
-            raise ValueError, 'Could not parse catcode'
-
-        # Make sure we are changing the category code for the group below
-        # where we are now
-        tex.context.pop()
-        tex.context.setCategoryCode(char,number)
-        tex.context.push(self)
+        return expanddef(self.definition, params)
 
 
 class Counter(Macro):
@@ -1252,147 +772,151 @@ class Counter(Macro):
         """ Return the symbol representation """
         return '*'
 
-class advance(Command):
-    """ \\advance """
-    def parse(self, tex):
-        l = tex.getArgument()
-        tex.getArgument('by')
-        by = tex.getDimension()
-
 class TheCounter(Macro):
     """ Base class for counter formats """
     format = ''
 
-def str2dimen(s):
-    """ Convert a string to a dimension """
-    value = float(s.strip()[:-2])
-    units = s.strip()[-2:]
-    if units == 'pt':
-        return Dimension(value)
-    if units == 'pc':
-        return Dimension(value*12)
-    if units == 'in':
-        return Dimension(value*72.27)
-    if units == 'bp':
-        return Dimension(value*(72.27/72))
-    if units == 'cm':
-        return Dimension(value*(72.27/2.54))
-    if units == 'mm':
-        return Dimension(value*(72.27/25.4))
-    if units == 'dd':
-        return Dimension(value*(1238/1157))
-    if units == 'cc':
-        return Dimension(value*(1238/1157)*12)
-    if units == 'sp':
-        return Dimension(value/65536)
+class Dimen(float):
 
-class Dimension(float): 
-    """ Base class for LaTeX dimensions """
+    units = ['pt','pc','in','bp','cm','mm','dd','cc','sp','ex','em']
+
+    def __new__(cls, v):
+        if isinstance(v, str) and v[-1] in string.letters:
+            v = list(v)
+            units = []
+            while v and v[-1] in string.letters:
+                units.insert(0, v.pop())
+            v = float(''.join(v))
+            units = ''.join(units) 
+            if units == 'pt':
+                v *= 65536
+            elif units == 'pc':
+                v *= 12 * 65536
+            elif units == 'in':
+                v *= 72.27 * 65536
+            elif units == 'bp':
+                v *= (72.27 * 65536) / 72
+            elif units == 'cm':
+                v *= (72.27 * 65536) / 2.54
+            elif units == 'mm':
+                v *= (72.27 * 65536) / 25.4
+            elif units == 'dd':
+                v *= (1238.0 * 65536) / 1157
+            elif units == 'cc':
+                v *= (1238.0 * 12 * 65536) / 1157
+            elif units == 'sp':
+                pass
+            # Encode fil(ll)s by adding 1, 2, and 3 billion
+            elif units == 'fil':
+                if v < 0: v -= 1e9
+                else: v += 1e9
+            elif units == 'fill':
+                if v < 0: v -= 2e9
+                else: v += 2e9
+            elif units == 'filll':
+                if v < 0: v -= 3e9
+                else: v += 3e9
+            elif units == 'mu':
+                pass
+            # Just estimates, since I don't know the actual font size
+            elif units == 'ex':
+                v *= 5 * 65536
+            elif units == 'em':
+                v *= 11 * 65536
+            else:
+                raise ValueError, 'Unrecognized units: %s' % units
+        return float.__new__(cls, v)
+
+    def __repr__(self):
+        sign = 1
+        if self < 0:
+            sign = -1
+        if abs(self) >= 3e9:
+            return repr(sign * (abs(self)-3e9)) + 'filll'
+        if abs(self) >= 2e9:
+            return repr(sign * (abs(self)-2e9)) + 'fill'
+        if abs(self) >= 1e9:
+            return repr(sign * (abs(self)-1e9)) + 'fil'
+        return repr(float(self)) + 'sp'
+
+    def pt(self): 
+        return self / 65536
+    point = pt = property(pt)
+
+    def pc(self): 
+        return self / (12 * 65536)
+    pica = pc = property(pc)
+
+    def _in(self): 
+        return self / (72.27 * 65536)
+    inch = _in = property(_in)
+
+    def bp(self): 
+        return self / ((72.27 * 65536) / 72)
+    bigpoint = bp = property(bp)
+
+    def cm(self): 
+        return self / ((72.27 * 65536) / 2.54)
+    centimeter = cm = property(cm)
+
+    def mm(self): 
+        return self / ((72.27 * 65536) / 25.4)
+    millimeter = mm = property(mm)
+
+    def dd(self): 
+        return self / ((1238 * 65536) / 1157)
+    didotpoint = dd = property(dd)
+
+    def cc(self): 
+        return self / ((1238 * 12 * 65536) / 1157)
+    cicero = cc = property(cc)
+
+    def sp(self): 
+        return self
+    scaledpoint = sp = property(sp)
+
+    def ex(self): 
+        return self / (5 * 65536)
+    xheight = ex = property(ex)
+
+    def em(self): 
+        return self / (11 * 65536)
+    mwidth = em = property(em)
+
+    def fill(self):
+        sign = 1
+        if self < 0:
+            sign = -1
+        if abs(self) >= 3e9:
+            return sign * (abs(self)-3e9)
+        if abs(self) >= 2e9:
+            return sign * (abs(self)-2e9)
+        if abs(self) >= 1e9:
+            return sign * (abs(self)-1e9)
+        raise ValueError, 'This is not a fil(ll) dimension'
+    fil = fill = filll = property(fill)
+
+class Mudimen(Dimen):
+    units = ['mu']
+
+class Glue(Dimen):
+    def __new__(cls, g, stretch=None, shrink=None):
+        return Dimen.__new__(cls, g)
+        
+    def __init__(self, g, stretch=None, shrink=None):
+        Dimen.__init__(self, g)
+        self.stretch = stretch
+        self.shrink = shrink
+
+    def __repr__(self):
+        s = [Dimen.__repr__(self)]
+        if self.stretch is not None:
+            s.append('plus')
+            s.append(repr(self.stretch))
+        if self.shrink is not None:
+            s.append('minus')
+            s.append(repr(self.shrink))
+        return ' '.join(s)
+
+class Muglue(Glue): 
     pass
-
-class Glue(Dimension):
-    def __init__(self, data=None):
-       if data is not None:
-           Dimension.__init__(self, data) 
-       self.plus = Dimension()
-       self.minus = Dimension()
-
-class csname(Command):
-    """ \\csname """
-    def parse(self, tex):
-        tex.disablePersist(self)
-        escape = tex.context.categories[0][0]
-        begin = tex.context.categories[1][0]
-        end = tex.context.categories[2][0]
-        name = tex.getVerbatim(escape+'endcsname', True).strip()
-        name = name.replace(begin,'').replace(end,'')
-        tex.enablePersist()
-        return tex.invokeMacro(name)
-
-class endcsname(Command): 
-    """ \\endcsname """
-    pass
-
-class usepackage(Command):
-    """ \\usepackage """
-    args = '[ %options ] name'
-    loaded = {}
-    def parse(self, tex):
-        attrs = self.attributes
-        Command.parse(self, tex)
-        try: 
-            attrs['name'] = str(attrs['name']).strip()
-
-            # See if it has already been loaded
-            if type(self).loaded.has_key(attrs['name']):
-                return
-
-            try: 
-                m = __import__(attrs['name'], globals(), locals())
-                status.info(' ( %s ' % m.__file__)
-                tex.context.importMacros(vars(m))
-                type(self).loaded[attrs['name']] = attrs['options']
-                status.info(' ) ')
-                return
-
-            except ImportError:
-                log.warning('No Python version of %s was found' % attrs['name'])
-
-            path = kpsewhich(attrs['name'])
-
-            status.info(' ( %s.sty ' % attrs['name'])
-            type(tex)(open(path)).parse(raw=True)
-            type(self).loaded[self.name] = attrs['options']
-            status.info(' ) ')
-
-        except (OSError, IOError):
-            log.warning('\nError opening package "%s"' % attrs['name'])
-            status.info(' ) ')
-
-class documentclass(usepackage):
-    """ \\documentclass """
-    def parse(self, tex):
-        usepackage.parse(self, tex)
-        from plasTeX import packages
-        tex.context.importMacros(vars(packages))
-
-class RequirePackage(usepackage):
-    """ \\RequirePackage """
-
-class input(Command):
-    """ \\input """
-    args = 'name'
-    def parse(self, tex):
-        attrs = self.attributes
-        Command.parse(self, tex)
-        tokens = []
-        try: 
-            attrs['name'] = str(attrs['name']).strip()
-
-            path = kpsewhich(attrs['name'])
-
-            status.info(' ( %s.tex ' % attrs['name'])
-            tokens = type(tex)(open(path)).parse(raw=True)
-            status.info(' ) ')
-
-        except (OSError, IOError):
-            log.warning('\nProblem opening file "%s"', attrs['name'])
-            status.info(' ) ')
-        return tokens
-
-class include(input):
-    """ \\include """
-
-class x_ifnextchar(Command):
-    texname = '@ifnextchar'
-    def parse(self, tex):
-        tex.removeWhitespace()
-        ifchar = tex.next()
-        truecontent = tex.getArgument(raw=True)
-        falsecontent = tex.getArgument(raw=True)
-        char = tex.next()
-        tex.backup()
-        if char == ifchar:
-            return truecontent
-        else:
-            return falsecontent

@@ -2,292 +2,16 @@
 
 import sys, string, new, re, os
 import plasTeX
-from plasTeX import Macro, NewEnvironment, DOCUMENT, ENVIRONMENT, StringMacro
+from plasTeX import Macro, DOCUMENT, ENVIRONMENT, StringMacro, UnrecognizedMacro
 from plasTeX.Logging import getLogger
 from Utils import *
+from Categories import *
 
 # Set up loggers
 log = getLogger()
 grouplog = getLogger('context.groups')
 stacklog = getLogger('context.stack')
 macrolog = getLogger('context.macros')
-
-# Default TeX category codes
-CATEGORIES = [
-   '\\',  # 0  - Escape character
-   '{',   # 1  - Beginning of group
-   '}',   # 2  - End of group
-   '$',   # 3  - Math shift
-   '&',   # 4  - Alignment tab
-   '\n',  # 5  - End of line
-   '#',   # 6  - Parameter
-   '^',   # 7  - Superscript
-   '_',   # 8  - Subscript
-   '\000',# 9  - Ignored character
-   ' \t', # 10 - Space
-   string.letters + '@', # - Letter
-   '',    # 12 - Other character - This isn't explicitly defined.  If it
-          #                        isn't any of the other categories, then
-          #                        it's an "other" character.
-   '~',   # 13 - Active character
-   '%',   # 14 - Comment character
-   ''     # 15 - Invalid character
-]
-
-class _TokenGroup(object):
-    """ Internal use only: for indicating the beginning of a new context """
-    tagName = '{'
-
-class GroupStack(list):
-    """ 
-    Manager for context groupings in LaTeX documents 
-
-    Groupings are delimited by {...}, \\begin{foo}...\\end{foo}, and
-    section headings in LaTeX documents.  This class manages those
-    groupings and makes sure that the groups are both explicitly
-    and implicitly terminated (e.g. \\bf is terminated by \\end{foo} in 
-    \\begin{foo}\\bf ...\\end{foo}, sections also terminate open
-    environments and subsections).
-
-    Each time a new {, \\begin, or section heading is hit, a new 
-    context grouping should be pushed.  When that grouping is finished,
-    the context should be popped off.  Contexts can be popped off by
-    supplying the initiating environment or {, a section level, or 
-    the name of the macro that started the context grouping.
-
-    """
-
-    # Added to be consistent with pop terminology
-    def push(self, *args, **kwargs): 
-        return self.append(*args, **kwargs)
-
-    def sections():
-        doc = """ Return all section groupings """
-        def fget(self):
-            return [x for x in self 
-                      if getattr(type(x), 'level', DOCUMENT) > DOCUMENT and 
-                         getattr(type(x), 'level', ENVIRONMENT) < ENVIRONMENT]
-        return locals()
-    sections = property(**sections())
-
-    def pushGrouping(self, env=None):
-        """ 
-        Push a new grouping onto the stack 
-
-        Keyword Arguments:
-        env -- the Environment instance that delimits the context group.
-           If this isn't supplied, an anonymous grouping (i.e. {...})
-           is assumed.
-
-        """
-        if env is None:
-            self.append(_TokenGroup)
-        else:
-            self.append(env)
-
-    def _parseEnd(self, env, tex):
-        """ 
-        Parse the end of a NewEnvironment 
-
-        Required Arguments:
-        env -- the NewEnvironment instance that needs to be parsed
-        tex -- the TeX stream
-
-        Returns: list of tokens in the end of the environment
-
-        """
-        output = []
-        tokens = env.parseEnd(tex)
-        if tokens is not None:
-            output += tokens
-        env._source.end = tex.getSourcePosition()
-        return output
-
-    def popGrouping(self, tex):
-        """ 
-        Pop until a TeX token group (i.e. {...}) is reached
-
-        Required Arguments:
-        tex -- the TeX stream instance corresponding to the source
-            document.  This is needed in order to parse the ending
-            of environments defined as NewEnvironments.
-
-        Returns: list containing objects to insert into the output stream
-
-        """
-        grouplog.debug('Popping until grouping }')
-
-        output = []
-        while self:
-           # Pop context grouping
-           env = self.pop()
-
-           # End condition reached (i.e. found {...} grouping), bail out
-           if env is _TokenGroup:
-               grouplog.debug('Popping grouping }')
-               break
-
-           # Get ending source position
-           env._source.end = tex.getSourcePosition()
-
-           # Parse end of NewEnvironments
-           if isinstance(env, NewEnvironment):
-               output += self._parseEnd(env, tex)
-
-           # Anything else just gets appended to the output stream
-           else:
-               output.append(env)
-
-        return output
-
-    def popLevel(self, level, tex):
-        """ 
-        Pop off groupings until a token with the given level is reached 
-
-        Required Arguments:
-        level -- integer indicating the section level that ends 
-           the context grouping
-        tex -- the TeX stream instance corresponding to the source
-            document.  This is needed in order to parse the ending
-            of environments defined as NewEnvironments.
-
-        Returns: list containing objects to insert into the output stream
-
-        """
-        assert isinstance(level, int), 'level must be an integer'
-        grouplog.debug('Popping until level %s' % level)
-
-        output = []
-        while self:
-           # Pop context grouping
-           env = self.pop()
-
-           # Just a token grouping (i.e. {...}).  Ignore it since
-           # we are already in the process of ending a context that
-           # implicitly ends all token groups.
-           if env is _TokenGroup:
-               continue
-
-           # Get the current grouping's level
-           if self: tokenlevel = getattr(type(self[-1]), 'level', sys.maxint)
-           else: tokenlevel = sys.maxint
-
-           grouplog.debug('Popping level %s (%s)' % (tokenlevel, env.tagName))
-
-           # Get ending source position
-           env._source.end = tex.getSourcePosition()
-
-           # Parse end of NewEnvironments
-           if isinstance(env, NewEnvironment):
-               output += self._parseEnd(env, tex)
-
-           # Anything else just gets appended to the output stream
-           else:
-               output.append(env)
-
-           # Ending condition reached, bail out
-           if tokenlevel < level:
-               break
-
-        return output
-
-    def popName(self, name, tex):
-        """ 
-        Pop off groupings until a token with the given name is reached 
-
-        Required Arguments:
-        name -- name of the token that delimits the context grouping
-        tex -- the TeX stream instance corresponding to the source
-            document.  This is needed in order to parse the ending
-            of environments defined as NewEnvironments.
-
-        Returns: list containing objects to insert into the output stream
-
-        """
-        grouplog.debug('Popping until name %s' % name)
-
-        output = []
-        while self:
-           # Pop context grouping
-           env = self.pop()
-
-           # Just a token grouping (i.e. {...}).  Ignore it since
-           # we are already in the process of ending a context that
-           # implicitly ends all token groups.
-           if env is _TokenGroup:
-               continue
-
-           grouplog.debug('Popping name %s' % env.tagName)
-
-           # Get ending source position
-           env._source.end = tex.getSourcePosition()
-
-           # Parse end of NewEnvironments
-           if isinstance(env, NewEnvironment) and env.tagName != name:
-               output += self._parseEnd(env, tex)
-
-           # Anything else just gets appended to the output stream
-           else:
-               output.append(env)
-
-           # Ending condition reached, bail out
-           if env.tagName == name:
-               break
-
-        return output
-
-    def popObject(self, obj, tex):
-        """ 
-        Pop off groupings including the given object 
-
-        Required Arguments:
-        obj -- the object that delimits the context grouping.  This is
-            usually an Environment instance.
-        tex -- the TeX stream instance corresponding to the source
-            document.  This is needed in order to parse the ending
-            of environments defined as NewEnvironments.
-
-        Returns: list containing objects to insert into the output stream
-
-        """
-        grouplog.debug('Popping until object %s (%s)' % (obj.tagName, id(obj)))
-
-        output = []
-        while self:
-           # Pop context grouping
-           env = self.pop()
-
-           # Just a token grouping (i.e. {...}).  Ignore it since
-           # we are already in the process of ending a context that
-           # implicitly ends all token groups.
-           if env is _TokenGroup:
-               continue
-
-           grouplog.debug('Popping object %s (%s)' % (env.tagName, id(env)))
-
-           # Get ending source position
-           env._source.end = tex.getSourcePosition()
-
-           # Parse end of NewEnvironments
-           if isinstance(env, NewEnvironment):
-               output += self._parseEnd(env, tex)
-
-           # Anything else just gets appended to the output stream
-           else:
-               output.append(env)
-
-           # Ending condition reached, bail out
-           if env is obj:
-               break
-
-        return output
-
-    def __repr__(self):
-        """ Return string representation of objects that makeup the context """ 
-        return str([x.tagName for x in self])
-
-    def __str__(self):
-        return repr(self)
 
 
 class ContextItem(dict):
@@ -334,48 +58,8 @@ class Context(object):
         # Labeled objects
         self.labels = {}
 
-        # Contex groupings
-        self.groups = GroupStack() 
-
         # Macro dictionary
         self.macros = self
-
-        # Aliases for non-alpha macros
-        self.aliases = {
-            ' ': 'textvisiblespace',
-            '!': 'negative_thin_space',
-            '\"': 'umlaut',
-            '#': 'texthash',
-            '$': 'textdollar',
-            '%': 'textpercent',
-            '&': 'textampersand',
-            '\'': 'acute',
-            '+': 'increment_tab',
-            ',': 'thin_space',
-            '-': 'hyphen',
-            '.': 'dot',
-            '/': 'italic_correction',
-            ':': 'medium_space',
-            ';': 'large_space',
-            '<': 'tab_left',
-            '=': 'macron',
-            '>': 'tab_right',
-            '@': 'extra_space',
-            '\\': 'cr', 
-            '^': 'circumflex',
-            '_': 'underscore',
-            '`': 'grave',
-            '{': 'lbrace',
-            '|': 'parallel',
-            '}': 'rbrace',
-            '~': 'tilde',
-            # Special cases: these have corresponding code in TeX.py
-            # and the `begin` and `end` classes.
-            '(': 'math',
-            ')': 'math',
-            '[': 'displaymath',
-            ']': 'displaymath',
-        }
 
     def __getitem__(self, key):
         """ 
@@ -394,14 +78,9 @@ class Context(object):
             if c.has_key(key):
                 return c[key]()
 
-            # See if an alias exists
-            if self.aliases.has_key(key) and c.has_key(self.aliases[key]):
-                return c[self.aliases[key]]()
-
         # Didn't find it, so generate a new class
         log.warning('unrecognized macro %s', key)
-        key = self.aliases.get(key, key)
-        self[key] = newclass = new.classobj(key, (Macro,), {})
+        self[key] = newclass = new.classobj(key, (UnrecognizedMacro,), {})
         return newclass()
 
     def __delitem__(self, key):
@@ -469,18 +148,18 @@ class Context(object):
 
             # If the new context is a macro, get it's category codes
             # and locally scoped macros
-            if hasattr(type(context), 'categories') and \
-               type(context).categories is not None:
-                newcontext.categories = type(context).categories
+            cat = getattr(type(context), 'categories', None)
+            if cat is not None:
+                newcontext.categories = cat
  
             # If the context is not a dictionary, use dir to
             # get the localized macros.
             if not hasattr(context, 'items'):
-                # Get all of the macros from the object
-                ctype = type(context)
+                mro = list(type(context).__mro__)
+                mro.reverse()
                 context = {}
-                for key in dir(ctype):
-                    context[key] = getattr(ctype, key)
+                for item in mro:
+                    context.update(vars(item))
 
             # Add the locally scoped macros to the current context
             attr = 'texname'
@@ -614,8 +293,6 @@ class Context(object):
         for d in self.contexts:
             if d.has_key(key):
                 return True
-            if self.aliases.has_key(key) and d.has_key(self.aliases[key]):
-                return True
         return False
 
     def keys(self):
@@ -629,8 +306,6 @@ class Context(object):
         for d in self.contexts:
             for key in d.keys():
                 allkeys[key] = 0
-                if key in self.aliases:
-                    allkeys[self.aliases[key]] = 0
         return allkeys.keys()
 
     def __delitem__(self, key):
@@ -645,19 +320,6 @@ class Context(object):
             if d.has_key(key):
                 del d[key]
         
-    def isCode(self, char, code):
-        """ 
-        Determine if `char` is of category `code` 
-
-        Required Arguments:
-        char -- the character to check the category code of
-        code -- the integer category code to test against
-
-        Returns: boolean indicating if `char` is of code `code`
-
-        """
-        return char in self.categories[code]
-
     def whichCode(self, char):
         """ 
         Return the character code that `char` belongs to 
@@ -669,50 +331,39 @@ class Context(object):
 
         """
         c = self.categories
-        if char in c[11]:
-            return 11
-        if char in c[10]:
-            return 10
-        if char in c[5]:
-            return 5
-        if char in c[1]:
-            return 1
-        if char in c[2]:
-            return 2
-        if char in c[0]:
-            return 0
-        if char in c[7]:
-            return 7
-        if char in c[8]:
-            return 8
-        if char in c[3]:
-            return 3
-        if char in c[4]:
-            return 4
-        if char in c[14]:
-            return 14
-        if char in c[13]:
-            return 13
-        if char in c[6]:
-            return 6
-        if char in c[9]:
-            return 9
-        if char in c[15]:
-            return 15
-        return 12
+        if char in c[CC_LETTER]:
+            return CC_LETTER
+        if char in c[CC_SPACE]:
+            return CC_SPACE
+        if char in c[CC_EOL]:
+            return CC_EOL
+        if char in c[CC_BGROUP]:
+            return CC_BGROUP
+        if char in c[CC_EGROUP]:
+            return CC_EGROUP 
+        if char in c[CC_ESCAPE]:
+            return CC_ESCAPE 
+        if char in c[CC_SUPER]:
+            return CC_SUPER
+        if char in c[CC_SUB]:
+            return CC_SUB 
+        if char in c[CC_MATHSHIFT]:
+            return CC_MATHSHIFT
+        if char in c[CC_ALIGNMENT]:
+            return CC_ALIGNMENT 
+        if char in c[CC_COMMENT]:
+            return CC_COMMENT
+        if char in c[CC_ACTIVE]:
+            return CC_ACTIVE
+        if char in c[CC_PARAMETER]:
+            return CC_PARAMETER
+        if char in c[CC_IGNORED]:
+            return CC_IGNORED 
+        if char in c[CC_INVALID]:
+            return CC_INVALID
+        return CC_OTHER
 
-    def setCategoryCodesForDef(self):
-        """ 
-        Set category codes for macros that define new macros 
-
-        """
-        c = self.contexts[-1].categories = self.categories = self.categories[:]
-        for i in [0, 3, 4, 5, 6, 7, 8, 11, 12, 13, 14, 15]:
-            c[i] = ''
-        c[9] = '\000'
-        c[10] = ' \t'
-        
-    def setCategoryCode(self, char, code):
+    def catcode(self, char, code):
         """
         Set the category code for a particular character
  
@@ -831,6 +482,8 @@ class Context(object):
             macrolog.debug('newcommand %s already defined', name)
             return
 
+        if nargs is None:
+            nargs = 0
         assert isinstance(nargs, int), 'nargs must be an integer'
 
         macrolog.debug('creating newcommand %s', name)
@@ -863,16 +516,24 @@ class Context(object):
             macrolog.debug('newenvironment %s already defined', name)
             return
 
+        if nargs is None:
+            nargs = 0
         assert isinstance(nargs, int), 'nargs must be an integer'
-        assert isinstance(definition, list) or isinstance(definition, tuple), \
+        assert isinstance(definition, (tuple,list)), \
             'definition must be a list or tuple'
         assert len(definition) == 2, 'definition must have 2 elements'
 
         macrolog.debug('creating newenvironment %s', name)
-        newclass = new.classobj(name, (plasTeX.NewEnvironment,),
-                       {'nargs':nargs,'opt':opt,'definition':definition})
 
+        # Begin portion
+        newclass = new.classobj(name, (plasTeX.NewCommand,),
+                       {'nargs':nargs,'opt':opt,'definition':definition[0]})
         self.addGlobal(name, newclass)
+
+        # End portion
+        newclass = new.classobj('end'+name, (plasTeX.NewCommand,),
+                       {'nargs':0,'opt':None,'definition':definition[1]})
+        self.addGlobal('end' + name, newclass)
 
     def newdef(self, name, args, definition, local=True):
         """ 
@@ -910,5 +571,9 @@ class Context(object):
 # Create single instance
 Context = Context()
 
+from plasTeX.packages import TeX as _TeX
+from plasTeX.packages import LaTeX as _LaTeX
+
 # Import all builtin macros
-Context.importMacros(vars(plasTeX))
+Context.importMacros(vars(_TeX))
+Context.importMacros(vars(_LaTeX))

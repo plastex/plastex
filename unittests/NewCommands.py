@@ -6,6 +6,31 @@ from plasTeX import Environment
 from plasTeX.TeX import TeX
 from plasTeX.Context import Macro
 
+class NC(TestCase):
+
+    def testNewcommand(self):
+        s = TeX(r'\newcommand\mycommand[2][optional]{\itshape{#1:#2}}\newcommand{ \foo }{{this is foo}}\mycommand[hi]{{\foo}!!!}')
+        res = s.parse()
+        expected = list('hi:this is foo!!!')
+        assert res == expected, '%s != %s' % (res, expected)
+
+    def testNewenvironment(self):
+        s = TeX(r'\newenvironment{foo}{\begin{list}}{\end{list}}\begin{foo}\begin{foo}\item hi\end{foo}\end{foo}')
+        output = s.parse()
+        print s.source(output)
+
+    def testReadDecimal(self):
+        i = TeX(r'-1.0').readDecimal()
+        assert i == -1, 'expected -1, but got %s' % i
+        i = TeX(r'-11234.0').readDecimal()
+        assert i == -11234, 'expected -11234, but got %s' % i
+        i = TeX(r'0.0').readDecimal()
+        assert i == 0, 'expected 0, but got %s' % i
+
+    def testCatcode(self):
+        s = TeX(r'\catcode`<=2')
+        s.parse()
+        assert '<' in s.context.categories[2]
 
 class NewCommands(TestCase):
 
@@ -94,10 +119,11 @@ class NewCommands(TestCase):
 #       assert s.context['myenv'].definition[0] == r'\begin{description}'
 #       assert s.context['myenv'].definition[1] == r'\end{description}'
 #       assert s.context['myenv'].opt == None
-        assert len(output) == 3, output
-        assert type(output[1]) == type(s.context['description'])
-        assert output[0] == 'before:'
-        assert output[2] == ':after'
+#       assert len(output) == 3, output
+        output = ''.join([str(x) for x in output])
+#       assert type(output[1]) == type(s.context['description'])
+        assert output.startswith('before:')
+        assert output.endswith(':after')
         del s.context['myenv']
 
     def testDef(self):

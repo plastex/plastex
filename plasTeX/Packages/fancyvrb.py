@@ -21,9 +21,9 @@ class Verbatim(verbatim):
         # Format command
         formatcom = None
         if options.has_key('formatcom'):
-            tex.context.groups.pushGrouping()
+            tex.context.push()
             formatcom = type(tex)(options['formatcom'].strip()).getToken()
-            tex.context.groups.popGrouping(tex)
+            tex.context.pop()
 
         # Frame width
         framerule = '1px'
@@ -33,9 +33,9 @@ class Verbatim(verbatim):
         # Frame color
         rulecolor = 'black'
         if options.has_key('rulecolor'):
-            tex.context.groups.pushGrouping()
+            tex.context.push()
             token = type(tex)(options['rulecolor'].strip()).getToken()
-            tex.context.groups.popGrouping(tex)
+            tex.context.pop()
             rulecolor = token.style['color']
 
         # Frames

@@ -223,7 +223,7 @@ class NamedNodeMap(dict):
             if self._parentNode is not value:
                 self._parentNode = value
                 for value in self.values():
-                    value.parentNode = value
+                    self._resetPosition(value.parentNode)
         return locals()
     parentNode = property(**parentNode())
 
@@ -242,7 +242,7 @@ class NamedNodeMap(dict):
             if self._ownerDocument is not value:
                 self._ownerDocument = value
                 for value in self.values():
-                    value.ownerDocument = value
+                    self._resetPosition(value.ownerDocument)
         return locals()
     ownerDocument = property(**ownerDocument())
 
@@ -431,20 +431,23 @@ def _compareDocumentPosition(self, other):
         return Node.DOCUMENT_IMPLEMENTATION_SPECIFIC
 
     sparents = []
-    parent = self.parentNode
+    parent = self
     while parent is not None:
         if parent is other:
             return Node.DOCUMENT_POSITION_CONTAINS
         sparents.append(parent)
-        parent = self.parentNode
+        parent = parent.parentNode
         
     oparents = []
-    parent = other.parentNode
+    parent = other
     while parent is not None:
         if parent is self:
             return Node.DOCUMENT_POSITION_CONTAINED_BY
         oparents.append(parent)
-        parent = other.parentNode
+        parent = parent.parentNode
+
+    sparents.reverse()
+    oparents.reverse()
 
     for i, sparent in enumerate(sparents):
         for j, oparent in enumerate(oparents):
@@ -453,9 +456,9 @@ def _compareDocumentPosition(self, other):
                 o = oparents[j+1]
                 for item in sparent:
                    if item is s:
-                       return Node.DOCUMENT_POSITION_PRECEDING
-                   if item is o:
                        return Node.DOCUMENT_POSITION_FOLLOWING
+                   if item is o:
+                       return Node.DOCUMENT_POSITION_PRECEDING
 
     return Node.DOCUMENT_POSITION_DISCONNECTED
 
@@ -589,36 +592,6 @@ class Node(_DOMList):
 
     compareDocumentPosition = _compareDocumentPosition
 
-#   def _resetPosition(self, i):
-#       """
-#       Set sibling, parent, and owner attributes
-
-#       Required Arguments:
-#       i -- position of the item to reset the position of
-
-#       """
-#       # Get current, previous, and next nodes
-#       length = len(self)
-#       if i < 0: i = i + length
-#       current = self[i]
-#       next = previous = None
-#       if i > 0: previous = self[i-1]
-#       if i < (length-1): next = self[i+1]
-
-#       # Reset attributes on the current node
-#       current.previousSibling = previous
-#       current.nextSibling = next
-#       current.parentNode = self
-#       current.ownerDocument = self.ownerDocument
-
-#       # Reset nextSibling on previous node
-#       if previous is not None:
-#           previous.nextSibling = current
-
-#       # Reset previousSibling on next node
-#       if next is not None:
-#           next.previousSibling = current
-
     def insertBefore(self, newChild, refChild):
         """ 
         Insert `newChild` before `refChild` 
@@ -710,11 +683,14 @@ class Node(_DOMList):
         """
         if isinstance(newChild, DocumentFragment):
             for item in newChild:
-                self.append(self, item)
+                self.append(item)
         else:
             if isinstance(newChild, basestring) and \
                not(isinstance(newChild, Text)):
-                newChild = Text(newChild)
+                if self.ownerDocument is not None:
+                    newChild = self.ownerDocument.createTextNode(newChild)
+                else:
+                    newChild = Text(newChild)
             _DOMList.append(self, newChild) 
         newChild.ownerDocument = self.ownerDocument
         newChild.parentNode = self
@@ -736,12 +712,15 @@ class Node(_DOMList):
         """
         if isinstance(newChild, DocumentFragment):
             for item in newChild:
-                self.insert(self, i, item)
+                self.insert(i, item)
                 i += 1
         else:
             if isinstance(newChild, basestring) and \
                not(isinstance(newChild, Text)):
-                newChild = Text(newChild)
+                if self.ownerDocument is not None:
+                    newChild = self.ownerDocument.createTextNode(newChild)
+                else:
+                    newChild = Text(newChild)
             _DOMList.insert(self, i, newChild)
         newChild.ownerDocument = self.ownerDocument
         newChild.parentNode = self
@@ -772,6 +751,7 @@ class Node(_DOMList):
         """ self += other """
         for item in other:
             self.append(item)
+        return self
 
     __iadd__ = extend
 
@@ -816,19 +796,35 @@ class Node(_DOMList):
         node.nodeType = self.nodeType
         node.parentNode = self.parentNode
         if deep:
-            node.attributes = self.attributes.deepcopy()
+            node.attributes.update(self.attributes)
             node[:] = [x.cloneNode(deep) for x in self[:]]
         else:
-            node.attributes = self.attributes.copy()
+            node.attributes.update(self.attributes)
             node[:] = self[:]
         return node 
 
     def normalize(self):
-        """
-        Combine consecutive text nodes and remove comments
+        """ Combine consecutive text nodes and remove comments """
+        # Remove all Comment nodes first
+        items = []
+        for i, item in enumerate(self): 
+            if isinstance(item, Comment):
+                items.insert(0,i)
+        for i in items:
+            self.pop(i)
 
-        """
-        pass
+        # Now merge Text nodes
+        i = 0
+        while i < len(self):
+            if isinstance(self[i], Text):
+                group = [self[i]]
+                while i < (len(self)-1) and isinstance(self[i+1], Text): 
+                    group.append(self.pop(i+1)) 
+                if len(group) > 1:
+                    self[i] = type(group[0])().join(group)
+            elif isinstance(self[i], Node):
+                self[i].normalize()
+            i += 1
 
     def isSupported(self, feature, version):
         """ Is the requested feature supported? """
@@ -842,11 +838,14 @@ class Node(_DOMList):
         """ Get the text content of the current node """
         output = []
         for item in self:
-            if isinstance(item, basestring):
+            if isinstance(item, Text):
                 output.append(item)
             else:
                 output.append(item.textContent)
-        return u''.join(output)
+        if self.ownerDocument is not None:
+            return self.ownerDocument.createTextNode('').join(output)
+        else:
+            return Text('').join(output)
     textContent = property(textContent) 
  
     def isSameNode(self, other):
@@ -1093,10 +1092,7 @@ class Element(Node):
         value -- value to set the attribute to
 
         """
-        attr = Attr() 
-        attr.name = name
-        attr.value = value
-        self.setAttributeNode(attr)
+        self.attributes[name] = value
 
     def removeAttribute(self, name):
         """
@@ -1119,7 +1115,7 @@ class Element(Node):
         newAttr -- attribute node 
 
         """
-        return self.setAttribute(newAttr.name, newAttr)
+        self.setAttributeNode(newAttr.name, newAttr)
 
     def removeAttributeNode(self, oldAttr):
         """
@@ -1306,6 +1302,11 @@ class CharacterData(unicode):
         return self
     nodeValue = property(nodeValue)
 
+    def cloneNode(self, deep=True):
+        o = type(self)(self)
+        o.ownerDocument = self.ownerDocument
+        return o
+
     def data(self):
         return self
     data = property(data)
@@ -1342,6 +1343,7 @@ class CharacterData(unicode):
 
     def textContent(self):
         return self
+    textContent = property(textContent)
 
     def isSameNode(self, other):
         return self is other
@@ -1701,6 +1703,7 @@ class Document(Node):
         self.strictErrorChecking = None
         self.documentURI = None
         self.domConfig = None
+        self.ownerDocument = self
 
     def createElement(self, tagName):
         """
@@ -1715,11 +1718,14 @@ class Document(Node):
         """
         o = self.elementClass()
         o.nodeName = tagName
+        o.ownerDocument = self
         return o
 
     def createDocumentFragment(self):
         """ Instantiate a new document fragment """
-        return self.documentFragmentClass()
+        o = self.documentFragmentClass()
+        o.ownerDocument = self
+        return o
          
     def createTextNode(self, data):
         """ 
@@ -1732,7 +1738,9 @@ class Document(Node):
         new text node
 
         """
-        return self.textNodeClass(data)
+        o = self.textNodeClass(data)
+        o.ownerDocument = self
+        return o
 
     def createComment(self, data):
         """ 
@@ -1745,7 +1753,9 @@ class Document(Node):
         new comment node
 
         """
-        return self.commentClass(data)
+        o = self.commentClass(data)
+        o.ownerDocument = self
+        return o
 
     def createCDATASection(self, data):
         """ 
@@ -1758,7 +1768,9 @@ class Document(Node):
         new CDATA section node
 
         """
-        return self.cdataSectionClass(data)
+        o = self.cdataSectionClass(data)
+        o.ownerDocument = self
+        return o
                          
     def createProcessingInstruction(self, target, data):
         """ 
@@ -1772,7 +1784,9 @@ class Document(Node):
         new processing instruction node
 
         """
-        return self.processingInstructionClass(data)
+        o = self.processingInstructionClass(data)
+        o.ownerDocument = self
+        return o
 
     def createAttribute(self, name):
         """ 
@@ -1785,7 +1799,10 @@ class Document(Node):
         new attribute node
 
         """
-        return self.attributeClass(name)
+        o = self.attributeClass()
+        o.name = name
+        o.ownerDocument = self
+        return o
                    
     def createEntityReference(self, name):
         """ 
@@ -1798,7 +1815,10 @@ class Document(Node):
         new entity reference node
 
         """
-        return self.entityReferenceClass(name)
+        o = self.entityReferenceClass()
+        o.name = name
+        o.ownerDocument = self
+        return o
 
     getElementsByTagName = _getElementsByTagName
 

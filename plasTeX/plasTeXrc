@@ -2,12 +2,11 @@
 render.images=WARNING
 parse.mathshift=ERROR
 parse.sections=ERROR
-parse.definitions=WARNING
+parse.definitions=DEBUG
 parse.persistent=ERROR
-parse.commands=ERROR
-parse.environments=ERROR
-context.groups=ERROR
-context.stack=ERROR
+parse.commands=WARNING
+parse.environments=WARNING
+context.stack=WARNING
 context.macros=ERROR
 
 [images]

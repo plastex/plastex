@@ -5,14 +5,23 @@ import plasTeX
 from plasTeX.TeX import TeX
 from plasTeX.TALUtils import *
 
-sys.path.insert(0, os.path.join(os.path.dirname(plasTeX.__file__), 'packages'))
+#sys.path.insert(0, os.path.join(os.path.dirname(plasTeX.__file__), 'packages'))
 
 print >>sys.stderr, 'plasTeX version 1.0'
 file = sys.argv[1]
 
+#s = TeX(open(file,'r').read())
+#for item in s:
+#    print item.code, item
+#print s.source(s)
+#sys.exit()
+
 # Parse document
+#TeX.disableLogging()
 s = TeX(open(file,'r').read())
 document = s.parse()
+print s.source(document)
+sys.exit()
 
 basename = os.path.splitext(os.path.basename(file))[0]
 
