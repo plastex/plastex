@@ -9,6 +9,8 @@ setup(name="plasTeX",
       #url="",
       packages=['plasTeX','plasTeX.ConfigManager','plasTeX.DOM',
                 'plasTeX.imagers','plasTeX.packages','plasTeX.renderers',
-                'plasTeX.renderers.xhtml','plasTeX.simpletal'],
+                'plasTeX.renderers.xhtml','plasTeX.simpletal',
+                'plasTeX.Base','plasTeX.Base.LaTeX','plasTeX.Base.TeX'],
+      scripts=['plasTeX/plastex'],
 )
 

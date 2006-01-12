@@ -81,7 +81,14 @@ class cite(Command):
 
     def bibitems(self):
         # Get all referenced items
-        return [bibliography.bibitems.get(x) for x in self.attributes['keys']]
+        output = []
+        for x in self.attributes['keys']:
+            item = bibliography.bibitems.get(x)
+            if item is None:
+                log.warning('Bibliography item "%s" has no entry', x)
+            else:
+                output.append(item)
+        return output
     bibitems = property(bibitems)
 
     def postnote(self):

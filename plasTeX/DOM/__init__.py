@@ -626,11 +626,13 @@ class Node(object):
                     label = ' id="%s"' % lid
         except AttributeError: pass
 
+        extra = ' parentNode="%s" ownerDocument="%s"' % (id(self.parentNode), id(self.ownerDocument))
+
         # Bail out early if the element is empty
         if not(self.attributes) and not(self.hasChildNodes()):
-            return '<%s%s%s%s%s%s/>' % (name, modifier, style, source, ref, label)
+            return '<%s%s%s%s%s%s%s/>' % (name, modifier, style, source, ref, label, extra)
 
-        s = ['<%s%s%s%s%s%s>\n' % (name, modifier, style, source, ref, label)]
+        s = ['<%s%s%s%s%s%s%s>\n' % (name, modifier, style, source, ref, label, extra)]
             
         # Render attributes
         if self.attributes:
@@ -708,11 +710,15 @@ class Node(object):
             try:
                 return getattr(self, '@ownerDocument')
             except AttributeError:
-                if self.parentNode:
+                if self.parentNode is not None:
                     return self.parentNode.ownerDocument
                 return
         def fset(self, value):
-            setattr(self, '@ownerDocument', value)
+            if value is None:
+                try: delattr(self, '@ownerDocument')
+                except: pass
+            else:
+                setattr(self, '@ownerDocument', value)
         return locals()
     ownerDocument = property(**ownerDocument())
 
@@ -1868,6 +1874,7 @@ class Document(Node):
         """
         o = self.elementClass()
         o.nodeName = tagName
+        o.parentNode = self
         return o
 
     def createDocumentFragment(self):
@@ -1979,6 +1986,8 @@ class Document(Node):
 
         """
         node = importedNode.cloneNode(deep)
+        node.parentNode = self
+        node.ownerDocument = None
         return node
   
     def createElementNS(self, namespaceURI, qualifiedName):
@@ -2036,7 +2045,7 @@ class Document(Node):
         `source`
 
         """
-        if source.parentNode:
+        if source.parentNode is not None:
             for i, item in enumerate(source.parentNode):
                 if item is source:
                     source.parentNode.pop(i)

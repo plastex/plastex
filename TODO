@@ -13,7 +13,6 @@ Parsing
 - Create a LaTeX Document similar to a DOM Document 
 - Clean up table object builder
 - Improve CSS style support
-- Unittests, unittests, unittests
 
 Rendering
 ---------
@@ -23,3 +22,14 @@ Rendering
 - ToCs
 - Indexes
 - Bibliography
+
+Testing
+-------
+- Unit tests are still fairly sparse
+- Automate unit tests
+- No regression tests
+
+UI
+--
+- Develop full set of options
+- Develop config file for options

@@ -1,16 +1,36 @@
 #!/usr/bin/env python
 
-import sys, os, re, codecs
-from plasTeX.Config import config
+import sys, os, re, codecs, plasTeX
 from plasTeX.Renderer import Renderer
-from simpletal import simpleTAL, simpleTALES
-from simpletal.simpleTALES import Context as TALContext
-from simpletal.simpleTALUtils import FastStringOutput as StringIO
+from plasTeX.simpletal import simpleTAL, simpleTALES
+from plasTeX.simpletal.simpleTALES import Context as TALContext
+from plasTeX.simpletal.simpleTALUtils import FastStringOutput as StringIO
+from plasTeX.Config import config
 
-encoding = config['encoding']['output']
+log = plasTeX.Logging.getLogger()
 
-def _render(self, obj, outputFile=None, outputEncoding=encoding, interpreter=None):
-    """ New rendering method for HTML templates """
+def _render(self, obj, outputFile=None, outputEncoding=config['encoding']['output'], interpreter=None):
+    """ 
+    New rendering method for HTML templates 
+
+    This function is used as the __call__ method on page templates to
+    make them callable.  They need to be callable in order to work
+    with Renderer.
+
+    Required Arguments:
+    obj -- the object to be rendered
+   
+    Keyword Arguments:
+    outputFile -- the file object to write the resultant content to.
+        By default, this comes from `obj`.
+    outputEncoding -- the encoding to use in the output file
+    interpreter -- passed as the interpreter to the page template's 
+        expand method
+
+    Returns:
+    string containing the content not written to an output file
+
+    """
     output = outputFile
     if obj.filename or outputFile is None:
         output = StringIO()
@@ -28,8 +48,31 @@ def _render(self, obj, outputFile=None, outputEncoding=encoding, interpreter=Non
         return output.getvalue()
 simpleTAL.HTMLTemplate.__call__ = _render
 
-def _render(self, obj, outputFile=None, outputEncoding=encoding, docType=None, suppressXMLDeclaration=1, interpreter=None):
-    """ New rendering method for XML templates """
+def _render(self, obj, outputFile=None, outputEncoding=config['encoding']['output'], docType=None, suppressXMLDeclaration=1, interpreter=None):
+    """ 
+    New rendering method for XML templates
+
+    This function is used as the __call__ method on page templates to
+    make them callable.  They need to be callable in order to work
+    with Renderer.
+
+    Required Arguments:
+    obj -- the object to be rendered
+   
+    Keyword Arguments:
+    outputFile -- the file object to write the resultant content to.
+        By default, this comes from `obj`.
+    outputEncoding -- the encoding to use in the output file
+    docType -- the document type for this XML document
+    suppressXMLDeclaration -- if true, the XML declaration is not included
+        in the output
+    interpreter -- passed as the interpreter to the page template's 
+        expand method
+
+    Returns:
+    string containing the content not written to an output file
+
+    """
     output = outputFile
     if obj.filename or outputFile is None:
         output = StringIO()
@@ -52,6 +95,7 @@ htmltemplate = simpleTAL.compileHTMLTemplate
 xmltemplate = simpleTAL.compileXMLTemplate
 
 class XHTML(Renderer):
+    """ Renderer for XHTML documents """
 
     outputtype = unicode
 
@@ -66,23 +110,54 @@ class XHTML(Renderer):
         ("'",  '&#8217;'),
     ]
 
-    def __init__(self):
-        Renderer.__init__(self)
+    def initialize(self):
+        """ Load and compile page templates """
         self.importDirectory(os.path.dirname(__file__))
 
-    def default(self, s):
-        """ Default renderer """
-        if isinstance(s, unicode):
-#           print type(s.parentNode), s
-            for before, after in type(self).entitysubs:
-                s = s.replace(before, after)
-            return s
-        return unicode(s)
+    def default(self, node):
+        """ 
+        Default renderer 
 
-    def cleanup(self):
-        """ Cleanup method called at the end of rendering """
+        If a node in a document is reached that has no rendering method,
+        this method is called in its place.
+
+        Required Arguments:
+        node -- node in the document that needs to be rendered
+
+        Returns:
+        unicode object containing rendered content
+
+        """
+        if isinstance(node, unicode):
+#           print type(node.parentNode), node
+            for before, after in type(self).entitysubs:
+                node = node.replace(before, after)
+            return node
+        return unicode(node)
+
+    def cleanup(self, document):
+        """ 
+        Cleanup method called at the end of rendering 
+
+        This method allows you to do arbitrary post-processing after
+        all files have been rendered.
+
+        Note: While I greatly dislike post-processing, sometimes it's 
+              just easier...
+
+        Required Arguments:
+        document -- the document being rendered
+
+        """
+        encoding = config['encoding']['output']
+
         for file in self.files:
-            s = codecs.open(file, 'r', encoding).read()
+            try:
+                s = codecs.open(str(file), 'r', encoding).read()
+            except IOError, msg:
+                print os.getcwd()
+                log.error(msg)
+                continue
 
             # Clean up empty paragraphs and table cells
             s = re.compile(r'(<p\b[^>]*>)\s*(</p>)', re.I).sub(r'', s)
@@ -114,6 +189,9 @@ class XHTML(Renderer):
         Required Arguments:
         m -- regular expression match object that contains an img tag
 
+        Returns:
+        new image tag with width, height, and depth information
+
         """
         tag = m.group()
 
@@ -144,7 +222,26 @@ class XHTML(Renderer):
         return tag
 
     def importDirectory(self, templatedir):
-        """ Compile all ZPT files in the given directory """
+        """ 
+        Compile all ZPT files in the given directory 
+
+        Templates can exist in two different forms.  First, a template
+        can be a file unto itself.  If an XML template is desired, 
+        the file should have an extension of .xml, .xhtml, or .xhtm.
+        If an HTML template is desired, the files should have an 
+        extension of .zpt, .html, or .htm.
+
+        If you have many small templates, or a template that corresponds
+        to more than one macro, you can use a multiple ZPT file.  A
+        multiple ZPT file contains directives within it to delimit 
+        individual page templates as well as specify which macros they
+        correspond to and what type of template they are (i.e. XML or
+        HTML).
+
+        Required Arguments:
+        templatedir -- the directory to search for template files
+
+        """
         if templatedir and os.path.isdir(templatedir):
             files = os.listdir(templatedir)
 
@@ -180,7 +277,15 @@ class XHTML(Renderer):
                 self.parseTemplates(file, options)                
 
     def setTemplate(self, template, options):
-        """ Compile template and set it in the renderer """
+        """ 
+        Compile template and set it in the renderer 
+
+        Required Arguments:
+        template -- the content of the template to be compiled
+        options -- dictionary containing the name (or names )and type 
+            of the template
+
+        """
 
         # Get name
         try:

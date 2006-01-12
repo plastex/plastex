@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from Tokenizer import Token
+from plasTeX.Tokenizer import Token
 from plasTeX import Command, Environment
 
 

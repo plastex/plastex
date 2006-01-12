@@ -456,6 +456,7 @@ class Macro(Element):
         contentstart = None
         currentpar = None
     
+        # Walk through this list backwards, it's just easier...
         for i in range(len(self)-1, -1, -1):
     
             item = self[i]
@@ -511,24 +512,29 @@ class Macro(Element):
 
 class TeXFragment(DocumentFragment):
     """ Document fragment node """
+    @property
     def source(self):
         return sourcechildren(self)
-    source = property(source)
 
 class TeXDocument(Document):
     """ TeX Document node """
+    @property
     def preamble(self):
+        """
+        Return the nodes in the document that correspond to the preamble
+
+        """
         output = TeXFragment()
         for item in self:
             if item.level == Macro.DOCUMENT_LEVEL:
                 break
             output.append(item)
         return output
-    preamble = property(preamble)
 
+    @property
     def source(self):
+        """ Return the LaTeX source of the document """
         return sourcechildren(self)
-    source = property(source)
 
 class Command(Macro): 
     """ Base class for all Python-based LaTeX commands """
@@ -598,6 +604,8 @@ class UnrecognizedMacro(Macro):
 
     """
     def __cmp__(self, other):
+        if not hasattr(other, 'nodeName'):
+            return 0
         if other.nodeName in ['undefined','@undefined']:
             return 0
         if isinstance(other, UnrecognizedMacro):

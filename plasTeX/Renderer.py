@@ -64,6 +64,20 @@ def unmix(base, mix=None):
 
 
 class Renderer(dict):
+    """
+    Base class for all renderers
+
+    All renderers must act like a dictionary.  Each macro that is encountered
+    in a document must have a corresponding key in the renderer.  This 
+    key points to a callable object which is called with the object to
+    be rendered.
+
+    In addition to callable renderers, the renderer also handles image 
+    generation.  Images are generated when the output document type can 
+    not support the rendering of a macro.  One example of this is equations
+    in HTML.
+
+    """
 
     default = unicode
     outputtype = unicode
@@ -90,9 +104,25 @@ class Renderer(dict):
         # Filename generator
         self.newfilename = self._newfilename()
 
+        # Call the initialization hook
+        self.initialize()
+
+    def initialize(self):
+        """ Invoke any setup that needs to be done before rendering """
+        pass
+
     def _newfilename(self):
         """ 
         Filename generator 
+
+        This method generates a new unique filename each time it is 
+        called.  It's behavior can be modified by the files:extension
+        and files:template configuration options.  The first time this
+        method is called, the index filename is returned (configured
+        using the files:index configuration option).
+
+        Returns:
+        unique filename
 
         """
         # Get the template and extension for output filenames
@@ -119,6 +149,11 @@ class Renderer(dict):
         document -- the document object to render
 
         """
+        # If there are no keys, print a warning.  
+        # This is most likely a problem.
+        if not self.keys():
+            log.warning('There are no keys in the renderer.  All objects will use the default rendering method.')
+
         # Mix in required methods and members
         mixin(Node, Renderable)
         Node.renderer = self
@@ -129,11 +164,19 @@ class Renderer(dict):
         # Invoke the rendering process
         result = unicode(document)
 
+        # There were no files created, so create one and write the 
+        # content to it.
+        if not self.files:
+            log.warning('No files were generated.  A file will be created that contains the result of this entire rendering.  This may produce unexpected results.')
+            filename = Node.renderer.newfilename.next()
+            status.info(' [ %s ] ', filename)
+            self.write(filename, unicode.encode(result, encoding)) 
+
         # Close imager so it can finish processing
         self.imager.close()
 
         # Run any cleanup activities
-        self.cleanup()
+        self.cleanup(document)
 
         # Remove mixins
         del Node.renderer
@@ -151,6 +194,21 @@ class Renderer(dict):
         pass
 
     def find(self, keys, default=None):
+        """
+        Locate a renderer given a list of possibilities
+  
+        Required Arguments:
+        keys -- a list of strings containing the requested name of 
+            a renderer.  This list is traversed in order.  The first 
+            renderer that is found is returned.
+
+        Keyword Arguments:
+        default -- the renderer to return if none of the keys exists
+
+        Returns:
+        the requested renderer
+
+        """
         for key in keys:
             if self.has_key(key):
                 return self[key]
@@ -158,43 +216,63 @@ class Renderer(dict):
 
 
 class Renderable(object):
+    """
+    Base class for all renderable nodes
+
+    This class is mixed into nodes of the document object prior to 
+    rendering.  The actual rendering method is __unicode__.
+
+    """
 
     def __unicode__(self):
         """
         Render the object and all of the child nodes
 
         """
+        # If we don't have childNodes, then we're done
         if not self.hasChildNodes():
             return u''
 
+        # Store these away for efficiency
         r = Node.renderer
         filename = self.filename
 
         if filename:
             status.info(' [ %s ', filename)
 
+        # Render all child nodes
         s = []
         for child in self.childNodes:
             names = []
             nodeName = child.nodeName
+
             # If the child is going to generate a new file, we should 
             # check for a template that has file wrapper content first.
             if self.nodeType == Node.ELEMENT_NODE:
                 modifier = None
+
                 # Does the macro have a modifier (i.e. '*')
                 if child.attributes:
                     modifier = child.attributes.get('*modifier*')
+
                 if child.filename:
                     # Filename and modifier
                     if modifier:
                         names.append('%s-file%s' % (nodeName, modifier))
                     # Filename only
                     names.append('%s-file' % nodeName)
+
                 # Modifier only
                 elif modifier:
                     names.append('%s%s' % (nodeName, modifier))
+
             names.append(nodeName)
+
+            # Locate the rendering callable, and call it with the 
+            # current object (i.e. `child`) as its argument.
             val = r.find(names, r.default)(child)
+
+            # Append the resultant unicode object to the output
             if type(val) is unicode:
                 s.append(val)
             else:
@@ -208,11 +286,12 @@ class Renderable(object):
     def __str__(self):
         return unicode(self)
 
+    @property
     def image(self):
         """ Generate an image and return the image filename """
         return Node.renderer.imager.newimage(self.source)
-    image = property(image)
 
+    @property
     def url(self):
         """
         Return the relative URL of the object
@@ -223,8 +302,11 @@ class Renderable(object):
         (e.g. foo.html#bar).
 
         """
+        # If this generates a file, return that filename
         if self.filename:
             return self.filename
+
+        # If this is a location within a file, return that location
         node = self.parentNode
         while node is not None and node.filename is None:
             node = node.parentNode
@@ -232,8 +314,8 @@ class Renderable(object):
         if node is not None:
             filename = node.filename
         return '%s#%s' % (filename, self.id)
-    url = property(url)
 
+    @property
     def filename(self):
         """
         The filename that this object should create
@@ -243,14 +325,22 @@ class Renderable(object):
         """
         try:
             return getattr(self, 'filenameoverride')
+
         except AttributeError:
+            # If our level doesn't invoke a split, don't return a filename
             if self.level > splitlevel:
                 filename = None
+
+            # Should we use LaTeX ids as filenames?
             elif useids and self.id != ('a%s' % id(self)):
                 filename = '%s%s' % (self.id, ext)
+
+            # All other cases get a generated filename
             else:
                 filename = Node.renderer.newfilename.next()
+
+            # Store the name if this method is called again
             setattr(self, 'filenameoverride', filename)
+
         return filename
-    filename = property(filename)
 

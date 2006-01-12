@@ -174,6 +174,7 @@ class TeX(object):
         inputs = self.inputs
         context = self.context
         endinput = self.endinput
+        ownerDocument = self.ownerDocument
 
         while inputs:
             # Always get next token from top of input stack
@@ -185,6 +186,7 @@ class TeX(object):
                         return
                     # Save context depth of each token for use in digestion
                     t.contextDepth = context.depth
+                    #print id(t), t
                     yield t
 
             except StopIteration:
@@ -244,6 +246,8 @@ class TeX(object):
                               % (token.macroName, self.lineinfo, msg))
                     raise
 
+#           tokenlog.debug('%s: %s', type(token), token.ownerDocument)
+
             yield token
 
     def expandtokens(self, tokens, normalize=False):
@@ -286,10 +290,13 @@ class TeX(object):
 
         """
         tokens = bufferediter(self)
+
         if output is None:
             output = TeXDocument()
+
         if output.nodeType == Macro.DOCUMENT_NODE:
             self.ownerDocument = output
+
         try:
             for item in tokens:
                 if item.nodeType == Macro.ELEMENT_NODE:
@@ -299,8 +306,10 @@ class TeX(object):
         except Exception, msg:
             log.error('An error occurred while building the document object%s (%s)', self.lineinfo, msg)
             raise
+
         if output.nodeType == Macro.DOCUMENT_NODE:
             output.normalize()
+
         return output
 
     def texttokens(self, text):
@@ -1151,15 +1160,25 @@ class TeX(object):
         `None' -- if it is not found
 
         """
+        log = getLogger('tex.kpsewhich')
         plastexinputs = os.environ.get('TEXINPUTS', '.')
+
+        # Look in all TEXINPUTS directories
         for path in plastexinputs.split(':'):
+
+           # Search for name as given
            fullpath = os.path.join(path, name)
+           log.debug('Looking for file at %s' % fullpath)
            if os.path.isfile(fullpath):
                return fullpath
+
+           # Check for filename with the given extensions
            for ext in extensions:
                fullpath = os.path.join(path, name+ext)
+               log.debug('Looking for file at %s' % fullpath)
                if os.path.isfile(fullpath):
                    return fullpath
+
         raise OSError, 'Could not find any file named: %s' % \
                        (', '.join(['%s%s' % (name, x) for x in extensions]))
 

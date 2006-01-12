@@ -2,7 +2,7 @@
 
 import sys
 from plasTeX.Base.LaTeX.Arrays import tabular
-from plasTeX import Command, Dimen, Count, Glue, dimen, glue, count
+from plasTeX import Command, Dimen, Count, Glue, dimen, glue, count, Counter
 
 class LTleft(Glue): value = glue('1fil')
 class LTright(Glue): value = glue('1fil')
@@ -15,6 +15,10 @@ class setlongtables(Command): pass
 
 class longtable(tabular):
     args = '[ position:str ] colspec:nox'
+
+    class nocountcaption(tabular.caption):
+        """ Caption that doesn't increment the counter """
+        counter = None
 
     class tabularnewline(Command): pass
 
@@ -40,6 +44,11 @@ class longtable(tabular):
 
     class endfirsthead(LongTableEndRow):
         """ End of first head section """
+        def invoke(self, tex):
+            # Store the current table counter value.  If more than one
+            # caption exists, we need to set this counter back to this value.
+            self._tabularcount = Counter.counters[longtable.caption.counter].value
+            return longtable.LongTableEndRow.invoke(self, tex)
 
     class endfoot(LongTableEndRow):
         """ End of footer section """
@@ -64,6 +73,9 @@ class longtable(tabular):
                             header = cache
                     elif isinstance(current, type(self).endfirsthead):
                         header = cache
+                        # Set counter back to correct value in case there
+                        # were multiple captions.
+                        Counter.counters[longtable.caption.counter].value = node._tabularcount
                     elif isinstance(current, type(self).endfoot):
                         if footer is None:
                             footer = cache
