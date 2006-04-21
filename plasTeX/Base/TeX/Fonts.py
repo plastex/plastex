@@ -31,6 +31,9 @@ class sl(Font):
 class bf(Font):
     pass
 
+class sf(Font):
+    pass
+
 class tt(Font):
     pass
 

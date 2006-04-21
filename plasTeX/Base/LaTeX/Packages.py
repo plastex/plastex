@@ -19,7 +19,7 @@ del packages
 
 log = getLogger()
 status = getLogger('status')
-encoding = config['encoding']['input']
+encoding = config['files']['input-encoding']
 
 class PackageLoader(Command):
 
@@ -34,6 +34,8 @@ class PackageLoader(Command):
             status.info(' ( %s ' % m.__file__)
             if hasattr(m, 'ProcessOptions'):
                 m.ProcessOptions(options)
+            if hasattr(m, 'initialize'):
+                m.initialize(tex.context)
             tex.context.importMacros(vars(m))
             tex.context.packages[file] = options
             status.info(' ) ')
@@ -206,7 +208,8 @@ class title(Command):
     args = 'self'
     def digest(self, tokens):
         Command.digest(self, tokens)
-        self.ownerDocument.userdata['title'] = self
+        if not self.ownerDocument.userdata.has_key('title'):
+            self.ownerDocument.userdata['title'] = self
 
 class author(Command):
     args = 'self'

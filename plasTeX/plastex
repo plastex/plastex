@@ -8,7 +8,7 @@ from plasTeX.ConfigManager import *
 
 def main(argv):
     """ Main program routine """
-    inencoding = config['encoding']['input']
+    inencoding = config['files']['input-encoding']
 
     print >>sys.stderr, 'plasTeX version 1.0'
 
@@ -29,8 +29,20 @@ def main(argv):
         sys.exit(1)
     basename = os.path.splitext(file)[0]
     
+    # Make sure that the renderer exists before we start parsing
+    r = config['general']['renderer']
+    try: 
+        exec('from plasTeX.renderers.%s import xhtml as renderer' % r)
+    except ImportError:
+        print >>sys.stderr, 'ERROR: Could not import renderer "%s".' % r
+        print >>sys.stderr, '       Make sure that it is installed correctly, and can be imported by Python.'
+        sys.exit(1)
+
     # Create document instance that output will be put into
     document = plasTeX.TeXDocument()
+
+    if config['doc']['title']:
+        document.userdata['title'] = config['doc']['title']
 
     # Parse document
     s = TeX(codecs.open(file,'r',inencoding))
@@ -45,8 +57,9 @@ def main(argv):
     open(outfile,'w').write(document.toXML().encode('utf-8'))
     
     # Apply renderer
-    from plasTeX.renderers.xhtml import xhtml as renderer
     renderer.render(document)
+
+    print
 
 def info(type, value, tb):
    if hasattr(sys, 'ps1') or not sys.stderr.isatty():

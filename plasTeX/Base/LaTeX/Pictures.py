@@ -18,6 +18,15 @@ class unitlength(Dimen):
 class picture(Environment):
     args = '( dimension:str ) ( offset:str )'
 
+#   def digest(self, tex):
+#       result = Environment.digest(self, tex)
+#       import pdb
+#       pdb.set_trace()
+#       return result
+
+    def paragraphs(self):
+        pass
+
     class put(Command):
         args = '( coord:str ) object'
 

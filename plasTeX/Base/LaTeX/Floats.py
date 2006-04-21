@@ -5,9 +5,10 @@ C.9 Figures and Other Floating Bodies (p196)
 
 """
 
-from plasTeX import Command, Environment, StringCommand, Counter, TheCounter
+from plasTeX import Command, Environment, StringCommand
 from plasTeX import Glue, glue, Dimen, dimen
 from plasTeX.Logging import getLogger
+
 
 class Caption(Command):
     args = '[ toc ] title'
@@ -15,15 +16,6 @@ class Caption(Command):
 #
 # C.9.1 Figures and Tables
 #
-
-Counter('figure','chapter')
-Counter('table','chapter')
-
-class thefigure(TheCounter):
-    format = '%(thechapter)s.%(figure)s'
-
-class thetable(TheCounter):
-    format = '%(thechapter)s.%(table)s'
 
 class figure(Environment):
     args = 'loc:str'
@@ -47,11 +39,6 @@ class suppressfloats(Command):
     pass
 
 # Counters
-
-Counter('topnumber')
-Counter('bottomnumber')
-Counter('totalnumber')
-Counter('dbltopnumber')
 
 class topfraction(StringCommand):
     value = '0.25'

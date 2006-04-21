@@ -7,13 +7,14 @@ from imagers import Imager
 from StringIO import StringIO
 from plasTeX.Config import config
 from plasTeX.Logging import getLogger
+import codecs
 
 log = getLogger()
 status = getLogger('status')
 
-encoding = config['encoding']['output']
+encoding = config['files']['output-encoding']
 useids = config['files']['use-ids']
-ext = config['files']['extension']
+filetemplate = config['files'].get('filename', raw=True)
 splitlevel = config['files']['split-level']
 
 def mixin(base, mix, overwrite=False):
@@ -89,16 +90,14 @@ class Renderer(dict):
         self.files = []
 
         # Image generator
-        if config['images']['enabled']:
-            program = config['images']['program']
-            if program == 'dvipng':
-                self.imager = DVIPNG()
-            elif program == 'dvi2bitmap':
-                self.imager = DVI2Bitmap()
-            else:
-                log.warning('Unrecognized imager "%s"', program)
-                self.imager = Imager()
+        program = config['images']['program']
+        if program == 'dvipng':
+            self.imager = DVIPNG()
+        elif program == 'dvi2bitmap':
+            self.imager = DVI2Bitmap()
         else:
+            if config['images']['enabled']:
+                log.warning('Unrecognized imager "%s"', program)
             self.imager = Imager()
 
         # Filename generator
@@ -126,11 +125,11 @@ class Renderer(dict):
 
         """
         # Get the template and extension for output filenames
-        ext = config['files']['extension']
-        template = config['files'].get('template', raw=True) + ext
+        basename = config['files'].get('basename', raw=True)
+        template = filetemplate % {'basename':basename}
     
         # Return the index filename on the first pass
-        yield config['files'].get('index', raw=True) + ext
+        yield filetemplate % {'basename':config['files'].get('index', raw=True)}
     
         # Generate new filenames
         v = {'num':1}
@@ -212,6 +211,13 @@ class Renderer(dict):
         for key in keys:
             if self.has_key(key):
                 return self[key]
+
+        if ''.join(keys) != '#text':
+            log.warning('Using default renderer for %s' % ', '.join(keys))
+
+        for key in keys:
+            self[key] = default
+
         return default
 
 
@@ -226,7 +232,7 @@ class Renderable(object):
 
     def __unicode__(self):
         """
-        Render the object and all of the child nodes
+        Invoke the rendering process on all of the child nodes.
 
         """
         # If we don't have childNodes, then we're done
@@ -333,11 +339,17 @@ class Renderable(object):
 
             # Should we use LaTeX ids as filenames?
             elif useids and self.id != ('a%s' % id(self)):
-                filename = '%s%s' % (self.id, ext)
+                filename = filetemplate % {'basename':self.id}
 
             # All other cases get a generated filename
             else:
                 filename = Node.renderer.newfilename.next()
+
+            # Remove evil characters from the filename
+            if filename:
+                good = config['files']['bad-chars-sub']
+                for char in config['files']['bad-chars']:
+                    filename = filename.replace(char, good)
 
             # Store the name if this method is called again
             setattr(self, 'filenameoverride', filename)

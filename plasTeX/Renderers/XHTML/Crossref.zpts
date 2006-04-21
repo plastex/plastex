@@ -4,3 +4,5 @@ name: ref
 name: pageref
 <a tal:attributes="href self/idref/url">*</a>
 
+name: label
+<a tal:attributes="name self/id"></a>

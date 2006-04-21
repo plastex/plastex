@@ -15,6 +15,9 @@ class hspace(Command):
 class vspace(Command):
     args = '* len:dimen'
 
+class phantom(Command):
+    args = 'text:str'
+
 class bigskip(Command):
     pass
 

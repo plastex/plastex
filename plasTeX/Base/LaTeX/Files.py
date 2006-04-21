@@ -12,7 +12,7 @@ from plasTeX import Command, Environment
 from plasTeX.Config import config
 from plasTeX.Logging import getLogger
 
-encoding = config['encoding']['input']
+encoding = config['files']['input-encoding']
 log = getLogger()
 
 class nofiles(Command):
@@ -39,7 +39,7 @@ class include(input):
     pass
 
 class includeonly(Command):
-    args = '@files:str'
+    args = 'files:list:str'
     def invoke(self, tex):
         for file in self.parse(tex)['files']:
             tex.input(tex.kpsewhich(file))

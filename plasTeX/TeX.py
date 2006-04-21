@@ -145,22 +145,22 @@ class TeX(object):
         if self.inputs:
             self.currentinput = self.inputs[-1]
 
+    @property
     def filename(self):
         return self.currentinput[0].filename
-    filename = property(filename)
 
+    @property
     def linenumber(self):
         return self.currentinput[0].linenumber
-    linenumber = property(linenumber)
 
+    @property
     def lineinfo(self):
         return ' in %s on line %s' % (self.filename, self.linenumber)
-    lineinfo = property(lineinfo)
 
+    @classmethod
     def disableLogging(cls):
         """ Turn off logging """
         disableLogging()
-    disableLogging = classmethod(disableLogging)
 
     def itertokens(self):
         """ 
@@ -186,7 +186,6 @@ class TeX(object):
                         return
                     # Save context depth of each token for use in digestion
                     t.contextDepth = context.depth
-                    #print id(t), t
                     yield t
 
             except StopIteration:
@@ -296,6 +295,9 @@ class TeX(object):
 
         if output.nodeType == Macro.DOCUMENT_NODE:
             self.ownerDocument = output
+
+        if self.ownerDocument:
+            self.ownerDocument.context = self.context
 
         try:
             for item in tokens:
@@ -464,7 +466,7 @@ class TeX(object):
 
     def readArgument(self, *args, **kwargs):
         """
-        Return and argument without the TeX source that created it
+        Return an argument without the TeX source that created it
 
         See Also:
         self.readArgumentAndSource()
@@ -700,6 +702,8 @@ class TeX(object):
             else:
                 self.pushtoken(t)
                 break
+        else:
+            self.pushtoken(EndTokens)
         return None, ''
 
     def readGrouping(self, chars, expanded=False):
@@ -744,6 +748,8 @@ class TeX(object):
             else:
                 source = self.source(source)
             return toks, source
+        else:
+            self.pushtoken(EndTokens)
         return None, ''
 
     def readInternalType(self, tokens, method):
@@ -1522,8 +1528,8 @@ class TeX(object):
         except OSError, msg:
             log.warning(msg)
 
+    @property
     def jobname(self):
         """ Return the basename of the main input file """
         return os.path.basename(os.path.splitext(self.inputs[0][0].filename)[0])
-    jobname = property(jobname)
 

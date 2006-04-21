@@ -234,8 +234,10 @@ class Macro(Element):
             return '%send{%s}' % (escape, name)
 
         argsource = sourcearguments(self)
-        if not argsource: 
+        if not argsource:
             argsource = ' '
+        elif argsource[0] in string.letters:
+            argsource = ' %s' % argsource
         s = '%s%s%s' % (escape, name, argsource)
 
         # If self.childNodes is not empty, print out the contents
@@ -272,19 +274,20 @@ class Macro(Element):
         arg = None
         try:
             for i, arg in enumerate(self.arguments):
-                output, source = tex.readArgumentAndSource(parentNode=self, 
-                                                           name=arg.name, 
-                                                           **arg.options)
                 # Check for a '*' type argument at the beginning of the
                 # argument list.  If there is one, don't increment counters
                 # or set labels.  This must be done immediately since
                 # the following arguments may contain labels.
-                if i == 0:
-                    if arg.name == '*modifier*':
-                        if output is None:
-                            self.resolve(tex)
-                    else:
-                        self.resolve(tex)
+                if i == 0 and arg.name != '*modifier*':
+                    self.resolve(tex)
+
+                output, source = tex.readArgumentAndSource(parentNode=self, 
+                                                           name=arg.name, 
+                                                           **arg.options)
+
+                if i == 0 and output is None and arg.name == '*modifier*':
+                    self.resolve(tex)
+
                 self.argsource += source
                 self.attributes[arg.name] = output
         except:
@@ -302,13 +305,37 @@ class Macro(Element):
         tex -- the TeX instance containing the current context
 
         """
+        self.refstepcounter(tex)
+
+    def stepcounter(self, tex):
+        """
+        Increment the counter for the object (if one exists)
+
+        Required Arguments:
+        tex -- the TeX instance containing the current context
+
+        """
         if self.counter:
-            tex.context.currentlabel = self
             try:
-                Counter.counters[self.counter].stepcounter()
+                tex.context.counters[self.counter].stepcounter()
             except KeyError:
                 log.warning('Could not find counter "%s"', self.counter)
                 tex.context.newcounter(self.counter,initial=1)
+
+    def refstepcounter(self, tex):
+        """
+        Increment the counter for the object (if one exists)
+
+        In addition to stepping the counter, the current object is 
+        set as the currently labeled object.
+
+        Required Arguments:
+        tex -- the TeX instance containing the current context
+
+        """
+        if self.counter:
+            tex.context.currentlabel = self
+            self.stepcounter(tex)
 
     def postparse(self, tex):
         """
@@ -620,17 +647,17 @@ class NewIf(Macro):
     def invoke(self, tex):
         return tex.readIfContent(type(self).state)
 
+    @classmethod
     def setState(cls, state):
         cls.state = state
-    setState = classmethod(setState)
 
+    @classmethod
     def setTrue(cls):
         cls.state = True
-    setTrue = classmethod(setTrue)
 
+    @classmethod
     def setFalse(cls):
         cls.state = False
-    setFalse = classmethod(setFalse)
 
 class IfTrue(Macro):
     """ Base class for all generated \\iftrues """
@@ -1036,13 +1063,11 @@ class Counter(object):
     LaTeX counter class
 
     """
-    counters = {}
-
-    def __init__(self, name, resetby=None, value=0):
+    def __init__(self, context, name, resetby=None, value=0):
         self.name = name
         self.resetby = resetby
         self.value = value
-        Counter.counters[name] = self
+        self.counters = context.counters
 
     def addtocounter(self, other):
         self.value += int(other)
@@ -1152,11 +1177,13 @@ class TheCounter(Command):
             if parts:
                 format = parts.pop(0)
 
-            return getattr(Counter.counters[name], format)
+            return getattr(tex.context.counters[name], format)
 
         format = self.format
         if self.format is None:
             format = '%%(%s.arabic)s' % self.nodeName[3:]
+        else:
+            format = self.format.replace('%s', '%%(%s.arabic)s' % self.nodeName[3:])
 
         return tex.texttokens(re.sub(r'%\(\s*(\w+(?:\.\w+)?)\s*\)s', 
                               countervalue, format))

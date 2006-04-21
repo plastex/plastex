@@ -211,11 +211,22 @@ class Array(Environment):
             for item in self:
                 if item.attributes and item.attributes.has_key('colspan'):
                     self.attributes['colspan'] = item.attributes['colspan']
-                if hasattr(item, 'colspec'):
+                if hasattr(item, 'colspec') and not isinstance(item, Array):
                     self.colspec = item.colspec
+
+            # Cache the border information.  This must be done before
+            # grouping paragraphs since a paragraph might swallow 
+            # an hline/vline/cline command.
+            h,v = self.borders
+
+            # Throw out the border commands, we're done with them
+#           for i in range(len(self)-1, -1, -1):
+#               if isinstance(self[i], Array.BorderCommand):
+#                   self.pop(i)
 
             self.paragraphs()
 
+        @property
         def borders(self):
             """
             Return all of the border control macros
@@ -263,8 +274,8 @@ class Array(Environment):
 
             return horiz, vert
 
-        borders = property(borders)
 
+        @property
         def isBorderOnly(self):
             """ Does this cell exist only for applying borders? """
             for item in self:
@@ -274,13 +285,14 @@ class Array(Environment):
                     continue
                 return False
             return True
-        isBorderOnly = property(isBorderOnly)
+
 
         def source(self):
             if self.endtoken is not None:
                 return sourcechildren(self) + self.endtoken.source
             return sourcechildren(self)
         source = property(source)
+
 
     class multicolumn(Command):
         """ Column spanning cell """
@@ -365,9 +377,9 @@ class Array(Environment):
                         if cell.attributes:
                             span = cell.attributes.get('colspan', 1)
                         cells += [cell] * span
-                    for colspec, cell in zip(self.colspec, cells):
-                        colspec = getattr(cell, 'colspec', colspec)
-                        cell.style.update(colspec.style)
+                    for spec, cell in zip(self.colspec, cells):
+                        spec = getattr(cell, 'colspec', spec)
+                        cell.style.update(spec.style)
                 prev = row
 
         # Pop empty rows

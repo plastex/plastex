@@ -14,6 +14,8 @@ class document(Environment, SectionUtils):
     def digest(self, tokens):
         Environment.digest(self, tokens)
         self.paragraphs()
+        if not self.ownerDocument:
+            return
         for key, value in self.ownerDocument.userdata.items():
             self.attributes[key] = value
 

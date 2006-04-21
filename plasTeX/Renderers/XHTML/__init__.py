@@ -9,7 +9,7 @@ from plasTeX.Config import config
 
 log = plasTeX.Logging.getLogger()
 
-def _render(self, obj, outputFile=None, outputEncoding=config['encoding']['output'], interpreter=None):
+def _render(self, obj, outputFile=None, outputEncoding=config['files']['output-encoding'], interpreter=None):
     """ 
     New rendering method for HTML templates 
 
@@ -48,7 +48,7 @@ def _render(self, obj, outputFile=None, outputEncoding=config['encoding']['outpu
         return output.getvalue()
 simpleTAL.HTMLTemplate.__call__ = _render
 
-def _render(self, obj, outputFile=None, outputEncoding=config['encoding']['output'], docType=None, suppressXMLDeclaration=1, interpreter=None):
+def _render(self, obj, outputFile=None, outputEncoding=config['files']['output-encoding'], docType=None, suppressXMLDeclaration=1, interpreter=None):
     """ 
     New rendering method for XML templates
 
@@ -108,6 +108,8 @@ class XHTML(Renderer):
         ("''", '&#8221;'),
         ('`',  '&#8216;'),
         ("'",  '&#8217;'),
+        ('---', '&#8212;'),
+        ('--', '&#8211;'),
     ]
 
     def initialize(self):
@@ -149,7 +151,7 @@ class XHTML(Renderer):
         document -- the document being rendered
 
         """
-        encoding = config['encoding']['output']
+        encoding = config['files']['output-encoding']
 
         for file in self.files:
             try:
@@ -212,12 +214,33 @@ class XHTML(Renderer):
             return tag
 
         img = self.imager.images[src]
-        tag = tag.replace('#width', str(img.width))
-        tag = tag.replace('#height', str(img.height))
-        if img.depth >= 0:
-            tag = tag.replace('#depth', ('raise%s' % img.depth))
-        else:
-            tag = tag.replace('#depth', ('lower%s' % -img.depth))
+
+        width = img.width
+        if width is None:
+            width = ''
+
+        height = img.height
+        if height is None:
+            height = ''
+
+        depth = img.depth
+        if depth is None:
+            depth = 0
+
+        tag = tag.replace('#width', '%spx' % width)
+        tag = tag.replace('#height', '%spx' % height)
+        tag = tag.replace('#depth', '%spx' % depth)
+
+        # If we have a large descender (i.e. greater than 8px), 
+        # put in this image hack to keep MSIE from truncating the 
+        # image if it's within a table cell.
+        if height and abs(depth) > 8: 
+            tag = '%s<img src="../blank.gif" style="height:%spx" class="ieimgfix">' % (tag, height)
+
+            # We don't want the full height to be used for the line height.
+            # After some tuning, a value of (height-8px) was chosen.  That
+            # seems to give decent descenders without much overlap.
+            tag = '%s<span style="line-height:%spx;visibility:hidden">&#8205;</span>' % (tag, height-8)
 
         return tag
 
@@ -359,6 +382,9 @@ class XHTML(Renderer):
                 self.setTemplate(''.join(template), options)
             except ValueError, msg:
                 print 'ERROR: %s at line %s in file %s' % (msg, i, filename)
+
+        elif name and not(template):
+            self.setTemplate('', options)
 
 xhtml = XHTML()
 

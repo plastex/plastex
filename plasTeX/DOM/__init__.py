@@ -566,7 +566,7 @@ class Node(object):
     parentNode = None
     attributes = None
 
-    def toXML(self):
+    def toXML(self, debug=False):
         """ 
         Dump the object as XML 
 
@@ -626,7 +626,10 @@ class Node(object):
                     label = ' id="%s"' % lid
         except AttributeError: pass
 
-        extra = ' parentNode="%s" ownerDocument="%s"' % (id(self.parentNode), id(self.ownerDocument))
+        extra = ''
+        if debug:
+            extra = ' parentNode="%s" ownerDocument="%s"' % \
+                    (id(self.parentNode), id(self.ownerDocument))
 
         # Bail out early if the element is empty
         if not(self.attributes) and not(self.hasChildNodes()):

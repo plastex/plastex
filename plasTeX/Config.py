@@ -6,24 +6,16 @@ from ConfigManager import *
 c = config = ConfigManager()
 
 #
-# Encodings
+# Renderer
 #
+general = c.add_section('general')
+c.add_category('general', 'General Options')
 
-encoding = c.add_section('encoding')
-c.add_category('encoding', 'Encoding Options')
-
-encoding['input'] = StringOption(
-    """ Input encoding """,
-    options = '--input-encoding',
-    default = 'utf-8',
-    category = 'encoding',
-)
-
-encoding['output'] = StringOption(
-    """ Output encoding """,
-    options = '--output-encoding',
-    default = 'utf-8',
-    category = 'encoding',
+general['renderer'] = StringOption(
+    """ Renderer to use for conversion """,
+    options = '--renderer',
+    default = 'xhtml',
+    category = 'general',
 )
 
 #
@@ -33,38 +25,66 @@ encoding['output'] = StringOption(
 files = c.add_section('files')
 c.add_category('files', 'File Handling Options')
 
+files['input'] = StringOption(
+    """ Input file encoding """,
+    options = '--input-encoding',
+    default = 'utf-8',
+    category = 'files',
+)
+
+files['output'] = StringOption(
+    """ Output file encoding """,
+    options = '--output-encoding',
+    default = 'utf-8',
+    category = 'files',
+)
+
 files['split-level'] = IntegerOption(
-    """ Level to split the document into files """,
+    """ Highest section level that generates a new file """,
     options = '--split-level',
     default = 2,
     category = 'files',
 )
 
 files['index'] = StringOption(
-    """ Name of the first file in the document """,
+    """ Basename of the first output file """,
     options = '--index-file',
     default = 'index',
     category = 'files',
 )
 
-files['template'] = StringOption(
-    """ Template to use for non-index filenames """,
-    options = '--filename-template',
+files['basename'] = StringOption(
+    """ Template to use for the basename of output files """,
+    options = '--file-basename',
     default = 'sect%(num).4d',
     category = 'files',
 )
 
-files['extension'] = StringOption(
-    """ File extension for output files """,
-    options = '--file-extension',
-    default = '.html',
+files['filename'] = StringOption(
+    """ Template for output filenames """,
+    options = '--filename',
+    default = '%(basename)s.html',
     category = 'files',
 )
 
 files['use-ids'] = BooleanOption(
     """ Use IDs (i.e. \\label{...}) as filename """,
-    options = '--use-id-filenames',
+    options = '--filenames-use-id',
     default = True,
+    category = 'files',
+)
+
+files['bad-chars'] = StringOption(
+    """ Characters that should not be allowed in a filename """,
+    options = '--bad-filename-chars',
+    default = ':#$%^&*!~`"\'=?/{}[]()|<>;\\,',
+    category = 'files',
+)
+
+files['bad-chars-sub'] = StringOption(
+    """ Character that should be used instead of an illegal character """,
+    options = '--bad-filename-chars-sub',
+    default = '_',
     category = 'files',
 )
 
@@ -143,6 +163,24 @@ images['cleanup'] = BooleanOption(
     category = 'images',
 )
 
+#
+# Document
+#
+
+doc = c.add_section('doc')
+c.add_category('doc', 'Document Options')
+
+doc['title'] = StringOption(
+    """ 
+    Title for the document 
+
+    This option specifies a title to use instead of the title
+    specified in the LaTeX document.
+
+    """,
+    options = '--title',
+    category = 'doc',
+)
 
 
 config.read('~/.plasTeXrc')

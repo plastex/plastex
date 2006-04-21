@@ -11,7 +11,7 @@ status = getLogger('status')
 deflog = getLogger('parse.definitions')
 envlog = getLogger('parse.environments')
 mathshiftlog = getLogger('parse.mathshift')
-encoding = config['encoding']['input']
+encoding = config['files']['input-encoding']
 
 class relax(Command):
     pass
@@ -38,11 +38,11 @@ class par(Command):
     def digest(self, tokens):
         status.dot()
 
+    @property
     def isElementContentWhitespace(self):
         if not self.hasChildNodes():
             return True
         return False
-    isElementContentWhitespace = property(isElementContentWhitespace)
 
 class BoxCommand(Command):
     """ Base class for box-type commands """
@@ -435,3 +435,9 @@ class expandafter(Command):
         tex.pushtoken(aftertok)
         tex.pushtoken(nexttok)
         return []
+
+class vskip(Command):
+    args = 'size:Dimen'
+
+class hskip(Command):
+    args = 'size:Dimen'

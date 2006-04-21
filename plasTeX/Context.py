@@ -6,8 +6,8 @@ from plasTeX import ismacro, macroname
 from plasTeX.Logging import getLogger
 from Tokenizer import Tokenizer, Token, DEFAULT_CATEGORIES, VERBATIM_CATEGORIES
 
-# Only export the Context class
-__all__ = ['Context']
+# Only export the Context singleton
+__all__ = ['Context','context']
 
 # Set up loggers
 log = getLogger()
@@ -67,6 +67,16 @@ class ContextItem(dict):
         return self.name
 
 
+class Counters(dict):
+    def __getitem__(self, name):
+        try: 
+            c = dict.__getitem__(self, name)
+        except KeyError:
+            log.warning('No counter "%s" exists.  Creating one.' % name)
+            c = self[name] = plasTeX.Counter(self.context, name)
+        return c
+
+
 class Context(object):
     """
     Object to handle macro contexts within a TeX document
@@ -96,7 +106,8 @@ class Context(object):
         self.refs = {}
 
         # LaTeX counters
-        self.counters = plasTeX.Counter.counters
+        self.counters = Counters()
+        self.counters.context = self
 
         # Tokens aliased by \let
         self.lets = {}
@@ -288,8 +299,8 @@ class Context(object):
         for value in context.values():
             if ismacro(value):
                 self[macroname(value)] = value
-            elif isinstance(value, Context):
-                self.importMacros(value)
+#           elif isinstance(value, Context):
+#               self.importMacros(value)
 
     def pop(self, obj=None):
         """ 
@@ -445,7 +456,7 @@ class Context(object):
         """
         self.contexts[-1].categories = self.categories = VERBATIM_CATEGORIES[:]
 
-    def newcounter(self, name, resetby=None, initial=0):
+    def newcounter(self, name, resetby=None, initial=0, format=None):
         """ 
         Create a new counter 
 
@@ -463,13 +474,15 @@ class Context(object):
         """
         name = str(name)
         # Counter already exists
-        if plasTeX.Counter.counters.has_key(name):
+        if self.counters.has_key(name):
             macrolog.debug('counter %s already defined', name)
             return
-        plasTeX.Counter(name, resetby, initial)
+        self.counters[name] = plasTeX.Counter(self, name, resetby, initial)
 
+        if format is None:
+            format = '%s'
         newclass = new.classobj('the'+name, (plasTeX.TheCounter,), 
-                               {'format': '%%(%s)s' % name})
+                               {'format': format})
         self.addGlobal('the'+name, newclass)
 
     def newcount(self, name, initial=0):
@@ -736,4 +749,3 @@ class Context(object):
         newclass = new.classobj(name, (plasTeX.StringCommand,), 
                                 {'value': chr(num)})
         self.addGlobal(name, newclass)
-

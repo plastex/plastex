@@ -637,13 +637,6 @@ class ConfigManager(UserDict, object):
         else: 
             raise NoSectionError(section)
 
-    def has_option(self, section, option):
-        """ Return whether the given section has the given option """
-        if self.has_key(section):
-            return option in self[section].keys()
-        else: 
-            raise NoSectionError(section)
-
     def read(self, filenames):
         """
         Read and parse a filename or a list of filenames

@@ -6,7 +6,7 @@ C.4 Sectioning and Table of Contents (p174)
 """
 
 from plasTeX.Config import config
-from plasTeX import Command, Environment, Counter, TheCounter, TeXFragment
+from plasTeX import Command, Environment, TeXFragment
 from plasTeX.Logging import getLogger
 
 log = getLogger()
@@ -16,6 +16,7 @@ log = getLogger()
 #
 
 class cachedproperty(object):
+    """ Property whose value is only calculated once and cached """
     def __init__(self, func):
         self._func = func
     def __get__(self, obj, type=None):
@@ -28,41 +29,46 @@ class cachedproperty(object):
             setattr(obj, '@%s' % self._func.func_name, result)
             return result
 
+
 class SectionUtils(object):
     """ General utilities for getting information about sections """
 
+    @cachedproperty
     def subsections(self):
-        """
-        Retrieve a list of all immediate subsections of this section
-
-        """
+        """ Retrieve a list of all immediate subsections of this section """
         return [x for x in self if x.level < Command.ENDSECTIONS_LEVEL]
-    subsections = cachedproperty(subsections)
 
+    @cachedproperty
+    def siblings(self):
+        """ Retrieve a list of all sibling sections of this section """
+        if not self.parentNode:
+            return []
+        return [x for x in self.parentNode.subsections if x is not self]
+
+    @cachedproperty
+    def tableofcontents(self):
+        """ Return only the immediate subsections that create files """
+        return [x for x in self.subsections if x.filename]
+
+    @cachedproperty
     def allSections(self):
-        """
-        Retrieve a list of all sections within (and including) this one
-
-        """
+        """ Retrieve a list of all sections within (and including) this one """
         sections = [self]
         for item in self.subsections:
             sections.extend(item.allSections)
         return sections
-    allSections = cachedproperty(allSections)
 
+    @cachedproperty
     def documentSections(self):
-        """
-        Retrieve a list of all sections in the document
-
-        """
+        """ Retrieve a list of all sections in the document """
         document = self
         while document.level is not Command.DOCUMENT_LEVEL:
             document = document.parentNode
             if document is None:
                 return []
         return document.allSections
-    documentSections = cachedproperty(documentSections)
 
+    @cachedproperty
     def navigation(self):
         """
         Return a dictionary containing a lot of navigation information
@@ -96,6 +102,19 @@ class SectionUtils(object):
                 break
             prev = item
 
+        document = part = chapter = section = subsection = None
+        for item in breadcrumbs:
+            if item.level == Command.DOCUMENT_LEVEL:
+                document = item
+            elif item.level == Command.PART_LEVEL:
+                part = item
+            elif item.level == Command.CHAPTER_LEVEL:
+                chapter = item
+            elif item.level == Command.SECTION_LEVEL:
+                section = item
+            elif item.level == Command.SUBSECTION_LEVEL:
+                subsection = item
+
         nav = {}
         nav['home'] = top
         nav['start'] = top
@@ -107,10 +126,16 @@ class SectionUtils(object):
         nav['top'] = nav['origin'] = top
         nav['parent'] = parent
         nav['child'] = self.subsections
-        nav['sibling'] = None
-        nav['chapter'] = None
-        nav['section'] = None
-        nav['subsection'] = None
+        nav['sibling'] = self.siblings
+
+        # These aren't actually part of the spec, but I added 
+        # them for consistency.
+        nav['document'] = document
+        nav['part'] = part
+
+        nav['chapter'] = chapter
+        nav['section'] = section
+        nav['subsection'] = subsection
         nav['appendix'] = None
         nav['glossary'] = None
         nav['bibliography'] = None
@@ -140,16 +165,6 @@ class SectionUtils(object):
 
         return nav
 
-    navigation = cachedproperty(navigation)
-
-Counter('part','volume')
-Counter('chapter','part')
-Counter('section','chapter')
-Counter('subsection','section')
-Counter('subsubsection','subsection')
-Counter('paragraph','subsubsection')
-Counter('subparagraph','paragraph')
-Counter('subsubparagraph','subparagraph')
 
 class StartSection(Command, SectionUtils):
     args = '* [ toc ] title'
@@ -166,30 +181,7 @@ class StartSection(Command, SectionUtils):
             self.appendChild(item)
         self.paragraphs()
 
-class thepart(TheCounter): 
-    format = '%(part)s'
 
-class thechapter(TheCounter): 
-    format = '%(chapter)s'
-
-class thesection(TheCounter): 
-    format = '%(section)s'
-
-class thesubsection(TheCounter): 
-    format = '%(thesection)s.%(subsection)s'
-
-class thesubsubsection(TheCounter): 
-    format = '%(thesubsection)s.%(subsubsection)s'
-
-class theparagraph(TheCounter):
-    format = '%(thesubsubsection)s.%(paragraph)s'
-
-class thesubparagraph(TheCounter):
-    format = '%(theparagraph)s.%(subparagraph)s'
-
-class thesubsubparagraph(TheCounter):
-    format = '%(thesubparagraph)s.%(subsubparagraph)s'
-    
 class part(StartSection):
     level = Command.PART_LEVEL
     counter = 'part'
@@ -251,7 +243,4 @@ class addtocontents(Command):
 #
 # C.4.4 Style Parameters
 #
-
-Counter('secnumdepth')
-Counter('tocdepth')
 

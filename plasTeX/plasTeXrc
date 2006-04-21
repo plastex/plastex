@@ -17,10 +17,11 @@ image-format=PNG
 cleanup=0
 enabled=1
 program=dvipng
+default-image=../missing.png
 
 [filenames]
 use-ids=1
 
-[encoding]
-input=utf-8
-output=utf-8
+[files]
+input-encoding=utf-8
+output-encoding=utf-8

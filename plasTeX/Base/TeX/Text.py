@@ -52,11 +52,11 @@ class bgroup(Command):
             self.appendChild(item)
         self.paragraphs()
 
+    @property
     def source(self):
         if self.hasChildNodes():
             return '{%s}' % sourcechildren(self)
         return '{'
-    source = property(source)
 
 class begingroup(bgroup):
     pass

@@ -1,5 +1,5 @@
 name: math
-<img tal:attributes="src self/image/filename; alt self/source" width="#width" height="#height" class="math #depth" />
+<img tal:attributes="src self/image/filename; alt self/source" class="math" style="margin-bottom:#depth; width:#width; height:#height" />
 
 name: displaymath
 <div class="displaymath">
@@ -17,4 +17,4 @@ name: eqnarray eqnarray*
 </div>
 
 name: ensuremath
-<img tal:attributes="src self/image/filename; alt self/source" width="#width" height="#height" class="math #depth" />
+<img tal:attributes="src self/image/filename; alt self/source" class="math" style="margin-bottom:#depth; width:#width; height:#height" />

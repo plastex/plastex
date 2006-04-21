@@ -396,8 +396,10 @@ class Tokenizer(object):
                         token = EscapeSequence(''.join(word))
 
                     elif token.catcode == CC_EOL:
-                        pushchar(token)
-                        token = EscapeSequence()
+                        #pushchar(token)
+                        #token = EscapeSequence()
+                        token = Space(' ')
+                        self.state = STATE_S
 
                     else:
                         token = EscapeSequence(token)
