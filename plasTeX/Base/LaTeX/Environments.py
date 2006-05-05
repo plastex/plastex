@@ -24,6 +24,7 @@ class begin(Command):
         # that it came from a \begin{...} macro
         obj = tex.context[name]
         obj.macroMode = Command.MODE_BEGIN
+        obj.ownerDocument = self.ownerDocument
 
         # Return the output of the instantiated macro in
         # place of self
@@ -46,6 +47,7 @@ class end(Command):
         # that it came from a \end{...} macro
         obj = tex.context[name]
         obj.macroMode = Command.MODE_END
+        obj.ownerDocument = self.ownerDocument
 
         # Return the output of the instantiated macro in
         # place of self

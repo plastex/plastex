@@ -1,0 +1,4 @@
+name: usepackage egroup
+
+name: bgroup
+<span tal:replace="self"></span>

@@ -6,8 +6,7 @@ C.3.2 Making Paragraphs (p171)
 """
 
 from plasTeX.Tokenizer import Other
-from plasTeX import Command, Environment, StringCommand
-from plasTeX import Dimen, dimen
+from plasTeX import Command, Environment, DimenCommand
 from plasTeX.Logging import getLogger
 
 class noindent(Command):
@@ -24,23 +23,23 @@ class indent(Command):
 # Style Parameters
 #
 
-class textwidth(Dimen):
-    value = dimen('6.5in')
+class textwidth(DimenCommand):
+    value = DimenCommand.new('6.5in')
 
-class columnwidth(Dimen):
-    value = dimen('6.5in')
+class columnwidth(DimenCommand):
+    value = DimenCommand.new('6.5in')
 
-class linewidth(Dimen):
-    value = dimen('6.5in')
+class linewidth(DimenCommand):
+    value = DimenCommand.new('6.5in')
 
-class parindent(Dimen):
-    value = dimen(0)
+class parindent(DimenCommand):
+    value = DimenCommand.new(0)
 
-class baselineskip(Dimen):
-    value = dimen('12pt')
+class baselineskip(DimenCommand):
+    value = DimenCommand.new('12pt')
 
-class baselinestretch(StringCommand):
-    value = '1'
+class baselinestretch(Command):
+    unicode = '1'
 
-class parskip(Dimen):
-    value = dimen(0)
+class parskip(DimenCommand):
+    value = DimenCommand.new(0)

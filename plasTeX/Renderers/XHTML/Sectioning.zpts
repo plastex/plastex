@@ -25,14 +25,14 @@ name: document part-file chapter-file section-file subsection-file \
       Chaphead-file Headi-file Headii-file Headiii-file Headiv-file \
       Headv-file Headvi-file Examplehead-file 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html tal:define="nav self/navigation">
+<html tal:define="links self/links">
 <head>
 <meta http-equiv="content-type" 
-      tal:attributes="content string:text/html;; charset=${config/encoding/output}" />
+      tal:attributes="content string:text/html;; charset=${config/files/output-encoding}" />
 <title tal:content="stripped self/title">Morbi metus pede, imperdiet vitae</title>
-<link tal:condition="nav/next" rel="next" tal:attributes="href nav/next/url; title nav/next/title" />
-<link tal:condition="nav/prev" rel="prev" tal:attributes="href nav/prev/url; title nav/prev/title" />
-<link tal:condition="nav/up" rel="up" tal:attributes="href nav/up/url; title nav/up/title" />
+<link tal:condition="links/next" rel="next" tal:attributes="href links/next/url; title links/next/title" />
+<link tal:condition="links/prev" rel="prev" tal:attributes="href links/prev/url; title links/prev/title" />
+<link tal:condition="links/up" rel="up" tal:attributes="href links/up/url; title links/up/title" />
 <link rel="stylesheet" href="green/styles.css" />
 <link rel="stylesheet" href="green/plastex-styles.css" />
 <link rel="stylesheet" href="green/statdoc.css" />
@@ -42,23 +42,24 @@ name: document part-file chapter-file section-file subsection-file \
 <div class="navigation" metal:define-macro="navigation">
 <table cellspacing="2" cellpadding="0" width="100%">
 <tr>
-<td tal:condition="nav/prev"><a tal:attributes="href nav/prev/url; title stripped:nav/prev/title"><img border="0" tal:attributes="alt stripped:Previous: ${nav/prev/title}" src="green/previous.gif" width="32" height="32" /></a></td>
-<td tal:condition="not:nav/prev"><img border="0" alt="" src="green/blank.gif" width="32" height="32" /></td>
-<td tal:condition="nav/up"><a tal:attributes="href nav/up/url; title stripped:nav/up/title"><img border="0" tal:attributes="alt stripped:Up: ${nav/up/title}" src="green/up.gif" width="32" height="32" /></a></td>
-<td tal:condition="not:nav/up"><img border="0" alt="" src="green/blank.gif" width="32" height="32" /></td>
-<td tal:condition="nav/next"><a tal:attributes="href nav/next/url; title stripped:nav/next/title"><img border="0" tal:attributes="alt stripped:Next: ${nav/next/title}" src="green/next.gif" width="32" height="32" /></a></td>
-<td tal:condition="not:nav/next"><img border="0" alt="" src="green/blank.gif" width="32" height="32" /></td>
+<td tal:condition="links/prev"><a tal:attributes="href links/prev/url; title stripped:links/prev/title"><img border="0" tal:attributes="alt stripped:Previous: ${links/prev/title}" src="green/previous.gif" width="32" height="32" /></a></td>
+<td tal:condition="not:links/prev"><img border="0" alt="" src="green/blank.gif" width="32" height="32" /></td>
+<td tal:condition="links/up"><a tal:attributes="href links/up/url; title stripped:links/up/title"><img border="0" tal:attributes="alt stripped:Up: ${links/up/title}" src="green/up.gif" width="32" height="32" /></a></td>
+<td tal:condition="not:links/up"><img border="0" alt="" src="green/blank.gif" width="32" height="32" /></td>
+<td tal:condition="links/next"><a tal:attributes="href links/next/url; title stripped:links/next/title"><img border="0" tal:attributes="alt stripped:Next: ${links/next/title}" src="green/next.gif" width="32" height="32" /></a></td>
+<td tal:condition="not:links/next"><img border="0" alt="" src="green/blank.gif" width="32" height="32" /></td>
 <td class="navtitle" align="center" tal:content="self/title">Section Title</td>
-<td tal:condition="nav/contents"><a tal:attributes="href nav/contents/url" title="Table of Contents"><img border="0" alt="" src="green/contents.gif" width="32" height="32" /></a></td>
-<td tal:condition="not:nav/contents"><img border="0" alt="" src="green/blank.gif" width="32" height="32" /></td>
-<td><img border="0" alt="" src="green/blank.gif" width="32" height="32" /></td>
+<td tal:condition="links/contents"><a tal:attributes="href links/contents/url" title="Table of Contents"><img border="0" alt="" src="green/contents.gif" width="32" height="32" /></a></td>
+<td tal:condition="not:links/contents"><img border="0" alt="" src="green/blank.gif" width="32" height="32" /></td>
+<td tal:condition="links/index"><a tal:attributes="href links/index/url" title="Index"><img border="0" alt="" src="green/contents.gif" width="32" height="32" /></a></td>
+<td tal:condition="not:links/index"><img border="0" alt="" src="green/blank.gif" width="32" height="32" /></td>
 <td><img border="0" alt="" src="green/blank.gif" width="32" height="32" /></td>
 </tr>
 </table>
 </div>
 
-<div class="breadcrumbs">
-<span tal:repeat="crumb nav/breadcrumbs">
+<div tal:condition="python:path('self/level') &gt; -10" class="breadcrumbs">
+<span tal:repeat="crumb links/breadcrumbs">
 <span tal:condition="not:repeat/crumb/end">
 <a href="." tal:attributes="href crumb/url" tal:content="crumb/title">Parent Section</a> <b>:</b>
 </span>
@@ -73,7 +74,7 @@ name: document part-file chapter-file section-file subsection-file \
 
 <div tal:condition="python:path('self/level') &lt;= 1">
 
-<h1 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/title">Morbi metus pede, imperdiet vitae</a></h1>
+<h1 tal:condition="python:path('self/level') &gt; -10" tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/title">Morbi metus pede, imperdiet vitae</a></h1>
 
 <p tal:replace="self">
 Phasellus gravida dolor ut risus. Vestibulum volutpat mollis elit. Suspendisse placerat dolor et dui. Integer metus. Cras lacus sem, pellentesque sit amet, pellentesque vel, blandit in, eros. Cras turpis justo, posuere vitae, tincidunt ac, molestie eu, quam. Aenean consequat tincidunt elit. Cras rutrum fringilla ipsum. Vivamus ut ipsum id massa elementum tincidunt. Donec posuere leo. Phasellus facilisis risus sed ligula.
@@ -135,9 +136,21 @@ Donec enim eros, malesuada ut, faucibus id, elementum non, tellus. In nibh. Proi
 
 <div tal:condition="self/tableofcontents" class="contents"><!--<strong>Subsections</strong>-->
 <ul>
-<li tal:repeat="item self/tableofcontents"><a href="." tal:attributes="href item/url" tal:content="item/title">Aliquam est. Aliquam fringilla pede</a>
-   <ul tal:condition="item/tableofcontents">
-   <li tal:repeat="item2 item/tableofcontents"><a href="." tal:attributes="href item2/url" tal:content="item2/title"></a></li>
+<li tal:repeat="section self/tableofcontents"><a href="." tal:attributes="href section/url" tal:content="section/fulltocentry">Aliquam est. Aliquam fringilla pede</a>
+   <ul tal:condition="section/tableofcontents">
+   <li tal:repeat="subsection section/tableofcontents"><a href="." tal:attributes="href subsection/url" tal:content="subsection/fulltocentry"></a>
+       <ul tal:condition="subsection/tableofcontents">
+       <li tal:repeat="subsubsection subsection/tableofcontents"><a href="." tal:attributes="href subsubsection/url" tal:content="subsubsection/fulltocentry"></a>
+           <ul tal:condition="subsubsection/tableofcontents">
+           <li tal:repeat="paragraph subsubsection/tableofcontents"><a href="." tal:attributes="href paragraph/url" tal:content="paragraph/fulltocentry"></a>
+               <ul tal:condition="paragraph/tableofcontents">
+               <li tal:repeat="subparagraph paragraph/tableofcontents"><a href="." tal:attributes="href subparagraph/url" tal:content="subparagraph/fulltocentry"></a></li>
+               </ul>
+           </li>
+           </ul>
+       </li>
+       </ul>
+   </li>
    </ul>
 </li>
 <li tal:replace="nothing"><a href=".">Maecenas id purus</a></li>
@@ -149,16 +162,17 @@ Donec enim eros, malesuada ut, faucibus id, elementum non, tellus. In nibh. Proi
 <div class="navigation" metal:use-macro="template/macros/navigation">
 <table cellspacing="2" cellpadding="0" width="100%">
 <tr>
-<td tal:condition="nav/prev"><a tal:attributes="href nav/prev/url"><img border="0" tal:attributes="alt stripped:Previous: ${nav/prev/title}" src="green/previous.gif" width="32" height="32" /></a></td>
-<td tal:condition="not:nav/prev"><img border="0" alt="" src="green/blank.gif" width="32" height="32" /></td>
-<td tal:condition="nav/up"><a tal:attributes="href nav/up/url"><img border="0" tal:attributes="alt stripped:Up: ${nav/up/title}" src="green/up.gif" width="32" height="32" /></a></td>
-<td tal:condition="not:nav/up"><img border="0" alt="" src="green/blank.gif" width="32" height="32" /></td>
-<td tal:condition="nav/next"><a tal:attributes="href nav/next/url"><img border="0" tal:attributes="alt stripped:Next: ${nav/next/title}" src="green/next.gif" width="32" height="32" /></a></td>
-<td tal:condition="not:nav/next"><img border="0" alt="" src="green/blank.gif" width="32" height="32" /></td>
+<td tal:condition="links/prev"><a tal:attributes="href links/prev/url"><img border="0" tal:attributes="alt stripped:Previous: ${links/prev/title}" src="green/previous.gif" width="32" height="32" /></a></td>
+<td tal:condition="not:links/prev"><img border="0" alt="" src="green/blank.gif" width="32" height="32" /></td>
+<td tal:condition="links/up"><a tal:attributes="href links/up/url"><img border="0" tal:attributes="alt stripped:Up: ${links/up/title}" src="green/up.gif" width="32" height="32" /></a></td>
+<td tal:condition="not:links/up"><img border="0" alt="" src="green/blank.gif" width="32" height="32" /></td>
+<td tal:condition="links/next"><a tal:attributes="href links/next/url"><img border="0" tal:attributes="alt stripped:Next: ${links/next/title}" src="green/next.gif" width="32" height="32" /></a></td>
+<td tal:condition="not:links/next"><img border="0" alt="" src="green/blank.gif" width="32" height="32" /></td>
 <td class="navtitle" align="center" tal:content="self/title">Section Title</td>
-<td tal:condition="nav/contents"><a tal:attributes="href nav/contents/title"><img border="0" alt="" src="green/contents.gif" width="32" height="32" /></a></td>
-<td tal:condition="not:nav/contents"><img border="0" alt="" src="green/blank.gif" width="32" height="32" /></td>
-<td><img border="0" alt="" src="green/blank.gif" width="32" height="32" /></td>
+<td tal:condition="links/contents"><a tal:attributes="href links/contents/title"><img border="0" alt="" src="green/contents.gif" width="32" height="32" /></a></td>
+<td tal:condition="not:links/contents"><img border="0" alt="" src="green/blank.gif" width="32" height="32" /></td>
+<td tal:condition="links/index"><a tal:attributes="href links/index/url" title="Index"><img border="0" alt="" src="green/contents.gif" width="32" height="32" /></a></td>
+<td tal:condition="not:links/index"><img border="0" alt="" src="green/blank.gif" width="32" height="32" /></td>
 <td><img border="0" alt="" src="green/blank.gif" width="32" height="32" /></td>
 </tr>
 </table>

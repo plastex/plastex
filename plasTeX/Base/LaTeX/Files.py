@@ -9,10 +9,8 @@ C.11.6 Terminal Input and Output
 
 import codecs
 from plasTeX import Command, Environment
-from plasTeX.Config import config
 from plasTeX.Logging import getLogger
 
-encoding = config['files']['input-encoding']
 log = getLogger()
 
 class nofiles(Command):
@@ -24,9 +22,10 @@ class input(Command):
     def invoke(self, tex):
         a = self.parse(tex)
         try: 
-            path = tex.kpsewhich(attrs['name'])
+            path = tex.kpsewhich(attrs['name'], self.config)
 
             status.info(' ( %s.tex ' % path)
+            encoding = self.config['files']['input-encoding']
             tex.input(codecs.open(path, 'r', encoding))
             status.info(' ) ')
 
@@ -42,7 +41,7 @@ class includeonly(Command):
     args = 'files:list:str'
     def invoke(self, tex):
         for file in self.parse(tex)['files']:
-            tex.input(tex.kpsewhich(file))
+            tex.input(tex.kpsewhich(file), self.config)
         return []
 
 class filecontents(Environment):

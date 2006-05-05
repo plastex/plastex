@@ -7,22 +7,22 @@ C.13.3 Boxes (p217)
 
 from plasTeX.Base.TeX.Primitives import BoxCommand
 from plasTeX import Command, Environment
-from plasTeX import Dimen, dimen, Glue, glue
+from plasTeX import DimenCommand, GlueCommand
 from plasTeX.Logging import getLogger
 
 class TextBoxCommand(Command):
 
-    class width(Dimen):
-        value = dimen(0)
+    class width(DimenCommand):
+        value = DimenCommand.new(0)
  
-    class height(Dimen):
-        value = dimen(0)
+    class height(DimenCommand):
+        value = DimenCommand.new(0)
 
-    class depth(Dimen):
-        value = dimen(0)
+    class depth(DimenCommand):
+        value = DimenCommand.new(0)
 
-    class totalheight(Dimen):
-        value = dimen(0)
+    class totalheight(DimenCommand):
+        value = DimenCommand.new(0)
 
 
 class mbox(BoxCommand):
@@ -66,8 +66,8 @@ class raisebox(TextBoxCommand):
 
 # Style Parameters
 
-class fboxrule(Dimen):
-    value = dimen(0)
+class fboxrule(DimenCommand):
+    value = DimenCommand.new(0)
 
-class fboxsep(Glue):
-    value = glue(0)
+class fboxsep(GlueCommand):
+    value = GlueCommand.new(0)

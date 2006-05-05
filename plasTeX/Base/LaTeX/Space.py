@@ -5,8 +5,7 @@ C.13.2 Space (p216)
 
 """
 
-from plasTeX import Command, Environment
-from plasTeX import Dimen, dimen
+from plasTeX import Command, Environment, DimenCommand
 from plasTeX.Logging import getLogger
 
 class hspace(Command):
@@ -27,14 +26,14 @@ class medskip(Command):
 class smallskip(Command):
     pass
 
-class bigskipamount(Dimen):
-    value = dimen('24pt')
+class bigskipamount(DimenCommand):
+    value = DimenCommand.new('24pt')
 
-class medskipamount(Dimen):
-    value = dimen('12pt')
+class medskipamount(DimenCommand):
+    value = DimenCommand.new('12pt')
 
-class smallskip(Dimen):
-    value = dimen('6pt')
+class smallskip(DimenCommand):
+    value = DimenCommand.new('6pt')
 
 class addvspace(Command):
     args = 'len:dimen'

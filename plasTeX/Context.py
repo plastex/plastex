@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-import new 
-import plasTeX
+import new, codecs, os, plasTeX
 from plasTeX import ismacro, macroname
 from plasTeX.Logging import getLogger
 from Tokenizer import Tokenizer, Token, DEFAULT_CATEGORIES, VERBATIM_CATEGORIES
@@ -11,6 +10,7 @@ __all__ = ['Context','context']
 
 # Set up loggers
 log = getLogger()
+status = getLogger('status')
 stacklog = getLogger('context.stack')
 macrolog = getLogger('context.macros')
 
@@ -51,6 +51,8 @@ class ContextItem(dict):
             return True
         if self.parent is not None:
             return self.parent.has_key(key)
+
+    __contains__ = has_key
 
     def keys(self):
         keys = {}
@@ -123,6 +125,16 @@ class Context(object):
 
         self.warnOnUnrecognized = True
 
+        # Character sequences that should be replaced by unicode
+        self.charsubs = [
+            ('``', unichr(8220)),
+            ("''", unichr(8221)),
+            ('`',  unichr(8216)),
+            ("'",  unichr(8217)),
+            ('---', unichr(8212)),
+            ('--', unichr(8211)),
+        ]
+
         if load:
             self.loadBaseMacros()
 
@@ -139,6 +151,68 @@ class Context(object):
         """ Import all builtin macros """
         from plasTeX import Base
         self.importMacros(vars(Base))
+
+    def loadLanguage(self, lang):
+        """
+        Load a localized version of macros for a particular language
+
+        Required Arguments:
+        lang -- the name of the language file to load
+
+        """
+        exec('from plasTeX.Base.LaTeX.Languages import %s as language' % lang)
+        if hasattr(language, 'ProcessOptions'):
+            language.ProcessOptions({}, self)
+        self.importMacros(vars(language))
+
+    def loadPackage(self, tex, file, options={}):
+        """
+        Load a Python or LaTeX package
+
+        A Python version of the package is searched for first,
+        if one cannot be found then a LaTeX version of the package
+        is searched for.
+
+        Required Arguments:
+        tex -- the instance of the TeX engine to use for parsing
+            the LaTeX file, if needed.
+        file -- the name of the file to load
+
+        Keyword Arguments:
+        options -- the options given on the macro to pass to the package
+
+        Returns:
+        boolean indicating whether or not the package loaded successfully
+
+        """
+        module = os.path.splitext(file)[0]
+
+        # See if it has already been loaded
+        if self.packages.has_key(module):
+            return True
+
+        try: 
+            # Try to import a Python package by that name
+            m = __import__(module, globals(), locals())
+            status.info(' ( %s ' % m.__file__)
+            if hasattr(m, 'ProcessOptions'):
+                m.ProcessOptions(options or {}, self)
+            self.importMacros(vars(m))
+            self.packages[module] = options
+            status.info(' ) ')
+            return True
+
+        except ImportError, msg:
+            # No Python module
+            if 'No module' in str(msg):
+                pass
+                # Failed to load Python package
+#               log.warning('No Python version of %s was found' % file)
+            # Error while importing
+            else:
+                raise
+
+        return tex.loadPackage(file, options)
 
     def label(self, label):
         """ 
@@ -245,6 +319,7 @@ class Context(object):
         # Getter methods use the most local context
         self.top = top = self.contexts[-1]
         self.__getitem__ = top.__getitem__
+        self.__contains__ = top.__contains__
         self.get = top.get
         self.keys = top.keys
         self.has_key = top.has_key
@@ -352,12 +427,14 @@ class Context(object):
         key -- name of macro to add
         value -- item to add to the global namespace.  If the item
             is a macro instance, it is simply added to the namespace.
-            If it is a string, it is converted into a StringCommand
+            If it is a string, it is converted into a string Command
             instance before being added.
 
         """
         if isinstance(value, basestring):
-            value = plasTeX.StringCommand(value)
+            newvalue = plasTeX.Command()
+            newvalue.unicode = value
+            value = newvalue
 
         elif not ismacro(value):
             raise ValueError, \
@@ -375,12 +452,14 @@ class Context(object):
         key -- name of macro to add
         value -- item to add to the global namespace.  If the item
             is a macro instance, it is simply added to the namespace.
-            If it is a string, it is converted into a StringCommand
+            If it is a string, it is converted into a string Command
             instance before being added.
 
         """
         if isinstance(value, basestring):
-            value = plasTeX.StringCommand(value)
+            newvalue = plasTeX.Command()
+            newvalue.unicode = value
+            value = newvalue
 
         elif not ismacro(value):
             raise ValueError, \
@@ -499,7 +578,7 @@ class Context(object):
         name = str(name)
         # Generate a new count class
         macrolog.debug('creating count %s', name)
-        newclass = new.classobj(name, (plasTeX.Count,), 
+        newclass = new.classobj(name, (plasTeX.CountCommand,), 
                                {'value': plasTeX.count(initial)})
         self.addGlobal(name, newclass)
 
@@ -517,7 +596,7 @@ class Context(object):
         name = str(name)
         # Generate a new dimen class
         macrolog.debug('creating dimen %s', name)
-        newclass = new.classobj(name, (plasTeX.Dimen,), 
+        newclass = new.classobj(name, (plasTeX.DimenCommand,), 
                                 {'value': plasTeX.dimen(initial)})
         self.addGlobal(name, newclass)
 
@@ -535,7 +614,7 @@ class Context(object):
         name = str(name)
         # Generate a new glue class
         macrolog.debug('creating dimen %s', name)
-        newclass = new.classobj(name, (plasTeX.Glue,), 
+        newclass = new.classobj(name, (plasTeX.GlueCommand,), 
                                 {'value': plasTeX.glue(initial)})
         self.addGlobal(name, newclass)
 
@@ -553,7 +632,7 @@ class Context(object):
         name = str(name)
         # Generate a new muglue class
         macrolog.debug('creating muskip %s', name)
-        newclass = new.classobj(name, (plasTeX.MuGlue,), 
+        newclass = new.classobj(name, (plasTeX.MuGlueCommand,), 
                                 {'value': plasTeX.muglue(initial)})
         self.addGlobal(name, newclass)
 
@@ -613,8 +692,10 @@ class Context(object):
         name = str(name)
         # Macro already exists
         if self.has_key(name):
-            macrolog.debug('newcommand %s already defined', name)
-            return
+            if not issubclass(type(self[name]), (plasTeX.NewCommand, 
+                                                 plasTeX.Definition)):
+                return
+            macrolog.debug('redefining command "%s"', name)
 
         if nargs is None:
             nargs = 0
@@ -653,8 +734,10 @@ class Context(object):
         name = str(name)
         # Macro already exists
         if self.has_key(name):
-            macrolog.debug('newenvironment %s already defined', name)
-            return
+            if not issubclass(type(self[name]), (plasTeX.NewCommand, 
+                                                 plasTeX.Definition)):
+                return
+            macrolog.debug('redefining environment "%s"', name)
 
         if nargs is None:
             nargs = 0
@@ -704,9 +787,11 @@ class Context(object):
         """
         name = str(name)
         # Macro already exists
-        if self.has_key(name):
-            macrolog.debug('def %s already defined', name)
-            return
+#       if self.has_key(name):
+#           if not issubclass(type(self[name]), (plasTeX.NewCommand, 
+#                                                plasTeX.Definition)):
+#               return
+#           macrolog.debug('redefining definition "%s"', name)
 
         if isinstance(definition, basestring):
             definition = [x for x in Tokenizer(definition, self)]
@@ -746,6 +831,6 @@ class Context(object):
         name = str(name)
         # Generate a new chardef class
         macrolog.debug('creating chardef %s', name)
-        newclass = new.classobj(name, (plasTeX.StringCommand,), 
-                                {'value': chr(num)})
+        newclass = new.classobj(name, (plasTeX.Command,), 
+                                {'unicode': chr(num)})
         self.addGlobal(name, newclass)

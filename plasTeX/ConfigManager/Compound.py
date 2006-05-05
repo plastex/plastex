@@ -47,8 +47,16 @@ class CompoundParser:
       new_args[0] = new_args[0][1:]
       new_args[-1] = new_args[-1][:-1]
 
-      value = '%s %s %s' % (begin,
-              ' '.join([a.strip() for a in new_args if a.strip()]), end)
+      output = []
+      for item in new_args:
+          item = item.strip()
+          if not item:
+              continue
+          if ' ' in item:
+              item = "'%s'" % item
+          output.append(item)
+      
+      value = '%s %s %s' % (begin, ' '.join(output), end)
 
       return value, args
 
@@ -64,7 +72,7 @@ class CompoundOption(CompoundParser, StringOption):
 
    """
    REGEX = re.compile(r'^(\s*(?:\(|\[|\{|\<)\s*)(.*)(\s*(?:\)|\]|\}|\]>)\s*)$')
-   synopsis = "'( ... )'"
+   synopsis = "[ ... ]"
 
    def cast(self, data):
       if data is None: return

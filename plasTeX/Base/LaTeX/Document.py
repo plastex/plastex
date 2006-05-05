@@ -11,13 +11,23 @@ from Sectioning import SectionUtils
 class document(Environment, SectionUtils):
     level = Environment.DOCUMENT_LEVEL
 
-    def digest(self, tokens):
-        Environment.digest(self, tokens)
-        self.paragraphs()
-        if not self.ownerDocument:
-            return
-        for key, value in self.ownerDocument.userdata.items():
-            self.attributes[key] = value
+    def invoke(self, tex):
+        res = Environment.invoke(self, tex)
+
+        # Copy attributes from the document
+        for attr in ['title']:
+            if attr in self.ownerDocument.userdata:
+                self.attributes[attr] = self.ownerDocument.userdata[attr]
+
+        # Set initial counter values
+        if self.config.has_key('counters'):
+            counters = self.config['counters']
+            for name in counters.keys():
+                if name.startswith('#'):
+                    continue
+                tex.context.counters[name].setcounter(counters[name]-1)
+
+        return res
 
 class AtEndDocument(Command):
     args = 'commands:nox'

@@ -6,6 +6,7 @@ from Arrays import *
 from Bibliography import *
 from Boxes import *
 from Breaking import *
+from Characters import *
 from Crossref import *
 from Definitions import *
 from Document import *
@@ -37,9 +38,9 @@ class ifundefined_(Command):
     def invoke(self, tex):
         a = self.parse(tex)
         if tex.context.has_key(a['name']):
-            tex.pushtokens(a['true'])
-        else:
             tex.pushtokens(a['false'])
+        else:
+            tex.pushtokens(a['true'])
         return []
 
 class vwritefile_(Command):
@@ -51,14 +52,3 @@ class pagelabel(Command):
 
 class verbatiminput(Command):
     pass
-
-class code(Command):
-    args = 'self'
-    def invoke(self, tex):
-        tex.context.push(self)
-        tex.context.setVerbatimCatcodes()
-        tex.context.catcode('\\', 0)
-        tex.context.catcode('{', 1)
-        tex.context.catcode('}', 2)
-        self.parse(tex)
-        tex.context.pop(self)

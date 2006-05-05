@@ -2,7 +2,7 @@
 
 import unittest, sys
 from unittest import TestCase
-from plasTeX import Macro, Environment, Node, StringCommand
+from plasTeX import Macro, Environment, Node, Command
 from plasTeX.TeX import TeX
 from plasTeX.Context import Context
 
@@ -174,7 +174,7 @@ class NewCommands(TestCase):
 class Python(TestCase):
 
     def testStringCommand(self):
-        class figurename(StringCommand): value = 'Figure'
+        class figurename(Command): unicode = 'Figure'
         s = TeX(r'\figurename')
         s.context['figurename'] = figurename
         output = u''.join([x for x in s])

@@ -2,16 +2,15 @@
 
 import codecs
 from plasTeX.Tokenizer import Token, EscapeSequence
-from plasTeX import Command, Environment, Count, count, sourcechildren
+from plasTeX import Command, Environment, CountCommand
+from plasTeX import IgnoreCommand, sourcechildren
 from plasTeX.Logging import getLogger
-from plasTeX.Config import config
 
 log = getLogger()
 status = getLogger('status')
 deflog = getLogger('parse.definitions')
 envlog = getLogger('parse.environments')
 mathshiftlog = getLogger('parse.mathshift')
-encoding = config['files']['input-encoding']
 
 class relax(Command):
     pass
@@ -378,9 +377,10 @@ class input(Command):
     def invoke(self, tex):
         a = self.parse(tex)
         try: 
-            path = tex.kpsewhich(a['name'])
+            path = tex.kpsewhich(a['name'], self.config)
 
             status.info(' ( %s ' % path)
+            encoding = self.config['files']['input-encoding']
             tex.input(codecs.open(path, 'r', encoding))
             status.info(' ) ')
 
@@ -401,8 +401,8 @@ class showthe(Command):
         log.info(tex.context[self.parse(tex)['arg']].the())
 
 
-class active(Count):
-    value = count(13)
+class active(CountCommand):
+    value = CountCommand.new(13)
 
 class advance(Command):
     def invoke(self, tex):
@@ -441,3 +441,12 @@ class vskip(Command):
 
 class hskip(Command):
     args = 'size:Dimen'
+
+class openout(IgnoreCommand):
+    args = 'arg:cs = value'
+
+class newwrite(IgnoreCommand):
+    args = 'arg:cs'
+
+class write(IgnoreCommand):
+    args = 'arg:cs text:nox'

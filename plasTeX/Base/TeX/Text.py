@@ -5,7 +5,7 @@ B.5 Macros for text
 
 """
 
-from plasTeX import Command, Environment, StringCommand, sourcechildren
+from plasTeX import Command, Environment, sourcechildren
 
 class frenchspacing(Command):
     pass
@@ -16,26 +16,26 @@ class nonfrenchspacing(Command):
 class normalbaselines(Command):
     pass
 
-class lq(StringCommand):
-    value = '`'
+class lq(Command):
+    unicode = '`'
 
-class rq(StringCommand):
-    value = "'"
+class rq(Command):
+    unicode = "'"
 
-class lbrack(StringCommand):
-    value = '['
+class lbrack(Command):
+    unicode = '['
 
-class rbrack(StringCommand):
-    value = ']'
+class rbrack(Command):
+    unicode = ']'
 
-class space(StringCommand):
-    value = ' '
+class space(Command):
+    unicode = ' '
 
-class empty(StringCommand):
-    value = ''
+class empty(Command):
+    unicode = ''
 
-class null(StringCommand):
-    value = ''
+class null(Command):
+    unicode = ''
 
 class bgroup(Command):
 

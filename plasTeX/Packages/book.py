@@ -1,46 +1,49 @@
 #!/usr/bin/env python
 
-from plasTeX import Command
+from plasTeX import Command, Environment, TheCounter
 
-
-def initialize(context):
+def ProcessOptions(options, context):
     # Lists
     context.newcounter('enumi')
-    context.newcounter('enumii')
-    context.newcounter('enumiii')
-    context.newcounter('enumiv')
+    context.newcounter('enumii', resetby='enumi')
+    context.newcounter('enumiii', resetby='enumii')
+    context.newcounter('enumiv', resetby='enumiii')
 
     # Sections
     context.newcounter('part', resetby='volume', 
-                       format='%(part)s')
+                       format='$part')
     context.newcounter('chapter', resetby='part', 
-                       format='%(chapter)s')
+                       format='$chapter')
     context.newcounter('section', resetby='chapter', 
-                       format='%(thechapter)s.%s')
+                       format='${thechapter}.${chapter}')
     context.newcounter('subsection', resetby='section', 
-                       format='%(thesection)s.%s')
+                       format='${thesection}.${subsection}')
     context.newcounter('subsubsection', resetby='subsection', 
-                       format='%(thesubsection)s.%s')
+                       format='${thesubsection}.${subsubsection}')
     context.newcounter('paragraph', resetby='subsubsection', 
-                       format='%(thesubsubsection)s.%s')
+                       format='${thesubsubsection}.${paragraph}')
     context.newcounter('subparagraph', resetby='paragraph',
-                       format='%(theparagraph)s.%s')
+                       format='${theparagraph}.${subparagraph}')
     context.newcounter('subsubparagraph', resetby='subparagraph',
-                       format='%(thesubparagraph)s.%s')
+                       format='${thesubparagraph}.${subsubparagraph}')
 
     context.newcounter('secnumdepth')
     context.newcounter('tocdepth')
+    context.newcounter('page')
 
     # Floats
     context.newcounter('figure', resetby='chapter', 
-                       format='%(thesection)s.%s')
+                       format='${thesection}.${figure}')
     context.newcounter('table', resetby='chapter',
-                       format='%(thesection)s.%s')
+                       format='${thesection}.${table}')
     context.newcounter('topnumber')
     context.newcounter('bottomnumber')
     context.newcounter('totalnumber')
     context.newcounter('dbltopnumber')
 
+    for key, value in options.items():
+        if key in ['american','french']:
+            context.loadLanguage(key)
 
 class frontmatter(Command): 
     pass
@@ -50,3 +53,12 @@ class mainmatter(Command):
 
 class backmatter(Command):
     pass
+
+class appendix(Command):
+
+    class thechapter(TheCounter):
+        format = '${chapter.Alph}'
+
+    def invoke(self, tex):
+        tex.context.counters['chapter'].setcounter(0)
+        tex.context['thechapter'] = type(self).thechapter 

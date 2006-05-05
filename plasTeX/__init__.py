@@ -2,7 +2,7 @@
 
 import string, re
 from DOM import Element, Text, Node, DocumentFragment, Document
-from Tokenizer import Token
+from Tokenizer import Token, BeginGroup, EndGroup
 from plasTeX import Logging
 
 log = Logging.getLogger()
@@ -56,8 +56,9 @@ class Argument(object):
     arguments thereafter.
 
     """
-    def __init__(self, name, options={}):
+    def __init__(self, name, index, options={}):
         self.name = name
+        self.index = index
         self.source = ''
         self.options = options.copy()
 
@@ -120,6 +121,11 @@ class Macro(Element):
     # LaTeX argument template
     args = ''
 
+    @property
+    def config(self):
+        """ Shortcut to the document config """
+        return self.ownerDocument.userdata['config']
+
     def title():
         """ Retrieve title from variable or attributes dictionary """
         def fget(self):
@@ -135,6 +141,63 @@ class Macro(Element):
             setattr(self, '@title', value)
         return locals()
     title = property(**title())
+
+    def fulltitle():
+        """ Retrieve title including the section number """
+        def fget(self):
+            try:
+                return getattr(self, '@fulltitle')
+            except AttributeError:
+                if self.ref is not None:
+                    fulltitle = TeXFragment()
+                    fulltitle.extend([self.ref, ' ', self.title])
+                else:
+                    fulltitle = self.title
+                setattr(self, '@fulltitle', fulltitle)
+                return fulltitle
+        def fset(self, value):
+            setattr(self, '@fulltitle', value)
+        return locals()
+    fulltitle = property(**fulltitle())
+
+    def tocentry():
+        """ Retrieve table of contents entry """
+        def fget(self):
+            try:
+                return getattr(self, '@tocentry')
+            except AttributeError:
+                try:
+                    if self.attributes.has_key('toc'):
+                        toc = self.attributes['toc']
+                        if toc is None:
+                            toc = self.title
+                        setattr(self, '@tocentry', toc)
+                        return toc
+                except (KeyError, AttributeError):
+                    pass
+            raise AttributeError, 'could not find attribute "tocentry"'
+        def fset(self, value):
+            setattr(self, '@tocentry', value)
+        return locals()
+    tocentry = property(**tocentry())
+
+    def fulltocentry():
+        """ Retrieve title including the section number """
+        def fget(self):
+            try:
+                return getattr(self, '@fulltocentry')
+            except AttributeError:
+                if self.ref is not None:
+                    fulltocentry = TeXFragment()
+                    fulltocentry.extend([self.ref, ' ', self.tocentry])
+                else:
+                    fulltocentry = self.tocentry
+                setattr(self, '@fulltocentry', fulltocentry)
+                return fulltocentry
+        def fset(self, value):
+            setattr(self, '@fulltocentry', value)
+        return locals()
+    fulltocentry = property(**fulltocentry())
 
     def style(self):
         """ CSS styles """
@@ -184,6 +247,9 @@ class Macro(Element):
         # Just pop the context if this is a \end token
         if self.macroMode == Macro.MODE_END:
             tex.context.pop(self)
+            # If a unicode value is set, just return that
+            if self.unicode is not None:
+                return tex.texttokens(self.unicode)
             return
 
         # If this is a \begin token or the element needs to be
@@ -192,6 +258,10 @@ class Macro(Element):
         elif self.macroMode == Macro.MODE_BEGIN:
             tex.context.push(self)
             self.parse(tex)
+            # If a unicode value is set, just return that
+            if self.unicode is not None:
+                return tex.texttokens(self.unicode)
+            self.setLinkType()
             return
 
         # Push, parse, and pop.  The command doesn't need to stay on
@@ -201,6 +271,33 @@ class Macro(Element):
         tex.context.push(self)
         self.parse(tex)
         tex.context.pop(self)
+
+        # If a unicode value is set, just return that
+        if self.unicode is not None:
+            return tex.texttokens(self.unicode)
+
+        self.setLinkType()
+
+    def setLinkType(self, key=None):
+        """ 
+        Set up navigation links 
+
+        Keyword Arguments:
+        key -- the name or names of the navigation keys to set
+            instead of using self.linkType
+
+        """
+        if key is None:
+            key = self.linkType
+        if key:
+            userdata = self.ownerDocument.userdata
+            if 'links' not in userdata:
+                userdata['links'] = {}
+            if isinstance(key, basestring):
+                userdata['links'][key] = self
+            else:
+                for k in key:
+                    userdata['links'][k] = self
 
     def tagName(self):
         t = type(self)
@@ -264,48 +361,76 @@ class Macro(Element):
         if self.macroMode == Macro.MODE_END:
             return
 
+        self.preparse(tex)
+
         # args is empty, don't parse
         if not self.args:
-            self.resolve(tex)
             self.postparse(tex)
             return
 
         self.argsource = ''
         arg = None
         try:
-            for i, arg in enumerate(self.arguments):
-                # Check for a '*' type argument at the beginning of the
-                # argument list.  If there is one, don't increment counters
-                # or set labels.  This must be done immediately since
-                # the following arguments may contain labels.
-                if i == 0 and arg.name != '*modifier*':
-                    self.resolve(tex)
-
+            for arg in self.arguments:
+                self.preargument(arg, tex)
                 output, source = tex.readArgumentAndSource(parentNode=self, 
                                                            name=arg.name, 
                                                            **arg.options)
-
-                if i == 0 and output is None and arg.name == '*modifier*':
-                    self.resolve(tex)
-
                 self.argsource += source
                 self.attributes[arg.name] = output
+                self.postargument(arg, output, tex)
         except:
             raise
             log.error('Error while parsing argument "%s" of "%s"' % 
                        (arg.name, self.nodeName))
+
         self.postparse(tex)
+
         return self.attributes
 
-    def resolve(self, tex):
+    def preparse(self, tex):
         """
-        Set macro up for labelling, increment counters, etc.
+        Do operations that must be done immediately before parsing arguments
 
         Required Arguments:
         tex -- the TeX instance containing the current context
 
         """
-        self.refstepcounter(tex)
+        if not self.args:
+            self.refstepcounter(tex)
+
+    def preargument(self, arg, tex):
+        """ 
+        Event called before parsing each argument
+
+        Arguments:
+        arg -- the Argument instance that holds all argument meta-data
+            including the argument's name, source, and options.
+        tex -- the TeX instance containing the current context 
+
+        """
+        # Check for a '*' type argument at the beginning of the
+        # argument list.  If there is one, don't increment counters
+        # or set labels.  This must be done immediately since
+        # the following arguments may contain labels.
+        if arg.index == 0 and arg.name != '*modifier*':
+            self.refstepcounter(tex)
+
+    def postargument(self, arg, value, tex):
+        """ 
+        Event called after parsing each argument
+
+        Arguments:
+        arg -- the Argument instance that holds all argument meta-data
+            including the argument's name, source, and options.
+        tex -- the TeX instance containing the current context 
+
+        """      
+        # If there was a '*', unset the counter for this instance
+        if arg.index == 0 and arg.name == '*modifier*':
+            if value:
+                self.counter = ''
+            self.refstepcounter(tex)
 
     def stepcounter(self, tex):
         """
@@ -346,7 +471,10 @@ class Macro(Element):
 
         """
         if self.counter:
-            self.ref = tex.expandtokens(tex.context['the'+self.counter].invoke(tex))
+            try: secnumdepth = self.config['document']['sec-num-depth']
+            except: secnumdepth = 10
+            if secnumdepth >= self.level:
+                self.ref = tex.expandtokens(tex.context['the'+self.counter].invoke(tex))
 
     def arguments(self):
         """ 
@@ -376,6 +504,7 @@ class Macro(Element):
 
         macroargs = []
         argdict = {}
+        index = 0
         for item in args:
 
             # Modifier argument
@@ -385,12 +514,14 @@ class Macro(Element):
                         'Improperly placed "%s" in argument string "%s"' % \
                         (item, tself.args)
                 argdict.clear()
-                macroargs.append(Argument('*modifier*', {'spec':item}))
+                macroargs.append(Argument('*modifier*', index, {'spec':item}))
+                index += 1
 
             # Optional equals
             elif item in '=':
                 argdict.clear()
-                macroargs.append(Argument('*equals*', {'spec':item}))
+                macroargs.append(Argument('*equals*', index, {'spec':item}))
+                index += 1
 
             # Beginning of group
             elif item in '[(<{':
@@ -421,7 +552,8 @@ class Macro(Element):
                     argdict['expanded'] = False
                 else:
                     argdict['expanded'] = True
-                macroargs.append(Argument(item, argdict))
+                macroargs.append(Argument(item, index, argdict))
+                index += 1
                 argdict.clear()
 
             else:
@@ -467,6 +599,22 @@ class Macro(Element):
                 tokens.push(tok)
                 break
             self.appendChild(tok)
+
+    @property
+    def currentSection(self):
+        """
+        Return the section that this node belongs to
+
+        This property will contain the parent section if the current
+        node is a section node.
+
+        """
+        node = self.parentNode
+        while node is not None:
+            if node.level < Node.ENDSECTIONS_LEVEL:
+                return node
+            node = node.parentNode
+        return
         
     def paragraphs(self):
         """
@@ -573,9 +721,19 @@ class Environment(Macro):
     def invoke(self, tex):
         if self.macroMode == Macro.MODE_END:
             tex.context.pop(self)
+            # If a unicode value is set, just return that
+            if self.unicode is not None:
+                return tex.texttokens(self.unicode)
             return
+
         tex.context.push(self)
         self.parse(tex)
+
+        # If a unicode value is set, just return that
+        if self.unicode is not None:
+            return tex.texttokens(self.unicode)
+
+        self.setLinkType()
 
     def digest(self, tokens):
         """ Absorb all of the tokens that belong to the environment """
@@ -607,21 +765,19 @@ class Environment(Macro):
         if dopars:
             self.paragraphs()
 
-class StringCommand(Command):
-    """ 
-    Convenience class for macros that are simply strings
+class IgnoreCommand(Command):
+    """
+    This command will be parsed, but will not go to the output stream
 
-    This class is used for simple macros that simply contain strings.
-
-    Example::
-        class figurename(StringCommand): value = 'Figure'
-        class tablename(StringCommand): value = 'Table'
+    This should be used sparingly because it also means that if you
+    try to access the source of a node in a document, this will also
+    be missing from that.
 
     """
-    value = ''
-    def invoke(self, tex): 
-        return tex.texttokens(type(self).value)
-                
+    def invoke(self, tex):
+        Command.invoke(self, tex)
+        return []
+
 class UnrecognizedMacro(Macro):
     """
     Base class for unrecognized macros
@@ -675,6 +831,7 @@ def expanddef(definition, params):
         return []
     output = []
     definition = iter(definition)
+    previous = ''
     for t in definition:
         # Expand parameters
         if t.catcode == Token.CC_PARAMETER:
@@ -684,11 +841,21 @@ def expanddef(definition, params):
                     output.append(t)
                 else:
                     if params[int(t)] is not None:
-                        output.extend(params[int(t)])
+                        # This is a pretty bad hack, but `ifx' commands
+                        # need an argument to also be a token.  So we
+                        # wrap them in a group here and let the 
+                        # TeX parser convert the group to a token. 
+                        if previous == 'ifx':
+                            output.append(BeginGroup(' '))
+                            output.extend(params[int(t)])
+                            output.append(EndGroup(' '))
+                        else:
+                            output.extend(params[int(t)])
                 break
         # Just append other tokens to the output
         else:
             output.append(t)
+        previous = t
     return output
 
 class NewCommand(Macro):
@@ -970,7 +1137,7 @@ class muglue(glue):
     units = ['mu']
 
 
-class Parameter(Command):
+class ParameterCommand(Command):
     args = '= value:Number'
     value = count(0)
 
@@ -978,21 +1145,21 @@ class Parameter(Command):
     _enablelevel = 0
     
     def invoke(self, tex):
-        if Parameter.enabled:
+        if ParameterCommand.enabled:
             # Disable invoke() in parameters nested in our arguments.
             # We don't want them to invoke, we want them to set our value.
-            Parameter.enabled = False
+            ParameterCommand.enabled = False
             type(self).value = self.parse(tex)['value']
-            Parameter.enabled = True
+            ParameterCommand.enabled = True
 
     def enable(cls):
-        Parameter._enablelevel += 1
-        Parameter.enabled = Parameter._enablelevel >= 0 
+        ParameterCommand._enablelevel += 1
+        ParameterCommand.enabled = ParameterCommand._enablelevel >= 0 
     enable = classmethod(enable)
 
     def disable(cls):
-        Parameter._enablelevel -= 1
-        Parameter.enabled = Parameter._enablelevel >= 0 
+        ParameterCommand._enablelevel -= 1
+        ParameterCommand.enabled = ParameterCommand._enablelevel >= 0 
     disable = classmethod(disable)
 
     def __dimen__(self):
@@ -1013,11 +1180,15 @@ class Parameter(Command):
     def the(self):
         return type(self).value.source
 
-class Register(Parameter): pass
+    @classmethod
+    def new(self, *args, **kwargs):
+        return count(*args, **kwargs)
 
-class Count(Register): pass
+class RegisterCommand(ParameterCommand): pass
 
-class Dimen(Register):
+class CountCommand(RegisterCommand): pass
+
+class DimenCommand(RegisterCommand):
     args = '= value:Dimen'
     value = dimen(0)
 
@@ -1027,7 +1198,11 @@ class Dimen(Register):
     def addtolength(self, len):
         type(self).value = dimen(type(self).value + len)
 
-class MuDimen(Register):
+    @classmethod
+    def new(self, *args, **kwargs):
+        return dimen(*args, **kwargs)
+
+class MuDimenCommand(RegisterCommand):
     args = '= value:MuDimen'
     value = mudimen(0)
 
@@ -1037,7 +1212,11 @@ class MuDimen(Register):
     def addtolength(self, len):
         type(self).value = mudimen(type(self).value + len)
 
-class Glue(Register):
+    @classmethod
+    def new(self, *args, **kwargs):
+        return mudimen(*args, **kwargs)
+
+class GlueCommand(RegisterCommand):
     args = '= value:Glue'
     value = glue(0)
 
@@ -1047,7 +1226,11 @@ class Glue(Register):
     def addtolength(self, len):
         type(self).value = glue(type(self).value + len)
 
-class MuGlue(Register):
+    @classmethod
+    def new(self, *args, **kwargs):
+        return glue(*args, **kwargs)
+
+class MuGlueCommand(RegisterCommand):
     args = '= value:MuGlue'
     value = muglue(0)
 
@@ -1056,6 +1239,10 @@ class MuGlue(Register):
 
     def addtolength(self, len):
         type(self).value = muglue(type(self).value + len)
+
+    @classmethod
+    def new(self, *args, **kwargs):
+        return muglue(*args, **kwargs)
 
 
 class Counter(object):
@@ -1165,25 +1352,22 @@ class TheCounter(Command):
 
         def countervalue(m):
             """ Replace the counter values """
-            parts = m.group(1).split('.')
-            name = parts.pop(0)
+            name = m.group(1)
 
             # If there is a reference to another \\thecounter, invoke it
             if name.startswith('the'):
                 return u''.join(tex.context[name].invoke(tex))
 
             # Get formatted value of the requested counter
-            format = 'arabic'
-            if parts:
-                format = parts.pop(0)
+            format = m.group(2)
+            if not format:
+                format = 'arabic'
 
             return getattr(tex.context.counters[name], format)
 
-        format = self.format
+        format = re.sub(r'\$(\w+)', r'${\1}', self.format)
         if self.format is None:
-            format = '%%(%s.arabic)s' % self.nodeName[3:]
-        else:
-            format = self.format.replace('%s', '%%(%s.arabic)s' % self.nodeName[3:])
+            format = '${%s.arabic}' % self.nodeName[3:]
 
-        return tex.texttokens(re.sub(r'%\(\s*(\w+(?:\.\w+)?)\s*\)s', 
-                              countervalue, format))
+        return tex.texttokens(re.sub(r'\$\{\s*(\w+)(?:\.(\w+))?\s*\}', 
+                                     countervalue, format))

@@ -566,6 +566,12 @@ class Node(object):
     parentNode = None
     attributes = None
 
+    unicode = None
+
+    # String containing type of node relating to navigation.
+    # Common values are: glossary, bibliography, contents, index, search, etc.
+    linkType = None
+
     def toXML(self, debug=False):
         """ 
         Dump the object as XML 
@@ -679,6 +685,8 @@ class Node(object):
         a = self.attributes
         if a and a.has_key('self'):
             nodes = a['self']
+            if nodes is None:
+                nodes = []
             setattr(self, '@childNodes', nodes)
             return nodes
         else:
@@ -939,8 +947,17 @@ class Node(object):
                     node.append(x)
         return node 
 
-    def normalize(self):
-        """ Combine consecutive text nodes and remove comments """
+    def normalize(self, charsubs=[]):
+        """ 
+        Combine consecutive text nodes and remove comments 
+
+        Keyword Arguments:
+        charsubs -- a list of two-element tuples that contain string
+            replacements.  The first element in each tuple is the source
+            string.  The second element is the string to convert the
+            source to.
+
+        """
         # Remove all Comment nodes first
 #       items = []
 #       for i, item in enumerate(self): 
@@ -948,6 +965,11 @@ class Node(object):
 #               items.insert(0,i)
 #       for i in items:
 #           self.pop(i)
+
+        if self.hasAttributes():
+            for value in self.attributes.values():
+                if isinstance(value, Node):
+                    value.normalize(charsubs)
 
         if not self.hasChildNodes():
             return
@@ -969,10 +991,14 @@ class Node(object):
                         continue
                     appendNode = True
                     break
-                newnodes.append(type(firstnode)(u''.join(group)))
+                # Join string and replace charsubs
+                text = u''.join(group)
+                for src, dest in charsubs:
+                    text = text.replace(src, dest)
+                newnodes.append(type(firstnode)(text))
                 if not appendNode:
                     continue
-            node.normalize()
+            node.normalize(charsubs)
             newnodes.append(node)
         newnodes.reverse()
         childNodes.extend(newnodes)
@@ -1479,9 +1505,13 @@ class CharacterData(unicode, Node):
 
     """
     # LaTeX extension that allows getting the LaTeX source from a plain string
+    @property
     def source(self):
         return self
-    source = property(source)
+
+    @property
+    def unicode(self):
+        return self
 
     def toXML(self):
         return xmlstr(self)
@@ -1494,14 +1524,14 @@ class CharacterData(unicode, Node):
         o = type(self)(self)
         return o
 
+    @property
     def data(self):
         return self
-    data = property(data)
 
+    @property
     def length(self):
         """ Number of characters in string """
         return len(self)
-    length = property(length)
 
     def _notImplemented(self, *args, **kwargs):
         raise NotImplementedError
@@ -1516,12 +1546,12 @@ class CharacterData(unicode, Node):
     removeChild = _notImplemented
     appendChild = _notImplemented
 
-    def normalize(self):
+    def normalize(self, charsubs=[]):
         pass
 
+    @property
     def textContent(self):
         return self
-    textContent = property(textContent)
 
     def getElementsByTagName(self, name):
         return []

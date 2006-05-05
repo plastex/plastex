@@ -54,6 +54,9 @@ class Token(Text):
     catcode = None       # TeX category code
     macroName = None     # Macro to invoke in place of this token
 
+    def __repr__(self):
+        return self.source
+
     def __cmp__(self, other):
         # Token comparison -- character and code must match
         if isinstance(other, Token):
@@ -63,9 +66,9 @@ class Token(Text):
         # Not comparing to token, just do a string match
         return cmp(unicode(self), unicode(other))
 
+    @property
     def source(self):
         return self
-    source = property(source)
 
 
 class EscapeSequence(Token):

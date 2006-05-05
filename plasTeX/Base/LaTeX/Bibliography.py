@@ -24,7 +24,7 @@ class bibliography(chapter):
         self.attributes['title'] = bibliography.title
         # Load bibtex file
         try:
-            file = tex.kpsewhich(tex.jobname, ['.bbl'])
+            file = tex.kpsewhich(tex.jobname+'.bbl', self.config)
             tex.input(open(file))
         except OSError, msg:
             log.warning(msg)

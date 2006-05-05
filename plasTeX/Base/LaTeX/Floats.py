@@ -5,8 +5,8 @@ C.9 Figures and Other Floating Bodies (p196)
 
 """
 
-from plasTeX import Command, Environment, StringCommand
-from plasTeX import Glue, glue, Dimen, dimen
+from plasTeX import Command, Environment
+from plasTeX import GlueCommand, DimenCommand
 from plasTeX.Logging import getLogger
 
 
@@ -40,38 +40,38 @@ class suppressfloats(Command):
 
 # Counters
 
-class topfraction(StringCommand):
-    value = '0.25'
+class topfraction(Command):
+    unicode = '0.25'
 
-class bottomfraction(StringCommand):
-    value = '0.25'
+class bottomfraction(Command):
+    unicode = '0.25'
 
-class textfraction(StringCommand):
-    value = '0.25'
+class textfraction(Command):
+    unicode = '0.25'
 
-class floatpagefraction(StringCommand):
-    value = '0.25'
+class floatpagefraction(Command):
+    unicode = '0.25'
 
-class dbltopfraction(StringCommand):
-    value = '0.25'
+class dbltopfraction(Command):
+    unicode = '0.25'
 
-class dblfloatpagefraction(StringCommand):
-    value = '0.25'
+class dblfloatpagefraction(Command):
+    unicode = '0.25'
 
-class floatsep(Glue):
-    value = glue(0)
+class floatsep(GlueCommand):
+    value = GlueCommand.new(0)
 
-class textfloatsep(Glue):
-    value = glue(0)
+class textfloatsep(GlueCommand):
+    value = GlueCommand.new(0)
 
-class intextsep(Glue):
-    value = glue(0)
+class intextsep(GlueCommand):
+    value = GlueCommand.new(0)
 
-class dblfloatsep(Glue):
-    value = glue(0)
+class dblfloatsep(GlueCommand):
+    value = GlueCommand.new(0)
 
-class dbltextfloatsep(Glue):
-    value = glue(0)
+class dbltextfloatsep(GlueCommand):
+    value = GlueCommand.new(0)
 
 
 #
@@ -89,11 +89,11 @@ class normalmarginpar(Command):
 
 # Style Parameters
 
-class marginparwidth(Dimen):
-    value = dimen(0)
+class marginparwidth(DimenCommand):
+    value = DimenCommand.new(0)
 
-class marginparsep(Dimen):
-    value = dimen(0)
+class marginparsep(DimenCommand):
+    value = DimenCommand.new(0)
 
-class marginparpush(Dimen):
-    value = dimen(0)
+class marginparpush(DimenCommand):
+    value = DimenCommand.new(0)

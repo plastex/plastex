@@ -45,6 +45,11 @@ class verbatim(Environment):
         tex.context.pop(self)
         return tokens
 
+    def normalize(self, charsubs=[]):
+        """ Normalize, but don't allow character substitutions """
+        return Environment.normalize(self)
+
+
 class VerbatimStar(verbatim):
     macroName = 'verbatim*'
 
@@ -82,4 +87,8 @@ class verb(Command):
                                  self.delimiter, sourcechildren(self), 
                                  self.delimiter)
     source = property(source)
+
+    def normalize(self, charsubs=[]):
+        """ Normalize, but don't allow character substitutions """
+        return Command.normalize(self)
 

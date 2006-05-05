@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 
 from plasTeX.Base.LaTeX.Arrays import tabular
-from plasTeX import Command, Dimen, Count, Glue, dimen, glue, count
+from plasTeX import Command, DimenCommand, CountCommand, GlueCommand 
+from plasTeX import dimen, glue, count
 
-class LTleft(Glue): value = glue('1fil')
-class LTright(Glue): value = glue('1fil')
-class LTpre(Glue): value = glue('1fil')
-class LTpost(Glue): value = glue('1fil')
-class LTchunksize(Dimen): value = dimen('4in')
-class LTchunksize(Count): value = count(20)
+class LTleft(GlueCommand): value = glue('1fil')
+class LTright(GlueCommand): value = glue('1fil')
+class LTpre(GlueCommand): value = glue('1fil')
+class LTpost(GlueCommand): value = glue('1fil')
+class LTchunksize(DimenCommand): value = dimen('4in')
+class LTchunksize(CountCommand): value = count(20)
 
 class setlongtables(Command): pass
 

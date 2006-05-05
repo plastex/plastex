@@ -5,8 +5,7 @@ C.10.1 The tabbing Environment (p201)
 
 """
 
-from plasTeX import Command, Environment
-from plasTeX import Dimen, dimen
+from plasTeX import Command, Environment, DimenCommand
 from plasTeX.Logging import getLogger
 
 class tabbing(Environment):
@@ -50,5 +49,5 @@ class tabbing(Environment):
 
 # Style Parameters
 
-class tabbingsep(Dimen):
-    value = dimen(0)
+class tabbingsep(DimenCommand):
+    value = DimenCommand.new(0)

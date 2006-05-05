@@ -6,8 +6,7 @@ B.2 Allocation of Registers (p346)
 """
 
 from plasTeX import Command, Environment
-from plasTeX import Dimen, Glue, MuGlue, MuDimen
-from plasTeX import dimen, glue, muglue, mudimen
+from plasTeX import DimenCommand, GlueCommand
 
 class dimen_(Command):
     macroName = 'dimen'
@@ -65,14 +64,14 @@ class newfam(Command):
 class newlanguage(Command):
     args = 'name:cs'
 
-class maxdimen(Dimen):
-    value = dimen('16383.99pt')
+class maxdimen(DimenCommand):
+    value = DimenCommand.new('16383.99pt')
 
-class hideskip(Glue):
-    value = glue('-1000pt plus 1fill')
+class hideskip(GlueCommand):
+    value = GlueCommand.new('-1000pt plus 1fill')
 
-#class centering(Glue):
-#    value = glue('0pt plus 1000pt minus 1000pt')
+#class centering(GlueCommand):
+#    value = GlueCommand.new('0pt plus 1000pt minus 1000pt')
 
 class newif(Command):
     args = 'name:cs'

@@ -11,40 +11,40 @@ class ArgumentParsing(TestCase):
         class foobar(Macro):
             args = 'arg1'
         arg = foobar().arguments
-        expected = [Argument('arg1', {'expanded':True})]
+        expected = [Argument('arg1', 0, {'expanded':True})]
         assert arg == expected, '"%s" != "%s"' % (arg, expected)
     
     def testArgumentString2(self):
         class foobar(Macro):
             args = '* [ opt ] arg1'
         arg = foobar().arguments
-        expected = [Argument('*modifier*', {'spec':'*'}),
-                    Argument('opt', {'spec':'[]','expanded':True}), 
-                    Argument('arg1', {'expanded':True})]
+        expected = [Argument('*modifier*', 0, {'spec':'*'}),
+                    Argument('opt', 1, {'spec':'[]','expanded':True}), 
+                    Argument('arg1', 2, {'expanded':True})]
         assert arg == expected, '"%s" != "%s"' % (arg, expected)
     
     def testArgumentString3(self):
         class foobar(Macro):
             args = '[ opt:dict ] arg1:list'
         arg = foobar().arguments
-        expected = [Argument('opt', {'spec':'[]','type':'dict','expanded':True,'delim':None}), 
-                    Argument('arg1', {'type':'list','expanded':True,'delim':None})]
+        expected = [Argument('opt', 0, {'spec':'[]','type':'dict','expanded':True,'delim':None}), 
+                    Argument('arg1', 1, {'type':'list','expanded':True,'delim':None})]
         assert arg == expected, '"%s" != "%s"' % (arg, expected)
     
     def testArgumentString4(self):
         class foobar(Macro):
             args = '[ opt:dict(;) ] arg1:list'
         arg = foobar().arguments
-        expected = [Argument('opt', {'spec':'[]','type':'dict','delim':';','expanded':True}), 
-                    Argument('arg1', {'type':'list','expanded':True,'delim':None})]
+        expected = [Argument('opt', 0, {'spec':'[]','type':'dict','delim':';','expanded':True}), 
+                    Argument('arg1', 1, {'type':'list','expanded':True,'delim':None})]
         assert arg == expected, '"%s" != "%s"' % (arg, expected)
     
     def testArgumentString5(self):
         class foobar(Macro):
             args = '[ opt:dict(;) ] < arg1:str >'
         arg = foobar().arguments
-        expected = [Argument('opt', {'spec':'[]','type':'dict','delim':';','expanded':True}), 
-                    Argument('arg1', {'type':'str','spec':'<>','expanded':True, 'delim':None})]
+        expected = [Argument('opt', 0, {'spec':'[]','type':'dict','delim':';','expanded':True}), 
+                    Argument('arg1', 1, {'type':'str','spec':'<>','expanded':True, 'delim':None})]
         assert arg == expected, '"%s" != "%s"' % (arg, expected)
     
     def _testInvalidArgumentString(self):
@@ -181,7 +181,7 @@ class ArgumentParsing(TestCase):
         arg = s.readArgument(type='dimen')
         assert arg == dimen(10), arg
 
-        assert Parameter._enablelevel == 0
+        assert ParameterCommand._enablelevel == 0
 
     def testTeXDimen(self):
         s = TeX(r'''\newcount\mycount\mycount=120
@@ -216,7 +216,7 @@ class ArgumentParsing(TestCase):
         arg = s.readArgument(type='Dimen')
         assert arg == dimen(0), arg
 
-        assert Parameter._enablelevel == 0
+        assert ParameterCommand._enablelevel == 0
 
     def testNumber(self):
         s = TeX(r'''\newcount\mycount\mycount=120
@@ -276,7 +276,7 @@ class ArgumentParsing(TestCase):
         arg = s.readArgument(type='number')
         assert arg == count(10), arg
 
-        assert Parameter._enablelevel == 0
+        assert ParameterCommand._enablelevel == 0
 
     def testTeXDimen(self):
         s = TeX(r'''\newcount\mycount\mycount=120
@@ -311,7 +311,7 @@ class ArgumentParsing(TestCase):
         arg = s.readArgument(type='Dimen')
         assert arg == dimen('120sp'), arg
 
-        assert Parameter._enablelevel == 0
+        assert ParameterCommand._enablelevel == 0
 
     def testTeXNumber(self):
         s = TeX(r'''\newcount\mycount\mycount=120
@@ -346,7 +346,7 @@ class ArgumentParsing(TestCase):
         arg = s.readArgument(type='Number')
         assert arg == count(0), arg
 
-        assert Parameter._enablelevel == 0
+        assert ParameterCommand._enablelevel == 0
 
     def testListTypes(self):
         s = TeX(r'''\newcount\mycount\mycount=120

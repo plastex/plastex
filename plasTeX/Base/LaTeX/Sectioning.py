@@ -5,7 +5,6 @@ C.4 Sectioning and Table of Contents (p174)
 
 """
 
-from plasTeX.Config import config
 from plasTeX import Command, Environment, TeXFragment
 from plasTeX.Logging import getLogger
 
@@ -30,6 +29,56 @@ class cachedproperty(object):
             return result
 
 
+class TableOfContents(object):
+    """
+    Table of Contents object
+
+    The table of contents object is a proxy object that limits the 
+    depth of a table of contents entry.  Each time the `tableofcontents'
+    attribute is accessed on the given node, the depth level is 
+    increased.  Once the depth limit has been reached, no more 
+    table of contents entries are returned.
+
+    """
+
+    def __init__(self, node, limit, level=1):
+        """
+        Instantiate a table of contents object
+
+        Arguments:
+        node -- the node to retrieve the table of contents from
+        limit -- the number of levels to display
+        level -- the current level
+
+        """
+        self._toc_node = node
+        self._toc_limit = limit
+        self._toc_level = level
+
+    def __getattribute__(self, name):
+        """
+        Proxy all attributes to the real object except `tableofcontents'
+
+        Each nested call to the tableofcontents should limit the 
+        depth of the items displayed.
+
+        """
+        # Attributes that belong to the ToC object
+        if name.startswith('_toc_'):
+            return object.__getattribute__(self, name)
+
+        # Limit the number of ToC levels
+        if name == 'tableofcontents':
+            if self._toc_level < self._toc_limit:
+                return [type(self)(x._toc_node, self._toc_limit, 
+                        self._toc_level+1) for x in self._toc_node.tableofcontents]
+            else:
+                return []
+
+        # All other attribute accesses get passed on
+        return getattr(self._toc_node, name)
+
+
 class SectionUtils(object):
     """ General utilities for getting information about sections """
 
@@ -41,14 +90,25 @@ class SectionUtils(object):
     @cachedproperty
     def siblings(self):
         """ Retrieve a list of all sibling sections of this section """
-        if not self.parentNode:
+        if not self.parentNode or self.level == Command.DOCUMENT_LEVEL:
             return []
         return [x for x in self.parentNode.subsections if x is not self]
 
     @cachedproperty
     def tableofcontents(self):
-        """ Return only the immediate subsections that create files """
-        return [x for x in self.subsections if x.filename]
+        """ Return a toble of contents object limited to toc-depth """
+        # Bail out if they don't want a ToC
+        if self.config['document']['toc-depth'] < 1:
+            return []
+
+        # Include sections that don't create files in the ToC
+        if self.config['document']['toc-non-files']:
+            return [TableOfContents(x, self.config['document']['toc-depth']) 
+                       for x in self.subsections]
+
+        # Only include sections that create files in the ToC
+        return [TableOfContents(x, self.config['document']['toc-depth']) 
+                   for x in self.subsections if x.filename]
 
     @cachedproperty
     def allSections(self):
@@ -69,7 +129,7 @@ class SectionUtils(object):
         return document.allSections
 
     @cachedproperty
-    def navigation(self):
+    def links(self):
         """
         Return a dictionary containing a lot of navigation information
  
@@ -163,12 +223,33 @@ class SectionUtils(object):
         nav['shortcut icon'] = None
         nav['breadcrumbs'] = breadcrumbs
 
+        # Get navigation info from the linkTypes
+        navinfo = self.ownerDocument.userdata.get('links', {})
+        for key, value in navinfo.items():
+            nav[key] = value
+
+        # Get user-defined links
+        links = {}
+        if self.config.has_key('links'):
+            for key in self.config['links'].keys():
+                if '-' not in key:
+                    continue
+                newkey, type = key.strip().split('-',1)
+                if newkey not in links:
+                    links[newkey] = {}
+                links[newkey][type] = self.config['links'][key]
+
+        # Set links in nav object
+        for key, value in links.items():
+            if key not in nav or nav[key] is None:
+                nav[key] = value
+
         return nav
 
 
 class StartSection(Command, SectionUtils):
     args = '* [ toc ] title'
-    
+
     def digest(self, tokens):
         # Absorb the tokens that belong to us
         for item in tokens:
@@ -219,6 +300,7 @@ class subsubparagraph(StartSection):
 #
 
 class appendix(Command):
+    """ This needs to be implemented in the cls file """
     pass
 
 #

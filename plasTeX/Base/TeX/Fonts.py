@@ -5,10 +5,10 @@ B.4 Font Information
 
 """
 
-from plasTeX import Command, Environment, StringCommand
+from plasTeX import Command, Environment
 
-class magstephalf(StringCommand):
-    value = '1095 '
+class magstephalf(Command):
+    unicode = '1095 '
 
 class magstep(Command):
     args = 'value:Number'

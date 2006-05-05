@@ -6,8 +6,7 @@ C.6.3 The list and trivlist Enviroments
 
 """
 
-from plasTeX import Environment, Command
-from plasTeX import Dimen, dimen
+from plasTeX import Environment, Command, DimenCommand
 from plasTeX import Logging
 
 log = Logging.getLogger()
@@ -104,35 +103,35 @@ class ConfigurableList(List):
     macroName = 'list'
     args = 'defaultlabel decls:nox'
 
-class topsep(Dimen):
-    value = dimen(0)
+class topsep(DimenCommand):
+    value = DimenCommand.new(0)
 
-class partopsep(Dimen):
-    value = dimen(0)
+class partopsep(DimenCommand):
+    value = DimenCommand.new(0)
 
-class itemsep(Dimen):
-    value = dimen(0)
+class itemsep(DimenCommand):
+    value = DimenCommand.new(0)
 
-class parsep(Dimen):
-    value = dimen(0)
+class parsep(DimenCommand):
+    value = DimenCommand.new(0)
 
-class leftmargin(Dimen):
-    value = dimen(0)
+class leftmargin(DimenCommand):
+    value = DimenCommand.new(0)
 
-class rightmargin(Dimen):
-    value = dimen(0)
+class rightmargin(DimenCommand):
+    value = DimenCommand.new(0)
 
-class listparindent(Dimen):
-    value = dimen(0)
+class listparindent(DimenCommand):
+    value = DimenCommand.new(0)
 
-class itemindent(Dimen):
-    value = dimen(0)
+class itemindent(DimenCommand):
+    value = DimenCommand.new(0)
 
-class labelsep(Dimen):
-    value = dimen(0)
+class labelsep(DimenCommand):
+    value = DimenCommand.new(0)
 
-class labelwidth(Dimen):
-    value = dimen(0)
+class labelwidth(DimenCommand):
+    value = DimenCommand.new(0)
 
 class makelabel(Command):
     args = 'label'

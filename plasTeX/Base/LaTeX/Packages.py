@@ -5,82 +5,22 @@ C.5 Classes, Packages, and Page Styles (p176)
 
 """
 
-import codecs
-from plasTeX import Command, Environment
-from plasTeX import Dimen, dimen
+import codecs, sys, os
+from plasTeX import Command, Environment, DimenCommand
 from plasTeX.Logging import getLogger
-from plasTeX.Config import config
 
 # Put the plasTeX packages into the path
-import sys, os
-from plasTeX import packages
-sys.path.append(os.path.dirname(packages.__file__))
-del packages
+from plasTeX import Packages
+sys.path.append(os.path.dirname(Packages.__file__))
+del Packages
 
 log = getLogger()
 status = getLogger('status')
-encoding = config['files']['input-encoding']
 
 class PackageLoader(Command):
-
+    extension = '.sty'
     def load(self, tex, file, options={}):
-        # See if it has already been loaded
-        if tex.context.packages.has_key(file):
-            return True
-
-        try: 
-            # Try to import a Python package by that name
-            m = __import__(file, globals(), locals())
-            status.info(' ( %s ' % m.__file__)
-            if hasattr(m, 'ProcessOptions'):
-                m.ProcessOptions(options)
-            if hasattr(m, 'initialize'):
-                m.initialize(tex.context)
-            tex.context.importMacros(vars(m))
-            tex.context.packages[file] = options
-            status.info(' ) ')
-            return True
-
-        except ImportError, msg:
-            # No Python module
-            if 'No module' in str(msg):
-                pass
-                # Failed to load Python package
-#               log.warning('No Python version of %s was found' % file)
-            # Error while importing
-            else:
-                raise
-
-        try:
-            path = tex.kpsewhich(file)
-        except OSError, msg:
-            log.warning(msg)
-            return False
-
-        # Try to load the actual LaTeX style file
-        status.info(' ( %s ' % path)
-
-        try:
-            file = codecs.open(path, 'r', encoding)
-            # Put `self` in as a flag so that we can parse past our own
-            # package tokens and throw them away, we don't want them in
-            # the output document.
-            tex.pushtoken(self)
-            tex.input(file)
-            tex.context.packages[file] = options
-            for tok in tex:
-                if tok is self:
-                    break
-
-        except (OSError, IOError, TypeError):
-            # Failed to load LaTeX style file
-            log.warning('Error opening package "%s"' % file)
-            status.info(' ) ')
-            return False
-
-        status.info(' ) ')
-
-        return True
+        tex.context.loadPackage(tex, file+self.extension, options)
 
 #
 # C.5.1 Document Class
@@ -88,7 +28,7 @@ class PackageLoader(Command):
 
 class documentclass(PackageLoader):
     args = '[ options:dict ] name:str'
-
+    extension = '.cls'
     def invoke(self, tex):
         a = self.parse(tex)
         self.load(tex, a['name'], a['options'])
@@ -100,17 +40,17 @@ class documentstyle(documentclass):
 # Style Parameters
 #
 
-class bibindent(Dimen):
-    value = dimen(0)
+class bibindent(DimenCommand):
+    value = DimenCommand.new(0)
 
-class columnsep(Dimen):
-    value = dimen(0)
+class columnsep(DimenCommand):
+    value = DimenCommand.new(0)
 
-class columnseprule(Dimen):
-    value = dimen(0)
+class columnseprule(DimenCommand):
+    value = DimenCommand.new(0)
 
-class mathindent(Dimen):
-    value = dimen(0)
+class mathindent(DimenCommand):
+    value = DimenCommand.new(0)
 
 #
 # C.5.2 Packages
@@ -118,7 +58,7 @@ class mathindent(Dimen):
 
 class usepackage(PackageLoader):
     args = '[ options:dict ] names:list:str'
-    
+    extension = '.sty'
     def invoke(self, tex):
         a = self.parse(tex)
         for file in a['names']:
@@ -158,44 +98,44 @@ class onecolumn(Command):
 
 # Figure C.3: Page style parameters
 
-class paperheight(Dimen):
-    value = dimen('11in')
+class paperheight(DimenCommand):
+    value = DimenCommand.new('11in')
 
-class paperwidth(Dimen):
-    value = dimen('8.5in')
+class paperwidth(DimenCommand):
+    value = DimenCommand.new('8.5in')
 
-class oddsidemargin(Dimen):
-    value = dimen('1in')
+class oddsidemargin(DimenCommand):
+    value = DimenCommand.new('1in')
 
-class evensidemargin(Dimen):
-    value = dimen('1in')
+class evensidemargin(DimenCommand):
+    value = DimenCommand.new('1in')
 
-class textheight(Dimen):
-    value = dimen('9in')
+class textheight(DimenCommand):
+    value = DimenCommand.new('9in')
 
-class textwidth(Dimen):
-    value = dimen('6.5in')
+class textwidth(DimenCommand):
+    value = DimenCommand.new('6.5in')
 
-class topmargin(Dimen):
-    value = dimen(0)
+class topmargin(DimenCommand):
+    value = DimenCommand.new(0)
 
-class headheight(Dimen):
-    value = dimen('0.5in')
+class headheight(DimenCommand):
+    value = DimenCommand.new('0.5in')
 
-class headsep(Dimen):
-    value = dimen('0.25in')
+class headsep(DimenCommand):
+    value = DimenCommand.new('0.25in')
 
-class footskip(Dimen):
-    value = dimen('0.5in')
+class footskip(DimenCommand):
+    value = DimenCommand.new('0.5in')
 
-class marginparsep(Dimen):
-    value = dimen('0.25in')
+class marginparsep(DimenCommand):
+    value = DimenCommand.new('0.25in')
 
-class marginparwidth(Dimen):
-    value = dimen('0.75in')
+class marginparwidth(DimenCommand):
+    value = DimenCommand.new('0.75in')
 
-class topskip(Dimen):
-    value = dimen(0)
+class topskip(DimenCommand):
+    value = DimenCommand.new(0)
 
 #
 # C.5.4 The Title Page and Abstract
@@ -206,27 +146,27 @@ class maketitle(Command):
 
 class title(Command):
     args = 'self'
-    def digest(self, tokens):
-        Command.digest(self, tokens)
+    def invoke(self, tex):
+        Command.invoke(self, tex)
         if not self.ownerDocument.userdata.has_key('title'):
             self.ownerDocument.userdata['title'] = self
 
 class author(Command):
     args = 'self'
-    def digest(self, tokens):
-        Command.digest(self, tokens)
+    def invoke(self, tex):
+        Command.invoke(self, tex)
         self.ownerDocument.userdata['author'] = self
 
 class date(Command):
     args = 'self'
-    def digest(self, tokens):
-        Command.digest(self, tokens)
+    def invoke(self, tex):
+        Command.invoke(self, tex)
         self.ownerDocument.userdata['date'] = self
 
 class thanks(Command):
     args = 'self'
-    def digest(self, tokens):
-        Command.digest(self, tokens)
+    def invoke(self, tex):
+        Command.invoke(self, tex)
         self.ownerDocument.userdata['thanks'] = self
 
 class abstract(Environment):
@@ -256,6 +196,7 @@ class ProcessOptions(Command):
 
 class LoadClass(usepackage):
     args = '[ options:dict ] names:list:str'
+    extension = '.cls'
 
 class NeedsTeXFormat(Command):
     args = 'name:str date:str'
@@ -265,7 +206,7 @@ class InputIfFileExists(Command):
     def invoke(self, tex):
         a = self.parse(tex)
         try: 
-            tex.input(tex.kpsewhich(a['file']))
+            tex.input(tex.kpsewhich(a['file'], self.config))
             tex.pushtokens(a['true'])
         except (IOError, OSError):
             tex.pushtokens(a['false'])

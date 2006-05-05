@@ -6,8 +6,8 @@ C.10.2 The array and tabular Environments
 """
 
 import new, sys
-from plasTeX import Macro, Environment, Command, StringCommand, sourcechildren
-from plasTeX import Dimen, dimen
+from plasTeX import Macro, Environment, Command, DimenCommand
+from plasTeX import sourcechildren
 
 class ColumnType(Macro):
 
@@ -468,17 +468,17 @@ class TabularStar(tabular):
 
 # Style Parameters
 
-class arraycolsep(Dimen):
-    value = dimen(0)
+class arraycolsep(DimenCommand):
+    value = DimenCommand.new(0)
 
-class tabcolsep(Dimen):
-    value = dimen(0)
+class tabcolsep(DimenCommand):
+    value = DimenCommand.new(0)
 
-class arrayrulewidth(Dimen):
-    value = dimen(0)
+class arrayrulewidth(DimenCommand):
+    value = DimenCommand.new(0)
 
-class doublerulesep(Dimen):
-    value = dimen(0)
+class doublerulesep(DimenCommand):
+    value = DimenCommand.new(0)
 
-class arraystretch(StringCommand):
-    value = '1'
+class arraystretch(Command):
+    unicode = '1'

@@ -7,7 +7,7 @@ C.7 Mathematical Formulas (p187)
 
 from Arrays import Array
 from plasTeX import Command, Environment, sourcechildren
-from plasTeX import Dimen, dimen, Glue, glue
+from plasTeX import DimenCommand, GlueCommand
 from plasTeX.Logging import getLogger
 
 #
@@ -89,23 +89,23 @@ class lefteqn(Command):
 # Style Parameters
 #
 
-class jot(Dimen):
-    value = dimen(0)
+class jot(DimenCommand):
+    value = DimenCommand.new(0)
 
-class mathindent(Dimen):
-    value = dimen(0)
+class mathindent(DimenCommand):
+    value = DimenCommand.new(0)
 
-class abovedisplayskip(Glue):
-    value = glue(0)
+class abovedisplayskip(GlueCommand):
+    value = GlueCommand.new(0)
 
-class belowdisplayskip(Glue):
-    value = glue(0)
+class belowdisplayskip(GlueCommand):
+    value = GlueCommand.new(0)
 
-class abovedisplayshortskip(Glue):
-    value = glue(0)
+class abovedisplayshortskip(GlueCommand):
+    value = GlueCommand.new(0)
 
-class belowdisplayshortskip(Glue):
-    value = glue(0)
+class belowdisplayshortskip(GlueCommand):
+    value = GlueCommand.new(0)
 
 
 #

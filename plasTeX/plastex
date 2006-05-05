@@ -1,16 +1,19 @@
 #!/usr/bin/env python2.4
 
-import os, sys, codecs
+import os, sys, codecs, string
 import plasTeX
 from plasTeX.TeX import TeX
 from plasTeX.Config import config
 from plasTeX.ConfigManager import *
+from plasTeX.Logging import getLogger
+
+log = getLogger()
 
 def main(argv):
     """ Main program routine """
     inencoding = config['files']['input-encoding']
 
-    print >>sys.stderr, 'plasTeX version 1.0'
+    print >>sys.stderr, 'plasTeX version 0.5'
 
     # Parse the command line options
     clm = CommandLineManager()
@@ -19,45 +22,59 @@ def main(argv):
     try: 
         clm.getopt(argv[1:])
     except Exception, msg:
+        log.error(msg)
         print >>sys.stderr, clm.usage()
         sys.exit(1)
 
     try:
-        file = TeX.kpsewhich(clm['file'], ['.tex','.ltx'])
+        file = TeX.kpsewhich(clm['file'], config)
     except OSError, msg:
-        print >>sys.stderr, msg
+        log.error(msg)
         sys.exit(1)
-    basename = os.path.splitext(file)[0]
-    
-    # Make sure that the renderer exists before we start parsing
-    r = config['general']['renderer']
-    try: 
-        exec('from plasTeX.renderers.%s import xhtml as renderer' % r)
-    except ImportError:
-        print >>sys.stderr, 'ERROR: Could not import renderer "%s".' % r
-        print >>sys.stderr, '       Make sure that it is installed correctly, and can be imported by Python.'
-        sys.exit(1)
+
+    basename = os.path.basename(os.path.splitext(file)[0])
 
     # Create document instance that output will be put into
     document = plasTeX.TeXDocument()
 
-    if config['doc']['title']:
-        document.userdata['title'] = config['doc']['title']
+    # Populate variables for use later
+    document.userdata['config'] = config
+    document.userdata['jobname'] = basename
+    if config['document']['title']:
+        document.userdata['title'] = config['document']['title']
 
-    # Parse document
-    s = TeX(codecs.open(file,'r',inencoding))
-    s.parse(document)
+    # Instantiate the TeX processor and parse the document
+    tex = TeX()
+    tex.input(codecs.open(file,'r',inencoding))
+    tex.parse(document)
+
+    # Change to specified directory to output to
+    outdir = config['files']['directory']
+    if outdir:
+        outdir = string.Template(outdir).substitute({'jobname':basename})
+        if not os.path.isdir(outdir):
+            os.makedirs(outdir)
+        log.info('Directing output files to directory: %s.' % outdir)        
+        os.chdir(outdir)
     
+    # Load renderer
+    r = config['general']['renderer']
+    try: 
+        exec('from plasTeX.Renderers.%s import Renderer' % r)
+    except ImportError, msg:
+        log.error('Could not import renderer "%s".  Make sure that it is installed correctly, and can be imported by Python.' % r)
+        sys.exit(1)
+
     # Write expanded source file
-    sourcefile = '%s.source' % basename
-    open(sourcefile,'w').write(document.source.encode('utf-8'))
+#   sourcefile = '%s.source' % basename
+#   open(sourcefile,'w').write(document.source.encode('utf-8'))
     
     # Write XML dump
-    outfile = '%s.xml' % basename
-    open(outfile,'w').write(document.toXML().encode('utf-8'))
+#   outfile = '%s.xml' % basename
+#   open(outfile,'w').write(document.toXML().encode('utf-8'))
     
     # Apply renderer
-    renderer.render(document)
+    Renderer().render(document)
 
     print
 
