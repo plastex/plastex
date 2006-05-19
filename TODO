@@ -5,17 +5,14 @@ Parsing
 Document Object
 ---------------
 - XPath (?)
-- Move context to document instead of TeX
 - Pickling
 
 Rendering
 ---------
-- Update SimpleTAL (see if it can be pulled out completely)
 - More themes
 
 General
 -------
-- Indexes
 - Logging needs to be entirely reworked
 - Multiple renderers for one parse step
 
