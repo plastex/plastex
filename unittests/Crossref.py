@@ -9,7 +9,8 @@ from plasTeX import Macro
 class Labels(TestCase):
 
     def testLabel(self):
-        s = TeX(r'\section{hi\label{one}} text \section{bye\label{two}}')
+        s = TeX()
+        s.input(r'\section{hi\label{one}} text \section{bye\label{two}}')
         output = s.parse()
         one = output[0]
         two = output[-1]
@@ -17,7 +18,8 @@ class Labels(TestCase):
         assert two.id == 'two', two.id
 
     def testLabelStar(self):
-        s = TeX(r'\section{hi} text \section*{bye\label{two}}')
+        s = TeX()
+        s.input(r'\section{hi} text \section*{bye\label{two}}')
         output = s.parse()
         one = output[0]
         two = output[-1]

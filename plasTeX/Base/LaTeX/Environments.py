@@ -22,9 +22,9 @@ class begin(Command):
 
         # Instantiate the correct macro and let it know
         # that it came from a \begin{...} macro
-        obj = tex.context[name]
+        obj = self.ownerDocument.createElement(name)
         obj.macroMode = Command.MODE_BEGIN
-        obj.ownerDocument = self.ownerDocument
+        obj.parentNode = self.parentNode
 
         # Return the output of the instantiated macro in
         # place of self
@@ -45,9 +45,9 @@ class end(Command):
 
         # Instantiate the correct macro and let it know
         # that it came from a \end{...} macro
-        obj = tex.context[name]
+        obj = self.ownerDocument.createElement(name)
         obj.macroMode = Command.MODE_END
-        obj.ownerDocument = self.ownerDocument
+        obj.parentNode = self.parentNode
 
         # Return the output of the instantiated macro in
         # place of self

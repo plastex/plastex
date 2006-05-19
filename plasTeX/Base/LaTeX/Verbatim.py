@@ -11,12 +11,12 @@ class verbatim(Environment):
 
     def invoke(self, tex):
         """ Parse until we reach `\end{verbatim}' or `\endverbatim' """
-        escape = tex.context.categories[0][0]
-        bgroup = tex.context.categories[1][0]
-        egroup = tex.context.categories[2][0]
-        tex.context.push(self)
+        escape = self.ownerDocument.context.categories[0][0]
+        bgroup = self.ownerDocument.context.categories[1][0]
+        egroup = self.ownerDocument.context.categories[2][0]
+        self.ownerDocument.context.push(self)
         self.parse(tex)
-        tex.context.setVerbatimCatcodes()
+        self.ownerDocument.context.setVerbatimCatcodes()
         tokens = [self]
 
         # If we were invoke by a \begin{...} look for an \end{...}
@@ -37,12 +37,12 @@ class verbatim(Environment):
                     tokens = tokens[:-endlength]
                     break
 
-        end = type(self)()
+        end = self.ownerDocument.createElement(self.nodeName)
         if self.macroMode == Environment.MODE_BEGIN:
             end.macroMode = Environment.MODE_END
 
         tokens.append(end)
-        tex.context.pop(self)
+        self.ownerDocument.context.pop(self)
         return tokens
 
     def normalize(self, charsubs=[]):
@@ -58,9 +58,9 @@ class verb(Command):
 
     def invoke(self, tex):
         """ Parse for matching delimiters """
-        tex.context.push(self)
+        self.ownerDocument.context.push(self)
         self.parse(tex)
-        tex.context.setVerbatimCatcodes()
+        self.ownerDocument.context.setVerbatimCatcodes()
         # See what the delimiter is
         for endpattern in tex:
             self.delimiter = endpattern
@@ -71,7 +71,7 @@ class verb(Command):
             tokens.append(tok)
             if tok == endpattern:
                 break
-        tex.context.pop(self)
+        self.ownerDocument.context.pop(self)
         return tokens
 
     def digest(self, tokens):

@@ -9,7 +9,7 @@ from plasTeX.Tokenizer import *
 class Tokenizing(TestCase):
 
     def testTokens(self):
-        tokens = [x for x in TeX('{\hskip 36 pt}').itertokens()]
+        tokens = [x for x in TeX().input('{\hskip 36 pt}').itertokens()]
         expected = [BeginGroup('{'), 
                     EscapeSequence('hskip'), 
                     Other('3'),
@@ -21,7 +21,7 @@ class Tokenizing(TestCase):
         assert tokens == expected, '%s != %s' % (tokens, expected)
 
     def testComment(self):
-        tokens = [x for x in TeX('line % comment').itertokens()]
+        tokens = [x for x in TeX().input('line % comment').itertokens()]
         expected = [Letter('l'), 
                     Letter('i'), 
                     Letter('n'), 
@@ -30,7 +30,7 @@ class Tokenizing(TestCase):
         assert tokens == expected, '%s != %s' % (tokens, expected)
 
     def testSymbols(self):
-        tokens = [x for x in TeX('\\ { } $ & # ^ _ ~ %').itertokens()]
+        tokens = [x for x in TeX().input('\\ { } $ & # ^ _ ~ %').itertokens()]
         expected = [EscapeSequence(' '),
                     BeginGroup('{'), Space(' '), 
                     EndGroup('}'), Space(' '), 
@@ -42,7 +42,7 @@ class Tokenizing(TestCase):
                     EscapeSequence('active::~'), Space(' ')]
         assert tokens == expected, '%s != %s' % (tokens, expected)
         
-        tokens = [x for x in TeX(r'\\ \{ \} \$ \& \# \^ \_ \~ \%').itertokens()]
+        tokens = [x for x in TeX().input(r'\\ \{ \} \$ \& \# \^ \_ \~ \%').itertokens()]
         expected = [EscapeSequence('\\'), Space(' '),
                     EscapeSequence('{'), Space(' '),
                     EscapeSequence('}'), Space(' '),
@@ -56,12 +56,12 @@ class Tokenizing(TestCase):
         assert tokens == expected, '%s != %s' % (tokens, expected)
 
     def testDoubleSuper(self):
-        tokens = [x for x in TeX('^^I ^^A ^^@ ^^M').itertokens()]
+        tokens = [x for x in TeX().input('^^I ^^A ^^@ ^^M').itertokens()]
         expected = [Other('\x01'), Space(' ')]
         assert tokens == expected, '%s != %s' % (tokens, expected)
 
     def testParagraph(self):
-        tokens = [x for x in TeX('1\n   2\n   \n   3\n').itertokens()]
+        tokens = [x for x in TeX().input('1\n   2\n   \n   3\n').itertokens()]
         expected = [Other('1'), Space(' '), 
                     Other('2'), Space(' '), 
                     EscapeSequence('par'), 
@@ -71,7 +71,7 @@ class Tokenizing(TestCase):
     def testExercises(self):
         """ Exercises in the TeX book """
         # 8.4
-        tokens = [x for x in TeX(r' $x^2$~  \TeX  ^^C').itertokens()]
+        tokens = [x for x in TeX().input(r' $x^2$~  \TeX  ^^C').itertokens()]
         expected = [MathShift('$'), 
                     Letter('x'), 
                     Superscript('^'), 
@@ -84,7 +84,7 @@ class Tokenizing(TestCase):
         assert tokens == expected, '%s != %s' % (tokens, expected)
         
         # 8.5
-        tokens = [x for x in TeX('Hi!\n\n\n').itertokens()]
+        tokens = [x for x in TeX().input('Hi!\n\n\n').itertokens()]
         expected = [Letter('H'), 
                     Letter('i'), 
                     Other('!'), 
@@ -93,7 +93,7 @@ class Tokenizing(TestCase):
         assert tokens == expected, '%s != %s' % (tokens, expected)
 
         # 8.6
-        tokens = [x for x in TeX(r'^^B^^BM^^A^^B^^C^^M^^@\M ').itertokens()]
+        tokens = [x for x in TeX().input(r'^^B^^BM^^A^^B^^C^^M^^@\M ').itertokens()]
         expected = [Other('\x02'), 
                     Other('\x02'), 
                     Letter('M'), 
@@ -105,7 +105,7 @@ class Tokenizing(TestCase):
         assert tokens == expected, '%s != %s' % (tokens, expected)
 
     def testParameters(self):
-        tokens = [x for x in TeX(r'\def\foo#1[#2]{hi}').itertokens()]
+        tokens = [x for x in TeX().input(r'\def\foo#1[#2]{hi}').itertokens()]
 
 if __name__ == '__main__':
     unittest.main()

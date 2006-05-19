@@ -76,8 +76,8 @@ class MathShift(Command):
 
         """
         inenv = type(self).inenv
-        math = tex.context['math']
-        displaymath = tex.context['displaymath']
+        math = self.ownerDocument.createElement('math')
+        displaymath = self.ownerDocument.createElement('displaymath')
 
         # See if this is the end of the environment
         if inenv and inenv[-1] is not None:
@@ -86,11 +86,11 @@ class MathShift(Command):
                 for t in tex.itertokens():
                     break
                 displaymath.macroMode = Command.MODE_END
-                tex.context.pop(displaymath)
+                self.ownerDocument.context.pop(displaymath)
                 return [displaymath]
             else:
                 math.macroMode = Command.MODE_END
-                tex.context.pop(math)
+                self.ownerDocument.context.pop(math)
                 return [math]
 
         for t in tex.itertokens():
@@ -103,7 +103,7 @@ class MathShift(Command):
 
         current = inenv[-1]
         mathshiftlog.debug('%s (%s)' % (current.tagName, id(current)))
-        tex.context.push(current)
+        self.ownerDocument.context.push(current)
 
         return [current]
 
@@ -117,7 +117,7 @@ class SuperScript(Command):
     args = 'arg'
     def invoke(self, tex):
         # If we're not in math mode, just treat this as a normal character
-        if not tex.context.isMathMode:
+        if not self.ownerDocument.context.isMathMode:
             return tex.texttokens('^')
         Command.parse(self, tex)
 
@@ -127,7 +127,7 @@ class SubScript(Command):
     args = 'arg'
     def invoke(self, tex):
         # If we're not in math mode, just treat this as a normal character
-        if not tex.context.isMathMode:
+        if not self.ownerDocument.context.isMathMode:
             return tex.texttokens('_')
         Command.parse(self, tex)
 
@@ -139,7 +139,7 @@ class DefCommand(Command):
         self.parse(tex)
         a = self.attributes
         deflog.debug('def %s %s %s', a['name'], a['args'], a['definition'])
-        tex.context.newdef(a['name'], a['args'], a['definition'], local=self.local)
+        self.ownerDocument.context.newdef(a['name'], a['args'], a['definition'], local=self.local)
 
 class def_(DefCommand): 
     macroName = 'def'
@@ -234,7 +234,7 @@ class ifmmode(IfCommand):
     """ Test for math mode """
     def invoke(self, tex):
         self.parse(tex)
-        return tex.readIfContent(tex.context.isMathMode)
+        return tex.readIfContent(self.ownerDocument.context.isMathMode)
 
 class ifinner(IfCommand):
     """ Test for internal mode """
@@ -321,7 +321,7 @@ class let(Command):
     args = 'name:Tok = value:Tok'
     def invoke(self, tex):
         a = self.parse(tex)
-        tex.context.let(a['name'], a['value'])
+        self.ownerDocument.context.let(a['name'], a['value'])
 
 class char(Command):
     """ \\char """
@@ -333,7 +333,7 @@ class chardef(Command):
     args = 'command:cs = num:Number'
     def invoke(self, tex):
         a = self.parse(tex)
-        tex.context.chardef(a['command'], a['num'])
+        self.ownerDocument.context.chardef(a['command'], a['num'])
       
 class NameDef(Command):
     macroName = '@namedef'
@@ -341,7 +341,7 @@ class NameDef(Command):
 
 class makeatletter(Command):
     def invoke(self, tex):
-        tex.context.catcode('@', Token.CC_LETTER)
+        self.ownerDocument.context.catcode('@', Token.CC_LETTER)
 
 class everypar(Command):
     args = 'tokens:nox'
@@ -351,7 +351,7 @@ class catcode(Command):
     args = 'char:Number = code:Number'
     def invoke(self, tex):
         a = self.parse(tex)
-        tex.context.catcode(chr(a['char']), a['code'])
+        self.ownerDocument.context.catcode(chr(a['char']), a['code'])
     def source(self):
         return '\\catcode`\%s=%s' % (chr(self.attributes['char']), 
                                      self.attributes['code'])
@@ -398,7 +398,7 @@ class include(input):
 class showthe(Command):
     args = 'arg:cs'
     def invoke(self, tex):
-        log.info(tex.context[self.parse(tex)['arg']].the())
+        log.info(self.ownerDocument.createElement(self.parse(tex)['arg']).the())
 
 
 class active(CountCommand):
@@ -411,15 +411,26 @@ class advance(Command):
         tex.readArgument(type='Number')
 
 class leavevmode(Command): pass
+
 class kern(Command): pass
+
 class hrule(Command): pass
-class jobname(Command): pass
+
+class jobname(Command):
+    @property
+    def unicode(self):
+        return unicode(self.ownerDocument.userdata['jobname'])
+
 class long(Command): pass
+
 class undefined(Command): pass
+
 class undefined_(Command):
     macroName = '@undefined'
+
 class vobeyspaces_(Command):
     macroName = '@vobeyspaces'
+
 class noligs_(Command):
     macroName = '@noligs'
 
@@ -442,11 +453,30 @@ class vskip(Command):
 class hskip(Command):
     args = 'size:Dimen'
 
-class openout(IgnoreCommand):
-    args = 'arg:cs = value'
+class openout(Command):
+    args = 'arg:cs = value:any'
+    def invoke(self, tex):
+        result = Command.invoke(self, tex)
+#       a = self.attributes
+#       self.ownerDocument.context.newwrite(a['arg'].nodeName, 
+#                                           a['value'].textContent)
+        return result
 
-class newwrite(IgnoreCommand):
+class closeout(Command):
     args = 'arg:cs'
+    def invoke(self, tex):
+        result = Command.invoke(self, tex)
+#       a = self.attributes
+#       self.ownerDocument.context.writes[a['arg'].nodeName].close()
+        return result
 
-class write(IgnoreCommand):
+class write(Command):
     args = 'arg:cs text:nox'
+    def invoke(self, tex):
+        result = Command.invoke(self, tex)
+#       a = self.attributes
+#       self.ownerDocument.context.writes[a['arg'].nodeName].write(self.attributes['text']+'\n')
+        return result
+
+class protected_write(write):
+    nodeName = 'protected@write'

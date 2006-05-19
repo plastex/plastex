@@ -26,22 +26,22 @@ class TeXCount(Command):
 class newcount(Command):
     args = 'arg:cs'
     def invoke(self, tex):
-        tex.context.newcount(self.parse(tex)['arg'])
+        self.ownerDocument.context.newcount(self.parse(tex)['arg'])
 
 class newdimen(Command):
     args = 'arg:cs'
     def invoke(self, tex):
-        tex.context.newdimen(self.parse(tex)['arg'])
+        self.ownerDocument.context.newdimen(self.parse(tex)['arg'])
 
 class newskip(Command):
     args = 'arg:cs'
     def invoke(self, tex):
-        tex.context.newskip(self.parse(tex)['arg'])
+        self.ownerDocument.context.newskip(self.parse(tex)['arg'])
 
 class newmuskip(Command):
     args = 'arg:cs'
     def invoke(self, tex):
-        tex.context.newmuskip(self.parse(tex)['arg'])
+        self.ownerDocument.context.newmuskip(self.parse(tex)['arg'])
 
 class newbox(Command):
     args = 'name:cs'
@@ -76,5 +76,5 @@ class hideskip(GlueCommand):
 class newif(Command):
     args = 'name:cs'
     def invoke(self, tex):
-        tex.context.newif(self.parse(tex)['name'])
+        self.ownerDocument.context.newif(self.parse(tex)['name'])
 

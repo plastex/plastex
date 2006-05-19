@@ -18,19 +18,19 @@ class stretch(Command):
 class newlength(Command):
     args = 'name:cs'
     def invoke(self, tex):
-        tex.context.newdimen(self.parse(tex)['name'])
+        self.ownerDocument.context.newdimen(self.parse(tex)['name'])
 
 class setlength(Command):
     args = 'name:cs len:nox'
 #   def invoke(self, tex):
 #       a = self.parse(tex)
-#       tex.context[a['name']].setlength(a['len'])
+#       ownerDocument.createElement(a['name']).setlength(a['len'])
 
 class addtolength(Command):
     args = 'name:cs len:nox'
 #   def invoke(self, tex):
 #       a = self.parse(tex)
-#       tex.context[a['name']].addtolength(a['len'])
+#       self.ownerDocument.createElement(a['name']).addtolength(a['len'])
 
 class settowidth(Command):
     args = 'name:cs text:nox'

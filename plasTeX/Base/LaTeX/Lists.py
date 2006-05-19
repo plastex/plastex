@@ -25,7 +25,7 @@ class List(Environment):
             """ Set up counter for this list depth """
             try:
                 self.counter = List.counters[List.depth-1]
-                self.position = tex.context.counters[self.counter].value + 1
+                self.position = self.ownerDocument.context.counters[self.counter].value + 1
             except (KeyError, IndexError):
                 pass
             return Command.invoke(self, tex)
@@ -53,7 +53,7 @@ class List(Environment):
             List.depth -= 1
         try:
             for i in range(List.depth+1, len(List.counters)):
-                tex.context.counters[List.counters[i]].setcounter(0)
+                self.ownerDocument.context.counters[List.counters[i]].setcounter(0)
         except (IndexError, KeyError):
             pass
         return Environment.invoke(self, tex)
@@ -88,8 +88,8 @@ class labelitemiii(Command):
 class labelitemiv(Command):
     pass
 
-class enumerate(List): 
-    pass
+class enumerate_(List): 
+    macroName = 'enumerate'
 
 class description(List): 
     pass

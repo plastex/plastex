@@ -30,6 +30,11 @@ class BooleanOption(BooleanParser, GenericOption):
    def validate(self, data):
       return self.cast(data)
 
+   def defaultValue(self):
+      if self.default:
+          return 'yes'
+      return 'no'
+
    def __repr__(self):
       """ Return command-line syntax as entered """
       if self.actual: return self.actual

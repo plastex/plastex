@@ -40,7 +40,7 @@ class BeginDisplayMath(Command):
     def invoke(self, tex):
         o = displaymath()
         o.macroMode = Command.MODE_BEGIN
-        tex.context.push(o)
+        self.ownerDocument.context.push(o)
         return [o]
 
 class EndDisplayMath(Command):
@@ -48,7 +48,7 @@ class EndDisplayMath(Command):
     def invoke(self, tex):
         o = displaymath()
         o.macroMode = Command.MODE_END
-        tex.context.pop(o)
+        self.ownerDocument.context.pop(o)
         return [o]
 
 class BeginMath(Command):
@@ -56,7 +56,7 @@ class BeginMath(Command):
     def invoke(self, tex):
         o = math()
         o.macroMode = Command.MODE_BEGIN
-        tex.context.push(o)
+        self.ownerDocument.context.push(o)
         return [o]
 
 class EndMath(Command):
@@ -64,7 +64,7 @@ class EndMath(Command):
     def invoke(self, tex):
         o = math()
         o.macroMode = Command.MODE_END
-        tex.context.pop(o)
+        self.ownerDocument.context.pop(o)
         return [o]
 
 class ensuremath(Command):

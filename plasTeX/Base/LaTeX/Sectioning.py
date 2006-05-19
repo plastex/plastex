@@ -97,18 +97,19 @@ class SectionUtils(object):
     @cachedproperty
     def tableofcontents(self):
         """ Return a toble of contents object limited to toc-depth """
+        tocdepth = self.config['document']['toc-depth']
+
         # Bail out if they don't want a ToC
-        if self.config['document']['toc-depth'] < 1:
+        if tocdepth < 1:
             return []
 
         # Include sections that don't create files in the ToC
         if self.config['document']['toc-non-files']:
-            return [TableOfContents(x, self.config['document']['toc-depth']) 
-                       for x in self.subsections]
+            return [TableOfContents(x, tocdepth) for x in self.subsections]
 
         # Only include sections that create files in the ToC
-        return [TableOfContents(x, self.config['document']['toc-depth']) 
-                   for x in self.subsections if x.filename]
+        return [TableOfContents(x, tocdepth) for x in self.subsections 
+                                             if x.filename]
 
     @cachedproperty
     def allSections(self):
@@ -252,14 +253,20 @@ class StartSection(Command, SectionUtils):
 
     def digest(self, tokens):
         # Absorb the tokens that belong to us
+        text = []
         for item in tokens:
+            if item.nodeType == Command.TEXT_NODE:
+                text.append(item)
+                continue
             if item.level <= self.level:
                 tokens.push(item)
                 break
             if item.nodeType == Command.ELEMENT_NODE:
                 item.parentNode = self
                 item.digest(tokens)
+            self.appendText(text, self.ownerDocument.charsubs)
             self.appendChild(item)
+        self.appendText(text, self.ownerDocument.charsubs)
         self.paragraphs()
 
 

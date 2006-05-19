@@ -1,35 +1,26 @@
-
-Since this package is still in early development, there is a lot to do
-just for basic functionality.
-
 Parsing
 -------
-- Finish DOM methods
-- XPath
-- Clean up \def parsing and expanding
-- Convert strings to nodes
-- Write parsers for all LaTeX commands
-- Develop a good LaTeX package API (LaTeX package -> Python package?)
-- Create a LaTeX Document similar to a DOM Document 
-- Clean up table object builder
-- Improve CSS style support
+- Performance, performance, performance
+
+Document Object
+---------------
+- XPath (?)
+- Move context to document instead of TeX
+- Pickling
 
 Rendering
 ---------
-- Figure out how to attach a renderer to the document
 - Update SimpleTAL (see if it can be pulled out completely)
-- Counters and labels
-- ToCs
-- Indexes
-- Bibliography
+- More themes
 
-Testing
+General
 -------
-- Unit tests are still fairly sparse
-- Automate unit tests
-- No regression tests
+- Indexes
+- Logging needs to be entirely reworked
+- Multiple renderers for one parse step
 
-UI
---
-- Develop full set of options
-- Develop config file for options
+Configuration
+-------------
+- Merging of config files and command-line options
+- Renderer specific config files
+- Theme specific config files

@@ -8,11 +8,11 @@ This module contains a plasTeX renderer that uses Zope Page Templates
 
 """
 
-import sys, os, re, codecs, plasTeX
+import sys, os, re, codecs, plasTeX, shutil
 from plasTeX.Renderers import Renderer as BaseRenderer
-from plasTeX.simpletal import simpleTAL, simpleTALES
-from plasTeX.simpletal.simpleTALES import Context as TALContext
-from plasTeX.simpletal.simpleTALUtils import FastStringOutput as StringIO
+from simpletal import simpleTAL, simpleTALES
+from simpletal.simpleTALES import Context as TALContext
+from simpletal.simpleTALUtils import FastStringOutput as StringIO
 
 log = plasTeX.Logging.getLogger()
 
@@ -91,6 +91,32 @@ simpleTAL.XMLTemplate.__call__ = _render
 htmltemplate = simpleTAL.compileHTMLTemplate
 xmltemplate = simpleTAL.compileXMLTemplate
 
+
+def copytree(src, dest, symlink=None):
+    """ 
+    This is the same as shutil.copytree, but doesn't error out if the 
+    directories already exist.
+
+    """
+    for root, dirs, files in os.walk(src, True):
+        for d in dirs:
+            srcpath = os.path.join(root, d)
+            destpath = os.path.join(dest, root, d)
+            if symlink and os.path.islink(srcpath):
+                os.symlink(os.readlink(srcpath), destpath)
+            elif not os.path.isdir(destpath):
+                os.makedirs(destpath)
+                shutil.copymode(srcpath, destpath)
+                shutil.copystat(srcpath, destpath)
+        for f in files:
+            srcpath = os.path.join(root, f)
+            destpath = os.path.join(dest, root, f)
+            if symlink and os.path.islink(srcpath):
+                os.symlink(os.readlink(srcpath), destpath)
+            else:
+                shutil.copy2(srcpath, destpath)
+
+
 class ZPT(BaseRenderer):
     """ Renderer for XHTML documents """
 
@@ -112,12 +138,15 @@ class ZPT(BaseRenderer):
         node = node.replace('>', '&gt;')
         return node
 
-    def initialize(self):
+    def render(self, document):
         """ Load and compile page templates """
+        themename = document.userdata['config']['general']['theme']
+
         # Load templates from renderer directory and parent 
         # renderer directories
         sup = list(type(self).__mro__)
         sup.reverse()
+        themes = []
         for cls in sup:
             if cls is BaseRenderer or cls is object or cls is dict:
                 continue
@@ -125,11 +154,40 @@ class ZPT(BaseRenderer):
             log.info('Importing templates from %s' % cwd)
             self.importDirectory(cwd)
 
+            # Store theme location
+            themes.append(os.path.join(cwd, 'Themes', themename))
+
             # Load templates configured by the environment variable
             templates = os.environ.get('%sTEMPLATES' % cls.__name__,'')
             for path in [x.strip() for x in templates.split(':') if x.strip()]:
                 log.info('Importing templates from %s' % path)
                 self.importDirectory(path)
+                themes.append(os.path.join(path, 'Themes', themename))
+
+        # Load only one theme
+        for theme in reversed(themes):
+            if os.path.isdir(theme):
+                log.info('Importing templates from %s' % theme)
+                self.importDirectory(theme)
+
+                if document.userdata['config']['general']['copy-theme-extras']:
+                    # Copy all theme extras
+                    cwd = os.getcwd()
+                    os.chdir(theme)
+                    for item in os.listdir('.'):
+                        if os.path.isdir(item):
+                            if not os.path.isdir(os.path.join(cwd,item)):
+                                os.makedirs(os.path.join(cwd,item))
+                            copytree(item, cwd, True)
+                        elif os.path.splitext(item)[-1].lower() not in \
+                                 ['.html','.htm','.zpt','.zpts',
+                                  '.xml','.xhtml','.xhtm']:
+                            shutil.copy(item, os.path.join(cwd,item))
+                    os.chdir(cwd)
+
+                break
+
+        BaseRenderer.render(self, document)
 
     def importDirectory(self, templatedir):
         """ 
@@ -153,30 +211,30 @@ class ZPT(BaseRenderer):
 
         """
         # Create a list for resolving aliases
-        self.aliases = []
+        self.aliases = {}
 
         if templatedir and os.path.isdir(templatedir):
             files = os.listdir(templatedir)
 
             # Compile multi-zpt files first
-            for file in files:
-                ext = os.path.splitext(file)[-1]
-                file = os.path.join(templatedir, file)
+            for f in files:
+                ext = os.path.splitext(f)[-1]
+                f = os.path.join(templatedir, f)
 
-                if not os.path.isfile(file):
+                if not os.path.isfile(f):
                     continue
 
                 # Multi-zpt files
                 if ext.lower() == '.zpts':
-                    self.parseTemplates(file)
+                    self.parseTemplates(f)
 
             # Now compile macros in individual files.  These have
             # a higher precedence than macros found in multi-zpt files.
-            for file in files:
-                basename, ext = os.path.splitext(file)
-                file = os.path.join(templatedir, file)
+            for f in files:
+                basename, ext = os.path.splitext(f)
+                f = os.path.join(templatedir, f)
 
-                if not os.path.isfile(file):
+                if not os.path.isfile(f):
                     continue
 
                 options = {'name':basename}
@@ -187,11 +245,11 @@ class ZPT(BaseRenderer):
                 else:
                     continue
 
-                self.parseTemplates(file, options)                
+                self.parseTemplates(f, options)                
 
         if self.aliases:
            log.warning('The following aliases were unresolved: %s' 
-                       % ', '.join(self.aliases)) 
+                       % ', '.join(self.aliases.keys())) 
 
     def setTemplate(self, template, options):
         """ 
@@ -215,16 +273,19 @@ class ZPT(BaseRenderer):
         # If an alias was specified, link the names to the 
         # already specified template.
         if 'alias' in options:
-            self.aliases.append(options['alias'].strip())
-            for i in range(len(self.aliases)-1, -1, -1):
-                if self.aliases[i] in self:
-                    for name in names:
-                        self[name] = self[self.aliases[i]]
-                    self.aliases.pop(i)
-
+            alias = options['alias'].strip()
+            for name in names:
+                self.aliases[alias] = name
             if ''.join(template).strip():
                 log.warning('Both an alias and a template were specified for: %s' % ', '.join(names))
 
+        # Resolve remaining aliases
+        for key, value in self.aliases.items():
+            if value in self:
+                self[key] = self[value]
+            self.aliases.pop(key)
+
+        if 'alias' in options:
             return
 
         # Compile template and add it to the renderer
@@ -256,35 +317,39 @@ class ZPT(BaseRenderer):
         """
         template = []
         options = options.copy()
-        file = open(filename, 'r')
-        for i, line in enumerate(file):
-            # Found a meta-data command
-            if re.match(r'\w+:', line):
+        if not options:
+            f = open(filename, 'r')
+            for i, line in enumerate(f):
+                # Found a meta-data command
+                if re.match(r'\w+:', line):
+    
+                    # Purge any awaiting templates
+                    if template:
+                        try:
+                            self.setTemplate(''.join(template), options)
+                        except ValueError, msg:
+                            print 'ERROR: %s at line %s in file %s' % (msg, i, filename)
+                        options.clear()
+                        template = []
+    
+                    # Done purging previous template, start a new one
+                    name, value = line.split(':', 1)
+                    name = name.strip()
+                    value = value.rstrip()
+                    while value.endswith('\\'):
+                        value = value[:-1] + ' '
+                        for line in f:
+                            value += line.rstrip()
+                            break
+    
+                    options[name] = re.sub(r'\s+', r' ', value.strip())
+                    continue
+                
+                template.append(line)
 
-                # Purge any awaiting templates
-                if template:
-                    try:
-                        self.setTemplate(''.join(template), options)
-                    except ValueError, msg:
-                        print 'ERROR: %s at line %s in file %s' % (msg, i, filename)
-                    options.clear()
-                    template = []
-
-                # Done purging previous template, start a new one
-                name, value = line.split(':', 1)
-                name = name.strip()
-                value = value.rstrip()
-                while value.endswith('\\'):
-                    value = value[:-1] + ' '
-                    for line in file:
-                        value += line.rstrip()
-                        break
-
-                options[name] = re.sub(r'\s+', r' ', value.strip())
-                continue
-            
-            template.append(line)
-
+        else:
+            template = open(filename, 'r').readlines()
+    
         # Purge any awaiting templates
         if template:
             try:

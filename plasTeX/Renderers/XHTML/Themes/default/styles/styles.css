@@ -1,0 +1,131 @@
+.sasop {
+    font-weight: bold;
+    font-family: "Lucida Grande", Arial, Helvetica, sans-serif;
+    font-size: 105%;
+}
+
+.sasstmts, .caption {
+    font-family: "Lucida Grande", Arial, Helvetica, sans-serif;
+}
+
+.sasstmts p {margin-bottom: 0px}
+
+.sasstmts p:first-child {text-indent: -2em}
+
+.reference p {margin-bottom: 1em}
+
+.bibliography {
+    list-style-type: none;
+    margin-left: 2em;
+}
+.bibliography p:first-child {text-indent: -2em}
+
+.sasstmt {
+    margin-left: 1em;
+    /* padding-bottom: 1em; */
+}
+.sasstmt td {
+    vertical-align: top;
+}
+.sasstmt .statement {
+    font-family: "Lucida Grande", Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: small;
+}
+.sasstmt .options {
+    font-family: "Lucida Grande", Arial, Helvetica, sans-serif;
+    font-style: italic;
+    font-weight: medium;
+    font-size: small;
+}
+
+.ssiten {
+    font-weight: medium;
+    font-size: small;
+    font-family: "Lucida Grande", Arial, Helvetica, sans-serif;
+    font-style: italic;
+}
+
+.ssbten {
+    font-weight: bold;
+    font-size: small; 
+    font-family: "Lucida Grande", Arial, Helvetica, sans-serif;
+    font-style: normal;
+}
+
+.ssieleven {
+    font-family: "Lucida Grande", Arial, Helvetica, sans-serif;
+    font-style: italic;
+    font-weight: medium;
+    font-size: small;
+}
+
+.ssbeleven {
+    font-family: "Lucida Grande", Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: small;
+    font-style: normal;
+}
+
+.ssbifourteen {
+    font-family: "Lucida Grande", Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: large;
+    font-style: italic;
+}
+
+.hv, .hvs {
+    font-family: "Lucida Grande", Arial, Helvetica, sans-serif;
+    font-size: small;
+}
+
+pre {
+    color: #004000;
+    width: 100%;
+    font-size: 90%;
+    background-color: #f0f0f0;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border: 1px #aaffaa solid;
+    font-family: Monaco, "Courier New", Courier, fixed;
+    padding-left: 4ex;
+}
+
+.sasout .output {
+    width: 100%;
+    background-color: #f0f0f0;
+    margin-top: 5px;
+    padding-top: 5px;
+    border: 1px #aaffaa solid;
+}
+
+.breadcrumbs {
+    font-family: "Lucida Grande", Arial, Helvetica, sans-serif;
+    font-size: small;
+    font-style: italic;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Lucida Grande", Arial, Helvetica, sans-serif;
+}
+
+.navigation td          { background-color: #669933;
+                          color: #ffffcc;
+                          font-weight: bold;
+                          font-family: avantgarde, sans-serif;
+                          font-size: 110% }
+
+.navigation img { border-width: 0px }
+.navtitle { width: 100% }
+
+.contents ul {
+    font-family: "Lucida Grande", Arial, Helvetica, sans-serif;
+    list-style-type: none;
+    font-weight: bold;
+}
+.contents ul ul {
+    font-size: small;
+    font-weight: normal;
+}
+
+hr {color: black}

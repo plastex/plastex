@@ -2,7 +2,7 @@
 
 import string, re
 from DOM import Element, Text, Node, DocumentFragment, Document
-from Tokenizer import Token, BeginGroup, EndGroup
+from Tokenizer import Token, BeginGroup, EndGroup, Other
 from plasTeX import Logging
 
 log = Logging.getLogger()
@@ -36,7 +36,7 @@ def ismacro(o):
 
 def issection(o): 
     """ Is the given object a section? """
-    return level > Node.DOCUMENT_LEVEL and level < Node.ENVIRONMENT_LEVEL 
+    return o.level >= Node.DOCUMENT_LEVEL and o.level < Node.END_SECTIONS_LEVEL 
 
 def macroname(o):
      """ Return the macro name of the given object """
@@ -149,7 +149,7 @@ class Macro(Element):
                 return getattr(self, '@fulltitle')
             except AttributeError:
                 if self.ref is not None:
-                    fulltitle = TeXFragment()
+                    fulltitle = self.ownerDocument.createDocumentFragment()
                     fulltitle.extend([self.ref, ' ', self.title])
                 else:
                     fulltitle = self.title
@@ -175,7 +175,7 @@ class Macro(Element):
                         return toc
                 except (KeyError, AttributeError):
                     pass
-            raise AttributeError, 'could not find attribute "tocentry"'
+            return self.title
         def fset(self, value):
             setattr(self, '@tocentry', value)
         return locals()
@@ -185,15 +185,18 @@ class Macro(Element):
         """ Retrieve title including the section number """
         def fget(self):
             try:
-                return getattr(self, '@fulltocentry')
-            except AttributeError:
-                if self.ref is not None:
-                    fulltocentry = TeXFragment()
-                    fulltocentry.extend([self.ref, ' ', self.tocentry])
-                else:
-                    fulltocentry = self.tocentry
-                setattr(self, '@fulltocentry', fulltocentry)
-                return fulltocentry
+                try:
+                    return getattr(self, '@fulltocentry')
+                except AttributeError:
+                    if self.ref is not None:
+                        fulltocentry = self.ownerDocument.createDocumentFragment()
+                        fulltocentry.extend([self.ref, ' ', self.tocentry])
+                    else:
+                        fulltocentry = self.tocentry
+                    setattr(self, '@fulltocentry', fulltocentry)
+                    return fulltocentry
+            except Exception, msg:
+                return self.title
         def fset(self, value):
             setattr(self, '@fulltocentry', value)
         return locals()
@@ -243,10 +246,17 @@ class Macro(Element):
         return locals()
     id = property(**id())
 
+    def expand(self, tex):
+        """ Fully expand the macro """
+        result = self.invoke(tex)
+        if result is None:
+            return self
+        return tex.expandtokens(result)
+
     def invoke(self, tex):
         # Just pop the context if this is a \end token
         if self.macroMode == Macro.MODE_END:
-            tex.context.pop(self)
+            self.ownerDocument.context.pop(self)
             # If a unicode value is set, just return that
             if self.unicode is not None:
                 return tex.texttokens(self.unicode)
@@ -256,7 +266,7 @@ class Macro(Element):
         # closed automatically (i.e. \section, \item, etc.), just 
         # push the new context and return the instance.
         elif self.macroMode == Macro.MODE_BEGIN:
-            tex.context.push(self)
+            self.ownerDocument.context.push(self)
             self.parse(tex)
             # If a unicode value is set, just return that
             if self.unicode is not None:
@@ -268,9 +278,9 @@ class Macro(Element):
         # the context stack.  We push an empty context so that the
         # `self' token doesn't get put into the output stream twice
         # (once here and once with the pop).
-        tex.context.push(self)
+        self.ownerDocument.context.push(self)
         self.parse(tex)
-        tex.context.pop(self)
+        self.ownerDocument.context.pop(self)
 
         # If a unicode value is set, just return that
         if self.unicode is not None:
@@ -442,10 +452,10 @@ class Macro(Element):
         """
         if self.counter:
             try:
-                tex.context.counters[self.counter].stepcounter()
+                self.ownerDocument.context.counters[self.counter].stepcounter()
             except KeyError:
                 log.warning('Could not find counter "%s"', self.counter)
-                tex.context.newcounter(self.counter,initial=1)
+                self.ownerDocument.context.newcounter(self.counter,initial=1)
 
     def refstepcounter(self, tex):
         """
@@ -459,7 +469,7 @@ class Macro(Element):
 
         """
         if self.counter:
-            tex.context.currentlabel = self
+            self.ownerDocument.context.currentlabel = self
             self.stepcounter(tex)
 
     def postparse(self, tex):
@@ -474,7 +484,7 @@ class Macro(Element):
             try: secnumdepth = self.config['document']['sec-num-depth']
             except: secnumdepth = 10
             if secnumdepth >= self.level:
-                self.ref = tex.expandtokens(tex.context['the'+self.counter].invoke(tex))
+                self.ref = tex.expandtokens(self.ownerDocument.createElement('the'+self.counter).invoke(tex))
 
     def arguments(self):
         """ 
@@ -616,7 +626,7 @@ class Macro(Element):
             node = node.parentNode
         return
         
-    def paragraphs(self):
+    def paragraphs(self, force=True):
         """
         Group content into paragraphs
 
@@ -626,63 +636,52 @@ class Macro(Element):
         ol, ul, etc.) inside paragraphs.  This will result in invalid
         HTML, but it isn't likely to be noticed in a browser.
 
+        Keyword Arguments:
+        force -- force all content to be grouped into paragraphs even
+            if there are no paragraps already present
+
         """
-        parclass = None
-        contentstart = None
-        currentpar = None
-    
-        # Walk through this list backwards, it's just easier...
-        for i in range(len(self)-1, -1, -1):
-    
-            item = self[i]
-    
+        parname = None
+        for item in self:
             if item.level == Node.PAR_LEVEL:
-    
-                if parclass is None:
-                    parclass = type(item)
-    
-                # We don't have a paragraph yet, but we have some
-                # content that belongs in a paragraph, so make one...
-                if currentpar is None and contentstart is not None:
-                    currentpar = parclass()
-                    self.insert(contentstart+1, currentpar)
-    
-                # We don't have any paragraph content yet
-                if contentstart is None:
-                    currentpar = item
-                    continue
+                parname = item.nodeName
+                break
 
-                # Move contents from self into the paragraph
-                for j in range(contentstart, i, -1):
-                    currentpar.insert(0, self.pop(j))
+        # No paragraphs, and we aren't forcing paragraphs...
+        if parname is None and not force:
+            return
 
-                contentstart = None
-                currentpar = item
+        if parname is None:
+            parname = 'par'
 
-            # Found paragraph content
-            elif item.level > Node.PAR_LEVEL and contentstart is None:
-                contentstart = i
-    
-        # We hit the end of the content, so it needs to be absorbed
-        if contentstart is not None and currentpar is not None:
-            for j in range(contentstart, -1, -1):
-                currentpar.insert(0, self.pop(j))
+        # Group content into paragraphs
+        par = self.ownerDocument.createElement(parname)
+        par.parentNode = self
+        newnodes = [par]
+        while self:
+            item = self.pop(0)
+            if item.level == Node.PAR_LEVEL:
+                newnodes.append(item)
+                continue
+            if item.level < Node.PAR_LEVEL:
+                newnodes.append(item)
+                break
+            newnodes[-1].append(item)
 
-        try:
-            first = self[0]
-            if first.level == Node.PAR_LEVEL:
-                whitespace = True
-                for item in first:
-                    if item.isElementContentWhitespace:
-                        continue
-                    whitespace = False
-                    break
-                if whitespace:
-                    self.pop(0)
-        except IndexError: pass 
+        # Insert nodes into self
+        i = 0
+        for item in newnodes:
+            self.insert(i, item)
+            i += 1
 
-        for i in self:
-            i.parentNode = self
+        # Filter out any empty paragraphs
+        for i in range(len(self)-1, -1, -1):
+            item = self[i]
+            if item.level == Node.PAR_LEVEL:
+                if len(item) == 0:
+                    self.pop(i)
+                elif len(item) == 1 and item[0].isElementContentWhitespace:
+                    self.pop(i)
 
 
 class TeXFragment(DocumentFragment):
@@ -693,13 +692,37 @@ class TeXFragment(DocumentFragment):
 
 class TeXDocument(Document):
     """ TeX Document node """
+    documentFragmentClass = TeXFragment
+
+    # Character sequences that should be replaced by unicode
+    charsubs = [
+        ('``', unichr(8220)),
+        ("''", unichr(8221)),
+        ('`',  unichr(8216)),
+        ("'",  unichr(8217)),
+        ('---', unichr(8212)),
+        ('--', unichr(8211)),
+    ]
+
+    def __init__(self, *args, **kwargs):
+        import Context
+        Document.__init__(self, *args, **kwargs)
+        self.context = Context.Context(load=True)
+
+    def createElement(self, name):
+        elem = self.context[name]()
+        elem.parentNode = None
+        elem.ownerDocument = self
+        elem.contextDepth = 1000
+        return elem
+
     @property
     def preamble(self):
         """
         Return the nodes in the document that correspond to the preamble
 
         """
-        output = TeXFragment()
+        output = self.createDocumentFragment()
         for item in self:
             if item.level == Macro.DOCUMENT_LEVEL:
                 break
@@ -720,13 +743,13 @@ class Environment(Macro):
 
     def invoke(self, tex):
         if self.macroMode == Macro.MODE_END:
-            tex.context.pop(self)
+            self.ownerDocument.context.pop(self)
             # If a unicode value is set, just return that
             if self.unicode is not None:
                 return tex.texttokens(self.unicode)
             return
 
-        tex.context.push(self)
+        self.ownerDocument.context.push(self)
         self.parse(tex)
 
         # If a unicode value is set, just return that
@@ -741,9 +764,14 @@ class Environment(Macro):
             return
         # Absorb the tokens that belong to us
         dopars = False
+        text = []
         for item in tokens:
+            if item.nodeType == Node.TEXT_NODE:
+                text.append(item)
+                continue
             # Make sure that we know to group paragraphs if one is found
             if item.level == Node.PAR_LEVEL:
+                self.appendText(text)
                 self.appendChild(item)
                 dopars = True
                 continue
@@ -761,7 +789,9 @@ class Environment(Macro):
             if item.contextDepth < self.contextDepth:
                 tokens.push(item)
                 break
+            self.appendText(text)
             self.appendChild(item)
+        self.appendText(text)
         if dopars:
             self.paragraphs()
 
@@ -866,7 +896,7 @@ class NewCommand(Macro):
 
     def invoke(self, tex):
         if self.macroMode == Macro.MODE_END:
-            return tex.context['end'+self.tagName].invoke(tex)            
+            return self.ownerDocument.createElement('end'+self.tagName).invoke(tex)            
 
         params = [None]
 
@@ -916,7 +946,7 @@ class Definition(Macro):
                         inparam = True
 
                     # Handle #{ case here
-                    elif t.catcode == Token.CC_BGROUP:
+                    elif a.catcode == Token.CC_BGROUP:
                         param = []
                         for t in tex.itertokens():
                             if t.catcode == Token.CC_BGROUP:
@@ -967,9 +997,9 @@ class number(int):
             return v.__count__()
         return int.__new__(cls, v)
 
+    @property
     def source(self):
         return unicode(self)
-    source = property(source)
 
 class count(number): pass
 
@@ -1181,7 +1211,7 @@ class ParameterCommand(Command):
         return type(self).value.source
 
     @classmethod
-    def new(self, *args, **kwargs):
+    def new(cls, *args, **kwargs):
         return count(*args, **kwargs)
 
 class RegisterCommand(ParameterCommand): pass
@@ -1199,7 +1229,7 @@ class DimenCommand(RegisterCommand):
         type(self).value = dimen(type(self).value + len)
 
     @classmethod
-    def new(self, *args, **kwargs):
+    def new(cls, *args, **kwargs):
         return dimen(*args, **kwargs)
 
 class MuDimenCommand(RegisterCommand):
@@ -1213,7 +1243,7 @@ class MuDimenCommand(RegisterCommand):
         type(self).value = mudimen(type(self).value + len)
 
     @classmethod
-    def new(self, *args, **kwargs):
+    def new(cls, *args, **kwargs):
         return mudimen(*args, **kwargs)
 
 class GlueCommand(RegisterCommand):
@@ -1227,7 +1257,7 @@ class GlueCommand(RegisterCommand):
         type(self).value = glue(type(self).value + len)
 
     @classmethod
-    def new(self, *args, **kwargs):
+    def new(cls, *args, **kwargs):
         return glue(*args, **kwargs)
 
 class MuGlueCommand(RegisterCommand):
@@ -1241,7 +1271,7 @@ class MuGlueCommand(RegisterCommand):
         type(self).value = muglue(type(self).value + len)
 
     @classmethod
-    def new(self, *args, **kwargs):
+    def new(cls, *args, **kwargs):
         return muglue(*args, **kwargs)
 
 
@@ -1356,14 +1386,14 @@ class TheCounter(Command):
 
             # If there is a reference to another \\thecounter, invoke it
             if name.startswith('the'):
-                return u''.join(tex.context[name].invoke(tex))
+                return u''.join(self.ownerDocument.createElement(name).invoke(tex))
 
             # Get formatted value of the requested counter
             format = m.group(2)
             if not format:
                 format = 'arabic'
 
-            return getattr(tex.context.counters[name], format)
+            return getattr(self.ownerDocument.context.counters[name], format)
 
         format = re.sub(r'\$(\w+)', r'${\1}', self.format)
         if self.format is None:

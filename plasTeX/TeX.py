@@ -17,9 +17,8 @@ Example:
 """
 
 import string, os, traceback, sys, plasTeX, codecs, subprocess
-from Context import Context 
 from Tokenizer import Tokenizer, Token, EscapeSequence, Other
-from plasTeX import TeXFragment, TeXDocument, Node
+from plasTeX import TeXDocument
 from plasTeX import ParameterCommand, Macro
 from plasTeX import glue, muglue, mudimen, dimen, number
 from plasTeX.Logging import getLogger, disableLogging
@@ -35,7 +34,6 @@ _type = type
 
 class bufferediter(object):
     """ Buffered iterator """
-    __slots__ = ['_next','_buffer']
     def __init__(self, obj):
         self._next = iter(obj).next
         self._buffer = []
@@ -48,19 +46,7 @@ class bufferediter(object):
     def push(self, value):
         self._buffer.append(value)
 
-
-class EndTokens(Token):
-    """
-    Demarcates the end of a stream of tokens to be processed
-
-    When this token is reached, the TeX processor should throw
-    a StopIteration exception.  This is used to process short circuit
-    sub-streams of tokens.  These tokens should never make it to
-    the output stream.
-
-    """
-
-class EndContext(plasTeX.Macro):
+class ArgumentContext(plasTeX.Macro):
     pass
 
 class TeX(object):
@@ -71,12 +57,12 @@ class TeX(object):
     parsing, invoking of macros, etc.
 
     """
+    documentClass = TeXDocument
 
-    def __init__(self, source=None):
-        self.context = Context(load=True)
-#       self.context.loadBaseMacros()
-
-        self.ownerDocument = None
+    def __init__(self, ownerDocument=None):
+        if ownerDocument is None:
+            ownerDocument = self.documentClass()
+        self.ownerDocument = ownerDocument
 
         # Input source stack
         self.inputs = []
@@ -120,11 +106,6 @@ class TeX(object):
 
         # Starting parsing if a source was given
         self.currentinput = (0,0)
-        self.input(source)
-
-    @property
-    def config(self):
-        return self.ownerDocument.userdata['config']
 
     def input(self, source):
         """
@@ -137,9 +118,10 @@ class TeX(object):
         """
         if source is None:
             return
-        t = Tokenizer(source, self.context)
+        t = Tokenizer(source, self.ownerDocument.context)
         self.inputs.append((t, iter(t)))
         self.currentinput = self.inputs[-1]
+        return self
 
     def endinput(self):
         """ 
@@ -162,8 +144,10 @@ class TeX(object):
         options -- options passed to the macro which is loading the package
 
         """
+        config = self.ownerDocument.userdata['config']
+
         try:
-            path = self.kpsewhich(file, self.config)
+            path = self.kpsewhich(file, config)
         except OSError, msg:
             log.warning(msg)
             return False
@@ -172,15 +156,16 @@ class TeX(object):
         status.info(' ( %s ' % path)
 
         try:
-            encoding = self.config['files']['input-encoding']
-            file = codecs.open(path, 'r', encoding)
+            encoding = config['files']['input-encoding']
+            f = codecs.open(path, 'r', encoding)
             # Put in a flag so that we can parse past our own
             # package tokens and throw them away, we don't want them in
             # the output document.
             flag = plasTeX.Command()
             self.pushtoken(flag)
-            self.input(file)
-            self.context.packages[file] = options or {}
+            encoding = config['files']['input-encoding']
+            self.input(f)
+            self.ownerDocument.context.packages[file] = options or {}
             for tok in self:
                 if tok is flag:
                     break
@@ -209,8 +194,8 @@ class TeX(object):
     def lineinfo(self):
         return ' in %s on line %s' % (self.filename, self.linenumber)
 
-    @classmethod
-    def disableLogging(cls):
+    @staticmethod
+    def disableLogging():
         """ Turn off logging """
         disableLogging()
 
@@ -224,7 +209,7 @@ class TeX(object):
         """
         # Create locals before going into generator loop
         inputs = self.inputs
-        context = self.context
+        context = self.ownerDocument.context
         endinput = self.endinput
         ownerDocument = self.ownerDocument
 
@@ -233,11 +218,10 @@ class TeX(object):
             try:
                 while 1:
                     t = inputs[-1][-1].next()
-                    # Magical EndTokens flag telling us to bail out
-                    if t is EndTokens:
-                        return
                     # Save context depth of each token for use in digestion
                     t.contextDepth = context.depth
+                    t.ownerDocument = ownerDocument
+                    t.parentNode = None
                     yield t
 
             except StopIteration:
@@ -259,8 +243,8 @@ class TeX(object):
         next = self.itertokens().next
         pushtoken = self.pushtoken
         pushtokens = self.pushtokens
-        context = self.context
-        ELEMENT_NODE = Node.ELEMENT_NODE
+        createElement = self.ownerDocument.createElement
+        ELEMENT_NODE = Macro.ELEMENT_NODE
 
         while 1:
             # Get the next token
@@ -282,8 +266,9 @@ class TeX(object):
                     # automatically here if `None' is received.  If you
                     # really don't want anything in the output stream,
                     # just return `[ ]'.
-                    obj = context[token.macroName]
-                    obj.ownerDocument = self.ownerDocument
+                    obj = createElement(token.macroName)
+                    obj.contextDepth = token.contextDepth
+                    obj.parentNode = token.parentNode
                     tokens = obj.invoke(self)
                     if tokens is None:
 #                       log.info('expanding %s %s', token.macroName, obj)
@@ -303,6 +288,29 @@ class TeX(object):
 
             yield token
 
+    def createSubProcess(self):
+        """
+        Create a TeX instance using the same document context
+
+        """
+        # Push a new context for cleanup later
+        tok = ArgumentContext()
+        self.ownerDocument.context.push(tok)
+        tex = type(self)(ownerDocument=self.ownerDocument)
+        tex._endcontext = tok
+        return tex
+
+    def endSubProcess(self):
+        """
+        End the context of a sub-interpreter
+
+        See Also:
+        createSubProcess()
+
+        """
+        if hasattr(self, '_endcontext'):
+            self.ownerDocument.context.pop(self._endcontext)
+
     def expandtokens(self, tokens, normalize=False):
         """
         Expand a list of unexpanded tokens
@@ -317,18 +325,20 @@ class TeX(object):
         `TeXFragment' populated with expanded tokens
 
         """
-        # EndTokens is a special token that tells the token iterator
-        # to stop the iteration
-        self.pushtoken(EndTokens)
-        self.pushtokens(tokens)
+        tex = self.createSubProcess()
 
-        tok = EndContext()
-        self.context.push(tok)
-        out = self.parse(TeXFragment())
-        self.context.pop(tok)
+        # Push the tokens and expand them
+        tex.pushtokens(tokens)
+        out = tex.parse(tex.ownerDocument.createDocumentFragment())
+
+        # Pop all of our nested contexts off
+        tex.endSubProcess()
+
         if normalize:
-            out.normalize()
+            out.normalize(getattr(tex.ownerDocument, 'charsubs', []))
+
         return out
+
 
     def parse(self, output=None):
         """ 
@@ -345,13 +355,7 @@ class TeX(object):
         tokens = bufferediter(self)
 
         if output is None:
-            output = TeXDocument()
-
-        if output.nodeType == Macro.DOCUMENT_NODE:
-            self.ownerDocument = output
-
-        if self.ownerDocument:
-            self.ownerDocument.context = self.context
+            output = self.ownerDocument
 
         try:
             for item in tokens:
@@ -364,9 +368,6 @@ class TeX(object):
                msg = ' (%s)' % str(msg).strip()
             log.error('An error occurred while building the document object%s%s', self.lineinfo, msg)
             raise
-
-        if output.nodeType == Macro.DOCUMENT_NODE:
-            output.normalize(self.context.charsubs)
 
         return output
 
@@ -454,16 +455,18 @@ class TeX(object):
             if t.nodeType == Macro.ELEMENT_NODE:
                 if len(tokens) == 1:
                     return tokens.pop()
-                t = TeXFragment()
+                t = self.ownerDocument.createDocumentFragment()
                 t.extend(tokens)
-                t.normalize()
+                t.normalize(getattr(self.ownerDocument, 'charsubs', []))
                 return t
             if t.catcode not in texttokens:
                 if len(tokens) == 1:
                     return tokens.pop()
-                t = TeXFragment()
+                t = self.ownerDocument.createDocumentFragment()
+                t.ownerDocument = self.ownerDocument
+                t.parentNode = None
                 t.extend(tokens)
-                t.normalize()
+                t.normalize(getattr(self.ownerDocument, 'charsubs', []))
                 return t
 
         return (u''.join([x for x in tokens 
@@ -573,6 +576,7 @@ class TeX(object):
         for the argument.
 
         """
+
         self.readOptionalSpaces()
 
         # Disable expansion of parameters
@@ -609,7 +613,7 @@ class TeX(object):
                 return tok, tok.source
 
         if type in ['XTok','XToken']:
-            self.context.warnOnUnrecognized = False
+            self.ownerDocument.context.warnOnUnrecognized = False
             for t in self.itertokens():
                 if t.catcode == Token.CC_BGROUP:
                     self.pushtoken(t)
@@ -639,6 +643,16 @@ class TeX(object):
             else: pass
             ParameterCommand.enable()
             return args, self.source(args)
+
+        if type in ['any']:
+            toks = []
+            for t in self.itertokens():
+                if t is None or t == '':
+                    continue
+                if t.catcode == Token.CC_SPACE:
+                    break 
+                toks.append(t)
+            return self.expandtokens(toks), self.source(toks)
 
         if type in ['cs']:
             expanded = False
@@ -675,15 +689,15 @@ class TeX(object):
         # Normalize any document fragments
         if expanded and \
            getattr(res,'nodeType',None) == Macro.DOCUMENT_FRAGMENT_NODE:
-            res.normalize()
+            res.normalize(getattr(self.ownerDocument, 'charsubs', []))
 
         # Re-enable Parameters
         ParameterCommand.enable()
 
         if False and parentNode is not None:
             log.warning('%s %s: %s', parentNode.nodeName, name, source)
-            log.warning('categories: %s', self.context.categories)
-            log.warning('stack: %s', self.context.top)
+            log.warning('categories: %s', self.ownerDocument.context.categories)
+            log.warning('stack: %s', self.ownerDocument.context.top)
 
         return res, source
 
@@ -772,8 +786,6 @@ class TeX(object):
             else:
                 self.pushtoken(t)
                 break
-        else:
-            self.pushtoken(EndTokens)
         return None, ''
 
     def readGrouping(self, chars, expanded=False):
@@ -818,8 +830,6 @@ class TeX(object):
             else:
                 source = self.source(source)
             return toks, source
-        else:
-            self.pushtoken(EndTokens)
         return None, ''
 
     def readInternalType(self, tokens, method):
@@ -943,7 +953,7 @@ class TeX(object):
 
         """
         label = self.castString(tokens, **kwargs)
-        self.context.label(label)
+        self.ownerDocument.context.label(label)
         return label
 
     def castRef(self, tokens, **kwargs):
@@ -963,7 +973,7 @@ class TeX(object):
 
         """
         ref = self.castString(tokens, **kwargs)
-        self.context.ref(kwargs['parentNode'], ref)
+        self.ownerDocument.context.ref(kwargs['parentNode'], ref)
         return ref
         
     def castNumber(self, tokens, **kwargs):
@@ -1238,7 +1248,7 @@ class TeX(object):
         """
         program = 'kpsewhich'
         if config:
-            program = config['programs']['kpsewhich']
+            program = config['general']['kpsewhich']
         output = subprocess.Popen([program, name], 
                               stdout=subprocess.PIPE).communicate()[0].strip()
         if output:
@@ -1263,8 +1273,6 @@ class TeX(object):
                 self.pushtoken(t)
                 break 
             tokens.append(t)
-        else:
-            self.pushtoken(EndTokens)
         return tokens
 
     def readKeyword(self, words, optspace=True):
@@ -1345,7 +1353,7 @@ class TeX(object):
         ParameterCommand.disable()
         sign = self.readOptionalSigns()
         for t in self:
-            if t.nodeType == Node.ELEMENT_NODE and \
+            if t.nodeType == Macro.ELEMENT_NODE and \
                isinstance(t, ParameterCommand):
                 ParameterCommand.enable()
                 return dimen(sign * dimen(t))
@@ -1374,7 +1382,7 @@ class TeX(object):
         ParameterCommand.disable()
         # internal unit
         for t in self:
-            if t.nodeType == Node.ELEMENT_NODE and \
+            if t.nodeType == Macro.ELEMENT_NODE and \
                isinstance(t, ParameterCommand):
                 ParameterCommand.enable()
                 return dimen(t)
@@ -1447,7 +1455,7 @@ class TeX(object):
         """
         output = []
         for t in self:
-            if t.nodeType == Node.ELEMENT_NODE:
+            if t.nodeType == Macro.ELEMENT_NODE:
                 self.pushtoken(t)
                 break 
             if t not in chars:
@@ -1474,7 +1482,7 @@ class TeX(object):
         sign = self.readOptionalSigns()
         for t in self:
             # internal/coerced integers
-            if t.nodeType == Node.ELEMENT_NODE:
+            if t.nodeType == Macro.ELEMENT_NODE:
                 if isinstance(t, ParameterCommand):
                     num = number(sign * number(t))
                 else:
@@ -1484,7 +1492,7 @@ class TeX(object):
             elif t in string.digits:
                 num = number(sign * int(t + self.readSequence(string.digits)))
                 for t in self:
-                    if t.nodeType == Node.ELEMENT_NODE and \
+                    if t.nodeType == Macro.ELEMENT_NODE and \
                        isinstance(t, ParameterCommand):
                         num = number(num * number(t))
                     else:
@@ -1516,7 +1524,7 @@ class TeX(object):
         sign = self.readOptionalSigns()
         # internal/coerced glue
         for t in self:
-            if t.nodeType == Node.ELEMENT_NODE and \
+            if t.nodeType == Macro.ELEMENT_NODE and \
                isinstance(t, ParameterCommand):
                 ParameterCommand.enable()
                 return glue(sign * glue(t))
@@ -1546,7 +1554,7 @@ class TeX(object):
         sign = self.readOptionalSigns()
         # internal/coerced muglue
         for t in self:
-            if t.nodeType == Node.ELEMENT_NODE and \
+            if t.nodeType == Macro.ELEMENT_NODE and \
                isinstance(t, ParameterCommand):
                 ParameterCommand.enable()
                 return muglue(sign * muglue(t))
@@ -1576,9 +1584,9 @@ class TeX(object):
             return
         self.auxfiles.append(self.jobname)
         try:
-            file = self.kpsewhich(self.jobname+'.aux', self.config)
+            f = self.kpsewhich(self.jobname+'.aux', self.ownerDocument.userdata['config'])
             self.pushtoken(plasTeX.Command())
-            self.input(open(file))
+            self.input(open(f))
             for item in self:
                 if item is plasTeX.Command():
                     break

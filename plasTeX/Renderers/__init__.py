@@ -1,11 +1,16 @@
 #!/usr/bin/env python
 
 import codecs, os
+from plasTeX.Filenames import Filenames
 from plasTeX.DOM import Node
 from plasTeX.Logging import getLogger
 
 log = getLogger()
 status = getLogger('status')
+
+import logging
+logging.getLogger('simpleTAL').setLevel(logging.WARNING)
+logging.getLogger('simpleTALES').setLevel(logging.WARNING)
 
 __all__ = ['Renderer','Renderable']
 
@@ -22,6 +27,8 @@ def mixin(base, mix, overwrite=False):
         base._mixed_ = {}
     mixed = base._mixed_
     for item, value in vars(mix).items():
+        if item in ['__dict__','__module__','__doc__','__weakref__']:
+            continue
         if overwrite or not vars(base).has_key(item):
             old = vars(base).get(item, None)
             setattr(base, item, value)
@@ -80,43 +87,13 @@ class Renderer(dict):
         dict.__init__(self, data)
 
         # Names of generated files
-        self.files = []
+        self.files = {}
 
         # Instantiated at render time
         self.imager = None
 
         # Filename generator
         self.newfilename = None
-
-        self.previous = None
-
-        # Call the initialization hook
-        self.initialize()
-
-    def initialize(self):
-        """ Invoke any setup that needs to be done before rendering """
-        pass
-
-    def loadImager(self, document):
-        """ Load the class responsible for generating images """
-        if not document.userdata['config']['images']['enabled']:
-            from plasTeX.Imagers import Imager
-            self.imager = Imager(document)
-            return
-
-        name = document.userdata['config']['images']['program']
-
-        try: 
-            exec('from plasTeX.Imagers.%s import Imager' % name)
-        except ImportError, msg:
-            log.warning("Could not load imager '%s' because '%s'" % (name, msg))
-            from plasTeX.Imagers import Imager
-        
-        self.imager = Imager(document)
-
-    def unloadImager(self):
-        if self.imager is not None:
-            self.imager.close()
 
     def render(self, document):
         """
@@ -142,36 +119,34 @@ class Renderer(dict):
         Node.renderer = self
 
         # Create a filename generator
-        ns = {'jobname':document.userdata['jobname']}
-        self.newfilename = GeneratorProxy(
-                         filenames(config['files'].get('filename', raw=True), 
-                         charsub=(config['files']['bad-chars'],
-                                  config['files']['bad-chars-sub']), 
-                         namespace=ns), namespace=ns)
+        self.newfilename = Filenames(config['files'].get('filename', raw=True), 
+                                     (config['files']['bad-chars'],
+                                      config['files']['bad-chars-sub']),
+                                     {'jobname':document.userdata['jobname']})
+                      
 
         # Instantiate appropriate imager
-        self.loadImager(document)
+        name = config['images']['converter']
+        try: 
+            exec('from plasTeX.Imagers.%s import Imager' % name)
+        except ImportError, msg:
+            log.warning("Could not load imager '%s' because '%s'" % (name, msg))
+            from plasTeX.Imagers import Imager
 
-        # Add document preamble to image document
-        self.imager.addtopreamble(document.preamble.source)
+        self.imager = Imager(document)
 
         # Invoke the rendering process
-        result = unicode(document)
+        unicode(document)
 
-        # Close imager so it can finish processing
-        self.unloadImager()
+        # Finish rendering images
+        self.imager.close()
 
         # Run any cleanup activities
-        self.cleanup(document, self.files)
-
-        # Must wait until after cleanup to delete the imager
-        self.imager = None
+        self.cleanup(document, self.files.values())
 
         # Remove mixins
         del Node.renderer
         unmix(Node, Renderable)
-
-        #return result
 
     def cleanup(self, doc, files):
         """ Do any post-rending cleanup """
@@ -197,18 +172,11 @@ class Renderer(dict):
             if self.has_key(key):
                 return self[key]
 
-        # Text nodes get the textdefault
-        if ''.join(keys) == '#text':
-            if self.textdefault:
-                return self.textdefault
-            return default
-
         # Other nodes supplied default
-        else:
-            log.warning('Using default renderer for %s' % ', '.join(keys))
-            for key in keys:
-                self[key] = default
-            return default
+        log.warning('Using default renderer for %s' % ', '.join(keys))
+        for key in keys:
+            self[key] = default
+        return default
 
 
 class Renderable(object):
@@ -225,49 +193,60 @@ class Renderable(object):
         Invoke the rendering process on all of the child nodes.
 
         """
+        r = Node.renderer
+
         # If we don't have childNodes, then we're done
         if not self.hasChildNodes():
             return u''
 
-        # Store these away for efficiency
-        r = Node.renderer
-        filename = self.filename
+        if self.filename:
+            status.info(' [ %s ', self.filename)
 
-        if filename:
-            status.info(' [ %s ', filename)
+        # At the very top level, only render the DOCUMENT_LEVEL node
+        if self.nodeType == Node.DOCUMENT_NODE:
+            childNodes = [x for x in self.childNodes 
+                            if x.level == Node.DOCUMENT_LEVEL]
+        else:
+            childNodes = self.childNodes
 
         # Render all child nodes
         s = []
-        for child in self.childNodes:
-            names = []
+        for child in childNodes:
+
+            # Short circuit text nodes
+            if child.nodeType == Node.TEXT_NODE:
+                s.append(r.textdefault(child))
+                continue
+
+            layouts, names = [], []
             nodeName = child.nodeName
+            modifier = None
 
-            # If the child is going to generate a new file, we should 
-            # check for a template that has file wrapper content first.
-            if self.nodeType == Node.ELEMENT_NODE:
-                modifier = None
+            # Does the macro have a modifier (i.e. '*')
+            if child.attributes:
+                modifier = child.attributes.get('*modifier*')
 
-                # Does the macro have a modifier (i.e. '*')
-                if child.attributes:
-                    modifier = child.attributes.get('*modifier*')
+            if child.filename:
+                # Filename and modifier
+                if modifier:
+                    layouts.append('%s-layout%s' % (nodeName, modifier))
 
-                if child.filename:
-                    # Filename and modifier
-                    if modifier:
-                        names.append('%s-file%s' % (nodeName, modifier))
-                    # Filename only
-                    names.append('%s-file' % nodeName)
+                # Filename only
+                layouts.append('%s-layout' % nodeName)
 
-                # Modifier only
-                elif modifier:
-                    names.append('%s%s' % (nodeName, modifier))
+            # Modifier only
+            if modifier:
+                names.append('%s%s' % (nodeName, modifier))
 
             names.append(nodeName)
+            layouts.append('default-layout')
 
             # Locate the rendering callable, and call it with the 
             # current object (i.e. `child`) as its argument.
             val = r.find(names, r.default)(child)
 
+            # If a plain string is returned, we have no idea what 
+            # the encoding is, but we'll make a guess.
             if type(val) is not unicode:
                 log.warning('The renderer for %s returned a non-unicode string.  Using the default input encoding.' % type(child).__name__)
                 val = unicode(val, child.config['files']['input-encoding'])
@@ -276,17 +255,32 @@ class Renderable(object):
             # to the next child.
             if child.filename:
                 filename = child.filename
+
+                # Create any directories as needed
                 directory = os.path.dirname(filename)
                 if directory and not os.path.isdir(directory):
                     os.makedirs(directory)
-                r.files.append(filename)
+
+                # Add the layout wrapper if there is one
+                func = r.find(layouts)
+                if func is not None:
+                    val = func(StaticNode(child, val))
+
+                    # If a plain string is returned, we have no idea what 
+                    # the encoding is, but we'll make a guess.
+                    if type(val) is not unicode:
+                        log.warning('The renderer for %s returned a non-unicode string.  Using the default input encoding.' % type(child).__name__)
+                        val = unicode(val, child.config['files']['input-encoding'])
+
+                # Write the file content
                 codecs.open(filename, 'w', child.config['files']['output-encoding']).write(val)
+
                 continue
 
             # Append the resultant unicode object to the output
             s.append(val)
 
-        if filename:
+        if self.filename:
             status.info(' ] ')
 
         return r.outputtype(u''.join(s))
@@ -310,8 +304,14 @@ class Renderable(object):
         (e.g. foo.html#bar).
 
         """
+        base = self.config['document']['base-url']
+        if base and base.endswith('/'):
+            base = base[:-1]
+        
         # If this generates a file, return that filename
         if self.filename:
+            if base:
+                return URL('%s/%s' % (base, self.filename))
             return URL(self.filename)
 
         # If this is a location within a file, return that location
@@ -321,6 +321,8 @@ class Renderable(object):
         filename = ''
         if node is not None:
             filename = node.filename
+        if base:
+            return URL('%s/%s#%s' % (base, filename, self.id))
         return URL('%s#%s' % (filename, self.id))
 
     @property
@@ -331,22 +333,27 @@ class Renderable(object):
         Objects that don't create new files should simply return `None`.
 
         """
+        r = Node.renderer
+
+        try: return r.files[self]
+        except KeyError: pass
+
         try:
-            return self.filenameoverride
+            if self.filenameoverride:
+                r.files[self] = self.filenameoverride
+                return self.filenameoverride
 
         except AttributeError:
             if not hasattr(self, 'config'):
-                self.filenameoverride = None
                 return
 
             # If our level doesn't invoke a split, don't return a filename
             if self.level > self.config['files']['split-level']:
-                self.filenameoverride = None
                 return
 
-            # Populate namespace of filename generator
+            # Populate vars of filename generator
             # and call the generator to get the filename.
-            ns = Node.renderer.newfilename.namespace
+            ns = r.newfilename.vars
             if hasattr(self, 'id') and self.id != ('a%s' % id(self)):
                 ns['id'] = self.id
             if hasattr(self, 'title'):
@@ -354,231 +361,48 @@ class Renderable(object):
                     ns['title'] = self.title.textContent
                 elif isinstance(self.title, basestring):
                     ns['title'] = self.title
-            filename = Node.renderer.newfilename()
-
-            # Store the name if this method is called again
-            self.filenameoverride = filename
+            r.files[self] = filename = r.newfilename()
 
         return filename
 
 
-def parsefilenames(spec):
-    """ Parse and expand the filename string """
-    import re
-
-    # Normalize string before parsing
-    spec = re.sub(r'\$(\w+)', r'${\1}', spec)
-    spec = re.sub(r'\${\s*(\w+)\s*}', r'${\1}', spec)
-    spec = re.sub(r'\}\(\s*(\d+)\s*\)', r'.\1}', spec)
-    spec = re.sub(r'\[\s*', r'[', spec)
-    spec = re.sub(r'\s*\]', r']', spec)
-    spec = re.sub(r'\s*,\s*', r',', spec)
-
-    files = ['']
-    spec = iter(spec)
-    for char in spec:
-
-        # Spaces mark a division between names
-        if not char.strip():
-             files.append('')
-             continue
-
-        # Check for alternatives
-        elif char == '[':
-            options = [files[-1]]
-            for char in spec:
-                if char == ',':
-                    options.append(files[-1])
-                    continue
-                elif char == ']':
-                    break
-                options[-1] += char
-            files[-1] = [x for x in options if x]
-            continue
-        
-        # Append the character to the current filename
-        if isinstance(files[-1], list):
-            for i, item in enumerate(files[-1]):
-                files[-1][i] += char
-        else:
-            files[-1] += char
-
-    files = [x for x in files if x]
-
-    return files
-
-
-def filenames(spec, charsub=[], namespace={}):
+class StaticNode(object):
     """
-    Generate filenames based on the `spec' and using the given namespace
+    Object to assist in rendering files
 
-    Arguments:
-    spec -- string containing filename specifier.  The filename specifier
-        is a list of space separated names.  Each name in the list is 
-        returned once.  An example is shown below::
+    This object is used to wrap objects that need to have a layout
+    file wrapped around them.  The layout wrapper generally includes 
+    all of the navigation links, table of contents, etc.  
 
-            index.html toc.html file1.html file2.html
-
-        These filenames can also contain variables as described in 
-        Python's string Templates (e.g. $title, ${id}).  These variables
-        come from the `namespace' variable.  One special variable is
-        $num.  This value in generated dynamically whenever a filename
-        with $num is requested.  Each time a filename with $num is 
-        successfully generated, the value of $num is incremented.
-
-        The values of variables can also be modified by a format specified
-        in parentheses after the variable.  The format is simply an integer
-        that specifies how wide of a field to create for integers 
-        (zero-padded), or, for strings, how many space separated words
-        to limit the name to.  The example below shows $num being padded
-        to four places and $title being limited to five words::
-
-            sect$num(4).html $title(5).html
-
-        The list can also contain a wildcard filename (which should be 
-        specified last).  Once a wildcard name is reached, it is 
-        used from that point on to generate the remaining filenames.  
-        The wildcard filename contains a list of alternatives to use as
-        part of the filename indicated by a comma separated list of 
-        alternatives surrounded by a set of square brackets ([ ]).
-        Each of the alternatives specified is tried until a filename is
-        successfully created (i.e. all variables resolve).  For example,
-        the specification below creates three alternatives::
- 
-            $jobname_[$id, $title, sect$num(4)].html
-
-        The code above is expanded to the following possibilities::
-
-            $jobname_$id.html
-            $jobname_$title.html
-            $jobname_sect$num(4).html
-
-        Each of the alternatives is attempted until one of them succeeds.
-        Generally, the last one should contain no variables except for
-        $num as a fail-safe alternative.
-
-    Keyword Arguments:
-    charsub -- two-element list that contains character substitutions.
-        The first element is a string containing all of the characters
-        that are illegal in a filename.  The second string is a string
-        that will be used in place of each of the "bad" characters in 
-        resulting filename.
-    namespace -- the namespace of variables to use when expanding the
-        filenames.  New variables can be added to this namespace between
-        each iteration.  The namespace is reset to the value sent in
-        the initial generator call after each iteration.
-
-    Returns:
-    generator that creates filenames
+    This is simply a proxy object that returns the attributes of
+    the given object.  The exceptions are __unicode__ and __str__
+    which simply return the rendered string that was passed in.
+    This allows you to use two templates: one that renders the content
+    and another that is wrapped around any node that generates a 
+    file.  Without this, you can easily run into infinite recursion 
+    problems.
 
     """
-    import re
-    from string import Template
+    def __init__(self, obj, content):
+        """
+        Initialize the static node
 
-    files = parsefilenames(spec)
+        Arguments:
+        obj -- the object that contains navigation and table of 
+            contents information
+        content -- the rendered object in a unicode string
 
-    globals = namespace.copy()
+        """
+        self._node_data = (obj, content)
+    def __getattribute__(self, name):
+        if name in ['_node_data','__unicode__','__str__']:
+            return object.__getattribute__(self, name)
+        return getattr(self._node_data[0], name)
+    def __unicode__(self):
+        return self._node_data[1]
+    def __str__(self):
+        return unicode(self)
 
-    # Split filenames into static and wildcard groups
-    static = []
-    wildcard = []
-    while files:
-        if isinstance(files[0], list):
-            break
-        static.append(files.pop(0))
-    if files:
-        wildcard = files.pop(0)
-
-    # Initialize file number counter
-    num = 1
-
-    # Locate all key names and formats in the string
-    keysre = re.compile(r'\$\{(\w+)(?:\.(\d+))?}')
-
-    # Return static filenames
-    for item in static:
-        currentns = namespace.copy()
-        for key, value in currentns.items():
-            for char in charsub[0]:
-                currentns[key] = value.replace(char, charsub[1])
-        for key, format in keysre.findall(item):
-            # Supply a file number as needed
-            if key == 'num':
-                currentns['num'] = ('%%.%sd' % format) % num
-            # Limit other variables to specified number of words
-            elif format and key in currentns:
-                value = currentns[key].split()
-                newvalue = []
-                for i in range(int(format)):
-                    newvalue.append(value.pop(0))
-                    if not value:
-                        break
-                currentns[key] = ' '.join(newvalue)
-        try:
-            # Strip formats
-            item = re.sub(r'(\$\{\w+)\.\d+(\})', r'\1\2', item)
-            # Do variable substitution
-            result = Template(item).substitute(currentns)
-            if 'num' in currentns:
-                num += 1
-            namespace.clear()
-            namespace.update(globals)
-            yield result
-        except KeyError, key:
-            continue
-            
-    # We've reached the wildcard stage.  The wildcard gives us
-    # multiple alternatives of filenames to choose from.  Keep trying
-    # each one with the current namespace until one works.
-    while 1:
-        for item in wildcard:
-            currentns = namespace.copy()
-            for key, value in currentns.items():
-                for char in charsub[0]:
-                    currentns[key] = value.replace(char, charsub[1])
-            for key, format in keysre.findall(item):
-                # Supply a file number as needed
-                if key == 'num':
-                    currentns['num'] = ('%%.%sd' % format) % num
-                # Limit other variables to specified number of words
-                elif format and key in currentns:
-                    value = currentns[key].split()
-                    newvalue = []
-                    for i in range(int(format)):
-                        newvalue.append(value.pop(0))
-                        if not value:
-                            break
-                    currentns[key] = ' '.join(newvalue)
-            try:
-                # Strip formats
-                item = re.sub(r'(\$\{\w+)\.\d+(\})', r'\1\2', item)
-                # Do variable substitution
-                result = Template(item).substitute(currentns)
-                if 'num' in currentns:
-                    num += 1
-                namespace.clear()
-                namespace.update(globals)
-                yield result
-                break
-            except KeyError, key:
-                if 'num' in namespace:
-                    del namespace['num']
-                continue
-        else:
-            break
-
-    raise ValueError, 'Filename could not be created.'
-
-
-class GeneratorProxy(object):
-    def __init__(self, gen, **kwargs):
-        self._gp_gen = gen
-        vars(self).update(kwargs)
-    def __call__(self):
-        return self._gp_gen.next()
-    def __getattr__(self, name):
-        return getattr(self._gp_gen, name)
-        
 
 class URL(unicode):
 

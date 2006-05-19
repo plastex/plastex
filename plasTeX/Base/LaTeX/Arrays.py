@@ -18,6 +18,7 @@ class ColumnType(Macro):
         Macro.__init__(self, *args, **kwargs)
         self.style.update(self.columnAttributes)
         
+    @classmethod
     def new(cls, name, attributes, args='', before=[], after=[], between=[]):
         """
         Generate a new column type definition
@@ -36,7 +37,6 @@ class ColumnType(Macro):
             {'columnAttributes':attributes, 'args':args,
              'before':before, 'after':after, 'between':between})
         cls.columnTypes[name] = newclass
-    new = classmethod(new)
 
     def __repr__(self):
         return '%s: %s' % (type(self).__name__, self.style)
@@ -69,8 +69,8 @@ class Array(Environment):
             # Pop and push a new context for each cell, this keeps
             # any formatting changes from the previous cell from
             # leaking over into the next cell
-            tex.context.pop()
-            tex.context.push()
+            self.ownerDocument.context.pop()
+            self.ownerDocument.context.push()
             # Add a phantom cell to absorb the appropriate tokens
             return [self, Array.ArrayCell()]
 
@@ -83,9 +83,9 @@ class Array(Environment):
             # Pop and push a new context for each row, this keeps
             # any formatting changes from the previous row from
             # leaking over into the next row
-            tex.context.pop()
+            self.ownerDocument.context.pop()
             self.parse(tex)
-            tex.context.push()
+            self.ownerDocument.context.push()
             # Add a phantom row and cell to absorb the appropriate tokens
             return [self, Array.ArrayRow(), Array.ArrayCell()]
 
@@ -309,7 +309,7 @@ class Array(Environment):
 
     def invoke(self, tex):
         if self.macroMode == Macro.MODE_END:
-            tex.context.pop(self) # End of table, row, and cell
+            self.ownerDocument.context.pop(self) # End of table, row, and cell
             return
         
         Environment.invoke(self, tex)
@@ -323,7 +323,7 @@ class Array(Environment):
         if self.attributes.has_key('colspec'):
             self.colspec = Array.compileColspec(tex, self.attributes['colspec'])
 
-        tex.context.push() # Beginning of cell
+        self.ownerDocument.context.push() # Beginning of cell
         # Add a phantom row and cell to absorb the appropriate tokens
         return [self, Array.ArrayRow(), Array.ArrayCell()]
 

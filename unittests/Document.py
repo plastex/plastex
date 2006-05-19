@@ -13,7 +13,7 @@ class Document(TestCase):
         class foo(Command):
             args = 'self'
         s = TeX()
-        s.context.importMacros(locals())
+        s.ownerDocument.context.importMacros(locals())
         s.input(r'\begin{myenv}\foo{TEST}\end{myenv}')
         output = s.parse()
 

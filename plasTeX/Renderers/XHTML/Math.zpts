@@ -1,20 +1,20 @@
 name: math
-<img tal:attributes="src self/image/filename; alt self/source" class="math" style="margin-bottom:#depth; width:#width; height:#height" />
+<img tal:attributes="src self/image/url; alt self/source" class="math" style="margin-bottom:#depth; width:#width; height:#height" />
 
 name: displaymath
 <div class="displaymath">
-<img tal:attributes="src self/image/filename; alt self/source" width="#width" height="#height" />
+<img tal:attributes="src self/image/url; alt self/source" width="#width" height="#height" />
 </div>
 
 name: equation
 <div class="equation">
-<img tal:attributes="src self/image/filename; alt self/source" width="#width" height="#height" />
+<img tal:attributes="src self/image/url; alt self/source" width="#width" height="#height" />
 </div>
 
 name: eqnarray eqnarray*
 <div class="eqnarray">
-<img tal:attributes="src self/image/filename; alt self/source" width="#width" height="#height" />
+<img tal:attributes="src self/image/url; alt self/source" width="#width" height="#height" />
 </div>
 
 name: ensuremath
-<img tal:attributes="src self/image/filename; alt self/source" class="math" style="margin-bottom:#depth; width:#width; height:#height" />
+<img tal:attributes="src self/image/url; alt self/source" class="math" style="margin-bottom:#depth; width:#width; height:#height" />

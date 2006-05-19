@@ -40,17 +40,20 @@ class null(Command):
 class bgroup(Command):
 
     def invoke(self, tex):
-        tex.context.push()
+        self.ownerDocument.context.push()
 
     def digest(self, tokens):
         # Absorb the tokens that belong to us
         for item in tokens:
             if item.nodeType == Command.ELEMENT_NODE:
+                if item.level < self.level:
+                    tokens.push(item)
+                    break
                 if isinstance(item, (egroup,endgroup)):
                     break
                 item.digest(tokens)
             self.appendChild(item)
-        self.paragraphs()
+        self.paragraphs(force=False)
 
     @property
     def source(self):
@@ -64,7 +67,7 @@ class begingroup(bgroup):
 class egroup(Command):
 
     def invoke(self, tex):
-        tex.context.pop()
+        self.ownerDocument.context.pop()
 
     def source(self):
         return '}'

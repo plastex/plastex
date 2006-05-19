@@ -60,5 +60,5 @@ class appendix(Command):
         format = '${chapter.Alph}'
 
     def invoke(self, tex):
-        tex.context.counters['chapter'].setcounter(0)
-        tex.context['thechapter'] = type(self).thechapter 
+        self.ownerDocument.context.counters['chapter'].setcounter(0)
+        self.ownerDocument.context['thechapter'] = type(self).thechapter 

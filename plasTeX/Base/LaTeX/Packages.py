@@ -20,7 +20,7 @@ status = getLogger('status')
 class PackageLoader(Command):
     extension = '.sty'
     def load(self, tex, file, options={}):
-        tex.context.loadPackage(tex, file+self.extension, options)
+        self.ownerDocument.context.loadPackage(tex, file+self.extension, options)
 
 #
 # C.5.1 Document Class
@@ -207,6 +207,17 @@ class InputIfFileExists(Command):
         a = self.parse(tex)
         try: 
             tex.input(tex.kpsewhich(a['file'], self.config))
+            tex.pushtokens(a['true'])
+        except (IOError, OSError):
+            tex.pushtokens(a['false'])
+        return []
+
+class IfFileExists(Command):
+    args = 'file:str true:nox false:nox'
+    def invoke(self, tex):
+        a = self.parse(tex)
+        try: 
+            tex.kpsewhich(a['file'], self.config)
             tex.pushtokens(a['true'])
         except (IOError, OSError):
             tex.pushtokens(a['false'])

@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
-import new, codecs, os, plasTeX
+import new, os, ConfigParser, re
+import plasTeX
 from plasTeX import ismacro, macroname
+from plasTeX.DOM import Node
 from plasTeX.Logging import getLogger
 from Tokenizer import Tokenizer, Token, DEFAULT_CATEGORIES, VERBATIM_CATEGORIES
 
 # Only export the Context singleton
-__all__ = ['Context','context']
+__all__ = ['Context']
 
 # Set up loggers
 log = getLogger()
@@ -74,7 +76,7 @@ class Counters(dict):
         try: 
             c = dict.__getitem__(self, name)
         except KeyError:
-            log.warning('No counter "%s" exists.  Creating one.' % name)
+#           log.warning('No counter "%s" exists.  Creating one.' % name)
             c = self[name] = plasTeX.Counter(self.context, name)
         return c
 
@@ -117,6 +119,9 @@ class Context(object):
         # Imported packages and their options
         self.packages = {}
 
+        # Output files
+        self.writes = {}
+
         # Depth of the context stack
         self.depth = 0
 
@@ -124,16 +129,6 @@ class Context(object):
         self.push()
 
         self.warnOnUnrecognized = True
-
-        # Character sequences that should be replaced by unicode
-        self.charsubs = [
-            ('``', unichr(8220)),
-            ("''", unichr(8221)),
-            ('`',  unichr(8216)),
-            ("'",  unichr(8217)),
-            ('---', unichr(8212)),
-            ('--', unichr(8211)),
-        ]
 
         if load:
             self.loadBaseMacros()
@@ -165,6 +160,41 @@ class Context(object):
             language.ProcessOptions({}, self)
         self.importMacros(vars(language))
 
+    def loadINIPackage(self, inifile):
+        """ 
+        Load INI file containing macro definitions
+
+        Arguments:
+        inifile -- filename of INI formatted file
+
+        """
+        ini = ConfigParser.RawConfigParser()
+        if not isinstance(inifile, (list,tuple)):
+            inifile = [inifile]
+        for f in inifile:
+            ini.read(f)
+            macros = {}
+            for section in ini.sections():
+                try: baseclass = self[section]
+                except KeyError:
+                    log.warning('Could not find macro %s' % section)
+                    continue
+                for name in ini.options(section):
+                    value = ini.get(section,name)
+                    m = re.match(r'^unicode\(\s*(?:(\'|\")(?P<string>.+)(?:\1)|(?P<number>\d+))\s*\)$',value)
+                    if m:
+                        data = m.groupdict()
+                        if data['number'] is not None:
+                            value = unichr(int(data['number']))
+                        else:
+                            value = unicode(data['string'])
+                        macros[name] = new.classobj(name, (baseclass,), 
+                                                    {'unicode': value})
+                        continue 
+                    macros[name] = new.classobj(name, (baseclass,), 
+                                                {'args': value})
+            self.importMacros(macros)
+
     def loadPackage(self, tex, file, options={}):
         """
         Load a Python or LaTeX package
@@ -191,6 +221,9 @@ class Context(object):
         if self.packages.has_key(module):
             return True
 
+        packagesini = os.path.join(os.path.dirname(plasTeX.Packages.__file__), 
+                                   os.path.basename(module)+'.ini')
+
         try: 
             # Try to import a Python package by that name
             m = __import__(module, globals(), locals())
@@ -198,6 +231,8 @@ class Context(object):
             if hasattr(m, 'ProcessOptions'):
                 m.ProcessOptions(options or {}, self)
             self.importMacros(vars(m))
+            moduleini = os.path.splitext(m.__file__)[0]+'.ini'
+            self.loadINIPackage([packagesini, moduleini])
             self.packages[module] = options
             status.info(' ) ')
             return True
@@ -212,7 +247,10 @@ class Context(object):
             else:
                 raise
 
-        return tex.loadPackage(file, options)
+        result = tex.loadPackage(file, options)
+        self.loadINIPackage([packagesini])
+        return result
+   
 
     def label(self, label):
         """ 
@@ -275,14 +313,14 @@ class Context(object):
         Returns: instance of requested macro
 
         """
-        try: return self.top[key]()
+        try: return self.top[key]
         except KeyError: pass
 
         # Didn't find it, so generate a new class
         if self.warnOnUnrecognized and not self.isMathMode:
             log.warning('unrecognized command/environment: %s', key)
         self[key] = newclass = new.classobj(str(key), (plasTeX.UnrecognizedMacro,), {})
-        return newclass()
+        return newclass
 
     def push(self, context=None):
         """ 
@@ -308,6 +346,11 @@ class Context(object):
             name = '{}'
             if context is not None:
                 name = context.nodeName 
+                # If we hit a document element, make sure that we start
+                # at the global context.
+                if context.level == context.DOCUMENT_LEVEL:
+                    while len(self.contexts) > 1:
+                        self.contexts.pop()
             stacklog.debug('pushing %s onto %s', name, self.top)
             self.contexts.append(self.createContext(context))
 
@@ -564,6 +607,17 @@ class Context(object):
                                {'format': format})
         self.addGlobal('the'+name, newclass)
 
+    def newwrite(self, name, file):
+        """
+        Create a new output file
+
+        Required Arguments:
+        name -- the key name for the file
+        file -- the file name to open
+
+        """
+        self.writes[name] = open(file, 'w')
+
     def newcount(self, name, initial=0):
         """ 
         Create a new count (like \\newcount)
@@ -663,14 +717,12 @@ class Context(object):
 
         # Create \iftrue macro
         truename = name[2:]+'true'
-        newclass = new.classobj(truename, (plasTeX.IfTrue,), 
-                                {'ifclass':ifclass})
+        newclass = new.classobj(truename, (plasTeX.IfTrue,), {'ifclass':ifclass})
         self.addGlobal(truename, newclass)
 
         # Create \iffalse macro
         falsename = name[2:]+'false'
-        newclass = new.classobj(falsename, (plasTeX.IfFalse,), 
-                                {'ifclass':ifclass})
+        newclass = new.classobj(falsename, (plasTeX.IfFalse,), {'ifclass':ifclass})
         self.addGlobal(falsename, newclass)
 
     def newcommand(self, name, nargs=0, definition=None, opt=None):
@@ -692,8 +744,8 @@ class Context(object):
         name = str(name)
         # Macro already exists
         if self.has_key(name):
-            if not issubclass(type(self[name]), (plasTeX.NewCommand, 
-                                                 plasTeX.Definition)):
+            if not issubclass(self[name], (plasTeX.NewCommand, 
+                                           plasTeX.Definition)):
                 return
             macrolog.debug('redefining command "%s"', name)
 
@@ -734,8 +786,8 @@ class Context(object):
         name = str(name)
         # Macro already exists
         if self.has_key(name):
-            if not issubclass(type(self[name]), (plasTeX.NewCommand, 
-                                                 plasTeX.Definition)):
+            if not issubclass(self[name], (plasTeX.NewCommand, 
+                                           plasTeX.Definition)):
                 return
             macrolog.debug('redefining environment "%s"', name)
 
@@ -788,8 +840,8 @@ class Context(object):
         name = str(name)
         # Macro already exists
 #       if self.has_key(name):
-#           if not issubclass(type(self[name]), (plasTeX.NewCommand, 
-#                                                plasTeX.Definition)):
+#           if not issubclass(self[name], (plasTeX.NewCommand, 
+#                                          plasTeX.Definition)):
 #               return
 #           macrolog.debug('redefining definition "%s"', name)
 
@@ -832,5 +884,5 @@ class Context(object):
         # Generate a new chardef class
         macrolog.debug('creating chardef %s', name)
         newclass = new.classobj(name, (plasTeX.Command,), 
-                                {'unicode': chr(num)})
+                                {'unicode':chr(num)})
         self.addGlobal(name, newclass)

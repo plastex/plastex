@@ -47,7 +47,7 @@ class longtable(tabular):
         def invoke(self, tex):
             # Store the current table counter value.  If more than one
             # caption exists, we need to set this counter back to this value.
-            self._tabularcount = tex.context.counters[longtable.caption.counter].value
+            self._tabularcount = self.ownerDocument.context.counters[longtable.caption.counter].value
             return longtable.LongTableEndRow.invoke(self, tex)
 
     class endfoot(LongTableEndRow):

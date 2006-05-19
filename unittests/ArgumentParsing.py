@@ -62,43 +62,50 @@ class ArgumentParsing(TestCase):
         else: self.fail("Expected a ValueError")
 
     def testStringArgument(self):
-        s = TeX('{foo {bar} one}')
+        s = TeX()
+        s.input('{foo {bar} one}')
         arg = s.readArgument(type='str')
         output = 'foo bar one'
         assert arg == output, '"%s" != "%s"' % (arg, output)
 
     def testIntegerArgument(self):
-        s = TeX('{1{0}2}')
+        s = TeX()
+        s.input('{1{0}2}')
         arg = s.readArgument(type='int')
         output = 102
         assert arg == output, '"%s" != "%s"' % (arg, output)
 
     def testIntegerArgument(self):
-        s = TeX('{ -1{0}2.67 }')
+        s = TeX()
+        s.input('{ -1{0}2.67 }')
         arg = s.readArgument(type='float')
         output = -102.67
         assert (output - arg) < 0.000001, '"%s" != "%s"' % (arg, output)
 
     def testListArgument(self):
-        s = TeX('{foo, {bar}, one}')
+        s = TeX()
+        s.input('{foo, {bar}, one}')
         arg = s.readArgument(type='list')
         output = ['foo','bar','one']
         assert arg == output, '"%s" != "%s"' % (arg, output)
 
     def testListArgument2(self):
-        s = TeX('{foo; {bar}; one}')
+        s = TeX()
+        s.input('{foo; {bar}; one}')
         arg = s.readArgument(type='list', delim=';')
         output = ['foo','bar','one']
         assert arg == output, '"%s" != "%s"' % (arg, output)
 
     def testDictArgument(self):
-        s = TeX('{one=1, two={2}, three=3}')
+        s = TeX()
+        s.input('{one=1, two={2}, three=3}')
         arg = s.readArgument(type='dict')
         output = {'one':'1', 'two':'2', 'three':'3'}
         assert arg == output, '"%s" != "%s"' % (arg, output)
 
     def testDictArgument2(self):
-        s = TeX('{one=1, two={\par}, three={$(x,y)$}, four=4}')
+        s = TeX()
+        s.input('{one=1, two={\par}, three={$(x,y)$}, four=4}')
         arg = s.readArgument(type='dict')
         keys = arg.keys()
         keys.sort()
@@ -108,14 +115,16 @@ class ArgumentParsing(TestCase):
         assert arg['four'] == '4'
 
     def testTokenArgument(self):
-        s = TeX(r'\foo a ')
+        s = TeX()
+        s.input(r'\foo a ')
         arg = s.readArgument(type='Tok')
         assert arg == 'foo'
         arg = s.readArgument(type='Tok')
         assert arg == 'a'
 
     def testXTokenArgument(self):
-        s = TeX(r'\newcommand{\foo}{\it}')
+        s = TeX()
+        s.input(r'\newcommand{\foo}{\it}')
         [x for x in s]
         s.input(r'\foo a ')
         arg = s.readArgument(type='XTok')
@@ -124,16 +133,17 @@ class ArgumentParsing(TestCase):
         assert arg == 'a', arg
 
     def testDimen(self):
-        s = TeX(r'''\newcount\mycount\mycount=120
+        s = TeX()
+        s.input(r'''\newcount\mycount\mycount=120
                     \newdimen\mydimen\mydimen=12sp
                     \newskip\myglue\myglue=10sp plus1pt minus2pt''')
         s.parse()
 
-        value = s.context['mycount'].value
+        value = s.ownerDocument.context['mycount'].value
         assert value == count(120), value
-        value = s.context['mydimen'].value
+        value = s.ownerDocument.context['mydimen'].value
         assert value == dimen('12sp'), value
-        value = s.context['myglue'].value
+        value = s.ownerDocument.context['myglue'].value
         assert value == glue('10sp', plus='1pt', minus='2pt'), value
 
         # Literal dimension, this will only parse the `3`
@@ -184,16 +194,17 @@ class ArgumentParsing(TestCase):
         assert ParameterCommand._enablelevel == 0
 
     def testTeXDimen(self):
-        s = TeX(r'''\newcount\mycount\mycount=120
+        s = TeX()
+        s.input(r'''\newcount\mycount\mycount=120
                     \newdimen\mydimen\mydimen=12sp
                     \newskip\myglue\myglue=10sp plus1pt minus2pt''')
         s.parse()
 
-        value = s.context['mycount'].value
+        value = s.ownerDocument.context['mycount'].value
         assert value == count(120), value
-        value = s.context['mydimen'].value
+        value = s.ownerDocument.context['mydimen'].value
         assert value == dimen('12sp'), value
-        value = s.context['myglue'].value
+        value = s.ownerDocument.context['myglue'].value
         assert value == glue('10sp', plus='1pt', minus='2pt'), value
 
         # Literal number
@@ -219,16 +230,17 @@ class ArgumentParsing(TestCase):
         assert ParameterCommand._enablelevel == 0
 
     def testNumber(self):
-        s = TeX(r'''\newcount\mycount\mycount=120
+        s = TeX()
+        s.input(r'''\newcount\mycount\mycount=120
                     \newdimen\mydimen\mydimen=12sp
                     \newskip\myglue\myglue=10sp plus1pt minus2pt''')
         s.parse()
 
-        value = s.context['mycount'].value
+        value = s.ownerDocument.context['mycount'].value
         assert value == count(120), value
-        value = s.context['mydimen'].value
+        value = s.ownerDocument.context['mydimen'].value
         assert value == dimen('12sp'), value
-        value = s.context['myglue'].value
+        value = s.ownerDocument.context['myglue'].value
         assert value == glue('10sp', plus='1pt', minus='2pt'), value
 
         # Literal number, this will only parse the `1`
@@ -279,16 +291,17 @@ class ArgumentParsing(TestCase):
         assert ParameterCommand._enablelevel == 0
 
     def testTeXDimen(self):
-        s = TeX(r'''\newcount\mycount\mycount=120
+        s = TeX()
+        s.input(r'''\newcount\mycount\mycount=120
                     \newdimen\mydimen\mydimen=12sp
                     \newskip\myglue\myglue=10sp plus1pt minus2pt''')
         s.parse()
 
-        value = s.context['mycount'].value
+        value = s.ownerDocument.context['mycount'].value
         assert value == count(120), value
-        value = s.context['mydimen'].value
+        value = s.ownerDocument.context['mydimen'].value
         assert value == dimen('12sp'), value
-        value = s.context['myglue'].value
+        value = s.ownerDocument.context['myglue'].value
         assert value == glue('10sp', plus='1pt', minus='2pt'), value
 
         # Literal dimension
@@ -314,16 +327,17 @@ class ArgumentParsing(TestCase):
         assert ParameterCommand._enablelevel == 0
 
     def testTeXNumber(self):
-        s = TeX(r'''\newcount\mycount\mycount=120
+        s = TeX()
+        s.input(r'''\newcount\mycount\mycount=120
                     \newdimen\mydimen\mydimen=12sp
                     \newskip\myglue\myglue=10sp plus1pt minus2pt''')
         s.parse()
 
-        value = s.context['mycount'].value
+        value = s.ownerDocument.context['mycount'].value
         assert value == count(120), value
-        value = s.context['mydimen'].value
+        value = s.ownerDocument.context['mydimen'].value
         assert value == dimen('12sp'), value
-        value = s.context['myglue'].value
+        value = s.ownerDocument.context['myglue'].value
         assert value == glue('10sp', plus='1pt', minus='2pt'), value
 
         # Literal number
@@ -349,7 +363,8 @@ class ArgumentParsing(TestCase):
         assert ParameterCommand._enablelevel == 0
 
     def testListTypes(self):
-        s = TeX(r'''\newcount\mycount\mycount=120
+        s = TeX()
+        s.input(r'''\newcount\mycount\mycount=120
                     \newdimen\mydimen\mydimen=12sp
                     \newskip\myglue\myglue=10sp plus1pt minus2pt''')
         s.parse()
@@ -359,7 +374,8 @@ class ArgumentParsing(TestCase):
         assert arg == [1, 120, 3], arg
     
     def testDictTypes(self):
-        s = TeX(r'''\newcount\mycount\mycount=120
+        s = TeX()
+        s.input(r'''\newcount\mycount\mycount=120
                     \newdimen\mydimen\mydimen=12sp
                     \newskip\myglue\myglue=10sp plus1pt minus2pt''')
         s.parse()

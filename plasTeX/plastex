@@ -16,18 +16,21 @@ def main(argv):
     print >>sys.stderr, 'plasTeX version 0.5'
 
     # Parse the command line options
-    clm = CommandLineManager()
-    clm['options'] = config
-    clm['file'] = StringArgument()
     try: 
-        clm.getopt(argv[1:])
+        opts, args = config.getopt(argv[1:])
     except Exception, msg:
         log.error(msg)
-        print >>sys.stderr, clm.usage()
+        print >>sys.stderr, config.usage()
         sys.exit(1)
 
+    if not args:
+        print >>sys.stderr, config.usage()
+        sys.exit(1)
+
+    file = args.pop(0)
+
     try:
-        file = TeX.kpsewhich(clm['file'], config)
+        file = TeX.kpsewhich(file, config)
     except OSError, msg:
         log.error(msg)
         sys.exit(1)
@@ -44,9 +47,9 @@ def main(argv):
         document.userdata['title'] = config['document']['title']
 
     # Instantiate the TeX processor and parse the document
-    tex = TeX()
+    tex = TeX(document)
     tex.input(codecs.open(file,'r',inencoding))
-    tex.parse(document)
+    tex.parse()
 
     # Change to specified directory to output to
     outdir = config['files']['directory']

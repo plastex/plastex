@@ -19,14 +19,16 @@ class ContextGenerated(TestCase):
 class NC(TestCase):
 
     def testNewcommand(self):
-        s = TeX(r'\newcommand\mycommand[2][optional]{\itshape{#1:#2}}\newcommand{ \foo }{{this is foo}}\mycommand[hi]{{\foo}!!!}')
+        s = TeX()
+        s.input(r'\newcommand\mycommand[2][optional]{\itshape{#1:#2}}\newcommand{ \foo }{{this is foo}}\mycommand[hi]{{\foo}!!!}')
         res = [x for x in s]
         text = [x for x in res if x.nodeType == Node.TEXT_NODE]
         expected = list('hi:this is foo!!!')
         assert text == expected, '%s != %s' % (text, expected)
 
     def testNewenvironment(self):
-        s = TeX(r'\newenvironment{foo}{\begin{itemize}}{\end{itemize}}\begin{foo}\begin{foo}\item hi\end{foo}\end{foo}')
+        s = TeX()
+        s.input(r'\newenvironment{foo}{\begin{itemize}}{\end{itemize}}\begin{foo}\begin{foo}\item hi\end{foo}\end{foo}')
         res = [x for x in s]
         assert res[1].nodeName == 'itemize'
         assert res[2].nodeName == 'itemize'
@@ -36,17 +38,24 @@ class NC(TestCase):
         assert res[7].nodeName == 'itemize'
 
     def testReadDecimal(self):
-        i = TeX(r'-1.0').readDecimal()
+        s = TeX()
+        s.input(r'-1.0')
+        i = s.readDecimal()
         assert i == -1, 'expected -1, but got %s' % i
-        i = TeX(r'-11234.0').readDecimal()
+        s = TeX()
+        s.input(r'-11234.0')
+        i = s.readDecimal()
         assert i == -11234, 'expected -11234, but got %s' % i
-        i = TeX(r'0.0').readDecimal()
+        s = TeX()
+        s.input(r'0.0')
+        i = s.readDecimal()
         assert i == 0, 'expected 0, but got %s' % i
 
     def testCatcode(self):
-        s = TeX(r'\catcode`<=2')
+        s = TeX()
+        s.input(r'\catcode`<=2')
         output = [x for x in s]
-        assert '<' in s.context.categories[2]
+        assert '<' in s.ownerDocument.context.categories[2]
 
 class NewCommands(TestCase):
 
@@ -61,88 +70,97 @@ class NewCommands(TestCase):
         self.macros['description'] = description
 
     def testSimpleNewCommand(self):
-        s = TeX(r'\newcommand\mycommand{\it}\mycommand')
+        s = TeX()
+        s.input(r'\newcommand\mycommand{\it}\mycommand')
         for key, value in self.macros.items():
-            s.context[key] = value
+            s.ownerDocument.context[key] = value
         output = [x for x in s]
         result = type(output[1])
-        expected = type(s.context['it'])
+        expected = type(s.ownerDocument.createElement('it'))
         assert result == expected, '"%s" != "%s"' % (result, expected)
 
     def testNewCommandWithArgs(self):
-        s = TeX(r'\newcommand{\mycommand}[2]{#1:#2}\mycommand{foo}{bar}')
+        s = TeX()
+        s.input(r'\newcommand{\mycommand}[2]{#1:#2}\mycommand{foo}{bar}')
         for key, value in self.macros.items():
-            s.context[key] = value
+            s.ownerDocument.context[key] = value
         output = [x for x in s]
-        assert s.context['mycommand'].definition == list('#1:#2')
+        assert s.ownerDocument.context['mycommand'].definition == list('#1:#2')
         text = [x for x in output if x.nodeType == Node.TEXT_NODE]
         assert text == list('foo:bar'), text
 
     def testNewCommandWithOptional(self):
-        s = TeX(r'\newcommand{\mycommand}[2][opt]{#1:#2}\mycommand{bar}\mycommand[foo]{bar}')
+        s = TeX()
+        s.input(r'\newcommand{\mycommand}[2][opt]{#1:#2}\mycommand{bar}\mycommand[foo]{bar}')
         for key, value in self.macros.items():
-            s.context[key] = value
+            s.ownerDocument.context[key] = value
         output = [x for x in s]
-        assert s.context['mycommand'].definition == list('#1:#2')
-        assert s.context['mycommand'].opt == list('opt'), '"%s" != "opt"' % (s.context['mycommand'].opt)
+        assert s.ownerDocument.context['mycommand'].definition == list('#1:#2')
+        assert s.ownerDocument.context['mycommand'].opt == list('opt'), '"%s" != "opt"' % (s.ownerDocument.context['mycommand'].opt)
         text = [x for x in output if x.nodeType == Node.TEXT_NODE]
         assert text == list('opt:barfoo:bar'), text
 
     def testSimpleNewEnvironment(self):
-        s = TeX(r'\newenvironment{myenv}{\it}{}\begin{myenv}hi\end{myenv}')
+        s = TeX()
+        s.input(r'\newenvironment{myenv}{\it}{}\begin{myenv}hi\end{myenv}')
         for key, value in self.macros.items():
-            s.context[key] = value
+            s.ownerDocument.context[key] = value
         output = [x for x in s]
-        assert type(output[1]) == type(s.context['it'])
+        assert type(output[1]) == s.ownerDocument.context['it']
         assert output[-2:] == ['h','i']
 
     def testSimpleNewEnvironmentWithArgs(self):
-        s = TeX(r'\newenvironment{myenv}[2]{#1:#2}{}\begin{myenv}{foo}{bar}hi\end{myenv}')
+        s = TeX()
+        s.input(r'\newenvironment{myenv}[2]{#1:#2}{}\begin{myenv}{foo}{bar}hi\end{myenv}')
         for key, value in self.macros.items():
-            s.context[key] = value
+            s.ownerDocument.context[key] = value
         output = [x for x in s]
-        definition = s.context['myenv'].definition
-        enddefinition = s.context['endmyenv'].definition
+        definition = s.ownerDocument.context['myenv'].definition
+        enddefinition = s.ownerDocument.context['endmyenv'].definition
         assert definition == list('#1:#2'), definition
         assert enddefinition == [], enddefinition
         text = [x for x in output if x.nodeType == Node.TEXT_NODE]
         assert text == list('foo:barhi'), text
 
     def testSimpleNewEnvironmentWithOptional(self):
-        s = TeX(r'\newenvironment{myenv}[2][opt]{#1:#2}{;}\begin{myenv}{foo}hi\end{myenv}\begin{myenv}[one]{blah}bye\end{myenv}')
+        s = TeX()
+        s.input(r'\newenvironment{myenv}[2][opt]{#1:#2}{;}\begin{myenv}{foo}hi\end{myenv}\begin{myenv}[one]{blah}bye\end{myenv}')
         for key, value in self.macros.items():
-            s.context[key] = value
+            s.ownerDocument.context[key] = value
         output = [x for x in s]
-        definition = s.context['myenv'].definition
-        enddefinition = s.context['endmyenv'].definition
+        definition = s.ownerDocument.context['myenv'].definition
+        enddefinition = s.ownerDocument.context['endmyenv'].definition
         assert definition == list('#1:#2'), definition
         assert enddefinition == list(';'), enddefinition
-        assert s.context['myenv'].opt == list('opt')
+        assert s.ownerDocument.context['myenv'].opt == list('opt')
         text = [x for x in output if x.nodeType == Node.TEXT_NODE]
         assert text == list('opt:foohi;one:blahbye;'), text
 
     def testNewEnvironment(self):
-        s = TeX(r'\newenvironment{myenv}{\begin{description}}{\end{description}}before:\begin{myenv}hi\end{myenv}:after')
+        s = TeX()
+        s.input(r'\newenvironment{myenv}{\begin{description}}{\end{description}}before:\begin{myenv}hi\end{myenv}:after')
         for key, value in self.macros.items():
-            s.context[key] = value
+            s.ownerDocument.context[key] = value
         output = [x for x in s]
-        definition = s.context['myenv'].definition
-        enddefinition = s.context['endmyenv'].definition
+        definition = s.ownerDocument.context['myenv'].definition
+        enddefinition = s.ownerDocument.context['endmyenv'].definition
         assert definition == ['begin'] + list('{description}'), definition
         assert enddefinition == ['end'] + list('{description}'), enddefinition
-        assert s.context['myenv'].opt == None
+        assert s.ownerDocument.context['myenv'].opt == None
         text = [x for x in output if x.nodeType == Node.TEXT_NODE]
-        assert type(output[8]) == type(s.context['description'])
+        assert type(output[8]) == s.ownerDocument.context['description']
         assert text == list('before:hi:after'), text
 
     def testDef(self):
-        s = TeX(r'\def\mymacro#1#2;#3\endmacro{this #1 is #2 my #3 command}\mymacro{one}x;y\endmacro morestuff')
+        s = TeX()
+        s.input(r'\def\mymacro#1#2;#3\endmacro{this #1 is #2 my #3 command}\mymacro{one}x;y\endmacro morestuff')
         output = [x for x in s]
         text = [x for x in output if x.nodeType == Node.TEXT_NODE]
         assert text == list('this one is x my y commandmorestuff'), text
 
     def testDef2(self):
-        s = TeX(r"\def\row#1{(#1_1,\ldots,#1_n)}\row{{x'}}")
+        s = TeX()
+        s.input(r"\def\row#1{(#1_1,\ldots,#1_n)}\row{{x'}}")
         output = [x for x in s]
         text = [x for x in output if x.nodeType == Node.TEXT_NODE]
         assert text == list('(x\'_1,,x\'_n)'), text
@@ -151,22 +169,26 @@ class NewCommands(TestCase):
         assert output[9].nodeName == 'ldots'
 
     def testDef3(self):
-        s = TeX(r'\def\foo#1#2{:#1:#2:}\foo x y')
+        s = TeX()
+        s.input(r'\def\foo#1#2{:#1:#2:}\foo x y')
         output = [x for x in s]
         text = [x for x in output if x.nodeType == Node.TEXT_NODE]
         assert text == list(':x:y:'), text
 
     def testLet(self):
-        s = TeX(r'\let\foo=\it\foo')
+        s = TeX()
+        s.input(r'\let\foo=\it\foo')
         output = [x for x in s]
-        assert type(output[1]) == type(s.context['it']) 
+        assert type(output[1]) == s.ownerDocument.context['it'] 
 
-        s = TeX(r'\let\bgroup={\bgroup')
+        s = TeX()
+        s.input(r'\let\bgroup={\bgroup')
         output = [x for x in s]
         assert output[1].source == '{', '"%s" != "%s"' % (output[1].source, '{')
 
     def testChardef(self):
-        s = TeX(r'\chardef\foo=65\relax\foo')
+        s = TeX()
+        s.input(r'\chardef\foo=65\relax\foo')
         output = [x for x in s]
         assert output[-1] == 'A', output
 
@@ -175,8 +197,9 @@ class Python(TestCase):
 
     def testStringCommand(self):
         class figurename(Command): unicode = 'Figure'
-        s = TeX(r'\figurename')
-        s.context['figurename'] = figurename
+        s = TeX()
+        s.input(r'\figurename')
+        s.ownerDocument.context['figurename'] = figurename
         output = u''.join([x for x in s])
         assert output == 'Figure', output
        

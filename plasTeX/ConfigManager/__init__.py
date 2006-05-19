@@ -16,7 +16,7 @@ followed by a bunch of imaginary command line options and arguments.
 """
 
 import sys, string, re, urllib, copy, types, os
-from dictutils import ordereddict
+from plasTeX.dictutils import ordereddict
 from UserList import UserList
 from UserDict import UserDict
 from textwrap import wrap
@@ -1460,6 +1460,9 @@ class ConfigManager(UserDict, object):
             summary = ''
             if option.summary:
                summary = option.summary % option.names()
+               default = option.defaultValue()
+               if default is not None:
+                   summary += ' [%s]' % default
 
             if not categorized.has_key(catname):
                categorized[catname] = []

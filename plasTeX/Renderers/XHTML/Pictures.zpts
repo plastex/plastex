@@ -1,2 +1,2 @@
 name: picture
-<img tal:attributes="src self/image/filename; alt self/source" width="#width" height="#height" class="picture" />
+<img tal:attributes="src self/image/url; alt self/source" width="#width" height="#height" class="picture" />

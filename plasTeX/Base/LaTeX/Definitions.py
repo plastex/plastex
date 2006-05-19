@@ -26,7 +26,7 @@ class newcommand(Command):
         args = (a['name'], a['nargs'], a['definition'])
         kwargs = {'opt':a['opt']}
         deflog.debug('command %s %s %s', *args)
-        tex.context.newcommand(*args, **kwargs)
+        self.ownerDocument.context.newcommand(*args, **kwargs)
 
 class renewcommand(newcommand): 
     pass
@@ -53,7 +53,7 @@ class newenvironment(Command):
         args = (a['name'], a['nargs'], [a['begin'], a['end']])
         kwargs = {'opt':a['opt']}
         deflog.debug('environment %s %s %s', *args)
-        tex.context.newenvironment(*args, **kwargs)
+        self.ownerDocument.context.newenvironment(*args, **kwargs)
 
 class renewenvironment(newenvironment):
     pass

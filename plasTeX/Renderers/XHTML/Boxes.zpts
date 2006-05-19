@@ -11,8 +11,8 @@ name: minipage
 <div class="minipage" tal:attributes="style string:${self/attributes/width}" tal:content="self">minipage</div>
 
 name: raisebox
-<img tal:attributes="src self/image/filename; alt self/source" width="#width" height="#height" class="#depth" alt="raisebox" />
+<img tal:attributes="src self/image/url; alt self/source" width="#width" height="#height" class="#depth" alt="raisebox" />
 
 name: rule
-<img tal:attributes="src self/image/filename; alt self/source" width="#width" height="#height" class="#depth" alt="rule" />
+<img tal:attributes="src self/image/url; alt self/source" width="#width" height="#height" class="#depth" alt="rule" />
 

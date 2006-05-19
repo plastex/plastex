@@ -24,9 +24,9 @@ class XHTML(ZPT):
         """
         encoding = document.userdata['config']['files']['output-encoding']
 
-        for file in files:
+        for f in files:
             try:
-                s = codecs.open(str(file), 'r', encoding).read()
+                s = codecs.open(str(f), 'r', encoding).read()
             except IOError, msg:
                 print os.getcwd()
                 log.error(msg)
@@ -48,7 +48,7 @@ class XHTML(ZPT):
                 if ord(item) > 127:
                     s[i] = '&#%.3d;' % ord(item)
              
-            open(file, 'w').write(unicode.encode(u''.join(s), encoding)) 
+            open(f, 'w').write(unicode.encode(u''.join(s), encoding)) 
 
     def setImageData(self, m):
         """

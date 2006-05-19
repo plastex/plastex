@@ -23,9 +23,9 @@ class document(Environment, SectionUtils):
         if self.config.has_key('counters'):
             counters = self.config['counters']
             for name in counters.keys():
-                if name.startswith('#'):
+                if name.startswith(';'):
                     continue
-                tex.context.counters[name].setcounter(counters[name]-1)
+                self.ownerDocument.context.counters[name].setcounter(counters[name]-1)
 
         return res
 

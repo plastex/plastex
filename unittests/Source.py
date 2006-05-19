@@ -6,33 +6,36 @@ from plasTeX.TeX import TeX
 from plasTeX import Macro
 
 def normalize(s):
-    return re.sub(r'\s+', r' ', s)
+    return re.sub(r'\s+', r' ', s).strip()
 
 
 class Source(TestCase):
 
     def testList(self):
         input = r'\begin{enumerate} \item one \item two \item three \end{enumerate}'
-        s = TeX(input)
+        s = TeX()
+        s.input(input)
         output = s.parse()
         source = normalize(output.source)
         assert input == source, '"%s" != "%s"' % (input, source)
 
-        input = r'\item one '
+        input = r'\item one'
         item = output[0].firstChild
         source = normalize(item.source)
         assert input == source, '"%s" != "%s"' % (input, source)
 
     def testMath(self):
         input = r'a $ x^{y_3} $ b'
-        s = TeX(input)
+        s = TeX()
+        s.input(input)
         output = s.parse()
         source = normalize(output.source)
         assert input == source, '"%s" != "%s"' % (input, source)
 
     def testDisplayMath(self):
         input = r'a \[ x^{y_3} \]b'
-        s = TeX(input)
+        s = TeX()
+        s.input(input)
         output = s.parse()
         source = normalize(output.source)
         assert input == source, '"%s" != "%s"' % (input, source)
@@ -40,14 +43,16 @@ class Source(TestCase):
         # \begin{displaymath} ... \end{displaymath} is transformed
         # into \[ ...\] 
         input2 = r'a \begin{displaymath} x^{y_3} \end{displaymath}b'
-        s = TeX(input2)
+        s = TeX()
+        s.input(input2)
         output = s.parse()
         source = normalize(output.source)
         assert input == source, '"%s" != "%s"' % (input, source)
 
     def testSection(self):
         input = r'\section{Heading 1} foo one \subsection{Heading 2} bar two'
-        s = TeX(input)
+        s = TeX()
+        s.input(input)
         output = s.parse()
         source = normalize(output.source)
         assert input == source, '"%s" != "%s"' % (input, source)
@@ -59,7 +64,8 @@ class Source(TestCase):
 
     def testTabular(self):
         input = r'\begin{tabular}{lll} \hline a & b & c \\[0.4in] 1 & 2 & 3 \end{tabular}'
-        s = TeX(input)
+        s = TeX()
+        s.input(input)
         output = s.parse()
         source = normalize(output.source)
         assert input == source, '"%s" != "%s"' % (input, source)

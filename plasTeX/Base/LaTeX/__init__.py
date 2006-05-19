@@ -29,6 +29,7 @@ from Sentences import *
 from Space import *
 from Tabbing import *
 from Verbatim import *
+from Languages.american import *
 
 from plasTeX import Command
 
@@ -37,7 +38,7 @@ class ifundefined_(Command):
     args = 'name:str true:nox false:nox'
     def invoke(self, tex):
         a = self.parse(tex)
-        if tex.context.has_key(a['name']):
+        if self.ownerDocument.context.has_key(a['name']):
             tex.pushtokens(a['false'])
         else:
             tex.pushtokens(a['true'])

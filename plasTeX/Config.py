@@ -9,13 +9,29 @@ c = config = ConfigManager()
 # General
 #
 general = c.add_section('general')
-c.add_category('general', 'General Options')
 
 general['renderer'] = StringOption(
     """ Renderer to use for conversion """,
     options = '--renderer',
     default = 'XHTML',
-    category = 'general',
+)
+
+general['theme'] = StringOption(
+    """ Theme for the renderer to use """,
+    options = '--theme',
+    default = 'default',
+)
+
+general['copy-theme-extras'] = BooleanOption(
+    """  Copy files associated with the theme to the output directory """,
+    options = '--copy-theme-extras !--no-theme-extras',
+    default = True,
+)
+
+general['kpsewhich'] = StringOption(
+    """ Program which locates LaTeX files and packages """,
+    options = '--kpsewhich',
+    default = 'kpsewhich',
 )
 
 def readconfig(file):
@@ -38,7 +54,6 @@ general['config'] = StringOption(
 
     """,
     options = '--config -c',
-    category = 'general',
     callback = readconfig,
 )
 
@@ -88,7 +103,7 @@ def setlinks(data):
     if url:
         links['%s-url' % key] = StringOption(default=url)
 
-links['#links'] = CompoundOption(
+links[';links'] = CompoundOption(
     """ Set links for use in navigation """,
     options = '--link',
     category = 'document',
@@ -107,7 +122,7 @@ def setcounter(data):
     if len(value) == 2:
         counters[value[0]] = IntegerOption(default=int(value[1]))
 
-counters['#counters'] = CompoundOption(
+counters[';counters'] = CompoundOption(
     """ Set initial counter values """,
     options = '--counter',
     category = 'document',
@@ -152,7 +167,7 @@ files['filename'] = StringOption(
 files['bad-chars'] = StringOption(
     """ Characters that should not be allowed in a filename """,
     options = '--bad-filename-chars',
-    default = ' :#$%^&*!~`"\'=?/{}[]()|<>;\\,.',
+    default = ': #$%^&*!~`"\'=?/{}[]()|<>;\\,.',
     category = 'files',
 )
 
@@ -177,6 +192,12 @@ files['directory'] = StringOption(
 images = c.add_section('images')
 c.add_category('images', 'Image Generation Options')
 
+images['base-url'] = StringOption(
+    """ Base URL for all images """,
+    options = '--image-base-url',
+    category = 'images',
+)
+
 images['enabled'] = BooleanOption(
     """ Enable/disable image generation """,
     options = '--enable-images !--disable-images',
@@ -184,44 +205,17 @@ images['enabled'] = BooleanOption(
     category = 'images',
 )
 
-images['program'] = StringOption(
+images['converter'] = StringOption(
     """ DVI to image program """,
-    options = '--image-program',
+    options = '--image-converter',
     default = 'dvipng',
     category = 'images',
 )
 
-images['image-format'] = StringOption(
-    """ PIL image format name """,
-    options = '--image-format',
-    default = 'PNG',
-    category = 'images',
-)
-
-images['file-template'] = StringOption(
+images['filenames'] = StringOption(
     """ Template for image filenames """,
-    options = '--image-file-template',
-    default = 'img-%03d',
-    category = 'images',
-)
-
-images['file-extension'] = StringOption(
-    """ Image file extension """,
-    options = '--image-file-extension',
-    default = '.png',
-    category = 'images',
-)
-
-images['image-path'] = StringOption(
-    """ Path where images should be generated """,
-    options = '--image-path',
-    default = 'images',
-    category = 'images',
-)
-
-images['latex-file'] = StringOption(
-    """ Image document filename """,
-    default = 'plastex-images.tex',
+    options = '--image-filenames',
+    default = 'images/img-$num(4).png',
     category = 'images',
 )
 
@@ -232,16 +226,10 @@ images['baseline-padding'] = IntegerOption(
     category = 'images',
 )
 
-images['smoothing-factor'] = IntegerOption(
-    """ Smoothing for images """,
-    options = '--image-smoothing-factor',
-    default = 6,
-    category = 'images',
-)
-
-images['cleanup'] = BooleanOption(
-    """ Should the temporary processing files be cleaned up? """,
-    default = 1,
+images['compiler'] = StringOption(
+    """ LaTeX command to use when compiling image document """,
+    options = '--image-compiler',
+    default = 'latex',
     category = 'images',
 )
 
@@ -251,6 +239,12 @@ images['cleanup'] = BooleanOption(
 
 doc = c.add_section('document')
 c.add_category('document', 'Document Options')
+
+doc['base-url'] = StringOption(
+    """ Base URL for inter-node links """,
+    options = '--base-url',
+    category = 'document',
+)
 
 doc['title'] = StringOption(
     """ 
@@ -285,18 +279,11 @@ doc['sec-num-depth'] = IntegerOption(
     default = 6,
 )
 
-#
-# Programs
-#
-
-prog = c.add_section('programs')
-c.add_category('programs', 'External Programs')
-
-prog['kpsewhich'] = StringOption(
-    """ Program which locates LaTeX files and packages """,
-    options = '--kpsewhich',
-    category = 'programs',
-    default = 'kpsewhich',
+doc['index-columns'] = IntegerOption(
+    """ Number of columns to split the index entries into """,
+    options = '--index-columns',
+    category = 'document',
+    default = 2,
 )
 
 

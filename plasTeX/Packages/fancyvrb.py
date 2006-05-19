@@ -98,14 +98,14 @@ class Verbatim(verbatim):
         # Command chars
         if options.has_key('commandchars'):
             chars = options['commandchars']
-            tex.context.catcode(chars[0], Token.CC_ESCAPE)
-            tex.context.catcode(chars[1], Token.CC_BGROUP)
-            tex.context.catcode(chars[2], Token.CC_EGROUP)
+            self.ownerDocument.context.catcode(chars[0], Token.CC_ESCAPE)
+            self.ownerDocument.context.catcode(chars[1], Token.CC_BGROUP)
+            self.ownerDocument.context.catcode(chars[2], Token.CC_EGROUP)
 
         # Comment char
         if options.has_key('commentchar'):
             char = options['commentchar']
-            tex.context.catcode(char, Token.CC_COMMENT)
+            self.ownerDocument.context.catcode(char, Token.CC_COMMENT)
 
         print self.style
         return self.attributes

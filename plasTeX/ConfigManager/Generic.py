@@ -427,6 +427,9 @@ class GenericOption(object):
 
       self.setValue(self.default)
 
+   def defaultValue(self):
+      return self.default
+
    def getValue(self, value=None):
       """ Return value for option """
       # If specified on the commond-line, always return it.

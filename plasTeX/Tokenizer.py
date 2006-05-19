@@ -50,6 +50,8 @@ class Token(Text):
     CC_ACTIVE = 13
     CC_COMMENT = 14
     CC_INVALID = 15
+
+    TOKEN_SLOTS = __slots__ = Text.TEXT_SLOTS
     
     catcode = None       # TeX category code
     macroName = None     # Macro to invoke in place of this token
@@ -92,58 +94,72 @@ class EscapeSequence(Token):
     def macroName(self):
         return self
     macroName = property(macroName)
+    __slots__ = Token.TOKEN_SLOTS
 
 class BeginGroup(Token):
     """ Beginning of a TeX group """
     catcode = Token.CC_BGROUP
     macroName = 'bgroup'
+    __slots__ = Token.TOKEN_SLOTS
 
 class EndGroup(Token):
     """ Ending of a TeX group """
     catcode = Token.CC_EGROUP
     macroName = 'egroup'
+    __slots__ = Token.TOKEN_SLOTS
 
 class MathShift(Token):
     catcode = Token.CC_MATHSHIFT
     macroName = 'active::$'
+    __slots__ = Token.TOKEN_SLOTS
 
 class Alignment(Token):
     catcode = Token.CC_ALIGNMENT
     macroName = 'active::&'
+    __slots__ = Token.TOKEN_SLOTS
 
 class EndOfLine(Token):
     catcode = Token.CC_EOL
     isElementContentWhitespace = True
+    __slots__ = Token.TOKEN_SLOTS
 
 class Parameter(Token):
     catcode = Token.CC_PARAMETER
+    __slots__ = Token.TOKEN_SLOTS
 
 class Superscript(Token):
     catcode = Token.CC_SUPER
     macroName = 'active::^'
+    __slots__ = Token.TOKEN_SLOTS
 
 class Subscript(Token):
     catcode = Token.CC_SUB
     macroName = 'active::_'
+    __slots__ = Token.TOKEN_SLOTS
 
 class Space(Token):
     catcode = Token.CC_SPACE
     isElementContentWhitespace = True
+    __slots__ = Token.TOKEN_SLOTS
 
 class Letter(Token):
     catcode = Token.CC_LETTER
+    __slots__ = Token.TOKEN_SLOTS
 
 class Other(Token):
     catcode = Token.CC_OTHER
+    __slots__ = Token.TOKEN_SLOTS
 
 class Active(Token):
     catcode = Token.CC_ACTIVE
+    __slots__ = Token.TOKEN_SLOTS
 
 class Comment(Token):
     catcode = Token.CC_COMMENT
     nodeType = Node.COMMENT_NODE
     nodeName = '#comment'
     isElementContentWhitespace = True
+    __slots__ = Token.TOKEN_SLOTS
 
 class Tokenizer(object):
 
@@ -420,7 +436,6 @@ class Tokenizer(object):
                         if token[-1] in string.letters:
                             # Absorb following whitespace
                             self.state = STATE_S
-#
 
                     break
 
