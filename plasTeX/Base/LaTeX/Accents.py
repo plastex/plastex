@@ -252,7 +252,8 @@ class H(Accent):
         'u': unichr(369),
     }
 
-class t(Accent): pass
+class t(Accent):
+    chars = {}
 
 class c(Accent):
     chars = {
@@ -353,6 +354,8 @@ class k(Accent):
         'o': unichr(491),
     }
 
+class r(Accent):
+    chars = {}
 
 #
 # Table 3.2: Non-English Symbols (see Characters.py)

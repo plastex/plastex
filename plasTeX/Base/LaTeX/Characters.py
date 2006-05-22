@@ -8,6 +8,14 @@ I figure that it wouldn't hurt to put them all in by default.
 
 from plasTeX import Command
 
+class ding(Command):
+    args = 'self'
+    values = {}
+    @property
+    def unicode(self):
+        if int(self.textContent.strip()) in type(self).values:
+            return type(self).values[int(self.textContent)]
+
 class textogonekcentered(Command):
     unicode = unichr(731)
 
