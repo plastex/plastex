@@ -2,15 +2,46 @@
 
 from distutils.core import setup
 
+templates = ['*.html','*.htm','*.xml','*.zpt','*.zpts']
+images = ['*.gif','*.png','*.jpg','*.jpeg','*.js']
+styles = ['*.css']
+
 setup(name="plasTeX",
-      description="LaTeX document parser and converter",
-      author="Kevin Smith",
-      author_email="Kevin.Smith@theMorgue.org",
+      description="LaTeX document processing framework",
+      author="Kevin D. Smith",
+      author_email="Kevin.Smith@sas.com",
       #url="",
-      packages=['plasTeX','plasTeX.ConfigManager','plasTeX.DOM',
-                'plasTeX.imagers','plasTeX.packages','plasTeX.renderers',
-                'plasTeX.renderers.xhtml','plasTeX.simpletal',
-                'plasTeX.Base','plasTeX.Base.LaTeX','plasTeX.Base.TeX'],
+      packages = [
+         'plasTeX',
+         'plasTeX.Base',
+         'plasTeX.Base.LaTeX',
+         'plasTeX.Base.LaTeX.Languages',
+         'plasTeX.Base.TeX',
+         'plasTeX.ConfigManager',
+         'plasTeX.DOM',
+         'plasTeX.Imagers',
+         'plasTeX.Packages',
+         'plasTeX.Renderers',
+         'plasTeX.Renderers.XHTML',
+         'plasTeX.Renderers.XHTML.Themes',
+         'plasTeX.Renderers.XHTML.Themes.default',
+         'plasTeX.Renderers.XHTML.Themes.default.icons',
+         'plasTeX.Renderers.XHTML.Themes.default.styles',
+         'plasTeX.Renderers.XHTML.Themes.python',
+         'plasTeX.Renderers.XHTML.Themes.python.icons',
+         'plasTeX.Renderers.XHTML.Themes.plain',
+         'plasTeX.Renderers.ZPT',
+         'plasTeX.Renderers.ZPT.simpletal',
+      ],
+      package_data = {
+         'plasTeX.Base.LaTeX': ['*.xml'],
+         'plasTeX.Renderers.XHTML': templates,
+         'plasTeX.Renderers.XHTML.Themes.default': templates,
+         'plasTeX.Renderers.XHTML.Themes.default.icons': images,
+         'plasTeX.Renderers.XHTML.Themes.default.styles': styles,
+         'plasTeX.Renderers.XHTML.Themes.python': templates+styles,
+         'plasTeX.Renderers.XHTML.Themes.python.icons': images,
+         'plasTeX.Renderers.XHTML.Themes.plain': templates,
+      },
       scripts=['plasTeX/plastex'],
 )
-
