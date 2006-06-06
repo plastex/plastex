@@ -18,7 +18,7 @@ parts of the macros.  See the example below.
 \begin{verbatim}
 % Print a double line, then bold the text.  
 % In plasTeX, leave the lines out.
-\newcommand{\mymacro}[1]{\ifplastex\else\hline\hline\fi\textbf{#1}}
+\newcommand{\mymacro}[1]{\ifplastex\else\vspace*{1in}\fi\textbf{#1}}
 \end{verbatim}
 
 Depending on how complicated you macro is, you may want to implement it

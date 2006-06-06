@@ -294,17 +294,17 @@ retrieves all of the \LaTeX\ macros that belong to the scope of the
 current Python based macro.
 \end{methoddesc}
 
-\begin{methoddesc}[Macro]{paragraphs}{}
+\begin{methoddesc}[Macro]{paragraphs}{force=True}
 group content into paragraphs.  Paragraphs are grouped once all other
 content has been \method{digest}ed.  The paragraph grouping routine works
 like \TeX's, in that environments are included inside paragraphs.  This 
 is unlike HTML's model, where lists and tables are not included inside 
-paragraphs.  In addition, content is only grouped into paragraphs if
-a true \TeX\ paragraph exists (i.e. a blank line in the \LaTeX\ source file).
-This can give seemingly strange behavior in constructs such as lists where
-some items may have blank lines and others may not.  The items with blank
-lines in the source will be grouped into paragraphs in the document 
-object, but the items without would not have paragraphs.
+paragraphs.  The \var{force} argument allows you to decide whether or not
+paragraphs should be forced.  By default, all content of the node is 
+grouped into paragraphs whether or not the content originally contained
+a paragraph node.  However, with \var{force} set to \var{False}, a node
+will only be grouped into paragraphs if the original content contained
+at least one paragraph node.
 \end{methoddesc}
 
 \begin{methoddesc}[Macro]{parse}{tex}

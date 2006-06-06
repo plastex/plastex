@@ -406,7 +406,7 @@ a \class{ConfigManager} instance to be used.  See the documentation for
    the following forms:
         
 
-\begin{tableii}{l|p{3in}}{var}{Type}{Description}
+\begin{tableii}{l|p{4in}}{var}{Type}{Description}
    \lineii{single value}{for \class{StringOption} this this is a string, for
       \class{IntegerOption} this is an integer, for \class{FloatOption} this is
       a float.  The single value mode is most useful when the 
@@ -511,12 +511,16 @@ of the subclasses themselves.
       options = '--help -h',
       callback = usage,  # usage() function must exist prior to this
    )
+\end{verbatim}
 
+\begin{verbatim}
    BooleanOption(
       ''' Set verbosity ''',
       options = '-v --verbose !-q !--quiet',
    )
+\end{verbatim}
 
+\begin{verbatim}
    StringOption(
       '''
       IP address option
@@ -533,7 +537,9 @@ of the subclasses themselves.
       synopsis = '#.#.#.#',
       category = 'network',  # Assumes 'network' category exists
    )
+\end{verbatim}
 
+\begin{verbatim}
    IntegerOption(
       '''
       Number of seconds to wait before timing out
@@ -547,7 +553,9 @@ of the subclasses themselves.
       values = [0,1e9],
       category = 'network',
    )
+\end{verbatim}
 
+\begin{verbatim}
    IntegerOption(
       '''
       Number of tries to connect to the host before giving up
@@ -561,7 +569,9 @@ of the subclasses themselves.
       values = (1,2,3),
       category = 'network',
    )
+\end{verbatim}
 
+\begin{verbatim}
    StringOption(
       '''
       Nonsense option for example purposes only

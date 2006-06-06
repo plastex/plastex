@@ -44,10 +44,10 @@ is discussed later in this chapter.
 
 The \class{Renderer} class is a subclass of the Python dictionary.  
 Each key in the renderer corresponds to the name of a node in the 
-document object.  The value stored under each key is a callable object.
+document object.  The value stored under each key is a function.
 As each node in the document object is traversed, the renderer is queried 
 to see if there is a key that matches the name of the node.  If a 
-key is found, the value at that key (which must be a callable object) is 
+key is found, the value at that key (which must be a function) is 
 called with the node as its only argument.  The return value from this
 call must be a unicode object that contains the rendered output.
 Based on the configuration, the renderer will handle all of the file 
@@ -58,13 +58,15 @@ renderer dictionary, the default rendering method is called.  The
 default rendering method is stored in the \member{default} attribute.
 One exception to this rule is for text nodes.  The default 
 rendering method for text nodes is actually stored in \member{textdefault}.
-Again, these attributes simply need to reference any Python callable
-object that returns a unicode object of the rendered output.  The 
+Again, these attributes simply need to reference any Python function
+that returns a unicode object of the rendered output.  The 
 default method in both of these attributes is the \function{unicode}
 built-in function.
 
 As mention previously, most of the work of the renderer is actually 
-done by the \class{Renderable} class.  This is a mixin class that is
+done by the \class{Renderable} class.  This is a mixin class\footnote{
+A mixin class is simply a class that is merely a collection of methods
+that are intended to be included in the namespace of another class.} that is
 mixed into the \class{Node} class in the \method{render} method.
 It is unmixed at the end of the \method{render} method.  The details
 of the \class{Renderable} class are discussed in section \ref{sec:renderable}.
@@ -229,8 +231,8 @@ Next paragraph.
 </document>
 \end{verbatim}
 
-Of course, you aren't limited to using just Python methods.  Any callable
-object that accepts a node as an argument can be used.  The 
+Of course, you aren't limited to using just Python methods.  Any function
+that accepts a node as an argument can be used.  The 
 Zope Page Template (ZPT) renderer included with \plasTeX\ is an example 
 of how to write a renderer that uses a templating language to render
 the nodes (see section \ref{sec:zpt}).
@@ -474,7 +476,7 @@ renderer is a general solution for rendering XML or HTML from a
 you simply need to use a different set of templates.
 
 As in all \class{Renderer}-based renderers, each key in the ZPT renderer
-returns a callable object.  In this case, each of these objects is a
+returns a function.  In this case, each of these ``functions'' is a
 callable ZPT instance\footnote{ZPT instances, by default, are not callable.
 The \method{__call__} is added to the object.  This new method populates
 the namespace of the template and returns the rendered output.}.  As is

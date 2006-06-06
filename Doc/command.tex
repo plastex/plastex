@@ -211,9 +211,9 @@ and one for the URL, if one exists.  They are specified in the config
 file as follows:
 \begin{verbatim}
 [links]
-glossary-url=http://myhost.com/glossary
-glossary-title=The Glossary
-otheropt-title=Another Title
+next-url=http://myhost.com/glossary
+next-title=The Next Document
+mylink-title=Another Title
 \end{verbatim}
 
 These option names are split on the dash (-) to create a key, before the dash,
@@ -221,11 +221,16 @@ and a member, after the dash.  A dictionary is inserted into the navigation
 object with the name of the key, and the members are added to that dictionary.
 The configuration above would create the following Python dictionary.
 \begin{verbatim}
-{'glossary':
-    {'url':'http://myhost.com/glossary', 
-     'title':'The Glossary'},
- 'otheropt':
-    {'title':'Another Title'}
+{
+    'next':
+        {
+            'url':'http://myhost.com/glossary', 
+            'title':'The Next Document'
+        },
+    'mylink':
+        {
+            'title':'Another Title'
+        }
 }
 \end{verbatim}
 
@@ -292,7 +297,9 @@ in the list is returned once.  An example is shown below.
 index.html toc.html file1.html file2.html
 \end{verbatim}
 
-These filenames can also contain variables as described in 
+If you don't know how many files you are going to be reproducing,
+using static filenames like in the example above is not practical.
+For this reason, these filenames can also contain variables as described in 
 Python's string Templates (e.g. \var{\$title}, \var{\${id}}).  These variables
 come from the namespace created in the renderer and include:
 \var{\$id}, the ID (i.e. label) of the item, \var{\$title}, the title of the
@@ -336,6 +343,11 @@ $jobname_sect$num(4).html
 \end{verbatim}
 
 Each of the alternatives is attempted until one of them succeeds.
+In order for an alternative to succeed, all of the variables referenced
+in the template must be populated.  For example, the \var{\$id} variable
+will not be populated unless the node had a \macro{\$label} macro
+pointing to it.  The \var{title} variable would not be populated unless
+the node had a title associated with it (e.g. such as section, subsection, etc.).
 Generally, the last one should contain no variables except for
 \var{\$num} as a fail-safe alternative.
 \end{configuration}

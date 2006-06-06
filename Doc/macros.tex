@@ -51,9 +51,9 @@ trouble with, or even write alternative versions of the macro for
 \LaTeX\ and \plasTeX.  Here is an example.
 \begin{verbatim}
 \newcommand{\foo}[1]{
-    \ifplastex\else\hline\hline\hline\fi
+    \ifplastex\else\vspace*{0.25in}\fi
     \textbf{\Large{#1}}
-    \ifplastex\else\hline\hline\hline\fi
+    \ifplastex\else\vspace*{1in}\fi
 }
 
 \ifplastex
@@ -176,7 +176,7 @@ of the available types is shown in the table below.
     retrieves the object that was labeled by that value,
     then adds the labeled object to the \member{idref} dictionary under
     the name of the argument.
-    This type of argument is used on commands like \macro{ref} that must
+    This type of argument is used in commands like \macro{ref} that must
     reference other abjects.  The nice thing about `idref' is that it
     gives you a reference to the object itself which you can then use
     to retrieve any type of information from it such as the reference
@@ -298,7 +298,7 @@ def latex2htmlcolor(arg):
 class color(Environment):
     args = 'color:str'
     def invoke(self, tex):
-        a = self.invoke(tex)
+        a = Environment.invoke(tex)
         self.style['color'] = latex2htmlcolor(a['color'])
 \end{verbatim}
 
@@ -356,7 +356,7 @@ class Caption(Command):
 
         return res
 
-class figure(Float):
+class figure(Environment):
     args = '[ loc:str ]'
     caption = None
     class caption_(Caption):
@@ -499,17 +499,23 @@ macros in the following way.
 Here is an example of an INI file that defines several macros.
 \begin{verbatim}
 [Command]
+; \program{ self }
 program=self
+; \programopt{ self }
 programopt=self
 
 [Environment]
+; \begin{methoddesc}[ classname ]{ name  { args } ... \end{methoddesc}
 methoddesc=[ classname ] name args
+; \begin{memberdesc}[ classname ]{ name  { args } ... \end{memberdesc}
 memberdesc=[ classname ] name args
 
 [section]
+; \headi( options:dict )[ toc ]{ title }
 headi=( options:dict ) [ toc ] title
 
 [subsection]
+; \headii( options:dict )[ toc ]{ title }
 headii=( options:dict ) [ toc ] title
 \end{verbatim}
 
@@ -550,7 +556,7 @@ package.  The following methods of the context object create new commands.
     \macro{{\it ifcommand}false}.}
 \lineii{newcommand}{corresponds to \LaTeX's \macro{newcommand} macro.}
 \lineii{newenvironment}{corresponds to \LaTeX's \macro{newenvironment} macro.}
-\lineii{newdif}{corresponds to \TeX's \macro{def} command.}
+\lineii{newdef}{corresponds to \TeX's \macro{def} command.}
 \lineii{chardef}{corresponds to \TeX's \macro{chardef} command.}
 \end{tableii}
 

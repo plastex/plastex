@@ -3,7 +3,7 @@
 
 \plasTeX is a collection of Python frameworks that allow you to process
 \LaTeX\ documents.  This processing includes, but is not limited to,
-conversion of \LaTeX\ documents to other formats.  Of course, it is 
+conversion of \LaTeX\ documents to various document formats.  Of course, it is 
 capable of converting to HTML or XML formats such as DocBook and tBook,
 but it is an open framework that allows you to drive any type of 
 rendering.  This means that it could be used to drive a COM object 
@@ -51,13 +51,16 @@ and the renderer.
 \item[Full Rendering Control] In \plasTeX\, you get full control over the
 renderer.  There is a Zope Page Template (ZPT) based renderer included for HTML
 and XML applications, but that is merely an example of what you can do.
-A renderer is simply a collection of callable objects.  During the rendering
-process, each node in the document object is passed to the callable object 
-in the renderer that has the same name as the node.  What that callable object
+A renderer is simply a collection of functions\footnote{``functions'' is being
+used loosely here.  Actually, any callable Python object (i.e. function, method, 
+or any object with the \method{__call__} method implemented) can be used.}.  
+During the rendering
+process, each node in the document object is passed to the function
+in the renderer that has the same name as the node.  What that function
 does is up to the renderer.  In the case of the ZPT-based renderer, the 
 node is simply applied to the template using the \method{expand()} method.
 If you don't like ZPT, there is nothing preventing you from populating
-a renderer with callables that invoke other types of templates, or functions
+a renderer with functions that invoke other types of templates, or functions
 that simply generate markup with print statements.  You could even drive
 a COM interface to create a MS Word document.
 \end{description}

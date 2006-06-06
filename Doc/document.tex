@@ -159,8 +159,6 @@ for its section levels, namely:
 \item[-\code{sys.maxint} {\it or} \member{Node.DOCUMENT_LEVEL}] 
     corresponds to the \environment{document} environment and 
     is always the top-level section
-\item[-2 {\it or} \member{Node.VOLUME_LEVEL}]
-    used for multiple volume sets of books
 \item[6 {\it or} \member{Node.SUBSUBPARAGRAPH_LEVEL}]
     this level was added to correspond to the sixth level of headings
     defined in HTML
@@ -324,7 +322,8 @@ weren't forced into these areas, you could have inconsistently
 paragraph-ed content.
 
 Some areas where paragraphs are allowed, but not necessarily needed might
-not want the forced paragraph to be generated.  In these cases, you can
+not want the forced paragraph to be generated, such as within a grouping
+of curly braces (\{~\}).  In these cases, you can
 use the \code{force=False} keyword argument to \method{paragraphs}.
 This still does paragraph grouping, but only if there is a paragraph element
 already in the list of child nodes.
@@ -444,24 +443,16 @@ table cell nodes.  To get the CSS information formatted such that it
 can be used in an inline style, simply access the \member{inline} property
 of the style object. 
 
+Here is an example of a \environment{tabular} environment.
 \begin{verbatim}
-# Create a TeX processor and parse a document with a table
-from plasTeX.TeX import TeX
-tex = TeX()
-tex.input(r'''
-\documentclass{book}
-\begin{document}
 \begin{tabular}{|l|l|}\hline
 x & y \\
 1 & 2 \\\hline
 \end{tabular}
-\end{document}
-''')
-document = tex.parse()
+\end{verbatim}
 
-# Grab the table node
-table = document.getElementsByTagName('tabular')[-1]
-
+The table node can be traversed as follows.
+\begin{verbatim}
 # Print the CSS for the borders of each cell
 for rownum, row in enumerate(table):
     for cellnum, cell in enumerate(row):

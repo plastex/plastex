@@ -11,11 +11,14 @@ This representation may be HTML, XML, RTF, etc.  While this could be
 implemented in various ways.  One rendering framework is included with
 \plasTeX.
 
-The renderer is essentially just a dictionary of callable objects.  The
+The renderer is essentially just a dictionary of functions\footnote{
+``functions'' is being used loosely here.  Actually, any Python callable
+object (i.e. function, method, or any object with the \method{__call__}
+method implemented) can be used}.  The
 keys in this dictionary correspond to names of the nodes in the document
-object.  The values are the callable objects that are called when a
+object.  The values are the functions that are called when a
 node in the document object needs to be rendered.  The only argument
-to the callable object is the node itself.  What this callable object
+to the function is the node itself.  What this function
 does in the rendering process is completely up to it; however, it should
 refrain from changing the document object itself as other renderers 
 may be using that same object.
@@ -35,7 +38,7 @@ output.
 
 \begin{classdesc}{Renderer}{}
 Base class for all renderers.  \class{Renderer} is a dictionary and
-contains callable objects that are called for each node in the \plasTeX\
+contains functions that are called for each node in the \plasTeX\
 document object.  The keys in the dictionary correspond to the names of
 the nodes.
 \end{classdesc}
@@ -51,7 +54,7 @@ class documentation.
 \begin{memberdesc}[Renderer]{default}
 the default renderer value.  If a node is being rendered and no key in
 the renderer matches the name of the node being rendered, this 
-callable is used instead.
+function is used instead.
 \end{memberdesc}
 
 \begin{memberdesc}[Renderer]{files}
@@ -81,7 +84,7 @@ called like a function.}
 \end{memberdesc}
 
 \begin{memberdesc}[Renderer]{outputtype}
-a callable object that converts the content returned from each rendered
+a function that converts the content returned from each rendered
 node to the appropriate value.
 \end{memberdesc}
 
