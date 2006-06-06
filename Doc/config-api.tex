@@ -1,0 +1,679 @@
+
+\section{\module{plasTeX.ConfigManager} --- \plasTeX\ Configuration}
+
+\declaremodule{standard}{plasTeX.ConfigManager}
+\modulesynopsis{\plasTeX's configuration management system}
+
+The configuration system in \plasTeX\ that parses the command-line options
+and configuration files is very flexible.  While many options are setup
+by the \plasTeX\ framework, it is possible for you to add your own options.
+This is useful if you have macros that may need to be configured by 
+configurable options, or if you write a renderer that surfaces special options
+to control it.
+
+The config files that \class{ConfigManager} supports are standard INI-style
+files.  This is the same format supported by Python's \class{ConfigParser}.
+However, this API has been extended with some dictionary-like behaviors
+to make it more Python friendly.
+
+In addition to the config files, \class{ConfigManager} can also parse
+command-line options and merge the options from the command-line into
+the options set by the given config files.  In fact, when adding options
+to a \class{ConfigManager}, you specify both how they appear in the config
+file as well as how they appear on the command-line.  Below is a basic 
+example.
+
+\begin{verbatim}
+from plasTeX.ConfigManager import *
+c = ConfigManager()
+
+# Create a new section in the config file.  This corresponds to the
+# [ sectionname ] sections in an INI file.  The returned value is 
+# a reference to the new section
+d = c.add_section('debugging')
+
+# Add an option to the 'debugging' section called 'verbose'.
+# This corresponds to the config file setting:
+#
+# [debugging]
+# verbose = no
+#
+d['verbose'] = BooleanOption(
+    """ Increase level of debugging information """,
+    options = '-v --verbose !-q !--quiet',
+    default = False,
+)
+
+# Read system-level config file
+c.read('/etc/myconfig.ini')
+
+# Read user-level config file
+c.read('~/myconfig.ini')
+
+# Parse the current command-line arguments
+opts, args = c.getopt(sys.argv[1:])
+
+# Print the value of the 'verbose' option in the 'debugging' section
+print c['debugging']['verbose']
+\end{verbatim}
+
+One interesting thing to note about retrieving values from a 
+\class{ConfigManager} is that you get the value of the option
+rather than the option instance that you put in.  For example, in the
+code above.  A \class{BooleanOption} in put into the `verbose' option
+slot, but when it is retrieved in the \function{print} statement at
+the end, it prints out a boolean value.  This is true of all option
+types.  You can access the option instance in the \member{data} attribute
+of the section (e.g. \code{c['debugging'].data['verbose']}).
+
+
+\subsection{ConfigManager Objects}
+
+\begin{classdesc}{ConfigManager}{defaults=\{~\}}
+Instantiate a configuration class for \plasTeX\ that parses the command-line options
+as well as reads the config files.  
+
+The optional argument, \var{defaults},
+is a dictionary of default values for the configuration object.  These 
+values are used if a value is not found in the requested section.
+\end{classdesc}
+
+\begin{methoddesc}[ConfigManager]{__add__}{other}
+merge items from another \class{ConfigManager}.  This allows you to add
+\class{ConfigManager} instances with syntax like: config + other. 
+This operation will modify the original instance.
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{add_section}{name}
+create a new section in the configuration with the given name.  This 
+name is the name used for the section heading in the INI file (i.e. the
+name used within square brackets (\lbrack~\rbrack) to start a section).
+The return value of this method is a reference to the newly created section.  
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{categories}{}
+return the dictionary of categories
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{copy}{}
+return a deep copy of the configuration
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{defaults}{}
+return the dictionary of default values
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{read}{filenames}
+read configuration data contained in files specified by \var{filenames}.
+Files that cannot be opened are silently ignored.  This is designed so that
+you can specify a list of potential configuration file locations (e.g.
+current directory, user's home directory, system directory), and all 
+existing configuration files in the list will be read.  A single filename
+may also be given.
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{get}{section, option, raw=0, vars=\{~\}}
+retrieve the value of \var{option} from the section \var{section}.
+Setting \var{raw} to true prevents any string interpolation from occurring
+in that value.  \var{vars} is a dictionary of addition value to use 
+when interpolating values into the option.
+
+\note{You can alsouse the alternative dictionary syntax: config[section].get(option).}
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{getboolean}{section, option}
+retrieve the specified value and cast it to a boolean
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{get_category}{key}
+return the title of the given category
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{getfloat}{section, option}
+retrieve the specified value and cast it to a float
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{getint}{section, option}
+retrieve the specified value and cast it to and integer
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{get_opt}{section, option}
+return the option value with any leading and trailing quotes removed
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{getopt}{args=None, merge=True}
+parse the command-line options.  If \var{args} is not given, the 
+args are parsed from \code{sys.argv[1:]}.  If \var{merge} is set to false,
+then the options are not merged into the configuration.  The return value
+is a two element tuple.  The first value is a list of parsed options
+in the form \code{(option, value)}, and the second value is the list of
+arguments.
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{get_optlist}{section, option, delim=','}
+return the option value as a list using \var{delim} as the delimiter
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{getraw}{section, option}
+return the raw (i.e. un-interpolated) value of the option
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{has_category}{key, title}
+add a category to group options when printing the command-line help.
+Command-line options can be grouped into categories to make options easier
+to find when printing the usage message for a program.  Categories consist
+of two pieces: 1) the name, and 2) the title.  The name is the key in
+the category dictionary and is the name used when specifying which category
+an option belongs to.  The title is the actual text that you see as a 
+section header when printing the usage message.
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{has_option}{section, name}
+return a boolean indicating whether or not an option with the given name exists
+in the given section
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{has_section}{name}
+return a boolean indicating whether or not a section with the given name exists
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{__iadd__}{other}
+merge items from another \class{ConfigManager}.  This allows you to add
+\class{ConfigManager} instances with syntax like: config += other.
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{options}{name}
+return a list of configured option names within a section.  Options are all
+of the settings of a configuration file within a section (i.e. the lines that 
+start with `optionname=').
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{__radd__}{other}
+merge items from another \class{ConfigManager}.  This allows you to add
+\class{ConfigManager} instances with syntax like: other + config.
+This operation will modify the original instance.
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{readfp}{fp, filename=None}
+like \method{read()}, but the argument is a file object.  The optional
+\var{filename} argument is used for printing error messages.
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{remove_option}{section, option}
+remove the specified option from the given section
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{remove_section}{section}
+remove the specified section
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{__repr__}{}
+return the configuration as an INI formatted string; this also includes 
+options that were set from Python code.
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{sections}{}
+return a list of all section names in the configuration
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{set}{section, option, value}
+set the value of an option
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{__str__}{}
+return the configuration as an INI formatted string; however, do not 
+include options that were set from Python code.
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{to_string}{source=...}
+return the configuration as an INI formatted string.  The \var{source}
+option indicates which source of information should be included in
+the resulting INI file.  The possible values are:
+\begin{tableii}{l|l}{var}{Name}{Description}
+\lineii{COMMANDLINE}{set from a command-line option}
+\lineii{CONFIGFILE}{set from a configuration file}
+\lineii{BUILTIN}{set from Python code}
+\lineii{ENVIRONMENT}{set from an environment variable}
+\end{tableii}
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{write}{fp}
+write the configuration as an INI formatted string to the given file object
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{usage}{categories=[]}
+print the descriptions of all command-line options.  If \var{categories}
+is specified, only the command-line options from those categories is printed.
+\end{methoddesc}
+
+
+\subsection{ConfigSection Objects}
+
+\begin{classdesc}{ConfigSection}{name, data=\{~\}}
+Instantiate a \class{ConfigSection} object.  
+
+\var{name} is the name of the section.
+
+\var{data}, if specified, is the dictionary of data to initalize
+the section contents with.
+\end{classdesc}
+
+\class{ConfigSection} objects are rarely instantiated manually.  They 
+are generally created using the \class{ConfigManager} API (either the 
+direct methods or the Python dictionary syntax).
+
+\begin{memberdesc}[ConfigSection]{data}
+dictionary that contains the option instances.  This is only accessed
+if you want to retrieve the real option instances.  Normally, you would
+use standard dictionary key access syntax on the section itself to
+retrieve the option values.
+\end{memberdesc}
+
+\begin{memberdesc}[ConfigSection]{name}
+the name given to the section.
+\end{memberdesc}
+
+
+\begin{methoddesc}[ConfigSection]{copy}{}
+make a deep copy of the section object.
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigSection]{defaults}{}
+return the dictionary of default options associated with the parent
+\class{ConfigManager}.
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{get}{option, raw=0, vars=\{~\}}
+retrieve the value of \var{option}.
+Setting \var{raw} to true prevents any string interpolation from occurring
+in that value.  \var{vars} is a dictionary of addition value to use 
+when interpolating values into the option.
+
+\note{You can alsouse the alternative dictionary syntax: section.get(option).}
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{getboolean}{section, option}
+retrieve the specified value and cast it to a boolean
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigSection]{__getitem__}{key}
+retrieve the value of an option.  This method allows you to use Python's 
+dictionary syntax on a section as shown below.
+\begin{verbatim}
+# Print the value of the 'optionname' option
+print mysection['optionname'] 
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{getint}{section, option}
+retrieve the specified value and cast it to and integer
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{getfloat}{section, option}
+retrieve the specified value and cast it to a float
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigManager]{getraw}{section, option}
+return the raw (i.e. un-interpolated) value of the option
+\end{methoddesc}
+
+\begin{memberdesc}[ConfigSection]{parent}
+a reference to the parent \class{ConfigManager} object.
+\end{memberdesc}
+
+\begin{methoddesc}[ConfigSection]{__repr__}{}
+return a string containing an INI file representation of the section.
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigSection]{set}{option, value}
+create a new option or set an existing option with the name 
+\var{option} and the value of \var{value}.
+If the given value is already an option instance, it is simply inserted
+into the section.  If it is not an option instance, an appropriate type
+of option is chosen for the given type.
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigSection]{__setitem__}{key, value}
+create a new option or set an existing option with the name \var{key} and
+the value of \var{value}.  This method allows you to use Python's 
+dictionary syntax to set options as shown below.
+\begin{verbatim}
+# Create a new option called 'optionname'
+mysection['optionname'] = 10
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigSection]{__str__}{}
+return a string containing an INI file representation of the section.
+Options set from Python code are not included in this representation.
+\end{methoddesc}
+
+\begin{methoddesc}[ConfigSection]{to_string}{\optional{source}}
+return a string containing an INI file representation of the section.
+The \var{source} option allows you to only display options from 
+certain sources.  See the \method{ConfigManager.source()} method for more
+information.
+\end{methoddesc}
+
+
+\subsection{Configuration Option Types}
+
+There are several option types that should cover just about any type 
+of command-line and configuration option that you may have.  However,
+in the spirit of object-orientedness, you can, of course, subclass
+one of these and create your own types.  \class{GenericOption} is the 
+base class for all options.  It contains all of the underlying framework
+for options, but should never be instantiated directly.  Only subclasses
+should be instantiated.
+
+\begin{classdesc}{GenericOption}{
+    \optional{docsTring, options, default, optional, values, category,
+              callback, synopsis, environ, registry, mandatory,
+              name, source}
+}
+Declare a command line option.
+
+Instances of subclasses of \class{GenericOption} must be placed in
+a \class{ConfigManager} instance to be used.  See the documentation for
+\class{ConfigManager} for more details.
+
+\var{docstring} is a string in the format of Python documentation
+   strings that describes the option and its usage.  The first
+   line is assumed to be a one-line summary for the option.
+   The following paragraphs are assumed to be a complete description
+   of the option.  You can give a paragraph with the label
+   'Valid Values:' that contains a short description of the
+   values that are valid for the current option.  If this
+   paragraph exists and an error is encountered while validating
+   the option, this paragraph will be printed instead of the
+   somewhat generic error message for that option type.
+
+\var{options} is a string containing all possible variants of the
+   option.  All variants should contain the '-', '--', etc. at
+   the beginning.  For boolean options, the option can be preceded
+   by a '!' to mean that the option should be turned OFF rather
+   than ON which is the default.
+
+\var{default} is a value for the option to take if it isn't specified
+   on the command line
+
+\var{optional} is a value for the option if it is given without a value.
+   This is only used for options that normally take a value,
+   but you also want a default that indicates that the option
+   was given without a value.
+
+\var{values} defines valid values for the option.  This argument can take
+   the following forms:
+        
+
+\begin{tableii}{l|p{3in}}{var}{Type}{Description}
+   \lineii{single value}{for \class{StringOption} this this is a string, for
+      \class{IntegerOption} this is an integer, for \class{FloatOption} this is
+      a float.  The single value mode is most useful when the 
+      value is a regular expression.  For example, to specify
+      that a \class{StringOption} must be a string of characters followed
+      by a digit, 'values' would be set to \code{re.compile(r'{\textbackslash}w+{\textbackslash}d')}.}
+   \lineii{range of values}{a two element list can be given to specify
+      the endpoints of a range of valid values.  This is probably
+      most useful on \class{IntegerOption} and \class{FloatOption}.  
+      For example, to specify that an IntegerOption can only take the values
+      from 0 to 10, 'values' would be set to [0,10]. 
+      \note{This mode must \emph{always} use a Python list since using
+            a tuple means something else entirely.}}
+   \lineii{tuple of values}{a tuple of values can be used to specify 
+      a complete list of valid values.  For example, to specify
+      that an \class{IntegerOption} can take the values 1, 2, or 3, 'values'
+      would be set to \code{(1,2,3)}.  If a string value can only take 
+      the values, 'hi', 'bye', and any string of characters beginning
+      with the letter 'z', 'values' would be set to 
+      \code{('hi','bye',re.compile(r'z.*?'))}.
+      \note{This mode must *always* use a Python tuple since using
+            a list means something else entirely.}}
+\end{tableii}
+
+\var{category} is a category key which specifies which category the
+   option belongs to (see the \class{ConfigManager} documentation on 
+   how to create categories).
+
+\var{callback} is a function to call after the value of the option has
+   been validated.  This function will be called with the validated
+   option value as its only argument.
+
+\var{environ} is an environment variable to use as default value instead
+   of specified value.  If the environment variable exists, it
+   will be used for the default value instead of the specified value.
+
+\var{registry} is a registry key to use as default value instead of
+   specified value.  If the registry key exists, it will be used
+   for the default value instead of the specified value.  A
+   specified environment variable takes precedence over this value.
+   \note{This is not implemented yet.}
+
+\var{name} is a key used to get the option from its corresponding section.
+   You do not need to specify this.  It will be set automatically
+   when you put the option into the \class{ConfigManager} instance.
+
+\var{mandatory} is a flag used to determine if the option itself is
+   required to be present.  The idea of a "mandatory option" is
+   a little strange, but I have seen it done.
+
+\var{source} is a flag used to determine whether the option was set
+   directly in the \class{ConfigManager} instance through Python,
+   by a configuration file/command line option, etc.  You do not need
+   to specify this, it will be set automatically during parsing.
+   This flag should have the value of \var{BUILTIN}, \var{COMMANDLINE},
+   \var{CONFIGFILE}, \var{ENVIRONMENT}, \var{REGISTRY}, or \var{CODE}.
+\end{classdesc}
+
+\begin{methoddesc}[GenericOption]{acceptsArgument}{}
+return a boolean indicating whether or not the option accepts an argument on 
+the command-line.  For example, boolean options do not accept an argument.
+\end{methoddesc}
+
+\begin{methoddesc}[GenericOption]{cast}{arg}
+cast the given value to the appropriate type.
+\end{methoddesc}
+
+\begin{methoddesc}[GenericOption]{checkValues}{value}
+check \var{value} against all possible valid values for the option.
+If the value is invalid, raise an \exception{InvalidOptionError} exception.
+\end{methoddesc}
+
+\begin{methoddesc}[GenericOption]{clearValue}{}
+reset the value of the option as if it had never been set.
+\end{methoddesc}
+
+\begin{methoddesc}[GenericOption]{getValue}{\optional{default}}
+return the current value of the option.  If \var{default} is specified
+and a value cannot be gotten from any source, it is returned.
+\end{methoddesc}
+
+
+\begin{methoddesc}[GenericOption]{__repr__}{}
+return a string containing a command-line representation of the option and
+its value.
+\end{methoddesc}
+
+\begin{methoddesc}[GenericOption]{requiresArgument}{}
+return a boolean indicating whether or not the option requires an argument
+on the command-line.
+\end{methoddesc}
+
+As mentioned previously, \class{GenericOption} is an abstract class 
+(i.e. it should not be instantiated directly).  Only subclasses of 
+\class{GenericOption} should be instantiated.  Below are some examples
+of use of some of these subclasses, followed by the descriptions
+of the subclasses themselves.
+
+\begin{verbatim}
+   BooleanOption(
+      ''' Display help message ''',
+      options = '--help -h',
+      callback = usage,  # usage() function must exist prior to this
+   )
+
+   BooleanOption(
+      ''' Set verbosity ''',
+      options = '-v --verbose !-q !--quiet',
+   )
+
+   StringOption(
+      '''
+      IP address option
+
+      This option accepts an IP address to connect to.
+
+      Valid Values:
+      '#.#.#.#' where # is a number from 1 to 255
+
+      ''',
+      options = '--ip-address',
+      values = re.compile(r'\d{1,3}(\.\d{1,3}){3}'),
+      default = '127.0.0.0',
+      synopsis = '#.#.#.#',
+      category = 'network',  # Assumes 'network' category exists
+   )
+
+   IntegerOption(
+      '''
+      Number of seconds to wait before timing out
+
+      Valid Values:
+      positive integer
+
+      ''',
+      options = '--timeout -t',
+      default = 300,
+      values = [0,1e9],
+      category = 'network',
+   )
+
+   IntegerOption(
+      '''
+      Number of tries to connect to the host before giving up
+
+      Valid Values:
+      accepts 1, 2, or 3 retries
+
+      ''',
+      options = '--tries',
+      default = 1,
+      values = (1,2,3),
+      category = 'network',
+   )
+
+   StringOption(
+      '''
+      Nonsense option for example purposes only
+
+      Valid Values:
+      accepts 'hi', 'bye', or any string beginning with the letter 'z'
+
+      ''',
+      options = '--nonsense -n',
+      default = 'hi',
+      values = ('hi', 'bye', re.compile(r'z.*?')),
+   )
+\end{verbatim}
+
+\begin{classdesc}{BooleanOption}{\optional{\class{GenericOption} arguments}}
+Boolean options are simply options that allow you to specify an `on' or 
+`off' state.  The accepted values for a boolean option in a config file
+are `on', `off', `true', `false', `yes', `no', 0, and 1.  Boolean options on
+the command-line do not take an argument; simply specifying the option
+sets the state to true.
+
+One interesting feature of boolean options is in specifying the command-line
+options.  Since you cannot specify a value on the command-line (the existence
+of the option indicates the state), there must be a way to set the state to
+false.  This is done using the `not' operator (!).  When specifying the 
+\var{options} argument of the constructor, if you prefix an command-line 
+option with an exclamation point, the existence of that option indicates
+a false state rather than a true state.  Below is an example of an \var{options}
+value that has a way to turn debugging information on (\longprogramopt{debug}) 
+or off (\longprogramopt{no-debug}).
+\begin{verbatim}
+BooleanOption( options = '--debug !--no-debug' )
+\end{verbatim}
+\end{classdesc}
+
+\begin{classdesc}{CompoundOption}{\optional{\class{GenericOption} arguments}}
+Compound options are options that contain multiple elements on the 
+command-line.  They are simply groups of command-line arguments surrounded
+by a pair of grouping characters (e.g. (~), [~], \{~\}, <~>).  This grouping
+can contain anything including other command-line arguments.  However, 
+all content between the grouping characters is unparsed.  This can be useful
+if you have a program that wraps another program and you want to be able
+to forward the wrapped program's options on.  An example of a compound option
+used on the command-line is shown below.
+\begin{verbatim}
+# Capture the --diff-opts options to send to another program
+mycommand --other-opt --diff-opts ( -ib --minimal ) file1 file2
+\end{verbatim}
+\end{classdesc}
+
+\begin{classdesc}{CountedOption}{\optional{\class{GenericOption} arguments}}
+A \class{CountedOption} is a boolean option that keeps track of how many
+times it has been specified.  This is useful for options that control 
+the verbosity of logging messages in a program where the number of times
+an option is specified, the more logging information is printed.
+\end{classdesc}
+
+\begin{classdesc}{InputDirectoryOption}{\optional{\class{GenericOption} arguments}}
+An \class{InputDirectoryOption} is an option that accepts a directory name
+for input.
+This directory name is checked to make sure that it exists and that it is
+readable.  If it is not, a \exception{InvalidOptionError} exception is 
+raised.
+\end{classdesc}
+
+\begin{classdesc}{OutputDirectoryOption}{\optional{\class{GenericOption} arguments}}
+An \class{OutputDirectoryOption} is an option that accepts a directory name
+for output.  If the directory exists, it is checked to make sure that it is
+readable.  If it does not exist, it is created.
+\end{classdesc}
+
+\begin{classdesc}{InputFileOption}{\optional{\class{GenericOption} arguments}}
+An \class{InputFileOption} is an option that accepts a file name for input.
+The filename is checked to make sure that it exists and is readable.  If
+it isn't, an \exception{InvalidOptionError} exception is raised.
+\end{classdesc}
+
+\begin{classdesc}{OutputFileOption}{\optional{\class{GenericOption} arguments}}
+An \class{OutputFileOption} is an option that accepts a file name for output.
+If the file exists, it is checked to make sure that it is writable.  
+If a name contains a directory, the path is checked to make sure that it is 
+writable.  If the directory does not exist, it is created. 
+\end{classdesc}
+
+\begin{classdesc}{FloatOption}{\optional{\class{GenericOption} arguments}}
+A \class{FloatOption} is an option that accepts a floating point number.
+\end{classdesc}
+
+\begin{classdesc}{IntegerOption}{\optional{\class{GenericOption} arguments}}
+An \class{IntegerOption} is an option that accepts an integer value.
+\end{classdesc}
+
+\begin{classdesc}{MultiOption}{\optional{\class{GenericOption} arguments, \optional{delim, range, template}}}
+A \class{MultiOption} is an option that is intended to be used multiple times
+on the command-line, or take a list of values.  Other options when specified
+more than once simply overwrite the previous value.  \class{MultiOption}s
+will append the new values to a list.
+
+The delimiter used to separate multiple values is the comma (,).  A different
+character can be specified in the \var{delim} argument.  
+
+In addition, it is possible to specify the number of values that are legal
+in the \var{range} argument.  The range argument takes a two element list.
+The first element is the minimum number of times the argument is required.
+The second element is the maximum number of times it is required.  You can
+use a `*' (in quotes) to mean an infinite number.
+
+You can cast each element in the list of values to a particular type by
+using the \var{template} argument.  The \var{template} argument takes a
+reference to the option class that you want the values to be converted to.
+\end{classdesc}
+
+\begin{classdesc}{StringOption}{\optional{\class{GenericOption} arguments}}
+A \class{StringOption} is an option that accepts an arbitrary string.
+\end{classdesc}

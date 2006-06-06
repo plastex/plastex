@@ -1,0 +1,281 @@
+
+\section{\module{plasTeX.Context} --- The \TeX\ Context\label{sec:context-api}}
+
+\declaremodule{standard}{plasTeX.Context}
+\modulesynopsis{The \TeX\ document context}
+
+The \class{Context} class stores all of the information associated with
+the currently running document.  This includes things like macros, counters, 
+labels, references, etc.  The context also makes sure that localized macros
+get popped off when processing leaves a macro or environment.  The context
+of a document also has the power to create new counters, dimens, if commands,
+macros, as well as change token category codes.
+
+Each time a \class{TeX} object is instantiated, it will create its own 
+context.  This context will load all of the base macros and initialize
+all of the context information described above.
+
+
+\subsection{Context Objects}
+
+\begin{classdesc}{Context}{\optional{load}}
+Instantiate a new context.
+
+If the \var{load} argument is set to true, the context will load all of the
+base macros defined in \plasTeX.  This includes all of the macros used in 
+the standard \TeX\ and \LaTeX\ distributions.
+\end{classdesc}
+
+\begin{memberdesc}[Context]{contexts}
+stack of all macro and category code collections currently in the document 
+being processed.  The item at index 0 include the global macro set and 
+default category codes.
+\end{memberdesc}
+
+\begin{memberdesc}[Context]{counters}
+a dictionary of counters.
+\end{memberdesc}
+
+\begin{memberdesc}[Context]{currentlabel}
+the object that is given the label when a \macro{label} macro is invoked.
+\end{memberdesc}
+
+\begin{memberdesc}[Context]{isMathMode}
+boolean that specifies if we are currently in \TeX's math mode or not.
+\end{memberdesc}
+
+\begin{memberdesc}[Context]{labels}
+a dictionary of labels and the objects that they refer to.
+\end{memberdesc}
+
+
+
+\begin{methoddesc}[Context]{addGlobal}{key, value}
+add a macro \var{value} with name \var{key} to the global namespace. 
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{addLocal}{key, value}
+add a macro \var{value} with name \var{key} to the current namespace. 
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{append}{\optional{context}}
+same as \method{push()}
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{catcode}{char, code}
+set the category code for a character in the current scope.  \var{char}
+is the character that will have its category code changed.  \var{code}
+is the \TeX\ category code (0-15) to change it to.
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{chardef}{name, num}
+create a new \TeX\ chardef like \macro{chardef}.
+
+\var{name} is the name of the command to create.
+
+\var{num} is the character number to use.
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{__getitem__}{key}
+look through the stack of macros and return the one with the name \var{key}.
+The return value is an \emph{instance} of the requested macro,
+not a reference to the macro class.
+This method allows you to use Python's dictionary syntax to retrieve
+the item from the context as shown below.
+\begin{verbatim}
+tex.context['section']
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{importMacros}{context}
+import macros from another context into the global namespace.  The argument,
+\var{context}, must be a dictionary of macros.
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{label}{label}
+set the given label to the currently labelable object.  An object can 
+only have one label associated with it.
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{let}{dest, source}
+create a new \TeX\ let like \macro{let}.
+
+\var{dest} is the command sequence to create.
+
+\var{source} is the token to set the command sequence equivalent to.
+
+\textbf{Example}
+\begin{verbatim}
+c.let('bgroup', BeginGroup('{'))
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{loadBaseMacros}{}
+imports all of the base macros defined by \plasTeX.  This includes all of
+the macros specified by the \TeX\ and \LaTeX\ systems.
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{loadLanguage}{language, document}
+loads a language package to configure names such as \macro{figurename},
+\macro{tablename}, etc.
+
+\var{language} is a string containing the name of the language file to load.
+
+\var{document} is the document object being processed.
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{loadINIPackage}{inifile}
+load an INI formatted package file (see section \ref{sec:packages} for 
+more information).
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{loadPackage}{tex, file, \optional{options}}
+loads a \LaTeX\ package.  
+
+\var{tex} is the \TeX\ processor to use in parsing the package content
+
+\var{file} is the name of the package to load
+
+\var{options} is a dictionary containing the options to pass to the package.
+This generally comes from the optional argument on a \macro{usepackage}
+or \macro{documentclass} macro.
+
+The package being loaded by this method can be one of three type: 1)
+a native \LaTeX\ package, 2) a Python package, or 3) an INI formatted file.
+The Python version of the package is searched for first.  If it is found,
+it is loaded and an INI version of the package is also loaded if it
+exists.  If there is no Python version, the true \LaTeX\ version of the
+package is loaded.  If there is an INI version of the package in the same
+directory as the \LaTeX\ version, that file is loaded also.
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{newcommand}{name\optional{, nargs\optional{, definition\optional{, opt}}}}
+create a new \LaTeX\ command like \macro{newcommand}.
+
+\var{name} is the name of the macro to create.
+
+\var{nargs} is the number of arguments including optional arguments.
+
+\var{definition} is a string containing the macro definition.
+
+\var{opt} is a string containing the default optional value.
+
+\textbf{Examples}
+\begin{verbatim}
+c.newcommand('bold', 1, r'\\textbf{#1}')
+c.newcommand('foo', 2, r'{\\bf #1#2}', opt='myprefix')
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{newcount}{name\optional{, initial}}
+create a new count like \macro{newcount}.
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{newcounter}{name, \optional{resetby, initial, format}}
+create a new counter like \macro{newcounter}.
+
+\var{name} is the name of the counter to create.
+
+\var{resetby} is the counter that, when incremented, will reset the 
+new counter.
+
+\var{initial} is the initial value for the counter.
+
+\var{format} is the printed format of the counter.
+
+In addition to creating a new counter macro, another macro corresponding
+to the \macro{the\var{name}} is created which prints the value of the
+counter just like in \LaTeX.
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{newdef}{name\optional{, args\optional{, definition\optional{, local}}}}
+create a new \TeX\ definition like \macro{def}.
+
+\var{name} is the name of the definition to create.
+
+\var{args} is a string containing the \TeX\ argument profile.
+
+\var{definition} is a string containing the macro code to expand when the
+definition is invoked.
+
+\var{local} is a boolean that specifies that the definition should only
+exist in the local scope.  The default value is true.
+
+\textbf{Examples}
+\begin{verbatim}
+c.newdef('bold', '#1', '{\\bf #1}')
+c.newdef('put', '(#1,#2)#3', '\\dostuff{#1}{#2}{#3}')
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{newdimen}{name\optional{, initial}}
+create a new dimen like \macro{newdimen}.
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{newenvironment}{name\optional{, nargs\optional{, definition\optional{, opt}}}}
+create a new \LaTeX\ environment like \macro{newenvironment}.  This works
+exactly like the \method{newcommand()} method, except that the 
+\var{definition} argument is a two element tuple where the first element
+is a string containing the macro content to expand at the \macro{begin},
+and the second element is the macro content to expand at the \macro{end}.
+
+\textbf{Example}
+\begin{verbatim}
+c.newenvironment('mylist', 0, (r'\\begin{itemize}', r'\\end{itemize}'))
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{newif}{name\optional{, initial}}
+create a new if like \macro{newif}.  This also creates macros corresponding
+to \macro{\var{name}true} and \macro{\var{name}false}.
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{newmuskip}{name\optional{, initial}}
+create a new muskip like \macro{newmuskip}.
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{newskip}{name\optional{, initial}}
+create a new skip like \macro{newskip}.
+\end{methoddesc}
+
+\begin{memberdesc}[Context]{packages}
+a dictionary of \LaTeX\ packages.  The keys are the names of the packages.
+The values are dictionaries containing the options that were specified
+when the package was loaded.
+\end{memberdesc}
+
+\begin{methoddesc}[Context]{pop}{\optional{obj}}
+pop the top scope off of the stack.  If \var{obj} is specified, continue
+to pop scopes off of the context stack until the scope that was originally
+added by \var{obj} is found.  
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{push}{\optional{context}}
+add a new scope to the stack.  If a macro instance \var{context} is specified, 
+the new scope's namespace is given by that object.
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{ref}{obj, label}
+set up a reference for resolution.  
+
+\var{obj} is the macro object that is doing the referencing.
+
+\var{label} is the label of the node that \var{obj} is looking for.
+
+If the item that \var{obj} is looking for has already been labeled, 
+the \member{idref} attribute of \var{obj} is set to the abject.  
+Otherwise, the reference is stored away to be resolved later. 
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{setVerbatimCatcodes}{}
+set the current set of category codes to the set used for the verbatim
+environment.
+\end{methoddesc}
+
+\begin{methoddesc}[Context]{whichCode}{char}
+return the character code that \var{char} belongs to.  The category
+codes are the same codes used by \TeX\ and are defined in the 
+\class{Token} class.  
+\end{methoddesc}
+
+

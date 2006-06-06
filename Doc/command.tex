@@ -1,0 +1,420 @@
+
+\chapter{\protect\program{plastex} --- The Command-Line Interface}
+
+While \plasTeX\ makes it possible to parse \LaTeX\ directly from Python
+code, most people will simply use the supplied command-line interface, 
+\program{plastex}.  \program{plastex} will invoke the parsing processes
+and apply a specified renderer.  By default, \program{plastex} will
+convert to HTML, although this can be changed in the \program{plastex}
+configuration.  
+
+Invoking \program{plastex} is very simple.  To convert a \LaTeX\ document 
+to HTML using all of the defaults, simply type the following at shell prompt.
+
+\begin{verbatim}
+plastex mylatex.tex
+\end{verbatim}
+
+where \file{mylatex.tex} is the name of your \LaTeX\ file.  The 
+\LaTeX\ source will be parsed, all packages will be loaded and macros 
+expanded, and converted to HTML.  Hopefully, at this point you will have
+a lovely set of HTML files that accurately reflect the \LaTeX\ source 
+document.  Unfortunately, converting \LaTeX\ to other formats can be 
+tricky, and there are many pitfalls.  If you are getting warnings or
+errors while converting your document, you may want to check the FAQ
+in the appendix to see if your problem is addressed.
+
+Running \program{plastex} with the default options may not give you output
+exactly the way you had envisioned.  Luckily, there are many options
+that allow you to change the rendering behavior.  These options are 
+described in the following section.
+
+
+\section{Command-Line and Configuration Options}
+
+There are many options to \program{plastex} that allow you to control
+things input and output file encodings, where files are generated and
+what the filenames look like, rendering parameters, etc.  While 
+\program{plastex} is the interface where the options are specified, for
+the most part these options are simply passed to the parser and renderers
+for their use.  It is even possible to create your own options for use
+in your own Python-based macros and renderers.
+The following options are currently available
+on the \program{plastex} command.  They are categorized for convenience. 
+
+\subsection{General Options}
+
+\begin{configuration}{Configuration files}
+\options{\longprogramopt{config=\optval{config-file}} or
+         \programopt{-c \optval{config-file}}}
+\config{general}{config}
+specifies a configuration file to load.  This should be the first option
+specified on the command-line.
+\end{configuration}
+
+\begin{configuration}{Kpsewhich}
+\options{\longprogramopt{kpsewhich=\optval{program}}}
+\config{general}{kpsewhich}
+\default{kpsewhich}
+specifies the \program{kpsewhich} program to use to locate \LaTeX\
+files and packages.
+\end{configuration}
+
+\begin{configuration}{Renderer}
+\options{\longprogramopt{renderer=\optval{renderer-name}}}
+\config{general}{renderer}
+\default{XHTML}
+specifies which renderer to use.
+\end{configuration}
+
+\begin{configuration}{Themes}
+\options{\longprogramopt{theme=\optval{theme-name}}}
+\config{general}{theme}
+\default{default}
+specifies which theme to use.
+\end{configuration}
+
+\begin{configuration}{Extra theme files}
+\options{\longprogramopt{copy-theme-extras} or 
+         \longprogramopt{ignore-theme-extras}}
+\config{general}{copy-theme-extras}
+\default{yes}
+indicates whether or not extra files that belong to a theme (if there are
+any) should be copied to the output directory.
+\end{configuration}
+
+
+\subsection{Document Properties\label{sec:config-document}}
+
+\begin{configuration}{Base URL}
+\options{\longprogramopt{base-url=\optval{url}}}
+\config{document}{base-url}
+specifies a base URL to prepend to the path of all links.
+\end{configuration}
+
+\begin{configuration}{Number of Columns in the Index}
+\options{\longprogramopt{index-columns=\optval{integer}}}
+\config{document}{index-columns}
+specifies the number of columns to group the index into.
+\end{configuration}
+
+\begin{configuration}{Section number depth}
+\options{\longprogramopt{sec-num-depth=\optval{integer}}}
+\config{document}{sec-num-depth}
+\default{6}
+specifies the section level depth that should appear in section numbers.
+This value overrides the value of the secnumdepth counter in the document.
+\end{configuration}
+
+\begin{configuration}{Title for the document}
+\options{\longprogramopt{title=\optval{string}}}
+\config{document}{title}
+specifies a title to use for the document instead of the title given
+in the \LaTeX\ source document
+\end{configuration}
+
+\begin{configuration}{Table of contents depth}
+\options{\longprogramopt{toc-depth=\optval{integer}}}
+\config{document}{toc-depth}
+specifies the number of levels to include in each table of contents.
+\end{configuration}
+
+\begin{configuration}{Display sections in the table of contents that do not create files}
+\options{\longprogramopt{toc-non-files}}
+\config{document}{toc-non-files}
+specifies that sections that do not create files should still appear in the
+table of contents.  By default, only sections that create files will show
+up in the table of contents.
+\end{configuration}
+
+
+\subsection{Counters}
+
+It is possible to set the initial value of a counter from the
+command-line using the \longprogramopt{counter} option or the
+``counters'' section in a configuration file.  The configuration
+file format for setting counters is very simple.  The option name
+in the configuration file corresponds to the counter name, and the
+value is the value to set the counter to.  
+\begin{verbatim}
+[counters]
+chapter=4
+part=2
+\end{verbatim}
+
+The sample configuration above sets the chapter counter to 4, and the
+part counter to 2.
+
+The \longprogramopt{counter} can also set counters.  It accepts multiple
+arguments which must be surrounded by square brackets ([~]).
+Each counter set in the \longprogramopt{counter}
+option requires two values: the name of the counter and the value to
+set the counter to.  An example of \longprogramopt{counter} is shown below.
+\begin{verbatim}
+plastex --counter [ part 2 chapter 4 ] file.tex
+\end{verbatim}
+
+Just as in the configuration example, this command-line sets the
+part counter to 2, and the chapter counter to 4.
+
+\begin{configuration}{Set initial counter values}
+\options{\longprogramopt{counter=\optval{[ counter-name initial-value ]}}}
+specifies the initial counter values.
+\end{configuration}
+
+
+\subsection{Document Links\label{sec:config-links}}
+
+The links section of the configuration is a little different than the
+others.  The options in the links section are not preconfigured, they
+are all user-specified.  The links section includes information 
+to be included in the navigation object available on all sections in 
+a document.  By default, the section's navigation object includes things
+like the previous and next objects in the document, the child nodes, 
+the sibling nodes, etc.  The table below lists all of the navigation
+objects that are already defined.  The names for these items came from
+the link types defined at \url{http://fantasai.tripod.com/qref/Appendix/LinkTypes/ltdef.html}.  Of course, it is up to the renderer to actually make use
+of them.
+
+\begin{tableii}{l|l}{var}{Name}{Description}
+\lineii{home}{the first section in the document}
+\lineii{start}{same as \var{home}}
+\lineii{begin}{same as \var{home}}
+\lineii{first}{same as \var{home}}
+\lineii{end}{the last section in the document}
+\lineii{last}{same as \var{end}}
+\lineii{next}{the next section in the document}
+\lineii{prev}{the previous section in the document}
+\lineii{previous}{same as \var{prev}}
+\lineii{up}{the parent section}
+\lineii{top}{the top section in the document}
+\lineii{origin}{same as \var{top}}
+\lineii{parent}{the parent section}
+\lineii{child}{a list of the subsections}
+\lineii{siblings}{a list of the sibling sections}
+\lineii{document}{the document object}
+\lineii{part}{the current part object}
+\lineii{chapter}{the current chapter object}
+\lineii{section}{the current section object}
+\lineii{subsection}{the current subsection object}
+\lineii{navigator}{the top node in the document object}
+\lineii{toc}{the node containing the table of contents}
+\lineii{contents}{same as \var{toc}}
+\lineii{breadcrumbs}{a list of the parent objects of the current node}
+\end{tableii}
+
+Since each of these items references an object that is expected to have
+a URL and a title, any user-defined fields should contain these as well
+(although the URL is optional in some items).  To create a user-defined
+field in this object, you need to use two options: one for the title
+and one for the URL, if one exists.  They are specified in the config
+file as follows:
+\begin{verbatim}
+[links]
+glossary-url=http://myhost.com/glossary
+glossary-title=The Glossary
+otheropt-title=Another Title
+\end{verbatim}
+
+These option names are split on the dash (-) to create a key, before the dash,
+and a member, after the dash.  A dictionary is inserted into the navigation
+object with the name of the key, and the members are added to that dictionary.
+The configuration above would create the following Python dictionary.
+\begin{verbatim}
+{'glossary':
+    {'url':'http://myhost.com/glossary', 
+     'title':'The Glossary'},
+ 'otheropt':
+    {'title':'Another Title'}
+}
+\end{verbatim}
+
+While you can not override a field that is populated by the document, 
+there are times when a field isn't populated.  This occurs, for example,
+in the \var{prev} field at the beginning of the document, or the 
+\var{next} field at the end of the document.  If you specify a \var{prev}
+or \var{next} field in your configuration, those fields will be used
+when no \var{prev} or \var{next} is available.  This allows you to link
+to external documents at those points.
+
+
+\begin{configuration}{Set document links}
+\options{\longprogramopt{links=\optval{[ key optional-url title ]}}}
+specifies links to be included in the navigation object.  Since at
+least two values are needed in the links (key and title, with an optional
+URL), the values are grouped in square brackets on the command-line ([~]).
+\end{configuration}
+
+
+\subsection{Input and Output Files\label{sec:config-files}}
+
+If you have a renderer that only generates one file, specifying the output
+filename is simple: use the \longprogramopt{filename} option to specify
+the name.  However, if the renderer you are using generates multiple
+files, things get more complicated.  The \longprogramopt{filename} option
+is also capable of handling multiple names, as well as giving you a
+templating way to build filenames.
+
+Below is a list of all of the options that affect filename generation.
+
+\begin{configuration}{Characters that shouldn't be used in a filename}
+\options{\longprogramopt{bad-filename-chars=\optval{string}}}
+\config{files}{bad-chars}
+\default{:~\#\$\%\textasciicircum\&*!\textasciitilde`"'=?/{}[]()|<>;\textbackslash,.}
+specifies all characters that should not be allowed in a filename.
+These characters will be replaced by the value in 
+\longprogramopt{bad-filename-chars-sub}.
+\end{configuration}
+
+\begin{configuration}{String to use in place of invalid characters}
+\options{\longprogramopt{bad-filename-chars-sub}=\optval{string}}
+\config{files}{bad-chars-sub}
+\default{-}
+specifies a string to use in place of invalid filename characters (
+specified by the \longprogramopt{bad-chars-sub} option)
+\end{configuration}
+
+\begin{configuration}{Output Directory}
+\options{\longprogramopt{dir=\optval{directory}}  or \programopt{-d \optval{directory}}}
+\config{files}{directory}
+\default{\$jobname}
+specifies a directory name to use as the output directory.
+\end{configuration}
+
+\begin{configuration}{Template to use for output filenames}
+\options{\longprogramopt{filename=\optval{string}}}
+\config{files}{filename}
+specifies the templates to use for generating filenames.  
+The filename template is a list of space separated names.  Each name 
+in the list is returned once.  An example is shown below.
+
+\begin{verbatim}
+index.html toc.html file1.html file2.html
+\end{verbatim}
+
+These filenames can also contain variables as described in 
+Python's string Templates (e.g. \var{\$title}, \var{\${id}}).  These variables
+come from the namespace created in the renderer and include:
+\var{\$id}, the ID (i.e. label) of the item, \var{\$title}, the title of the
+item, and \var{\$jobname}, the basename of the \LaTeX\ file being processed.  
+One special variable is \var{\$num}.  This value in generated dynamically 
+whenever a filename with \var{\$num} is requested.  Each time a filename 
+with \var{\$num} is successfully generated, the value of \var{\$num}
+is incremented.
+
+The values of variables can also be modified by a format specified
+in parentheses after the variable.  The format is simply an integer
+that specifies how wide of a field to create for integers 
+(zero-padded), or, for strings, how many space separated words
+to limit the name to.  The example below shows \var{\$num} being padded
+to four places and \var{\$title} being limited to five words.
+
+\begin{verbatim}
+sect$num(4).html $title(5).html
+\end{verbatim}
+
+The list can also contain a wildcard filename (which should be 
+specified last).  Once a wildcard name is reached, it is 
+used from that point on to generate the remaining filenames.  
+The wildcard filename contains a list of alternatives to use as
+part of the filename indicated by a comma separated list of 
+alternatives surrounded by a set of square brackets ([ ]).
+Each of the alternatives specified is tried until a filename is
+successfully created (i.e. all variables resolve).  For example,
+the specification below creates three alternatives.
+
+\begin{verbatim}
+$jobname_[$id, $title, sect$num(4)].html
+\end{verbatim}
+
+The code above is expanded to the following possibilities.
+
+\begin{verbatim}
+$jobname_$id.html
+$jobname_$title.html
+$jobname_sect$num(4).html
+\end{verbatim}
+
+Each of the alternatives is attempted until one of them succeeds.
+Generally, the last one should contain no variables except for
+\var{\$num} as a fail-safe alternative.
+\end{configuration}
+
+\begin{configuration}{Input Encoding}
+\options{\longprogramopt{input-encoding=\optval{string}}}
+\config{files}{input-encoding}
+\default{utf-8}
+specifies which encoding the \LaTeX\ source file is in
+\end{configuration}
+
+\begin{configuration}{Output Encoding}
+\options{\longprogramopt{output-encoding=\optval{string}}}
+\config{files}{output-encoding}
+\default{utf-8}
+specifies which encoding the output files should use.  
+\note{This depends on the output format as well.  While HTML and XML use 
+encodings, a binary format like MS Word, would not.}
+\end{configuration}
+
+\begin{configuration}{Splitting document into multiple files}
+\options{\longprogramopt{split-level=\optval{integer}}}
+\config{files}{split-level}
+\default{2}
+specifies the highest section level that generates a new file.  Each section
+in a \LaTeX\ document has a number associated with its hierarchical level.
+These levels are -2 for the document, -1 for parts, 0 for chapters,
+1 for sections, 2 for subsections, 3 for subsubsections, 4 for paragraphs,
+and 5 for subparagraphs.  A new file will be generated for every section
+in the hierarchy with a value less than or equal to the value of this 
+option.  This means that for the value of 2, files will be generated for
+the document, parts, chapters, sections, and subsections.
+\end{configuration}
+
+
+\subsection{Image Options\label{sec:config-images}}
+
+Images are created by renderers when the output type in incapable of 
+rendering the content in any other way.  This method is commonly used
+to display equations in HTML output.  The following options control
+how images are generated.
+
+\begin{configuration}{Base URL}
+\options{\longprogramopt{image-base-url=\optval{url}}}
+\config{images}{base-url}
+specifies a base URL to prepend to the path of all images.
+\end{configuration}
+
+\begin{configuration}{\LaTeX\ program to use to compile image document}
+\options{\longprogramopt{image-compiler=\optval{program}}}
+\config{images}{compiler}
+\default{latex}
+specifies which program to use to compile the images \LaTeX\ document.
+\end{configuration}
+
+\begin{configuration}{Enable or disable image generation}
+\options{\longprogramopt{enable-images} or
+         \longprogramopt{disable-images}}
+\config{images}{enabled}
+\default{yes}
+indicates whether or not images should be generated.
+\end{configuration}
+
+\begin{configuration}{Convert \LaTeX\ output to images}
+\options{\longprogramopt{imager=\optval{program}}}
+\config{images}{imager}
+\default{dvipng}
+specifies which converter will be used to take the output from the
+\LaTeX\ compiler and convert it to images.  You can specify a space 
+delimited list of names as well.  If a list of names is specified, 
+each one is verified in order to see if it works on the current machine.
+The first one that succeeds is used.
+\end{configuration}
+
+\begin{configuration}{Image filenames}
+\options{\longprogramopt{image-filenames=\optval{filename-template}}}
+\config{images}{filenames}
+\default{images/img-\$num(4).png}
+specifies the image naming template to use to generate filenames.  This
+template is the same as the templates used by the \longprogramopt{filename}
+option.
+\end{configuration}

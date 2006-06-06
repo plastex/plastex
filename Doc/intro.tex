@@ -1,0 +1,63 @@
+
+\chapter{Introduction}
+
+\plasTeX is a collection of Python frameworks that allow you to process
+\LaTeX\ documents.  This processing includes, but is not limited to,
+conversion of \LaTeX\ documents to other formats.  Of course, it is 
+capable of converting to HTML or XML formats such as DocBook and tBook,
+but it is an open framework that allows you to drive any type of 
+rendering.  This means that it could be used to drive a COM object 
+that creates a MS Word Document.
+
+The \plasTeX\ framework allows you to control all of the 
+processes including tokenizing, object creation, and rendering through 
+API calls.  You also have access to all of the internals such as
+counters, the states of ``if'' commands, locally and globally
+defined macros, labels and references, etc.  In essence, it is a \LaTeX\
+document processor that gives you the advantages of an XML
+document in the context of a language as superb as Python. 
+
+Here are some of the main features and benefits of \plasTeX.
+\begin{description}
+\item[Simple High-Level API] The API for processing a \LaTeX\ document
+is simple enough that you can write a \LaTeX\ to HTML converter
+in one line of code (not including the Python \code{import} lines).
+Just to prove it, here it is!
+\begin{verbatim}
+import sys
+from plasTeX.TeX import TeX
+from plasTeX.Renderers.XHTML import Renderer
+Renderer().render(TeX(file=sys.argv[-1]).parse())
+\end{verbatim}
+
+\item[Full Configuration File and Command-Line Option Control]
+The configuration object included with \plasTeX\ can be extended to include
+your own options.
+
+\item[Low-Level Tokenizing Control] The tokenizer in \plasTeX\ works very 
+much like the tokenizer in \TeX\ itself.  In your macro classes, you 
+can actually control the draining of tokens and even change category codes.
+
+\item[Document Object] While most other \LaTeX\ converters translate from
+\LaTeX\ source another type of markup, \plasTeX\ actually converts the 
+document into a document object very similar to the DOM used in XML.
+Of course, there are many Python constructs built on top of this object
+to make it more Pythonic, so you don't have to deal with the objects using
+only DOM methods. What's really nice about this is that you can actually 
+manipulate the document object prior to rendering.  While this may be an
+esoteric feature, not many other converters let you get between the parser
+and the renderer.
+
+\item[Full Rendering Control] In \plasTeX\, you get full control over the
+renderer.  There is a Zope Page Template (ZPT) based renderer included for HTML
+and XML applications, but that is merely an example of what you can do.
+A renderer is simply a collection of callable objects.  During the rendering
+process, each node in the document object is passed to the callable object 
+in the renderer that has the same name as the node.  What that callable object
+does is up to the renderer.  In the case of the ZPT-based renderer, the 
+node is simply applied to the template using the \method{expand()} method.
+If you don't like ZPT, there is nothing preventing you from populating
+a renderer with callables that invoke other types of templates, or functions
+that simply generate markup with print statements.  You could even drive
+a COM interface to create a MS Word document.
+\end{description}

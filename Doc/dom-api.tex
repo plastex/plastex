@@ -1,0 +1,411 @@
+
+\section{\module{plasTeX.DOM} --- The \plasTeX\ Document Object Model (DOM)\label{sec:dom-api}}
+
+\declaremodule{standard}{plasTeX.DOM}
+\modulesynopsis{The Document Object Model (DOM) used by \plasTeX.}
+
+While most \LaTeX\ processors use a stream model where the input is 
+directly connected to the output, \plasTeX\ actually works in two phases.
+The first phase reads in the \LaTeX\ document, expands macros, and
+constructs an object similar to an XML DOM.  This object is then passed
+to the renderer which translates it into the appropriate output format.
+The benefit to doing it this way is that you are not limited to a single
+output format.  In addition, you can actually apply multiple renderers
+with only one parse step.  This section describes the DOM used by 
+\plasTeX, its API, and the similarities and differences between the 
+\plasTeX\ DOM and the XML DOM.
+
+\subsection{\plasTeX\ vs. XML}
+
+The \plasTeX\ DOM and XML DOM have more similarities than differences.
+This similarity is purely intentional to reduce the learning curve and
+to prevent reinventing the wheel.  However, the XML DOM can be a bit 
+cumbersome especially when you're used to much simpler and more elegant
+Python code.  Because of this, some Python behaviors were adopted into
+the \plasTeX\ DOM.  The good news is that these extensions do not break
+compatibility with the XML DOM.  There are, however, some differences 
+due to conventions used \LaTeX.  
+
+The only significant difference between the \plasTeX\ DOM and the XML DOM is 
+that \plasTeX\ nodes do not have true attributes like in XML.  Attributes in XML
+are more like arguments in \LaTeX, because they are similar the \plasTeX\
+DOM actually puts the \LaTeX\ macro arguments into the \member{attributes}
+dictionary.  This does create an incompatibility though since XML DOM
+attributes can only be strings whereas \LaTeX\ arguments can contain 
+lots of markup.  In addition, \plasTeX\ allows you to convert these 
+arguments into Python strings, lists, dictionaries, etc., so essentially
+any type of object can occur in the \member{attributes} dictionary.
+
+Other than paying attention to the the attributes dictionary difference,
+you can use most other XML DOM methods on \plasTeX\ document objects to
+create nodes, delete nodes, etc.  The full API is described below.
+
+In most cases, you will not need to be concerned with instantiating nodes.
+The \plasTeX\ framework does this.  However, the API can be helpful if you
+want to modify the document object that \plasTeX\ creates.
+
+
+\subsection{Node Objects}
+
+\begin{classdesc}{Node}{}
+The \class{Node} class is the base class for all nodes in the
+\plasTeX\ DOM inluding elements, text, etc.
+\end{classdesc}
+
+\begin{memberdesc}[Node]{attributes}
+a dictionary containing the attributes, in the case of \plasTeX\, the 
+\LaTeX\ macro arguments
+\end{memberdesc}
+
+\begin{memberdesc}[Node]{childNodes}
+a list of the nodes that are contained by this one.  In \plasTeX, this 
+generally contains the contents of a \LaTeX\ environment.
+\end{memberdesc}
+
+\begin{memberdesc}[Node]{isElementContentWhitespace}
+boolean indicating whether or not the node only contains whitespace.
+\end{memberdesc}
+
+\begin{memberdesc}[Node]{lastChild}
+the last node in the \member{childNodes} list.  If there are no child nodes,
+the value is \var{None}.
+\end{memberdesc}
+
+\begin{memberdesc}[Node]{nodeName}
+the name of the node.  This is either the special node name as specified
+in the XML DOM (e.g. \#document-fragment, \#text, etc.), or, if the
+node corresponds to an element, it is the name of the element.
+\end{memberdesc}
+
+\begin{memberdesc}[Node]{nodeType}
+integer indicating the type of the node.  The node types are defined as:
+\begin{itemize}
+\item \member{Node.ELEMENT\_NODE}
+\item \member{Node.ATTRIBUTE\_NODE}
+\item \member{Node.TEXT\_NODE}
+\item \member{Node.CDATA\_SECTION\_NODE}
+\item \member{Node.ENTITY\_REFERENCE\_NODE}
+\item \member{Node.ENTITY\_NODE}
+\item \member{Node.PROCESSING\_INSTRUCTION\_NODE}
+\item \member{Node.COMMENT\_NODE}
+\item \member{Node.DOCUMENT\_NODE}
+\item \member{Node.DOCUMENT\_TYPE\_NODE}
+\item \member{Node.DOCUMENT\_FRAGMENT\_NODE}
+\item \member{Node.NOTATION\_NODE}
+\end{itemize}
+\note{These are defined by the XML DOM, not all of them are used by \plasTeX.}
+\end{memberdesc}
+
+\begin{memberdesc}[Node]{parentNode}
+refers to the node that contains this node
+\end{memberdesc}
+
+\begin{memberdesc}[Node]{previousSibling}
+the node in the document that is adjacent to and immediately before this 
+node.  If one does not exist, the value is \var{None}.
+\end{memberdesc}
+
+\begin{memberdesc}[Node]{nextSibling}
+the node in the document that is adjacent to and immediately after this 
+node.  If one does not exist, the value is \var{None}.
+\end{memberdesc}
+
+\begin{memberdesc}[Node]{ownerDocument}
+the node that owner of, and ultimate parent of, all nodes in the document
+\end{memberdesc}
+
+\begin{memberdesc}[Node]{textContent}
+contains just the text content of this node
+\end{memberdesc}
+
+\begin{memberdesc}[Node]{unicode}
+specifies a unicode string that could be used in place of the node.
+This unicode string will be converted into tokens in the \plasTeX\ 
+output stream.
+\end{memberdesc}
+
+\begin{memberdesc}[Node]{userdata}
+dictionary used for holding user-defined data
+\end{memberdesc}
+
+
+\begin{methoddesc}[Node]{__add__}{other}
+create a new node that is the sum of \var{self} and \var{other}.  This
+allows you to use nodes in Python statements like: node + other.
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{append}{newChild}
+adds a new child to the end of the child nodes
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{appendChild}{newChild}
+same as \method{append}
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{cloneNode}{deep=False}
+create a clone of the current node.  If \var{deep} is true, then the 
+attributes and child nodes are cloned as well.  Otherwise, all references
+to attributes and child nodes will be shared between the nodes.
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{__cmp__}{other}
+same as \method{isEqualNode}, but allows you to compare nodes using the
+Python statement: node == other.
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{extend}{other}
+appends \var{other} to list of children then returns \var{self}
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{__getitem__}{i}
+returns the child node at the index given by \var{i}.  This allows you to
+use Python's slicing syntax to retrieve child nodes: node[i].
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{getUserData}{key}
+retrieves the data in the \member{userdata} dictionary under the name \var{key}
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{hasAttributes}{}
+returns a boolean indicating whether or not this node has attributes defined
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{hasChildNodes}{}
+returns a boolean indicating whether or not the node has child nodes
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{__iadd__}{other}
+same as \method{extend}.  This allows you to use nodes in Python statements
+like: node += other.
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{insert}{i, newChild}
+inserts node \var{newChild} into position \var{i} in the child nodes list
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{insertBefore}{newChild, refChild}
+inserts \var{newChild} before \var{refChild} in this node.  If \var{refChild}
+is not found, a \exception{NotFoundErr} exception is raised.
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{isEqualNode}{other}
+indicates whether the given node is equivalent to this one
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{isSameNode}{other}
+indicates whether the given node is the same node as this one
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{__iter__}{}
+returns an iterator that iterates over the child nodes.  This allows you to
+use Python's \function{iter()} function on nodes.
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{__len__}{}
+returns the number of child nodes.  This allows you to use Python's 
+\function{len()} function on nodes.
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{normalize}{}
+combine consecutive text nodes and remove comments in this node
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{pop}{index=-1}
+removes child node and the index given by \var{index}.  If no index is
+specified, the last child is removed.
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{__radd__}{other}
+create a new node that is the sum of \var{other} and \var{self}.  This
+allows you to use nodes in Python statements like: other + node.
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{replaceChild}{newChild, oldChild}
+replaces \var{oldChild} with \var{newChild} in this node.  If \var{oldChild}
+is not found, a \exception{NotFoundErr} exception is raised.
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{removeChild}{oldChild}
+removes \var{oldChild} from this node.  If \var{oldChild} is not found,
+a \exception{NotFoundErr} exception is raised.
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{__setitem__}{i, node}
+sets the item at index \var{i} to \var{node}.  This allows you to use 
+Python's slicing syntax to insert child nodes; see the example below.
+\begin{verbatim}
+mynode[5] = othernode
+mynode[6:10] = [node1, node2]
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{setUserData}{key, data}
+put data specified in \var{data} into the \member{userdata} dictionary under the
+name given by \var{key}
+\end{methoddesc}
+
+\begin{methoddesc}[Node]{toXML}{}
+return an XML representation of the node
+\end{methoddesc}
+
+
+\subsection{DocumentFragment Objects}
+
+\begin{classdesc}{DocumentFragment}{}
+A collection of nodes that make up only part of a document.  This is 
+mainly used to hold the content of a \LaTeX\ macro argument.
+\end{classdesc}
+
+
+\subsection{Element Objects}
+
+\begin{classdesc}{Element}{}
+The base class for all element-type nodes in a document.  Elements generally
+refer to nodes created by \LaTeX\ commands and environments.
+\end{classdesc}
+
+\begin{methoddesc}[Element]{getAttribute}{name}
+returns the attribute specified by \var{name}
+\end{methoddesc}
+
+\begin{methoddesc}[Element]{getElementById}{elementId}
+retrieve the element with the given ID
+\end{methoddesc}
+
+\begin{methoddesc}[Element]{getElementsByTagName}{tagName}
+retrieve all nodes with the given name in the node
+\end{methoddesc}
+
+\begin{methoddesc}[Element]{hasAttribute}{name}
+returns a boolean indicating whether or not the specified attribute exists
+\end{methoddesc}
+
+\begin{methoddesc}[Element]{removeAttribute}{name}
+removes the attribute \var{name} from the \member{attributes} dictionary
+\end{methoddesc}
+
+\begin{methoddesc}[Element]{setAttribute}{name, value}
+sets the attribute \var{value} in the \member{attributes} dictionary
+using the key \var{name}
+\end{methoddesc}
+
+
+\subsection{Text Objects}
+
+\begin{classdesc}{Text}{}
+This is the node type used for all text data in a document object.
+Unlike XML DOM text nodes, text nodes in \plasTeX\ are 
+not mutable.  This is because they are a subclass of \var{unicode}.
+This means that they will respond to all of the standard Python
+string methods in addition to the \class{Node} methods and the methods
+described below.
+\end{classdesc}
+
+\begin{memberdesc}[Text]{data}
+the text content of the node
+\end{memberdesc}
+
+\begin{memberdesc}[Text]{length}
+the length of the text content
+\end{memberdesc}
+
+\begin{memberdesc}[Text]{nodeValue}
+the text content of the node
+\end{memberdesc}
+
+\begin{memberdesc}[Text]{wholeText}
+returns the text content from the current text node as well as its siblings
+\end{memberdesc}
+
+
+\subsection{Document Objects}
+
+\begin{classdesc}{Document}{}
+The top-level node of a document that contains all other nodes.
+\end{classdesc}
+
+\begin{methoddesc}[Document]{createDocumentFragment}{}
+instantiate a new document fragment
+\end{methoddesc}
+
+\begin{methoddesc}[Document]{createElement}{tagName}
+instantiate a new element with the given name
+\end{methoddesc}
+
+\begin{methoddesc}[Document]{createTextNode}{data}
+instantiate a new text node initialized with \var{data}
+\end{methoddesc}
+
+\begin{methoddesc}[Document]{importNode}{importedNode, deep=False}
+import a node from another document.  If \var{deep} is true, all nodes
+within \var{importedNode} are cloned.
+\end{methoddesc}
+
+\begin{methoddesc}[Document]{normalizeDocument}{}
+concatenate all consecutive text nodes and remove comments
+\end{methoddesc}
+
+
+
+\subsection{Command Objects}
+
+\begin{classdesc}{Command}{}
+The \class{Command} class is a subclass of \class{Macro}.  This is the class
+that should be subclassed when creating Python based macros that correspond
+to \LaTeX\ commands.
+
+For more information on the \class{Command} class' API, see the 
+\class{Macro} class.
+\end{classdesc}
+
+
+\subsection{Environment Objects}
+
+\begin{classdesc}{Environment}{}
+The \class{Environment} class is a subclass of \class{Macro}.  This is the
+class that should be subclassed when creating Python based macros that 
+correspond to \LaTeX\ environments.  The main difference between the 
+processing of \class{Command}s and \class{Environment}s is that the
+\method{invoke()} method does special handling of the \LaTeX\ document
+context, and the \method{digest()} method absorbs the output stream tokens
+that are encapsulated by the \macro{begin} and \macro{end} tokens. 
+
+For more information on the \class{Environment} class' API, see the 
+\class{Macro} class.
+\end{classdesc}
+
+
+\subsection{TeXFragment Objects}
+
+\begin{classdesc}{TeXFragment}{}
+A fragment of a document.  This class is used mainly to store the contents
+of \LaTeX\ macro arguments.
+\end{classdesc}
+
+\begin{memberdesc}[TeXFragment]{source}
+the \LaTeX\ source representation of the document fragment
+\end{memberdesc}
+
+
+\subsection{TeXDocument Objects}
+
+\begin{classdesc}{TeXDocument}{}
+A complete \LaTeX\ document.
+\end{classdesc}
+
+\begin{memberdesc}[TeXDocument]{charsubs}
+a list of two element tuples containing character substitutions for all
+text nodes in a document.  This is used to convert charcter strings
+like ``-{}-{}-'' into ``---''.  The first element in each tuple in the
+string to replace, the second element is the unicode character or 
+sequence to replace the original string with.
+\end{memberdesc}
+
+\begin{memberdesc}[TeXDocument]{preamble}
+returns the \LaTeX\ source representation of the document preamble 
+(i.e. everything before the \macro{begin\{document\}})
+\end{memberdesc}
+
+\begin{memberdesc}[TeXDocument]{source}
+the \LaTeX\ source representation of the document 
+\end{memberdesc}

@@ -1,0 +1,168 @@
+
+\section{\module{plasTeX.TeX} --- The \TeX\ Stream}
+
+\declaremodule{standard}{plasTeX.TeX}
+\modulesynopsis{The \TeX\ stream processor}
+
+The \TeX\ stream is the piece of \plasTeX\ where the parsing of the
+\LaTeX\ document takes place.  While the \class{TeX} class is fairly
+large, there are only a few methods and attributes designated in the
+public API.  
+
+The \TeX\ stream is based on a Python generator.  When you feed it
+a \LaTeX\ source file, it processes the file much like \TeX\ itself.
+However, on the output end, rather than a DVI file, you get a 
+\plasTeX\ document object.  The basic usage is shown in the code below.
+\begin{verbatim}
+from plasTeX.TeX import TeX
+doc = TeX(file='myfile.tex').parse()
+\end{verbatim}
+
+\subsection{TeX Objects}
+
+\begin{classdesc}{TeX}{\optional{ownerDocument, file}}
+The \class{TeX} class is the central \TeX\ engine that does all of the 
+parsing, invoking of macros, and other document building tasks.
+You can pass in an owner document if you have a customized document
+node, or if it contains a customized configuration; otherwise, 
+the default \class{TeXDocument} class is instantiated.  The \var{file}
+argument is the name of a \LaTeX\ file.  This file will be 
+searched for using the standard \LaTeX\ technique and will be 
+read using the default input encoding in the document's configuration.
+\end{classdesc}
+
+\begin{methoddesc}[TeX]{disableLogging}{}
+disables logging.  This is useful if you are using the \class{TeX} object
+within another library and do not want all of the status information to 
+be printed to the screen.
+
+\note{This is a class method.}
+\end{methoddesc}
+
+\begin{memberdesc}[TeX]{filename}
+the current filename being processed
+\end{memberdesc}
+
+\begin{memberdesc}[TeX]{jobname}
+the name of the basename at the top of the input stack
+\end{memberdesc}
+
+\begin{memberdesc}[TeX]{linenumber}
+the line number of the current file being processed 
+\end{memberdesc}
+
+
+\begin{methoddesc}[TeX]{expandtokens}{tokens, normalize=False}
+expand a list of unexpanded tokens.  This method can be used to expand
+tokens without having them sent to the output stream.  The returned value
+is a \class{TeXFragment} populated with the expanded tokens.
+\end{methoddesc}
+
+\begin{methoddesc}[TeX]{input}{source}
+add a new input source to the input stack.  \var{source} should be
+a Python file object.  This can be used to add additional input sources
+to the stream after the \class{TeX} object has been instantiated.
+\end{methoddesc}
+
+\begin{methoddesc}[TeX]{__iter__}{}
+return a generator that iterates through the tokens in the source.  
+This method allows you to treat the \class{TeX} stream as an iterable
+and use it in looping constructs.  While the looping is generally
+handled in the \method{parse()} method, you can manually expand the
+tokens in the source by looping over the \class{TeX} object as well.
+\begin{verbatim}
+for tok in TeX(open('myfile.tex')):
+    print tok
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[TeX]{itertokens}{}
+return an iterator that iterates over the unexpanded tokens in the 
+input document.
+\end{methoddesc}
+
+\begin{methoddesc}[TeX]{kpsewhich}{name}
+locate the given file in a kpsewhich-like manner.  The full path to the
+file is returned if it is found; otherwise, \var{None} is returned.
+\note{Currently, only the directories listed in the environment variable
+\envvar{TEXINPUTS} are searched.}
+\end{methoddesc}
+
+\begin{methoddesc}[TeX]{normalize}{tokens}
+joins consecutive text tokens into a string.  If the list of tokens contain
+tokens that are not text tokens, the original list of tokens is returned.
+\end{methoddesc}
+
+\begin{methoddesc}[TeX]{parse}{output=None}
+parse the sources currently in the input stack until they are empty.
+The \var{output} argument is an optional \class{Document} node to put
+the resulting nodes into.  If none is supplied, a \class{TeXDocument}
+instance will be created.  The return value is the document from the
+\var{output} argument or the instantiated \class{TeXDocument} object.
+\end{methoddesc}
+
+\begin{methoddesc}[TeX]{pushtoken}{token}
+pushes a token back into the input stream to be re-read.
+\end{methoddesc}
+
+\begin{methoddesc}[TeX]{pushtokens}{tokens}
+pushes a list of tokens back into the input stream to be re-read.
+\end{methoddesc}
+
+\begin{methoddesc}[TeX]{readArgument}{*args, **kwargs}
+parse a macro argument without the \LaTeX\ source that created it.
+This method is just a thin wrapper around \method{readArgumentAndSource}.
+See that method for more information.
+\end{methoddesc}
+
+\begin{methoddesc}[TeX]{readArgumentAndSource}{spec=None, subtype=None, 
+       delim=',', expanded=False, default=None, parentNode=None, name=None}
+parse a macro argument.  Return the argument and the \LaTeX\ source that
+created it.  The arguments are described below.
+
+\begin{tableii}{l|p{4in}}{var}{Option}{Description}
+\lineii{spec}{string containing information about the type of
+            argument to get.  If it is 'None', the next token is
+            returned.  If it is a two-character string, a grouping
+            delimited by those two characters is returned (i.e. '[]').
+            If it is a single-character string, the stream is checked
+            to see if the next character is the one specified.  
+            In all cases, if the specified argument is not found,
+            'None' is returned.}
+\lineii{type}{data type to cast the argument to.  New types can be
+            added to the self.argtypes dictionary.  The key should
+            match this 'type' argument and the value should be a callable
+            object that takes a list of tokens as the first argument
+            and a list of unspecified keyword arguments (i.e. **kwargs)
+            for type specific information such as list delimiters.}
+\lineii{subtype}{data type to use for elements of a list or dictionary}
+\lineii{delim}{item delimiter for list and dictionary types}
+\lineii{expanded}{boolean indicating whether the argument content
+            should be expanded or just returned as an unexpanded 
+            text string}
+\lineii{default}{value to return if the argument doesn't exist}
+\lineii{parentNode}{the node that the argument belongs to}
+\lineii{name}{the name of the argument being parsed}
+\end{tableii}
+
+The return value is always a two-element tuple.  The second value is always
+a string.  However, the first value can take the following values.
+
+\begin{tableii}{l|l}{}{Value}{Condition}
+\lineii{None}{the requested argument wasn't found}
+\lineii{object of requested type}{if \var{type} was specified}
+\lineii{list of tokens}{all other arguments}
+\end{tableii}
+
+\end{methoddesc}
+
+\begin{methoddesc}[TeX]{source}{tokens}
+return the \LaTeX\ representation of the tokens in \var{tokens}
+\end{methoddesc} 
+
+\begin{methoddesc}[TeX]{texttokens}{text}
+convert a string of text into a series of tokens
+\end{methoddesc}
+
+
+

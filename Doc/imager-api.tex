@@ -1,0 +1,239 @@
+
+\section{\module{plasTeX.Imagers} --- The \plasTeX\ Imaging Framework\label{sec:imager-api}}
+
+\declaremodule{standard}{plasTeX.Imagers}
+\modulesynopsis{The \plasTeX\ imaging framework}
+
+The imager framework is used when an output format is incapable of 
+representing part of a \LaTeX\ document natively.  One example of this
+is equations in HTML.  In cases like this you can use an 
+\class{Imager} to generate images of the commands and environments
+that cannot be rendered in any other way.
+
+Currently, \plasTeX\ comes with three imager implementations based
+on \program{dvi2bitmap} (\url{http://dvi2bitmap.sourceforge.net/}),
+\program{dvipng} (\url{http://savannah.nongnu.org/projects/dvipng/}),
+and \program{ghostscript} with the PNG driver 
+(\url{http://www.cs.wisc.edu/~ghost/doc/GPL/index.htm}) called gspdfpng.
+However, creating imagers based on other programs is quite simple
+and is planned for future releases.
+
+The \class{Imager} framework does all of its work in temporary directories
+the one requirement that it has is that \class{Imager} subclasses need
+to generate images with the basenames \file{img\%d} where \file{\%d} is
+the number of the image.
+
+The only requirement by the \plasTeX\ framework is that the imager class
+within the imager module is called ``Imager'' and should be installed in
+the \module{plasTeX.Imagers} package.  The basename of the imager
+module is the name used when \plasTeX\ looks for a specified imager.
+
+
+\subsection{Imager Objects}
+
+\begin{classdesc}{Imager}{document}
+Instantiate the imager class.
+
+\var{document} the document object that is being rendered.
+
+The \class{Imager} class is responsible for creating a \LaTeX\ document
+of requested images, compiling it, and generating images from each
+page in the document.
+\end{classdesc}
+
+\begin{memberdesc}[Imager]{command}
+specifies the converter that translates the output from the \LaTeX\
+document compiler (e.g. PDF, DVI, PS) into images (e.g. PNG, JPEG, GIF).
+The only requirement is that the basename of each image is of the
+form \file{img\%d} where \file{\%d} is the number of the image.
+
+\note{This is a class attribute.}
+
+Writing a renderer requires you to at least override the command that
+creates images.  It can be as simple as the example below.
+\begin{verbatim}
+import plasTeX.Imagers
+class DVIPNG(plasTeX.Imagers.Imager):
+    """ Imager that uses dvipng """
+    command = 'dvipng -o img%d.png -D 110'
+\end{verbatim}
+\end{memberdesc}
+
+\begin{memberdesc}[Imager]{compiler}
+specifies the \LaTeX\ document compiler (i.e. latex, pdflatex) command.
+
+\note{This is a class attribute.}
+\end{memberdesc}
+
+\begin{memberdesc}[Imager]{config}
+contains the ``images'' section of the document configuration.
+\end{memberdesc}
+
+\begin{memberdesc}[Imager]{images}
+dictionary that contains the \class{Image} objects corresponding to
+the requested images.  The keys are the image filenames.
+\end{memberdesc}
+
+\begin{memberdesc}[Imager]{newfilename}
+callable iterator that generates filenames according to the filename template
+in the configuration.
+\end{memberdesc}
+
+\begin{memberdesc}[Imager]{source}
+file object where the image \LaTeX\ document is written to.
+\end{memberdesc}
+
+\begin{memberdesc}[Imager]{verification}
+command that verifies the existence of the image converter on the current
+machine.  If \member{verification} is not specified, the executable 
+specified in \member{command} is executed with the \longprogramopt{help}.
+If the return code is zero, the imager is considered valid.  If the
+return code is anything else, the imager is not considered valid.
+\end{memberdesc}
+
+
+\begin{methoddesc}[Imager]{close}{}
+closes the generated \LaTeX\ document and starts the image generation routine.
+\end{methoddesc}
+
+\begin{methoddesc}[Imager]{compilelatex}{source}
+the method responsible for compiling the \LaTeX\ source.
+
+\var{source} is a file object containing the \LaTeX\ document.
+\end{methoddesc}
+
+\begin{methoddesc}[Imager]{convert}{output}
+sets up the temporary environment for the image converter, then executes
+\method{executeconverter}.  It also moves the generated images into
+their final location specified in the configuration.
+\end{methoddesc}
+
+\begin{methoddesc}[Imager]{executeconverter}{output}
+executes the command that converts the output from the \LaTeX\ compiler
+into image files.
+
+\var{output} is a file object containing the compiled output of the 
+\LaTeX\ document.
+\end{methoddesc}
+
+\begin{methoddesc}[Imager]{newimage}{text, \optional{context, filename}}
+invokes the creation of an image using the \LaTeX\ content in \var{text}.
+
+\var{context} is the \LaTeX\ code that sets up the context of the document.
+This generally includes the setting of counters so that counters used
+within the image code are correct.
+
+\var{filename} is an optional filename for the output image.  Generally, 
+image filenames are generated automatically, but they can be overridden
+with this argument.
+\end{methoddesc}
+
+\begin{methoddesc}[Imager]{verify}{}
+verifies that the command in \member{command} is valid for the current
+machine.  The \method{verify} method returns \var{True} if the command will
+work, or \var{False} if it will not.
+\end{methoddesc}
+
+\begin{methoddesc}[Imager]{writeimage}{filename, code, context}
+writes the \LaTeX\ code to the generated document that creates the 
+image content.
+
+\var{filename} is the final filename of the image.  This is not actually
+used in the document, but can be handy for debugging.
+
+\var{code} is the \LaTeX\ code that an image is needed of.
+
+\var{context} is the \LaTeX\ code that sets up the context of the document.
+This generally includes the setting of counters so that counters used
+within the image code are correct.
+\end{methoddesc}
+
+\begin{methoddesc}[Imager]{writepreamble}{document}
+this method is called when the imager is instantiated and is used to 
+write any extra information to the preamble.  If overridden, the
+subclass needs to make sure that \var{document.preamble.source} is
+the first thing written to the preamble.
+\end{methoddesc}
+
+
+\subsection{Image Objects}
+
+\begin{classdesc}{Image}{filename, config, \optional{width, height,
+                         alt, depth, longdesc}}
+Instantiate an \class{Image} object.
+
+Image objects contain information about the generated images.  This 
+information includes things such as width, height, filename, absolute
+path, etc.  Images objects also have the ability to crop the image
+that they reference and return information about the baseline of the 
+image that can be used to properly align the image with surrounding
+text.
+
+\var{filename} is the input filename of the image.
+
+\var{config} is the ``images'' section of the document configuration.
+
+\var{width} is the width of the image.  This is usually extracted from
+the image file automatically.
+
+\var{height} is the height of the image.  This is usually extracted
+from the image file automatically.
+
+\var{alt} is a text alternative of the image to be use by renderers such
+as HTML.
+
+\var{depth} is the depth of the image below the baseline of the 
+surrounding text.  This is generally calculated automatically when
+the image is cropped.
+
+\var{longdesc} is a long description used to describe the content of 
+the image for renderers such as HTML.
+\end{classdesc}
+
+\begin{memberdesc}[Image]{alt}
+a text alternative of the image to be use by renderers such as HTML.
+\end{memberdesc}
+
+\begin{memberdesc}[Image]{config}
+the ``images'' section of the document's configuration.
+\end{memberdesc}
+
+\begin{memberdesc}[Image]{depth}
+the depth of the image below the baseline of the 
+surrounding text.  This is generally calculated automatically when
+the image is cropped.
+\end{memberdesc}
+
+\begin{memberdesc}[Image]{filename}
+the filename of the image.
+\end{memberdesc}
+
+\begin{memberdesc}[Image]{height}
+the heigt of the image in pixels.
+\end{memberdesc}
+
+\begin{memberdesc}[Image]{longdesc}
+a long description used to describe the content of 
+the image for renderers such as HTML.
+\end{memberdesc}
+
+\begin{memberdesc}[Image]{path}
+the absolute path of the image file.
+\end{memberdesc}
+
+\begin{memberdesc}[Image]{url}
+the URL of the image.  This may be used during rendering.
+\end{memberdesc}
+
+\begin{memberdesc}[Image]{width}
+the width of the image in pixels.
+\end{memberdesc}
+
+
+\begin{methoddesc}[Image]{crop}{}
+crops the image so that the image edges are flush with the image 
+content.  It also sets the \member{depth} attribute of the image
+to the number of pixels that the image extends below the baseline
+of the surrounding text. 
+\end{methoddesc}
+

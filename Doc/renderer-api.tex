@@ -1,0 +1,171 @@
+
+\section{\module{plasTeX.Renderers} --- The \plasTeX\ Rendering Framework}
+
+\declaremodule{standard}{plasTeX.Renderers}
+\modulesynopsis{The \plasTeX\ rendering framework}
+
+
+The renderer is responsible for taking the information in a \plasTeX\
+document object and creating a another (usually visual) representation of it.  
+This representation may be HTML, XML, RTF, etc.  While this could be
+implemented in various ways.  One rendering framework is included with
+\plasTeX.
+
+The renderer is essentially just a dictionary of callable objects.  The
+keys in this dictionary correspond to names of the nodes in the document
+object.  The values are the callable objects that are called when a
+node in the document object needs to be rendered.  The only argument
+to the callable object is the node itself.  What this callable object
+does in the rendering process is completely up to it; however, it should
+refrain from changing the document object itself as other renderers 
+may be using that same object.
+
+There are some responsibilities that all renderers share.  Renderers
+are responsible for checking options in the configuration object.
+For instance, renderers are responsible for generating filenames, 
+creating directories, writing files in the proper encoding, generating
+images, splitting the document into multiple output files, etc.
+Of course, how it accomplishes this is really renderer dependent.
+An example of a renderer based on Zope Page Templates (ZPT) is included
+with \plasTeX.  This renderer is capable of generating XML and HTML
+output.
+
+
+\subsection{Renderer Objects}
+
+\begin{classdesc}{Renderer}{}
+Base class for all renderers.  \class{Renderer} is a dictionary and
+contains callable objects that are called for each node in the \plasTeX\
+document object.  The keys in the dictionary correspond to the names of
+the nodes.
+\end{classdesc}
+
+This renderer implementation uses a mixin called \class{Renderable} that
+is mixed into the \class{Node} class prior to rendering.  \class{Renderable}
+adds various methods to the \class{Node} namespace to assist in the
+rendering process.  The primary inclusion is the \method{\_\_unicode\_\_()}
+method.  This method returns a unicode representation of the current node
+and all of its child nodes.  For more information, see the \class{Renderable}
+class documentation.
+
+\begin{memberdesc}[Renderer]{default}
+the default renderer value.  If a node is being rendered and no key in
+the renderer matches the name of the node being rendered, this 
+callable is used instead.
+\end{memberdesc}
+
+\begin{memberdesc}[Renderer]{files}
+a list of files created during rendering.
+\end{memberdesc}
+
+\begin{memberdesc}[Renderer]{imager}
+a reference to an \class{Imager} implementation.  Imagers are responsible
+for generating images from \LaTeX\ code.  This is needed for output types 
+which aren't capable of displaying equations, \LaTeX\ pictures, etc. such
+as HTML.
+\end{memberdesc}
+
+\begin{memberdesc}[Renderer]{newfilename}
+filename generator.  This method generates a basename based on the options
+in the configuration.  
+
+The generator has an attribute called \member{namespace} which contains the
+namespace used to resolve the variables in the filename string.  This
+namespace should be populated prior to invoking the generator.  After
+a successful filename is generated, the namespace is automatically cleared
+(with the exception of the variables sent in the namespace when the 
+generator was instantiated).
+
+\note{This generator can be accessed in the usual generator fashion, or
+called like a function.}
+\end{memberdesc}
+
+\begin{memberdesc}[Renderer]{outputtype}
+a callable object that converts the content returned from each rendered
+node to the appropriate value.
+\end{memberdesc}
+
+\begin{memberdesc}[Renderer]{textdefault}
+the default renderer to use for text nodes.
+\end{memberdesc}
+
+
+\begin{methoddesc}[Renderer]{cleanup}{document, files}
+this method is called once the entire rendering process is finished.  
+Subclasses can use this method to run any post-rendering cleanup tasks.
+The first argument, \var{document}, is the document instance that is
+being rendered.  The second argument, \var{files}, is a list of all of the
+filenames that were created.
+\end{methoddesc}
+
+\begin{methoddesc}[Renderer]{find}{keys\optional{, default}}
+locate a rendering method from a list of possibilities.  
+
+\var{keys} is a list of strings containing the requested name of a
+rendering method.  This list is traversed in order.  The first renderer
+that is found is returned.
+
+\var{default} is a default rendering method to return if none of the keys
+exists in the renderer.
+\end{methoddesc}
+
+\begin{methoddesc}[Renderer]{initialize}{}
+this routine is called after the renderer is instantiated.  It can be used
+by subclasses to do any initialization routines before the rendering process.
+\end{methoddesc}
+
+\begin{methoddesc}[Renderer]{render}{document}
+invokes the rendering process on \var{document}.
+\end{methoddesc}
+
+
+\subsection{Renderable MixIn}
+
+\begin{classdesc}{Renderable}{}
+The \class{Renderable} mixin is mixed into the \class{Node} namespace
+prior to the rendering process.  The methods mixed in assist in the 
+rendering process.
+\end{classdesc}
+
+\begin{memberdesc}[Renderable]{filename}
+the filename that this object will create.  Objects that don't create 
+new files should simply return \var{None}.   The configuration determines
+which nodes should create new files. 
+\end{memberdesc}
+
+\begin{memberdesc}[Renderable]{image}
+generate an image of the object and return the image filename.  See
+the \class{Imager} documentation in section \ref{sec:imager-api} for
+more information.
+\end{memberdesc}
+
+\begin{memberdesc}[Renderable]{url}
+return the relative URL of the object.  
+
+If the object actually creates a file, just the filename will
+be returned (e.g. \file{foo.html}).  If the object is within a file, 
+both the filename and the anchor will be returned 
+(e.g. \file{foo.html\#bar}).
+\end{memberdesc}
+
+
+\begin{methoddesc}[Renderable]{__str__}{}
+same as \method{__unicode__()}.
+\end{methoddesc}
+
+\begin{methoddesc}[Renderable]{__unicode__}{}
+invoke the rendering process on all of the child nodes.  The rendering process
+includes walking through the child nodes, looking up the appropriate 
+rendering method from the renderer, and calling the method with the child
+node as its argument.
+
+In addition to the actual rendering process, this method also prints out 
+some status information about the rendering process.  For example, if 
+the node being rendered has a non-empty \member{filename} attribute, that
+means that the node is generating a new file.  This filename information
+is printed to the log.  One problem with this methodology is that the 
+filename is not actually created at this time.  It is assumed that the
+rendering method will check for the \member{filename} attribute and actually
+create the file.
+\end{methoddesc}
+

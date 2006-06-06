@@ -1,0 +1,378 @@
+
+\section{\module{plasTeX} --- The Python Macro and Document Interfaces\label{sec:macros-api}}
+
+\declaremodule{standard}{plasTeX}
+\modulesynopsis{The classes that make up a majority of the \plasTeX\ framework.}
+
+While \plasTeX\ does a respectable job expanding \LaTeX\ macros, some macros
+may be too complicated for it to handle.  These macros may have to be re-coded
+as Python objects.  Another reason you may want to use Python-based macros
+is for performance reasons.  In most cases, macros coded using Python will
+be faster than those expanded as true \LaTeX\ macros.
+
+The API for Python macros is much higher-level than that of \LaTeX\ macros.
+This has good and bad ramifications.  The good is that most common forms
+of \LaTeX\ macros can be parsed and processed very easily using Python code
+which is easier to read than \LaTeX\ code.  The bad news is that if you 
+are doing something that isn't common, you will have more work to do.
+Below is a basic example.
+
+\begin{verbatim}
+from plasTeX import Command
+
+class mycommand(Command):
+    """ \mycommand[name]{title} """
+    args = '[ name ] title'
+\end{verbatim}
+
+The code above demonstrates how to create a Python-based macro corresponding
+to \LaTeX\ macro with the form \macro{mycommand[name]\{title\}} where `name'
+is an optional argument and `title' is a mandatory argument.  In the Python
+version of the macro, you simply declare the arguments in the \member{args}
+attribute as they would be used in the \LaTeX\ macro, while leaving the braces
+off of the mandatory arguments.  When parsed in a \LaTeX\ document, an instance
+of the class \class{mycommand} in created and the arguments corresponding to
+`name' and `title' are set in the \member{attributes} dictionary for that 
+instance.  This is very similar to the way an XML DOM works, and there are
+more DOM similarities yet to come.  In addition, there are ways to handle
+casting of the arguments to various data types in Python.  The API documentation
+below goes into more detail on these and many more aspects of the Python
+macro API.
+
+\subsection{Macro Objects}
+
+\begin{classdesc}{Macro}{}
+The \class{Macro} class is the base class for all Python based macros
+although you will generally want to subclass from \class{Command} or 
+\class{Environment} in real-world use.  There are various attributes and
+methods that affect how Python macros are parsed, constructed and 
+inserted into the resulting DOM.  These are described below.
+\end{classdesc}
+
+\begin{memberdesc}[Macro]{args}
+specifies the arguments to the \LaTeX\ macro and their data types.  The
+\member{args} attribute gives you a very simple, yet extremely powerful way
+of parsing \LaTeX\ macro arguments and converting them into Python objects.
+Once parsed, each \LaTeX\ macro argument is set in the \member{attributes}
+dictionary of the Python instance using the name given in the \member{args}
+string.  For example, the following \member{args} string will direct 
+\plasTeX\ to parse two mandatory arguments, `id' and `title', and put them 
+into the \member{attributes} dictonary.
+\begin{verbatim}
+args = 'id title'
+\end{verbatim}
+
+You can also parse optional arguments, usually surrounded by square brackets
+(\lbrack~\rbrack).  However, in \plasTeX, any arguments specified in the 
+\member{args}
+string that aren't mandatory (i.e. no braces surrounding it) are automatically
+considered optional.  This may not truly be the case, but it doesn't make
+much difference.  If they truly are mandatory, then your \LaTeX\ source file will
+always have them and \plasTeX\ will simply always find them even though it
+considers them to be optional.  
+
+Optional arguments in the \member{args} string are surround by matching
+square brackets (\lbrack~\rbrack), angle brackets (<~>), or parentheses ((~)).
+The name for the attribute is placed between the matching symbols as follows:
+\begin{verbatim}
+args = '[ toc ] title'
+args = '( position ) object'
+args = '< markup > ref'
+\end{verbatim}
+You can have as many optional arguments as you wish.  It is also possible to 
+have optional arguments using braces (\{~\}), but this requires you
+to change \TeX's category codes and is not common.
+
+Modifiers such as asterisks (*) are also allowed in the \member{args} string.
+You can also use the plus (+) and minus (-) signs as modifiers although these
+are not common.  Using modifiers can affect the incrementing of counters (see
+the \method{parse()} method for more information).
+
+In addition to specifying which arguments to parse, you can also specify 
+what the data type should be. 
+By default, all arguments are processed and stored as document fragments.
+However, some arguments may be simpler than that.  They may contain an integer,
+a string, an ID, etc.  Others may be collections like a list or dictionary.
+There are even more esoteric types for mostly internal use that allow you to
+get unexpanded tokens, \TeX\ dimensions, and the like.  Regardless, all of 
+these directives are specified in the same way, using the typecast operator:
+`:'.  To cast an argument, simply place a colon (:) and the name of the 
+argument type immediately after the name of the argument.  The following example
+casts the `filename' argument to a string.
+\begin{verbatim}
+args = 'filename:str'
+\end{verbatim}
+
+Parsing compound arguments such as lists and dictionaries is very similar.
+\begin{verbatim}
+args = 'filenames:list'
+\end{verbatim}
+By default, compound arguments are assumed to be comma separated.  If you
+are using a different separator, it is specified in parentheses after the type.
+\begin{verbatim}
+args = 'filenames:list(;)'
+\end{verbatim}
+Again, each element element in the list, by default, is a document fragment.
+However, you can also give the data type of the elements with another typecast.
+\begin{verbatim}
+args = 'filenames:list(;):str'
+\end{verbatim}
+
+Parsing dictionaries is a bit more restrictive.  \plasTeX\ assumes that 
+dictionary arguments are always key-value pairs, that the key is always
+a string and the separator between the key and value is an equals sign (=).  
+Other than that, they operate in the same manner.
+
+A full list of the supported data types as well as more examples are
+discussed in section \ref{sec:macros}.
+\end{memberdesc}
+
+\begin{memberdesc}[Macro]{argsource}
+the source for the \LaTeX\ arguments to this macro.  This is a read-only 
+attribute.
+\end{memberdesc}
+
+\begin{memberdesc}[Macro]{arguments}
+gives the arguments in the \member{args} attribute in object form 
+(i.e. \class{Argument} objects).
+\note{This is a read-only attribute.}
+\note{This is generally an internal-use-only attribute.}
+\end{memberdesc}
+
+\begin{memberdesc}[Macro]{counter}
+specifies the name of the counter to associate with this macro.  Each time
+an instance of this macro is created, this counter is incremented.  
+The incrementing of this counter, of course, resets any ``child'' counters
+just like in \LaTeX.  By default and \LaTeX\ convention, if the macro's first 
+argument is an asterisk (i.e. *), the counter is not incremented.
+\end{memberdesc}
+
+\begin{memberdesc}[Macro]{id}
+specifies a unique ID for the object.  If the object has an associated 
+label (i.e. \macro{label}), that is its ID.  You can also set the ID 
+manually.  Otherwise, an ID will be generated based on the result of Python's
+\function{id()} function.
+\end{memberdesc}
+
+\begin{memberdesc}[Macro]{idref}
+a dictionary containing all of the objects referenced by ``idref'' type
+arguments.  Each idref attribute is stored under the name of the 
+argument in the \member{idref} dictionary.
+\end{memberdesc}
+
+\begin{memberdesc}[Macro]{level}
+specifies the hierarchical level of the node in the DOM.  For most macros,
+this will be set to \member{Node.COMMAND_LEVEL} or 
+\member{Node.ENVIRONMENT_LEVEL} by the \class{Command} and \class{Environment}
+macros, respectively.  However, there are other levels that invoke special
+processing.  In particular, sectioning commands such as \macro{section} and
+\macro{subsection} have levels set to \member{Node.SECTION_LEVEL} and 
+\member{Node.SUBSECTION_LEVEL}.  These levels assist in the building of 
+an appropriate DOM.  Unless you are creating a sectioning command or a command
+that should act like a paragraph, you should leave the value of this attribute
+alone.  See section \ref{sec:dom-api} for more information.
+\end{memberdesc}
+
+\begin{memberdesc}[Macro]{macroName}
+specifies the name of the \LaTeX\ macro that this class corresponds to.  
+By default, the Python class name is the name that is used, but there are
+some legal \LaTeX\ macro names that are not legal Python class names.
+In those cases, you would use \member{macroName} to specify the correct
+name.  Below is an example.
+\begin{verbatim}
+class _illegalname(Command):
+    macroName = '@illegalname'
+\end{verbatim}
+\note{This is a class attribute, not an instance attribute.}
+\end{memberdesc}
+
+\begin{memberdesc}[Macro]{macroMode}
+specifies what the current parsing mode is for this macro.  Macro classes
+are instantiated for every invocation including each \macro{begin} and 
+\macro{end}.  This attribute is set to \member{Macro.MODE_NONE} for normal
+commands, \member{Macro.MODE_BEGIN} for the beginning of an environment,
+and \member{Macro.MODE_END} for the end of an environment.  
+
+These attributes are used in the \method{invoke()} method to determine the
+scope of macros used within the environment.  They are also used in printing
+the source of the macro in the \member{source} attribute.  Unless you 
+really know what you are doing, this should be treated as a read-only attribute.
+\end{memberdesc}
+
+\begin{memberdesc}[Macro]{mathMode}
+boolean that indicates that the macro is in \TeX's ``math mode.''  This
+is a read-only attribute.
+\end{memberdesc}
+
+\begin{memberdesc}[Macro]{nodeName}
+the name of the node in the DOM.  This will either be the name given in
+\member{macroName}, if defined, or the name of the class itself.
+\note{This is a read-only attribute.}
+\end{memberdesc}
+
+\begin{memberdesc}[Macro]{ref}
+specifies the value to return when this macro is referenced (i.e. \macro{ref}).
+This is set automatically when the counter associated with the macro is
+incremented.
+\end{memberdesc}
+
+\begin{memberdesc}[Macro]{source}
+specifies the \LaTeX\ source that was parsed to create the object.  This
+is most useful in the renderer if you need to generate an image of a
+document node.  You can simply retrieve the \LaTeX\ source from this 
+attribute, create a \LaTeX\ document including the source, then convert
+the DVI file to the appropriate image type.
+\end{memberdesc}
+
+\begin{memberdesc}[Macro]{style}
+specifies style overrides, in CSS format, that should be applied to the
+output.  This object is a dictionary, so style property names are given
+as the key and property values are given as the values.
+\begin{verbatim}
+inst.style['color'] = 'red'
+inst.style['background-color'] = 'blue'
+\end{verbatim}
+\note{Not all renderers are going to support CSS styles.}
+\end{memberdesc}
+
+\begin{memberdesc}[Macro]{tagName}
+same as \member{nodeName}
+\end{memberdesc}
+
+\begin{memberdesc}[Macro]{title}
+specifies the title of the current object.  If the attributes dictionary
+contains a title, that object is returned.  An \exception{AttributeError}
+is thrown if there is no `title' key in that dictionary.  A title can also be 
+set manually by setting this attribute.
+\end{memberdesc}
+
+
+
+\begin{methoddesc}[Macro]{digest}{tokens}
+absorb the tokens from the given output stream that belong to the current
+object.  In most commands, this does nothing.  However, \LaTeX\ environments
+have a \macro{begin} and an \macro{end} that surround content that belong 
+to them.  In this case, these environments need to absorb those tokens 
+and construct them into the appropriate document object model (see the
+\class{Environment} class for more information).
+\end{methoddesc}
+
+\begin{methoddesc}[Macro]{digestUntil}{tokens, endclass}
+utility method to help macros like lists and tables digest their contents.
+In lists and tables, the items, rows, and cells are delimited by 
+\macro{begin} and \macro{end} tokens.  They are simply delimited by the
+occurrence of another item, row, or cell.  This method allows you to
+absorb tokens until a particular class is reached.
+\end{methoddesc}
+
+\begin{methoddesc}[Macro]{expand}{}
+the \method{expand} method is a thin wrapper around the \method{invoke}
+method.  The \method{expand} method makes sure that all tokens are
+expanded and will not return a \var{None} value like \method{invoke}.
+\end{methoddesc}
+
+\begin{methoddesc}[Macro]{invoke}{}
+invakes the macro.  Invoking the macro, in the general case, includes 
+creating a new context, parsing the options of the macro, and removing 
+the context.  \LaTeX\ environments are slightly different.  If 
+\member{macroMode} is set to \member{Macro.MODE\_BEGIN}, the new context
+is kept on the stack.  If \member{macroMode} is set to \member{Macro.MODE\_END},
+no arguments are parsed, the context is simply popped.  For most macros, the
+default implementation will work fine.
+
+The return value for this method is generally \var{None} (an empty return
+statement or simply no return statement).  In this case, the current object
+is simply put into the resultant output stream.  However, you can also
+return a list of tokens.  In this case, the returned tokens will be put 
+into the output stream in place of the current object.  You can even 
+return an empty list to indicate that you don't want anything to be 
+inserted into the output stream.
+\end{methoddesc}
+
+\begin{methoddesc}[Macro]{locals}{}
+retrieves all of the \LaTeX\ macros that belong to the scope of the
+current Python based macro.
+\end{methoddesc}
+
+\begin{methoddesc}[Macro]{paragraphs}{}
+group content into paragraphs.  Paragraphs are grouped once all other
+content has been \method{digest}ed.  The paragraph grouping routine works
+like \TeX's, in that environments are included inside paragraphs.  This 
+is unlike HTML's model, where lists and tables are not included inside 
+paragraphs.  In addition, content is only grouped into paragraphs if
+a true \TeX\ paragraph exists (i.e. a blank line in the \LaTeX\ source file).
+This can give seemingly strange behavior in constructs such as lists where
+some items may have blank lines and others may not.  The items with blank
+lines in the source will be grouped into paragraphs in the document 
+object, but the items without would not have paragraphs.
+\end{methoddesc}
+
+\begin{methoddesc}[Macro]{parse}{tex}
+parses the arguments defined in the \member{args} attribute from the given
+token stream.  This method also calls several hooks as described in the table
+below.
+
+\begin{tableii}{l|l}{method}{Method Name}{Description}
+\lineii{preparse()}{called at the beginning of the argument parsing process}
+\lineii{preargument()}{called before parsing each argument}
+\lineii{postargument()}{called after parsing each argument}
+\lineii{postparse()}{called at the end of the argument parsing process}
+\end{tableii}
+
+The methods are called to assist in labeling and counting.  For example,
+by default, the counter associated with a macro is automatically incremented
+when the macro is parsed.  However, if the first argument is a modifier 
+(i.e. *, +, -), the counter will not be incremented.  This is handled 
+in the \method{preargument()} and \method{postargument()} methods.
+
+Each time an argument is parsed, the result is put into the \member{attributes}
+dictionary.  The key in the dictionary is, of course, the name given to that
+argument in the \member{args} string.  Modifiers such as *, +, and - are
+stored under the special key `*modifier*'.
+
+The return value for this method is simply a reference to the 
+\member{attributes} dictionary.
+
+\note{If \method{parse()} is called on an instance with \member{macroMode}
+set to \member{Macro.MODE\_END}, no parsing takes place.}
+\end{methoddesc}
+
+\begin{methoddesc}[Macro]{postargument}{arg, tex}
+called after parsing each argument. This is generally where label and
+counter mechanisms are handled.
+
+\var{arg} is the Argument instance that holds all argument meta-data
+    including the argument's name, source, and options.
+
+\var{tex} is the TeX instance containing the current context 
+\end{methoddesc}
+
+\begin{methoddesc}[Macro]{postparse}{tex}
+do any operations required immediately after parsing the arguments.  This
+generally includes setting up the value that will be returned when 
+referencing the object.
+\end{methoddesc}
+
+\begin{methoddesc}[Macro]{preargument}{arg, tex}
+called before parsing each argument.  This is generally where label and
+counter mechanisms are handled.
+
+\var{arg} is the Argument instance that holds all argument meta-data
+    including the argument's name, source, and options.
+
+\var{tex} is the TeX instance containing the current context 
+\end{methoddesc}
+
+\begin{methoddesc}[Macro]{preparse}{tex}
+do any operations required immediately before parsing the arguments.
+\end{methoddesc}
+
+\begin{methoddesc}[Macro]{refstepcounter}{tex}
+set the object as the current labellable object and increment its counter.
+When an object is set as the current labellable object, the next 
+\macro{label} command will point to that object.
+\end{methoddesc}
+
+\begin{methoddesc}[Macro]{stepcounter}{tex}
+step the counter associated with the macro
+\end{methoddesc}

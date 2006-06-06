@@ -1,0 +1,43 @@
+
+\section{Parsing \LaTeX}
+
+\question{How can I make \plasTeX\ work with my complicated macros?}
+
+While \plasTeX\ makes a valiant effort 
+to expand all \LaTeX\ macros, it isn't \TeX\ and may have problems if 
+your macros are complicated.  There are things that you can do to remedy the 
+situation.  If you are getting failures or warnings, you can do one of two 
+things: 1) you can create a simplified version of the macro that \plasTeX\ uses
+for its work, while \LaTeX\ uses the more complicated one, or 2) you
+can implement the macro as a Python class. 
+
+In the first solution, you can use the \macro{ifplastex} construct to wrap
+your \plasTeX\ and \LaTeX\ versions of the macros.  You can even just remove 
+parts of the macros.  See the example below.
+
+\begin{verbatim}
+% Print a double line, then bold the text.  
+% In plasTeX, leave the lines out.
+\newcommand{\mymacro}[1]{\ifplastex\else\hline\hline\fi\textbf{#1}}
+\end{verbatim}
+
+Depending on how complicated you macro is, you may want to implement it
+as a Python class instead of a \LaTeX\ macro.  Using a Python class 
+gives you full access to all of the \plasTeX\ internal mechanisms to 
+do whatever you need to do in your macro.  To read more about writing
+Python class macros, see the section \ref{sec:macros}.
+
+\question{How can I get \plasTeX\ to find my \LaTeX\ packages?}
+
+There are two types of packages that can be loaded by \plasTeX: 1) native
+\LaTeX\ packages, and 2) packages written entirely in Python.  \plasTeX\
+first looks for packages written in Python.  Packages such as this are
+written specifically for \plasTeX\ and will yield better parsing performance
+as well as better looking output.  Python-based packages are valid Python
+packages as well.  So to load them, you must add the directory where
+your Python packages are to your \envvar{PYTHONPATH} environment variable.
+For more information about Python-based packages, see the section
+\ref{sec:packages}.
+
+If you have a true \LaTeX\ package, \plasTeX\ will try to locate it using
+the \program{kpsewhich} program just like \LaTeX\ does.

@@ -1,0 +1,1082 @@
+
+\chapter{Renderers}
+
+Renderers allow you to convert a \plasTeX\ document object into viewable
+output such as HTML, RTF, or PDF, or simply a data structure format such
+as DocBook or tBook.  Since the \plasTeX\ document object gives you 
+everything that you could possibly want to know about the \LaTeX\ document,
+it should, in theory, be possible to generate any type of output from
+the \plasTeX\ document object while preserving as much information as the
+output format is capable of.  In addition, since the document object is
+not affected by the rendering process, you can apply multiple renderers
+in sequence so that the \LaTeX\ document only needs to be parsed one time
+for all output types.
+
+While it is possible to write a completely custom renderer, one possible
+rendeerer implementation is included with the \plasTeX\ framework.
+While the rendering process in this implementation is fairly simple,
+it is also very powerful.  Some of the main features are listed below.
+\begin{itemize}
+\item ability to generate multiple output files
+\item automatic splitting of files is configurable by section level,
+    or can be invoked using ad-hoc methods in the 
+    \member{filenameoverride} property
+\item powerful output filename generation utility
+\item image generation for portions of the document that cannot be 
+    easily rendered in a particular output formate (e.g. equations in HTML)
+\item themeing support
+\item hooks for post-processing of output files
+\item configurable output encodings
+\end{itemize}
+
+The API of the renderer itself is very small.  In fact, there are only
+a couple of methods that are of real interest to an end user: \method{render}
+and \method{cleanup}.  The \method{render} method is the method that starts
+the rendering process.  It's only argument is a \plasTeX\ document object.
+The \method{cleanup} method is called at the end of the rendering process.
+It is passed the document object and a list of all of the files that were
+generated.  This method allows you to do post-processing on the output files.
+In general, this method will probably only be of interest to someone 
+writing a subclass of the \class{Renderer} class, so most users of 
+\plasTeX\ will only use the \method{render} method.  The real work of
+the rendering process is handled in the \class{Renderable} class which
+is discussed later in this chapter.
+
+The \class{Renderer} class is a subclass of the Python dictionary.  
+Each key in the renderer corresponds to the name of a node in the 
+document object.  The value stored under each key is a callable object.
+As each node in the document object is traversed, the renderer is queried 
+to see if there is a key that matches the name of the node.  If a 
+key is found, the value at that key (which must be a callable object) is 
+called with the node as its only argument.  The return value from this
+call must be a unicode object that contains the rendered output.
+Based on the configuration, the renderer will handle all of the file 
+generation and encoding issues.
+
+If a node is traversed that doesn't correspond to a key in the 
+renderer dictionary, the default rendering method is called.  The 
+default rendering method is stored in the \member{default} attribute.
+One exception to this rule is for text nodes.  The default 
+rendering method for text nodes is actually stored in \member{textdefault}.
+Again, these attributes simply need to reference any Python callable
+object that returns a unicode object of the rendered output.  The 
+default method in both of these attributes is the \function{unicode}
+built-in function.
+
+As mention previously, most of the work of the renderer is actually 
+done by the \class{Renderable} class.  This is a mixin class that is
+mixed into the \class{Node} class in the \method{render} method.
+It is unmixed at the end of the \method{render} method.  The details
+of the \class{Renderable} class are discussed in section \ref{sec:renderable}.
+
+\section{Simple Renderer Example}
+
+It is possible to write a renderer with just a couple of methods:
+\method{default} and \method{textdefault}.
+The code below demonstrates how one might create a generic XML
+renderer that simply uses the node names as XML tag names.  
+The text node renderer escapes the <, >, and \& characters.
+\begin{verbatim}
+import string
+from plasTeX.Renderers import Renderer
+
+class Renderer(Renderer):
+    
+    def default(self, node):
+        """ Rendering method for all non-text nodes """
+        s = []
+
+        # Handle characters like \&, \$, \%, etc.
+        if len(node.nodeName) == 1 and node.nodeName not in string.letters:
+            return self.textdefault(node.nodeName)
+
+        # Start tag
+        s.append('<%s>' % node.nodeName)
+
+        # See if we have any attributes to render
+        if node.hasAttributes():
+            s.append('<attributes>')
+            for key, value in node.attributes.items():
+                # If the key is 'self', don't render it
+                # these nodes are the same as the child nodes
+                if key == 'self':
+                    continue
+                s.append('<%s>%s</%s>' % (key, unicode(value), key))
+            s.append('</attributes>')
+
+        # Invoke rendering on child nodes
+        s.append(unicode(node))
+
+        # End tag
+        s.append('</%s>' % node.nodeName)
+
+        return u'\n'.join(s)
+
+    def textdefault(self, node):
+        """ Rendering method for all text nodes """
+        return node.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;')
+\end{verbatim}
+
+To use the renderer, simply parse a \LaTeX\ document and apply the renderer
+using the \method{render} method.
+\begin{verbatim}
+# Import renderer from previous code sample
+from MyRenderer import Renderer
+
+from plasTeX.TeX import TeX
+
+# Instantiate a TeX processor and parse the input text
+tex = TeX()
+tex.ownerDocument.config['files']['split-level'] = -100
+tex.ownerDocument.config['files']['filename'] = 'test.xml'
+tex.input(r'''
+\documentclass{book}
+\begin{document}
+
+Previous paragraph.
+
+\section{My Section}
+
+\begin{center}
+Centered text with <, >, and \& charaters.
+\end{center}
+
+Next paragraph.
+
+\end{document}
+''')
+document = tex.parse()
+
+# Render the document
+renderer = Renderer()
+renderer.render(document)
+\end{verbatim}
+
+The output from the renderer, located in \file{test.xml}, looks like the
+following.
+\begin{verbatim}
+<document>
+<par>
+Previous paragraph.
+</par><section>
+    <attributes>
+        <toc>None</toc>
+        <*modifier*>None</*modifier*>
+        <title>My Section</title>
+    </attributes>
+<par>
+<center>
+ Centered text with &lt;, &gt;, and &amp; charaters.
+</center>
+</par><par>
+Next paragraph.
+</par>
+</section>
+</document>
+\end{verbatim}
+
+
+\subsection{Extending the Simple Renderer}
+
+Now that we have a simple renderer working, it is very simple to extend
+it to do more specific operations.  Let's say that the default renderer
+is fine for most nodes, but for the \macro{section} node we want to do
+something special.  For the section node, we want the title argument
+to correspond to the title attribute in the output XML\footnote{This
+will only work properly in XML if the content of the title is plain text
+since other nodes will generate markup.}.  To do this we need a 
+method like the following.
+\begin{verbatim}
+def handle_section(node):
+    return u'\n\n<%s title="%s">\n%s\n</%s>\n' % \
+            (node.nodeName, unicode(node.attributes['title']), 
+             unicode(node), node.nodeName)
+\end{verbatim}
+
+Now we simply insert the rendering method into the renderer under the
+appropriate key.  Remember that the key in the renderer should match
+the name of the node you want to render.  Since the above rendering 
+method will work for all section types, we'll insert it into the 
+renderer for each \LaTeX\ sectioning command.
+\begin{verbatim}
+renderer = Renderer()
+renderer['section'] = handle_section
+renderer['subsection'] = handle_section
+renderer['subsubsection'] = handle_section
+renderer['paragraph'] = handle_section
+renderer['subparagraph'] = handle_section
+renderer.render(document)
+\end{verbatim}
+
+Running the same \LaTeX\ document as in the previous example, we now get
+this output.
+\begin{verbatim}
+<document>
+<par>
+Previous paragraph.
+</par>
+
+<section title="My Section">
+<par>
+<center>
+ Centered text with &lt;, &gt;, and &amp; charaters.
+</center>
+</par><par>
+Next paragraph.
+</par>
+</section>
+
+</document>
+\end{verbatim}
+
+Of course, you aren't limited to using just Python methods.  Any callable
+object that accepts a node as an argument can be used.  The 
+Zope Page Template (ZPT) renderer included with \plasTeX\ is an example 
+of how to write a renderer that uses a templating language to render
+the nodes (see section \ref{sec:zpt}).
+
+
+\section{Renderable Objects\label{sec:renderable}}
+
+The \class{Renderable} class is the real workhorse of the rendering process.
+It traverses the document object, looks up the appropriate rendering
+methods in the renderer, and generates the output files.  It also 
+invokes the image generating process when needed for parts of a document
+that cannot be rendered in the given output format.
+
+Most of the work of the \class{Renderable} class is done in the 
+\method{__unicode__} method.  This is rather convenient since each of
+the rendering methods in the renderer are required to return a unicode
+object.  When the \function{unicode} function is called with a renderable
+object as its argument, the document traversal begins for that node.
+This traversal includes iterating through each of the node's child nodes, and
+looking up and calling the appropriate rendering method in the renderer.
+If the child node is configured to generate a new output file, the 
+file is created and the rendered output is written to it; otherwise,
+the rendered output is appended to the rendered output of previous nodes.
+Once all of the child nodes have been rendered, the unicode object containing
+that output is returned.  This recursive process continues until the 
+entire document has been rendered.
+
+There are a few useful things to know about renderable objects such as
+how they determine which rendering method to use, when to generate new
+files, what the filenames will be, and how to generate images.  These
+things are discussed below.
+
+
+\subsection{Determining the Correct Rendering Method}
+
+Looking up the correct rendering method is quite straight-forward.  
+If the node is a text node, the \member{textdefault} attribute on 
+the renderer is used.  If it is not a text node, then the node's name
+determines the key name in the renderer.  In most cases, the node's
+name is the same name as the \LaTeX\ macro that created it.  If the
+macro used some type of modifier argument (i.e. *, +, -), a name 
+with that modifier applied to it is also searched for first.  For example,
+if you used the \environment{tablular*} environment in your \LaTeX\
+document, the renderer will look for ``tabular*'' first, then ``tabular''.
+This allows you to use different rendering methods for modified and
+unmodified macros.  If no rendering method is found, the method
+in the renderer's \member{default} attribute is used.
+
+
+\subsection{Generating Files}
+
+Any node in a document has the ability to generate a new file. 
+During document traversal, each node is queried for a filename.  If
+a non-\var{None} is returned, a new file is created for the content
+of that node using the given filename.  The querying for the filename
+is simply done by accessing the \member{filename} property of the
+node.  This property is added to the node's namespace during the
+mixin process.  The default behavior for this property is to only
+return filenames for sections with a level less than the split-level
+given in the configuration (see section \ref{sec:config-files}).
+The filenames generated by this routine are very flexible.  They can 
+be statically given names, or names based on the ID and/or title, 
+or simply generically numbered.  For more information on configuring
+filenames see section \ref{sec:config-files}.
+
+While the filenaming mechanism is very powerful, you may want to give
+your files names based on some other information.  This is possible through
+the \member{filenameoverride} attribute.  If the \member{filenameoverride}
+is set, the name returned by that attribute is used as the filename.
+The string in \member{filenameoverride} is still processed in the same
+way as the filename specifier in the configuration so that you can 
+use things like the ID or title of the section in the overridden filename.
+
+The string used to specify filenames can also contain directory paths.
+This is not terribly useful at the moment since there is no way to 
+get the relative URLs between two nodes for linking purposes.
+
+If you want to use a filename override, but want to do it conditionally
+you can use a Python property to do this.  Just calculate the filename
+however you wish, if you decide that you don't want to use that filename
+then raise an \exception{AttributeError} exception.  An example of this
+is shown below.
+\begin{verbatim}
+class mymacro{Command):
+    args = '[ filename:str ] self'
+    @property
+    def filenameoverride(self):
+        # See if the attributes dictionary has a filename
+        if self.attributes['filename'] is not None:
+            return self.attributes['filename']
+        raise AttributeError, 'filenameoverride'
+\end{verbatim}
+\note{The filename in the \member{filenameoverride} attribute must 
+   contain any directory paths as well as a file extension.}
+
+
+\subsection{Generating Images}
+
+Not all output types that you might render are going to support everything
+that \LaTeX\ is capable of.  For example, HTML has no way of representing
+equations, and most output types won't be capable of rendering 
+\LaTeX's \environment{picture} environment.  In cases like these, you
+can let \plasTeX\ generate images of the document node.  Generating
+images is done with a subclass of \class{plasTeX.Imagers.Imager}.
+The imager is responsible for creating a \LaTeX\ document from the
+requested document fragments, compiling the document and converting
+each page of the output document into individual images.  Currently,
+there are two \class{Imager} subclasses included with \plasTeX.
+Each of them use the standard \LaTeX\ compiler to generate a DVI file.
+The DVI file is then converted into images using either \program{dvipng}
+or \program{dvi2bitmap} depending on which imager is chosen (see section
+\ref{sec:config-images} on how to select different imagers).
+
+To generate an image of a document node, simply access the \member{image}
+property during the rendering process.  This property will return
+an \class{plasTeX.Imagers.Image} instance.  In most cases, the image
+file will not be available until the rendering process is finished
+since most renderers will need the generated \LaTeX\ document to be
+complete before compiling it and generating the final images.
+
+The example below demonstrates how to generate an image for the 
+\environment{equation} environment.
+\begin{verbatim}
+# Import renderer from first renderer example
+from MyRenderer import Renderer
+
+from plasTeX.TeX import TeX
+
+def handle_equation(node):
+    return u'<div><img src="%s"/></div>' % node.image.url
+
+# Instantiate a TeX processor and parse the input text
+tex = TeX()
+tex.input(r'''
+\documentclass{book}
+\begin{document}
+
+Previous paragraph.
+
+\begin{equation}
+\Sigma_{x=0}^{x+n} = \beta^2
+\end{equation}
+
+Next paragraph.
+
+\end{document}
+''')
+document = tex.parse()
+
+# Instantiate the renderer
+renderer = Renderer()
+
+# Insert the rendering method into all of the environments that might need it
+renderer['equation'] = handle_equation
+renderer['displaymath'] = handle_equation
+renderer['eqnarray'] = handle_equation
+
+# Render the document
+renderer.render(document)
+\end{verbatim}
+
+The rendered output looks like the following, and the image is generated
+is located in \file{images/img-0001.png}.
+\begin{verbatim}
+<document>
+<par>
+Previous paragraph.
+</par><par>
+<div><img src="images/img-0001.png"/></div>
+</par><par>
+Next paragraph.
+</par>
+</document>
+\end{verbatim}
+
+The names of the image files are determined by the document's configuration.
+The filename generator is very powerful, and is in fact, the same filename
+generator used to create the other output filenames.  For more information
+on customizing the image filenames see section \ref{sec:config-images}.
+
+In addition, the image types are customizable as well.  \plasTeX\ uses
+the Python Imaging Library (PIL) to do the final cropping and saving of the
+image files, so any image format that PIL supports can be used.  The
+format that PIL saves the images in is determined by the file extension
+in the generated filenames, so you must use a file extension that 
+PIL recognizes.
+
+It is possible to write your own \class{Imager} subclass if necessary.
+See the \class{Imager} API documentation for more information (see
+\ref{sec:imager-api}).
+
+
+\subsection{Static Images}
+
+There are some images in a document that don't need to be generated, they
+simply need to be copied to the output directory and possibly converted
+to an appropriate formate.  This is accomplished with the 
+\member{imageoverride} attribute.  When the \member{image} property
+is accessed, the \member{imageoverride} attribute is checked to see if
+an image is already available for that node.  If there is, the image
+is copied to the image output directory using a name generated 
+using the same method as described in the previous section.  The image
+is copied to that new filename and converted to the appropriate 
+image format if needed.  While it would be possible to simply copy the
+image over using the same filename, this may cause filename collisions
+depending on the directory structure that the original images were
+store in.
+
+Below is an example of using \member{imageoverride} for copying 
+stock icons that are used throughout the document.
+\begin{verbatim}
+from plasTeX import Command
+
+class dangericon(Command):
+    imageoverride = 'danger.gif'
+
+class warningicon(Command):
+    imageoverride = 'warning.gif'
+\end{verbatim}
+
+It is also possible to make \member{imageoverride} a property
+so that the image override can done conditionally.  In the case
+where no override is desired in a property implementation, simply
+raise an \exception{AttributeError} exception.
+
+\section{Zope Page Template Renderer\label{sec:zpt}}
+
+The Zope Page Template (ZPT) renderer is a renderer for \plasTeX\ document
+objects that is based on the ZPT language (see the official documentation at
+\url{http://www.zope.org/Documentation/Books/ZopeBook/2_6Edition/ZPT.stx}).
+The actual ZPT implementation used is SimpleTAL 
+(\url{http://www.owlfish.com/software/simpleTAL/}).  This implementation
+implements almost all of the ZPT API and is very stable.  However, some
+changes were made to this package to make it more convenient to use
+within \plasTeX.  These changes are discussed in detail in the 
+ZPT Tutorial (see section \ref{sec:zpttutorial}).
+
+Since ZPT can be used to generate any form of XML or HTML, the ZPT
+renderer is a general solution for rendering XML or HTML from a 
+\plasTeX\ document object.  When switching from one DTD to another, 
+you simply need to use a different set of templates.
+
+As in all \class{Renderer}-based renderers, each key in the ZPT renderer
+returns a callable object.  In this case, each of these objects is a
+callable ZPT instance\footnote{ZPT instances, by default, are not callable.
+The \method{__call__} is added to the object.  This new method populates
+the namespace of the template and returns the rendered output.}.  As is
+the case with all rendering methods, the only argument is the node to be
+rendered, and the output is a unicode object containing the rendered 
+output. In addition to the rendering methods, the \method{textdefault} method
+escapes all characters that are special in XML and HTML (i.e. <, >, and \&).
+
+The following sections describe how templates are loaded into the 
+renderer, how to extend the set of templates with your own, as well
+as a theming mechanism that allows you to apply different looks to 
+output types that are visual (e.g. HTML).
+
+\subsection{Defining and Using Templates}
+
+\note{If you are not familiar with the ZPT language, you should read the 
+tutorial in section \ref{sec:zpttutorial} before continuing in this 
+section.}
+
+By default, templates are loaded from the directory where the 
+renderer module was imported from.  In addition, the templates from
+each of the parent renderer class modules are also loaded.  This makes
+it very easy to extend a renderer and add just a few new templates
+to support the additions that were made.
+
+The template files in the module directories can have three different forms.
+The first is HTML.  HTML templates must have an extension of \file{.htm},
+ \file{.html}, or \file{.zpt}.  These templates are compiled using 
+SimpleTAL's HTML compiler.  XML templates, the second form of template, 
+uses SimpleTAL's XML compiler, so they must be well-formed XML 
+fragments.  XML templates must have the file extension \file{.xml}, 
+\file{.xhtml}, or \file{.xhtm}.  In any case, the basename of the template
+file is used as the key to store the template in the renderer.  Keep in
+mind that the names of the keys in the renderer correspond to the node
+names in the document object.  
+
+The file listing below is an example of a directory of template files.
+In this case the templates correspond to nodes in the document created
+by the \environment{description} environment, the \environment{tabular}
+environment, \macro{textbf}, and \macro{textit}.
+\begin{verbatim}
+description.xml
+tabular.xml
+textbf.html
+textit.html
+\end{verbatim}
+
+Since there are a lot of templates that are merely one line, it would be
+inconvenient to have to create a new file for each template.  In cases
+like this, you can use the \file{.zpts} extension.  Files with this
+extension have multiple templates in them.  Each template is separated
+from the next by the template metadata which includes things like the 
+name of the template, the type (xml or html), and can also alias 
+template names to another template in the renderer.  The following 
+metadata names are currently supported.
+\begin{tableii}{l|p{4in}}{}{Name}{Purpose}
+\lineii{name}{the name or names of the template that is to follow. 
+    This name is used as the key in the renderer, and also 
+    corresponds to the node name that will be rendered by the template.
+    If more than one name is desired, they are simply separated by
+    spaces.}
+\lineii{type}{the type of the template: xml or html.  XML templates
+    must contain a well-formed XML fragment.  HTML templates are more 
+    forgiving, but do not support all features of ZPT (see the SimpleTAL
+    documentation).}
+\lineii{alias}{specifies the name of another template that the given
+    names should be aliased to.  This allows you to simply reference
+    another template to use rather than redefining one.  For example,
+    you might create a new section heading called \macro{introduction}
+    that should render the same way as \macro{section}.  In this case,
+    you would set the name to ``introduction'' and the alias to
+    ``section''.}
+\end{tableii}
+
+The code sample below shows the basic format of a zpts file.
+\begin{verbatim}
+name: textbf bfseries
+<b tal:content="self">bold content</b>
+
+name: textit
+<i tal:content="self">italic content</i>
+
+name: introduction introduction*
+alias: section
+
+name: description
+type: xml
+<dl>
+<metal:block tal:repeat="item self">
+    <dt tal:content="item/attributes/term">definition term</dt>
+    <dd tal:content="item">definition content</dd>
+</metal:block>
+</dl>
+\end{verbatim}
+
+The code above is a zpts file that contains four templates.  Each template
+begins when a line starts with ``name:''.  Other directives have the same
+format (i.e. the name of the directive followed by a colon) and must 
+immediately follow the name directive.  The first template definition 
+actually applies to two types of nodes \var{textbf} and \var{bfseries}.
+You can specify ony number of names on the name line.  The third template
+isn't a template at all; it is an alias.  When an alias is specified,
+the name (or names) given use the same template as the one specified 
+in the alias directive.  Notice also that starred versions of a macro
+can be specified separately.  This means that they can use a different
+template than the un-starred versions of the command.
+The last template is just a simple XML formatted
+template.  By default, templates in a zpts file use the HTML compiler
+in SimpleTAL.  You can specify that a template is an XML template by using
+the type directive.
+
+
+\subsubsection{Template Overrides\label{sec:tmploverrides}}
+
+It is possible to override the templates located in a renderer's directory
+with templates defined elsewhere.  This is done using the 
+\environment{*TEMPLATES} environment variable.  The ``*'' in the name
+\environment{*TEMPLATES} is a wildcard and must be replaced by the name of the
+renderer.  For example, if you are using the XHTML renderer, the 
+environment variable would be \environment{XHTMLTEMPLATES}.  For the ZPT
+renderer, the environment variable would be \environment{ZPTTEMPLATES}.
+
+The format of this variable is the same as that of the \environment{PATH}
+environment variable which means that you can put multiple directory 
+names in this variable.  In addition, the environment variables for 
+each of the parent renderers is also used, so that you can use
+multiple layers of template directories.
+
+You can actually create an entire renderer just using overrides and the
+ZPT renderer.  Since the ZPT renderer doesn't actually define any templates,
+it is just a framework for defining other XML/HTML renderers, you can
+simply load the ZPT renderer and set the \environment{ZPTTEMPLATES} environment
+variable to the locations of your templates.  This method of creating 
+renderers will work for any XML/HTML that doesn't require any special
+post-processing.
+
+
+\subsection{Defining and Using Themes}
+
+In addition to the templates that define how each node should be rendered,
+there are also templates that define page layouts.  Page layouts are used
+whenever a node in the document generates a new file.   Page layouts 
+generally include all of the markup required to make a complete document
+of the desired DTD, and may include things like navigation buttons,
+tables of contents, breadcrumb trails, etc. to link the current file to
+other files in the document. 
+
+When rendering files, the content of the
+node is generated first, then that content is wrapped in a page layout.
+The page layouts are defined the same way as regular templates; however,
+they all include ``-layout'' at the end of the template name.  For 
+example the sectioning commands in \LaTeX\ would use the layout templates
+``section-layout'', ``subsection-layout'', ``subsubsection-layout'', etc.
+Again, these templates can exist in files by themselves or multiply 
+specified in a zpts file.  If no layout template exists for a particular
+node, the template name ``default-layout'' is used.
+
+Since there can be several themes defined within a renderer, theme files
+are stored in a subdirectory of a renderer directory.  This directory
+is named \file{Themes}.  The \file{Themes} directory itself only contains
+directories that correspond to the themes themselves where the name
+of the directory corresponds to the name of the theme.  These theme 
+directories generally only consist of the layout files described above,
+but can override other templates as well.  Below is a file listing
+demonstrating the structure of a renderer with multiple themese.
+\begin{verbatim}
+# Renderer directory: contains template files
+ZPT/
+
+# Theme directory: contains theme directories
+ZPT/Themes/
+
+# Theme directories: contain page layout templates
+ZPT/Themes/default/
+ZPT/Themes/fancy/
+ZPT/Themes/plain/
+\end{verbatim}
+\note{If no theme is specified in the document configuration, a theme
+    with the name ``default'' is used.}
+
+Since all template directories are created equally, you can also define
+themes in template directories specified by environment variables as
+described in section \ref{sec:tmploverrides}.  Also, theme files are 
+searched in the same way as regular templates, so any theme defined
+in a renderer superclass' directory is valid as well.
+
+
+\subsection{Zope Page Template Tutorial\label{sec:zpttutorial}}
+
+The Zope Page Template (ZPT) language is actually just a set of XML
+attributes that can be applied to markup of an DTD.  These attributes
+tell the ZPT interpreter how to process the element.  There are 
+seven different attributes that you can use to direct the processing
+of an XML or HTML file (in order of evaluation): define, condition, repeat, 
+content, replace, attributes, and omit-tag.  These attributes are
+described in section \ref{sec:talattributes}.  For a more complete description,
+see the official ZPT documentation at 
+\url{http://www.zope.org/Documentation/Books/ZopeBook/2_6Edition/ZPT.stx}.
+
+
+\subsubsection{Template Attribute Language Expression Syntax (TALES)}
+
+The Template Attribute Language Expression Syntax (TALES) is used
+by the attribute language described in the next section.  The TALES 
+syntax is used to evaluate expressions based on objects in the
+template namespace.  The results of these expressions can be used to
+define variables, produce output, or be used as booleans.  There are
+also several operators used to modify the behavior or interpretation
+of an expression.  The expressions and their modifiers are described
+below.
+
+\paragraph{path: operator\label{sec:pathoperator}}
+
+A ``path'' is the most basic form on an expression in ZPT.  The basic form
+is shown below.
+\begin{verbatim}
+[path:]string [ | TALES expression ]
+\end{verbatim}
+
+The \var{path:} operator is actually optional on all paths.  Leaving it
+off makes no difference.  The ``string'' in the above syntax is a '/'
+delimited string of names.  Each name refers to a property of the 
+previous name in the string.  Properties can include attributes, methods,
+or keys in a dictionary.  These properties can in turn have properties
+of their own.  Some examples of paths are shown below.
+\begin{verbatim}
+# Access the parentNode attribute of chapter, then get its title
+chapter/parentNode/title
+
+# Get the key named 'foo' from the dictionary bar
+bar/foo
+
+# Call the title method on the string in the variable booktitle
+booktitle/title
+\end{verbatim}
+
+It is possible to specify multiple paths separated by a pipe (|).
+These paths are evaluated from left to right.  The first one to return
+a non-None value is used.
+\begin{verbatim}
+# Look for the title on the current chapter node as well as its parents
+chapter/title | chapter/parentNode/title | chapter/parentNode/parentNode/title
+
+# Look for the value of the option otherwise get its default value
+myoptions/encoding | myoptions/defaultencoding
+\end{verbatim}
+
+There are a few keywords that can be used in place of a path in a
+TALES expression as well.
+\begin{tableii}{l|p{4in}}{var}{Name}{Purpose}
+\lineii{nothing}{same as \var{None} in Python}
+\lineii{default}{keeps whatever the existing value of the element or attribute is}
+\lineii{options}{dictionary of values passed in to the template when instatiated}
+\lineii{repeat}{the repeat variable (see \ref{sec:talrepeat})}
+\lineii{attrs}{dictonary of the original attributes of the element}
+\lineii{CONTEXTS}{dictionary containing all of the above}
+\end{tableii}
+
+
+\paragraph{exists: operator}
+
+This operator returns true if the path exists.  If the path does not exist,
+the operator returns false.   The syntax is as follows.
+\begin{verbatim}
+exists:path
+\end{verbatim}
+
+The ``path'' in the code above is a path as described in section 
+\ref{sec:pathoperator}.  This operator is commonly combined with the
+not: operator.
+
+
+\paragraph{nocall: operator}
+
+By default, if a property that is retrieved is callable, it will be
+called automatically.  Using the nocall: operator, prevents this 
+execution from happening.  The syntax is shown below.
+\begin{verbatim}
+nocall:path
+\end{verbatim}
+
+
+\paragraph{not: operator}
+
+The not: operator simply negates the boolean result of the path.  If
+the path is a boolean true, the not: operator will return false, and
+vice versa.  The syntax is shown below.
+\begin{verbatim}
+not:path
+\end{verbatim}
+
+
+\paragraph{string: operator}
+
+The string: operator allows you to combine literal strings and paths
+into one string.  Paths are inserted into the literal string using a
+syntax much like that of Python Templates: \$path or \$\{path\}.
+The general syntax is:
+\begin{verbatim}
+string:text
+\end{verbatim}
+
+Here are some examples of using the string: operator.
+\begin{verbatim}
+string:Next - ${section/links/next}
+string:($pagenumber)
+string:[${figure/number}] ${figure/caption}
+\end{verbatim}
+
+
+\paragraph{python: operator}
+
+The python: operator allows you to evaluate a Python expression.  The
+syntax is as follows.
+\begin{verbatim}
+python:python-code
+\end{verbatim}
+
+The ``python-code'' in the expression above can include any of the Python
+built-in functions and operators as well as four new functions that
+correspond to the TALES operators: path, string, exists, and nocall.
+Each of these functions takes a string containing the path to be 
+evaluated (e.g. path('foo/bar'), exists('chapter/title'), etc.).
+
+When using Python operators, you must escape any characters that would
+not be legal in an XML/HTML document (i.e. <>\&).  For example, 
+to write an expression to test if a number was less than or greater than
+two numbers, you would need to do something like the following example.
+\begin{verbatim}
+# See if the figure number is less than 2 or greater than 4
+python: path('figure/number') &lt; 2 or path('figure/number') &gt; 4
+\end{verbatim}
+
+
+\paragraph{stripped: operator}
+
+The stripped: operator only exists in the SimpleTAL distribution provided
+by \plasTeX.  It evaluates the given path and removes any markup from
+that path.  Essentially, it is a way to get a plain text representation
+of the path.  The syntax is as follows.
+\begin{verbatim}
+stripped:path
+\end{verbatim}
+
+
+\subsubsection{Template Attribute Language (TAL) Attributes\label{sec:talattributes}}
+
+\paragraph{tal:define}
+
+The \attr{tal:define} attribute allows you to define a variable for use
+later in the template.  Variables can be specifies as local (only for
+use in the scope of the current element) or global (for use anywhere in
+the template).  The syntax of the define attribute is shown below.
+\begin{verbatim}
+tal:define="[ local | global ] name expression [; define-expression ]"
+\end{verbatim}
+
+The define attributes sets the value of ``name'' to ``expression.''  
+By default, the scope of the variable is local, but can be specified
+as global by including the ``global'' keyword before the name of the 
+variable.  As shown in the grammar above, you can specify multiple 
+variables in one \attr{tal:define} attribute by separating the define
+expressions by semi-colons.
+
+Examples of using the \attr{tal:define} attribute are shown belaw.
+\begin{verbatim}
+<p tal:define="global title document/title; 
+               next self/links/next;
+               previous self/links/previous;
+               length python:len(self);
+               up string:Up - ${self/links/up}">
+...
+</p>
+\end{verbatim}
+
+
+\paragraph{tal:condition}
+
+The \attr{tal:condition} attribute allows you to conditionally include
+an element.  The syntax is shown below.
+\begin{verbatim}
+tal:condition="expression"
+\end{verbatim}
+
+The \attr{tal:condition} attribute is very simple.  If the expression
+evaluates to true, the element and its children will be evaluated and 
+included in the output.  If the expression evaluates to false, the element 
+and its children will not be evaluated or included in the output.
+Valid expressions for the \attr{tal:condition} attribute are the same 
+as those for the expressions in the \attr{tal:define} attribute.
+\begin{verbatim}
+<p tal:condition="python:len(self)">
+    <b tal:condition="self/caption">Caption for paragraph</b>
+    ...
+</p>
+\end{verbatim}
+
+
+\paragraph{tal:repeat\label{sec:talrepeat}}
+
+The \attr{tal:repeat} attribute allows you to repeat an element multiple 
+times; the syntax is shown below.
+\begin{verbatim}
+tal:repeat="name expression"
+\end{verbatim}
+
+When the \attr{tal:repeat} attribute is used on an element, the
+result of``expression'' is iterated over, and a new element is generated
+for each item in the iteration.  The value of the current item is
+set to ``name'' much like in the \attr{tal:define} attribute.
+
+Within the scope of the repeated element, another variable is available:
+\var{repeat}.  This variable contains several properties related to
+the loop.  
+\begin{tableii}{l|p{4in}}{var}{Name}{Purpose}
+\lineii{index}{number of the current iteration starting from zero}
+\lineii{number}{number of the current iteration starting from one}
+\lineii{even}{is true if the iteration number is even}
+\lineii{odd}{is true if the iteration number is odd}
+\lineii{start}{is true if this is the first iteration}
+\lineii{end}{is true if this is the last iteration; This is never
+    true if the repeat expression returns an iterator}
+\lineii{length}{the length of the sequence being iterated over; This
+    is set to \var{sys.maxint} for iterators.}
+\lineii{letter}{lower case letter corresponding to the current iteration
+    number starting with 'a'}
+\lineii{Letter}{upper case letter corresponding to the current iteration
+    number starting with 'A'}
+\lineii{roman}{lower case Roman numeral corresponding to the current iteration
+    number starting with 'i'}
+\lineii{Roman}{upper case Roman numeral corresponding to the current iteration
+    number starting with 'I'}
+\end{tableii}
+
+To access the properties listed above, you must use the property of 
+the \var{repeat} variable that corresponds to the repeat variable name.
+For example, if your repeat variable name is ``item'', you would access
+the above variables using the expressions \var{repeat/item/index}, 
+\var{repeat/item/number}, \var{repeat/item/even}, etc.
+
+A simple example of the \attr{tal:repeat} attribute is shown below.
+\begin{verbatim}
+<ol>
+<li tal:repeat="option options" tal:content="option/name">option name</li>
+</ol>
+\end{verbatim}
+
+One commonly used feature of rendering tables is alternating row colors.
+This is a little bit tricky with ZPT since the \attr{tal:condition}
+attribute is evaluated before the \attr{tal:repeat} directive.  You
+can get around this by using the \namespace{metal} namespace.  This
+is the namespace used by ZPT's macro language\footnote{The macro language
+isn't discussed here.  See the official ZPT documentation for more 
+information.}  You can create another element around the element you 
+want to be conditional.  This wrapper element is simply there to do the 
+iterating, but is not included in the output.  The example below shows
+how to do alternating row colors in an HTML table.
+\begin{verbatim}
+<table>
+<metal:block tal:repeat="employee employees">
+<!-- even rows -->
+<tr tal:condition="repeat/employee/even" style="background-color: white">
+    <td tal:content="employee/name"></td>
+    <td tal:content="employee/title"></td>
+</tr>
+<!-- odd rows -->
+<tr tal:condition="repeat/employee/odd" style="background-color: gray">
+    <td tal:content="employee/name"></td>
+    <td tal:content="employee/title"></td>
+</tr>
+</metal:block>
+</table>
+\end{verbatim}
+
+
+\paragraph{tal:content}
+
+The \attr{tal:content} attribute evaluates an expression and replaces
+the content of the element with the result of the expression.  The
+syntax is shown below.
+\begin{verbatim}
+tal:content="[ text | structure ] expression"
+\end{verbatim}
+
+The \var{text} and \var{structure} options in the \attr{tal:content}
+attribute indicate whether or not the content returned by the 
+expression should be escaped (i.e. "\&<> replaced by \&quot;, \&amp;, \&lt;,
+and \&gt;, respectively).  When the \var{text} option is used, these
+special characters are escaped; this is the default behavior.  When
+the \var{structure} option is specified, the result of the expression is
+assumed to be valid markup and is not escaped.  
+
+In SimpleTAL, the default
+behavior is the same as using the \var{text} option.  However, in 
+\plasTeX, 99.9\% of the time the content returned by the expression is
+valid markup, so the default was changed to \var{structure} in the 
+SimpleTAL package distributed with \plasTeX.
+
+
+\paragraph{tal:replace}
+
+The \attr{tal:replace} attribute is much like the \attr{tal:content}
+attribute.  They both evaluate an expression and include the content
+of that expression in the output, and they both have a \var{text} and
+\var{structure} option to indicate escaping of special characters.
+The difference is that when the \attr{tal:replace} attribute is used,
+the element with the \attr{tal:replace} attribute on it is not included
+in the output.  Only the content of the evaluated expression is returned.
+The syntax of the \attr{tal:replace} attribute is shown below.
+\begin{verbatim}
+tal:replace="[ text | structure ] expression"
+\end{verbatim}
+
+
+\paragraph{tal:attributes}
+
+The \attr{tal:attributes} attribute allows you to programatically create
+attributes on the element.  The syntax is shown below.
+\begin{verbatim}
+tal:attributes="name expression [; attribute-expression ]"
+\end{verbatim}
+
+The syntax of the \attr{tal:attributes} attribute is very similar to
+that of the \attr{tal:define} attribute.  However, in the case of the
+\attr{tal:attributes} attribute, the name is the name of the attribute
+to be created on the element and the expression is evaluated to
+get the value of the attribute.  If an error occurs or \var{None} is 
+returned by the expression, then the attribute is removed from the 
+element.
+
+Just as in the case of the \attr{tal:define} attribute, you can specify
+multiple attributes separated by semi-colons (;).  If a semi-colon character
+is needed in the expression, then it must be represented by a double
+semi-colon (;;).
+
+An example of using the \attr{tal:attributes} is shown below.
+\begin{verbatim}
+<a tal:attributes="href self/links/next/url; 
+                   title self/links/next/title">link text</a>
+\end{verbatim}
+
+
+\paragraph{tal:omit-tag}
+
+The \attr{tal:omit-tag} attribute allows you to conditionally omit an
+element.  The syntax is shown below.
+\begin{verbatim}
+tal:omit-tag="expression"
+\end{verbatim}
+
+If the value of ``expression'' evaluates to true (or is empty), the element 
+is omitted; however, the content of the element is still sent to the output.
+If the expression evaluates to false, the element is included in the 
+output.
+
+
+\section{XHTML Renderer}
+
+The XHTML renderer is a subclass of the ZPT renderer (section \ref{sec:zpt}).
+Since the ZPT renderer can render any variant of XML or HTML, the 
+XHTML renderer has very little to do in the Python code.  Almost all
+of the additionaly processing in the XHTML renderer has to do with
+generated images.  Since HTML cannot render \LaTeX's vector graphics
+or equations natively, they are converted to images.  In order for 
+inline equations to line up correctly with the text around them, CSS
+attributes are used to adjust the vertical alignment.  Since the images
+aren't generated until after all of the document has been rendered,
+this CSS information is added in post-processing (i.e. the \method{cleanup} 
+method).
+
+In addition to the processing of images, all characters with a ordinal
+greater than 127 are converted into numerical entities.  This should 
+prevent any rendering problems due to unknown encodings.
+
+Most of the work in this renderer was in creating the templates for 
+every \LaTeX\ construct.  Since this renderer was intended to be the
+basis of all HTML-based renderers, it must be capable of rendering
+all \LaTeX\ constructs; therefore, there are ZPT templates for every
+\LaTeX\ command, and the commands in some common \LaTeX\ packages.
+
+While the XHTML renderer is fairly complete when it comes to standard
+\LaTeX, there are many packages which are not currently supported.
+To add support for these packages, templates (and possibly Python
+based macros; section \ref{sec:macros}) must be created.
+
+
+\subsection{Themes}
+
+The theming support in the XHTML renderer is the same as that of the
+ZPT renderer.  Any template directory can have a subdirectory called
+\file{Themes} which contains theme directories with sets of templates
+in them.  The names of the directories in the \file{Themes} directory
+corresponds to the name of the theme.  There are currently two themes
+included with \plasTeX: default and plain.  The default theme is a
+minor variation of the one used in the Python 1.6 documentation.  The
+plain theme is a theme with no extra navigation bars. 
+
+
+\section{tBook Renderer}
+
+Not yet implemented.
+
+\section{DocBook Renderer}
+
+Not yet implemented.
