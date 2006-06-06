@@ -1,10 +1,10 @@
 Metadata-Version: 1.0
 Name: plasTeX
-Version: 1.0
-Summary: LaTeX document parser and converter
+Version: 0.5
+Summary: Python framework for processing LaTeX documents
 Home-page: http://plastex.sourceforge.net/
 Author: Kevin Smith
-Author-email: Kevin.Smith@theMorgue.org
-License: UNKNOWN
-Description: UNKNOWN
-Platform: UNKNOWN
+Author-email: Kevin.Smith@sas.com
+License: Python
+Description: Python framework for processing LaTeX documents
+Platform: any

@@ -1,6 +1,3 @@
 
-To install plasTeX, simply do:
-
-    python setup.py install
-
-See plasTeX/plastex for an example of usage.
+Installation of this package is done just like any other Python package.
+See the INSTALL file for details.
