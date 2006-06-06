@@ -1,5 +1,7 @@
 name: thebibliography
 type: xml
+<h1>Bibliography</h1>
+
 <dl class="bibliography">
 <metal:block tal:repeat="item self">
 <dt>

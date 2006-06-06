@@ -15,7 +15,7 @@ name: document
 <p tal:replace="self"></p>
 
 
-name: part chapter section bibliography theindex
+name: part chapter section
 <h1 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/fulltitle">Morbi metus pede, imperdiet vitae</a></h1>
 <p tal:replace="self"></p>
 
