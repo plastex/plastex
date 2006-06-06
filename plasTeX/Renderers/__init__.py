@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
-import codecs, os
+import codecs, os, shutil, string
 from plasTeX.Filenames import Filenames
 from plasTeX.DOM import Node
 from plasTeX.Logging import getLogger
+from plasTeX.Imagers import Image, PILImage
 
 log = getLogger()
 status = getLogger('status')
@@ -106,7 +107,7 @@ class Renderer(dict):
         document -- the document object to render
 
         """
-        config = document.userdata['config']
+        config = document.config
 
         # If there are no keys, print a warning.  
         # This is most likely a problem.
@@ -122,18 +123,31 @@ class Renderer(dict):
         self.newfilename = Filenames(config['files'].get('filename', raw=True), 
                                      (config['files']['bad-chars'],
                                       config['files']['bad-chars-sub']),
-                                     {'jobname':document.userdata['jobname']})
+                                     {'jobname':document.userdata.get('jobname', '')})
                       
 
         # Instantiate appropriate imager
-        name = config['images']['converter']
-        try: 
-            exec('from plasTeX.Imagers.%s import Imager' % name)
-        except ImportError, msg:
-            log.warning("Could not load imager '%s' because '%s'" % (name, msg))
-            from plasTeX.Imagers import Imager
+        names = [x for x in config['images']['imager'].split() if x]
+        for name in names:
+            try: 
+                exec('from plasTeX.Imagers.%s import Imager' % name)
+            except ImportError, msg:
+                log.warning("Could not load imager '%s' because '%s'" % (name, msg))
+                continue
+            
+            self.imager = Imager(document)
+    
+            # Make sure that this imager works on this machine
+            if self.imager.verify():
+                break
+ 
+            self.imager = None
 
-        self.imager = Imager(document)
+        # Still no imager? Just use the default.
+        if self.imager is None:
+            log.warning('Could not find a valid imager in the list: %s.  The default imager will be used.' % ', '.join(names))
+            from plasTeX.Imagers import Imager
+            self.imager = Imager(document)
 
         # Invoke the rendering process
         unicode(document)
@@ -195,6 +209,11 @@ class Renderable(object):
         """
         r = Node.renderer
 
+        # Short circuit macros that have unicode equivalents
+        uni = self.unicode
+        if uni is not None: 
+            return r.outputtype(r.textdefault(uni))
+
         # If we don't have childNodes, then we're done
         if not self.hasChildNodes():
             return u''
@@ -216,6 +235,12 @@ class Renderable(object):
             # Short circuit text nodes
             if child.nodeType == Node.TEXT_NODE:
                 s.append(r.textdefault(child))
+                continue
+
+            # Short circuit macros that have unicode equivalents
+            uni = child.unicode
+            if uni is not None: 
+                s.append(r.textdefault(uni))
                 continue
 
             layouts, names = [], []
@@ -291,6 +316,32 @@ class Renderable(object):
     @property
     def image(self):
         """ Generate an image and return the image filename """
+        img = getattr(self, 'imageoverride', None)
+        if img is not None:
+            # Copy or convert the image as needed
+            path = Node.renderer.imager.newfilename()
+            newext = os.path.splitext(path)[-1]
+            oldext = os.path.splitext(img)[-1]
+            try:
+                # If PIL isn't available or no conversion is necessary, 
+                # just copy the image to the new location
+                if PILImage is None or newext == oldext:
+                    path = os.path.splitext(path)[0] + os.path.splitext(img)[-1]
+                    shutil.copyfile(img, path)
+                    width = height = None
+                # If PIL is available, convert the image to the appropriate type
+                else:
+                    img = PILImage.open(img)
+                    width, height = img.size
+                    img.save(path)
+                return Image(path, self.ownerDocument.config['images'], width=width, height=height)
+
+            # If anything fails, just let the imager handle it...
+            except:
+                pass
+#               import traceback
+#               traceback.print_exc()
+            
         return Node.renderer.imager.newimage(self.source)
 
     @property
@@ -340,8 +391,15 @@ class Renderable(object):
 
         try:
             if self.filenameoverride:
-                r.files[self] = self.filenameoverride
-                return self.filenameoverride
+                userdata = self.ownerDocument.userdata
+                config = self.ownerDocument.config
+                newfilename = Filenames(self.filenameoverride,
+                                        (config['files']['bad-chars'],
+                                         config['files']['bad-chars-sub']),
+                                        {'jobname':userdata.get('jobname','')})
+                      
+                r.files[self] = newfilename()
+                return r.files[self]
 
         except AttributeError:
             if not hasattr(self, 'config'):

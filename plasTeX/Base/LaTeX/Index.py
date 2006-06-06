@@ -43,6 +43,9 @@ class IndexUtils(object):
                                     ', '.join([str(x) for x in self.pages]), 
                                     Command.__repr__(self))
 
+    class IndexGroup(list):
+        title = None
+
     def invoke(self, tex):
         if isinstance(self, Environment):
             Environment.invoke(self, tex)
@@ -70,13 +73,15 @@ class IndexUtils(object):
             except IndexError: 
                 title = 'Symbols'
             if current != title:
-                batches.append({'title':title, 'entries':[]})
+                newgroup = self.IndexGroup()
+                newgroup.title = title
+                batches.append(newgroup)
                 current = title
-            batches[-1]['entries'].append(item)
+            batches[-1].append(item)
 
         for item in batches:
-            item['entries'] = self.splitColumns(item['entries'], 
-                self.ownerDocument.userdata['config']['document']['index-columns'])
+            item[:] = self.splitColumns(item,
+                self.ownerDocument.config['document']['index-columns'])
 
         return batches
 
@@ -140,6 +145,10 @@ class IndexUtils(object):
             Environment.digest(self, tokens)
             if self.macroMode == self.MODE_END:
                 return
+            # Throw it all away, we don't need it.  We'll be generating
+            # our own index entries below.
+            while self.childNodes:
+                self.pop()
         else:
             Command.digest(self, tokens)
         doc = self.ownerDocument

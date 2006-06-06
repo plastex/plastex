@@ -29,6 +29,7 @@ class document(Environment, SectionUtils):
 
         return res
 
+
 class AtEndDocument(Command):
     args = 'commands:nox'
 

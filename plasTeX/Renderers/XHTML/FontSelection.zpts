@@ -25,6 +25,9 @@ name: slshape textsl
 name: scshape textsc
 <span class="scshape" tal:content="self">small-caps text</span>
 
+name: textnormal
+<span class="textnormal" tal:content="self">normal text</span>
+
 name: rm
 <span class="rm" tal:content="self">rm</span>
 

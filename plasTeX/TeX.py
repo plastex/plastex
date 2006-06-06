@@ -59,7 +59,7 @@ class TeX(object):
     """
     documentClass = TeXDocument
 
-    def __init__(self, ownerDocument=None):
+    def __init__(self, ownerDocument=None, file=None):
         if ownerDocument is None:
             ownerDocument = self.documentClass()
         self.ownerDocument = ownerDocument
@@ -107,6 +107,20 @@ class TeX(object):
         # Starting parsing if a source was given
         self.currentinput = (0,0)
 
+        if file is not None:
+
+            # Filename
+            if isinstance(file, basestring):
+                try:
+                    encoding = self.ownerDocument.config['files']['input-encoding']
+                except:
+                    encoding = 'utf-8'
+                self.input(codecs.open(self.kpsewhich(file), 'r', encoding))
+
+            # File object
+            else:
+                self.input(file)
+
     def input(self, source):
         """
         Add a new input source to the stack
@@ -144,10 +158,10 @@ class TeX(object):
         options -- options passed to the macro which is loading the package
 
         """
-        config = self.ownerDocument.userdata['config']
+        config = self.ownerDocument.config
 
         try:
-            path = self.kpsewhich(file, config)
+            path = self.kpsewhich(file)
         except OSError, msg:
             log.warning(msg)
             return False
@@ -973,7 +987,7 @@ class TeX(object):
 
         """
         ref = self.castString(tokens, **kwargs)
-        self.ownerDocument.context.ref(kwargs['parentNode'], ref)
+        self.ownerDocument.context.ref(kwargs['parentNode'], kwargs['name'], ref)
         return ref
         
     def castNumber(self, tokens, **kwargs):
@@ -1234,8 +1248,7 @@ class TeX(object):
 
         return dictarg
 
-    @staticmethod
-    def kpsewhich(name, config=None):
+    def kpsewhich(self, name):
         """ 
         Locate the given file using kpsewhich
 
@@ -1246,9 +1259,7 @@ class TeX(object):
         full path to file -- if it is found
 
         """
-        program = 'kpsewhich'
-        if config:
-            program = config['general']['kpsewhich']
+        program = self.ownerDocument.config['general']['kpsewhich']
         output = subprocess.Popen([program, name], 
                               stdout=subprocess.PIPE).communicate()[0].strip()
         if output:
@@ -1584,7 +1595,7 @@ class TeX(object):
             return
         self.auxfiles.append(self.jobname)
         try:
-            f = self.kpsewhich(self.jobname+'.aux', self.ownerDocument.userdata['config'])
+            f = self.kpsewhich(self.jobname+'.aux')
             self.pushtoken(plasTeX.Command())
             self.input(open(f))
             for item in self:

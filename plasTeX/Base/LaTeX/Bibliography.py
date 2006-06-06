@@ -5,10 +5,9 @@ C.11.3 Bibliography and Citation (p208)
 
 """
 
-import string, plasTeX
-from plasTeX.Base.LaTeX.Sectioning import section, chapter
-from plasTeX import Command, Environment, TeXFragment
-from plasTeX.Tokenizer import Token
+import plasTeX
+from plasTeX.Base.LaTeX.Sectioning import chapter
+from plasTeX import Command, Environment
 from Lists import List
 
 log = plasTeX.Logging.getLogger()
@@ -18,13 +17,14 @@ class bibliography(chapter):
 
     bibitems = {}
     title = 'References'
+    linkType = 'bibliography'
 
     def invoke(self, tex):
         res = super(bibliography, self).invoke(tex)
         self.attributes['title'] = bibliography.title
         # Load bibtex file
         try:
-            file = tex.kpsewhich(tex.jobname+'.bbl', self.config)
+            file = tex.kpsewhich(tex.jobname+'.bbl')
             tex.input(open(file))
         except OSError, msg:
             log.warning(msg)
@@ -34,6 +34,7 @@ class bibliographystyle(Command):
     
 class thebibliography(List):
     args = 'widelabel'
+    linkType = 'bibliography'
   
     class bibitem(List.item):
         args = '[ label ] key:str'
@@ -50,7 +51,7 @@ class thebibliography(List):
             label = a.get('label')
             if not bibcite.citations.has_key(key):
                 if label is None:
-                    label = TeXFragment()
+                    label = self.ownerDocument.createDocumentFragment()
                     label.extend(self.ref)
                 bibcite.citations[key] = label
             return res
@@ -60,7 +61,7 @@ class thebibliography(List):
         id = property(id)
 
         def cite(self):
-            res = TeXFragment()
+            res = self.ownerDocument.createDocumentFragment()
             res.extend(bibcite.citations.get(self.attributes['key']))
             res.idref = self
             return res
@@ -79,6 +80,7 @@ class thebibliography(List):
 class cite(Command):
     args = '[ text ] keys:list:str'
 
+    @property
     def bibitems(self):
         # Get all referenced items
         output = []
@@ -89,14 +91,13 @@ class cite(Command):
             else:
                 output.append(item)
         return output
-    bibitems = property(bibitems)
 
+    @property
     def postnote(self):
         a = self.attributes
         if a['text'] is not None:
             return a['text']
         return ''
-    postnote = property(postnote)
 
     def citation(self):
         res = []

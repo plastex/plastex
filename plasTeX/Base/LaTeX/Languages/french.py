@@ -3,7 +3,8 @@
 import time
 from plasTeX import Command
 
-def ProcessOptions(options, context):
+def ProcessOptions(options, document):
+    context = document.context
     context.newcommand('refname', 0, r"R\'ef\'erences")
     context.newcommand('abstractname', 0, r"R\'esum\'e")
     context.newcommand('bibname', 0, r"Bibliographie")

@@ -11,8 +11,6 @@ log = getLogger()
 
 def main(argv):
     """ Main program routine """
-    inencoding = config['files']['input-encoding']
-
     print >>sys.stderr, 'plasTeX version 0.5'
 
     # Parse the command line options
@@ -29,32 +27,24 @@ def main(argv):
 
     file = args.pop(0)
 
-    try:
-        file = TeX.kpsewhich(file, config)
-    except OSError, msg:
-        log.error(msg)
-        sys.exit(1)
-
-    basename = os.path.basename(os.path.splitext(file)[0])
-
     # Create document instance that output will be put into
-    document = plasTeX.TeXDocument()
-
-    # Populate variables for use later
-    document.userdata['config'] = config
-    document.userdata['jobname'] = basename
-    if config['document']['title']:
-        document.userdata['title'] = config['document']['title']
+    document = plasTeX.TeXDocument(config=config)
 
     # Instantiate the TeX processor and parse the document
-    tex = TeX(document)
-    tex.input(codecs.open(file,'r',inencoding))
+    tex = TeX(document, file=file)
+
+    # Populate variables for use later
+    if config['document']['title']:
+        document.userdata['title'] = config['document']['title']
+    jobname = document.userdata['jobname'] = tex.jobname
+
+    # Parse the document
     tex.parse()
 
     # Change to specified directory to output to
     outdir = config['files']['directory']
     if outdir:
-        outdir = string.Template(outdir).substitute({'jobname':basename})
+        outdir = string.Template(outdir).substitute({'jobname':jobname})
         if not os.path.isdir(outdir):
             os.makedirs(outdir)
         log.info('Directing output files to directory: %s.' % outdir)        
@@ -69,11 +59,11 @@ def main(argv):
         sys.exit(1)
 
     # Write expanded source file
-#   sourcefile = '%s.source' % basename
+#   sourcefile = '%s.source' % jobname
 #   open(sourcefile,'w').write(document.source.encode('utf-8'))
     
     # Write XML dump
-#   outfile = '%s.xml' % basename
+#   outfile = '%s.xml' % jobname
 #   open(outfile,'w').write(document.toXML().encode('utf-8'))
     
     # Apply renderer
@@ -94,7 +84,7 @@ def info(type, value, tb):
       # ...then start the debugger in post-mortem mode.
       pdb.pm()
 
-sys.excepthook = info
+#sys.excepthook = info
 
 #sys.setrecursionlimit(10000)
     

@@ -22,7 +22,7 @@ class input(Command):
     def invoke(self, tex):
         a = self.parse(tex)
         try: 
-            path = tex.kpsewhich(attrs['name'], self.config)
+            path = tex.kpsewhich(attrs['name'])
 
             status.info(' ( %s.tex ' % path)
             encoding = self.config['files']['input-encoding']
@@ -41,7 +41,7 @@ class includeonly(Command):
     args = 'files:list:str'
     def invoke(self, tex):
         for file in self.parse(tex)['files']:
-            tex.input(tex.kpsewhich(file), self.config)
+            tex.input(tex.kpsewhich(file))
         return []
 
 class filecontents(Environment):

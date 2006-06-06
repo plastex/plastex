@@ -1,8 +1,8 @@
 name: ref
-<a tal:attributes="href self/idref/url" tal:content="self/idref/ref">#.#.#</a>
+<a tal:attributes="href self/idref/label/url" tal:content="self/idref/label/ref">#.#.#</a>
 
 name: pageref
-<a tal:attributes="href self/idref/url">*</a>
+<a tal:attributes="href self/idref/label/url">*</a>
 
 name: label
 <a tal:attributes="name self/id"></a>

@@ -41,7 +41,8 @@ def _render(self, obj, outputFile=None, outputEncoding=None, interpreter=None):
     context = TALContext(allowPythonPath=1)
     context.addGlobal('here', obj)
     context.addGlobal('self', obj)
-    context.addGlobal('config', obj.ownerDocument.userdata['config'])
+    context.addGlobal('container', obj.parentNode)
+    context.addGlobal('config', obj.ownerDocument.config)
     context.addGlobal('template', self)
     context.addGlobal('templates', obj.renderer)
     output = StringIO()
@@ -78,7 +79,8 @@ def _render(self, obj, outputFile=None, outputEncoding=None, docType=None, suppr
     context = TALContext(allowPythonPath=1)
     context.addGlobal('here', obj)
     context.addGlobal('self', obj)
-    context.addGlobal('config', obj.ownerDocument.userdata['config'])
+    context.addGlobal('container', obj.parentNode)
+    context.addGlobal('config', obj.ownerDocument.config)
     context.addGlobal('template', self)
     context.addGlobal('templates', obj.renderer)
     output = StringIO()
@@ -140,7 +142,7 @@ class ZPT(BaseRenderer):
 
     def render(self, document):
         """ Load and compile page templates """
-        themename = document.userdata['config']['general']['theme']
+        themename = document.config['general']['theme']
 
         # Load templates from renderer directory and parent 
         # renderer directories
@@ -159,7 +161,7 @@ class ZPT(BaseRenderer):
 
             # Load templates configured by the environment variable
             templates = os.environ.get('%sTEMPLATES' % cls.__name__,'')
-            for path in [x.strip() for x in templates.split(':') if x.strip()]:
+            for path in [x.strip() for x in templates.split(os.pathsep) if x.strip()]:
                 log.info('Importing templates from %s' % path)
                 self.importDirectory(path)
                 themes.append(os.path.join(path, 'Themes', themename))
@@ -170,7 +172,7 @@ class ZPT(BaseRenderer):
                 log.info('Importing templates from %s' % theme)
                 self.importDirectory(theme)
 
-                if document.userdata['config']['general']['copy-theme-extras']:
+                if document.config['general']['copy-theme-extras']:
                     # Copy all theme extras
                     cwd = os.getcwd()
                     os.chdir(theme)

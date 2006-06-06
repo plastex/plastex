@@ -216,9 +216,9 @@ class SectionUtils(object):
         nav['made'] = None
         nav['meta'] = None
         nav['script'] = None
-        nav['stylesheet'] = None
-        nav['alternate'] = None
-        nav['translation'] = None
+        nav['stylesheet'] = []
+        nav['alternate'] = []
+        nav['translation'] = []
 
         # Additional related entries
         nav['shortcut icon'] = None
@@ -247,27 +247,27 @@ class SectionUtils(object):
 
         return nav
 
-
-class StartSection(Command, SectionUtils):
-    args = '* [ toc ] title'
-
     def digest(self, tokens):
         # Absorb the tokens that belong to us
-        text = []
+#       text = []
         for item in tokens:
-            if item.nodeType == Command.TEXT_NODE:
-                text.append(item)
-                continue
+#           if item.nodeType == Command.TEXT_NODE:
+#               text.append(item)
+#               continue
             if item.level <= self.level:
                 tokens.push(item)
                 break
             if item.nodeType == Command.ELEMENT_NODE:
                 item.parentNode = self
                 item.digest(tokens)
-            self.appendText(text, self.ownerDocument.charsubs)
+#           self.appendText(text, self.ownerDocument.charsubs)
             self.appendChild(item)
-        self.appendText(text, self.ownerDocument.charsubs)
+#       self.appendText(text, self.ownerDocument.charsubs)
         self.paragraphs()
+
+
+class StartSection(SectionUtils, Command):
+    args = '* [ toc ] title'
 
 
 class part(StartSection):

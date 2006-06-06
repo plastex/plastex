@@ -206,7 +206,7 @@ class InputIfFileExists(Command):
     def invoke(self, tex):
         a = self.parse(tex)
         try: 
-            tex.input(tex.kpsewhich(a['file'], self.config))
+            tex.input(tex.kpsewhich(a['file']))
             tex.pushtokens(a['true'])
         except (IOError, OSError):
             tex.pushtokens(a['false'])
@@ -217,7 +217,7 @@ class IfFileExists(Command):
     def invoke(self, tex):
         a = self.parse(tex)
         try: 
-            tex.kpsewhich(a['file'], self.config)
+            tex.kpsewhich(a['file'])
             tex.pushtokens(a['true'])
         except (IOError, OSError):
             tex.pushtokens(a['false'])

@@ -205,10 +205,10 @@ images['enabled'] = BooleanOption(
     category = 'images',
 )
 
-images['converter'] = StringOption(
+images['imager'] = StringOption(
     """ DVI to image program """,
-    options = '--image-converter',
-    default = 'dvipng',
+    options = '--imager',
+    default = 'dvipng dvi2bitmap gspdfpng',
     category = 'images',
 )
 
@@ -229,7 +229,6 @@ images['baseline-padding'] = IntegerOption(
 images['compiler'] = StringOption(
     """ LaTeX command to use when compiling image document """,
     options = '--image-compiler',
-    default = 'latex',
     category = 'images',
 )
 
@@ -276,7 +275,7 @@ doc['sec-num-depth'] = IntegerOption(
     """ Maximum section depth to display section numbers """,
     options = '--sec-num-depth',
     category = 'document',
-    default = 6,
+    default = 2,
 )
 
 doc['index-columns'] = IntegerOption(

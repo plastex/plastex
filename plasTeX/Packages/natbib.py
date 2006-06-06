@@ -9,29 +9,29 @@ TODO:
 
 """
 
-import string, plasTeX
-from plasTeX import TeXFragment
+import plasTeX
 from plasTeX import Base
 
 log = plasTeX.Logging.getLogger()
 
 PackageOptions = {}
 
-def ProcessOptions(options):
+def ProcessOptions(options, document):
     """ Process package options """
+    context = document.context
     if options is None:
         return
     PackageOptions.update(options)
     for key, value in options.items():
         if key == 'numbers':
             bibpunct.punctuation['style'] = 'n'
-            ProcessOptions({'square':True, 'comma':True})
+            ProcessOptions({'square':True, 'comma':True}, document)
         elif key == 'super':
             bibpunct.punctuation['style'] = 's'
             bibpunct.punctuation['open'] = ''
             bibpunct.punctuation['close'] = ''
         elif key == 'authoryear':
-            ProcessOptions({'round':True, 'colon':True})
+            ProcessOptions({'round':True, 'colon':True}, document)
         elif key == 'round':
             bibpunct.punctuation['open'] = '('
             bibpunct.punctuation['close'] = ')'
@@ -141,6 +141,7 @@ class thebibliography(Base.thebibliography):
     class bibitem(Base.thebibliography.bibitem):
         cited = []
 
+        @property
         def citation(self):
             try: 
                 return bibcite.citations[self.attributes['key']]
@@ -155,7 +156,6 @@ class thebibliography(Base.thebibliography):
                 obj.append('??')
                 value.attributes[item] = obj
             return value
-        citation = property(citation)
 
         def cite(self):
             """ Jones et al. (1990) """
@@ -171,7 +171,7 @@ class thebibliography(Base.thebibliography):
     
         def citep(self, full=False):
             """ (Jones et al., 1990) """
-            res = TeXFragment()
+            res = self.ownerDocument.createDocumentFragment()
             res.append(bibpunct.punctuation['open'])
             if bibpunct.punctuation['style'] == 's':
                 res.extend(self.ref)
@@ -195,7 +195,7 @@ class thebibliography(Base.thebibliography):
                 self.cited.append(self.attributes['key'])
             if full: which = 'fullauthor'
             else: which = 'author'
-            res = TeXFragment()
+            res = self.ownerDocument.createDocumentFragment()
             res.extend(self.citation.attributes[which])
             res.append(' ')
             res.append(bibpunct.punctuation['open'])
@@ -217,7 +217,7 @@ class thebibliography(Base.thebibliography):
             """ Jones et al. 1990 """
             if full: which = 'fullauthor'
             else: which = 'author'
-            res = TeXFragment()
+            res = self.ownerDocument.createDocumentFragment()
             res.extend(self.citation.attributes[which])
             res.append(' ')
             res.extend(self.citation.attributes['year'])
@@ -232,7 +232,7 @@ class thebibliography(Base.thebibliography):
             """ Jones et al., 1990 """
             if full: which = 'fullauthor'
             else: which = 'author'
-            res = TeXFragment()
+            res = self.ownerDocument.createDocumentFragment()
             res.extend(self.citation.attributes[which])
             res.append(bibpunct.punctuation['dates'])
             res.append(' ')
@@ -248,7 +248,7 @@ class thebibliography(Base.thebibliography):
             """ Jones et al. """
             if full: which = 'fullauthor'
             else: which = 'author'
-            res = TeXFragment()
+            res = self.ownerDocument.createDocumentFragment()
             res.extend(self.citation.attributes[which])
             res.idref = self
             return res
@@ -263,7 +263,7 @@ class thebibliography(Base.thebibliography):
     
         def citeyearpar(self):
             """ (1990) """
-            res = TeXFragment()
+            res = self.ownerDocument.createDocumentFragment()
             res.append(bibpunct.punctuation['open'])
             res.extend(self.citeyear())
             res.append(bibpunct.punctuation['close'])
@@ -280,7 +280,7 @@ class thebibliography(Base.thebibliography):
             return node
     
         def Citep(self):
-            res = TeXFragment()
+            res = self.ownerDocument.createDocumentFragment()
             res.append(bibpunct.punctuation['open'])
             node = self.citealp().cloneNode(True)
             if node.firstChild.nodeType == Base.Command.TEXT_NODE:
@@ -309,6 +309,7 @@ class NatBibCite(Base.cite):
     args = '* [ text ] [ text2 ] keys:list:str'
     citemethod = thebibliography.bibitem.cite
 
+    @property
     def bibitems(self):
         items = super(NatBibCite, self).bibitems
         if PackageOptions.has_key('sort') or \
@@ -316,34 +317,33 @@ class NatBibCite(Base.cite):
            PackageOptions.has_key('sortandcompress'):
             items.sort(lambda x, y: int(x.ref) - int(y.ref))
         return items
-    bibitems = property(bibitems)
 
+    @property
     def prenote(self):
         """ Text that comes before the citation """
         a = self.attributes
         if a.get('text2') is not None and a.get('text') is not None:
-            out = TeXFragment()
+            out = self.ownerDocument.createDocumentFragment()
             out.extend(a['text'])
             out.append(' ')
             return out
         return ''
-    prenote = property(prenote)
 
+    @property
     def postnote(self):
         """ Text that comes after the citation """
         a = self.attributes
         if a.get('text2') is not None and a.get('text') is not None:
-            out = TeXFragment()
+            out = self.ownerDocument.createDocumentFragment()
             out.append(bibpunct.punctuation['post'])
             out.extend(a['text2'])
             return out
         elif a.get('text') is not None:
-            out = TeXFragment()
+            out = self.ownerDocument.createDocumentFragment()
             out.append(bibpunct.punctuation['post'])
             out.extend(a['text'])
             return out
         return ''
-    postnote = property(postnote)
 
     def citation(self):
         """
@@ -378,7 +378,7 @@ class citep(NatBibCite):
         res = []
         res.append(bibpunct.punctuation['open'])
         for i, item in enumerate(self.bibitems):
-            frag = TeXFragment()
+            frag = self.ownerDocument.createDocumentFragment()
             frag.append(item.ref)
             frag.idref = item
             res.append(frag)
@@ -414,7 +414,7 @@ class citep(NatBibCite):
                     # be linked to the same place as the reference that
                     # we just put out.
                     res.append('')
-                    frag = TeXFragment()
+                    frag = self.ownerDocument.createDocumentFragment()
                     frag.append('a')
                     frag.idref = previtem
                     res.append(frag)
@@ -422,7 +422,7 @@ class citep(NatBibCite):
                 else:
                     res.append(bibpunct.punctuation['years'])
                 # Create a new fragment with b,c,d... in it
-                frag = TeXFragment()
+                frag = self.ownerDocument.createDocumentFragment()
                 frag.append(chr(duplicateyears+ord('b')))
                 frag.idref = item
                 res.append(frag)

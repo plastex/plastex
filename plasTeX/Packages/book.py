@@ -2,7 +2,9 @@
 
 from plasTeX import Command, Environment, TheCounter
 
-def ProcessOptions(options, context):
+def ProcessOptions(options, document):
+    context = document.context
+
     # Lists
     context.newcounter('enumi')
     context.newcounter('enumii', resetby='enumi')
@@ -15,7 +17,7 @@ def ProcessOptions(options, context):
     context.newcounter('chapter', resetby='part', 
                        format='$chapter')
     context.newcounter('section', resetby='chapter', 
-                       format='${thechapter}.${chapter}')
+                       format='${thechapter}.${section}')
     context.newcounter('subsection', resetby='section', 
                        format='${thesection}.${subsection}')
     context.newcounter('subsubsection', resetby='subsection', 
@@ -33,9 +35,9 @@ def ProcessOptions(options, context):
 
     # Floats
     context.newcounter('figure', resetby='chapter', 
-                       format='${thesection}.${figure}')
+                       format='${thechapter}.${figure}')
     context.newcounter('table', resetby='chapter',
-                       format='${thesection}.${table}')
+                       format='${thechapter}.${table}')
     context.newcounter('topnumber')
     context.newcounter('bottomnumber')
     context.newcounter('totalnumber')
@@ -43,7 +45,7 @@ def ProcessOptions(options, context):
 
     for key, value in options.items():
         if key in ['american','french']:
-            context.loadLanguage(key)
+            context.loadLanguage(key, document)
 
 class frontmatter(Command): 
     pass

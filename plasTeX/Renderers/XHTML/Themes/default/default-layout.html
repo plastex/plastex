@@ -15,18 +15,18 @@
 <div class="navigation" metal:define-macro="navigation">
 <table cellspacing="2" cellpadding="0" width="100%">
 <tr>
-<td tal:condition="links/prev"><a tal:attributes="href links/prev/url; title stripped:links/prev/title"><img border="0" tal:attributes="alt stripped:Previous: ${links/prev/title}" src="images/previous.gif" width="32" height="32" /></a></td>
-<td tal:condition="not:links/prev"><img border="0" alt="" src="images/blank.gif" width="32" height="32" /></td>
-<td tal:condition="links/up"><a tal:attributes="href links/up/url; title stripped:links/up/title"><img border="0" tal:attributes="alt stripped:Up: ${links/up/title}" src="images/up.gif" width="32" height="32" /></a></td>
-<td tal:condition="not:links/up"><img border="0" alt="" src="images/blank.gif" width="32" height="32" /></td>
-<td tal:condition="links/next"><a tal:attributes="href links/next/url; title stripped:links/next/title"><img border="0" tal:attributes="alt stripped:Next: ${links/next/title}" src="images/next.gif" width="32" height="32" /></a></td>
-<td tal:condition="not:links/next"><img border="0" alt="" src="images/blank.gif" width="32" height="32" /></td>
+<td tal:condition="links/prev"><a tal:attributes="href links/prev/url; title stripped:links/prev/title"><img border="0" tal:attributes="alt stripped:Previous: ${links/prev/title}" src="icons/previous.gif" width="32" height="32" /></a></td>
+<td tal:condition="not:links/prev"><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+<td tal:condition="links/up"><a tal:attributes="href links/up/url; title stripped:links/up/title"><img border="0" tal:attributes="alt stripped:Up: ${links/up/title}" src="icons/up.gif" width="32" height="32" /></a></td>
+<td tal:condition="not:links/up"><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+<td tal:condition="links/next"><a tal:attributes="href links/next/url; title stripped:links/next/title"><img border="0" tal:attributes="alt stripped:Next: ${links/next/title}" src="icons/next.gif" width="32" height="32" /></a></td>
+<td tal:condition="not:links/next"><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
 <td class="navtitle" align="center" tal:content="self/title">Section Title</td>
-<td tal:condition="links/contents"><a tal:attributes="href links/contents/url" title="Table of Contents"><img border="0" alt="" src="images/contents.gif" width="32" height="32" /></a></td>
-<td tal:condition="not:links/contents"><img border="0" alt="" src="images/blank.gif" width="32" height="32" /></td>
-<td tal:condition="links/index"><a tal:attributes="href links/index/url" title="Index"><img border="0" alt="" src="images/index.gif" width="32" height="32" /></a></td>
-<td tal:condition="not:links/index"><img border="0" alt="" src="images/blank.gif" width="32" height="32" /></td>
-<td><img border="0" alt="" src="images/blank.gif" width="32" height="32" /></td>
+<td tal:condition="links/contents"><a tal:attributes="href links/contents/url" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+<td tal:condition="not:links/contents"><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+<td tal:condition="links/index"><a tal:attributes="href links/index/url" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+<td tal:condition="not:links/index"><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
 </tr>
 </table>
 </div>
@@ -73,18 +73,18 @@
 <div class="navigation" metal:use-macro="template/macros/navigation">
 <table cellspacing="2" cellpadding="0" width="100%">
 <tr>
-<td tal:condition="links/prev"><a tal:attributes="href links/prev/url"><img border="0" tal:attributes="alt stripped:Previous: ${links/prev/title}" src="images/previous.gif" width="32" height="32" /></a></td>
-<td tal:condition="not:links/prev"><img border="0" alt="" src="images/blank.gif" width="32" height="32" /></td>
-<td tal:condition="links/up"><a tal:attributes="href links/up/url"><img border="0" tal:attributes="alt stripped:Up: ${links/up/title}" src="images/up.gif" width="32" height="32" /></a></td>
-<td tal:condition="not:links/up"><img border="0" alt="" src="images/blank.gif" width="32" height="32" /></td>
-<td tal:condition="links/next"><a tal:attributes="href links/next/url"><img border="0" tal:attributes="alt stripped:Next: ${links/next/title}" src="images/next.gif" width="32" height="32" /></a></td>
-<td tal:condition="not:links/next"><img border="0" alt="" src="images/blank.gif" width="32" height="32" /></td>
+<td tal:condition="links/prev"><a tal:attributes="href links/prev/url"><img border="0" tal:attributes="alt stripped:Previous: ${links/prev/title}" src="icons/previous.gif" width="32" height="32" /></a></td>
+<td tal:condition="not:links/prev"><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+<td tal:condition="links/up"><a tal:attributes="href links/up/url"><img border="0" tal:attributes="alt stripped:Up: ${links/up/title}" src="icons/up.gif" width="32" height="32" /></a></td>
+<td tal:condition="not:links/up"><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+<td tal:condition="links/next"><a tal:attributes="href links/next/url"><img border="0" tal:attributes="alt stripped:Next: ${links/next/title}" src="icons/next.gif" width="32" height="32" /></a></td>
+<td tal:condition="not:links/next"><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
 <td class="navtitle" align="center" tal:content="self/title">Section Title</td>
-<td tal:condition="links/contents"><a tal:attributes="href links/contents/title"><img border="0" alt="" src="images/contents.gif" width="32" height="32" /></a></td>
-<td tal:condition="not:links/contents"><img border="0" alt="" src="images/blank.gif" width="32" height="32" /></td>
-<td tal:condition="links/index"><a tal:attributes="href links/index/url" title="Index"><img border="0" alt="" src="images/index.gif" width="32" height="32" /></a></td>
-<td tal:condition="not:links/index"><img border="0" alt="" src="images/blank.gif" width="32" height="32" /></td>
-<td><img border="0" alt="" src="images/blank.gif" width="32" height="32" /></td>
+<td tal:condition="links/contents"><a tal:attributes="href links/contents/title"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+<td tal:condition="not:links/contents"><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+<td tal:condition="links/index"><a tal:attributes="href links/index/url" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+<td tal:condition="not:links/index"><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
 </tr>
 </table>
 </div>

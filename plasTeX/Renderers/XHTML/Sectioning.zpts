@@ -16,30 +16,30 @@ name: document
 
 
 name: part chapter section bibliography theindex
-<h1 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/title">Morbi metus pede, imperdiet vitae</a></h1>
+<h1 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/fulltitle">Morbi metus pede, imperdiet vitae</a></h1>
 <p tal:replace="self"></p>
 
 
 name: subsection 
-<h2 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/title">Cras dignissim</a></h2>
+<h2 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/fulltitle">Cras dignissim</a></h2>
 <p tal:replace="self"></p>
 
 
 name: subsubsection
-<h3 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/title">Velit id pharetra</a></h3>
+<h3 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/fulltitle">Velit id pharetra</a></h3>
 <p tal:replace="self"></p>
 
 
 name: paragraph
-<h4 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/title">Donec elementum mauris vel urna</a></h4>
+<h4 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/fulltitle">Donec elementum mauris vel urna</a></h4>
 <p tal:replace="self"></p>
 
 
 name: subparagraph
-<h5 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/title">Duis orci</a></h5>
+<h5 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/fulltitle">Duis orci</a></h5>
 <p tal:replace="self"></p>
 
 
 name: subsubparagraph
-<h6 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/title">Mauris fringilla, metus</a></h6>
+<h6 tal:attributes="id self/id"><a tal:attributes="name self/id" tal:content="self/fulltitle">Mauris fringilla, metus</a></h6>
 <p tal:replace="self"></p>

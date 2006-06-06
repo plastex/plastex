@@ -185,13 +185,13 @@ class Array(Environment):
                     for border in vert:
                         border.applyBorders([applyto], location=location)
 
+        @property
         def isBorderOnly(self):
             """ Does this row exist only for applying borders? """
             for cell in self:
                 if not cell.isBorderOnly:
                     return False
             return True
-        isBorderOnly = property(isBorderOnly)
 
     class ArrayCell(Macro):
         """ Table cell class """
@@ -278,20 +278,21 @@ class Array(Environment):
         @property
         def isBorderOnly(self):
             """ Does this cell exist only for applying borders? """
-            for item in self:
-                if item.isElementContentWhitespace:
-                    continue
-                elif isinstance(item, Array.BorderCommand):
-                    continue
-                return False
+            for par in self:
+                for item in par:
+                    if item.isElementContentWhitespace:
+                        continue
+                    elif isinstance(item, Array.BorderCommand):
+                        continue
+                    return False
             return True
 
 
+        @property
         def source(self):
             if self.endtoken is not None:
                 return sourcechildren(self) + self.endtoken.source
             return sourcechildren(self)
-        source = property(source)
 
 
     class multicolumn(Command):

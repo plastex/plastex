@@ -133,6 +133,7 @@ class Context(object):
         if load:
             self.loadBaseMacros()
 
+    @property
     def isMathMode(self):
         """ Are we in math mode or not? """
         for i in range(len(self.contexts)-1, -1, -1):
@@ -140,14 +141,13 @@ class Context(object):
             if obj is not None and obj.mathMode is not None:
                 return obj.mathMode
         return False
-    isMathMode = property(isMathMode)
 
     def loadBaseMacros(self):
         """ Import all builtin macros """
         from plasTeX import Base
         self.importMacros(vars(Base))
 
-    def loadLanguage(self, lang):
+    def loadLanguage(self, lang, document):
         """
         Load a localized version of macros for a particular language
 
@@ -157,7 +157,7 @@ class Context(object):
         """
         exec('from plasTeX.Base.LaTeX.Languages import %s as language' % lang)
         if hasattr(language, 'ProcessOptions'):
-            language.ProcessOptions({}, self)
+            language.ProcessOptions({}, document)
         self.importMacros(vars(language))
 
     def loadINIPackage(self, inifile):
@@ -229,7 +229,7 @@ class Context(object):
             m = __import__(module, globals(), locals())
             status.info(' ( %s ' % m.__file__)
             if hasattr(m, 'ProcessOptions'):
-                m.ProcessOptions(options or {}, self)
+                m.ProcessOptions(options or {}, tex.ownerDocument)
             self.importMacros(vars(m))
             moduleini = os.path.splitext(m.__file__)[0]+'.ini'
             self.loadINIPackage([packagesini, moduleini])
@@ -248,7 +248,11 @@ class Context(object):
                 raise
 
         result = tex.loadPackage(file, options)
-        self.loadINIPackage([packagesini])
+        try:
+            moduleini = os.path.join(os.path.dirname(tex.kpsewhich(file)),
+                                     os.path.basename(module)+'.ini')
+            self.loadINIPackage([packagesini, moduleini])
+        except OSError: pass
         return result
    
 
@@ -274,10 +278,13 @@ class Context(object):
         # Resolve any outstanding references to this object
         if self.refs.has_key(label) and self.labels.has_key(label):
             for obj in self.refs[label]:
-                obj.idref = self.labels[label]
+                for key, value in obj.idref.items():
+                    if value != label:
+                        continue
+                    obj.idref[key] = self.labels[label]
             del self.refs[label]
 
-    def ref(self, obj, label):
+    def ref(self, obj, name, label):
         """
         Set up a ref for resolution
 
@@ -295,13 +302,14 @@ class Context(object):
 
         # Resolve ref if label already exists
         if self.labels.has_key(label):
-            obj.idref = self.labels[label]
+            obj.idref[name] = self.labels[label]
             return 
 
         # If the label doesn't exist, store away the object for later
         if not self.refs.has_key(label):
             self.refs[label] = []
         self.refs[label].append(obj)
+        obj.idref[name] = label
 
     def __getitem__(self, key):
         """ 

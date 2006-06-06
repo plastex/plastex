@@ -22,7 +22,7 @@ class XHTML(ZPT):
         document -- the document being rendered
 
         """
-        encoding = document.userdata['config']['files']['output-encoding']
+        encoding = document.config['files']['output-encoding']
 
         for f in files:
             try:

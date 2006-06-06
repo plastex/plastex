@@ -28,11 +28,11 @@ class par(Command):
     def invoke(self, tex):
         status.dot()
 
+    @property
     def source(self): 
         if self.hasChildNodes():
             return '%s\n\n' % sourcechildren(self)
         return '\n\n'
-    source = property(source)
 
     def digest(self, tokens):
         status.dot()
@@ -377,7 +377,7 @@ class input(Command):
     def invoke(self, tex):
         a = self.parse(tex)
         try: 
-            path = tex.kpsewhich(a['name'], self.config)
+            path = tex.kpsewhich(a['name'])
 
             status.info(' ( %s ' % path)
             encoding = self.config['files']['input-encoding']
@@ -417,9 +417,8 @@ class kern(Command): pass
 class hrule(Command): pass
 
 class jobname(Command):
-    @property
-    def unicode(self):
-        return unicode(self.ownerDocument.userdata['jobname'])
+    def invoke(self, tex):
+        self.unicode = tex.jobname
 
 class long(Command): pass
 

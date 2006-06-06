@@ -73,6 +73,7 @@ class Argument(object):
 
 class CSSStyles(dict):
     """ CSS Style object """
+    @property
     def inline(self):
         """ 
         Create an inline style representation
@@ -84,7 +85,6 @@ class CSSStyles(dict):
         if not self:
             return None      
         return u'; '.join([u'%s:%s' % (x[0],x[1]) for x in self.items()])
-    inline = property(inline)
 
 
 class Macro(Element):
@@ -111,10 +111,6 @@ class Macro(Element):
     # Value to return when macro is referred to by \ref
     ref = None
 
-    # Element that this element links to (i.e. args = 'label:idref')
-    # Only one idref attribute is allowed in the args string
-    idref = None
-
     # Source of the TeX macro arguments
     argsource = ''
 
@@ -124,7 +120,16 @@ class Macro(Element):
     @property
     def config(self):
         """ Shortcut to the document config """
-        return self.ownerDocument.userdata['config']
+        return self.ownerDocument.config
+
+    @property
+    def idref(self):
+        """ Storage area for idref argument types """
+        if hasattr(self, '@idref'):
+            return getattr(self, '@idref')
+        d = {}
+        setattr(self, '@idref', d)
+        return d
 
     def title():
         """ Retrieve title from variable or attributes dictionary """
@@ -202,6 +207,7 @@ class Macro(Element):
         return locals()
     fulltocentry = property(**fulltocentry())
 
+    @property
     def style(self):
         """ CSS styles """
         try:
@@ -210,7 +216,6 @@ class Macro(Element):
             style = CSSStyles()
             setattr(self, '@style', style)
         return style
-    style = property(style)
 
     def digest(self, tokens):
         pass
@@ -258,8 +263,8 @@ class Macro(Element):
         if self.macroMode == Macro.MODE_END:
             self.ownerDocument.context.pop(self)
             # If a unicode value is set, just return that
-            if self.unicode is not None:
-                return tex.texttokens(self.unicode)
+#           if self.unicode is not None:
+#               return tex.texttokens(self.unicode)
             return
 
         # If this is a \begin token or the element needs to be
@@ -269,8 +274,8 @@ class Macro(Element):
             self.ownerDocument.context.push(self)
             self.parse(tex)
             # If a unicode value is set, just return that
-            if self.unicode is not None:
-                return tex.texttokens(self.unicode)
+#           if self.unicode is not None:
+#               return tex.texttokens(self.unicode)
             self.setLinkType()
             return
 
@@ -283,8 +288,8 @@ class Macro(Element):
         self.ownerDocument.context.pop(self)
 
         # If a unicode value is set, just return that
-        if self.unicode is not None:
-            return tex.texttokens(self.unicode)
+#       if self.unicode is not None:
+#           return tex.texttokens(self.unicode)
 
         self.setLinkType()
 
@@ -316,6 +321,7 @@ class Macro(Element):
         return t.macroName
     nodeName = tagName = property(tagName)
 
+    @property
     def source(self):
         name = self.nodeName
 
@@ -354,8 +360,6 @@ class Macro(Element):
             if self.hasChildNodes():
                 s += sourcechildren(self)
         return s
-
-    source = property(source)
 
     def parse(self, tex): 
         """ 
@@ -483,9 +487,10 @@ class Macro(Element):
         if self.counter:
             try: secnumdepth = self.config['document']['sec-num-depth']
             except: secnumdepth = 10
-            if secnumdepth >= self.level:
-                self.ref = tex.expandtokens(self.ownerDocument.createElement('the'+self.counter).invoke(tex))
+            if secnumdepth >= self.level or self.level > self.ENDSECTIONS_LEVEL:
+                self.ref = self.ownerDocument.createElement('the'+self.counter).expand(tex)
 
+    @property
     def arguments(self):
         """ 
         Compile the argument string into function call arguments 
@@ -574,8 +579,6 @@ class Macro(Element):
 
         return macroargs
 
-    arguments = property(arguments)
-
     def digestUntil(self, tokens, endclass):
         """
         Absorb tokens until a token of the given class is given
@@ -649,6 +652,7 @@ class Macro(Element):
 
         # No paragraphs, and we aren't forcing paragraphs...
         if parname is None and not force:
+            self.normalize(self.ownerDocument.charsubs)
             return
 
         if parname is None:
@@ -669,10 +673,10 @@ class Macro(Element):
             newnodes[-1].append(item)
 
         # Insert nodes into self
-        i = 0
-        for item in newnodes:
+        for i, item in enumerate(newnodes):
+            if item.level == Node.PAR_LEVEL:
+                item.normalize(self.ownerDocument.charsubs)
             self.insert(i, item)
-            i += 1
 
         # Filter out any empty paragraphs
         for i in range(len(self)-1, -1, -1):
@@ -682,7 +686,6 @@ class Macro(Element):
                     self.pop(i)
                 elif len(item) == 1 and item[0].isElementContentWhitespace:
                     self.pop(i)
-
 
 class TeXFragment(DocumentFragment):
     """ Document fragment node """
@@ -700,14 +703,32 @@ class TeXDocument(Document):
         ("''", unichr(8221)),
         ('`',  unichr(8216)),
         ("'",  unichr(8217)),
-        ('---', unichr(8212)),
+        ('---',unichr(8212)),
         ('--', unichr(8211)),
+#       ('fj', unichr(58290)),
+#       ('ff', unichr(64256)),
+#       ('fi', unichr(64257)),
+#       ('fl', unichr(64258)),
+#       ('ffi',unichr(64259)),
+#       ('ffl',unichr(64260)),
+#       ('ij', unichr(307)),
+#       ('IJ', unichr(308)),
     ]
 
     def __init__(self, *args, **kwargs):
-        import Context
         Document.__init__(self, *args, **kwargs)
-        self.context = Context.Context(load=True)
+
+        if 'context' not in kwargs:
+            import Context
+            self.context = Context.Context(load=True)
+        else:
+            self.context = kwargs['context']
+
+        if 'config' not in kwargs:
+            import Config
+            self.config = Config.config
+        else:
+            self.config = kwargs['config']
 
     def createElement(self, name):
         elem = self.context[name]()
@@ -764,14 +785,14 @@ class Environment(Macro):
             return
         # Absorb the tokens that belong to us
         dopars = False
-        text = []
+#       text = []
         for item in tokens:
-            if item.nodeType == Node.TEXT_NODE:
-                text.append(item)
-                continue
+#           if item.nodeType == Node.TEXT_NODE:
+#               text.append(item)
+#               continue
             # Make sure that we know to group paragraphs if one is found
             if item.level == Node.PAR_LEVEL:
-                self.appendText(text)
+#               self.appendText(text, self.ownerDocument.charsubs)
                 self.appendChild(item)
                 dopars = True
                 continue
@@ -789,9 +810,9 @@ class Environment(Macro):
             if item.contextDepth < self.contextDepth:
                 tokens.push(item)
                 break
-            self.appendText(text)
+#           self.appendText(text, self.ownerDocument.charsubs)
             self.appendChild(item)
-        self.appendText(text)
+#       self.appendText(text, self.ownerDocument.charsubs)
         if dopars:
             self.paragraphs()
 
@@ -849,11 +870,13 @@ class IfTrue(Macro):
     """ Base class for all generated \\iftrues """
     def invoke(self, tex):
         type(self).ifclass.setTrue()
+        return []
 
 class IfFalse(Macro):
     """ Base class for all generated \\iffalses """
     def invoke(self, tex):
         type(self).ifclass.setFalse()
+        return []
 
 def expanddef(definition, params):
     # Walk through the definition and expand parameters

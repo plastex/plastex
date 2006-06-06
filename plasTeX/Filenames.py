@@ -153,7 +153,8 @@ class Filenames(object):
             currentns = self.vars.copy()
             for key, value in currentns.items():
                 for char in self.charsub[0]:
-                    currentns[key] = value.replace(char, self.charsub[1])
+                    value = value.replace(char, self.charsub[1])
+                currentns[key] = value
             for key, format in keysre.findall(item):
                 # Supply a file number as needed
                 if key == 'num':
@@ -188,7 +189,8 @@ class Filenames(object):
                 currentns = self.vars.copy()
                 for key, value in currentns.items():
                     for char in self.charsub[0]:
-                        currentns[key] = value.replace(char, self.charsub[1])
+                        value = value.replace(char, self.charsub[1])
+                    currentns[key] = value
                 for key, format in keysre.findall(item):
                     # Supply a file number as needed
                     if key == 'num':

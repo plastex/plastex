@@ -2,3 +2,5 @@ name: egroup
 
 name: bgroup
 <span tal:replace="self"></span>
+
+name: tableofcontents input @vobeyspaces @noligs def protect let newcommand hfill hline openout renewcommand write hspace appendix global

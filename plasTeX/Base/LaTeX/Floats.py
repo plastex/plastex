@@ -11,25 +11,42 @@ from plasTeX.Logging import getLogger
 
 
 class Caption(Command):
-    args = '[ toc ] title'
+    args = '[ toc ] self'
+
+    def invoke(self, tex):
+        res = Command.invoke(self, tex)
+        try: self.title = self.ownerDocument.createElement(self.counter+'name').expand(tex)
+        except TypeError: pass
+        return res
+
+    def digest(self, tokens):
+        res = Command.digest(self, tokens)
+        node = self.parentNode
+        while node is not None and not isinstance(node, Float):
+            node = node.parentNode
+        if isinstance(node, Float):
+            node.caption = self
+        return res
 
 #
 # C.9.1 Figures and Tables
 #
 
-class figure(Environment):
-    args = 'loc:str'
+class Float(Environment):
+    args = '[ loc:str ]'
+    caption = None
 
-    class caption(Caption):
+class figure(Float):
+    class caption_(Caption):
+        macroName = 'caption'
         counter = 'figure'
 
 class FigureStar(figure):
     macroName = 'figure*'
 
-class table(Environment):
-    args = 'loc:str'
-
-    class caption(Caption):
+class table(Float):
+    class caption_(Caption):
+        macroName = 'caption'
         counter = 'table'
 
 class TableStar(table):

@@ -11,8 +11,8 @@ name: theindex printindex
 
 <table width="100%">
 <tr>
-<td tal:attributes="width python:'%s%%'%int(100.0/len(path('group/entries')))" 
-    tal:repeat="column group/entries">
+<td tal:attributes="width python:'%s%%'%int(100.0/len(path('group')))" 
+    tal:repeat="column group">
 <ul>
 <li tal:repeat="item column">
     <span tal:replace="item/key">item</span>

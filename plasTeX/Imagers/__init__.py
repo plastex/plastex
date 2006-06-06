@@ -206,8 +206,14 @@ class Imager(object):
     # This should be overridden by the subclass.
     command = ''
 
+    # The compiler command used to compile the LaTeX document
+    compiler = 'latex'
+
+    # Verification command to determine if the imager is available
+    verification = ''
+
     def __init__(self, document):
-        self.config = document.userdata['config']['images']
+        self.config = document.config['images']
 
         # Dictionary that makes sure each image is only generated once.
         # The key is the LaTeX source and the value is the image instance.
@@ -217,7 +223,7 @@ class Imager(object):
         self.images = ordereddict()
 
         # Filename generator
-        self.newfilename = Filenames(self.config.get('filenames', raw=True), {'jobname':document.userdata['jobname']})
+        self.newfilename = Filenames(self.config.get('filenames', raw=True), {'jobname':document.userdata.get('jobname','')})
 
         # Start the document with a preamble
         self.source = StringIO()
@@ -237,6 +243,23 @@ class Imager(object):
                           'width 2pt\\hskip2pt}}{}\n')
         self.source.write('\\pagestyle{empty}\n')
 
+    def verify(self):
+        """ Verify that this commmand works on this machine """
+        os.environ['SHELL'] = 'sh'
+        if self.verification:
+            if not os.system('%s >/dev/null 2>/dev/null' % self.verification):
+                return True
+
+        cmd = self.command.split()[0]
+
+        if not cmd:
+            return False
+
+        if not os.system('%s --help >/dev/null 2>/dev/null' % cmd):
+            return True
+
+        return False
+
     def close(self):
         """ Invoke the rendering code """
         # Finish the document
@@ -250,7 +273,8 @@ class Imager(object):
             return
 
         # Compile LaTeX source, then convert the output
-        self.convert(self.compilelatex(self.source.getvalue()))
+        self.source.seek(0)
+        self.convert(self.compilelatex(self.source.read()))
 
     def compilelatex(self, source):
         """
@@ -272,11 +296,14 @@ class Imager(object):
         filename = 'images.tex'
 
         # Write LaTeX source file
-        open(filename, 'w').write(self.source.getvalue())
+        self.source.seek(0)
+        open(filename, 'w').write(self.source.read())
 
         # Run LaTeX
         os.environ['SHELL'] = '/bin/sh'
         program = self.config['compiler']
+        if not program:
+            program = self.compiler
         os.system(r"%s '\scrollmode\input %s'" % (program, filename))
 
         output = None
@@ -357,7 +384,8 @@ class Imager(object):
             shutil.copy2(os.path.join(tempdir,src), dest.path)
 
             # Crop the image
-            try: dest.crop()
+            try: 
+                dest.crop()
             except Exception, msg:
                 log.warning('failed to crop %s (%s)', dest.path, msg)
         
