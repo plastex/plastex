@@ -1,0 +1,127 @@
+<html>
+<head>
+<title>plasTeX - LaTeX Document Processing Framework</title>
+<style>
+<!--
+body {
+   font-family: "lucida grande", helvetica, sans-serif;
+   background-color: #ffffff;
+   color: #000000;
+}
+
+p {
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 15px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+   font-family: times, serif;
+   font-size: 30pt;
+   color: #ffffcc;
+}
+
+.navigation big {
+   color: #669933;
+   font-weight: 100;
+}
+.navigation a {
+   font-size: small;
+   font-weight: bold;
+   text-decoration: none;
+}
+.navigation a:link {color: #ffffff}
+.navigation a:active {color: #ff0000}
+.navigation a:visited {color: #ffffff}
+.navigation a:hover {
+   color: #ffffff; 
+   background-color: #444444;
+   text-decoration: underline;}
+
+a:link {}
+a:visited {}
+a:active {}
+a:hover {background-color: #ffffcc}
+-->
+</style>
+</head>
+
+<body marginheight="0" marginwidth="0" topmargin="0" leftmargin="0">
+
+<table style="background-color:#669933" width="100%" border="0" cellspacing="0" cellpadding="1">
+<tr>
+   <td align="center" nowrap class="title">
+   <h1>&nbsp;&nbsp;<i>plas</i>TeX</h1>
+   </td>
+   <td width="100%" align="right" valign="bottom" style="font-size:small; color:#ffffcc">
+   Processing LaTeX the Python Way
+   &nbsp;
+   </td>
+</tr>
+<tr>
+   <td class="navigation" style="background-color:#000000" colspan="2"
+       align="right" nowrap>
+   <a href="http://sourceforge.net/project/showfiles.php?group_id=120835"
+      title="Get the current release">download</a>
+   &nbsp;&nbsp;<big>|</big>&nbsp;&nbsp;
+   <a href="http://plastex.sf.net/plastex/" 
+      title="Read the documentation">documentation</a>
+   &nbsp;&nbsp;<big>|</big>&nbsp;&nbsp;
+   <a href="http://plastex.cvs.sourceforge.net/plastex/"
+      title="Browse the cvs repository">cvs</a>
+   &nbsp;&nbsp;<big>|</big>&nbsp;&nbsp;
+   <a href="mailto:Kevin.Smith@sas.com" title="Send us e-mail">contact us</a>
+   &nbsp;&nbsp;
+   </td>
+</tr>
+</table>
+
+<table cellspacing="10" cellpadding="0" border="0">
+<tr>
+   <td valign="top">
+
+<p>
+plasTeX is a <a href="http://www.tug.org/">LaTeX</a> 
+document processing framework written entirely in 
+<a title="Go to the Python web site" href="http://www.python.org/">Python</a>.
+It currently comes bundled with an <a href="http://www.w3.org/MarkUp/">XHTML</a> 
+renderer (including multiple themes), as well as a way to simply dump the document
+to a generic form of <a href="http://www.w3.org/XML/">XML</a>.
+Other renderers can be added as well and are planned for future releases.  
+</p>
+
+<p>
+plasTeX differs from other tools like 
+<a href="http://saftsack.fs.uni-bayreuth.de/~latex2ht/"
+   title="Go to the the LaTeX2HTML web site">LaTeX2HTML</a>, 
+<a href="http://www.cse.ohio-state.edu/~gurari/TeX4ht/mn.html"
+   title="Go to the TeX4ht web site">TeX4ht</a>, 
+<a href="http://hutchinson.belmont.ma.us/tth/"
+   title="Go to the TtH web site">TtH</a>, etc. 
+in that the parsing and rendering of the document are completely 
+separated.  This separation makes it possible to render the document
+in multiple output formats.  It also allows the parser to create
+a cleaner document object, so that the rendering process is easier.  
+</p>
+
+<p>
+Since the renderer has complete control over which pieces of the 
+document are rendered, it is possible that the resultant document
+is structured quite differently than the input document.  This object
+actually allows you to traverse and edit the document tree.
+</p>
+
+<p>
+The <a href="http://sourceforge.net/project/showfiles.php?group_id=120835"
+   title="Go to the plasTeX file list page on SourceForge">latest release
+   with complete documentation</a> is always available on 
+<a href="http://sourceforge.net/projects/plastex">SourceForge</a>.
+</p>
+
+   </td>
+</tr>
+</table>
+
+</body>
+
+</html>
