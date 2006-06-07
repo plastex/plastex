@@ -1,5 +1,7 @@
 name: thebibliography
 type: xml
+<div>
+
 <h1>Bibliography</h1>
 
 <dl class="bibliography">
@@ -10,6 +12,8 @@ type: xml
 <dd tal:content="item">information</dd>
 </metal:block>
 </dl>
+
+</div>
 
 name: cite
 <span tal:repeat="item self/citation"><a class="cite" tal:attributes="href item/idref/url" tal:content="item">citation</a></span>

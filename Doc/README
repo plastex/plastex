@@ -1,0 +1,37 @@
+
+The documentation in this directory is available in PDF and HTML format
+at http://plastex.sf.net/.  However, if you really want to compile the
+documentation yourself, you'll need to add the 'commontex' and 'texinputs'
+directories to your TEXINPUTS environment variable as shown below.
+These LaTeX style files are the same ones used by the official Python
+documentation system.
+
+    # For csh or tcsh users
+    setenv TEXINPUTS .:/path/to/plastex/Doc/commontex
+    setenv TEXINPUTS ${TEXINPUTS}:/path/to/plastex/Doc/texinputs:
+
+    # For other shell users
+    export TEXINPUTS=.:/path/to/plastex/Doc/commontex
+    export TEXINPUTS=${TEXINPUTS}:/path/to/plastex/Doc/texinputs:
+
+You should then be able to run pdflatex to get the PDF version of the
+documentation.
+
+    pdflatex plastex
+
+Of course to get the index and all the page references correct, you'll
+need to run it more than once and also run makeindex to sort the indexes.
+
+    pdflatex plastex
+    pdflatex plastex
+    makeindex pdflatex.idx
+    pdflatex plastex
+
+If you want to get the HTML version of this documentation, you do not
+need to use LaTeX2html as the Python documents say.  plasTeX is capable
+of converting this document to HTML using the Python LaTeX styles as
+well.  Once you are successful at converting the document to PDF, you
+should be able to simply run the following command to generate the 
+HTML version.
+
+    plastex plastex
