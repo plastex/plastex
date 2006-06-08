@@ -34,7 +34,7 @@
 		Module Dependencies: logging, simpleTALES, simpleTALTemplates
 """
 
-import simpletal
+from plasTeX.Renderers.ZPT import simpletal
 import HTMLParser
 
 

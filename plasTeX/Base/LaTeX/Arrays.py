@@ -158,11 +158,11 @@ class Array(Environment):
                 tokens.next()
                 self.endtoken.digest(tokens)
 
+        @property
         def source(self):
             if self.endtoken is not None:
                 return sourcechildren(self) + self.endtoken.source
             return sourcechildren(self)
-        source = property(source)
 
         def applyBorders(self, tocells=None, location=None):
             """ 
@@ -208,6 +208,7 @@ class Array(Environment):
                 self.endtoken = None
 
             # Check for multicols
+            hasmulticol = False
             for item in self:
                 if item.attributes and item.attributes.has_key('colspan'):
                     self.attributes['colspan'] = item.attributes['colspan']
@@ -290,9 +291,13 @@ class Array(Environment):
 
         @property
         def source(self):
+            # Don't put paragraphs into math mode arrays
+            par = True
+            if self.parentNode.parentNode.mathMode:
+                par = False
             if self.endtoken is not None:
-                return sourcechildren(self) + self.endtoken.source
-            return sourcechildren(self)
+                return sourcechildren(self, par=par) + self.endtoken.source
+            return sourcechildren(self, par=par)
 
 
     class multicolumn(Command):
@@ -305,7 +310,7 @@ class Array(Environment):
 
         def digest(self, tokens):
             Command.digest(self, tokens)
-            self.paragraphs()
+            #self.paragraphs()
 
 
     def invoke(self, tex):
@@ -387,6 +392,7 @@ class Array(Environment):
         for i in emptyrows:
             self.pop(i)
 
+    @classmethod
     def compileColspec(cls, tex, colspec):
         """ 
         Compile colspec into an object 
@@ -454,11 +460,9 @@ class Array(Environment):
              
         return output
 
-    compileColspec = classmethod(compileColspec)
-
-
 class array(Array):
     args = '[ pos:str ] colspec:nox'
+    mathMode = True
 
 class tabular(Array):
     args = '[ pos:str ] colspec:nox'

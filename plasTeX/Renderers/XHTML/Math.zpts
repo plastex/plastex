@@ -1,20 +1,7 @@
-name: math
-<img tal:attributes="src self/image/url; alt self/source" class="math" style="margin-bottom:#depth; width:#width; height:#height" />
+name: math ensuremath
+<img tal:attributes="src self/image/url; alt self/source; style string:margin-bottom:&amp;${self/image/filename}-depth;;;; width:&amp;${self/image/filename}-width;;;; height:&amp;${self/image/filename}-height;;" class="math" />
 
-name: displaymath
-<div class="displaymath">
-<img tal:attributes="src self/image/url; alt self/source" width="#width" height="#height" />
-</div>
-
-name: equation
+name: displaymath equation eqnarray eqnarray*
 <div class="equation">
-<img tal:attributes="src self/image/url; alt self/source" width="#width" height="#height" />
+<img tal:attributes="src self/image/url; alt self/source; style string:width:&amp;${self/image/filename}-width;;;; height:&amp;${self/image/filename}-height;;" /> 
 </div>
-
-name: eqnarray eqnarray*
-<div class="eqnarray">
-<img tal:attributes="src self/image/url; alt self/source" width="#width" height="#height" />
-</div>
-
-name: ensuremath
-<img tal:attributes="src self/image/url; alt self/source" class="math" style="margin-bottom:#depth; width:#width; height:#height" />

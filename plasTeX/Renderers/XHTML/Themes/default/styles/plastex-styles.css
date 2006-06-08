@@ -202,6 +202,16 @@ hr {color: black}
 .lower30 {margin-bottom: -20px}
 .lower20 {margin-bottom: -20px}
 
+td p:first-child, th p:first-child {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+td p, th p {
+    margin-top: 1em;
+    margin-bottom: 0px;
+}
+
 p {
     text-indent: 0em;
     margin-top: 0px;

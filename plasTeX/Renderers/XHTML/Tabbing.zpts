@@ -1,2 +1,4 @@
 name: tabbing
-<img tal:attributes="src self/image/url; alt self/source" width="#width" height="#height" class="tabbing" />
+<div class="tabbing">
+<img tal:attributes="src self/image/url; alt self/source; style string:width:&amp;${self/image/filename}-width;;;; height:&amp;${self/image/filename}-height;;" /> 
+</div>

@@ -214,6 +214,7 @@ class Imager(object):
 
     def __init__(self, document):
         self.config = document.config['images']
+        self.ownerDocument = document
 
         # Dictionary that makes sure each image is only generated once.
         # The key is the LaTeX source and the value is the image instance.
@@ -229,6 +230,7 @@ class Imager(object):
         self.source = StringIO()
         self.writepreamble(document)
         self.source.write('\\begin{document}\n')
+
 
     def writepreamble(self, document):
         """ Write any necessary code to the preamble of the document """
@@ -297,6 +299,8 @@ class Imager(object):
 
         # Write LaTeX source file
         self.source.seek(0)
+#       open(os.path.join(cwd,filename), 'w').write(self.source.read())
+#       self.source.seek(0)
         open(filename, 'w').write(self.source.read())
 
         # Run LaTeX
@@ -307,7 +311,7 @@ class Imager(object):
         os.system(r"%s '\scrollmode\input %s'" % (program, filename))
 
         output = None
-        for ext in ['.dvi','.pdf']:
+        for ext in ['.dvi','.pdf','.ps']:
             if os.path.isfile('images'+ext):
                 output = WorkingFile('images'+ext, 'rb', tempdir=tempdir)
                 break
@@ -420,6 +424,10 @@ class Imager(object):
             should not include the file extension. 
 
         """
+        # Convert ligatures back to original string
+        for dest, src in self.ownerDocument.charsubs:
+            text = text.replace(src, dest)
+
         key = (text, context)
 
         # See if this image has been cached

@@ -35,7 +35,9 @@
 """
 
 import StringIO, os, stat, threading, sys, codecs, sgmllib, cgi, re, types
-import simpletal, simpleTAL
+import simpleTAL
+from plasTeX.Renderers.ZPT import simpletal
+
 
 __version__ = simpletal.__version__
 

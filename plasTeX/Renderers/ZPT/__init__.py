@@ -357,7 +357,7 @@ class ZPT(BaseRenderer):
             try:
                 self.setTemplate(''.join(template), options)
             except ValueError, msg:
-                print 'ERROR: %s at line %s in file %s' % (msg, i, filename)
+                print 'ERROR: %s in template %s in file %s' % (msg, ''.join(template), filename)
 
         elif name and not(template):
             self.setTemplate('', options)

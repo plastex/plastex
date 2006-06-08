@@ -40,7 +40,8 @@ except:
 	import DummyLogger as logging
 	
 import xml.sax, cgi, StringIO, codecs, re, sgmlentitynames, types
-import simpletal, copy, sys
+from plasTeX.Renderers.ZPT import simpletal 
+import copy, sys
 import FixedHTMLParser
 
 __version__ = simpletal.__version__

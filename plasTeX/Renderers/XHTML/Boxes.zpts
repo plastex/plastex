@@ -10,9 +10,5 @@ name: parbox
 name: minipage
 <div class="minipage" tal:attributes="style string:${self/attributes/width}" tal:content="self">minipage</div>
 
-name: raisebox
-<img tal:attributes="src self/image/url; alt self/source" width="#width" height="#height" class="#depth" alt="raisebox" />
-
-name: rule
-<img tal:attributes="src self/image/url; alt self/source" width="#width" height="#height" class="#depth" alt="rule" />
-
+name: raisebox rule
+<img tal:attributes="src self/image/url; alt self/source" tal:attributes="style string:margin-bottom:&amp;${self/image/filename}-depth;;;; width:&amp;${self/image/filename}-width;;;; height:&amp;${self/image/filename}-height;;" />

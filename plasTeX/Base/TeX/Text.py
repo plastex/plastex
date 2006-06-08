@@ -8,34 +8,34 @@ B.5 Macros for text
 from plasTeX import Command, Environment, sourcechildren
 
 class frenchspacing(Command):
-    pass
+    unicode = u''
 
 class nonfrenchspacing(Command):
-    pass
+    unicode = u''
 
 class normalbaselines(Command):
-    pass
+    unicode = u''
 
 class lq(Command):
-    unicode = '`'
+    unicode = unichr(8216)
 
 class rq(Command):
-    unicode = "'"
+    unicode = unichr(8217)
 
 class lbrack(Command):
-    unicode = '['
+    unicode = u'['
 
 class rbrack(Command):
-    unicode = ']'
+    unicode = u']'
 
 class space(Command):
-    unicode = ' '
+    unicode = u' '
 
 class empty(Command):
-    unicode = ''
+    unicode = u''
 
 class null(Command):
-    unicode = ''
+    unicode = u''
 
 class bgroup(Command):
 
@@ -46,10 +46,13 @@ class bgroup(Command):
         # Absorb the tokens that belong to us
         for item in tokens:
             if item.nodeType == Command.ELEMENT_NODE:
-                if item.level < self.level:
+                if item.level < self.ENDSECTIONS_LEVEL:
                     tokens.push(item)
                     break
                 if isinstance(item, (egroup,endgroup)):
+                    break
+                if item.contextDepth < self.contextDepth:
+                    tokens.push(tok)
                     break
                 item.digest(tokens)
             self.appendChild(item)
@@ -65,6 +68,7 @@ class begingroup(bgroup):
     pass
 
 class egroup(Command):
+    unicode = u''
 
     def invoke(self, tex):
         self.ownerDocument.context.pop()
@@ -77,19 +81,20 @@ class egroup(Command):
         return
 
 class endgroup(egroup):
-    pass
+    unicode = u''
 
 class obeyspaces(Command):
-    pass
+    unicode = u''
 
 class loop(Command):
     args = 'var:Tok'
+    unicode = u''
 
 class iterate(Command):
-    pass
+    unicode = u''
 
 class repeat(Command):
-    pass
+    unicode = u''
 
 class enskip(Command):
     pass
@@ -135,9 +140,10 @@ class bigskip(Command):
 
 class TeXBreak(Command):
     macroName = 'break'
+    unicode = u''
 
 class allowbreak(Command):
-    pass
+    unicode = u''
 
 class ControlSpace(Command):
     macroName = 'active::~'
@@ -152,10 +158,10 @@ class goodbreak(Command):
     pass
 
 class eject(Command):
-    pass
+    unicode = u''
 
 class supereject(Command):
-    pass
+    unicode = u''
 
 class removelastskip(Command):
     pass

@@ -20,10 +20,16 @@ def subclasses(o):
         output.extend(subclasses(item))
     return output
 
-def sourcechildren(o): 
+def sourcechildren(o, par=True): 
     """ Return the LaTeX source of the child nodes """
     if o.hasChildNodes():
-        return u''.join([x.source for x in o.childNodes])
+        if par:
+            return u''.join([x.source for x in o.childNodes])
+        else:
+            source = []
+            for par in o.childNodes:
+                source += [x.source for x in par]
+            return u''.join(source)
     return u''
 
 def sourcearguments(o): 

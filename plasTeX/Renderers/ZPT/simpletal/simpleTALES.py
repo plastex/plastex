@@ -40,7 +40,8 @@ try:
 except:
 	import DummyLogger as logging
 	
-import simpletal, simpleTAL
+import simpleTAL
+from plasTeX.Renderers.ZPT import simpletal
 
 __version__ = simpletal.__version__
 
