@@ -24,7 +24,7 @@ need to run it more than once and also run makeindex to sort the indexes.
 
     pdflatex plastex
     pdflatex plastex
-    makeindex pdflatex.idx
+    makeindex plastex.idx
     pdflatex plastex
 
 If you want to get the HTML version of this documentation, you do not

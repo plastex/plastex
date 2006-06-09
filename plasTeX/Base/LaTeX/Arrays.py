@@ -55,6 +55,7 @@ class Array(Environment):
     """
 
     colspec = None
+    blockType = True
 
     class caption(Command):
         """ Table caption """

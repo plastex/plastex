@@ -27,18 +27,19 @@ class math(MathEnvironment):
     source = property(source)
 
 class displaymath(MathEnvironment):
+    blockType = True
+    @property
     def source(self):
         if self.hasChildNodes():
             return r'\[ %s \]' % sourcechildren(self)
         if self.macroMode == Command.MODE_END:
             return r'\]'
         return r'\['
-    source = property(source)
 
 class BeginDisplayMath(Command):
     macroName = '['
     def invoke(self, tex):
-        o = displaymath()
+        o = self.ownerDocument.createElement('displaymath')
         o.macroMode = Command.MODE_BEGIN
         self.ownerDocument.context.push(o)
         return [o]
@@ -46,7 +47,7 @@ class BeginDisplayMath(Command):
 class EndDisplayMath(Command):
     macroName = ']'
     def invoke(self, tex):
-        o = displaymath()
+        o = self.ownerDocument.createElement('displaymath')
         o.macroMode = Command.MODE_END
         self.ownerDocument.context.pop(o)
         return [o]
@@ -54,7 +55,7 @@ class EndDisplayMath(Command):
 class BeginMath(Command):
     macroName = '('
     def invoke(self, tex):
-        o = math()
+        o = self.ownerDocument.createElement('math')
         o.macroMode = Command.MODE_BEGIN
         self.ownerDocument.context.push(o)
         return [o]
@@ -62,7 +63,7 @@ class BeginMath(Command):
 class EndMath(Command):
     macroName = ')'
     def invoke(self, tex):
-        o = math()
+        o = self.ownerDocument.createElement('math')
         o.macroMode = Command.MODE_END
         self.ownerDocument.context.pop(o)
         return [o]
@@ -71,6 +72,7 @@ class ensuremath(Command):
     args = 'self'
 
 class equation(MathEnvironment):
+    blockType = True
     counter = 'equation'
 
 class eqnarray(Array):

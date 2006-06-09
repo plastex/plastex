@@ -676,6 +676,15 @@ class Macro(Element):
             if item.level < Node.PAR_LEVEL:
                 newnodes.append(item)
                 break
+            # Block level elements get their own paragraph
+            if item.blockType:
+                par = self.ownerDocument.createElement(parname)
+                par.appendChild(item)
+                par.blockType = True
+                newnodes.append(par)
+                par = self.ownerDocument.createElement(parname)
+                newnodes.append(par)
+                continue
             newnodes[-1].append(item)
 
         # Insert nodes into self

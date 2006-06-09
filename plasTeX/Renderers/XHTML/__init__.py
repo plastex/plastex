@@ -8,6 +8,9 @@ log = plasTeX.Logging.getLogger()
 class XHTML(ZPT):
     """ Renderer for XHTML documents """
 
+    fileextension = '.html'
+    imagetypes = ['.png','.jpg','.jpeg','.gif']
+
     def cleanup(self, document, files):
         """ 
         Cleanup method called at the end of rendering 
@@ -39,7 +42,7 @@ class XHTML(ZPT):
             s = re.sub(r'&amp;(\S+)-(width|height|depth);', self.setImageData, s) 
 
             # Force XHTML syntax on empty tags
-#           s = re.compile(r'(<(?:br|img|link|meta)\b[^>]*)/?(>)', re.I).sub(r'\1 /\2', s)
+            s = re.compile(r'(<(?:hr|br|img|link|meta)\b[^>]*)/?(>)', re.I).sub(r'\1 /\2', s)
 
             # Convert characters >127 to entities
 #           s = list(s)
@@ -70,9 +73,9 @@ class XHTML(ZPT):
         filename, parameter = m.group(1), m.group(2)
 
         try:
-            img = self.imager.images[filename]
-            if getattr(img, parameter) is not None:
-                return '%spx' % getattr(img, parameter)
+            img = self.imager.images.get(filename, self.imager.staticimages.get(filename))
+            if img is not None and getattr(img, parameter) is not None:
+                return str(getattr(img, parameter))
         except KeyError: pass
 
         return '&%s-%s;' % (filename, parameter)

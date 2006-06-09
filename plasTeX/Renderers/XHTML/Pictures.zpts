@@ -1,4 +1,4 @@
 name: picture
 <div class="picture">
-<img tal:attributes="src self/image/url; alt self/source; style string:width:&amp;${self/image/filename}-width;;;; height:&amp;${self/image/filename}-height;;" /> 
+<img tal:attributes="src self/image/url; alt self/source; style string:width:${self/image/width}px;; height:${self/image/height}px" /> 
 </div>

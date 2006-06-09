@@ -123,6 +123,7 @@ class ZPT(BaseRenderer):
     """ Renderer for XHTML documents """
 
     outputtype = unicode
+    fileextension = '.xml'
 
     def textdefault(self, node):
         """ 

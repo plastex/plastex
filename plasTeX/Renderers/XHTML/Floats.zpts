@@ -1,15 +1,9 @@
 name: figure figure*
-<div class="figure">
-<a tal:condition="self/caption" 
-   tal:attributes="name self/caption/id" tal:content="&amp;#09;"></a>
-<span tal:replace="self"></span>
+<div class="figure" tal:attributes="id self/caption/id" tal:content="self">
 </div>
 
 name: table table*
-<div class="table">
-<a tal:condition="self/caption" 
-   tal:attributes="name self/caption/id" tal:content="&amp;#09;"></a>
-<span tal:replace="self"></span>
+<div class="table" tal:attributes="id self/caption/id" tal:content="self">
 </div>
 
 name: marginpar

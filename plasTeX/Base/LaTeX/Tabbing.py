@@ -9,6 +9,7 @@ from plasTeX import Command, Environment, DimenCommand
 from plasTeX.Logging import getLogger
 
 class tabbing(Environment):
+    blockType = True
 
     class SetTabStop(Command):
         macroName = '='

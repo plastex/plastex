@@ -16,6 +16,7 @@ class unitlength(DimenCommand):
 
 class picture(Environment):
     args = '( dimension:str ) ( offset:str )'
+    blockType = True
 
 #   def digest(self, tex):
 #       result = Environment.digest(self, tex)

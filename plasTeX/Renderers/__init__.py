@@ -83,6 +83,9 @@ class Renderer(dict):
     textdefault = unicode
     default = unicode
     outputtype = unicode
+    imagetypes = []
+    fileextension = ''
+    imageattrs = '&${filename}-${attr};'
 
     def __init__(self, data={}):
         dict.__init__(self, data)
@@ -123,7 +126,7 @@ class Renderer(dict):
         self.newfilename = Filenames(config['files'].get('filename', raw=True), 
                                      (config['files']['bad-chars'],
                                       config['files']['bad-chars-sub']),
-                                     {'jobname':document.userdata.get('jobname', '')})
+                                     {'jobname':document.userdata.get('jobname', '')}, self.fileextension)
                       
 
         # Instantiate appropriate imager
@@ -148,6 +151,11 @@ class Renderer(dict):
             log.warning('Could not find a valid imager in the list: %s.  The default imager will be used.' % ', '.join(names))
             from plasTeX.Imagers import Imager
             self.imager = Imager(document)
+
+        if self.imagetypes and self.imager.fileextension not in self.imagetypes:
+            self.imager.fileextension = self.imagetypes[0]
+        if self.imageattrs and not self.imager.imageattrs:
+            self.imager.imageattrs = self.imageattrs
 
         # Invoke the rendering process
         unicode(document)
@@ -316,33 +324,7 @@ class Renderable(object):
     @property
     def image(self):
         """ Generate an image and return the image filename """
-        img = getattr(self, 'imageoverride', None)
-        if img is not None:
-            # Copy or convert the image as needed
-            path = Node.renderer.imager.newfilename()
-            newext = os.path.splitext(path)[-1]
-            oldext = os.path.splitext(img)[-1]
-            try:
-                # If PIL isn't available or no conversion is necessary, 
-                # just copy the image to the new location
-                if PILImage is None or newext == oldext:
-                    path = os.path.splitext(path)[0] + os.path.splitext(img)[-1]
-                    shutil.copyfile(img, path)
-                    width = height = None
-                # If PIL is available, convert the image to the appropriate type
-                else:
-                    img = PILImage.open(img)
-                    width, height = img.size
-                    img.save(path)
-                return Image(path, self.ownerDocument.config['images'], width=width, height=height)
-
-            # If anything fails, just let the imager handle it...
-            except:
-                pass
-#               import traceback
-#               traceback.print_exc()
-            
-        return Node.renderer.imager.newimage(self.source)
+        return Node.renderer.imager.getimage(self)
 
     @property
     def url(self):
@@ -396,10 +378,10 @@ class Renderable(object):
                 newfilename = Filenames(self.filenameoverride,
                                         (config['files']['bad-chars'],
                                          config['files']['bad-chars-sub']),
-                                        {'jobname':userdata.get('jobname','')})
-                      
-                r.files[self] = newfilename()
-                return r.files[self]
+                                        {'jobname':userdata.get('jobname','')},
+                                        self.fileextension)
+                filename = r.files[self] = newfilename()
+                return filename
 
         except AttributeError:
             if not hasattr(self, 'config'):

@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-import re, string
+import re, string, os.path
 
 class Filenames(object):
 
-    def __init__(self, spec, charsub=[], vars={}):
+    def __init__(self, spec, charsub=[], vars={}, extension=''):
         """
         Generate filenames based on the `spec' and using the given vars
     
@@ -63,6 +63,8 @@ class Filenames(object):
             filenames.  New variables can be added to this namespace between
             each iteration.  The namespace is reset to the value sent in
             the initial generator call after each iteration.
+        extension -- file extension to add to filenames that do not
+            already have an extension
     
         Returns:
         generator that creates filenames
@@ -71,6 +73,7 @@ class Filenames(object):
         self.files = self.parsefilenames(spec)
         self.charsub = charsub
         self.vars = vars
+        self.extension = extension
         self.newfilename = self._newfilename()
 
     def parsefilenames(self, spec):
@@ -123,6 +126,13 @@ class Filenames(object):
         for name in self.newfilename:
             return name
 
+    def addextension(self, filename):
+        """ Add a file extension to the filename if none exists """
+        ext = os.path.splitext(filename)[-1]
+        if not ext:
+            return filename + self.extension
+        return filename
+
     def _newfilename(self):
         """ Generator that generates new filenames """
         g = self.vars.copy()
@@ -152,8 +162,9 @@ class Filenames(object):
         for item in static:
             currentns = self.vars.copy()
             for key, value in currentns.items():
-                for char in self.charsub[0]:
-                    value = value.replace(char, self.charsub[1])
+                if self.charsub:
+                    for char in self.charsub[0]:
+                        value = value.replace(char, self.charsub[1])
                 currentns[key] = value
             for key, format in keysre.findall(item):
                 # Supply a file number as needed
@@ -177,7 +188,7 @@ class Filenames(object):
                     num += 1
                 self.vars.clear()
                 self.vars.update(g)
-                yield result
+                yield self.addextension(result)
             except KeyError, key:
                 continue
                 
@@ -188,8 +199,9 @@ class Filenames(object):
             for item in wildcard:
                 currentns = self.vars.copy()
                 for key, value in currentns.items():
-                    for char in self.charsub[0]:
-                        value = value.replace(char, self.charsub[1])
+                    if self.charsub:
+                        for char in self.charsub[0]:
+                            value = value.replace(char, self.charsub[1])
                     currentns[key] = value
                 for key, format in keysre.findall(item):
                     # Supply a file number as needed
@@ -213,7 +225,7 @@ class Filenames(object):
                         num += 1
                     self.vars.clear()
                     self.vars.update(g)
-                    yield result
+                    yield self.addextension(result)
                     break
                 except KeyError, key:
                     if 'num' in self.vars:

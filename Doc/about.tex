@@ -1,0 +1,18 @@
+
+This document was writted using LaTeX (\url{http://www.latex-project.org/}).  
+The documents use macros written for documenting the Python 
+(\url{http://www.python.org}) language and Python packages.  Generating
+the PDF version of the document is simply a matter of using the 
+\program{pdflatex} command.  Generating the HTML version of the document,
+of course, uses plasTeX.  
+
+The wonderful thing about the HTML version is that it was generated from
+the LaTeX source and Python style files without customization\footnote{
+Ok, there was one customization to \macro{var} for a whitespace issue,
+but the change works both in the PDF and HTML version}!  In fact, in its
+current state, plasTeX can generate the HTML versions of the Python
+documentation found on their website, \url{http://www.python.org/doc/}.
+Without customization of plasTeX, the only remaining issues are that the
+module index is missing and there are some formatting differences.
+Not bad, considering plasTeX is doing actually expanding the LaTeX
+document natively.

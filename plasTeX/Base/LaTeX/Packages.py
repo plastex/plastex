@@ -142,7 +142,7 @@ class topskip(DimenCommand):
 #
 
 class maketitle(Command):
-    pass
+    blockType = True
 
 class title(Command):
     args = 'self'
@@ -170,10 +170,10 @@ class thanks(Command):
         self.ownerDocument.userdata['thanks'] = self
 
 class abstract(Environment):
-    pass
+    blockType = True
 
 class titlepage(Environment):
-    pass
+    blockType = True
 
 
 #

@@ -15,6 +15,7 @@ class List(Environment):
     """ Base class for all list-based environments """
     depth = 0
     counters = ['enumi','enumii','enumiii','enumiv']
+    blockType = True
 
     class item(Command):
         args = '[ term ]'

@@ -79,4 +79,4 @@ name: Huge
 
 
 name: symbol
-<img tal:attributes="src self/image/url; alt self/source" tal:attributes="style string:margin-bottom:&amp;${self/image/filename}-depth;;;; width:&amp;${self/image/filename}-width;;;; height:&amp;${self/image/filename}-height;;" />
+<img tal:attributes="src self/image/url; alt self/source; style string:margin-bottom:${self/image/depth}px;; width:${self/image/width}px;; height:${self/image/height}px" />

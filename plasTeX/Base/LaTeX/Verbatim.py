@@ -8,6 +8,7 @@ C.6.4 Verbatim
 from plasTeX import Macro, Environment, Command, sourcearguments, sourcechildren
 
 class verbatim(Environment):
+    blockType = True
 
     def invoke(self, tex):
         """ Parse until we reach `\end{verbatim}' or `\endverbatim' """

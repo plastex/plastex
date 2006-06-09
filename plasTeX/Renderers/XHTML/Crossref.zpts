@@ -5,4 +5,3 @@ name: pageref
 <a tal:attributes="href self/idref/label/url">*</a>
 
 name: label
-<a tal:attributes="name self/id"></a>

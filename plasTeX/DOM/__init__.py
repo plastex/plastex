@@ -529,7 +529,8 @@ class Node(object):
     CHARACTER_LEVEL = COMMAND_LEVEL = 1001
 
     level = CHARACTER_LEVEL    # Document hierarchy level of the node
-
+    blockType = False     # Indicates that this node is a block-level element
+                          # (i.e. should not be in a paragraph)
     contextDepth = 1000   # TeX context level of this node (used during digest)
 
 #

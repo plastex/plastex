@@ -160,7 +160,7 @@ files['split-level'] = IntegerOption(
 files['filename'] = StringOption(
     """ Template for output filenames """,
     options = '--filename',
-    default = 'index.html [$id, sect$num(4)].html',
+    default = 'index [$id, sect$num(4)]',
     category = 'files',
 )
 
@@ -215,7 +215,7 @@ images['imager'] = StringOption(
 images['filenames'] = StringOption(
     """ Template for image filenames """,
     options = '--image-filenames',
-    default = 'images/img-$num(4).png',
+    default = 'images/img-$num(4)',
     category = 'images',
 )
 

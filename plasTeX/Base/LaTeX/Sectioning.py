@@ -267,6 +267,7 @@ class SectionUtils(object):
 
 
 class StartSection(SectionUtils, Command):
+    blockType = True
     args = '* [ toc ] title'
 
 
@@ -308,20 +309,20 @@ class subsubparagraph(StartSection):
 
 class appendix(Command):
     """ This needs to be implemented in the cls file """
-    pass
+    blockType = True
 
 #
 # C.4.3 Table of Contents
 #
 
 class tableofcontents(Command):
-    pass
+    blockType = True
 
 class listoffigures(Command):
-    pass
+    blockType = True
 
 class listoftables(Command):
-    pass
+    blockType = True
 
 class addcontentsline(Command):
     args = 'file:str level:str text'

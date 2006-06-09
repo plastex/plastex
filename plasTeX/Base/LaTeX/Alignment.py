@@ -8,22 +8,22 @@ from plasTeX import Command, Environment
 
 
 class center(Environment): 
-    pass
+    blockType = True
 
 class centering(center):
-    pass
+    blockType = True
 
 class flushleft(Environment):
-    pass
+    blockType = True
 
 class raggedright(flushleft):
-    pass
+    blockType = True
 
 class flushright(Environment):
-    pass
+    blockType = True
 
 class raggedleft(flushright):
-    pass
+    blockType = True
 
 class raggedbottom(Environment):
     pass

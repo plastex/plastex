@@ -63,18 +63,19 @@ class IndexUtils(object):
         current = ''
         for item in self:
             try: 
-                title = item.sortkey[0].upper()
+                label = title = item.sortkey[0].upper()
                 if title in string.letters:
                     pass
                 elif title == '_':
                      title = '_ (Underscore)'
                 else:
-                     title = 'Symbols'
+                     label = title = 'Symbols'
             except IndexError: 
-                title = 'Symbols'
+                label = title = 'Symbols'
             if current != title:
                 newgroup = self.IndexGroup()
                 newgroup.title = title
+                newgroup.id = label
                 batches.append(newgroup)
                 current = title
             batches[-1].append(item)

@@ -33,6 +33,7 @@ class Caption(Command):
 #
 
 class Float(Environment):
+    blockType = True
     args = '[ loc:str ]'
     caption = None
 

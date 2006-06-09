@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-import os, time, tempfile, shutil, re
+import os, time, tempfile, shutil, re, string
 from plasTeX.Logging import getLogger
 from StringIO import StringIO
 from plasTeX.Filenames import Filenames
 from plasTeX.dictutils import ordereddict
 
-log = getLogger('render.images')
+log = getLogger()
 depthlog = getLogger('render.images.depth')
 
 try:
@@ -212,6 +212,10 @@ class Imager(object):
     # Verification command to determine if the imager is available
     verification = ''
 
+    fileextension = ''
+
+    imageattrs = ''
+
     def __init__(self, document):
         self.config = document.config['images']
         self.ownerDocument = document
@@ -223,14 +227,17 @@ class Imager(object):
         # List of images in the order that they appear in the LaTeX file
         self.images = ordereddict()
 
+        # Images that are simply copied from the source directory
+        self.staticimages = ordereddict()
+
         # Filename generator
-        self.newfilename = Filenames(self.config.get('filenames', raw=True), {'jobname':document.userdata.get('jobname','')})
+        self.newfilename = Filenames(self.config.get('filenames', raw=True), vars={'jobname':document.userdata.get('jobname','')}, extension=self.fileextension)
 
         # Start the document with a preamble
         self.source = StringIO()
+        self.source.write('\\scrollmode\n')
         self.writepreamble(document)
         self.source.write('\\begin{document}\n')
-
 
     def writepreamble(self, document):
         """ Write any necessary code to the preamble of the document """
@@ -299,6 +306,7 @@ class Imager(object):
 
         # Write LaTeX source file
         self.source.seek(0)
+#       print self.source.read()
 #       open(os.path.join(cwd,filename), 'w').write(self.source.read())
 #       self.source.seek(0)
         open(filename, 'w').write(self.source.read())
@@ -308,7 +316,7 @@ class Imager(object):
         program = self.config['compiler']
         if not program:
             program = self.compiler
-        os.system(r"%s '\scrollmode\input %s'" % (program, filename))
+        os.system(r"%s %s" % (program, filename))
 
         output = None
         for ext in ['.dvi','.pdf','.ps']:
@@ -439,12 +447,78 @@ class Imager(object):
             filename = self.newfilename()
 
         # Add the image to the current document and cache
-        log.debug3('Creating %s from %s', filename, text)
+        #log.debug('Creating %s from %s', filename, text)
         self.writeimage(filename, text, context)
 
         img = Image(filename, self.config)
+
+        # Populate image attrs that will be bound later
+        if self.imageattrs:
+            tmpl = string.Template(self.imageattrs)
+            vars = {'filename':filename}
+            for name in ['height','width','depth']:
+                if getattr(img, name) is None:
+                    vars['attr'] = name
+                    setattr(img, name, tmpl.substitute(vars))
+    
         self.images[filename] = self._cache[key] = img
         return img
+
+    def getimage(self, node):
+        """
+        Get an image from the given node whatever way possible
+
+        This method attempts to find an existing image using the
+        `imageoverride' attribute.  If it finds it, the image is 
+        converted to the appropriate output format and copied to the
+        images directory.  If no image is available, or there was
+        a problem in getting the image, an image is generated.
+
+        Arguments:
+        node -- the node to create the image from
+
+        Returns:
+        Image instance
+
+        """
+        name = getattr(node, 'imageoverride', None)
+        if name is None:
+            return self.newimage(node.source)
+
+        if name in self.staticimages:
+            return self.staticimages[name]
+
+        # Copy or convert the image as needed
+        path = self.newfilename()
+        newext = os.path.splitext(path)[-1]
+        oldext = os.path.splitext(name)[-1]
+        try:
+            # If PIL isn't available or no conversion is necessary, 
+            # just copy the image to the new location
+            if newext == oldext or oldext in self.imagetypes:
+                path = os.path.splitext(path)[0] + os.path.splitext(name)[-1]
+                shutil.copyfile(name, path)
+                if PILImage is None:
+                    tmpl = string.Template(self.imageattrs)
+                    width = tmpl.substitute({'filename':path, 'attr':'width'})
+                    height = tmpl.substitute({'filename':path, 'attr':'height'})
+                else:
+                    img = PILImage.open(name)
+                    width, height = img.size
+            # If PIL is available, convert the image to the appropriate type
+            else:
+                img = PILImage.open(name)
+                width, height = img.size
+                img.save(path)
+            img = Image(path, self.ownerDocument.config['images'], width=width, height=height)
+            self.staticimages[name] = img
+            return img
+
+        # If anything fails, just let the imager handle it...
+        except Exception, msg:
+            log.warning(msg)
+
+        return self.newimage(img.source)
 
 
 class WorkingFile(file):

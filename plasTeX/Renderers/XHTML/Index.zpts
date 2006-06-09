@@ -3,17 +3,17 @@ name: theindex printindex
 
 <div tal:define="groups self/groups">
 
-<div align="center"><span tal:repeat="group groups"><a tal:attributes="href string:#IDXGROUP.${group/title}" tal:content="group/title"></a><span tal:condition="not:repeat/group/end"> | </span></span></div>
+<div align="center"><span tal:repeat="group groups"><a tal:attributes="href string:#IDXGROUP.${group/id}" tal:content="group/title"></a><span tal:condition="not:repeat/group/end"> | </span></span></div>
 
 <div tal:condition="self" tal:repeat="group groups" class="theindex">
 
-<h2><a tal:content="group/title" tal:attributes="name string:IDXGROUP.${group/title}"></a></h2>
+<h2 tal:content="group/title" tal:attributes="id string:IDXGROUP.${group/id}"></h2>
 
 <table width="100%">
 <tr>
 <td tal:attributes="width python:'%s%%'%int(100.0/len(path('group')))" 
     tal:repeat="column group">
-<ul>
+<ul tal:condition="column">
 <li tal:repeat="item column">
     <span tal:replace="item/key">item</span>
     <span tal:repeat="page item/pages"><a tal:attributes="href page/url; title stripped:page/currentSection/title" tal:content="page"></a><span tal:condition="not:repeat/page/end">, </span></span>
@@ -40,4 +40,4 @@ name: theindex printindex
 </div>
 
 name: index
-<a tal:attributes="name self/id" tal:content="string:&amp;#09;"></a>
+<span tal:attributes="id self/id"></span>

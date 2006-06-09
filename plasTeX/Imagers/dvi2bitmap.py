@@ -7,6 +7,7 @@ class DVI2Bitmap(plasTeX.Imagers.Imager):
 
     command = 'dvi2bitmap --magnification=6 --scaledown=6 ' + \
               '--process=notransparent --crop=all=5 --output=img%d.png'
+    fileextension = '.png'
 
     def writepreamble(self, document):
         plasTeX.Imagers.Imager.writepreamble(self, document)
