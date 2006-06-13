@@ -39,10 +39,6 @@ class include(input):
 
 class includeonly(Command):
     args = 'files:list:str'
-    def invoke(self, tex):
-        for file in self.parse(tex)['files']:
-            tex.input(tex.kpsewhich(file))
-        return []
 
 class filecontents(Environment):
     args = 'file:str'

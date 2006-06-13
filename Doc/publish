@@ -1,0 +1,63 @@
+#!/usr/bin/env python
+
+import os, sys
+
+# Set up TEX environment
+os.environ['TEXINPUTS'] = '.:%s:%s:' % (os.path.join(os.getcwd(),'commontex'), 
+                                        os.path.join(os.getcwd(),'texinputs'))
+
+args = sys.argv[1:]
+if args:
+    commands = [args.pop(0)]
+    options = []
+    if args:
+        options = args
+else:
+    commands = ['build','install']
+
+if 'build' in commands:
+
+    def compile(commands, message):
+        """ Compile document using given commands """
+        rc = 0
+        command = ''
+        while commands and not rc:
+            command = commands.pop(0)
+            rc = os.system(command)
+        if rc:
+            print 'ERROR: %s (%s).' % (message, command)
+            sys.exit(1)
+
+    if not options or 'manual' in options:
+        # Compile PDF manual
+        compile(['pdflatex plastex.tex', 'pdflatex plastex.tex',
+                 'makeindex plastex.idx', 'pdflatex plastex.tex'],
+                 'Compiling PDF manual failed')
+
+        # Compile HTML manual
+        compile(['plastex plastex.tex'], 'Compiling HTML manual failed')
+
+    if not options or 'sample' in options:
+        # Compile sample PDF document
+        compile(['pdflatex sample2e.tex', 'pdflatex sample2e.tex'],
+                 'Compiling PDF sample failed')
+
+        # Compile sample HTML document
+        compile(['plastex sample2e.tex'], 'Compiling HTML sample failed')
+
+
+if 'install' in commands:
+    # Install home page
+    if not options or 'index' in options:
+        os.system('scp index.html shell.sf.net:/home/groups/p/pl/plastex/htdocs/.')
+
+    # Install manual
+    if not options or 'manual' in options:
+        os.system('scp -r plastex shell.sf.net:/home/groups/p/pl/plastex/htdocs/.')
+        os.system('scp plastex.pdf shell.sf.net:/home/groups/p/pl/plastex/htdocs/plastex/.')
+
+    # Install sample document
+    if not options or 'sample' in options:
+        os.system('scp -r sample2e shell.sf.net:/home/groups/p/pl/plastex/htdocs/.')
+        os.system('scp sample2e.pdf shell.sf.net:/home/groups/p/pl/plastex/htdocs/sample2e/.')
+        os.system('scp sample2e.tex shell.sf.net:/home/groups/p/pl/plastex/htdocs/sample2e/sample2e.txt')

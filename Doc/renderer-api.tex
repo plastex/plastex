@@ -57,8 +57,22 @@ the renderer matches the name of the node being rendered, this
 function is used instead.
 \end{memberdesc}
 
+\begin{memberdesc}[Renderer]{fileextension}
+contains the file extension to use for generated files.  This extension is
+only used if the filename generator does not supply a file extension.
+\end{memberdesc}
+
 \begin{memberdesc}[Renderer]{files}
 a list of files created during rendering.
+\end{memberdesc}
+
+\begin{memberdesc}[Renderer]{imageattrs}
+contains a string template that renders the placeholder for the image 
+attributes: width, height, and depth.  This placeholder is inserted into
+the document where the width, height, and depth of an image is needed.
+The placeholder is needed because images are not generated until after
+the document is rendered.  See the \class{Imager} API 
+(section \ref{sec:imager-api}) for more information.
 \end{memberdesc}
 
 \begin{memberdesc}[Renderer]{imager}
@@ -66,6 +80,21 @@ a reference to an \class{Imager} implementation.  Imagers are responsible
 for generating images from \LaTeX\ code.  This is needed for output types 
 which aren't capable of displaying equations, \LaTeX\ pictures, etc. such
 as HTML.
+\end{memberdesc}
+
+\begin{memberdesc}[Renderer]{imagetypes}
+contains a list of file extensions of valid image types for the renderer.
+The first element in the list is the default image format.  This format
+is used when generating images (if the image type isn't specified by
+the filename generater).  When static images are simply copied from
+the document, their format is checked against the list of supported image
+types.  If the static image is not in the correct format it is converted
+to the default image format.  Below is an example of a list of image
+types used in the HTML renderer.  These image types are valid because 
+web browsers all support these formats.
+\begin{verbatim}
+imagetypes = ['.png','.gif','.jpg','.jpeg']
+\end{verbatim}
 \end{memberdesc}
 
 \begin{memberdesc}[Renderer]{newfilename}

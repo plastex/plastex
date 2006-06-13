@@ -20,7 +20,7 @@ class Image(object):
     """ Generic image object """
 
     def __init__(self, filename, config, width=None, height=None, alt=None,
-                       depth=0, longdesc=None):
+                       depth=None, longdesc=None):
         self.filename = filename
         self.path = os.path.join(os.getcwd(), self.filename)
         self.width = width
@@ -305,10 +305,9 @@ class Imager(object):
         filename = 'images.tex'
 
         # Write LaTeX source file
-        self.source.seek(0)
-#       print self.source.read()
-#       open(os.path.join(cwd,filename), 'w').write(self.source.read())
 #       self.source.seek(0)
+#       open(os.path.join(cwd,filename), 'w').write(self.source.read())
+        self.source.seek(0)
         open(filename, 'w').write(self.source.read())
 
         # Run LaTeX
@@ -493,6 +492,10 @@ class Imager(object):
         newext = os.path.splitext(path)[-1]
         oldext = os.path.splitext(name)[-1]
         try:
+            directory = os.path.dirname(path)
+            if directory and not os.path.isdir(directory):
+                os.makedirs(directory)
+
             # If PIL isn't available or no conversion is necessary, 
             # just copy the image to the new location
             if newext == oldext or oldext in self.imagetypes:

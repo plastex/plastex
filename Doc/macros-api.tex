@@ -139,6 +139,13 @@ gives the arguments in the \member{args} attribute in object form
 \note{This is generally an internal-use-only attribute.}
 \end{memberdesc}
 
+\begin{memberdesc}[Macro]{blockType}
+indicates whether the macro node should be considered a block-level
+element.  If true, this node will be put into its own paragraph node
+(which also has the \member{blockType} set to \var{True}) to make it easier 
+to generate output that requires block-level to exist outside of paragraphs.
+\end{memberdesc}
+
 \begin{memberdesc}[Macro]{counter}
 specifies the name of the counter to associate with this macro.  Each time
 an instance of this macro is created, this counter is incremented.  
@@ -305,6 +312,14 @@ grouped into paragraphs whether or not the content originally contained
 a paragraph node.  However, with \var{force} set to \var{False}, a node
 will only be grouped into paragraphs if the original content contained
 at least one paragraph node.
+
+Even though the paragraph method follow's \TeX's model, it is still possible
+to generate valid HTML content.  Any node with the \var{blockType} attribute
+set to \var{True} is considered to be a block-level node.  This means that 
+it will be contained in its own paragraph node.  This paragraph node
+will also have the \var{blockType} attribute set to \var{True} so that
+in the renderer the paragraph can be inserted or ignored based on this
+attribute.
 \end{methoddesc}
 
 \begin{methoddesc}[Macro]{parse}{tex}

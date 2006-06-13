@@ -1220,15 +1220,15 @@ class ParameterCommand(Command):
             type(self).value = self.parse(tex)['value']
             ParameterCommand.enabled = True
 
+    @classmethod
     def enable(cls):
         ParameterCommand._enablelevel += 1
         ParameterCommand.enabled = ParameterCommand._enablelevel >= 0 
-    enable = classmethod(enable)
 
+    @classmethod
     def disable(cls):
         ParameterCommand._enablelevel -= 1
         ParameterCommand.enabled = ParameterCommand._enablelevel >= 0 
-    disable = classmethod(disable)
 
     def __dimen__(self):
         return dimen(type(self).value)
@@ -1348,9 +1348,9 @@ class Counter(object):
     def __float__(self):
         return self.value
 
+    @property
     def arabic(self):
         return unicode(self.value)
-    arabic = property(arabic)
 
     def Roman(self):
         roman = ""

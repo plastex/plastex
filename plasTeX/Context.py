@@ -30,11 +30,11 @@ class ContextItem(dict):
         self.parent = None
         self.owner = None
 
+    @property
     def name(self):
         if self.obj is not None:
             return self.obj.nodeName
         return '{}'
-    name = property(name)
 
     def __getitem__(self, key):
         try: 
@@ -274,6 +274,8 @@ class Context(object):
         if self.currentlabel is not None:
             self.labels[label] = self.currentlabel
             self.currentlabel.id = label
+
+        #print label, ''.join(self.currentlabel.ref[:])
 
         # Resolve any outstanding references to this object
         if self.refs.has_key(label) and self.labels.has_key(label):
@@ -610,7 +612,7 @@ class Context(object):
         self.counters[name] = plasTeX.Counter(self, name, resetby, initial)
 
         if format is None:
-            format = '%s'
+            format = '${%s}' % name
         newclass = new.classobj('the'+name, (plasTeX.TheCounter,), 
                                {'format': format})
         self.addGlobal('the'+name, newclass)

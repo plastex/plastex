@@ -76,9 +76,12 @@ class equation(MathEnvironment):
     counter = 'equation'
 
 class eqnarray(Array):
+    blockType = True
+    counter = 'equation'
     mathMode = True
 
 class EqnarrayStar(eqnarray): 
+    counter = None
     macroName = 'eqnarray*'
 
 class nonumber(Command):

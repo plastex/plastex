@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="content-type" 
       tal:attributes="content string:text/html;; charset=${config/files/output-encoding}" />
-<title tal:content="stripped self/title">Morbi metus pede, imperdiet vitae</title>
+<title tal:content="stripped links/document/title">Morbi metus pede, imperdiet vitae</title>
 <link tal:condition="links/next" rel="next" tal:attributes="href links/next/url; title links/next/title" />
 <link tal:condition="links/prev" rel="prev" tal:attributes="href links/prev/url; title links/prev/title" />
 <link tal:condition="links/up" rel="up" tal:attributes="href links/up/url; title links/up/title" />
@@ -21,7 +21,7 @@
 <td tal:condition="not:links/up"><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
 <td tal:condition="links/next"><a tal:attributes="href links/next/url; title stripped:links/next/title"><img border="0" tal:attributes="alt stripped:Next: ${links/next/title}" src="icons/next.gif" width="32" height="32" /></a></td>
 <td tal:condition="not:links/next"><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
-<td class="navtitle" align="center" tal:content="self/title">Section Title</td>
+<td class="navtitle" align="center" tal:content="links/document/title">Section Title</td>
 <td tal:condition="links/contents"><a tal:attributes="href links/contents/url" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
 <td tal:condition="not:links/contents"><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
 <td tal:condition="links/index"><a tal:attributes="href links/index/url" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
@@ -79,7 +79,7 @@
 <td tal:condition="not:links/up"><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
 <td tal:condition="links/next"><a tal:attributes="href links/next/url"><img border="0" tal:attributes="alt stripped:Next: ${links/next/title}" src="icons/next.gif" width="32" height="32" /></a></td>
 <td tal:condition="not:links/next"><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
-<td class="navtitle" align="center" tal:content="self/title">Section Title</td>
+<td class="navtitle" align="center" tal:content="links/document/title">Section Title</td>
 <td tal:condition="links/contents"><a tal:attributes="href links/contents/title"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
 <td tal:condition="not:links/contents"><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
 <td tal:condition="links/index"><a tal:attributes="href links/index/url" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
