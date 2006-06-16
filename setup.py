@@ -43,5 +43,5 @@ setup(name="plasTeX",
          'plasTeX.Renderers.XHTML.Themes.python.icons': images,
          'plasTeX.Renderers.XHTML.Themes.plain': templates,
       },
-      scripts=['plasTeX/plastex'],
+      scripts=['plasTeX/plastex','plasTeX/Imagers/cgpdfpng'],
 )

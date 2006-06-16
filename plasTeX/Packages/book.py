@@ -29,6 +29,9 @@ def ProcessOptions(options, document):
     context.newcounter('subsubparagraph', resetby='subparagraph',
                        format='${thesubparagraph}.${subsubparagraph}')
 
+    context.newcounter('equation', resetby='chapter',
+                       format='${thechapter}.${equation}')
+
     context.newcounter('secnumdepth')
     context.newcounter('tocdepth')
     context.newcounter('page')

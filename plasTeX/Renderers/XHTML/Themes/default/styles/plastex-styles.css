@@ -137,7 +137,11 @@ table.list td {
 .displaymath, .eqnarray, .equation {
     margin-top: 15px;
     margin-bottom: 15px;
-    margin-left: 35px;
+    text-align: center;
+}
+.eqnnum { 
+    width: 16ex;
+    text-align: center;
 }
 
 /* Quotations and Verse */

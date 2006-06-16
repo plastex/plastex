@@ -756,7 +756,8 @@ class Context(object):
         if self.has_key(name):
             if not issubclass(self[name], (plasTeX.NewCommand, 
                                            plasTeX.Definition)):
-                return
+                if not issubclass(self[name], plasTeX.TheCounter):
+                    return
             macrolog.debug('redefining command "%s"', name)
 
         if nargs is None:

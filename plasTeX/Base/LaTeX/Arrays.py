@@ -7,7 +7,7 @@ C.10.2 The array and tabular Environments
 
 import new, sys
 from plasTeX import Macro, Environment, Command, DimenCommand
-from plasTeX import sourcechildren
+from plasTeX import sourcechildren, sourcearguments
 
 class ColumnType(Macro):
 
@@ -73,7 +73,7 @@ class Array(Environment):
             self.ownerDocument.context.pop()
             self.ownerDocument.context.push()
             # Add a phantom cell to absorb the appropriate tokens
-            return [self, Array.ArrayCell()]
+            return [self, self.ownerDocument.createElement('ArrayCell')]
 
     class EndRow(Command):
         """ End of a row """
@@ -88,7 +88,8 @@ class Array(Environment):
             self.parse(tex)
             self.ownerDocument.context.push()
             # Add a phantom row and cell to absorb the appropriate tokens
-            return [self, Array.ArrayRow(), Array.ArrayCell()]
+            return [self, self.ownerDocument.createElement('ArrayRow'), 
+                          self.ownerDocument.createElement('ArrayCell')]
 
     class BorderCommand(Command):
         """
@@ -161,9 +162,29 @@ class Array(Environment):
 
         @property
         def source(self):
+            """
+            This source property is a little different than most.  
+            Instead of printing just the source of the row, it prints
+            out the entire environment with just this row as its content.
+            This allows renderers to render images for arrays a row 
+            at a time.
+
+            """
+            name = self.parentNode.nodeName
+            escape = '\\'
+            s = []
+            argsource = sourcearguments(self.parentNode)
+            if not argsource: 
+                argsource = ' '
+            s.append('%sbegin{%s}%s' % (escape, name, argsource))
+            for cell in self:
+                s.append(sourcechildren(cell, par=not(self.parentNode.mathMode)))
+                if cell.endtoken is not None:
+                    s.append(cell.endtoken.source)
             if self.endtoken is not None:
-                return sourcechildren(self) + self.endtoken.source
-            return sourcechildren(self)
+                s.append(self.endtoken.source)
+            s.append('%send{%s}' % (escape, name))
+            return ''.join(s)
 
         def applyBorders(self, tocells=None, location=None):
             """ 
@@ -293,12 +314,8 @@ class Array(Environment):
         @property
         def source(self):
             # Don't put paragraphs into math mode arrays
-            par = True
-            if self.parentNode.parentNode.mathMode:
-                par = False
-            if self.endtoken is not None:
-                return sourcechildren(self, par=par) + self.endtoken.source
-            return sourcechildren(self, par=par)
+            return sourcechildren(self, 
+                       par=not(self.parentNode.parentNode.mathMode))
 
 
     class multicolumn(Command):
@@ -332,7 +349,8 @@ class Array(Environment):
 
         self.ownerDocument.context.push() # Beginning of cell
         # Add a phantom row and cell to absorb the appropriate tokens
-        return [self, Array.ArrayRow(), Array.ArrayCell()]
+        return [self, self.ownerDocument.createElement('ArrayRow'), 
+                      self.ownerDocument.createElement('ArrayCell')]
 
     def digest(self, tokens):
         Environment.digest(self, tokens)
@@ -461,9 +479,47 @@ class Array(Environment):
              
         return output
 
+    @property
+    def source(self):
+        """
+        This source property is a little different than most.
+        Instead of calling the source property of the child nodes,
+        it walks through the rows and cells manually.  It does
+        this because rows and cells have special source properties
+        as well that don't return the correct markup for inserting
+        into this source property.
+
+        """
+        name = self.nodeName
+        escape = '\\'
+        # \begin environment
+        # If self.childNodes is not empty, print out the entire environment
+        if self.macroMode == Macro.MODE_BEGIN:
+            s = []
+            argsource = sourcearguments(self)
+            if not argsource: 
+                argsource = ' '
+            s.append('%sbegin{%s}%s' % (escape, name, argsource))
+            if self.hasChildNodes():
+                for row in self:
+                    for cell in row:
+                        s.append(sourcechildren(cell, par=not(self.mathMode)))
+                        if cell.endtoken is not None:
+                            s.append(cell.endtoken.source)
+                    if row.endtoken is not None:
+                        s.append(row.endtoken.source)
+                s.append('%send{%s}' % (escape, name))
+            return ''.join(s)
+
+        # \end environment
+        if self.macroMode == Macro.MODE_END:
+            return '%send{%s}' % (escape, name)
+
 class array(Array):
     args = '[ pos:str ] colspec:nox'
     mathMode = True
+    class nonumber(Command):
+        pass
 
 class tabular(Array):
     args = '[ pos:str ] colspec:nox'

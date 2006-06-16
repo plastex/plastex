@@ -1,7 +1,29 @@
 name: math ensuremath
 <img tal:attributes="src self/image/url; alt self/source; style string:margin-bottom:${self/image/depth}px;; width:${self/image/width}px;; height:${self/image/height}px" class="math" />
 
-name: displaymath equation eqnarray eqnarray*
-<div class="equation">
-<img tal:attributes="src self/image/url; alt self/source; style string:width:${self/image/width}px;; height:${self/image/height}px" /> 
-</div>
+name: displaymath equation
+<table class="equation" width="100%" tal:attributes="id self/id">
+<tr>
+<td><img tal:attributes="src self/image/url; alt self/source; style string:width:${self/image/width}px;; height:${self/image/height}px" /></td>
+<td class="eqnnum"><span tal:condition="self/ref">(<span tal:content="self/ref">1.1.1</span>)</span></td>
+</tr>
+</table>
+
+name: eqnarray eqnarray*
+type: xml
+<table class="eqnarray" cellspacing="0" cellpadding="7" width="100%"
+       tal:attributes="id self/id">
+<tr tal:repeat="row self" tal:attributes="id row/id">
+    <td></td>
+    <metal:block tal:repeat="cell row">
+    <metal:block tal:define="alignment 
+           python:test(path('repeat/cell/start'), 'right', 
+                       path('repeat/cell/end'), 'left', 'center')">
+        <td tal:attributes="style string:width:${cell/image/width}px;; vertical-align:baseline;; text-align:${alignment}"><img tal:attributes="src cell/image/url; alt cell/source; style string:margin-bottom:${cell/image/depth}px;; width:${cell/image/width}px;; height:${cell/image/height}px" class="math" /></td>
+    </metal:block>
+    </metal:block>
+    <td></td>
+    <td class="eqnnum"><span tal:condition="row/ref">(<span tal:content="row/ref">1.1.1</span>)</span></td>
+</tr>
+</table>
+

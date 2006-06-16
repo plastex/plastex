@@ -75,17 +75,46 @@ class equation(MathEnvironment):
     blockType = True
     counter = 'equation'
 
-class eqnarray(Array):
+class EqnarrayStar(Array): 
+    macroName = 'eqnarray*'
     blockType = True
-    counter = 'equation'
     mathMode = True
 
-class EqnarrayStar(eqnarray): 
-    counter = None
-    macroName = 'eqnarray*'
+    class ArrayCell(Array.ArrayCell):
+        @property
+        def source(self):
+            return '$ %s $' % sourcechildren(self, par=False)
+
+class eqnarray(EqnarrayStar):
+    macroName = None
+    counter = 'equation'
+
+    class EndRow(Array.EndRow):
+        """ End of a row """
+        counter = 'equation'
+        def invoke(self, tex):
+            res = Array.EndRow.invoke(self, tex)
+            res[1].ref = self.ref
+            self.ownerDocument.context.currentlabel = res[1]
+            return res
+
+    def invoke(self, tex):
+        res = EqnarrayStar.invoke(self, tex)
+        if self.macroMode == self.MODE_END:
+            return res
+        res[1].ref = self.ref
+        return res
 
 class nonumber(Command):
-    pass
+
+    def invoke(self, tex):
+        self.ownerDocument.context.counters['equation'].addtocounter(-1)
+
+    def digest(self, tokens):
+        row = self.parentNode
+        while not isinstance(row, Array.ArrayRow):
+            row = row.parentNode
+        row.ref = None
 
 class lefteqn(Command):
     args = 'self'

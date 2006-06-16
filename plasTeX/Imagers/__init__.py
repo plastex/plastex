@@ -8,12 +8,76 @@ from plasTeX.dictutils import ordereddict
 
 log = getLogger()
 depthlog = getLogger('render.images.depth')
+status = getLogger('status')
 
 try:
     import Image as PILImage
     import ImageChops as PILImageChops
 except ImportError:
     PILImage = PILImageChops = None
+
+def autocrop(im, bgcolor=None, margin=0):
+    """
+    Automatically crop image down to non-background portion
+
+    Required Argument:
+    im -- image object
+
+    Optional Argument:
+    bgcolor -- value or tuple containing the color to use for the 
+        background color when cropping
+    margin -- leave this many pixels around the content.  If there
+        aren't that many pixels to leave, leave as many as possible.
+
+    Returns: cropped image object and tuple containing the number
+        of pixels removed from each side (left, top, right, bottom) 
+
+    """
+    if im.mode != "RGB":
+        im = im.convert("RGB")
+
+    origbbox = im.getbbox()
+
+    # Figure out the background color from the corners, if needed
+    if bgcolor is None:
+        topleft = im.getpixel((origbbox[0],origbbox[1]))
+        topright = im.getpixel((origbbox[2]-1,origbbox[1]))
+        bottomleft = im.getpixel((origbbox[0],origbbox[3]-1))
+        bottomright = im.getpixel((origbbox[2]-1,origbbox[3]-1))
+        corners = [topleft, topright, bottomleft, bottomright]
+
+        matches = []
+        matches.append(len([x for x in corners if x == topleft]))
+        matches.append(len([x for x in corners if x == topright]))
+        matches.append(len([x for x in corners if x == bottomleft]))
+        matches.append(len([x for x in corners if x == bottomright]))
+
+        try: bgcolor = corners[matches.index(1)]
+        except ValueError: pass
+        try: bgcolor = corners[matches.index(2)]
+        except ValueError: pass
+        try: bgcolor = corners[matches.index(3)]
+        except ValueError: pass
+        try: bgcolor = corners[matches.index(4)]
+        except ValueError: pass
+
+    # Create image with only the background color
+    bg = PILImage.new("RGB", im.size, bgcolor)
+
+    # Get bounding box of non-background content
+    diff = PILImageChops.difference(im, bg)
+    bbox = diff.getbbox()
+    if bbox:
+        if margin:
+            bbox = list(bbox)
+            bbox[0] -= margin
+            bbox[1] -= margin
+            bbox[2] += margin
+            bbox[3] += margin
+            bbox = tuple([max(0,x) for x in bbox])
+        return im.crop(bbox), tuple([abs(x-y) for x,y in zip(origbbox,bbox)])
+    return PILImage.new("RGB", (1,1), bgcolor), (0,0,0,0)
+    return None, None # no contents
 
 
 class Image(object):
@@ -67,58 +131,8 @@ class Image(object):
     def __repr__(self):
         return self.filename
 
-    def _autocrop(self, im, bgcolor=None):
-        """
-        Automatically crop image down to non-background portion
-
-        Required Argument:
-        im -- image object
-
-        Optional Argument:
-        bgcolor -- value or tuple containing the color to use for the 
-            background color when cropping
-
-        Returns: cropped image object and tuple containing the number
-            of pixels removed from each side (left, top, right, bottom) 
-
-        """
-        if im.mode != "RGB":
-            im = im.convert("RGB")
-
-        origbbox = im.getbbox()
-
-        # Figure out the background color from the corners, if needed
-        if bgcolor is None:
-            topleft = im.getpixel((origbbox[0],origbbox[1]))
-            topright = im.getpixel((origbbox[2]-1,origbbox[1]))
-            bottomleft = im.getpixel((origbbox[0],origbbox[3]-1))
-            bottomright = im.getpixel((origbbox[2]-1,origbbox[3]-1))
-            corners = [topleft, topright, bottomleft, bottomright]
-
-            matches = []
-            matches.append(len([x for x in corners if x == topleft]))
-            matches.append(len([x for x in corners if x == topright]))
-            matches.append(len([x for x in corners if x == bottomleft]))
-            matches.append(len([x for x in corners if x == bottomright]))
-
-            try: bgcolor = corners[matches.index(1)]
-            except ValueError: pass
-            try: bgcolor = corners[matches.index(2)]
-            except ValueError: pass
-            try: bgcolor = corners[matches.index(3)]
-            except ValueError: pass
-            try: bgcolor = corners[matches.index(4)]
-            except ValueError: pass
-
-        # Create image with only the background color
-        bg = PILImage.new("RGB", im.size, bgcolor)
-
-        # Get bounding box of non-background content
-        diff = PILImageChops.difference(im, bg)
-        bbox = diff.getbbox()
-        if bbox:
-            return im.crop(bbox), tuple([abs(x-y) for x,y in zip(origbbox,bbox)])
-        return None, None # no contents
+    def _autocrop(self, im, bgcolor=None, margin=0):
+        return autocrop(im, bgcolor, margin)
 
     def _stripbaseline(self, im, padbaseline=0):
         """
@@ -166,11 +180,13 @@ class Image(object):
             while pos and im.getpixel((0,pos)) == background:
                 pos -= 1
             depth = pos - height + 1
+            # Adjust for anti-aliasing effects
+#           if sum(im.getpixel((0,pos))) > sum((210,210,210)):
+#               depth -= 1
 
         # Get the width of the registration mark so it can be cropped out
-        foreground = im.getpixel((0,pos))
         rwidth = 0
-        while rwidth < width and im.getpixel((rwidth,pos)) == foreground:
+        while rwidth < width and im.getpixel((rwidth,pos)) != background:
             rwidth += 1
 
         # Handle empty images
@@ -250,7 +266,7 @@ class Imager(object):
                           '\\def\\plasTeXregister{\\ifhmode\\hrule' +
                           '\\else\\vrule\\fi height 2pt depth 0pt ' +
                           'width 2pt\\hskip2pt}}{}\n')
-        self.source.write('\\pagestyle{empty}\n')
+        self.source.write('\\pagestyle{empty}\\def\\@eqnnum{}\n')
 
     def verify(self):
         """ Verify that this commmand works on this machine """
@@ -306,6 +322,7 @@ class Imager(object):
 
         # Write LaTeX source file
 #       self.source.seek(0)
+#       print self.source.read()
 #       open(os.path.join(cwd,filename), 'w').write(self.source.read())
         self.source.seek(0)
         open(filename, 'w').write(self.source.read())
@@ -397,6 +414,7 @@ class Imager(object):
             # Crop the image
             try: 
                 dest.crop()
+                status.dot()
             except Exception, msg:
                 log.warning('failed to crop %s (%s)', dest.path, msg)
         

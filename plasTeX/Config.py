@@ -208,7 +208,7 @@ images['enabled'] = BooleanOption(
 images['imager'] = StringOption(
     """ DVI to image program """,
     options = '--imager',
-    default = 'dvipng dvi2bitmap gspdfpng',
+    default = 'dvipng dvi2bitmap gsdvipng gspdfpng OSXCoreGraphics',
     category = 'images',
 )
 

@@ -82,6 +82,8 @@ class TableOfContents(object):
 class SectionUtils(object):
     """ General utilities for getting information about sections """
 
+    tocdepth = None
+
     @cachedproperty
     def subsections(self):
         """ Retrieve a list of all immediate subsections of this section """
@@ -97,7 +99,10 @@ class SectionUtils(object):
     @cachedproperty
     def tableofcontents(self):
         """ Return a toble of contents object limited to toc-depth """
-        tocdepth = self.config['document']['toc-depth']
+        if self.tocdepth is not None:
+            tocdepth = self.tocdepth
+        else:
+            tocdepth = self.config['document']['toc-depth']
 
         # Bail out if they don't want a ToC
         if tocdepth < 1:
