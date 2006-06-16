@@ -1,0 +1,92 @@
+#!/usr/bin/env python2.3
+
+"""
+This program converts a multipage PDF document to a series of PNG images
+using the OS X CoreGraphics library.
+
+"""
+
+import sys, os
+from optparse import OptionParser
+try:
+    import CoreGraphics as CG
+except ImportError:
+    print 'ERROR: cgpdfpng will not run on this platform' 
+    sys.exit(1)
+
+__version__ = '0.1'
+
+parser = OptionParser(usage='usage: %prog [ options ] filename.pdf',
+                      version='%%prog %s' % __version__)
+parser.add_option('-o', '--output', action='store', default=None,
+                  type='string', dest='output', metavar='FILENAME',
+                  help='output filename template')
+parser.add_option('-m', '--magnification', action='store', default=1.0,
+                  type='float', dest='magnification', metavar='NUM',
+                  help='magnification level applied to input document')
+parser.add_option('-s', '--scaledown', action='store', default=1.0,
+                  type='float', dest='scaledown', metavar='NUM',
+                  help='scale factor to reduce size of output images')
+(options, args) = parser.parse_args()
+
+if len(args) > 1:
+    parser.error('Too many arguments')
+if len(args) < 1:
+    parser.error('A filename argument is required')
+
+inputfile = args[0]
+if not os.path.isfile(inputfile):
+    parser.error('%s is not a valid file' % inputfile)
+
+print 'cgpdfpng %s' % __version__
+
+pdf = CG.CGPDFDocumentCreateWithProvider(
+          CG.CGDataProviderCreateWithFilename(inputfile))
+
+# Determine output filenames
+output = options.output
+if output is None:
+    ext = '.png' 
+    if pdf.getNumberOfPages() > 1:
+        ext = '%d.png' 
+    output = os.path.splitext(inputfile)[0] + ext
+
+for pageNumber in xrange(1, pdf.getNumberOfPages()+1):
+    if pdf.getNumberOfPages() > 1:
+        filename = output % pageNumber
+    else:
+        filename = output
+
+    # Get content information
+    box = pdf.getTrimBox(pageNumber)
+    origin = box.origin
+    size = box.size
+    size.width = float(options.magnification) * size.width
+    size.height = float(options.magnification) * size.height
+
+    # Create new image from page
+    ctx = CG.CGBitmapContextCreateWithColor(int(size.width), int(size.height), 
+                                 CG.CGColorSpaceCreateDeviceRGB(), (1,1,1,1))
+    ctx.setShouldAntialias(True)
+    ctx.setShouldSmoothFonts(True)
+    ctx.drawPDFDocument(box, pdf, pageNumber)
+    ctx.writeToFile(filename, CG.kCGImageFormatPNG)
+
+    # Create new image
+    img = CG.CGImageImport(CG.CGDataProviderCreateWithFilename(filename))
+
+    w = int(size.width / float(options.scaledown))
+    h = int(size.height / float(options.scaledown))
+
+    # Create new imoge
+    c = CG.CGBitmapContextCreateWithColor(w, h, CG.CGColorSpaceCreateDeviceRGB(), (1,1,1,1))
+    c.setShouldAntialias(True)
+    c.setShouldSmoothFonts(True)
+    pageRect = CG.CGRectMake(0, 0, w, h)
+    c.drawImage(pageRect.inset(0, 0), img)
+
+    # Write the file
+    sys.stdout.write('[%s]' % filename)
+    c.writeToFile(filename, CG.kCGImageFormatPNG)
+
+sys.stdout.write('\n')
