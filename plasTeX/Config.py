@@ -150,6 +150,13 @@ files['output-encoding'] = StringOption(
     category = 'files',
 )
 
+files['escape-high-chars'] = BooleanOption(
+    """ Escape characters that are higher than 7-bit """,
+    options = '--escape-high-chars',
+    default = False,
+    category = 'files',
+)
+
 files['split-level'] = IntegerOption(
     """ Highest section level that generates a new file """,
     options = '--split-level',
@@ -199,16 +206,23 @@ images['base-url'] = StringOption(
 )
 
 images['enabled'] = BooleanOption(
-    """ Enable/disable image generation """,
+    """ Enable image generation """,
     options = '--enable-images !--disable-images',
     default = True,
     category = 'images',
 )
 
 images['imager'] = StringOption(
-    """ DVI to image program """,
+    """ LaTeX to image program """,
     options = '--imager',
     default = 'dvipng dvi2bitmap gsdvipng gspdfpng OSXCoreGraphics',
+    category = 'images',
+)
+
+images['vector-imager'] = StringOption(
+    """ LaTeX to vector image program """,
+    options = '--vector-imager',
+    default = 'dvisvgm',
     category = 'images',
 )
 
@@ -229,6 +243,13 @@ images['baseline-padding'] = IntegerOption(
 images['compiler'] = StringOption(
     """ LaTeX command to use when compiling image document """,
     options = '--image-compiler',
+    category = 'images',
+)
+
+images['cache'] = BooleanOption(
+    """  Enable image caching between runs """,
+    options = '--enable-image-cache !--disable-image-cache',
+    default = True,
     category = 'images',
 )
 

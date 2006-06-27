@@ -363,6 +363,52 @@ class ZPT(BaseRenderer):
         elif name and not(template):
             self.setTemplate('', options)
 
+    def processFileContent(self, document, s):
+        # Add width, height, and depth to images
+        s = re.sub(r'&amp;(\S+)-(width|height|depth);(?:&amp;([a-z]+);)?', 
+                   self.setImageData, s) 
+
+        # Convert characters >127 to entities
+        if document.config['files']['escape-high-chars']:
+            s = list(s)
+            for i, item in enumerate(s):
+                if ord(item) > 127:
+                    s[i] = '&#%.3d;' % ord(item)
+            s = u''.join(s)
+
+        return BaseRenderer.processFileContent(self, document, s)
+             
+    def setImageData(self, m):
+        """
+        Substitute in width, height, and depth parameters in image tags
+
+        The width, height, and depth parameters aren't known until after
+        all of the output has been generated.  We have to post-process
+        the files to insert this information.  This method replaces
+        the &filename-width;, &filename-height;, and &filename-depth; 
+        placeholders with their appropriate values.
+
+        Required Arguments:
+        m -- regular expression match object that contains the filename
+            and the parameter: width, height, or depth.
+
+        Returns:
+        replacement for entity
+
+        """
+        filename, parameter, units = m.group(1), m.group(2), m.group(3)
+
+        try:
+            img = self.imager.images.get(filename, self.vectorimager.images.get(filename, self.imager.staticimages.get(filename)))
+            if img is not None and getattr(img, parameter) is not None:
+                if units:
+                    return getattr(getattr(img, parameter), units)
+                return str(getattr(img, parameter))
+        except KeyError: pass
+
+        return '&%s-%s;' % (filename, parameter)
+
+
 # Set Renderer variable so that plastex will know how to load it
 Renderer = ZPT
 

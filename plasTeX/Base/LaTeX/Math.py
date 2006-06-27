@@ -83,7 +83,7 @@ class EqnarrayStar(Array):
     class ArrayCell(Array.ArrayCell):
         @property
         def source(self):
-            return '$ %s $' % sourcechildren(self, par=False)
+            return '$\\displaystyle %s $' % sourcechildren(self, par=False)
 
 class eqnarray(EqnarrayStar):
     macroName = None

@@ -79,4 +79,4 @@ name: Huge
 
 
 name: symbol
-<img tal:attributes="src self/image/url; alt self/source; style string:margin-bottom:${self/image/depth}px;; width:${self/image/width}px;; height:${self/image/height}px" />
+<object tal:omit-tag="not:self/renderer/vectorimager/enabled" type="image/svg+xml" tal:attributes="data self/vectorimage/url; style string:width:${self/vectorimage/width/em};; height:${self/vectorimage/height/em};; position:relative;; bottom:${self/vectorimage/depth/em}"><img tal:attributes="src self/image/url; alt self/source; style string:position:relative;; bottom:${self/image/depth/px};; width:${self/image/width/px};; height:${self/image/height/px}" class="symbol" /></object>

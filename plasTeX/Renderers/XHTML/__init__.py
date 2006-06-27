@@ -3,81 +3,41 @@
 import sys, os, re, codecs, plasTeX
 from plasTeX.Renderers.ZPT import ZPT
 
-log = plasTeX.Logging.getLogger()
-
 class XHTML(ZPT):
     """ Renderer for XHTML documents """
 
     fileextension = '.html'
     imagetypes = ['.png','.jpg','.jpeg','.gif']
 
-    def cleanup(self, document, files):
-        """ 
-        Cleanup method called at the end of rendering 
+    def processFileContent(self, document, s):
+        s = ZPT.processFileContent(self, document, s)
 
-        This method allows you to do arbitrary post-processing after
-        all files have been rendered.
+        # Force XHTML syntax on empty tags
+        s = re.compile(r'(<(?:hr|br|img|link|meta)\b.*?)\s*/?\s*(>)', 
+                       re.I|re.S).sub(r'\1 /\2', s)
 
-        Note: While I greatly dislike post-processing, sometimes it's 
-              just easier...
+        # Realign eqnarray.  The cells in an eqnarry can really have some
+        # deep depths.  This causes the content of those cells to overlap
+        # the content below them.  Therefore, all cells in an eqnarray
+        # are pulled up by the amount of the deepest depth.
+        def normalizeBottom(m):
+            begin, rows, end = m.group(1), m.group(2), m.group(3)
+            rows = re.compile(r'(<tr\b[^>]*>.+?</tr>)', re.I|re.S).findall(rows)
+            newrows = []
+            for i, row in enumerate(rows):
+                bottoms = {}
+                for amount, unit in re.compile(r'(?:\'|"|;)\s*bottom\s*:\s*(-?[\d\.]+)\s*(\w*)', re.I).findall(row):
+                    if unit not in bottoms:
+                        bottoms[unit] = []
+                    bottoms[unit].append(float(amount))
+                for unit in bottoms:
+                    adjust = -min(bottoms[unit])
+                    row = re.compile(r'((?:\'|"|;)\s*bottom\s*:\s*)(-?[\d\.]+)\s*%s' % unit, re.I).sub(lambda x: x.group(1) + str(float(x.group(2)) + adjust) + unit, row)
+                newrows.append(row)
+            return begin + u''.join(newrows) + end
 
-        Required Arguments:
-        document -- the document being rendered
+        s = re.compile(r'(<table\s+[^>]*class="eqnarray"[^>]*>\s*)(.+?)(\s*</table>)', re.I|re.S).sub(normalizeBottom, s)
 
-        """
-        encoding = document.config['files']['output-encoding']
-
-        for f in files:
-            try:
-                s = codecs.open(str(f), 'r', encoding).read()
-            except IOError, msg:
-                print os.getcwd()
-                log.error(msg)
-                continue
-
-            # Clean up empty paragraphs
-#           s = re.compile(r'(<p\b[^>]*>)\s*(</p>)', re.I).sub(r'', s)
-            
-            # Add width, height, and depth to images
-            s = re.sub(r'&amp;(\S+)-(width|height|depth);', self.setImageData, s) 
-
-            # Force XHTML syntax on empty tags
-            s = re.compile(r'(<(?:hr|br|img|link|meta)\b[^>]*)/?(>)', re.I).sub(r'\1 /\2', s)
-
-            # Convert characters >127 to entities
-#           s = list(s)
-#           for i, item in enumerate(s):
-#               if ord(item) > 127:
-#                   s[i] = '&#%.3d;' % ord(item)
-             
-            open(f, 'w').write(unicode.encode(u''.join(s), encoding)) 
-
-    def setImageData(self, m):
-        """
-        Substitute in width, height, and depth parameters in image tags
-
-        The width, height, and depth parameters aren't known until after
-        all of the output has been generated.  We have to post-process
-        the files to insert this information.  This method replaces
-        the &filename-width;, &filename-height;, and &filename-depth; 
-        placeholders with their appropriate values.
-
-        Required Arguments:
-        m -- regular expression match object that contains the filename
-            and the parameter: width, height, or depth.
-
-        Returns:
-        replacement for entity
-
-        """
-        filename, parameter = m.group(1), m.group(2)
-
-        try:
-            img = self.imager.images.get(filename, self.imager.staticimages.get(filename))
-            if img is not None and getattr(img, parameter) is not None:
-                return str(getattr(img, parameter))
-        except KeyError: pass
-
-        return '&%s-%s;' % (filename, parameter)
+        return s
 
 Renderer = XHTML 

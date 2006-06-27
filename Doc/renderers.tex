@@ -342,9 +342,8 @@ requested document fragments, compiling the document and converting
 each page of the output document into individual images.  Currently,
 there are two \class{Imager} subclasses included with \plasTeX.
 Each of them use the standard \LaTeX\ compiler to generate a DVI file.
-The DVI file is then converted into images using either \program{dvipng}
-or \program{dvi2bitmap} depending on which imager is chosen (see section
-\ref{sec:config-images} on how to select different imagers).
+The DVI file is then converted into images using one of the available
+imagers (see section \ref{sec:config-images} on how to select different imagers).
 
 To generate an image of a document node, simply access the \member{image}
 property during the rendering process.  This property will return
@@ -423,6 +422,30 @@ PIL recognizes.
 It is possible to write your own \class{Imager} subclass if necessary.
 See the \class{Imager} API documentation for more information (see
 \ref{sec:imager-api}).
+
+
+\subsection{Generating Vector Images}
+
+If you have a vector imager configured (such as dvisvg or dvisvgm), you
+can generate a vector version of the requested image as well as a 
+bitmap.  The nice thing about vector versions of images is that they
+can scale infinitely and not loose resolution.  The bad thing about them
+is that they are not as well supported in the real world as bitmaps.
+
+Generating a vector image is just as easy as generating a bitmap image,
+you simply access the \member{vectorimage} property of the node that
+you want an image of.  This will return an \class{plasTeX.Imagers.Image} 
+instance that corresponds to the vector image.  A bitmap version of 
+the same image can be accessed through the \member{image} property of the
+document node or the \member{bitmap} variable of the vector image object.
+
+Everything that was described about generating images in the previous 
+section is also true of vector images with the exception of cropping.
+\plasTeX\ does not attempt to crop vector images.  The program that
+converts the \LaTeX\ output to a vector image is expected to crop the 
+image down to the image content.  \plasTeX\ uses the information from
+the bitmap version of the image to determine the proper depth of the 
+vector image.
 
 
 \subsection{Static Images}

@@ -4,7 +4,7 @@ import re, string, os.path
 
 class Filenames(object):
 
-    def __init__(self, spec, charsub=[], vars={}, extension=''):
+    def __init__(self, spec, charsub=[], vars={}, extension='', invalid={}):
         """
         Generate filenames based on the `spec' and using the given vars
     
@@ -65,6 +65,9 @@ class Filenames(object):
             the initial generator call after each iteration.
         extension -- file extension to add to filenames that do not
             already have an extension
+        invalid -- names that can not be used.  If the generated name is
+            found to be one of the specified invalid names, a new one
+            is generated until a valid name is found.
     
         Returns:
         generator that creates filenames
@@ -74,6 +77,7 @@ class Filenames(object):
         self.charsub = charsub
         self.vars = vars
         self.extension = extension
+        self.invalid = invalid
         self.newfilename = self._newfilename()
 
     def parsefilenames(self, spec):
@@ -188,7 +192,10 @@ class Filenames(object):
                     num += 1
                 self.vars.clear()
                 self.vars.update(g)
-                yield self.addextension(result)
+                result = self.addextension(result)
+                if result not in self.invalid:
+                    self.invalid[result] = None
+                    yield result
             except KeyError, key:
                 continue
                 
@@ -225,7 +232,10 @@ class Filenames(object):
                         num += 1
                     self.vars.clear()
                     self.vars.update(g)
-                    yield self.addextension(result)
+                    result = self.addextension(result)
+                    if result not in self.invalid:
+                        self.invalid[result] = None
+                        yield result
                     break
                 except KeyError, key:
                     if 'num' in self.vars:

@@ -286,6 +286,19 @@ specified by the \longprogramopt{bad-chars-sub} option)
 specifies a directory name to use as the output directory.
 \end{configuration}
 
+\begin{configuration}{Escaping characters higher than 7-bit}
+\options{\longprogramopt{escape-high-chars}}
+\config{files}{escape-high-chars}
+\default{False}
+some output types allow you to represent characters that are greater than
+7-bits with an alternate representation to alleviate the issue of 
+file encoding.  This option indicates that these alternate representations
+should be used.
+
+\note{The renderer is responsible for doing the translation into the 
+alternate format.  This might not be supported by all output types.}
+\end{configuration}
+
 \begin{configuration}{Template to use for output filenames}
 \options{\longprogramopt{filename=\optval{string}}}
 \config{files}{filename}
@@ -411,15 +424,25 @@ specifies which program to use to compile the images \LaTeX\ document.
 indicates whether or not images should be generated.
 \end{configuration}
 
+\begin{configuration}{Enable or disable the image cache}
+\options{\longprogramopt{enable-image-cache} or
+         \longprogramopt{disable-image-cache}}
+\config{images}{cache}
+\default{yes}
+indicates whether or not images should use a cache between runs.
+\end{configuration}
+
 \begin{configuration}{Convert \LaTeX\ output to images}
 \options{\longprogramopt{imager=\optval{program}}}
 \config{images}{imager}
-\default{dvipng}
+\default{dvipng dvi2bitmap gsdvipng gspdfpng OSXCoreGraphics}
 specifies which converter will be used to take the output from the
 \LaTeX\ compiler and convert it to images.  You can specify a space 
 delimited list of names as well.  If a list of names is specified, 
 each one is verified in order to see if it works on the current machine.
 The first one that succeeds is used.
+
+You can use the value of ``none'' to turn the imager off.
 \end{configuration}
 
 \begin{configuration}{Image filenames}
@@ -429,4 +452,22 @@ The first one that succeeds is used.
 specifies the image naming template to use to generate filenames.  This
 template is the same as the templates used by the \longprogramopt{filename}
 option.
+\end{configuration}
+
+\begin{configuration}{Convert \LaTeX\ output to vector images}
+\options{\longprogramopt{vector-imager=\optval{program}}}
+\config{images}{vector-imager}
+\default{dvisvgm}
+specifies which converter will be used to take the output from the
+\LaTeX\ compiler and convert it to vector images.  You can specify a space 
+delimited list of names as well.  If a list of names is specified, 
+each one is verified in order to see if it works on the current machine.
+The first one that succeeds is used.
+
+You can use the value of ``none'' to turn the vector imager off.
+
+\note{When using the vector imager, a bitmap image is also created
+using the regular imager.  This bitmap is used to determine the 
+depth information about the vector image and can also be used as
+a backup if the vector image is not supported by the viewer.}
 \end{configuration}

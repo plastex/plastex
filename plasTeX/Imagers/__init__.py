@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os, time, tempfile, shutil, re, string
+import os, time, tempfile, shutil, re, string, pickle, md5
 from plasTeX.Logging import getLogger
 from StringIO import StringIO
 from plasTeX.Filenames import Filenames
@@ -37,6 +37,8 @@ def autocrop(im, bgcolor=None, margin=0):
         im = im.convert("RGB")
 
     origbbox = im.getbbox()
+    if origbbox is None:
+        origbbox = (0,0,im.size[0],im.size[1])
 
     # Figure out the background color from the corners, if needed
     if bgcolor is None:
@@ -79,6 +81,82 @@ def autocrop(im, bgcolor=None, margin=0):
     return PILImage.new("RGB", (1,1), bgcolor), (0,0,0,0)
     return None, None # no contents
 
+class Box(object):
+    pass
+
+class Dimension(float):
+    """
+    Dimension object used for width, height, and depth of images
+
+    This object is simply a float value.  The value of the float 
+    is in pixels.  All other units can be gotten using their 
+    corresponding property.
+
+    """
+    fontSize = 15
+    @property
+    def ex(self): 
+        return '%sex' % self.format(self / (self.fontSize * 0.6))
+    @property
+    def em(self): 
+        return '%sem' % self.format(self / self.fontSize)
+    @property
+    def pt(self): 
+        return '%spt' % self.format(self)
+    @property
+    def px(self): 
+        return '%spx' % self.format(self)
+    @property
+    def mm(self): 
+        return '%smm' % self.format(self.cm * 10.0)
+    @property
+    def inch(self): 
+        return '%sin' % self.format(self.pt / 72.0)
+    @property
+    def cm(self): 
+        return '%scm' % self.format(self.inch * 2.54)
+    @property
+    def pc(self): 
+        return '%spc' % self.format(self.pt / 12.0)
+
+    def __getattribute__(self, name):
+        if name in ['in']:
+            return self.inch
+        return float.__getattribute__(self, name)
+
+    def format(self, value):
+        if abs(int(value) - value) < 0.0001:
+            return '%s' % int(value)
+        return '%0.3f' % value
+
+    def __str__(self):
+        return self.format(self)
+
+    def __repr__(self):
+        return self.format(self)
+        
+
+class DimensionPlaceholder(str):
+    """ 
+    Placeholder for dimensions
+
+    Dimensions for an image aren't generally known until the end of
+    the rendering process.  This object generates a placeholder
+    for the dimension.
+
+    """
+    imageunits = ''
+    def __getattribute__(self, name):
+        if name in ['in','ex','em','pt','px','mm','cm','pc']:
+            if not self:
+                return self
+            vars = {'units':name}
+            return self + string.Template(self.imageunits).substitute(vars)
+        return str.__getattribute__(self, name)
+    def __setattribute__(self, name, value):
+        if name in ['in','ex','em','pt','px','mm','cm','pc']:
+            return 
+        return str.__setattribute__(self, name, value)
 
 class Image(object):
     """ Generic image object """
@@ -91,9 +169,51 @@ class Image(object):
         self.height = height
         self.alt = alt
         self.depth = depth
+        self.depthratio = 0
         self.longdesc = longdesc 
         self.config = config
         self._cropped = False
+        self.bitmap = self
+        self.checksum = None
+
+    def height():
+        def fget(self):
+            return getattr(self.bitmap, '_height', None)
+        def fset(self, value):
+            if value is None:
+                self._height = value
+            elif isinstance(value, DimensionPlaceholder):
+                self._height = value
+            else:
+                self._height = Dimension(value)
+        return locals()
+    height = property(**height())
+
+    def width():
+        def fget(self):
+            return getattr(self.bitmap, '_width', None)
+        def fset(self, value):
+            if value is None:
+                self._width = value
+            elif isinstance(value, DimensionPlaceholder):
+                self._width = value
+            else:
+                self._width = Dimension(value)
+        return locals()
+    width = property(**width())
+
+    def depth():
+        def fget(self):
+            return getattr(self, '_depth', None)
+        def fset(self, value):
+            if value is None:
+                self._depth = value
+            elif isinstance(value, DimensionPlaceholder):
+                self._depth = value
+            else:
+                self._depth = Dimension(value)
+        return locals()
+    depth = property(**depth())
 
     @property
     def url(self):
@@ -109,11 +229,36 @@ class Image(object):
         if self._cropped:
             return
 
+        # Crop an SVG image
+        if os.path.splitext(self.path)[-1] in ['.svg']:
+            svg = open(self.path,'r').read()
+
+            self.width = 0
+            width = re.search(r'width=(?:\'|")([^\d\.]+)\w*(?:\'|")', svg)
+            if width:
+                self.width = float(width)
+
+            self.height = 0
+            height = re.search(r'height=(?:\'|")([^\d\.]+)\w*(?:\'|")', svg)
+            if height:
+                self.height = float(height)
+
+            self.depth = 0
+            if self.bitmap and self.height:
+                depth = (self.height / self.bitmap.height) * self.bitmap.depth
+                if abs(depth - int(depth)) > 0.1:
+                    self.depth = depth - 1
+                else:
+                    self.depth = depth
+                
+            self._cropped = True
+            return
+
         padbaseline = self.config['baseline-padding']
 
         try:
             im, self.depth = self._stripbaseline(PILImage.open(self.path), 
-                                                 padbaseline)
+                                             padbaseline)
             self.width, self.height = im.size
         except IOError, msg:
             self._cropped = True
@@ -180,9 +325,6 @@ class Image(object):
             while pos and im.getpixel((0,pos)) == background:
                 pos -= 1
             depth = pos - height + 1
-            # Adjust for anti-aliasing effects
-#           if sum(im.getpixel((0,pos))) > sum((210,210,210)):
-#               depth -= 1
 
         # Get the width of the registration mark so it can be cropped out
         rwidth = 0
@@ -191,7 +333,7 @@ class Image(object):
 
         # Handle empty images
         bbox = im.getbbox()
-        if bbox is None:
+        if bbox is None or rwidth == (width-1):
             return PILImage.new("RGB", (1,1), background), 0
 
         # Crop out register mark, and autocrop result
@@ -228,9 +370,10 @@ class Imager(object):
     # Verification command to determine if the imager is available
     verification = ''
 
-    fileextension = ''
+    fileextension = '.png'
 
     imageattrs = ''
+    imageunits = ''
 
     def __init__(self, document):
         self.config = document.config['images']
@@ -239,6 +382,13 @@ class Imager(object):
         # Dictionary that makes sure each image is only generated once.
         # The key is the LaTeX source and the value is the image instance.
         self._cache = {}
+        usednames = {}
+        self._filecache = os.path.abspath(os.path.join('.cache', 
+                                          self.__class__.__name__+'.images'))
+        if self.config['cache'] and os.path.isfile(self._filecache):
+            self._cache = pickle.load(open(self._filecache, 'r'))
+            for value in self._cache.values():
+                usednames[value.filename] = None
 
         # List of images in the order that they appear in the LaTeX file
         self.images = ordereddict()
@@ -247,7 +397,9 @@ class Imager(object):
         self.staticimages = ordereddict()
 
         # Filename generator
-        self.newfilename = Filenames(self.config.get('filenames', raw=True), vars={'jobname':document.userdata.get('jobname','')}, extension=self.fileextension)
+        self.newfilename = Filenames(self.config.get('filenames', raw=True), 
+                           vars={'jobname':document.userdata.get('jobname','')},
+                           extension=self.fileextension, invalid=usednames)
 
         # Start the document with a preamble
         self.source = StringIO()
@@ -259,14 +411,22 @@ class Imager(object):
         """ Write any necessary code to the preamble of the document """
         self.source.write(document.preamble.source)
         self.source.write('\\makeatletter\n')
-        self.source.write('\\@ifundefined{plasTeXimage}{\\newenvironment' +
-                          '{plasTeXimage}[1]{\\vfil\\break\\plasTeXregister' +
+
+#       self.source.write('\\tracingoutput=1\n')
+#       self.source.write('\\tracingonline=1\n')
+#       self.source.write('\\showboxbreadth=\maxdimen\n')
+#       self.source.write('\\showboxdepth=\maxdimen\n')
+#       self.source.write('\\newenvironment{plasTeXimage}[1]{\\def\\@current@file{#1}\\thispagestyle{empty}\\def\\@eqnnum{}\\setbox0=\\vbox\\bgroup}{\\egroup\\typeout{imagebox:\\@current@file(\\the\\ht0+\\the\\dp0)}\\box0\\newpage}')
+
+        self.source.write('\\@ifundefined{plasTeXimage}{'
+                          '\\newenvironment{plasTeXimage}[1]{' +
+                          '\\vfil\\break\\plasTeXregister' +
+                          '\\thispagestyle{empty}\\def\\@eqnnum{}' +
                           '\\ignorespaces}{}}{}\n')
         self.source.write('\\@ifundefined{plasTeXregister}{' +
                           '\\def\\plasTeXregister{\\ifhmode\\hrule' +
                           '\\else\\vrule\\fi height 2pt depth 0pt ' +
                           'width 2pt\\hskip2pt}}{}\n')
-        self.source.write('\\pagestyle{empty}\\def\\@eqnnum{}\n')
 
     def verify(self):
         """ Verify that this commmand works on this machine """
@@ -285,21 +445,42 @@ class Imager(object):
 
         return False
 
+    @property
+    def enabled(self):
+        if self.config['enabled'] and \
+           (self.command or (type(self) is not Imager and type(self) is not VectorImager)): 
+            return True
+        return False
+
     def close(self):
         """ Invoke the rendering code """
         # Finish the document
         self.source.write('\n\\end{document}\\endinput')
 
+        for value in self._cache.values():
+            if value.checksum and os.path.isfile(value.path):
+                 d = md5.new(open(value.path,'r').read()).digest()
+                 if value.checksum != d:
+                     log.warning('The image data for "%s" on the disk has changed.  You may want to clear the image cache.' % value.filename)
+
         # Bail out if there are no images
-        if not self._cache:
+        if not self.images:
             return 
 
-        if not self.config['enabled']:
+        if not self.enabled:
             return
 
         # Compile LaTeX source, then convert the output
         self.source.seek(0)
         self.convert(self.compilelatex(self.source.read()))
+
+        for value in self._cache.values():
+            if value.checksum is None and os.path.isfile(value.path):
+                 value.checksum = md5.new(open(value.path,'r').read()).digest()
+
+        if not os.path.isdir(os.path.dirname(self._filecache)):
+            os.makedirs(os.path.dirname(self._filecache))
+        pickle.dump(self._cache, open(self._filecache,'w'))
 
     def compilelatex(self, source):
         """
@@ -370,7 +551,7 @@ class Imager(object):
         output -- output file object
 
         """
-        if not self.command:
+        if not self.command and self.executeconverter is Imager.executeconverter:
             log.warning('No imager command is configured.  ' +
                         'No images will be created.')
             return
@@ -416,6 +597,8 @@ class Imager(object):
                 dest.crop()
                 status.dot()
             except Exception, msg:
+#               import traceback
+#               traceback.print_exc()
                 log.warning('failed to crop %s (%s)', dest.path, msg)
         
         # Remove temporary directory
@@ -453,12 +636,12 @@ class Imager(object):
         for dest, src in self.ownerDocument.charsubs:
             text = text.replace(src, dest)
 
-        key = (text, context)
+        key = text
 
         # See if this image has been cached
         if self._cache.has_key(key):
             return self._cache[key]
-
+            
         # Generate a filename
         if not filename:
             filename = self.newfilename()
@@ -476,7 +659,9 @@ class Imager(object):
             for name in ['height','width','depth']:
                 if getattr(img, name) is None:
                     vars['attr'] = name
-                    setattr(img, name, tmpl.substitute(vars))
+                    value = DimensionPlaceholder(tmpl.substitute(vars))
+                    value.imageunits = self.imageunits
+                    setattr(img, name, value)
     
         self.images[filename] = self._cache[key] = img
         return img
@@ -521,8 +706,9 @@ class Imager(object):
                 shutil.copyfile(name, path)
                 if PILImage is None:
                     tmpl = string.Template(self.imageattrs)
-                    width = tmpl.substitute({'filename':path, 'attr':'width'})
-                    height = tmpl.substitute({'filename':path, 'attr':'height'})
+                    width = DimensionPlaceholder(tmpl.substitute({'filename':path, 'attr':'width'}))
+                    height = DimensionPlaceholder(tmpl.substitute({'filename':path, 'attr':'height'}))
+                    height.imageunits = width.imageunits = self.imageunits
                 else:
                     img = PILImage.open(name)
                     width, height = img.size
@@ -540,6 +726,15 @@ class Imager(object):
             log.warning(msg)
 
         return self.newimage(img.source)
+
+
+class VectorImager(Imager):
+    fileextension = '.svg'
+
+    def writepreamble(self, document):
+        Imager.writepreamble(self, document)
+#       self.source.write('\\usepackage{type1ec}\n')
+        self.source.write('\\def\\plasTeXregister{}\n')
 
 
 class WorkingFile(file):

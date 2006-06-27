@@ -84,8 +84,10 @@ class Renderer(dict):
     default = unicode
     outputtype = unicode
     imagetypes = []
+    vectorimagetypes = []
     fileextension = ''
     imageattrs = '&${filename}-${attr};'
+    imageunits = '&${units};'
 
     def __init__(self, data={}):
         dict.__init__(self, data)
@@ -95,6 +97,7 @@ class Renderer(dict):
 
         # Instantiated at render time
         self.imager = None
+        self.vectorimager = None
 
         # Filename generator
         self.newfilename = None
@@ -132,6 +135,8 @@ class Renderer(dict):
         # Instantiate appropriate imager
         names = [x for x in config['images']['imager'].split() if x]
         for name in names:
+            if name == 'none':
+                break
             try: 
                 exec('from plasTeX.Imagers.%s import Imager' % name)
             except ImportError, msg:
@@ -148,7 +153,8 @@ class Renderer(dict):
 
         # Still no imager? Just use the default.
         if self.imager is None:
-            log.warning('Could not find a valid imager in the list: %s.  The default imager will be used.' % ', '.join(names))
+            if 'none' not in names:
+                log.warning('Could not find a valid imager in the list: %s.  The default imager will be used.' % ', '.join(names))
             from plasTeX.Imagers import Imager
             self.imager = Imager(document)
 
@@ -156,12 +162,50 @@ class Renderer(dict):
             self.imager.fileextension = self.imagetypes[0]
         if self.imageattrs and not self.imager.imageattrs:
             self.imager.imageattrs = self.imageattrs
+        if self.imageunits and not self.imager.imageunits:
+            self.imager.imageunits = self.imageunits
+
+        # Instantiate appropriate vector imager
+        names = [x for x in config['images']['vector-imager'].split() if x]
+        for name in names:
+            if name == 'none':
+                break
+            try: 
+                exec('from plasTeX.Imagers.%s import Imager' % name)
+            except ImportError, msg:
+                log.warning("Could not load imager '%s' because '%s'" % (name, msg))
+                continue
+            
+            self.vectorimager = Imager(document)
+    
+            # Make sure that this imager works on this machine
+            if self.vectorimager.verify():
+                break
+ 
+            self.vectorimager = None
+
+        # Still no vector imager? Just use the default.
+        if self.vectorimager is None:
+            if 'none' not in names:
+                log.warning('Could not find a valid vector imager in the list: %s.  The default vector imager will be used.' % ', '.join(names))
+            from plasTeX.Imagers import VectorImager
+            self.vectorimager = VectorImager(document)
+
+        if self.vectorimagetypes and \
+           self.vectorimager.fileextension not in self.vectorimagetypes:
+            self.vectorimager.fileextension = self.vectorimagetypes[0]
+        if self.imageattrs and not self.vectorimager.imageattrs:
+            self.vectorimager.imageattrs = self.imageattrs
+        if self.imageunits and not self.vectorimager.imageunits:
+            self.vectorimager.imageunits = self.imageunits
+
 
         # Invoke the rendering process
         unicode(document)
 
         # Finish rendering images
         self.imager.close()
+        self.vectorimager.close()
 
         # Run any cleanup activities
         self.cleanup(document, self.files.values())
@@ -170,9 +214,38 @@ class Renderer(dict):
         del Node.renderer
         unmix(Node, Renderable)
 
-    def cleanup(self, doc, files):
-        """ Do any post-rending cleanup """
-        pass
+    def processFileContent(self, document, s):
+        return s
+
+    def cleanup(self, document, files):
+        """ 
+        Cleanup method called at the end of rendering 
+
+        This method allows you to do arbitrary post-processing after
+        all files have been rendered.
+
+        Note: While I greatly dislike post-processing, sometimes it's 
+              just easier...
+
+        Required Arguments:
+        document -- the document being rendered
+
+        """
+        if self.processFileContent is Renderer.processFileContent:
+            return 
+
+        encoding = document.config['files']['output-encoding']
+
+        for f in files:
+            try:
+                s = codecs.open(str(f), 'r', encoding).read()
+            except IOError, msg:
+                log.error(msg)
+                continue
+
+            s = self.processFileContent(document, s)
+
+            codecs.open(f, 'w', encoding).write(u''.join(s))
 
     def find(self, keys, default=None):
         """
@@ -325,6 +398,13 @@ class Renderable(object):
     def image(self):
         """ Generate an image and return the image filename """
         return Node.renderer.imager.getimage(self)
+
+    @property
+    def vectorimage(self):
+        """ Generate a vector image and return the image filename """
+        image = Node.renderer.vectorimager.getimage(self)
+        image.bitmap = Node.renderer.imager.getimage(self)
+        return image
 
     @property
     def url(self):
