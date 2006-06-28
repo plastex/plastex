@@ -11,13 +11,12 @@ from Sectioning import SectionUtils
 class document(Environment, SectionUtils):
     level = Environment.DOCUMENT_LEVEL
 
+    @property
+    def title(self):
+        return self.ownerDocument.userdata.get('title','')
+
     def invoke(self, tex):
         res = Environment.invoke(self, tex)
-
-        # Copy attributes from the document
-        for attr in ['title']:
-            if attr in self.ownerDocument.userdata:
-                self.attributes[attr] = self.ownerDocument.userdata[attr]
 
         # Set initial counter values
         if self.config.has_key('counters'):

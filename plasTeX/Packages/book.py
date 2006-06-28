@@ -46,9 +46,17 @@ def ProcessOptions(options, document):
     context.newcounter('totalnumber')
     context.newcounter('dbltopnumber')
 
+    language = False
     for key, value in options.items():
-        if key in ['american','french']:
+        if key == 'language':
+            language = True
+            context.loadLanguage(value, document)
+        elif key in ['american','french']:
+            language = True
             context.loadLanguage(key, document)
+
+    if not language:
+        context.loadLanguage('american', document)
 
 class frontmatter(Command): 
     pass

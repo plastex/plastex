@@ -31,7 +31,6 @@ from Sentences import *
 from Space import *
 from Tabbing import *
 from Verbatim import *
-from Languages.american import *
 
 from plasTeX import Command
 
@@ -55,3 +54,11 @@ class pagelabel(Command):
 
 class verbatiminput(Command):
     pass
+
+class makeatother(Command):
+    def invoke(self, tex):
+        self.ownerDocument.context.catcode('@', 12)
+
+class makeatletter(Command):
+    def invoke(self, tex):
+        self.ownerDocument.context.catcode('@', 11)

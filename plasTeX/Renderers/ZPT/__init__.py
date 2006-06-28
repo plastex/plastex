@@ -278,7 +278,7 @@ class ZPT(BaseRenderer):
         if 'alias' in options:
             alias = options['alias'].strip()
             for name in names:
-                self.aliases[alias] = name
+                self.aliases[name] = alias
             if ''.join(template).strip():
                 log.warning('Both an alias and a template were specified for: %s' % ', '.join(names))
 
