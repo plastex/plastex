@@ -265,11 +265,11 @@ class index(Command):
 
         # Convert the sort keys to strings
         for i, item in enumerate(sortkey):
-            sortkey[i] = tex.expandtokens(item).textContent
+            sortkey[i] = tex.expandTokens(item).textContent
 
         # Expand the key tokens
         for i, item in enumerate(key):
-            key[i] = tex.expandtokens(item) 
+            key[i] = tex.expandTokens(item) 
 
         # Get the format element
         if format:

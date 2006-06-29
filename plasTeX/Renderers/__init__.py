@@ -80,14 +80,14 @@ class Renderer(dict):
 
     """
 
-    textdefault = unicode
+    textDefault = unicode
     default = unicode
-    outputtype = unicode
-    imagetypes = []
-    vectorimagetypes = []
-    fileextension = ''
-    imageattrs = '&${filename}-${attr};'
-    imageunits = '&${units};'
+    outputType = unicode
+    imageTypes = []
+    vectorImageTypes = []
+    fileExtension = ''
+    imageAttrs = '&${filename}-${attr};'
+    imageUnits = '&${units};'
 
     def __init__(self, data={}):
         dict.__init__(self, data)
@@ -97,10 +97,10 @@ class Renderer(dict):
 
         # Instantiated at render time
         self.imager = None
-        self.vectorimager = None
+        self.vectorImager = None
 
         # Filename generator
-        self.newfilename = None
+        self.newFilename = None
 
     def render(self, document):
         """
@@ -126,10 +126,10 @@ class Renderer(dict):
         Node.renderer = self
 
         # Create a filename generator
-        self.newfilename = Filenames(config['files'].get('filename', raw=True), 
+        self.newFilename = Filenames(config['files'].get('filename', raw=True), 
                                      (config['files']['bad-chars'],
                                       config['files']['bad-chars-sub']),
-                                     {'jobname':document.userdata.get('jobname', '')}, self.fileextension)
+                                     {'jobname':document.userdata.get('jobname', '')}, self.fileExtension)
                       
 
         # Instantiate appropriate imager
@@ -158,12 +158,12 @@ class Renderer(dict):
             from plasTeX.Imagers import Imager
             self.imager = Imager(document)
 
-        if self.imagetypes and self.imager.fileextension not in self.imagetypes:
-            self.imager.fileextension = self.imagetypes[0]
-        if self.imageattrs and not self.imager.imageattrs:
-            self.imager.imageattrs = self.imageattrs
-        if self.imageunits and not self.imager.imageunits:
-            self.imager.imageunits = self.imageunits
+        if self.imageTypes and self.imager.fileExtension not in self.imageTypes:
+            self.imager.fileExtension = self.imageTypes[0]
+        if self.imageAttrs and not self.imager.imageAttrs:
+            self.imager.imageAttrs = self.imageAttrs
+        if self.imageUnits and not self.imager.imageUnits:
+            self.imager.imageUnits = self.imageUnits
 
         # Instantiate appropriate vector imager
         names = [x for x in config['images']['vector-imager'].split() if x]
@@ -176,28 +176,28 @@ class Renderer(dict):
                 log.warning("Could not load imager '%s' because '%s'" % (name, msg))
                 continue
             
-            self.vectorimager = Imager(document)
+            self.vectorImager = Imager(document)
     
             # Make sure that this imager works on this machine
-            if self.vectorimager.verify():
+            if self.vectorImager.verify():
                 break
  
-            self.vectorimager = None
+            self.vectorImager = None
 
         # Still no vector imager? Just use the default.
-        if self.vectorimager is None:
+        if self.vectorImager is None:
             if 'none' not in names:
                 log.warning('Could not find a valid vector imager in the list: %s.  The default vector imager will be used.' % ', '.join(names))
             from plasTeX.Imagers import VectorImager
-            self.vectorimager = VectorImager(document)
+            self.vectorImager = VectorImager(document)
 
-        if self.vectorimagetypes and \
-           self.vectorimager.fileextension not in self.vectorimagetypes:
-            self.vectorimager.fileextension = self.vectorimagetypes[0]
-        if self.imageattrs and not self.vectorimager.imageattrs:
-            self.vectorimager.imageattrs = self.imageattrs
-        if self.imageunits and not self.vectorimager.imageunits:
-            self.vectorimager.imageunits = self.imageunits
+        if self.vectorImageTypes and \
+           self.vectorImager.fileExtension not in self.vectorImageTypes:
+            self.vectorImager.fileExtension = self.vectorImageTypes[0]
+        if self.imageAttrs and not self.vectorImager.imageAttrs:
+            self.vectorImager.imageAttrs = self.imageAttrs
+        if self.imageUnits and not self.vectorImager.imageUnits:
+            self.vectorImager.imageUnits = self.imageUnits
 
 
         # Invoke the rendering process
@@ -205,7 +205,7 @@ class Renderer(dict):
 
         # Finish rendering images
         self.imager.close()
-        self.vectorimager.close()
+        self.vectorImager.close()
 
         # Run any cleanup activities
         self.cleanup(document, self.files.values())
@@ -293,7 +293,7 @@ class Renderable(object):
         # Short circuit macros that have unicode equivalents
         uni = self.unicode
         if uni is not None: 
-            return r.outputtype(r.textdefault(uni))
+            return r.outputType(r.textDefault(uni))
 
         # If we don't have childNodes, then we're done
         if not self.hasChildNodes():
@@ -315,13 +315,13 @@ class Renderable(object):
 
             # Short circuit text nodes
             if child.nodeType == Node.TEXT_NODE:
-                s.append(r.textdefault(child))
+                s.append(r.textDefault(child))
                 continue
 
             # Short circuit macros that have unicode equivalents
             uni = child.unicode
             if uni is not None: 
-                s.append(r.textdefault(uni))
+                s.append(r.textDefault(uni))
                 continue
 
             layouts, names = [], []
@@ -389,7 +389,7 @@ class Renderable(object):
         if self.filename:
             status.info(' ] ')
 
-        return r.outputtype(u''.join(s))
+        return r.outputType(u''.join(s))
 
     def __str__(self):
         return unicode(self)
@@ -397,13 +397,13 @@ class Renderable(object):
     @property
     def image(self):
         """ Generate an image and return the image filename """
-        return Node.renderer.imager.getimage(self)
+        return Node.renderer.imager.getImage(self)
 
     @property
-    def vectorimage(self):
+    def vectorImage(self):
         """ Generate a vector image and return the image filename """
-        image = Node.renderer.vectorimager.getimage(self)
-        image.bitmap = Node.renderer.imager.getimage(self)
+        image = Node.renderer.vectorImager.getImage(self)
+        image.bitmap = Node.renderer.imager.getImage(self)
         return image
 
     @property
@@ -455,12 +455,12 @@ class Renderable(object):
             if self.filenameoverride:
                 userdata = self.ownerDocument.userdata
                 config = self.ownerDocument.config
-                newfilename = Filenames(self.filenameoverride,
+                newFilename = Filenames(self.filenameoverride,
                                         (config['files']['bad-chars'],
                                          config['files']['bad-chars-sub']),
                                         {'jobname':userdata.get('jobname','')},
-                                        self.fileextension)
-                filename = r.files[self] = newfilename()
+                                        self.fileExtension)
+                filename = r.files[self] = newFilename()
                 return filename
 
         except AttributeError:
@@ -473,7 +473,7 @@ class Renderable(object):
 
             # Populate vars of filename generator
             # and call the generator to get the filename.
-            ns = r.newfilename.vars
+            ns = r.newFilename.vars
             if hasattr(self, 'id') and self.id != ('a%s' % id(self)):
                 ns['id'] = self.id
             if hasattr(self, 'title'):
@@ -481,7 +481,7 @@ class Renderable(object):
                     ns['title'] = self.title.textContent
                 elif isinstance(self.title, basestring):
                     ns['title'] = self.title
-            r.files[self] = filename = r.newfilename()
+            r.files[self] = filename = r.newFilename()
 
         return filename
 
@@ -526,7 +526,7 @@ class StaticNode(object):
 
 class URL(unicode):
 
-    def relativeto(self, src):
+    def relativeTo(self, src):
         """
         Get the path of this URL relative to `src'
     

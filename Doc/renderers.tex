@@ -57,7 +57,7 @@ If a node is traversed that doesn't correspond to a key in the
 renderer dictionary, the default rendering method is called.  The 
 default rendering method is stored in the \member{default} attribute.
 One exception to this rule is for text nodes.  The default 
-rendering method for text nodes is actually stored in \member{textdefault}.
+rendering method for text nodes is actually stored in \member{textDefault}.
 Again, these attributes simply need to reference any Python function
 that returns a unicode object of the rendered output.  The 
 default method in both of these attributes is the \function{unicode}
@@ -74,7 +74,7 @@ of the \class{Renderable} class are discussed in section \ref{sec:renderable}.
 \section{Simple Renderer Example}
 
 It is possible to write a renderer with just a couple of methods:
-\method{default} and \method{textdefault}.
+\method{default} and \method{textDefault}.
 The code below demonstrates how one might create a generic XML
 renderer that simply uses the node names as XML tag names.  
 The text node renderer escapes the <, >, and \& characters.
@@ -90,7 +90,7 @@ class Renderer(Renderer):
 
         # Handle characters like \&, \$, \%, etc.
         if len(node.nodeName) == 1 and node.nodeName not in string.letters:
-            return self.textdefault(node.nodeName)
+            return self.textDefault(node.nodeName)
 
         # Start tag
         s.append('<%s>' % node.nodeName)
@@ -114,7 +114,7 @@ class Renderer(Renderer):
 
         return u'\n'.join(s)
 
-    def textdefault(self, node):
+    def textDefault(self, node):
         """ Rendering method for all text nodes """
         return node.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;')
 \end{verbatim}
@@ -269,7 +269,7 @@ things are discussed below.
 \subsection{Determining the Correct Rendering Method}
 
 Looking up the correct rendering method is quite straight-forward.  
-If the node is a text node, the \member{textdefault} attribute on 
+If the node is a text node, the \member{textDefault} attribute on 
 the renderer is used.  If it is not a text node, then the node's name
 determines the key name in the renderer.  In most cases, the node's
 name is the same name as the \LaTeX\ macro that created it.  If the
@@ -433,7 +433,7 @@ can scale infinitely and not loose resolution.  The bad thing about them
 is that they are not as well supported in the real world as bitmaps.
 
 Generating a vector image is just as easy as generating a bitmap image,
-you simply access the \member{vectorimage} property of the node that
+you simply access the \member{vectorImage} property of the node that
 you want an image of.  This will return an \class{plasTeX.Imagers.Image} 
 instance that corresponds to the vector image.  A bitmap version of 
 the same image can be accessed through the \member{image} property of the
@@ -505,7 +505,7 @@ The \method{__call__} is added to the object.  This new method populates
 the namespace of the template and returns the rendered output.}.  As is
 the case with all rendering methods, the only argument is the node to be
 rendered, and the output is a unicode object containing the rendered 
-output. In addition to the rendering methods, the \method{textdefault} method
+output. In addition to the rendering methods, the \method{textDefault} method
 escapes all characters that are special in XML and HTML (i.e. <, >, and \&).
 
 The following sections describe how templates are loaded into the 

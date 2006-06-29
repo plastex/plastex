@@ -259,14 +259,14 @@ In most cases, the default implementation will work just fine, but you
 may want to do some extra processing of the macro arguments or 
 counters before letting the parsing of the document proceed.  There
 are actually several methods in the API that are called within the
-scope of the \method{invoke} method: \method{preparse}, \method{preargument},
-\method{postargument}, and \method{postparse}.
+scope of the \method{invoke} method: \method{preParse}, \method{preArgument},
+\method{postArgument}, and \method{postParse}.
 
 The order of execution is quite simple.  Before any arguments have been
-parsed, the \method{preparse} method is called.  The \method{preargument}
-and \method{postargument} methods are called before and after each
+parsed, the \method{preParse} method is called.  The \method{preArgument}
+and \method{postArgument} methods are called before and after each
 argument, respectively.  Then, after all arguments have been parsed, the
-\method{postparse} method is called.  The default implementations of 
+\method{postParse} method is called.  The default implementations of 
 these methods handle the stepping of counters and setting the 
 current labeled item in the document.  By default, macros that have
 been ``starred'' (i.e. have a `*' before the arguments) do not 
@@ -434,16 +434,16 @@ by the \macro{ref} command.
 The \member{title} attribute retrieves the ``title'' attribute from
 the \member{attributes} dictionary.  This attribute is also overridable.
 
-\paragraph{The \member{fulltitle} attribute}
+\paragraph{The \member{fullTitle} attribute}
 The same as the \member{title} attribute, but also includes the 
 counter value at the beginning.
 
-\paragraph{The \member{tocentry} attribute}
-The \member{tocentry} attribute retrieves the ``toc'' attribute from
+\paragraph{The \member{tocEntry} attribute}
+The \member{tocEntry} attribute retrieves the ``toc'' attribute from
 the \member{attributes} dictionary.  This attribute is also overridable.
 
-\paragraph{The \member{fulltocentry} attribute}
-The same as the \member{tocentry} attribute, but also includes the 
+\paragraph{The \member{fullTocEntry} attribute}
+The same as the \member{tocEntry} attribute, but also includes the 
 counter value at the beginning.
 
 \paragraph{The \member{style} attribute}

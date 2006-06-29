@@ -190,7 +190,7 @@ class NewCommands(TestCase):
         s = TeX()
         s.input(r'\chardef\foo=65\relax\foo')
         output = [x for x in s]
-        assert output[-1] == 'A', output
+        assert output[-1].unicode == 'A', output
 
 
 class Python(TestCase):
@@ -200,8 +200,8 @@ class Python(TestCase):
         s = TeX()
         s.input(r'\figurename')
         s.ownerDocument.context['figurename'] = figurename
-        output = u''.join([x for x in s])
-        assert output == 'Figure', output
+        output = [x for x in s]
+        assert output[0].unicode == 'Figure', output
        
 
 if __name__ == '__main__':

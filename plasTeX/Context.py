@@ -2,7 +2,7 @@
 
 import new, os, ConfigParser, re
 import plasTeX
-from plasTeX import ismacro, macroname
+from plasTeX import ismacro, macroName
 from plasTeX.DOM import Node
 from plasTeX.Logging import getLogger
 from Tokenizer import Tokenizer, Token, DEFAULT_CATEGORIES, VERBATIM_CATEGORIES
@@ -364,11 +364,11 @@ class Context(object):
             stacklog.debug('pushing %s onto %s', name, self.top)
             self.contexts.append(self.createContext(context))
 
-        self.mapmethods()
+        self.mapMethods()
 
     append = push
 
-    def mapmethods(self):
+    def mapMethods(self):
         # Getter methods use the most local context
         self.top = top = self.contexts[-1]
         self.__getitem__ = top.__getitem__
@@ -426,7 +426,7 @@ class Context(object):
         """
         for value in context.values():
             if ismacro(value):
-                self[macroname(value)] = value
+                self[macroName(value)] = value
 #           elif isinstance(value, Context):
 #               self.importMacros(value)
 
@@ -470,7 +470,7 @@ class Context(object):
                     break
                 self.contexts.pop()
 
-        self.mapmethods()
+        self.mapMethods()
 
     def addGlobal(self, key, value):
         """ 
@@ -493,7 +493,7 @@ class Context(object):
             raise ValueError, \
                   '"%s" does not implement the macro interface' % key
 
-        self.contexts[0][macroname(value)] = value
+        self.contexts[0][macroName(value)] = value
 
     __setitem__ = addGlobal
 
@@ -518,7 +518,7 @@ class Context(object):
             raise ValueError, \
                   '"%s" does not implement the macro interface' % key
 
-        self.contexts[-1][macroname(value)] = value
+        self.contexts[-1][macroName(value)] = value
 
     def whichCode(self, char):
         """ 

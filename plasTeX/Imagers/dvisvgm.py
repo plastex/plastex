@@ -5,11 +5,11 @@ import plasTeX.Imagers
 
 class DVISVGM(plasTeX.Imagers.VectorImager):
     """ Imager that uses dvisvgm """
-    fileextension = '.svg'
+    fileExtension = '.svg'
     verification = 'dvisvgm --help'
     compiler = 'latex'
 
-    def executeconverter(self, output):
+    def executeConverter(self, output):
         rc = 0
         open('images.dvi', 'w').write(output.read())
         page = 1

@@ -9,9 +9,11 @@ from plasTeX.Logging import getLogger
 
 log = getLogger()
 
+__version__ = '0.6'
+
 def main(argv):
     """ Main program routine """
-    print >>sys.stderr, 'plasTeX version 0.5'
+    print >>sys.stderr, 'plasTeX version %s' % __version__
 
     # Parse the command line options
     try: 

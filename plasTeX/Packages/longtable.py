@@ -90,11 +90,11 @@ class longtable(tabular):
             header.reverse()
             for item in header:
                 for cell in item:
-                    cell.isheader = True
+                    cell.isHeader = True
                 self.insert(0, item)
 
         if footer is not None:
             for item in footer:
                 for cell in item:
-                    cell.isheader = True
+                    cell.isHeader = True
                 self.append(item)

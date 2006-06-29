@@ -7,7 +7,7 @@ C.10.2 The array and tabular Environments
 
 import new, sys
 from plasTeX import Macro, Environment, Command, DimenCommand
-from plasTeX import sourcechildren, sourcearguments
+from plasTeX import sourceChildren, sourceArguments
 
 class ColumnType(Macro):
 
@@ -151,14 +151,14 @@ class Array(Environment):
 
     class ArrayRow(Macro):
         """ Table row class """
-        endtoken = None
+        endToken = None
 
         def digest(self, tokens):
             # Absorb tokens until the end of the row
-            self.endtoken = self.digestUntil(tokens, Array.EndRow)
-            if self.endtoken is not None:
+            self.endToken = self.digestUntil(tokens, Array.EndRow)
+            if self.endToken is not None:
                 tokens.next()
-                self.endtoken.digest(tokens)
+                self.endToken.digest(tokens)
 
         @property
         def source(self):
@@ -173,16 +173,16 @@ class Array(Environment):
             name = self.parentNode.nodeName
             escape = '\\'
             s = []
-            argsource = sourcearguments(self.parentNode)
-            if not argsource: 
-                argsource = ' '
-            s.append('%sbegin{%s}%s' % (escape, name, argsource))
+            argSource = sourceArguments(self.parentNode)
+            if not argSource: 
+                argSource = ' '
+            s.append('%sbegin{%s}%s' % (escape, name, argSource))
             for cell in self:
-                s.append(sourcechildren(cell, par=not(self.parentNode.mathMode)))
-                if cell.endtoken is not None:
-                    s.append(cell.endtoken.source)
-            if self.endtoken is not None:
-                s.append(self.endtoken.source)
+                s.append(sourceChildren(cell, par=not(self.parentNode.mathMode)))
+                if cell.endToken is not None:
+                    s.append(cell.endToken.source)
+            if self.endToken is not None:
+                s.append(self.endToken.source)
             s.append('%send{%s}' % (escape, name))
             return ''.join(s)
 
@@ -217,17 +217,17 @@ class Array(Environment):
 
     class ArrayCell(Macro):
         """ Table cell class """
-        endtoken = None
-        isheader = False
+        endToken = None
+        isHeader = False
 
         def digest(self, tokens):
-            self.endtoken = self.digestUntil(tokens, (Array.CellDelimiter, 
+            self.endToken = self.digestUntil(tokens, (Array.CellDelimiter, 
                                                       Array.EndRow))
-            if isinstance(self.endtoken, Array.CellDelimiter):
+            if isinstance(self.endToken, Array.CellDelimiter):
                 tokens.next()
-                self.endtoken.digest(tokens)
+                self.endToken.digest(tokens)
             else:
-                self.endtoken = None
+                self.endToken = None
 
             # Check for multicols
             hasmulticol = False
@@ -314,7 +314,7 @@ class Array(Environment):
         @property
         def source(self):
             # Don't put paragraphs into math mode arrays
-            return sourcechildren(self, 
+            return sourceChildren(self, 
                        par=not(self.parentNode.parentNode.mathMode))
 
 
@@ -428,8 +428,8 @@ class Array(Environment):
         before = None
         leftborder = None
 
-        tex.pushtoken(Array)
-        tex.pushtokens(colspec)
+        tex.pushToken(Array)
+        tex.pushTokens(colspec)
 
         for tok in tex.itertokens():
             if tok is Array:
@@ -462,7 +462,7 @@ class Array(Environment):
                 num = tex.readArgument(type=int, expanded=True)
                 spec = tex.readArgument()
                 for i in range(num):
-                    tex.pushtokens(spec)
+                    tex.pushTokens(spec)
                 continue
 
             output.append(ColumnType.columnTypes.get(tok, ColumnType)())
@@ -496,18 +496,18 @@ class Array(Environment):
         # If self.childNodes is not empty, print out the entire environment
         if self.macroMode == Macro.MODE_BEGIN:
             s = []
-            argsource = sourcearguments(self)
-            if not argsource: 
-                argsource = ' '
-            s.append('%sbegin{%s}%s' % (escape, name, argsource))
+            argSource = sourceArguments(self)
+            if not argSource: 
+                argSource = ' '
+            s.append('%sbegin{%s}%s' % (escape, name, argSource))
             if self.hasChildNodes():
                 for row in self:
                     for cell in row:
-                        s.append(sourcechildren(cell, par=not(self.mathMode)))
-                        if cell.endtoken is not None:
-                            s.append(cell.endtoken.source)
-                    if row.endtoken is not None:
-                        s.append(row.endtoken.source)
+                        s.append(sourceChildren(cell, par=not(self.mathMode)))
+                        if cell.endToken is not None:
+                            s.append(cell.endToken.source)
+                    if row.endToken is not None:
+                        s.append(row.endToken.source)
                 s.append('%send{%s}' % (escape, name))
             return ''.join(s)
 

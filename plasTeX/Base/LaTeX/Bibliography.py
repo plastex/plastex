@@ -56,9 +56,9 @@ class thebibliography(List):
                 bibcite.citations[key] = label
             return res
 
+        @property
         def id(self):
             return self.attributes['key']
-        id = property(id)
 
         def cite(self):
             res = self.ownerDocument.createDocumentFragment()

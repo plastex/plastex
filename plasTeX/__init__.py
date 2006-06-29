@@ -20,7 +20,7 @@ def subclasses(o):
         output.extend(subclasses(item))
     return output
 
-def sourcechildren(o, par=True): 
+def sourceChildren(o, par=True): 
     """ Return the LaTeX source of the child nodes """
     if o.hasChildNodes():
         if par:
@@ -32,9 +32,9 @@ def sourcechildren(o, par=True):
             return u''.join(source)
     return u''
 
-def sourcearguments(o): 
+def sourceArguments(o): 
     """ Return the LaTeX source of the arguments """
-    return o.argsource
+    return o.argSource
 
 def ismacro(o): 
     """ Is the given object a macro? """
@@ -44,7 +44,7 @@ def issection(o):
     """ Is the given object a section? """
     return o.level >= Node.DOCUMENT_LEVEL and o.level < Node.END_SECTIONS_LEVEL 
 
-def macroname(o):
+def macroName(o):
      """ Return the macro name of the given object """
      if o.macroName is None:
          if type(o) is type:
@@ -118,7 +118,7 @@ class Macro(Element):
     ref = None
 
     # Source of the TeX macro arguments
-    argsource = ''
+    argSource = ''
 
     # LaTeX argument template
     args = ''
@@ -153,65 +153,65 @@ class Macro(Element):
         return locals()
     title = property(**title())
 
-    def fulltitle():
+    def fullTitle():
         """ Retrieve title including the section number """
         def fget(self):
             try:
-                return getattr(self, '@fulltitle')
+                return getattr(self, '@fullTitle')
             except AttributeError:
                 if self.ref is not None:
-                    fulltitle = self.ownerDocument.createDocumentFragment()
-                    fulltitle.extend([self.ref, ' ', self.title])
+                    fullTitle = self.ownerDocument.createDocumentFragment()
+                    fullTitle.extend([self.ref, ' ', self.title])
                 else:
-                    fulltitle = self.title
-                setattr(self, '@fulltitle', fulltitle)
-                return fulltitle
+                    fullTitle = self.title
+                setattr(self, '@fullTitle', fullTitle)
+                return fullTitle
         def fset(self, value):
-            setattr(self, '@fulltitle', value)
+            setattr(self, '@fullTitle', value)
         return locals()
-    fulltitle = property(**fulltitle())
+    fullTitle = property(**fullTitle())
 
-    def tocentry():
+    def tocEntry():
         """ Retrieve table of contents entry """
         def fget(self):
             try:
-                return getattr(self, '@tocentry')
+                return getattr(self, '@tocEntry')
             except AttributeError:
                 try:
                     if self.attributes.has_key('toc'):
                         toc = self.attributes['toc']
                         if toc is None:
                             toc = self.title
-                        setattr(self, '@tocentry', toc)
+                        setattr(self, '@tocEntry', toc)
                         return toc
                 except (KeyError, AttributeError):
                     pass
             return self.title
         def fset(self, value):
-            setattr(self, '@tocentry', value)
+            setattr(self, '@tocEntry', value)
         return locals()
-    tocentry = property(**tocentry())
+    tocEntry = property(**tocEntry())
 
-    def fulltocentry():
+    def fullTocEntry():
         """ Retrieve title including the section number """
         def fget(self):
             try:
                 try:
-                    return getattr(self, '@fulltocentry')
+                    return getattr(self, '@fullTocEntry')
                 except AttributeError:
                     if self.ref is not None:
-                        fulltocentry = self.ownerDocument.createDocumentFragment()
-                        fulltocentry.extend([self.ref, ' ', self.tocentry])
+                        fullTocEntry = self.ownerDocument.createDocumentFragment()
+                        fullTocEntry.extend([self.ref, ' ', self.tocEntry])
                     else:
-                        fulltocentry = self.tocentry
-                    setattr(self, '@fulltocentry', fulltocentry)
-                    return fulltocentry
+                        fullTocEntry = self.tocEntry
+                    setattr(self, '@fullTocEntry', fullTocEntry)
+                    return fullTocEntry
             except Exception, msg:
                 return self.title
         def fset(self, value):
-            setattr(self, '@fulltocentry', value)
+            setattr(self, '@fullTocEntry', value)
         return locals()
-    fulltocentry = property(**fulltocentry())
+    fullTocEntry = property(**fullTocEntry())
 
     @property
     def style(self):
@@ -241,7 +241,7 @@ class Macro(Element):
         for cls in mro:
             for value in vars(cls).values():
                 if ismacro(value):
-                    loc[macroname(value)] = value
+                    loc[macroName(value)] = value
         # Cache the locals in a unique name
         setattr(tself, localsname, loc)
         return loc
@@ -262,7 +262,7 @@ class Macro(Element):
         result = self.invoke(tex)
         if result is None:
             return self
-        return tex.expandtokens(result)
+        return tex.expandTokens(result)
 
     def invoke(self, tex):
         # Just pop the context if this is a \end token
@@ -270,7 +270,7 @@ class Macro(Element):
             self.ownerDocument.context.pop(self)
             # If a unicode value is set, just return that
 #           if self.unicode is not None:
-#               return tex.texttokens(self.unicode)
+#               return tex.textTokens(self.unicode)
             return
 
         # If this is a \begin token or the element needs to be
@@ -281,7 +281,7 @@ class Macro(Element):
             self.parse(tex)
             # If a unicode value is set, just return that
 #           if self.unicode is not None:
-#               return tex.texttokens(self.unicode)
+#               return tex.textTokens(self.unicode)
             self.setLinkType()
             return
 
@@ -295,7 +295,7 @@ class Macro(Element):
 
         # If a unicode value is set, just return that
 #       if self.unicode is not None:
-#           return tex.texttokens(self.unicode)
+#           return tex.textTokens(self.unicode)
 
         self.setLinkType()
 
@@ -320,12 +320,13 @@ class Macro(Element):
                 for k in key:
                     userdata['links'][k] = self
 
+    @property
     def tagName(self):
         t = type(self)
         if t.macroName is None:
             return t.__name__
         return t.macroName
-    nodeName = tagName = property(tagName)
+    nodeName = tagName
 
     @property
     def source(self):
@@ -340,31 +341,31 @@ class Macro(Element):
         # \begin environment
         # If self.childNodes is not empty, print out the entire environment
         if self.macroMode == Macro.MODE_BEGIN:
-            argsource = sourcearguments(self)
-            if not argsource: 
-                argsource = ' '
-            s = '%sbegin{%s}%s' % (escape, name, argsource)
+            argSource = sourceArguments(self)
+            if not argSource: 
+                argSource = ' '
+            s = '%sbegin{%s}%s' % (escape, name, argSource)
             if self.hasChildNodes():
-                s += '%s%send{%s}' % (sourcechildren(self), escape, name)
+                s += '%s%send{%s}' % (sourceChildren(self), escape, name)
             return s
 
         # \end environment
         if self.macroMode == Macro.MODE_END:
             return '%send{%s}' % (escape, name)
 
-        argsource = sourcearguments(self)
-        if not argsource:
-            argsource = ' '
-        elif argsource[0] in string.letters:
-            argsource = ' %s' % argsource
-        s = '%s%s%s' % (escape, name, argsource)
+        argSource = sourceArguments(self)
+        if not argSource:
+            argSource = ' '
+        elif argSource[0] in string.letters:
+            argSource = ' %s' % argSource
+        s = '%s%s%s' % (escape, name, argSource)
 
         # If self.childNodes is not empty, print out the contents
         if self.attributes and self.attributes.has_key('self'):
             pass
         else:
             if self.hasChildNodes():
-                s += sourcechildren(self)
+                s += sourceChildren(self)
         return s
 
     def parse(self, tex): 
@@ -381,34 +382,34 @@ class Macro(Element):
         if self.macroMode == Macro.MODE_END:
             return
 
-        self.preparse(tex)
+        self.preParse(tex)
 
         # args is empty, don't parse
         if not self.args:
-            self.postparse(tex)
+            self.postParse(tex)
             return
 
-        self.argsource = ''
+        self.argSource = ''
         arg = None
         try:
             for arg in self.arguments:
-                self.preargument(arg, tex)
+                self.preArgument(arg, tex)
                 output, source = tex.readArgumentAndSource(parentNode=self, 
                                                            name=arg.name, 
                                                            **arg.options)
-                self.argsource += source
+                self.argSource += source
                 self.attributes[arg.name] = output
-                self.postargument(arg, output, tex)
+                self.postArgument(arg, output, tex)
         except:
             raise
             log.error('Error while parsing argument "%s" of "%s"' % 
                        (arg.name, self.nodeName))
 
-        self.postparse(tex)
+        self.postParse(tex)
 
         return self.attributes
 
-    def preparse(self, tex):
+    def preParse(self, tex):
         """
         Do operations that must be done immediately before parsing arguments
 
@@ -419,7 +420,7 @@ class Macro(Element):
         if not self.args:
             self.refstepcounter(tex)
 
-    def preargument(self, arg, tex):
+    def preArgument(self, arg, tex):
         """ 
         Event called before parsing each argument
 
@@ -436,7 +437,7 @@ class Macro(Element):
         if arg.index == 0 and arg.name != '*modifier*':
             self.refstepcounter(tex)
 
-    def postargument(self, arg, value, tex):
+    def postArgument(self, arg, value, tex):
         """ 
         Event called after parsing each argument
 
@@ -482,7 +483,7 @@ class Macro(Element):
             self.ownerDocument.context.currentlabel = self
             self.stepcounter(tex)
 
-    def postparse(self, tex):
+    def postParse(self, tex):
         """
         Do operations that must be done immediately after parsing arguments
 
@@ -706,7 +707,7 @@ class TeXFragment(DocumentFragment):
     """ Document fragment node """
     @property
     def source(self):
-        return sourcechildren(self)
+        return sourceChildren(self)
 
 class TeXDocument(Document):
     """ TeX Document node """
@@ -768,7 +769,7 @@ class TeXDocument(Document):
     @property
     def source(self):
         """ Return the LaTeX source of the document """
-        return sourcechildren(self)
+        return sourceChildren(self)
 
 class Command(Macro): 
     """ Base class for all Python-based LaTeX commands """
@@ -782,7 +783,7 @@ class Environment(Macro):
             self.ownerDocument.context.pop(self)
             # If a unicode value is set, just return that
             if self.unicode is not None:
-                return tex.texttokens(self.unicode)
+                return tex.textTokens(self.unicode)
             return
 
         self.ownerDocument.context.push(self)
@@ -790,7 +791,7 @@ class Environment(Macro):
 
         # If a unicode value is set, just return that
         if self.unicode is not None:
-            return tex.texttokens(self.unicode)
+            return tex.textTokens(self.unicode)
 
         self.setLinkType()
 
@@ -893,7 +894,7 @@ class IfFalse(Macro):
         type(self).ifclass.setFalse()
         return []
 
-def expanddef(definition, params):
+def expandDef(definition, params):
     # Walk through the definition and expand parameters
     if not definition:
         return []
@@ -953,7 +954,7 @@ class NewCommand(Macro):
 
         deflog.debug2('expanding %s %s', self.definition, params)
 
-        return expanddef(self.definition, params)
+        return expandDef(self.definition, params)
 
 class Definition(Macro):
     """ Superclass for all \\def-type commands """
@@ -963,11 +964,11 @@ class Definition(Macro):
     def invoke(self, tex):
         if not self.args: return self.definition
 
-        name = macroname(self)
-        argiter = iter(self.args)
+        name = macroName(self)
+        argIter = iter(self.args)
         inparam = False
         params = [None]
-        for a in argiter:
+        for a in argIter:
 
             # Beginning a new parameter
             if a.catcode == Token.CC_PARAMETER:
@@ -978,7 +979,7 @@ class Definition(Macro):
                                                    name='#%s' % len(params)))
 
                 # Get the parameter number
-                for a in argiter:
+                for a in argIter:
                     # Numbered parameter
                     if a in string.digits:
                         inparam = True
@@ -988,7 +989,7 @@ class Definition(Macro):
                         param = []
                         for t in tex.itertokens():
                             if t.catcode == Token.CC_BGROUP:
-                                tex.pushtoken(t)
+                                tex.pushToken(t)
                             else:
                                 param.append(t)
                         inparam = False
@@ -1025,7 +1026,7 @@ class Definition(Macro):
 
         deflog.debug2('expanding %s %s', self.definition, params)
 
-        return expanddef(self.definition, params)
+        return expandDef(self.definition, params)
 
 
 class number(int):
@@ -1096,6 +1097,7 @@ class dimen(float):
                 raise ValueError, 'Unrecognized units: %s' % units
         return float.__new__(cls, v)
 
+    @property
     def source(self):
         sign = 1
         if self < 0:
@@ -1107,52 +1109,63 @@ class dimen(float):
         if abs(self) >= 2e9:
             return unicode(sign * (abs(self)-2e9)) + 'fil'
         return '%spt' % self.pt
-    source = property(source)
 
+    @property
     def pt(self): 
         return self / 65536
-    point = pt = property(pt)
+    point = pt
 
+    @property
     def pc(self): 
         return self / (12 * 65536)
-    pica = pc = property(pc)
+    pica = pc
 
+    @property
     def _in(self): 
         return self / (72.27 * 65536)
-    inch = _in = property(_in)
+    inch = _in
 
+    @property
     def bp(self): 
         return self / ((72.27 * 65536) / 72)
-    bigpoint = bp = property(bp)
+    bigpoint = bp
 
+    @property
     def cm(self): 
         return self / ((72.27 * 65536) / 2.54)
-    centimeter = cm = property(cm)
+    centimeter = cm
 
+    @property
     def mm(self): 
         return self / ((72.27 * 65536) / 25.4)
-    millimeter = mm = property(mm)
+    millimeter = mm
 
+    @property
     def dd(self): 
         return self / ((1238 * 65536) / 1157)
-    didotpoint = dd = property(dd)
+    didotpoint = dd
 
+    @property
     def cc(self): 
         return self / ((1238 * 12 * 65536) / 1157)
-    cicero = cc = property(cc)
+    cicero = cc
 
+    @property
     def sp(self): 
         return self
-    scaledpoint = sp = property(sp)
+    scaledpoint = sp
 
+    @property
     def ex(self): 
         return self / (5 * 65536)
-    xheight = ex = property(ex)
+    xheight = ex
 
+    @property
     def em(self): 
         return self / (11 * 65536)
-    mwidth = em = property(em)
+    mwidth = em
 
+    @property
     def fill(self):
         sign = 1
         if self < 0:
@@ -1164,7 +1177,7 @@ class dimen(float):
         if abs(self) >= 2e9:
             return sign * (abs(self)-2e9)
         raise ValueError, 'This is not a fil(ll) dimension'
-    fil = fill = filll = property(fill)
+    fil = filll = fill
 
     def __repr__(self):
         return self.source
@@ -1189,6 +1202,7 @@ class glue(dimen):
         if minus is not None:
             self.shrink = dimen(minus)
 
+    @property
     def source(self):
         s = [dimen(self).source]
         if self.stretch is not None:
@@ -1198,7 +1212,6 @@ class glue(dimen):
             s.append('minus')
             s.append(self.shrink.source)
         return ' '.join(s)
-    source = property(source)
 
 class muglue(glue): 
     """ Class used for muglue values """
@@ -1352,6 +1365,7 @@ class Counter(object):
     def arabic(self):
         return unicode(self.value)
 
+    @property
     def Roman(self):
         roman = ""
         n, number = divmod(self.value, 1000)
@@ -1393,23 +1407,22 @@ class Counter(object):
             roman = roman + "I"
             number = number - 1
         return roman
-    Roman = property(Roman)
 
+    @property
     def roman(self):
         return self.Roman.lower()
-    roman = property(roman)
 
+    @property
     def Alph(self):
         return string.letters[self.value-1].upper()
-    Alph = property(Alph)
 
+    @property
     def alph(self):
         return self.Alph.lower()
-    alph = property(alph)
 
+    @property
     def fnsymbol(self):
         return '*' * self.value
-    fnsymbol = property(fnsymbol)
 
 
 class TheCounter(Command):
@@ -1418,7 +1431,7 @@ class TheCounter(Command):
 
     def invoke(self, tex):
 
-        def countervalue(m):
+        def counterValue(m):
             """ Replace the counter values """
             name = m.group(1)
 
@@ -1437,5 +1450,5 @@ class TheCounter(Command):
         if self.format is None:
             format = '${%s.arabic}' % self.nodeName[3:]
 
-        return tex.texttokens(re.sub(r'\$\{\s*(\w+)(?:\.(\w+))?\s*\}', 
-                                     countervalue, format))
+        return tex.textTokens(re.sub(r'\$\{\s*(\w+)(?:\.(\w+))?\s*\}', 
+                                     counterValue, format))

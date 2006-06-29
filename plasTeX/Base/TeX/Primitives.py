@@ -3,7 +3,7 @@
 import codecs
 from plasTeX.Tokenizer import Token, EscapeSequence
 from plasTeX import Command, Environment, CountCommand
-from plasTeX import IgnoreCommand, sourcechildren
+from plasTeX import IgnoreCommand, sourceChildren
 from plasTeX.Logging import getLogger
 
 log = getLogger()
@@ -31,7 +31,7 @@ class par(Command):
     @property
     def source(self): 
         if self.hasChildNodes():
-            return '%s\n\n' % sourcechildren(self)
+            return '%s\n\n' % sourceChildren(self)
         return '\n\n'
 
     def digest(self, tokens):
@@ -48,9 +48,9 @@ class BoxCommand(Command):
     args = 'self'
     mathMode = False
     def parse(self, tex):
-        MathShift.inenv.append(None)
+        MathShift.inEnv.append(None)
         Command.parse(self, tex) 
-        MathShift.inenv.pop()
+        MathShift.inEnv.pop()
         return self.attributes
 
 class hbox(BoxCommand): pass
@@ -66,7 +66,7 @@ class MathShift(Command):
 
     """
     macroName = 'active::$'
-    inenv = []
+    inEnv = []
 
     def invoke(self, tex):
         """
@@ -75,13 +75,13 @@ class MathShift(Command):
         account \mbox{}es.
 
         """
-        inenv = type(self).inenv
+        inEnv = type(self).inEnv
         math = self.ownerDocument.createElement('math')
         displaymath = self.ownerDocument.createElement('displaymath')
 
         # See if this is the end of the environment
-        if inenv and inenv[-1] is not None:
-            env = inenv.pop()
+        if inEnv and inEnv[-1] is not None:
+            env = inEnv.pop()
             if type(env) is type(displaymath):
                 for t in tex.itertokens():
                     break
@@ -95,13 +95,13 @@ class MathShift(Command):
 
         for t in tex.itertokens():
             if t.catcode == Token.CC_MATHSHIFT:
-                inenv.append(displaymath)
+                inEnv.append(displaymath)
             else:
-                inenv.append(math)
-                tex.pushtoken(t)
+                inEnv.append(math)
+                tex.pushToken(t)
             break
 
-        current = inenv[-1]
+        current = inEnv[-1]
         mathshiftlog.debug('%s (%s)' % (current.tagName, id(current)))
         self.ownerDocument.context.push(current)
 
@@ -118,7 +118,7 @@ class SuperScript(Command):
     def invoke(self, tex):
         # If we're not in math mode, just treat this as a normal character
         if not self.ownerDocument.context.isMathMode:
-            return tex.texttokens('^')
+            return tex.textTokens('^')
         Command.parse(self, tex)
 
 class SubScript(Command):
@@ -128,7 +128,7 @@ class SubScript(Command):
     def invoke(self, tex):
         # If we're not in math mode, just treat this as a normal character
         if not self.ownerDocument.context.isMathMode:
-            return tex.texttokens('_')
+            return tex.textTokens('_')
         Command.parse(self, tex)
 
 class DefCommand(Command):
@@ -327,7 +327,7 @@ class char(Command):
     """ \\char """
     args = 'char:Number'
     def invoke(self, tex):
-        return tex.texttokens(chr(self.parse(tex)['char']))
+        return tex.textTokens(chr(self.parse(tex)['char']))
 
 class chardef(Command):
     args = 'command:cs = num:Number'
@@ -390,7 +390,7 @@ class input(Command):
 
 class endinput(Command):
     def invoke(self, tex):
-        tex.endinput()
+        tex.endInput()
 
 class include(input):
     """ \\include """
@@ -442,8 +442,8 @@ class expandafter(Command):
         for tok in tex:
             aftertok = tok
             break
-        tex.pushtoken(aftertok)
-        tex.pushtoken(nexttok)
+        tex.pushToken(aftertok)
+        tex.pushToken(nexttok)
         return []
 
 class vskip(Command):

@@ -16,7 +16,7 @@ try:
 except ImportError:
     PILImage = PILImageChops = None
 
-def autocrop(im, bgcolor=None, margin=0):
+def autoCrop(im, bgcolor=None, margin=0):
     """
     Automatically crop image down to non-background portion
 
@@ -145,13 +145,13 @@ class DimensionPlaceholder(str):
     for the dimension.
 
     """
-    imageunits = ''
+    imageUnits = ''
     def __getattribute__(self, name):
         if name in ['in','ex','em','pt','px','mm','cm','pc']:
             if not self:
                 return self
             vars = {'units':name}
-            return self + string.Template(self.imageunits).substitute(vars)
+            return self + string.Template(self.imageUnits).substitute(vars)
         return str.__getattribute__(self, name)
     def __setattribute__(self, name, value):
         if name in ['in','ex','em','pt','px','mm','cm','pc']:
@@ -169,7 +169,7 @@ class Image(object):
         self.height = height
         self.alt = alt
         self.depth = depth
-        self.depthratio = 0
+        self.depthRatio = 0
         self.longdesc = longdesc 
         self.config = config
         self._cropped = False
@@ -257,7 +257,7 @@ class Image(object):
         padbaseline = self.config['baseline-padding']
 
         try:
-            im, self.depth = self._stripbaseline(PILImage.open(self.path), 
+            im, self.depth = self._stripBaseline(PILImage.open(self.path), 
                                              padbaseline)
             self.width, self.height = im.size
         except IOError, msg:
@@ -276,10 +276,10 @@ class Image(object):
     def __repr__(self):
         return self.filename
 
-    def _autocrop(self, im, bgcolor=None, margin=0):
-        return autocrop(im, bgcolor, margin)
+    def _autoCrop(self, im, bgcolor=None, margin=0):
+        return autoCrop(im, bgcolor, margin)
 
-    def _stripbaseline(self, im, padbaseline=0):
+    def _stripBaseline(self, im, padbaseline=0):
         """
         Find the baseline register mark and crop it out
 
@@ -311,7 +311,7 @@ class Image(object):
         background = im.getpixel((0,0))
 
         # Crop the image so that the regitration mark is on the left edge
-        im = self._autocrop(im)[0]
+        im = self._autoCrop(im)[0]
 
         width, height = im.size
 
@@ -336,10 +336,10 @@ class Image(object):
         if bbox is None or rwidth == (width-1):
             return PILImage.new("RGB", (1,1), background), 0
 
-        # Crop out register mark, and autocrop result
+        # Crop out register mark, and autoCrop result
         bbox = list(bbox)
         bbox[0] = rwidth
-        im, cropped = self._autocrop(im.crop(bbox), background)
+        im, cropped = self._autoCrop(im.crop(bbox), background)
 
         # If the content was entirely above the baseline, 
         # we need to keep that whitespace
@@ -370,10 +370,10 @@ class Imager(object):
     # Verification command to determine if the imager is available
     verification = ''
 
-    fileextension = '.png'
+    fileExtension = '.png'
 
-    imageattrs = ''
-    imageunits = ''
+    imageAttrs = ''
+    imageUnits = ''
 
     def __init__(self, document):
         self.config = document.config['images']
@@ -397,17 +397,17 @@ class Imager(object):
         self.staticimages = ordereddict()
 
         # Filename generator
-        self.newfilename = Filenames(self.config.get('filenames', raw=True), 
+        self.newFilename = Filenames(self.config.get('filenames', raw=True), 
                            vars={'jobname':document.userdata.get('jobname','')},
-                           extension=self.fileextension, invalid=usednames)
+                           extension=self.fileExtension, invalid=usednames)
 
         # Start the document with a preamble
         self.source = StringIO()
         self.source.write('\\scrollmode\n')
-        self.writepreamble(document)
+        self.writePreamble(document)
         self.source.write('\\begin{document}\n')
 
-    def writepreamble(self, document):
+    def writePreamble(self, document):
         """ Write any necessary code to the preamble of the document """
         self.source.write(document.preamble.source)
         self.source.write('\\makeatletter\n')
@@ -434,6 +434,10 @@ class Imager(object):
         if self.verification:
             if not os.system('%s >/dev/null 2>/dev/null' % self.verification):
                 return True
+            return False
+
+        if not self.command.strip():
+            return False
 
         cmd = self.command.split()[0]
 
@@ -472,7 +476,7 @@ class Imager(object):
 
         # Compile LaTeX source, then convert the output
         self.source.seek(0)
-        self.convert(self.compilelatex(self.source.read()))
+        self.convert(self.compileLatex(self.source.read()))
 
         for value in self._cache.values():
             if value.checksum is None and os.path.isfile(value.path):
@@ -482,7 +486,7 @@ class Imager(object):
             os.makedirs(os.path.dirname(self._filecache))
         pickle.dump(self._cache, open(self._filecache,'w'))
 
-    def compilelatex(self, source):
+    def compileLatex(self, source):
         """
         Compile the LaTeX source
 
@@ -526,7 +530,7 @@ class Imager(object):
 
         return output
 
-    def executeconverter(self, output):
+    def executeConverter(self, output):
         """ 
         Execute the actual image converter 
 
@@ -551,7 +555,7 @@ class Imager(object):
         output -- output file object
 
         """
-        if not self.command and self.executeconverter is Imager.executeconverter:
+        if not self.command and self.executeConverter is Imager.executeConverter:
             log.warning('No imager command is configured.  ' +
                         'No images will be created.')
             return
@@ -563,7 +567,7 @@ class Imager(object):
         os.chdir(tempdir)
 
         # Execute converter
-        rc, images = self.executeconverter(output)
+        rc, images = self.executeConverter(output)
         if rc:
             log.warning('Image converter did not exit properly.  ' +
                         'Images may be corrupted or missing.')
@@ -604,7 +608,7 @@ class Imager(object):
         # Remove temporary directory
         shutil.rmtree(tempdir, True)
 
-    def writeimage(self, filename, code, context):
+    def writeImage(self, filename, code, context):
         """
         Write LaTeX source for the image
 
@@ -616,7 +620,7 @@ class Imager(object):
         """
         self.source.write('%s\n\\begin{plasTeXimage}{%s}\n%s\n\\end{plasTeXimage}\n' % (context, filename, code))
 
-    def newimage(self, text, context='', filename=None):
+    def newImage(self, text, context='', filename=None):
         """ 
         Invoke a new image 
 
@@ -644,29 +648,29 @@ class Imager(object):
             
         # Generate a filename
         if not filename:
-            filename = self.newfilename()
+            filename = self.newFilename()
 
         # Add the image to the current document and cache
         #log.debug('Creating %s from %s', filename, text)
-        self.writeimage(filename, text, context)
+        self.writeImage(filename, text, context)
 
         img = Image(filename, self.config)
 
         # Populate image attrs that will be bound later
-        if self.imageattrs:
-            tmpl = string.Template(self.imageattrs)
+        if self.imageAttrs:
+            tmpl = string.Template(self.imageAttrs)
             vars = {'filename':filename}
             for name in ['height','width','depth']:
                 if getattr(img, name) is None:
                     vars['attr'] = name
                     value = DimensionPlaceholder(tmpl.substitute(vars))
-                    value.imageunits = self.imageunits
+                    value.imageUnits = self.imageUnits
                     setattr(img, name, value)
     
         self.images[filename] = self._cache[key] = img
         return img
 
-    def getimage(self, node):
+    def getImage(self, node):
         """
         Get an image from the given node whatever way possible
 
@@ -685,13 +689,13 @@ class Imager(object):
         """
         name = getattr(node, 'imageoverride', None)
         if name is None:
-            return self.newimage(node.source)
+            return self.newImage(node.source)
 
         if name in self.staticimages:
             return self.staticimages[name]
 
         # Copy or convert the image as needed
-        path = self.newfilename()
+        path = self.newFilename()
         newext = os.path.splitext(path)[-1]
         oldext = os.path.splitext(name)[-1]
         try:
@@ -701,14 +705,14 @@ class Imager(object):
 
             # If PIL isn't available or no conversion is necessary, 
             # just copy the image to the new location
-            if newext == oldext or oldext in self.imagetypes:
+            if newext == oldext or oldext in self.imageTypes:
                 path = os.path.splitext(path)[0] + os.path.splitext(name)[-1]
                 shutil.copyfile(name, path)
                 if PILImage is None:
-                    tmpl = string.Template(self.imageattrs)
+                    tmpl = string.Template(self.imageAttrs)
                     width = DimensionPlaceholder(tmpl.substitute({'filename':path, 'attr':'width'}))
                     height = DimensionPlaceholder(tmpl.substitute({'filename':path, 'attr':'height'}))
-                    height.imageunits = width.imageunits = self.imageunits
+                    height.imageUnits = width.imageUnits = self.imageUnits
                 else:
                     img = PILImage.open(name)
                     width, height = img.size
@@ -725,14 +729,14 @@ class Imager(object):
         except Exception, msg:
             log.warning(msg)
 
-        return self.newimage(img.source)
+        return self.newImage(img.source)
 
 
 class VectorImager(Imager):
-    fileextension = '.svg'
+    fileExtension = '.svg'
 
-    def writepreamble(self, document):
-        Imager.writepreamble(self, document)
+    def writePreamble(self, document):
+        Imager.writePreamble(self, document)
 #       self.source.write('\\usepackage{type1ec}\n')
         self.source.write('\\def\\plasTeXregister{}\n')
 

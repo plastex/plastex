@@ -30,14 +30,14 @@ class value(Command):
     args = 'name:str'
     def invoke(self, tex):
         a = self.parse(tex)
-        return tex.texttokens(self.ownerDocument.context.counters[a['name']].arabic)
+        return tex.textTokens(self.ownerDocument.context.counters[a['name']].arabic)
 
 class arabic(Command):
     """ Return arabic representation """
     args = 'name:str'
     def invoke(self, tex):
         a = self.parse(tex)
-        return tex.texttokens(self.ownerDocument.context.counters[a['name']].arabic)
+        return tex.textTokens(self.ownerDocument.context.counters[a['name']].arabic)
 
 class Roman(Command):
     """ Return uppercase roman representation """
@@ -83,33 +83,33 @@ class Roman(Command):
         while number > 0:
             roman = roman + "I"
             number = number - 1
-        return tex.texttokens(roman)
+        return tex.textTokens(roman)
 
 class roman(Roman):
     """ Return the lowercase roman representation """
     def invoke(self, tex):
         a = self.parse(tex)
-        return tex.texttokens(self.ownerDocument.context.counters[a['name']].roman)
+        return tex.textTokens(self.ownerDocument.context.counters[a['name']].roman)
 
 class Alph(Command):
     """ Return the uppercase letter representation """
     args = 'name:str'
     def invoke(self, tex):
         a = self.parse(tex)
-        return tex.texttokens(self.ownerDocument.context.counters[a['name']].Alph)
+        return tex.textTokens(self.ownerDocument.context.counters[a['name']].Alph)
 
 class alph(Alph):
     """ Return the lowercase letter representation """
     def invoke(self, tex):
         a = self.parse(tex)
-        return tex.texttokens(self.ownerDocument.context.counters[a['name']].alph)
+        return tex.textTokens(self.ownerDocument.context.counters[a['name']].alph)
 
 class fnsymbol(Command):
     """ Return the symbol representation """
     args = 'name:str'
     def invoke(self, tex):
         a = self.parse(tex)
-        return tex.texttokens(self.ownerDocument.context.counters[a['name']].fnsymbol)
+        return tex.textTokens(self.ownerDocument.context.counters[a['name']].fnsymbol)
 
 class stepcounter(Command):
     args = 'name:str'

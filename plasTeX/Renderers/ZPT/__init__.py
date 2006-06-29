@@ -122,10 +122,10 @@ def copytree(src, dest, symlink=None):
 class ZPT(BaseRenderer):
     """ Renderer for XHTML documents """
 
-    outputtype = unicode
-    fileextension = '.xml'
+    outputType = unicode
+    fileExtension = '.xml'
 
-    def textdefault(self, node):
+    def textDefault(self, node):
         """ 
         Default renderer for text nodes 
 
@@ -399,7 +399,7 @@ class ZPT(BaseRenderer):
         filename, parameter, units = m.group(1), m.group(2), m.group(3)
 
         try:
-            img = self.imager.images.get(filename, self.vectorimager.images.get(filename, self.imager.staticimages.get(filename)))
+            img = self.imager.images.get(filename, self.vectorImager.images.get(filename, self.imager.staticimages.get(filename)))
             if img is not None and getattr(img, parameter) is not None:
                 if units:
                     return getattr(getattr(img, parameter), units)

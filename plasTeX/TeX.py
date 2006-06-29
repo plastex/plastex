@@ -68,7 +68,7 @@ class TeX(object):
         self.inputs = []
 
         # Auxiliary files loaded
-        self.auxfiles = []
+        self.auxFiles = []
 
         # TeX arguments types and their casting functions
         self.argtypes = {
@@ -105,7 +105,7 @@ class TeX(object):
         }
 
         # Starting parsing if a source was given
-        self.currentinput = (0,0)
+        self.currentInput = (0,0)
 
         if file is not None:
 
@@ -134,10 +134,10 @@ class TeX(object):
             return
         t = Tokenizer(source, self.ownerDocument.context)
         self.inputs.append((t, iter(t)))
-        self.currentinput = self.inputs[-1]
+        self.currentInput = self.inputs[-1]
         return self
 
-    def endinput(self):
+    def endInput(self):
         """ 
         Pop the most recent input source from the stack 
 
@@ -145,7 +145,7 @@ class TeX(object):
         if self.inputs:
             self.inputs.pop()
         if self.inputs:
-            self.currentinput = self.inputs[-1]
+            self.currentInput = self.inputs[-1]
 
     def loadPackage(self, file, options={}):
         """
@@ -176,7 +176,7 @@ class TeX(object):
             # package tokens and throw them away, we don't want them in
             # the output document.
             flag = plasTeX.Command()
-            self.pushtoken(flag)
+            self.pushToken(flag)
             encoding = config['files']['input-encoding']
             self.input(f)
             self.ownerDocument.context.packages[file] = options or {}
@@ -198,15 +198,15 @@ class TeX(object):
 
     @property
     def filename(self):
-        return self.currentinput[0].filename
+        return self.currentInput[0].filename
 
     @property
-    def linenumber(self):
-        return self.currentinput[0].linenumber
+    def lineNumber(self):
+        return self.currentInput[0].lineNumber
 
     @property
-    def lineinfo(self):
-        return ' in %s on line %s' % (self.filename, self.linenumber)
+    def lineInfo(self):
+        return ' in %s on line %s' % (self.filename, self.lineNumber)
 
     @staticmethod
     def disableLogging():
@@ -224,7 +224,7 @@ class TeX(object):
         # Create locals before going into generator loop
         inputs = self.inputs
         context = self.ownerDocument.context
-        endinput = self.endinput
+        endInput = self.endInput
         ownerDocument = self.ownerDocument
 
         while inputs:
@@ -239,7 +239,7 @@ class TeX(object):
                     yield t
 
             except StopIteration:
-                endinput()
+                endInput()
 
             # This really shouldn't happen, but just in case...
             except IndexError:
@@ -255,8 +255,8 @@ class TeX(object):
         """
         # Cache variables before starting the generator
         next = self.itertokens().next
-        pushtoken = self.pushtoken
-        pushtokens = self.pushtokens
+        pushToken = self.pushToken
+        pushTokens = self.pushTokens
         createElement = self.ownerDocument.createElement
         ELEMENT_NODE = Macro.ELEMENT_NODE
 
@@ -286,16 +286,16 @@ class TeX(object):
                     tokens = obj.invoke(self)
                     if tokens is None:
 #                       log.info('expanding %s %s', token.macroName, obj)
-                        pushtoken(obj)
+                        pushToken(obj)
                     elif tokens:
 #                       log.info('expanding %s %s', token.macroName, ''.join([x.source for x in tokens]))
-                        pushtokens(tokens)
+                        pushTokens(tokens)
                     continue
                 except Exception, msg:
                     if str(msg).strip():
                         msg = ' (%s)' % str(msg).strip()
                     log.error('Error while expanding "%s"%s%s',
-                              token.macroName, self.lineinfo, msg)
+                              token.macroName, self.lineInfo, msg)
                     raise
 
 #           tokenlog.debug('%s: %s', type(token), token.ownerDocument)
@@ -325,7 +325,7 @@ class TeX(object):
         if hasattr(self, '_endcontext'):
             self.ownerDocument.context.pop(self._endcontext)
 
-    def expandtokens(self, tokens, normalize=False):
+    def expandTokens(self, tokens, normalize=False):
         """
         Expand a list of unexpanded tokens
 
@@ -342,7 +342,7 @@ class TeX(object):
         tex = self.createSubProcess()
 
         # Push the tokens and expand them
-        tex.pushtokens(tokens)
+        tex.pushTokens(tokens)
         out = tex.parse(tex.ownerDocument.createDocumentFragment())
 
         # Pop all of our nested contexts off
@@ -380,12 +380,12 @@ class TeX(object):
         except Exception, msg:
             if str(msg).strip():
                msg = ' (%s)' % str(msg).strip()
-            log.error('An error occurred while building the document object%s%s', self.lineinfo, msg)
+            log.error('An error occurred while building the document object%s%s', self.lineInfo, msg)
             raise
 
         return output
 
-    def texttokens(self, text):
+    def textTokens(self, text):
         """
         Return a list of `Other` tokens from a string
 
@@ -395,7 +395,7 @@ class TeX(object):
         """
         return [Other(x) for x in unicode(text)]
 
-    def pushtoken(self, token):
+    def pushToken(self, token):
         """
         Push a token back into the token buffer to be re-read
 
@@ -409,9 +409,9 @@ class TeX(object):
             if not self.inputs:
                 self.input([token])
             else:
-                self.inputs[-1][0].pushtoken(token)
+                self.inputs[-1][0].pushToken(token)
 
-    def pushtokens(self, tokens):
+    def pushTokens(self, tokens):
         """
         Push a list of tokens back into the token buffer to be re-read
 
@@ -423,7 +423,7 @@ class TeX(object):
             if not self.inputs:
                 self.input(tokens)
             else:
-                self.inputs[-1][0].pushtokens(tokens)
+                self.inputs[-1][0].pushTokens(tokens)
 
     def source(self, tokens):
         """
@@ -455,7 +455,7 @@ class TeX(object):
             return tokens
 
         grouptokens = [Token.CC_EGROUP, Token.CC_BGROUP]
-        texttokens = [Token.CC_LETTER, Token.CC_OTHER, 
+        textTokens = [Token.CC_LETTER, Token.CC_OTHER, 
                       Token.CC_EGROUP, Token.CC_BGROUP, 
                       Token.CC_SPACE]
 
@@ -473,7 +473,7 @@ class TeX(object):
                 t.extend(tokens)
                 t.normalize(getattr(self.ownerDocument, 'charsubs', []))
                 return t
-            if t.catcode not in texttokens:
+            if t.catcode not in textTokens:
                 if len(tokens) == 1:
                     return tokens.pop()
                 t = self.ownerDocument.createDocumentFragment()
@@ -630,7 +630,7 @@ class TeX(object):
             self.ownerDocument.context.warnOnUnrecognized = False
             for t in self.itertokens():
                 if t.catcode == Token.CC_BGROUP:
-                    self.pushtoken(t)
+                    self.pushToken(t)
                     toks, source = self.readToken(True)
                     if len(toks) == 1:
                         ParameterCommand.enable()
@@ -638,7 +638,7 @@ class TeX(object):
                     ParameterCommand.enable()
                     return toks, source
                 else:
-                    toks = self.expandtokens([t])
+                    toks = self.expandTokens([t])
                     if len(toks) == 1:
                         ParameterCommand.enable()
                         return toks[0], toks[0].source
@@ -650,7 +650,7 @@ class TeX(object):
             args = []
             for t in self.itertokens():
                 if t.catcode == Token.CC_BGROUP:
-                    self.pushtoken(t)
+                    self.pushToken(t)
                     break
                 else:
                     args.append(t) 
@@ -666,7 +666,7 @@ class TeX(object):
                 if t.catcode == Token.CC_SPACE:
                     break 
                 toks.append(t)
-            return self.expandtokens(toks), self.source(toks)
+            return self.expandTokens(toks), self.source(toks)
 
         if type in ['cs']:
             expanded = False
@@ -691,7 +691,7 @@ class TeX(object):
 
         except Exception, msg:
             log.error('Error while reading argument "%s" of %s%s (%s)' % \
-                          (name, parentNode.nodeName, self.lineinfo, msg))
+                          (name, parentNode.nodeName, self.lineInfo, msg))
             raise 
 
         if toks is None:
@@ -757,18 +757,18 @@ class TeX(object):
             if expanded:
 
                 # If we only get back a single token that is an escape sequence
-                # go ahead and expand it.  If we let self.expandtokens do it
+                # go ahead and expand it.  If we let self.expandTokens do it
                 # it won't work properly.
                 if not(isgroup) and len(toks)==1 and \
                    toks[0].catcode==Token.CC_ESCAPE:
-                    self.pushtoken(toks.pop())
+                    self.pushToken(toks.pop())
                     for toks in self:
                         break
                     source = toks.source
     
                 # Expand groupings and all other types
                 else:
-                    toks = self.expandtokens(toks)
+                    toks = self.expandTokens(toks)
                     if isgroup:
                         s = self.source(toks)
                         source = u'%s%s%s' % (source[0].source, s, 
@@ -798,7 +798,7 @@ class TeX(object):
             if t == char:
                 return t, self.source([t])
             else:
-                self.pushtoken(t)
+                self.pushToken(t)
                 break
         return None, ''
 
@@ -836,10 +836,10 @@ class TeX(object):
                     else:
                         toks.append(t)
             else:
-                self.pushtoken(t)
+                self.pushToken(t)
                 break
             if expanded:
-                toks = self.expandtokens(toks)
+                toks = self.expandTokens(toks)
                 source = begin + self.source(toks) + end
             else:
                 source = self.source(source)
@@ -860,8 +860,8 @@ class TeX(object):
         """
         # Throw a \relax in here to keep the token after the
         # argument from being expanded when parsing the internal type
-        self.pushtoken(EscapeSequence('relax'))
-        self.pushtokens(tokens)
+        self.pushToken(EscapeSequence('relax'))
+        self.pushTokens(tokens)
 
         # Call the appropriate parsing method for this type
         result = method()
@@ -1276,12 +1276,12 @@ class TeX(object):
         tokens = []
         for t in self.itertokens():
             if t.nodeType == t.ELEMENT_NODE:
-                self.pushtoken(t)
+                self.pushToken(t)
                 break
             elif t is None or t == '':
                 continue
             elif t.catcode != Token.CC_SPACE:
-                self.pushtoken(t)
+                self.pushToken(t)
                 break 
             tokens.append(t)
         return tokens
@@ -1318,7 +1318,7 @@ class TeX(object):
                         return word
                 else:
                     break
-            self.pushtokens(matched)
+            self.pushTokens(matched)
         return None
 
     def readDecimal(self):
@@ -1326,28 +1326,28 @@ class TeX(object):
         sign = self.readOptionalSigns()
         for t in self:
             if t.nodeType == Token.ELEMENT_NODE:
-                self.pushtoken(t)
+                self.pushToken(t)
                 break
             if t in string.digits:
                 num = t + self.readSequence(string.digits, False)
                 for t in self:
                     if t.nodeType == Token.ELEMENT_NODE:
-                        self.pushtoken(t)
+                        self.pushToken(t)
                         return sign * float(num)
                     elif t in '.,':
                         num += '.' + self.readSequence(string.digits, default='0')
                     else:
-                        self.pushtoken(t)
+                        self.pushToken(t)
                         return sign * float(num)
                     break
                 return sign * float(num)
             if t in '.,':
                 return sign * float('.' + self.readSequence(string.digits, default='0'))
             if t in '\'"`':
-                self.pushtoken(t)
+                self.pushToken(t)
                 return sign * self.readInteger()
             break
-        log.warning('Missing decimal%s, treating as `0`.', self.lineinfo)
+        log.warning('Missing decimal%s, treating as `0`.', self.lineInfo)
         return float(0)
 
     def readDimen(self, units=dimen.units):
@@ -1368,7 +1368,7 @@ class TeX(object):
                isinstance(t, ParameterCommand):
                 ParameterCommand.enable()
                 return dimen(sign * dimen(t))
-            self.pushtoken(t)
+            self.pushToken(t)
             break
         num = dimen(sign * self.readDecimal() * self.readUnitOfMeasure(units=units))
         ParameterCommand.enable()
@@ -1397,13 +1397,13 @@ class TeX(object):
                isinstance(t, ParameterCommand):
                 ParameterCommand.enable()
                 return dimen(t)
-            self.pushtoken(t)
+            self.pushToken(t)
             break
         true = self.readKeyword(['true'])
         unit = self.readKeyword(units)
         if unit is None:
             log.warning('Missing unit (expecting %s)%s, treating as `%s`', 
-                        ', '.join(units), self.lineinfo, units[0])
+                        ', '.join(units), self.lineInfo, units[0])
             unit = units[0]
         ParameterCommand.enable()
         return dimen('1%s' % unit)
@@ -1420,7 +1420,7 @@ class TeX(object):
         self.readOptionalSpaces()
         for t in self:
             if t.nodeType == Token.ELEMENT_NODE:
-                self.pushtoken(t)
+                self.pushToken(t)
                 break
             elif t == '+':
                 pass
@@ -1429,7 +1429,7 @@ class TeX(object):
             elif t is None or t == '' or t.catcode == Token.CC_SPACE:
                 continue
             else:
-                self.pushtoken(t)
+                self.pushToken(t)
                 break
         return sign
 
@@ -1437,13 +1437,13 @@ class TeX(object):
         """ Read one optional space from the stream """
         for t in self.itertokens():
             if t.nodeType == Token.ELEMENT_NODE:
-                self.pushtoken(t)
+                self.pushToken(t)
                 return None
             if t is None or t == '':
                 continue
             if t.catcode == Token.CC_SPACE:
                 return t
-            self.pushtoken(t)
+            self.pushToken(t)
             return None
 
     def readSequence(self, chars, optspace=True, default=''):
@@ -1467,13 +1467,13 @@ class TeX(object):
         output = []
         for t in self:
             if t.nodeType == Macro.ELEMENT_NODE:
-                self.pushtoken(t)
+                self.pushToken(t)
                 break 
             if t not in chars:
                 if optspace and t.catcode == Token.CC_SPACE:
                     pass
                 else:
-                    self.pushtoken(t)
+                    self.pushToken(t)
                 break
             output.append(t)
         if not output:
@@ -1497,7 +1497,7 @@ class TeX(object):
                 if isinstance(t, ParameterCommand):
                     num = number(sign * number(t))
                 else:
-                    self.pushtoken(t)
+                    self.pushToken(t)
                     break
             # integer constant
             elif t in string.digits:
@@ -1507,7 +1507,7 @@ class TeX(object):
                        isinstance(t, ParameterCommand):
                         num = number(num * number(t))
                     else:
-                        self.pushtoken(t)
+                        self.pushToken(t)
                     break
             # octal constant
             elif t == "'":
@@ -1524,7 +1524,7 @@ class TeX(object):
         ParameterCommand.enable()
         if num is not None:
             return num
-        log.warning('Missing number%s, treating as `0`. (%s)', self.lineinfo, t)
+        log.warning('Missing number%s, treating as `0`. (%s)', self.lineInfo, t)
         return number(0)
 
     readNumber = readInteger
@@ -1539,7 +1539,7 @@ class TeX(object):
                isinstance(t, ParameterCommand):
                 ParameterCommand.enable()
                 return glue(sign * glue(t))
-            self.pushtoken(t)
+            self.pushToken(t)
             break
         dim = self.readDimen()
         stretch = self.readStretch()
@@ -1569,7 +1569,7 @@ class TeX(object):
                isinstance(t, ParameterCommand):
                 ParameterCommand.enable()
                 return muglue(sign * muglue(t))
-            self.pushtoken(t)
+            self.pushToken(t)
             break
         dim = self.readMuDimen()
         stretch = self.readMuStretch()
@@ -1591,12 +1591,12 @@ class TeX(object):
 
     def loadAuxiliaryFile(self):
         """ Read in an auxiliary file (only once) """
-        if self.jobname in self.auxfiles:
+        if self.jobname in self.auxFiles:
             return
-        self.auxfiles.append(self.jobname)
+        self.auxFiles.append(self.jobname)
         try:
             f = self.kpsewhich(self.jobname+'.aux')
-            self.pushtoken(plasTeX.Command())
+            self.pushToken(plasTeX.Command())
             self.input(open(f))
             for item in self:
                 if item is plasTeX.Command():

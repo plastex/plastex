@@ -21,15 +21,15 @@
 
 <div tal:condition="self/tableofcontents" class="contents">
 <ul>
-<li tal:repeat="section self/tableofcontents"><a href="." tal:attributes="href section/url" tal:content="section/fulltocentry">Aliquam est. Aliquam fringilla pede</a>
+<li tal:repeat="section self/tableofcontents"><a href="." tal:attributes="href section/url" tal:content="section/fullTocEntry">Aliquam est. Aliquam fringilla pede</a>
    <ul tal:condition="section/tableofcontents">
-   <li tal:repeat="subsection section/tableofcontents"><a href="." tal:attributes="href subsection/url" tal:content="subsection/fulltocentry"></a>
+   <li tal:repeat="subsection section/tableofcontents"><a href="." tal:attributes="href subsection/url" tal:content="subsection/fullTocEntry"></a>
        <ul tal:condition="subsection/tableofcontents">
-       <li tal:repeat="subsubsection subsection/tableofcontents"><a href="." tal:attributes="href subsubsection/url" tal:content="subsubsection/fulltocentry"></a>
+       <li tal:repeat="subsubsection subsection/tableofcontents"><a href="." tal:attributes="href subsubsection/url" tal:content="subsubsection/fullTocEntry"></a>
            <ul tal:condition="subsubsection/tableofcontents">
-           <li tal:repeat="paragraph subsubsection/tableofcontents"><a href="." tal:attributes="href paragraph/url" tal:content="paragraph/fulltocentry"></a>
+           <li tal:repeat="paragraph subsubsection/tableofcontents"><a href="." tal:attributes="href paragraph/url" tal:content="paragraph/fullTocEntry"></a>
                <ul tal:condition="paragraph/tableofcontents">
-               <li tal:repeat="subparagraph paragraph/tableofcontents"><a href="." tal:attributes="href subparagraph/url" tal:content="subparagraph/fulltocentry"></a></li>
+               <li tal:repeat="subparagraph paragraph/tableofcontents"><a href="." tal:attributes="href subparagraph/url" tal:content="subparagraph/fullTocEntry"></a></li>
                </ul>
            </li>
            </ul>

@@ -47,12 +47,12 @@ the current filename being processed
 the name of the basename at the top of the input stack
 \end{memberdesc}
 
-\begin{memberdesc}[TeX]{linenumber}
+\begin{memberdesc}[TeX]{lineNumber}
 the line number of the current file being processed 
 \end{memberdesc}
 
 
-\begin{methoddesc}[TeX]{expandtokens}{tokens, normalize=False}
+\begin{methoddesc}[TeX]{expandTokens}{tokens, normalize=False}
 expand a list of unexpanded tokens.  This method can be used to expand
 tokens without having them sent to the output stream.  The returned value
 is a \class{TeXFragment} populated with the expanded tokens.
@@ -101,11 +101,11 @@ instance will be created.  The return value is the document from the
 \var{output} argument or the instantiated \class{TeXDocument} object.
 \end{methoddesc}
 
-\begin{methoddesc}[TeX]{pushtoken}{token}
+\begin{methoddesc}[TeX]{pushToken}{token}
 pushes a token back into the input stream to be re-read.
 \end{methoddesc}
 
-\begin{methoddesc}[TeX]{pushtokens}{tokens}
+\begin{methoddesc}[TeX]{pushTokens}{tokens}
 pushes a list of tokens back into the input stream to be re-read.
 \end{methoddesc}
 
@@ -160,7 +160,7 @@ a string.  However, the first value can take the following values.
 return the \LaTeX\ representation of the tokens in \var{tokens}
 \end{methoddesc} 
 
-\begin{methoddesc}[TeX]{texttokens}{text}
+\begin{methoddesc}[TeX]{textTokens}{text}
 convert a string of text into a series of tokens
 \end{methoddesc}
 

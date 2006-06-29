@@ -11,7 +11,7 @@
 <link tal:condition="links/prev" rel="prev" tal:attributes="href links/prev/url" />
 <link tal:condition="links/up" rel="parent" tal:attributes="href links/up/url" />
 <meta name='aesop' content='information' />
-<title tal:content="stripped self/fulltitle">1. Whetting Your Appetite </title>
+<title tal:content="stripped self/fullTitle">1. Whetting Your Appetite </title>
 </head>
 <body>
 <div class="navigation">
@@ -19,18 +19,18 @@
 <table align="center" width="100%" cellpadding="0" cellspacing="2">
 <tr>
 <td class='online-navigation'><a tal:condition="links/prev" rel="prev" 
-  tal:attributes="title stripped:links/prev/fulltitle; href links/prev/url"
+  tal:attributes="title stripped:links/prev/fullTitle; href links/prev/url"
   ><img src='icons/previous.png'
   border='0' height='32'  alt='Previous Page' width='32' /></a><img tal:condition="not:links/prev" src="icons/blank.png" width="32" height="32" border="0" /></td>
 <td class='online-navigation'><a tal:condition="links/up" rel="parent" 
-  tal:attributes="title stripped:links/up/fulltitle; href links/up/url"
+  tal:attributes="title stripped:links/up/fullTitle; href links/up/url"
   ><img src='icons/up.png'
   border='0' height='32'  alt='Up One Level' width='32' /></a><img tal:condition="not:links/up" src="icons/blank.png" width="32" height="32" border="0" /></td>
 <td class='online-navigation'><a tal:condition="links/next" rel="next" 
   tal:attributes="title stripped:links/next/title; href links/next/url"
   ><img src='icons/next.png'
   border='0' height='32'  alt='Next Page' width='32' /></a><img tal:condition="not:links/next" src="icons/blank.png" width="32" height="32" border="0" /></td>
-<td align="center" width="100%" tal:content="links/document/fulltitle">Python Tutorial</td>
+<td align="center" width="100%" tal:content="links/document/fullTitle">Python Tutorial</td>
 <td class='online-navigation'><a tal:condition="links/contents" rel="contents" title="Table of Contents"
   tal:attributes="href links/contents/url"><img src='icons/contents.png'
   border='0' height='32'  alt='Contents' width='32' /></a><img tal:condition="not:links/contents" src='icons/blank.png' border='0' height='32' width='32' /></td>
@@ -53,15 +53,15 @@
 
 <div tal:condition="self/tableofcontents" class="contents"><strong>Subsections</strong>
 <ul>
-<li tal:repeat="section self/tableofcontents"><a href="." tal:attributes="href section/url" tal:content="section/fulltocentry">Aliquam est. Aliquam fringilla pede</a>
+<li tal:repeat="section self/tableofcontents"><a href="." tal:attributes="href section/url" tal:content="section/fullTocEntry">Aliquam est. Aliquam fringilla pede</a>
    <ul tal:condition="section/tableofcontents">
-   <li tal:repeat="subsection section/tableofcontents"><a href="." tal:attributes="href subsection/url" tal:content="subsection/fulltocentry"></a>
+   <li tal:repeat="subsection section/tableofcontents"><a href="." tal:attributes="href subsection/url" tal:content="subsection/fullTocEntry"></a>
        <ul tal:condition="subsection/tableofcontents">
-       <li tal:repeat="subsubsection subsection/tableofcontents"><a href="." tal:attributes="href subsubsection/url" tal:content="subsubsection/fulltocentry"></a>
+       <li tal:repeat="subsubsection subsection/tableofcontents"><a href="." tal:attributes="href subsubsection/url" tal:content="subsubsection/fullTocEntry"></a>
            <ul tal:condition="subsubsection/tableofcontents">
-           <li tal:repeat="paragraph subsubsection/tableofcontents"><a href="." tal:attributes="href paragraph/url" tal:content="paragraph/fulltocentry"></a>
+           <li tal:repeat="paragraph subsubsection/tableofcontents"><a href="." tal:attributes="href paragraph/url" tal:content="paragraph/fullTocEntry"></a>
                <ul tal:condition="paragraph/tableofcontents">
-               <li tal:repeat="subparagraph paragraph/tableofcontents"><a href="." tal:attributes="href subparagraph/url" tal:content="subparagraph/fulltocentry"></a></li>
+               <li tal:repeat="subparagraph paragraph/tableofcontents"><a href="." tal:attributes="href subparagraph/url" tal:content="subparagraph/fullTocEntry"></a></li>
                </ul>
            </li>
            </ul>
@@ -85,18 +85,18 @@
 <table align="center" width="100%" cellpadding="0" cellspacing="2">
 <tr>
 <td class='online-navigation'><a tal:condition="links/prev" rel="prev" 
-  tal:attributes="title stripped:links/prev/fulltitle; href links/prev/url"
+  tal:attributes="title stripped:links/prev/fullTitle; href links/prev/url"
   ><img src='icons/previous.png'
   border='0' height='32'  alt='Previous Page' width='32' /></a><img tal:condition="not:links/prev" src="icons/blank.png" width="32" height="32" border="0" /></td>
 <td class='online-navigation'><a tal:condition="links/up" rel="parent" 
-  tal:attributes="title stripped:links/up/fulltitle; href links/up/url"
+  tal:attributes="title stripped:links/up/fullTitle; href links/up/url"
   ><img src='icons/up.png'
   border='0' height='32'  alt='Up One Level' width='32' /></a><img tal:condition="not:links/up" src="icons/blank.png" width="32" height="32" border="0" /></td>
 <td class='online-navigation'><a tal:condition="links/next" rel="next" 
   tal:attributes="title stripped:links/next/title; href links/next/url"
   ><img src='icons/next.png'
   border='0' height='32'  alt='Next Page' width='32' /></a><img tal:condition="not:links/next" src="icons/blank.png" width="32" height="32" border="0" /></td>
-<td align="center" width="100%" tal:content="links/document/fulltitle">Python Tutorial</td>
+<td align="center" width="100%" tal:content="links/document/fullTitle">Python Tutorial</td>
 <td class='online-navigation'><a tal:condition="links/contents" rel="contents" title="Table of Contents"
   tal:attributes="href links/contents/url"><img src='icons/contents.png'
   border='0' height='32'  alt='Contents' width='32' /></a><img tal:condition="not:links/contents" src='icons/blank.png' border='0' height='32' width='32' /></td>

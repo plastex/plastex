@@ -73,14 +73,14 @@ class Filenames(object):
         generator that creates filenames
     
         """      
-        self.files = self.parsefilenames(spec)
+        self.files = self.parseFilenames(spec)
         self.charsub = charsub
         self.vars = vars
         self.extension = extension
         self.invalid = invalid
-        self.newfilename = self._newfilename()
+        self.newFilename = self._newFilename()
 
-    def parsefilenames(self, spec):
+    def parseFilenames(self, spec):
         """ Parse and expand the filename string """
         # Normalize string before parsing
         spec = re.sub(r'\$(\w+)', r'${\1}', spec)
@@ -127,17 +127,17 @@ class Filenames(object):
         return self.next()
 
     def next(self):
-        for name in self.newfilename:
+        for name in self.newFilename:
             return name
 
-    def addextension(self, filename):
+    def addExtension(self, filename):
         """ Add a file extension to the filename if none exists """
         ext = os.path.splitext(filename)[-1]
         if not ext:
             return filename + self.extension
         return filename
 
-    def _newfilename(self):
+    def _newFilename(self):
         """ Generator that generates new filenames """
         g = self.vars.copy()
     
@@ -192,7 +192,7 @@ class Filenames(object):
                     num += 1
                 self.vars.clear()
                 self.vars.update(g)
-                result = self.addextension(result)
+                result = self.addExtension(result)
                 if result not in self.invalid:
                     self.invalid[result] = None
                     yield result
@@ -232,7 +232,7 @@ class Filenames(object):
                         num += 1
                     self.vars.clear()
                     self.vars.update(g)
-                    result = self.addextension(result)
+                    result = self.addExtension(result)
                     if result not in self.invalid:
                         self.invalid[result] = None
                         yield result

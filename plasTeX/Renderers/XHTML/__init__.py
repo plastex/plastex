@@ -6,8 +6,8 @@ from plasTeX.Renderers.ZPT import ZPT
 class XHTML(ZPT):
     """ Renderer for XHTML documents """
 
-    fileextension = '.html'
-    imagetypes = ['.png','.jpg','.jpeg','.gif']
+    fileExtension = '.html'
+    imageTypes = ['.png','.jpg','.jpeg','.gif']
 
     def processFileContent(self, document, s):
         s = ZPT.processFileContent(self, document, s)

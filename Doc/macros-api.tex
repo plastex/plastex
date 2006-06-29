@@ -127,7 +127,7 @@ A full list of the supported data types as well as more examples are
 discussed in section \ref{sec:macros}.
 \end{memberdesc}
 
-\begin{memberdesc}[Macro]{argsource}
+\begin{memberdesc}[Macro]{argSource}
 the source for the \LaTeX\ arguments to this macro.  This is a read-only 
 attribute.
 \end{memberdesc}
@@ -328,17 +328,17 @@ token stream.  This method also calls several hooks as described in the table
 below.
 
 \begin{tableii}{l|l}{method}{Method Name}{Description}
-\lineii{preparse()}{called at the beginning of the argument parsing process}
-\lineii{preargument()}{called before parsing each argument}
-\lineii{postargument()}{called after parsing each argument}
-\lineii{postparse()}{called at the end of the argument parsing process}
+\lineii{preParse()}{called at the beginning of the argument parsing process}
+\lineii{preArgument()}{called before parsing each argument}
+\lineii{postArgument()}{called after parsing each argument}
+\lineii{postParse()}{called at the end of the argument parsing process}
 \end{tableii}
 
 The methods are called to assist in labeling and counting.  For example,
 by default, the counter associated with a macro is automatically incremented
 when the macro is parsed.  However, if the first argument is a modifier 
 (i.e. *, +, -), the counter will not be incremented.  This is handled 
-in the \method{preargument()} and \method{postargument()} methods.
+in the \method{preArgument()} and \method{postArgument()} methods.
 
 Each time an argument is parsed, the result is put into the \member{attributes}
 dictionary.  The key in the dictionary is, of course, the name given to that
@@ -352,7 +352,7 @@ The return value for this method is simply a reference to the
 set to \member{Macro.MODE\_END}, no parsing takes place.}
 \end{methoddesc}
 
-\begin{methoddesc}[Macro]{postargument}{arg, tex}
+\begin{methoddesc}[Macro]{postArgument}{arg, tex}
 called after parsing each argument. This is generally where label and
 counter mechanisms are handled.
 
@@ -362,13 +362,13 @@ counter mechanisms are handled.
 \var{tex} is the TeX instance containing the current context 
 \end{methoddesc}
 
-\begin{methoddesc}[Macro]{postparse}{tex}
+\begin{methoddesc}[Macro]{postParse}{tex}
 do any operations required immediately after parsing the arguments.  This
 generally includes setting up the value that will be returned when 
 referencing the object.
 \end{methoddesc}
 
-\begin{methoddesc}[Macro]{preargument}{arg, tex}
+\begin{methoddesc}[Macro]{preArgument}{arg, tex}
 called before parsing each argument.  This is generally where label and
 counter mechanisms are handled.
 
@@ -378,7 +378,7 @@ counter mechanisms are handled.
 \var{tex} is the TeX instance containing the current context 
 \end{methoddesc}
 
-\begin{methoddesc}[Macro]{preparse}{tex}
+\begin{methoddesc}[Macro]{preParse}{tex}
 do any operations required immediately before parsing the arguments.
 \end{methoddesc}
 

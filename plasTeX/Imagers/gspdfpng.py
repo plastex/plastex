@@ -10,10 +10,10 @@ class GSPDFPNG(plasTeX.Imagers.Imager):
     command = 'gs -dSAFER -dBATCH -dNOPAUSE -sDEVICE=png16m -r250 ' + \
               '-dGraphicsAlphaBits=4 -sOutputFile=img%d.png'
     compiler = 'pdflatex'
-    fileextension = '.png'
+    fileExtension = '.png'
 
-    def executeconverter(self, output):
-        res = plasTeX.Imagers.Imager.executeconverter(self, output)
+    def executeConverter(self, output):
+        res = plasTeX.Imagers.Imager.executeConverter(self, output)
         self.scaleImages()
         return res
 
@@ -24,7 +24,7 @@ class GSPDFPNG(plasTeX.Imagers.Imager):
             scaledown = 2.2
             for filename in glob.glob('img*.png'):
                 status.info('[%s]' % filename,)
-                img = plasTeX.Imagers.autocrop(PILImage.open(filename), 
+                img = plasTeX.Imagers.autoCrop(PILImage.open(filename), 
                                                margin=3)[0]
                 width, height = [int(float(x)/scaledown) for x in img.size]
                 img = img.resize((width, height), PILImage.ANTIALIAS)

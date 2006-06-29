@@ -7,10 +7,10 @@ class GSDVIPNG(gspdfpng.GSPDFPNG):
     compiler = 'latex'
     verification = '(gs --help && dvips --help)'
 
-    def executeconverter(self, output):
+    def executeConverter(self, output):
         open('images.dvi', 'w').write(output.read())
         rc = os.system('dvips -o images.ps images.dvi')
         if rc: return rc, None
-        return gspdfpng.GSPDFPNG.executeconverter(self, open('images.ps'))
+        return gspdfpng.GSPDFPNG.executeConverter(self, open('images.ps'))
 
 Imager = GSDVIPNG

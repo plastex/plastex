@@ -207,9 +207,9 @@ class InputIfFileExists(Command):
         a = self.parse(tex)
         try: 
             tex.input(tex.kpsewhich(a['file']))
-            tex.pushtokens(a['true'])
+            tex.pushTokens(a['true'])
         except (IOError, OSError):
-            tex.pushtokens(a['false'])
+            tex.pushTokens(a['false'])
         return []
 
 class IfFileExists(Command):
@@ -218,7 +218,7 @@ class IfFileExists(Command):
         a = self.parse(tex)
         try: 
             tex.kpsewhich(a['file'])
-            tex.pushtokens(a['true'])
+            tex.pushTokens(a['true'])
         except (IOError, OSError):
-            tex.pushtokens(a['false'])
+            tex.pushTokens(a['false'])
         return []

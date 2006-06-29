@@ -83,6 +83,7 @@ class EscapeSequence(Token):
 
     """
     catcode = Token.CC_ESCAPE
+    @property
     def source(self):
         if self == 'par':
             return '\n\n'
@@ -90,10 +91,9 @@ class EscapeSequence(Token):
         if '::' in self:
             return self.split('::').pop()
         return '\\%s ' % self
-    source = property(source)
+    @property
     def macroName(self):
         return self
-    macroName = property(macroName)
     __slots__ = Token.TOKEN_SLOTS
 
 class BeginGroup(Token):
@@ -198,13 +198,13 @@ class Tokenizer(object):
         """
         self.context = context
         self.state = Tokenizer.STATE_N
-        self._charbuffer = []
-        self._tokbuffer = []
+        self._charBuffer = []
+        self._tokBuffer = []
         if isinstance(source, basestring):
             source = StringIO(source)
             self.filename = '<string>'
         elif isinstance(source, (tuple,list)):
-            self.pushtokens(source)
+            self.pushTokens(source)
             source = StringIO('')
             self.filename = '<tokens>'
         else:
@@ -213,7 +213,7 @@ class Tokenizer(object):
         self.read = source.read
 #       self.readline = source.readline
         self.tell = source.tell
-        self.linenumber = 1
+        self.lineNumber = 1
 
 # There seems to be a problem with readline in Python 2.4 !!!
     def readline(self):
@@ -233,11 +233,11 @@ class Tokenizer(object):
 
         If you are iterating through the characters in a TeX instance
         and you go too far, you can put the character back with
-        the pushchar() method.
+        the pushChar() method.
 
         """
         # Create locals before going into the generator loop
-        buffer = self._charbuffer
+        buffer = self._charBuffer
         classes = self.tokenClasses
         read = self.read
         seek = self.seek
@@ -258,7 +258,7 @@ class Tokenizer(object):
             # ord(token) == 10 is the same as saying token == '\n'
             # but it is much faster.
             if ord(token) == 10:
-                self.linenumber += 1
+                self.lineNumber += 1
 
             code = whichCode(token)
 
@@ -283,7 +283,7 @@ class Tokenizer(object):
 
             yield classes[code](token)
 
-    def pushchar(self, char):
+    def pushChar(self, char):
         """ 
         Push a character back into the stream to be re-read 
 
@@ -291,9 +291,9 @@ class Tokenizer(object):
         char -- the character to push back
 
         """
-        self._charbuffer.insert(0, char)
+        self._charBuffer.insert(0, char)
 
-    def pushtoken(self, token):
+    def pushToken(self, token):
         """
         Push a token back into the stream to be re-read
 
@@ -302,9 +302,9 @@ class Tokenizer(object):
 
         """
         if token is not None:
-            self._tokbuffer.insert(0, token)
+            self._tokBuffer.insert(0, token)
 
-    def pushtokens(self, tokens):
+    def pushTokens(self, tokens):
         """
         Push a list of tokens back into the stream to be re-read
 
@@ -316,7 +316,7 @@ class Tokenizer(object):
             tokens = list(tokens)
             tokens.reverse()
             for t in tokens:
-                self.pushtoken(t)
+                self.pushToken(t)
 
     def __iter__(self):
         """ 
@@ -330,11 +330,11 @@ class Tokenizer(object):
         global Space, EscapeSequence
         Space = Space
         EscapeSequence = EscapeSequence
-        buffer = self._tokbuffer
-        chariter = self.iterchars()
-        next = chariter.next
+        buffer = self._tokBuffer
+        charIter = self.iterchars()
+        next = charIter.next
         context = self.context
-        pushchar = self.pushchar
+        pushChar = self.pushChar
         STATE_N = self.STATE_N
         STATE_M = self.STATE_M
         STATE_S = self.STATE_S
@@ -388,7 +388,7 @@ class Tokenizer(object):
                     # ord(token) != 10 is the same as saying token != '\n'
                     # but it is much faster.
                     if ord(token) != 10:
-                        self.linenumber += 1
+                        self.lineNumber += 1
                         self.readline()
                     token = EscapeSequence('par')
                     # Prevent adjacent paragraphs
@@ -402,20 +402,20 @@ class Tokenizer(object):
                 # Get name of command sequence
                 self.state = STATE_M
 
-                for token in chariter:
+                for token in charIter:
  
                     if token.catcode == CC_LETTER:
                         word = [token]
-                        for t in chariter:
+                        for t in charIter:
                             if t.catcode == CC_LETTER:
                                 word.append(t) 
                             else:
-                                pushchar(t)
+                                pushChar(t)
                                 break
                         token = EscapeSequence(''.join(word))
 
                     elif token.catcode == CC_EOL:
-                        #pushchar(token)
+                        #pushChar(token)
                         #token = EscapeSequence()
                         token = Space(' ')
                         self.state = STATE_S
@@ -446,7 +446,7 @@ class Tokenizer(object):
 
             elif code == CC_COMMENT:
                 self.readline() 
-                self.linenumber += 1
+                self.lineNumber += 1
                 self.state = STATE_N
                 continue
 

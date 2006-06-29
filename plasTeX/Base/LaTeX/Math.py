@@ -6,7 +6,7 @@ C.7 Mathematical Formulas (p187)
 """
 
 from Arrays import Array
-from plasTeX import Command, Environment, sourcechildren
+from plasTeX import Command, Environment, sourceChildren
 from plasTeX import DimenCommand, GlueCommand
 from plasTeX.Logging import getLogger
 
@@ -20,18 +20,18 @@ class MathEnvironment(Environment):
 # Need \newcommand\({\begin{math}} and \newcommand\){\end{math}}
 
 class math(MathEnvironment): 
+    @property
     def source(self): 
         if self.hasChildNodes():
-            return '$%s$' % sourcechildren(self)
+            return '$%s$' % sourceChildren(self)
         return '$'
-    source = property(source)
 
 class displaymath(MathEnvironment):
     blockType = True
     @property
     def source(self):
         if self.hasChildNodes():
-            return r'\[ %s \]' % sourcechildren(self)
+            return r'\[ %s \]' % sourceChildren(self)
         if self.macroMode == Command.MODE_END:
             return r'\]'
         return r'\['
@@ -83,7 +83,7 @@ class EqnarrayStar(Array):
     class ArrayCell(Array.ArrayCell):
         @property
         def source(self):
-            return '$\\displaystyle %s $' % sourcechildren(self, par=False)
+            return '$\\displaystyle %s $' % sourceChildren(self, par=False)
 
 class eqnarray(EqnarrayStar):
     macroName = None

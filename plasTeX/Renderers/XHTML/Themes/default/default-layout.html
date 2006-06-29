@@ -3,7 +3,8 @@
 <head>
 <meta http-equiv="content-type" 
       tal:attributes="content string:text/html;; charset=${config/files/output-encoding}" />
-<title tal:content="stripped links/document/title">Morbi metus pede, imperdiet vitae</title>
+<title tal:condition="python:path('self/level') &gt; -10" tal:content="stripped string:${links/document/title}: ${self/title}">Morbi metus pede, imperdiet vitae</title>
+<title tal:condition="python:path('self/level') &lt;= -10" tal:content="stripped self/title">Morbi metus pede, imperdiet vitae</title>
 <link tal:condition="links/next" rel="next" tal:attributes="href links/next/url; title links/next/title" />
 <link tal:condition="links/prev" rel="prev" tal:attributes="href links/prev/url; title links/prev/title" />
 <link tal:condition="links/up" rel="up" tal:attributes="href links/up/url; title links/up/title" />
@@ -47,15 +48,15 @@
 
 <div tal:condition="self/tableofcontents" class="contents"><!--<strong>Subsections</strong>-->
 <ul>
-<li tal:repeat="section self/tableofcontents"><a href="." tal:attributes="href section/url" tal:content="section/fulltocentry">Aliquam est. Aliquam fringilla pede</a>
+<li tal:repeat="section self/tableofcontents"><a href="." tal:attributes="href section/url" tal:content="section/fullTocEntry">Aliquam est. Aliquam fringilla pede</a>
    <ul tal:condition="section/tableofcontents">
-   <li tal:repeat="subsection section/tableofcontents"><a href="." tal:attributes="href subsection/url" tal:content="subsection/fulltocentry"></a>
+   <li tal:repeat="subsection section/tableofcontents"><a href="." tal:attributes="href subsection/url" tal:content="subsection/fullTocEntry"></a>
        <ul tal:condition="subsection/tableofcontents">
-       <li tal:repeat="subsubsection subsection/tableofcontents"><a href="." tal:attributes="href subsubsection/url" tal:content="subsubsection/fulltocentry"></a>
+       <li tal:repeat="subsubsection subsection/tableofcontents"><a href="." tal:attributes="href subsubsection/url" tal:content="subsubsection/fullTocEntry"></a>
            <ul tal:condition="subsubsection/tableofcontents">
-           <li tal:repeat="paragraph subsubsection/tableofcontents"><a href="." tal:attributes="href paragraph/url" tal:content="paragraph/fulltocentry"></a>
+           <li tal:repeat="paragraph subsubsection/tableofcontents"><a href="." tal:attributes="href paragraph/url" tal:content="paragraph/fullTocEntry"></a>
                <ul tal:condition="paragraph/tableofcontents">
-               <li tal:repeat="subparagraph paragraph/tableofcontents"><a href="." tal:attributes="href subparagraph/url" tal:content="subparagraph/fulltocentry"></a></li>
+               <li tal:repeat="subparagraph paragraph/tableofcontents"><a href="." tal:attributes="href subparagraph/url" tal:content="subparagraph/fullTocEntry"></a></li>
                </ul>
            </li>
            </ul>

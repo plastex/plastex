@@ -5,7 +5,7 @@ C.6.4 Verbatim
 
 """
 
-from plasTeX import Macro, Environment, Command, sourcearguments, sourcechildren
+from plasTeX import Macro, Environment, Command, sourceArguments, sourceChildren
 
 class verbatim(Environment):
     blockType = True
@@ -83,11 +83,11 @@ class verb(Command):
                 break
             self.appendChild(tok)
 
+    @property
     def source(self):
-        return '\\%s%s%s%s%s' % (self.nodeName, sourcearguments(self),
-                                 self.delimiter, sourcechildren(self), 
+        return '\\%s%s%s%s%s' % (self.nodeName, sourceArguments(self),
+                                 self.delimiter, sourceChildren(self), 
                                  self.delimiter)
-    source = property(source)
 
     def normalize(self, charsubs=[]):
         """ Normalize, but don't allow character substitutions """

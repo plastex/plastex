@@ -5,7 +5,7 @@ B.5 Macros for text
 
 """
 
-from plasTeX import Command, Environment, sourcechildren
+from plasTeX import Command, Environment, sourceChildren
 
 class frenchspacing(Command):
     unicode = u''
@@ -61,7 +61,7 @@ class bgroup(Command):
     @property
     def source(self):
         if self.hasChildNodes():
-            return '{%s}' % sourcechildren(self)
+            return '{%s}' % sourceChildren(self)
         return '{'
 
 class begingroup(bgroup):
@@ -73,9 +73,9 @@ class egroup(Command):
     def invoke(self, tex):
         self.ownerDocument.context.pop()
 
+    @property
     def source(self):
         return '}'
-    source = property(source)
 
     def digest(self, tokens):
         return

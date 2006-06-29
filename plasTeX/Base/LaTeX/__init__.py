@@ -40,9 +40,9 @@ class ifundefined_(Command):
     def invoke(self, tex):
         a = self.parse(tex)
         if self.ownerDocument.context.has_key(a['name']):
-            tex.pushtokens(a['false'])
+            tex.pushTokens(a['false'])
         else:
-            tex.pushtokens(a['true'])
+            tex.pushTokens(a['true'])
         return []
 
 class vwritefile_(Command):

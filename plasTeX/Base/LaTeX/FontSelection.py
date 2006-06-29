@@ -5,7 +5,7 @@ C.15 Font Selection (p225)
 
 """
 
-from plasTeX import Command, Environment, sourcearguments
+from plasTeX import Command, Environment, sourceArguments
 from plasTeX.Logging import getLogger
 
 log = getLogger()
