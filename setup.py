@@ -34,7 +34,7 @@ setup(name="plasTeX",
          'plasTeX.Renderers.ZPT.simpletal',
       ],
       package_data = {
-         'plasTeX.Base.LaTeX': ['*.xml'],
+         'plasTeX.Base.LaTeX': ['*.xml','*.txt'],
          'plasTeX.Renderers.XHTML': templates,
          'plasTeX.Renderers.XHTML.Themes.default': templates,
          'plasTeX.Renderers.XHTML.Themes.default.icons': images,

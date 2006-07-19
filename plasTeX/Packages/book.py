@@ -51,7 +51,7 @@ def ProcessOptions(options, document):
         if key == 'language':
             language = True
             context.loadLanguage(value, document)
-        elif key in ['american','french']:
+        elif key in ['american','french','japanese']:
             language = True
             context.loadLanguage(key, document)
 

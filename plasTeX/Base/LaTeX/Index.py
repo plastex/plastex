@@ -5,12 +5,17 @@ C.11.5 Index and Glossary (p211)
 
 """
 
-import string
+import string, os
 from plasTeX.Tokenizer import Token
 from plasTeX import Command, Environment
 from plasTeX.Logging import getLogger
 from Sectioning import SectionUtils
 
+try:
+    from pyuca import Collator
+    collator = Collator(os.path.join(os.path.dirname(__file__), 'allkeys.txt')).sort_key
+except ImportError:
+    collator = lambda x: x.lower()
 
 class IndexUtils(object):
     """ Helper functions for generating indexes """
@@ -303,11 +308,11 @@ class IndexEntry(object):
         self.node = node
 
     def __cmp__(self, other):
-        result = cmp(zip([x.lower() for x in self.sortkey], 
-                         [x.textContent.lower() for x in self.key], 
+        result = cmp(zip([collator(x) for x in self.sortkey], 
+                         [collator(x.textContent) for x in self.key], 
                          self.key), 
-                     zip([x.lower() for x in other.sortkey], 
-                         [x.textContent.lower() for x in other.key], 
+                     zip([collator(x) for x in other.sortkey], 
+                         [collator(x.textContent) for x in other.key], 
                          other.key))
         if result == 0 and len(self.key) != len(other.key):
             return cmp(len(self.key), len(other.key))

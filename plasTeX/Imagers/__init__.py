@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os, time, tempfile, shutil, re, string, pickle, md5
+import os, time, tempfile, shutil, re, string, pickle, md5, codecs
 from plasTeX.Logging import getLogger
 from StringIO import StringIO
 from plasTeX.Filenames import Filenames
@@ -375,9 +375,14 @@ class Imager(object):
     imageAttrs = ''
     imageUnits = ''
 
-    def __init__(self, document):
-        self.config = document.config['images']
+    def __init__(self, document, imageTypes=None):
+        self.config = document.config
         self.ownerDocument = document
+
+        if imageTypes is None:
+            self.imageTypes = [self.fileExtension]
+        else:
+            self.imageTypes = imageTypes[:]
 
         # Dictionary that makes sure each image is only generated once.
         # The key is the LaTeX source and the value is the image instance.
@@ -385,9 +390,12 @@ class Imager(object):
         usednames = {}
         self._filecache = os.path.abspath(os.path.join('.cache', 
                                           self.__class__.__name__+'.images'))
-        if self.config['cache'] and os.path.isfile(self._filecache):
+        if self.config['images']['cache'] and os.path.isfile(self._filecache):
             self._cache = pickle.load(open(self._filecache, 'r'))
-            for value in self._cache.values():
+            for key, value in self._cache.items():
+                if not os.path.isfile(value.filename):
+                    del self._cache[key]
+                    continue
                 usednames[value.filename] = None
 
         # List of images in the order that they appear in the LaTeX file
@@ -397,7 +405,7 @@ class Imager(object):
         self.staticimages = ordereddict()
 
         # Filename generator
-        self.newFilename = Filenames(self.config.get('filenames', raw=True), 
+        self.newFilename = Filenames(self.config['images'].get('filenames', raw=True), 
                            vars={'jobname':document.userdata.get('jobname','')},
                            extension=self.fileExtension, invalid=usednames)
 
@@ -451,7 +459,7 @@ class Imager(object):
 
     @property
     def enabled(self):
-        if self.config['enabled'] and \
+        if self.config['images']['enabled'] and \
            (self.command or (type(self) is not Imager and type(self) is not VectorImager)): 
             return True
         return False
@@ -506,15 +514,15 @@ class Imager(object):
         filename = 'images.tex'
 
         # Write LaTeX source file
-#       self.source.seek(0)
-#       print self.source.read()
-#       open(os.path.join(cwd,filename), 'w').write(self.source.read())
         self.source.seek(0)
-        open(filename, 'w').write(self.source.read())
+#       print self.source.read()
+#       codecs.open(os.path.join(cwd,filename), 'w', self.config['files']['input-encoding']).write(self.source.read())
+        self.source.seek(0)
+        codecs.open(filename, 'w', self.config['files']['input-encoding']).write(self.source.read())
 
         # Run LaTeX
         os.environ['SHELL'] = '/bin/sh'
-        program = self.config['compiler']
+        program = self.config['images']['compiler']
         if not program:
             program = self.compiler
         os.system(r"%s %s" % (program, filename))
@@ -654,7 +662,7 @@ class Imager(object):
         #log.debug('Creating %s from %s', filename, text)
         self.writeImage(filename, text, context)
 
-        img = Image(filename, self.config)
+        img = Image(filename, self.config['images'])
 
         # Populate image attrs that will be bound later
         if self.imageAttrs:
@@ -728,7 +736,6 @@ class Imager(object):
         # If anything fails, just let the imager handle it...
         except Exception, msg:
             log.warning(msg)
-
         return self.newImage(img.source)
 
 

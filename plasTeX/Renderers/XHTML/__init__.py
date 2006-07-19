@@ -8,6 +8,7 @@ class XHTML(ZPT):
 
     fileExtension = '.html'
     imageTypes = ['.png','.jpg','.jpeg','.gif']
+    vectorImageTypes = ['.svg']
 
     def processFileContent(self, document, s):
         s = ZPT.processFileContent(self, document, s)

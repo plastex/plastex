@@ -222,7 +222,7 @@ images['imager'] = StringOption(
 images['vector-imager'] = StringOption(
     """ LaTeX to vector image program """,
     options = '--vector-imager',
-    default = 'dvisvgm',
+    default = 'none dvisvgm',
     category = 'images',
 )
 

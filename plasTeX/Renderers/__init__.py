@@ -143,7 +143,7 @@ class Renderer(dict):
                 log.warning("Could not load imager '%s' because '%s'" % (name, msg))
                 continue
             
-            self.imager = Imager(document)
+            self.imager = Imager(document, self.imageTypes)
     
             # Make sure that this imager works on this machine
             if self.imager.verify():
@@ -156,7 +156,7 @@ class Renderer(dict):
             if 'none' not in names:
                 log.warning('Could not find a valid imager in the list: %s.  The default imager will be used.' % ', '.join(names))
             from plasTeX.Imagers import Imager
-            self.imager = Imager(document)
+            self.imager = Imager(document, self.imageTypes)
 
         if self.imageTypes and self.imager.fileExtension not in self.imageTypes:
             self.imager.fileExtension = self.imageTypes[0]
@@ -176,7 +176,7 @@ class Renderer(dict):
                 log.warning("Could not load imager '%s' because '%s'" % (name, msg))
                 continue
             
-            self.vectorImager = Imager(document)
+            self.vectorImager = Imager(document, self.vectorImageTypes)
     
             # Make sure that this imager works on this machine
             if self.vectorImager.verify():
@@ -189,7 +189,7 @@ class Renderer(dict):
             if 'none' not in names:
                 log.warning('Could not find a valid vector imager in the list: %s.  The default vector imager will be used.' % ', '.join(names))
             from plasTeX.Imagers import VectorImager
-            self.vectorImager = VectorImager(document)
+            self.vectorImager = VectorImager(document, self.vectorImageTypes)
 
         if self.vectorImageTypes and \
            self.vectorImager.fileExtension not in self.vectorImageTypes:
@@ -198,7 +198,6 @@ class Renderer(dict):
             self.vectorImager.imageAttrs = self.imageAttrs
         if self.imageUnits and not self.vectorImager.imageUnits:
             self.vectorImager.imageUnits = self.imageUnits
-
 
         # Invoke the rendering process
         unicode(document)
