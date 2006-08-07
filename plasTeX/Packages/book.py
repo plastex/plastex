@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os, glob
 from plasTeX import Command, Environment, TheCounter
 
 def ProcessOptions(options, document):
@@ -47,11 +48,14 @@ def ProcessOptions(options, document):
     context.newcounter('dbltopnumber')
 
     language = False
+    from plasTeX.Base.LaTeX import Languages
+    languages = glob.glob(os.path.join(os.path.dirname(Languages.__file__),'*.py'))
+    languages = [os.path.splitext(os.path.basename(x))[0] for x in languages]
     for key, value in options.items():
         if key == 'language':
             language = True
             context.loadLanguage(value, document)
-        elif key in ['american','french','japanese']:
+        elif key in languages:
             language = True
             context.loadLanguage(key, document)
 
