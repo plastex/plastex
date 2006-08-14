@@ -438,9 +438,10 @@ class Imager(object):
 
     def verify(self):
         """ Verify that this commmand works on this machine """
-        os.environ['SHELL'] = 'sh'
         if self.verification:
-            if not os.system('%s >/dev/null 2>/dev/null' % self.verification):
+            proc = os.popen(self.verification)
+            proc.read()
+            if not proc.close():
                 return True
             return False
 
@@ -452,7 +453,9 @@ class Imager(object):
         if not cmd:
             return False
 
-        if not os.system('%s --help >/dev/null 2>/dev/null' % cmd):
+        proc = os.popen('%s --help' % cmd)
+        proc.read()
+        if not proc.close():
             return True
 
         return False

@@ -1,13 +1,17 @@
 #!/usr/bin/env python
 
 from plasTeX.Logging import getLogger
-import plasTeX.Imagers, glob
+import plasTeX.Imagers, glob, sys
 
 status = getLogger('status')
 
+gs = 'gs'
+if sys.platform.startswith('win'):
+   gs = 'gswin32c'
+
 class GSPDFPNG(plasTeX.Imagers.Imager):
     """ Imager that uses gs to convert pdf to png """
-    command = 'gs -dSAFER -dBATCH -dNOPAUSE -sDEVICE=png16m -r250 ' + \
+    command = ('%s -dSAFER -dBATCH -dNOPAUSE -sDEVICE=png16m -r250 ' % gs) + \
               '-dGraphicsAlphaBits=4 -sOutputFile=img%d.png'
     compiler = 'pdflatex'
     fileExtension = '.png'

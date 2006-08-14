@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 
-import gspdfpng, os
+import gspdfpng, os, sys
+
+gs = 'gs'
+if sys.platform.startswith('win'):
+   gs = 'gswin32c'
 
 class GSDVIPNG(gspdfpng.GSPDFPNG):
     """ Imager that uses gs to convert dvi to png """
     compiler = 'latex'
-    verification = '(gs --help && dvips --help)'
+    verification = '(%s --help && dvips --help)' % gs
 
     def executeConverter(self, output):
         open('images.dvi', 'w').write(output.read())

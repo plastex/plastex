@@ -479,3 +479,6 @@ class write(Command):
 
 class protected_write(write):
     nodeName = 'protected@write'
+
+class hfil(Command):
+    pass
