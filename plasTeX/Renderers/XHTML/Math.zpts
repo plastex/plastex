@@ -10,7 +10,7 @@ name: displaymath equation
 </tr>
 </table>
 
-name: eqnarray eqnarray*
+name: eqnarray eqnarray* align align*
 type: xml
 <table class="eqnarray" cellspacing="0" cellpadding="7" width="100%"
        tal:attributes="id self/id">
