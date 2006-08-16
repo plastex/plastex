@@ -1,0 +1,17 @@
+#!/usr/bin/env python
+
+from plasTeX import Environment
+
+class wrapfigure(Environment):
+    args = '[ lines ] place:str [ overhang ] width'
+    float = 'left'
+    def invoke(self, tex):
+        res = Environment.invoke(self, tex)
+        if self.macroMode == self.MODE_BEGIN:
+            a = self.attributes['place'].lower()
+            if a in ['r','o']:
+                self.float = 'right'
+        return res
+
+class wraptable(wrapfigure):
+    pass

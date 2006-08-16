@@ -52,7 +52,7 @@ class bgroup(Command):
                 if isinstance(item, (egroup,endgroup)):
                     break
                 if item.contextDepth < self.contextDepth:
-                    tokens.push(tok)
+                    tokens.push(item)
                     break
                 item.digest(tokens)
             self.appendChild(item)
