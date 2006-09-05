@@ -9,6 +9,7 @@ class includegraphics(Command):
     def invoke(self, tex):
         res = Command.invoke(self, tex)
         f = self.attributes['file']
+        print self.args
         ext = self.ownerDocument.userdata.get('packages', {}).get(self.packageName, {}).get('extensions', ['.png','.jpg','.jpeg','.gif','.pdf','.ps','.eps'])
         img = None
         for e in ['']+ext:
