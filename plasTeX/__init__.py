@@ -1450,5 +1450,13 @@ class TheCounter(Command):
         if self.format is None:
             format = '${%s.arabic}' % self.nodeName[3:]
 
-        return tex.textTokens(re.sub(r'\$\{\s*(\w+)(?:\.(\w+))?\s*\}', 
-                                     counterValue, format))
+        t = re.sub(r'\$\{\s*(\w+)(?:\.(\w+))?\s*\}', counterValue, format)
+
+        # This is kind of a hack.  Since number formats aren't quite as 
+        # flexible as in LaTeX, we have to do somethings heuristically.
+        # In this case, whenever a counter value comes out as a zero,
+        # just hank it out.  This is especially useful in document classes
+        # such as book and report which do this in the \thefigure format macro.
+        t = re.sub(r'\b0[^\d]+', r'', t)
+
+        return tex.textTokens(t)
