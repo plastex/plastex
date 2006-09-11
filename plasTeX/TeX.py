@@ -72,6 +72,7 @@ class TeX(object):
 
         # TeX arguments types and their casting functions
         self.argtypes = {
+            'url': (self.castString, {'#':12,'~':12}),
             'str': self.castString,
             str: self.castString,
             'chr': self.castString,
@@ -671,7 +672,15 @@ class TeX(object):
         if type in ['cs']:
             expanded = False
 
+        priorcodes = {}
+
         try:
+            # Set catcodes for this argument type
+            try: 
+                for key, value in self.argtypes[type][1].items():
+                    priorcodes[key] = self.ownerDocument.whichCode(key)
+                    self.ownerDocument.catcode(key, value)
+            except: pass
 
             # Get a TeX token (i.e. {...})
             if spec is None:
@@ -693,6 +702,10 @@ class TeX(object):
             log.error('Error while reading argument "%s" of %s%s (%s)' % \
                           (name, parentNode.nodeName, self.lineInfo, msg))
             raise 
+
+        # Set catcodes back to original values
+        for key, value in priorcodes.items():
+            self.ownerDocument.catcode(key, value)
 
         if toks is None:
             ParameterCommand.enable()
@@ -896,18 +909,25 @@ class TeX(object):
         object of the specified type
 
         """
+        argtypes = {}
+        for key, t in self.argtypes.items():
+            if isinstance(t, tuple):
+                argtypes[key] = t[0]
+            else:
+                argtypes[key] = t
+
         # No type specified
         if dtype is None:
             pass
 
         # Could not find specified type
-        elif not self.argtypes.has_key(dtype):
+        elif not argtypes.has_key(dtype):
             log.warning('Could not find datatype "%s"' % dtype)
             pass
 
         # Casting to specified type
         else:
-            tokens = self.argtypes[dtype](tokens, subtype=subtype, 
+            tokens = argtypes[dtype](tokens, subtype=subtype, 
                      delim=delim, parentNode=parentNode, name=name)
 
         # Set parent node as needed 
