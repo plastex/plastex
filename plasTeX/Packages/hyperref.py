@@ -4,14 +4,14 @@
 Implementation of the hyperref package
 
 TO DO:
-- \autoref simply acts like \ref
-- Starred versions of \ref and \pageref
+- \autoref doesn't look for \*autorefname, it only looks for \*name
 - Layouts
 - Forms optional parameters
 
 """
 
 from plasTeX import Command, Environment
+from plasTeX.Base.LaTeX.Crossref import ref, pageref
 import urlparse
 
 def addBaseURL(self, urlarg):
@@ -22,6 +22,9 @@ def addBaseURL(self, urlarg):
     return self.attributes[urlarg]
 
 # Basic macros
+
+ref.args = '* %s' % ref.args
+pageref.args = '* %s' % pageref.args
 
 class href(Command):
     args = 'url:url self'

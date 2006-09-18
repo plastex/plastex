@@ -25,6 +25,17 @@ class alsoname(Command): unicode = 'see also'
 class proofname(Command): unicode = 'Proof'
 class glossaryname(Command): unicode = 'Glossary'
 
+# Added for hyperref
+class sectionname(Command): unicode = 'section'
+class subsectionname(Command): unicode = 'subsection'
+class subsubsectionname(Command): unicode = 'subsubsection'
+class paragraphname(Command): unicode = 'paragraph'
+class Hfootnotename(Command): unicode = 'footnote'
+class AMSname(Command): unicode = 'Equation'
+class equationname(Command): unicode = 'Equation'
+class theoremname(Command): unicode = 'Theorem'
+class Itemname(Command): unicode = 'item'
+
 def ukdate():
     day = time.strftime('%d')
     suffix = 'th'

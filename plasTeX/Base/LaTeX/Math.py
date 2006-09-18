@@ -17,6 +17,21 @@ from plasTeX.Logging import getLogger
 class MathEnvironment(Environment):
     mathMode = True
 
+    class ThinSpace(Command):
+        macroName = '.'
+
+    class NegativeThisSpace(Command):
+        macroName = '!'
+    
+    class MediumSpace(Command):
+        macroName = ':'
+    
+    class ThickSpace(Command):
+        macroName = ';'
+    
+    class ThinSpace_(Command):
+        macroName = '/'
+
 # Need \newcommand\({\begin{math}} and \newcommand\){\end{math}}
 
 class math(MathEnvironment): 
@@ -570,20 +585,8 @@ class stackrel(MathAccent):
 # C.7.7 Spacing
 # 
 
-class ThinSpace(Command):
-    macroName = '.'
+# These are nested inside the MathEnvironemnt
 
-class NegativeThisSpace(Command):
-    macroName = '!'
-
-class MediumSpace(Command):
-    macroName = ':'
-
-class ThickSpace(Command):
-    macroName = ';'
-
-class ThinSpace_(Command):
-    macroName = '/'
 
 #
 # C.7.8 Changing Style

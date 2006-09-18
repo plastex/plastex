@@ -28,7 +28,7 @@ name: phantomsection
 <a tal:attributes="name self/id"></a>
 
 name: autoref
-<a tal:attributes="href self/idref/label/url" tal:content="self/idref/label/ref">#.#.#</a>
+<a tal:attributes="href self/idref/label/url" tal:content="string:${self/idref/label/captionName} ${self/idref/label/ref}">Figure #.#.#</a>
 
 name: Form
 <form tal:attributes="action self/attributes/parameters/action; 
@@ -57,4 +57,10 @@ name: Submit
 
 name: Reset
 <input type="reset" tal:attributes="name self/attributes/parameters/name | self/attributes/label; id self/id; value self/attributes/label" />
+
+name: ref*
+<span tal:content="self/idref/label/ref">#.#.#</span>
+
+name: pageref*
+*
 

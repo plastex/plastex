@@ -487,7 +487,14 @@ class Imager(object):
 
         # Compile LaTeX source, then convert the output
         self.source.seek(0)
-        self.convert(self.compileLatex(self.source.read()))
+        print self.source.read()
+        self.source.seek(0)
+        output = self.compileLatex(self.source.read())
+        if output is None:
+            log.error('Compilation of the document containing the images failed.  No output file was found.')
+            return
+
+        self.convert(output)
 
         for value in self._cache.values():
             if value.checksum is None and os.path.isfile(value.path):

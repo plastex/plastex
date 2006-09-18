@@ -15,8 +15,7 @@ class Caption(Command):
 
     def invoke(self, tex):
         res = Command.invoke(self, tex)
-        try: self.title = self.ownerDocument.createElement(self.counter+'name').expand(tex)
-        except TypeError: pass
+        self.title = self.captionName
         return res
 
     def digest(self, tokens):

@@ -6,7 +6,6 @@ C.11.2 Cross-References (p209)
 """
 
 from plasTeX import Command, Environment
-from plasTeX.Logging import getLogger
 
 
 class label(Command):

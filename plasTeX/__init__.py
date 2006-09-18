@@ -137,6 +137,19 @@ class Macro(Element):
         setattr(self, '@idref', d)
         return d
 
+    def captionName():
+        """ Name associated with the counter """
+        def fget(self):
+            if hasattr(self, '@captionName'):
+                return getattr(self, '@captionName')
+            name = self.ownerDocument.createTextNode('')
+            setattr(self, '@captionName', name)
+            return name
+        def fset(self, value):
+            setattr(self, '@captionName', value)
+        return locals()
+    captionName = property(**captionName())
+
     def title():
         """ Retrieve title from variable or attributes dictionary """
         def fget(self):
@@ -496,6 +509,7 @@ class Macro(Element):
             except: secnumdepth = 10
             if secnumdepth >= self.level or self.level > self.ENDSECTIONS_LEVEL:
                 self.ref = self.ownerDocument.createElement('the'+self.counter).expand(tex)
+                self.captionName = self.ownerDocument.createElement(self.counter+'name').expand(tex)
 
     @property
     def arguments(self):
