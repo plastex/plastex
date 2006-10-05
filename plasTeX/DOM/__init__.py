@@ -1559,19 +1559,20 @@ class CharacterData(unicode, Node):
         return []
 
     def __add__(self, other):
-        return unicode(self) + other
+        return unicode.__add__(self, other)
 
     def __radd__(self, other):
-        return other + unicode(self)
+        return other.__add__(self)
 
     def __len__(self):
-        return len(unicode(self))
+        return unicode.__len__(self)
 
     def __iter__(self):
-        return iter(unicode(self))
+        for i in range(len(self)):
+            yield self[i]
 
     def __getitem__(self, i):
-        return unicode(self)[i]
+        return unicode.__getitem__(self, i)
 
     def __str__(self):
         return self
