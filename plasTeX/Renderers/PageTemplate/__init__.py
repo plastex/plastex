@@ -450,19 +450,20 @@ class PageTemplate(BaseRenderer):
         """
         template = []
         options = options.copy()
+        defaults = {}
         if not options:
             f = open(filename, 'r')
             for i, line in enumerate(f):
                 # Found a meta-data command
-                if re.match(r'\w+:', line):
-    
+                if re.match(r'(default-)?\w+:', line):
+
                     # Purge any awaiting templates
                     if template:
                         try:
                             self.setTemplate(''.join(template), options)
                         except ValueError, msg:
                             print 'ERROR: %s at line %s in file %s' % (msg, i, filename)
-                        options.clear()
+                        options = defaults.copy()
                         template = []
     
                     # Done purging previous template, start a new one
@@ -475,10 +476,18 @@ class PageTemplate(BaseRenderer):
                             value += line.rstrip()
                             break
     
-                    options[name] = re.sub(r'\s+', r' ', value.strip())
+                    value = re.sub(r'\s+', r' ', value.strip())
+                    if name.startswith('default-'):
+                        name = name.split('-')[-1]
+                        defaults[name] = value
+                        if name not in options:
+                            options[name] = value
+                    else:
+                        options[name] = value
                     continue
                 
-                template.append(line)
+                if template or (not(template) and line.strip()):
+                    template.append(line)
 
         else:
             template = open(filename, 'r').readlines()

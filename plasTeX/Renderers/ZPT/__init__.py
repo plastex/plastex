@@ -12,9 +12,9 @@ just here for backwards compatibility.
 
 """
 
-from plasTeX.Renderers.PageTemplate import PageTemplate
+#from plasTeX.Renderers.PageTemplate import PageTemplate
 
-class ZPT(PageTemplate):
-    pass
+#class ZPT(PageTemplate):
+#    pass
 
-Renderer = ZPT
+#Renderer = ZPT
