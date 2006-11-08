@@ -102,7 +102,7 @@ class Renderer(dict):
         # Filename generator
         self.newFilename = None
 
-    def render(self, document):
+    def render(self, document, postProcess=None):
         """
         Invoke the rendering process
 
@@ -111,6 +111,7 @@ class Renderer(dict):
 
         Required Arguments:
         document -- the document object to render
+        postProcess -- a function that will be called with the content of 
 
         """
         config = document.config
@@ -207,7 +208,13 @@ class Renderer(dict):
         self.vectorImager.close()
 
         # Run any cleanup activities
-        self.cleanup(document, self.files.values())
+        self.cleanup(document, self.files.values(), postProcess=postProcess)
+
+        # Write out auxilliary information
+        pauxname = os.path.join(document.userdata.get('working-dir','.'), 
+                                '%s.paux' % document.userdata['jobname'])
+        rname = config['general']['renderer']
+        document.context.persist(pauxname, rname)
 
         # Remove mixins
         del Node.renderer
@@ -216,7 +223,7 @@ class Renderer(dict):
     def processFileContent(self, document, s):
         return s
 
-    def cleanup(self, document, files):
+    def cleanup(self, document, files, postProcess=None):
         """ 
         Cleanup method called at the end of rendering 
 
@@ -228,6 +235,13 @@ class Renderer(dict):
 
         Required Arguments:
         document -- the document being rendered
+        files -- the list of filenames that were generated
+       
+        Optional Arguments:
+        postProcess -- a function that will be called on the content of 
+            each file.  It is called with the document object and a
+            unicode object with the content of each file.  
+            It must return a unicode object.
 
         """
         if self.processFileContent is Renderer.processFileContent:
@@ -243,6 +257,9 @@ class Renderer(dict):
                 continue
 
             s = self.processFileContent(document, s)
+
+            if callable(postProcess):
+                s = postProcess(document, s)
 
             codecs.open(f, 'w', encoding).write(u''.join(s))
 
@@ -416,6 +433,9 @@ class Renderable(object):
         (e.g. foo.html#bar).
 
         """
+        if getattr(self, 'urloverride', None) is not None:
+            return self.urloverride
+
         base = self.config['document']['base-url']
         if base and base.endswith('/'):
             base = base[:-1]

@@ -117,11 +117,53 @@ class Macro(Element):
     # Value to return when macro is referred to by \ref
     ref = None
 
+    # Attributes that should be persisted between runs for nodes 
+    # that can be referenced.  This allows for cross-document links.
+    refAttributes = ['macroName','ref','title','captionName','id','url']
+
     # Source of the TeX macro arguments
     argSource = ''
 
     # LaTeX argument template
     args = ''
+
+    def persist(self, attrs=None):
+        """ 
+        Store attributes needed for cross-document links 
+
+        This method really needs to be called by the renderer because
+        the rendered versions of the attributes are needed.  If nested
+        classes could be pickeled, we could just pickle the attributes.
+
+        Keyword Arguments:
+        attrs -- dictionary to populate with values.  If set to None,
+            a new dictionary should be created.
+
+        Returns: dictionary containing attributes to be persisted
+
+        """
+        if attrs is None:
+            attrs = {}
+        for name in self.refAttributes:
+            value = getattr(self, name, None)
+            if value is None:
+                continue
+            if isinstance(value, Node):
+                value = unicode(value)
+            attrs[name] = value
+        return attrs
+
+    def restore(self, attrs):
+        """ 
+        Restore attributes needed for cross-document links 
+
+        Required Attributes:
+        attrs -- dictionary of attributes to be set on self
+
+        """
+        remap = {'url':'urloverride'}
+        for key, value in attrs.items():
+            setattr(self, remap.get(key, key), value)
 
     @property
     def config(self):
@@ -142,8 +184,7 @@ class Macro(Element):
         def fget(self):
             if hasattr(self, '@captionName'):
                 return getattr(self, '@captionName')
-            name = self.ownerDocument.createTextNode('')
-            setattr(self, '@captionName', name)
+            self.captionName = name = self.ownerDocument.createTextNode('')
             return name
         def fset(self, value):
             setattr(self, '@captionName', value)

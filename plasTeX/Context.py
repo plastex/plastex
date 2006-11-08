@@ -105,6 +105,7 @@ class Context(object):
 
         # Labeled objects
         self.labels = {}
+        self.persistentLabels = {}
 
         # Unresolved refs
         self.refs = {}
@@ -132,6 +133,54 @@ class Context(object):
 
         if load:
             self.loadBaseMacros()
+
+    def persist(self, filename, type='none'):
+        """
+        Persist cross-document information for labeled nodes
+
+        Required Arguments:
+        filename -- the name of the file with the shelved data
+ 
+        Keyword Arguments:
+        type -- the key in the shelved data to look under.  This is generally
+            the name of the renderer used since the information for each
+            renderer may be different.
+
+        """
+        import pickle
+        if os.path.exists(filename):
+            d = pickle.load(open(filename,'rb'))
+        else:
+            d = {type:{}}
+        data = d[type]
+        for key, value in self.persistentLabels.items():
+            data[key] = value.persist()
+        pickle.dump(d, open(filename,'wb'))
+
+    def restore(self, filename, type='none'):
+        """
+        Restore cross-document information for labeled nodes
+
+        Required Arguments:
+        filename -- the name of the file with the shelved data
+ 
+        Keyword Arguments:
+        type -- the key in the shelved data to look under.  This is generally
+            the name of the renderer used since the information for each
+            renderer may be different.
+
+        """
+        import pickle
+        if not os.path.exists(filename):
+            return
+        d = pickle.load(open(filename,'rb'))
+        try: data = d[type]
+        except KeyError: return
+        for key, value in data.items():
+            n = self[value.get('macroName','Macro')]()
+            n.restore(value)
+            self.labels[key] = n
+        pickle.dump(d, open(filename,'wb'))
 
     @property
     def isMathMode(self):
@@ -272,7 +321,7 @@ class Context(object):
             return
 
         if self.currentlabel is not None:
-            self.labels[label] = self.currentlabel
+            self.persistentLabels[label] = self.labels[label] = self.currentlabel
             self.currentlabel.id = label
 
         #print label, ''.join(self.currentlabel.ref[:])
@@ -292,6 +341,7 @@ class Context(object):
 
         Required Arguments:
         obj -- object to put the referenced object onto
+        name -- name of key in idref dictionary where object is stored
         label -- label to resolve
 
         See Also:

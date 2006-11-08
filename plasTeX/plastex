@@ -1,6 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.4
 
-import os, sys, codecs, string
+import os, sys, codecs, string, glob
 import plasTeX
 from plasTeX.TeX import TeX
 from plasTeX.Config import config
@@ -39,6 +39,16 @@ def main(argv):
     if config['document']['title']:
         document.userdata['title'] = config['document']['title']
     jobname = document.userdata['jobname'] = tex.jobname
+    cwd = document.userdata['working-dir'] = os.getcwd()
+
+    # Load aux files for cross-document references
+    pauxname = '%s.paux' % jobname
+    rname = config['general']['renderer']
+    for dirname in [cwd] + config['general']['paux-dirs']:
+        for fname in glob.glob(os.path.join(dirname, '*.paux')):
+            if os.path.basename(fname) == pauxname:
+                continue
+            document.context.restore(fname, rname)
 
     # Parse the document
     tex.parse()
@@ -53,11 +63,10 @@ def main(argv):
         os.chdir(outdir)
     
     # Load renderer
-    r = config['general']['renderer']
     try: 
-        exec('from plasTeX.Renderers.%s import Renderer' % r)
+        exec('from plasTeX.Renderers.%s import Renderer' % rname)
     except ImportError, msg:
-        log.error('Could not import renderer "%s".  Make sure that it is installed correctly, and can be imported by Python.' % r)
+        log.error('Could not import renderer "%s".  Make sure that it is installed correctly, and can be imported by Python.' % rname)
         sys.exit(1)
 
     # Write expanded source file

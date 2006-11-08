@@ -4,6 +4,26 @@ name: mdseries textmd
 name: bfseries textbf
 <b class="bfseries" tal:content="self">bold text</b>
 
+name: -textbf
+engine: kid
+<b class="bfseries" py:content="XML(unicode(here))">bold text</b>
+
+name: -textbf
+engine: genshi
+<b class="bfseries" py:content="markup(here)">$here</b>
+
+name: -textbf
+engine: cheetah
+<b class="bfseries">$here</b>
+
+name: -textbf
+engine: string
+<b>$self</b>
+
+name: -textbf
+engine: python
+<b>%(self)s</b>
+
 name: rmfamily textrm
 <span class="rmfamily" tal:content="self">roman text</span>
 

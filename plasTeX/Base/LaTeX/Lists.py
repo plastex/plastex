@@ -11,6 +11,11 @@ from plasTeX import Logging
 
 log = Logging.getLogger()
 
+class enuminame(Command): unicode = ''
+class enumiiname(Command): unicode = ''
+class enumiiiname(Command): unicode = ''
+class enumivname(Command): unicode = ''
+
 class List(Environment):
     """ Base class for all list-based environments """
     depth = 0
@@ -43,7 +48,7 @@ class List(Environment):
                     continue
                 tokens.push(tok)
                 break
-            self.digestUntil(tokens, type(self))
+            self.digestUntil(tokens, List.item)
             self.paragraphs()
 
     def invoke(self, tex):

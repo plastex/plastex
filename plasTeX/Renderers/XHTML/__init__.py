@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 import sys, os, re, codecs, plasTeX
-from plasTeX.Renderers.ZPT import ZPT
+from plasTeX.Renderers.PageTemplate import PageTemplate
 
-class XHTML(ZPT):
+class XHTML(PageTemplate):
     """ Renderer for XHTML documents """
 
     fileExtension = '.html'
@@ -11,7 +11,7 @@ class XHTML(ZPT):
     vectorImageTypes = ['.svg']
 
     def processFileContent(self, document, s):
-        s = ZPT.processFileContent(self, document, s)
+        s = PageTemplate.processFileContent(self, document, s)
 
         # Force XHTML syntax on empty tags
         s = re.compile(r'(<(?:hr|br|img|link|meta)\b.*?)\s*/?\s*(>)', 

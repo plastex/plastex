@@ -57,6 +57,14 @@ general['config'] = StringOption(
     callback = readconfig,
 )
 
+general['paux-dirs'] = MultiOption(
+    """
+    Directories where *.paux files should be loaded from.
+
+    """,
+    options = '--paux-dirs',
+)
+
 #
 # Links
 #
