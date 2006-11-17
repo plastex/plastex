@@ -8,30 +8,57 @@ class includegraphics(Command):
     packageName = 'graphics'
     def invoke(self, tex):
         res = Command.invoke(self, tex)
+
         f = self.attributes['file']
-        print self.args
-        ext = self.ownerDocument.userdata.get('packages', {}).get(self.packageName, {}).get('extensions', ['.png','.jpg','.jpeg','.gif','.pdf','.ps','.eps'])
+
+        ext = self.ownerDocument.userdata.getPath(
+                      'packages/%s/extensions' % self.packageName, 
+                      ['.png','.jpg','.jpeg','.gif','.pdf','.ps','.eps'])
+        paths = self.ownerDocument.userdata.getPath(
+                        'packages/%s/paths' % self.packageName, ['.'])
         img = None
-        for e in ['']+ext:
-            try: 
-                img = os.path.abspath(tex.kpsewhich(f+e))
+
+        # Check for file using graphicspath
+        for p in paths:
+            for e in ['']+ext:
+                fname = os.path.join(p,f+e)
+                if os.path.isfile(fname):
+                    img = os.path.abspath(fname)
+                    break
+            if img is not None:
                 break
-            except (OSError, IOError): 
-                pass 
+
+        # Check for file using kpsewhich
+        if img is None:
+            for e in ['']+ext:
+                try: 
+                    img = os.path.abspath(tex.kpsewhich(f+e))
+                    break
+                except (OSError, IOError): 
+                    pass 
+
         self.imageoverride = img
         return res
 
+class graphicspath(Command):
+    args = 'paths'
+    packageName = 'graphics'
+    def invoke(self, tex):
+        res = Command.invoke(self, tex)
+        output = [x.textContent.strip() for x in self.attributes['paths']]
+        output = [x for x in output if x]
+        self.ownerDocument.userdata.setPath(
+                'packages/%s/paths' % self.packageName, output)
+        return res
+
 class DeclareGraphicsExtensions(Command):
+    packageName = 'graphics'
     args = 'ext:list'
     def invoke(self, tex):
         res = Command.invoke(self, tex)
-        ext = self.attributes['ext']
-        data = self.ownerDocument.userdata
-        if 'packages' not in data:
-            data['packages'] = {}
-        if 'graphicx' not in data['packages']:
-            data['packages']['graphicx'] = {}
-        self.ownerDocument.userdata['packages']['graphicx']['extensions'] = ext
+        ext = [x for x in self.attributes['ext'] if x]
+        self.ownerDocument.userdata.setPath(
+                'packages/%s/extensions' % self.packageName, ext)
         return res
 
 class rotatebox(Command):

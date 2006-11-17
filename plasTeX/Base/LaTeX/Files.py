@@ -26,7 +26,7 @@ class input(Command):
 
             status.info(' ( %s.tex ' % path)
             encoding = self.config['files']['input-encoding']
-            tex.input(codecs.open(path, 'r', encoding))
+            tex.input(codecs.open(path, 'r', encoding, 'replace'))
             status.info(' ) ')
 
         except (OSError, IOError):

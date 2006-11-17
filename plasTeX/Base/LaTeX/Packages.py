@@ -20,7 +20,10 @@ status = getLogger('status')
 class PackageLoader(Command):
     extension = '.sty'
     def load(self, tex, file, options={}):
-        self.ownerDocument.context.loadPackage(tex, file+self.extension, options)
+        try:
+            self.ownerDocument.context.loadPackage(tex, file+self.extension, options)
+        except Exception, msg:
+            log.error('Could not load package "%s": %s' % (file, msg)) 
 
 #
 # C.5.1 Document Class

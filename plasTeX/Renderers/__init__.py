@@ -251,7 +251,7 @@ class Renderer(dict):
 
         for f in files:
             try:
-                s = codecs.open(str(f), 'r', encoding).read()
+                s = codecs.open(str(f), 'r', encoding, 'replace').read()
             except IOError, msg:
                 log.error(msg)
                 continue

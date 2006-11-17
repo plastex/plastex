@@ -12,6 +12,7 @@ from plasTeX.Logging import getLogger
 
 class Caption(Command):
     args = '[ toc ] self'
+    blockType = True
 
     def invoke(self, tex):
         res = Command.invoke(self, tex)
@@ -33,8 +34,9 @@ class Caption(Command):
 
 class Float(Environment):
     blockType = True
+    forcePars = True
     args = '[ loc:str ]'
-    caption = None
+    caption = None  # Points to the actual caption node of the figure
 
 class figure(Float):
     class caption_(Caption):

@@ -3,7 +3,7 @@
 import os
 from plasTeX import Command
 
-from graphics import DeclareGraphicsExtensions
+from graphics import DeclareGraphicsExtensions, graphicspath
 
 class includegraphics(Command):
     args = '[ options:dict ] file:str'
@@ -14,14 +14,31 @@ class includegraphics(Command):
 
         f = self.attributes['file']
 
-        ext = self.ownerDocument.userdata.get('packages', {}).get(self.packageName, {}).get('extensions', ['.png','.jpg','.jpeg','.gif','.pdf','.ps','.eps'])
+        ext = self.ownerDocument.userdata.getPath(
+                      'packages/%s/extensions' % self.packageName, 
+                      ['.png','.jpg','.jpeg','.gif','.pdf','.ps','.eps'])
+        paths = self.ownerDocument.userdata.getPath(
+                        'packages/%s/paths' % self.packageName, ['.'])
         img = None
-        for e in ['']+ext:
-            try: 
-                img = os.path.abspath(tex.kpsewhich(f+e))
+
+        # Check for file using graphicspath
+        for p in paths:
+            for e in ['']+ext:
+                fname = os.path.join(p,f+e)
+                if os.path.isfile(fname):
+                    img = os.path.abspath(fname)
+                    break
+            if img is not None:
                 break
-            except (OSError, IOError): 
-                pass 
+
+        # Check for file using kpsewhich
+        if img is None:
+            for e in ['']+ext:
+                try: 
+                    img = os.path.abspath(tex.kpsewhich(f+e))
+                    break
+                except (OSError, IOError): 
+                    pass 
 
         options = self.attributes['options']
 
@@ -29,12 +46,18 @@ class includegraphics(Command):
 
             height = options.get('height')
             if height is not None:
-                self.style['height'] = tex.castString(height)
+                self.style['height'] = height
 
             width = options.get('width')
             if width is not None:
-                self.style['width'] = tex.castString(width)
+                self.style['width'] = width
 
         self.imageoverride = img
 
         return res
+
+class DeclareGraphicsExtensions(DeclareGraphicsExtensions):
+    packageName = 'graphicx'
+
+class graphicspath(graphicspath):
+    packageName = 'graphicx'

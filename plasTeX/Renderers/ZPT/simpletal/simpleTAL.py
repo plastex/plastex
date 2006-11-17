@@ -62,9 +62,6 @@ try:
 except ImportError:
 	use_dom2sax = 0
 
-def stripMarkup(s):
-     return re.sub(r'</?\w+[^>]*>', r'', s)
-
 import simpleTALES
 
 # Name-space URIs
@@ -440,23 +437,15 @@ class TemplateInterpreter:
 					self.slotParameters = {}
 				else:
 					if (isinstance (resultVal, types.UnicodeType)):
-                                                if contentType == 2:
-                                                        resultVal = stripMarkup(resultVal)
-						self.file.write (resultVal)
+						self.file.write (contentType (resultVal))
 					elif (isinstance (resultVal, types.StringType)):
 						# THIS IS NOT A BUG!
 						# Use Unicode in the Context object if you are not using Ascii
-                                                resultVal = unicode (resultVal, 'ascii')
-                                                if contentType == 2:
-                                                        resultVal = stripMarkup (resultVal)
-                                                self.file.write (resultVal)
+                                                self.file.write (contentType (unicode (resultVal, 'ascii')))
 					else:
 						# THIS IS NOT A BUG!
 						# Use Unicode in the Context object if you are not using Ascii
-                                                resultVal = unicode (resultVal)
-                                                if contentType == 2:
-                                                        resultVal = stripMarkup (resultVal)
-                                                self.file.write (resultVal)
+                                                self.file.write (contentType (unicode (resultVal)))
 			else:
 				if (isinstance (resultVal, types.UnicodeType)):
 					self.file.write (cgi.escape (resultVal))
@@ -743,6 +732,7 @@ class XMLTemplate (Template):
 		self.expandInline (context, encodingFile, interpreter)
 	
 class TemplateCompiler:
+        structureFlag = lambda self, x:x
 	def __init__ (self):
 		""" Initialise a template compiler.
 		"""
@@ -751,6 +741,12 @@ class TemplateCompiler:
 		self.symbolLocationTable = {}
 		self.macroMap = {}
 		self.endTagSymbol = 1
+
+                self.contentType = {}
+                self.contentType ['text'] = 0
+                self.contentType ['escape'] = 0
+                self.contentType ['structure'] = lambda x: x
+                self.contentType ['stripped'] = lambda x: re.sub(r'</?\w+[^>]*>', r'', x)
 
 		self.commandHandler  = {}
 		self.commandHandler [TAL_DEFINE] = self.compileCmdDefine
@@ -1119,17 +1115,12 @@ class TemplateCompiler:
 			self.log.error (msg)
 			raise TemplateParseException (self.tagAsText (self.currentStartTag), msg)
 
-		structureFlag = 1
+		structureFlag = self.structureFlag
 		attProps = argument.split (' ')
 		if (len(attProps) > 1):
-			if (attProps[0] == "structure"):
-				structureFlag = 1
-				express = " ".join (attProps[1:])
-                        elif (attProps[0] == "stripped"):
-                                structureFlag = 2
-                                express = " ".join (attProps[1:])
-                        elif (attProps[0] in ["text", "escape"]):
-				structureFlag = 0
+                        flag = self.contentType.get(attProps[0])
+                        if flag is not None:
+                                structureFlag = flag 
 				express = " ".join (attProps[1:])
 			else:
 				# It's not a type selection after all - assume it's part of the path

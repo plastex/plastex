@@ -116,7 +116,7 @@ class TeX(object):
                     encoding = self.ownerDocument.config['files']['input-encoding']
                 except:
                     encoding = 'utf-8'
-                self.input(codecs.open(self.kpsewhich(file), 'r', encoding))
+                self.input(codecs.open(self.kpsewhich(file), 'r', encoding, 'replace'))
 
             # File object
             else:
@@ -172,7 +172,7 @@ class TeX(object):
 
         try:
             encoding = config['files']['input-encoding']
-            f = codecs.open(path, 'r', encoding)
+            f = codecs.open(path, 'r', encoding, 'replace')
             # Put in a flag so that we can parse past our own
             # package tokens and throw them away, we don't want them in
             # the output document.

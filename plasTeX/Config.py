@@ -261,6 +261,13 @@ images['cache'] = BooleanOption(
     category = 'images',
 )
 
+images['save-file'] = BooleanOption(
+    """ Should the temporary images.tex file be saved for debugging? """,
+    options = '--save-image-file !--delete-image-file',
+    default = False,
+    category = 'images',
+)
+
 #
 # Document
 #

@@ -487,8 +487,6 @@ class Imager(object):
 
         # Compile LaTeX source, then convert the output
         self.source.seek(0)
-        print self.source.read()
-        self.source.seek(0)
         output = self.compileLatex(self.source.read())
         if output is None:
             log.error('Compilation of the document containing the images failed.  No output file was found.')
@@ -524,9 +522,9 @@ class Imager(object):
         filename = 'images.tex'
 
         # Write LaTeX source file
-        self.source.seek(0)
-#       print self.source.read()
-#       codecs.open(os.path.join(cwd,filename), 'w', self.config['files']['input-encoding']).write(self.source.read())
+        if self.config['images']['save-file']:
+            self.source.seek(0)
+            codecs.open(os.path.join(cwd,filename), 'w', self.config['files']['input-encoding']).write(self.source.read())
         self.source.seek(0)
         codecs.open(filename, 'w', self.config['files']['input-encoding']).write(self.source.read())
 

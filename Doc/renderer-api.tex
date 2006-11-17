@@ -145,7 +145,7 @@ the default renderer to use for text nodes.
 \end{memberdesc}
 
 
-\begin{methoddesc}[Renderer]{cleanup}{document, files}
+\begin{methoddesc}[Renderer]{cleanup}{document, files\optional{, postProcess}}
 this method is called once the entire rendering process is finished.  
 Subclasses can use this method to run any post-rendering cleanup tasks.
 The first argument, \var{document}, is the document instance that is
@@ -155,6 +155,10 @@ filenames that were created.
 This method opens each file, reads the content, and 
 calls \method{processFileContent} on the file content.  It is suggested
 that renderers override that method instead of \method{cleanup}.
+
+In addition to overriding \method{processFileContent}, you can post-process
+file content without having to subclass a renderer by using the 
+\var{postProcess} argument.  See the \method{render} method for more information.
 \end{methoddesc}
 
 \begin{methoddesc}[Renderer]{find}{keys\optional{, default}}
@@ -181,8 +185,12 @@ file in a unicode object.  The value returned from this method will be
 written to the output file in the appropriate encoding.
 \end{methoddesc}
 
-\begin{methoddesc}[Renderer]{render}{document}
-invokes the rendering process on \var{document}.
+\begin{methoddesc}[Renderer]{render}{document\optional{, postProcess}}
+invokes the rendering process on \var{document}.  You can post-process each
+file after it is rendered by passing a function into the \var{postProcess}
+argument.  This function must take two arguments: 1) the document object and
+2) the content of a file as a unicode object.  It should do whatever 
+processing it needs to the file content and return a unicode object.
 \end{methoddesc}
 
 

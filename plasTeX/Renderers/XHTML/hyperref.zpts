@@ -2,7 +2,7 @@ name: href
 <a tal:attributes="href self/attributes/url" tal:content="self">link text</a>
 
 name: url
-<a tal:attributes="href self/attributes/url" tal:content="self/attributes/url">link text</a>
+<a tal:attributes="href self/attributes/url | self" tal:content="self/attributes/url | self">link text</a>
 
 name: nolinkurl
 <span tal:replace="self/attributes/url">url</span>

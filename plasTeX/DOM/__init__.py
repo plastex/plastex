@@ -17,12 +17,55 @@ class DOMTimeStamp(long):
     http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html#Core-DOMTimeStamp
     """
 
-class DOMUserData(object):
+class DOMUserData(dict):
     """
     DOM User Data
 
     http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html#Core-DOMUserData
     """
+    def setPath(self, path, value):
+        """ 
+        Traverse the nested dictionary `d` and set the value 
+
+        Arguments:
+        path -- a '/' delimited string of keys
+        value -- value to set at the last key
+
+        Examples::
+        userdata.setPath('packages/graphics/extensions', ['.ps','jpg'])
+
+        See Also:
+        getPath()
+
+        """
+        keys = path.split('/')
+        for key in keys[:-1]:
+            if key not in self:
+                self[key] = {}
+            self = self[key]
+        self[keys[-1]] = value
+
+    def getPath(self, path, default=None):
+        """ 
+        Return the value of the nested dictionary `d` at the path 
+
+        Arguments:
+        path -- a '/' delimited string of keys
+        default -- value to return if the path doesn't exist
+
+        Examples::
+        userdata.getPath('packages/graphics/extensions')
+
+        See Also:
+        setPath()
+
+        """
+        keys = path.split('/')
+        for key in keys[:-1]:
+            if key not in self:
+                return default
+            self = self[key]
+        return self.get(keys[-1], default)
 
 class DOMObject(object):
     """
@@ -1103,7 +1146,7 @@ class Node(object):
             return self._dom_userdata
         except AttributeError:
             pass
-        userdata = {}
+        userdata = DOMUserData()
         self._dom_userdata = userdata
         return userdata
 

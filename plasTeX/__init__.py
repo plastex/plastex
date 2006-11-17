@@ -127,6 +127,9 @@ class Macro(Element):
     # LaTeX argument template
     args = ''
 
+    # Force there to be at least on paragraph in the content
+    forcePars = False
+
     def persist(self, attrs=None):
         """ 
         Store attributes needed for cross-document links 
@@ -855,7 +858,7 @@ class Environment(Macro):
         if self.macroMode == Macro.MODE_END:
             return
         # Absorb the tokens that belong to us
-        dopars = False
+        dopars = self.forcePars
 #       text = []
         for item in tokens:
 #           if item.nodeType == Node.TEXT_NODE:

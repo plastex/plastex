@@ -304,10 +304,10 @@ class iffalse(IfCommand):
     def invoke(self, tex):
         return tex.readIfContent(False)
 
-#class ifpdf(iffalse): pass
-#class pdffalse(Command): pass
-#class pdftrue(Command): pass
-#class pdfoutput(Command): pass
+class ifpdf(iffalse): pass
+class pdffalse(Command): pass
+class pdftrue(Command): pass
+class pdfoutput(Command): pass
 
 class ifcase(IfCommand):
     """ Cases """
@@ -381,7 +381,7 @@ class input(Command):
 
             status.info(' ( %s ' % path)
             encoding = self.config['files']['input-encoding']
-            tex.input(codecs.open(path, 'r', encoding))
+            tex.input(codecs.open(path, 'r', encoding, 'replace'))
             status.info(' ) ')
 
         except (OSError, IOError), msg:
