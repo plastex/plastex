@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
 import sys, os, re, codecs, plasTeX
-from plasTeX.Renderers.PageTemplate import PageTemplate
+from plasTeX.Renderers.PageTemplate import Renderer as _Renderer
+from plasTeX.Renderers.ZPT import Renderer as _Renderer
 
-class XHTML(PageTemplate):
+class XHTML(_Renderer):
     """ Renderer for XHTML documents """
 
     fileExtension = '.html'
@@ -11,7 +12,7 @@ class XHTML(PageTemplate):
     vectorImageTypes = ['.svg']
 
     def processFileContent(self, document, s):
-        s = PageTemplate.processFileContent(self, document, s)
+        s = _Renderer.processFileContent(self, document, s)
 
         # Force XHTML syntax on empty tags
         s = re.compile(r'(<(?:hr|br|img|link|meta)\b.*?)\s*/?\s*(>)', 

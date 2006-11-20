@@ -41,7 +41,7 @@ except:
 	import DummyLogger as logging
 	
 import simpleTAL
-from plasTeX.Renderers.ZPT import simpletal
+from plasTeX.Renderers.PageTemplate import simpletal
 
 __version__ = simpletal.__version__
 

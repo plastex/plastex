@@ -40,7 +40,7 @@ except:
 	import DummyLogger as logging
 	
 import xml.sax, cgi, StringIO, codecs, re, sgmlentitynames, types
-from plasTeX.Renderers.ZPT import simpletal 
+from plasTeX.Renderers.PageTemplate import simpletal 
 import copy, sys
 import FixedHTMLParser
 

@@ -481,11 +481,23 @@ so that the image override can done conditionally.  In the case
 where no override is desired in a property implementation, simply
 raise an \exception{AttributeError} exception.
 
-\section{Zope Page Template Renderer\label{sec:zpt}}
+\section{Page Template Renderer\label{sec:zpt}}
 
-The Zope Page Template (ZPT) renderer is a renderer for \plasTeX\ document
-objects that is based on the ZPT language (see the official documentation at
-\url{http://www.zope.org/Documentation/Books/ZopeBook/2_6Edition/ZPT.stx}).
+The Page Template (PT) renderer is a renderer for \plasTeX\ document
+objects that supports various page template engines such as 
+\href{http://www.zope.org/Documentation/Books/ZopeBook/2_6Edition/ZPT.stx}{Zope Page Templates (ZPT)}, 
+\href{http://www.cheetahtemplate.org/}{Cheetah templates}, 
+\href{http://kid-templating.org/}{Kid templates}, 
+\href{http://genshi.edgewall.org/}{Genshi templates}, 
+\href{http://docs.python.org/lib/node40.html}{Python string templates}, 
+as well as plain old \href{http://docs.python.org/lib/typesseq-strings.html}{Python string formatting}.  It is also possible to add support for other 
+template engines.  Note that all template engines except ZPT, Python formats, 
+and Python string templates must be installed in your Python installation. 
+They are not included.
+
+ZPT is the most supported page template language at the moment.  This is the
+template engine that is used for all of the \plasTeX\ delivered templates
+in the XHTML renderer; however, the other templates work in a very similar way.
 The actual ZPT implementation used is SimpleTAL 
 (\url{http://www.owlfish.com/software/simpleTAL/}).  This implementation
 implements almost all of the ZPT API and is very stable.  However, some
@@ -493,17 +505,16 @@ changes were made to this package to make it more convenient to use
 within \plasTeX.  These changes are discussed in detail in the 
 ZPT Tutorial (see section \ref{sec:zpttutorial}).
 
-Since ZPT can be used to generate any form of XML or HTML, the ZPT
+Since the above template engines can be used to generate any form of 
+XML or HTML, the PT
 renderer is a general solution for rendering XML or HTML from a 
 \plasTeX\ document object.  When switching from one DTD to another, 
 you simply need to use a different set of templates.
 
-As in all \class{Renderer}-based renderers, each key in the ZPT renderer
-returns a function.  In this case, each of these ``functions'' is a
-callable ZPT instance\footnote{ZPT instances, by default, are not callable.
-The \method{__call__} is added to the object.  This new method populates
-the namespace of the template and returns the rendered output.}.  As is
-the case with all rendering methods, the only argument is the node to be
+As in all \class{Renderer}-based renderers, each key in the PT renderer
+returns a function.  These functions are actually generated when the 
+template files are parsed by the PT renderer.
+As is the case with all rendering methods, the only argument is the node to be
 rendered, and the output is a unicode object containing the rendered 
 output. In addition to the rendering methods, the \method{textDefault} method
 escapes all characters that are special in XML and HTML (i.e. <, >, and \&).
@@ -517,7 +528,8 @@ output types that are visual (e.g. HTML).
 
 \note{If you are not familiar with the ZPT language, you should read the 
 tutorial in section \ref{sec:zpttutorial} before continuing in this 
-section.}
+section.  See the links in the previous section for documentation on
+the other template engines.}
 
 By default, templates are loaded from the directory where the 
 renderer module was imported from.  In addition, the templates from
@@ -526,8 +538,8 @@ it very easy to extend a renderer and add just a few new templates
 to support the additions that were made.
 
 The template files in the module directories can have three different forms.
-The first is HTML.  HTML templates must have an extension of \file{.htm},
- \file{.html}, or \file{.zpt}.  These templates are compiled using 
+The first is HTML.  HTML templates must have an extension of \file{.htm} or
+ \file{.html}.  These templates are compiled using 
 SimpleTAL's HTML compiler.  XML templates, the second form of template, 
 uses SimpleTAL's XML compiler, so they must be well-formed XML 
 fragments.  XML templates must have the file extension \file{.xml}, 
@@ -535,6 +547,17 @@ fragments.  XML templates must have the file extension \file{.xml},
 file is used as the key to store the template in the renderer.  Keep in
 mind that the names of the keys in the renderer correspond to the node
 names in the document object.  
+
+The extensions used for all templating engines are shown in the table below.
+\begin{tableiii}{l|l|l}{}{Engine}{Extension}{Output Type}
+\lineiii{ZPT}{.html, .htm, .zpt}{HTML}
+\lineiii{}{.xhtml, .xhtm, .xml}{XML/XHTML}
+\lineiii{Python string formatting}{.pyt}{Any}
+\lineiii{Python string templates}{.st}{Any}
+\lineiii{Kid}{.kid}{XML/XHTML}
+\lineiii{Cheetah}{.che}{XML/XHTML}
+\lineiii{Genshi}{.gen}{HTML}
+\end{tableiii} 
 
 The file listing below is an example of a directory of template files.
 In this case the templates correspond to nodes in the document created
@@ -549,19 +572,26 @@ textit.html
 
 Since there are a lot of templates that are merely one line, it would be
 inconvenient to have to create a new file for each template.  In cases
-like this, you can use the \file{.zpts} extension.  Files with this
+like this, you can use the \file{.zpts} extension for collections of
+ZPT templates, or more generally \file{.pts} for collections of various 
+template types.  Files with this
 extension have multiple templates in them.  Each template is separated
 from the next by the template metadata which includes things like the 
-name of the template, the type (xml or html), and can also alias 
+name of the template, the type (xml, html, or text), and can also alias 
 template names to another template in the renderer.  The following 
 metadata names are currently supported.
 \begin{tableii}{l|p{4in}}{}{Name}{Purpose}
+\lineii{engine}{the name of the templating engine to use.  At the time of
+    this writing, the value could be zpt, tal (same as zpt), 
+    html (ZPT HTML template), xml (ZPT XML template), python
+    (Python formatted string), string (Python string template),
+    kid, cheetah, or genshi.}
 \lineii{name}{the name or names of the template that is to follow. 
     This name is used as the key in the renderer, and also 
     corresponds to the node name that will be rendered by the template.
     If more than one name is desired, they are simply separated by
     spaces.}
-\lineii{type}{the type of the template: xml or html.  XML templates
+\lineii{type}{the type of the template: xml, html, or text.  XML templates
     must contain a well-formed XML fragment.  HTML templates are more 
     forgiving, but do not support all features of ZPT (see the SimpleTAL
     documentation).}
@@ -572,6 +602,15 @@ metadata names are currently supported.
     that should render the same way as \macro{section}.  In this case,
     you would set the name to ``introduction'' and the alias to
     ``section''.}
+\end{tableii}
+
+There are also some defaults that you can set at the top of the file that
+get applied to the entire file unles overridden by the meta-data on a 
+particular template.
+\begin{tableii}{l|p{4in}}{Name}{Purpose}
+\lineii{default-engine}{the name of the engine to use for all templates in
+    the file.}
+\lineii{default-type}{the default template type for all templates in the file.}
 \end{tableii}
 
 The code sample below shows the basic format of a zpts file.
@@ -611,6 +650,50 @@ template.  By default, templates in a zpts file use the HTML compiler
 in SimpleTAL.  You can specify that a template is an XML template by using
 the type directive.
 
+Here is an example of using various types of templates in a single file.
+\begin{verbatim}
+name: textbf
+type: python
+<b>%(self)s</b>
+
+name: textit
+type: string
+<i>${self}</i>
+
+name: textsc
+type: cheetah
+<span class="textsc">${here}</span>
+
+name: textrm
+type: kid
+<span class="textrm" py:content="XML(unicode(here))">normal text</span>
+
+name: textup
+type: genshi
+<span class="textup" py:content="markup(here)">upcase text</span>
+\end{verbatim}
+
+There are several variables inserted into the template namespace.  Here is
+a list of the variables and the templates that support them.
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}\hline
+\textbf{Object} & \textbf{ZPT/Python Formats/String Template} & 
+    \textbf{Cheetah} & \textbf{Kid/Genshi}\\\hline
+document node & \var{self} or \var{here} & \var{here} & \var{here} \\
+parent node & \var{container} & \var{container} & \var{container} \\
+document config & \var{config} & \var{config} & \var{config} \\
+template instance & \var{template} &  & \\
+renderer instance & \var{templates} & \var{templates} & \var{templates} \hline
+\end{tabular}
+\end{center}
+
+You'll notice that Kid and Genshi templates require some extra processing
+of the variables in order to get the proper markup.  By default, these templates
+escape characters like <, >, and \&.  In order to get HTML/XML markup from
+the variables you must wrap them in the code shown in the example above.
+Hopefully, this limitation will be removed in the future.
+
 
 \subsubsection{Template Overrides\label{sec:tmploverrides}}
 
@@ -619,8 +702,8 @@ with templates defined elsewhere.  This is done using the
 \environment{*TEMPLATES} environment variable.  The ``*'' in the name
 \environment{*TEMPLATES} is a wildcard and must be replaced by the name of the
 renderer.  For example, if you are using the XHTML renderer, the 
-environment variable would be \environment{XHTMLTEMPLATES}.  For the ZPT
-renderer, the environment variable would be \environment{ZPTTEMPLATES}.
+environment variable would be \environment{XHTMLTEMPLATES}.  For the PageTemplate
+renderer, the environment variable would be \environment{PAGETEMPLATETEMPLATES}.
 
 The format of this variable is the same as that of the \environment{PATH}
 environment variable which means that you can put multiple directory 
@@ -629,9 +712,10 @@ each of the parent renderers is also used, so that you can use
 multiple layers of template directories.
 
 You can actually create an entire renderer just using overrides and the
-ZPT renderer.  Since the ZPT renderer doesn't actually define any templates,
+PT renderer.  Since the PT renderer doesn't actually define any templates,
 it is just a framework for defining other XML/HTML renderers, you can
-simply load the ZPT renderer and set the \environment{ZPTTEMPLATES} environment
+simply load the PT renderer and set the \environment{PAGETEMPLATETEMPLATES} 
+environment
 variable to the locations of your templates.  This method of creating 
 renderers will work for any XML/HTML that doesn't require any special
 post-processing.
@@ -667,15 +751,15 @@ but can override other templates as well.  Below is a file listing
 demonstrating the structure of a renderer with multiple themese.
 \begin{verbatim}
 # Renderer directory: contains template files
-ZPT/
+XHTML/
 
 # Theme directory: contains theme directories
-ZPT/Themes/
+XHTML/Themes/
 
 # Theme directories: contain page layout templates
-ZPT/Themes/default/
-ZPT/Themes/fancy/
-ZPT/Themes/plain/
+XHTML/Themes/default/
+XHTML/Themes/fancy/
+XHTML/Themes/plain/
 \end{verbatim}
 \note{If no theme is specified in the document configuration, a theme
     with the name ``default'' is used.}
