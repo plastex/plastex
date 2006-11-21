@@ -618,6 +618,7 @@ class Template:
 			ourInterpreter.execute (self)
 		except UnicodeError, unierror:
 			logging.error ("UnicodeError caused by placing a non-Unicode string in the Context object.")
+                        raise
 			raise simpleTALES.ContextContentException ("Found non-unicode string in Context!")
 			
 	def getProgram (self):

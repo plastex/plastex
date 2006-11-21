@@ -13,7 +13,6 @@ class includegraphics(Command):
         res = Command.invoke(self, tex)
 
         f = self.attributes['file']
-
         ext = self.ownerDocument.userdata.getPath(
                       'packages/%s/extensions' % self.packageName, 
                       ['.png','.jpg','.jpeg','.gif','.pdf','.ps','.eps'])

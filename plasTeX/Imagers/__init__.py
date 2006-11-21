@@ -430,6 +430,7 @@ class Imager(object):
                           '\\newenvironment{plasTeXimage}[1]{' +
                           '\\vfil\\break\\plasTeXregister' +
                           '\\thispagestyle{empty}\\def\\@eqnnum{}' +
+                          '\\def\\tagform@#1{}' +
                           '\\ignorespaces}{}}{}\n')
         self.source.write('\\@ifundefined{plasTeXregister}{' +
                           '\\def\\plasTeXregister{\\ifhmode\\hrule' +

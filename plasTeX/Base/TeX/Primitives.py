@@ -307,7 +307,7 @@ class iffalse(IfCommand):
 class ifpdf(iffalse): pass
 class pdffalse(Command): pass
 class pdftrue(Command): pass
-class pdfoutput(Command): pass
+#class pdfoutput(Command): pass
 
 class ifcase(IfCommand):
     """ Cases """

@@ -212,7 +212,7 @@ class Renderer(dict):
 
         # Write out auxilliary information
         pauxname = os.path.join(document.userdata.get('working-dir','.'), 
-                                '%s.paux' % document.userdata['jobname'])
+                                '%s.paux' % document.userdata.get('jobname',''))
         rname = config['general']['renderer']
         document.context.persist(pauxname, rname)
 
@@ -395,7 +395,8 @@ class Renderable(object):
                         val = unicode(val, child.config['files']['input-encoding'])
 
                 # Write the file content
-                codecs.open(filename, 'w', child.config['files']['output-encoding']).write(val)
+                codecs.open(filename, 'w', 
+                            child.config['files']['output-encoding']).write(val)
 
                 continue
 

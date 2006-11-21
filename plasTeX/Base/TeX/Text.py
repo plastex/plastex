@@ -179,22 +179,22 @@ class line(Command):
     pass
 
 class leftline(Command):
-    args = 'text'
+    args = 'self'
 
 class llap(Command):
-    args = 'text'
+    args = 'self'
 
 class centerline(Command):
-    args = 'text'
+    args = 'self'
 
 class underbar(Command):
-    args = 'text'
+    args = 'self'
 
 class hang(Command):
     pass
 
 class textindent(Command):
-    args = 'text'
+    args = 'self'
 
 class narrower(Command):
     pass

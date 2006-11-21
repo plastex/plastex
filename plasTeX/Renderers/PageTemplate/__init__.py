@@ -24,7 +24,7 @@ def stringtemplate(s, encoding='utf8'):
         tvars = {'here':obj, 'self':obj, 'container':obj.parentNode,
                  'config':obj.ownerDocument.config, 'template':template,
                  'templates':obj.renderer}
-        return template.substitute(tvars)
+        return unicode(template.substitute(tvars))
     return renderstring
 
 # Support for Python string interpolations
@@ -72,13 +72,17 @@ def xmltemplate(s, encoding='utf8'):
 try: 
 
     from Cheetah.Template import Template as CheetahTemplate
+    from Cheetah.Filters import Filter as CheetahFilter
+    class CheetahUnicode(CheetahFilter):
+        def filter(self, val, encoding='utf-8', **kw):
+            return unicode(val).encode(encoding)
     def cheetahtemplate(s, encoding='utf8'):
         def rendercheetah(obj, s=s):
             tvars = {'here':obj, 'container':obj.parentNode,
                      'config':obj.ownerDocument.config,
                      'templates':obj.renderer}
             return unicode(CheetahTemplate(source=s, 
-                           searchList=[tvars]).respond(), encoding)
+                           searchList=[tvars], filter=CheetahUnicode).respond(), encoding)
         return rendercheetah
 
 except ImportError:
@@ -265,7 +269,7 @@ class PageTemplate(BaseRenderer):
         node = node.replace('&', '&amp;')
         node = node.replace('<', '&lt;')
         node = node.replace('>', '&gt;')
-        return node
+        return self.outputType(node)
 
     def render(self, document):
         """ Load and compile page templates """
@@ -451,6 +455,7 @@ class PageTemplate(BaseRenderer):
         template = []
         options = options.copy()
         defaults = {}
+        name = None
         if not options:
             f = open(filename, 'r')
             for i, line in enumerate(f):
