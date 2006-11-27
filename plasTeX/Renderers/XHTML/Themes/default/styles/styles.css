@@ -130,3 +130,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 hr {color: black}
+
+.minitoc {
+    border-top: 1px solid black;
+    border-bottom: 1px solid block;
+    margin-bottom: 1em;
+}
+
+.minitoc li {
+    list-style-type: none;
+}

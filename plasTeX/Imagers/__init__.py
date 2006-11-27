@@ -391,12 +391,15 @@ class Imager(object):
         self._filecache = os.path.abspath(os.path.join('.cache', 
                                           self.__class__.__name__+'.images'))
         if self.config['images']['cache'] and os.path.isfile(self._filecache):
-            self._cache = pickle.load(open(self._filecache, 'r'))
-            for key, value in self._cache.items():
-                if not os.path.isfile(value.filename):
-                    del self._cache[key]
-                    continue
-                usednames[value.filename] = None
+            try: 
+                self._cache = pickle.load(open(self._filecache, 'r'))
+                for key, value in self._cache.items():
+                    if not os.path.isfile(value.filename):
+                        del self._cache[key]
+                        continue
+                    usednames[value.filename] = None
+            except ImportError:
+                os.remove(self._filecache)
 
         # List of images in the order that they appear in the LaTeX file
         self.images = ordereddict()
@@ -430,7 +433,6 @@ class Imager(object):
                           '\\newenvironment{plasTeXimage}[1]{' +
                           '\\vfil\\break\\plasTeXregister' +
                           '\\thispagestyle{empty}\\def\\@eqnnum{}' +
-                          '\\def\\tagform@#1{}' +
                           '\\ignorespaces}{}}{}\n')
         self.source.write('\\@ifundefined{plasTeXregister}{' +
                           '\\def\\plasTeXregister{\\ifhmode\\hrule' +
