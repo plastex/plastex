@@ -746,8 +746,8 @@ class Imager(object):
 
         # If anything fails, just let the imager handle it...
         except Exception, msg:
-            log.warning(msg)
-        return self.newImage(img.source)
+            log.warning('%s in image "%s".  Reverting to LaTeX to generate the image.' % (msg, name))
+        return self.newImage(node.source)
 
 
 class VectorImager(Imager):

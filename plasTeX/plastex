@@ -53,6 +53,10 @@ def main(argv):
     # Parse the document
     tex.parse()
 
+    # Set up TEXINPUTS to include the current directory for the renderer
+    os.environ['TEXINPUTS'] = '%s:%s' % (os.getcwd(), 
+                                         os.environ.get('TEXINPUTS',''))
+
     # Change to specified directory to output to
     outdir = config['files']['directory']
     if outdir:
