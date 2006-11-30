@@ -148,6 +148,7 @@ class Renderer(dict):
     
             # Make sure that this imager works on this machine
             if self.imager.verify():
+                log.info('Using the imager "%s".' % name)
                 break
  
             self.imager = None
@@ -181,6 +182,7 @@ class Renderer(dict):
     
             # Make sure that this imager works on this machine
             if self.vectorImager.verify():
+                log.info('Using the vector imager "%s".' % name)
                 break
  
             self.vectorImager = None
