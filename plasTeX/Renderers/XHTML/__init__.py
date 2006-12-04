@@ -2,7 +2,6 @@
 
 import sys, os, re, codecs, plasTeX
 from plasTeX.Renderers.PageTemplate import Renderer as _Renderer
-from plasTeX.Renderers.ZPT import Renderer as _Renderer
 
 class XHTML(_Renderer):
     """ Renderer for XHTML documents """

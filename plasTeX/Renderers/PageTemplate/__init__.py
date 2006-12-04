@@ -493,6 +493,8 @@ class PageTemplate(BaseRenderer):
                 
                 if template or (not(template) and line.strip()):
                     template.append(line)
+                elif not(template) and 'name' in options:
+                    template.append('')
 
         else:
             template = open(filename, 'r').readlines()

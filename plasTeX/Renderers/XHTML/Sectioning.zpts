@@ -1,7 +1,7 @@
 name: abstract
 <div class="abstract" tal:content="self">abstract</div>
 
-name: title author date
+name: title author date thanks
 
 name: maketitle
 <div class="titlepage" tal:define="metadata self/ownerDocument/userdata">
