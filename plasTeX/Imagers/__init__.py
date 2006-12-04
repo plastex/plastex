@@ -599,7 +599,10 @@ class Imager(object):
             log.warning('The number of images generated (%d) and the number of images requested (%d) is not the same.' % (len(images), len(self.images)))
 
         # Sort by creation date
-        images.sort(lambda a,b: cmp(os.stat(a)[9], os.stat(b)[9]))
+        #images.sort(lambda a,b: cmp(os.stat(a)[9], os.stat(b)[9]))
+
+        images.sort(lambda a,b: cmp(int(re.search(r'^img(\d+)',a).group(1)), 
+                                    int(re.search(r'^img(\d+)',b).group(1))))
 
         os.chdir(cwd)
 
