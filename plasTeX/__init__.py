@@ -860,7 +860,9 @@ class Environment(Macro):
         # Absorb the tokens that belong to us
         dopars = self.forcePars
 #       text = []
+#       print 'DIGEST', type(self)
         for item in tokens:
+#           print type(item), item
 #           if item.nodeType == Node.TEXT_NODE:
 #               text.append(item)
 #               continue
@@ -887,6 +889,7 @@ class Environment(Macro):
 #           self.appendText(text, self.ownerDocument.charsubs)
             self.appendChild(item)
 #       self.appendText(text, self.ownerDocument.charsubs)
+#       print 'DONE', type(self)
         if dopars:
             self.paragraphs()
 
@@ -993,7 +996,10 @@ class NewCommand(Macro):
 
     def invoke(self, tex):
         if self.macroMode == Macro.MODE_END:
-            return self.ownerDocument.createElement('end'+self.tagName).invoke(tex)            
+            res = self.ownerDocument.createElement('end'+self.tagName).invoke(tex)
+            if res is None:
+                return [res, EndGroup(' ')]
+            return res + [EndGroup(' ')]
 
         params = [None]
 
@@ -1012,7 +1018,11 @@ class NewCommand(Macro):
 
         deflog.debug2('expanding %s %s', self.definition, params)
 
-        return expandDef(self.definition, params)
+        output = []
+        if self.macroMode == Macro.MODE_BEGIN:
+            output.append(BeginGroup(' '))
+            
+        return output + expandDef(self.definition, params)
 
 class Definition(Macro):
     """ Superclass for all \\def-type commands """

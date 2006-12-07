@@ -126,6 +126,9 @@ class Context(object):
         # Depth of the context stack
         self.depth = 0
 
+        # Holds the current environment name stack
+        self._currenvir = []
+
         # Create a global namespace
         self.push()
 
@@ -133,6 +136,21 @@ class Context(object):
 
         if load:
             self.loadBaseMacros()
+
+    def currenvir():
+        def fget(self):
+            if self._currenvir:
+                return self._currenvir[-1]
+            return
+        def fset(self, value):
+            if value is None:
+                self._currenvir.pop()
+            else:
+                self._currenvir.append(value)
+        def fdel(self):
+            self._currenvir.pop()
+        return locals()
+    currenvir = property(**currenvir())
 
     def persist(self, filename, type='none'):
         """

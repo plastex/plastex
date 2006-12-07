@@ -20,6 +20,8 @@ class begin(Command):
         name = tex.readArgument(type=str)
         envlog.debug(name)
 
+        self.ownerDocument.context.currenvir = name
+
         # Instantiate the correct macro and let it know
         # that it came from a \begin{...} macro
         obj = self.ownerDocument.createElement(name)
@@ -54,4 +56,9 @@ class end(Command):
         out = obj.invoke(tex)
         if out is None:
             return [obj]
+
+        while self.ownerDocument.context.currenvir is not None and \
+              not self.ownerDocument.context.currenvir == name:
+            del self.ownerDocument.context.currenvir
+
         return out

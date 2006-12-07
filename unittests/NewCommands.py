@@ -30,12 +30,16 @@ class NC(TestCase):
         s = TeX()
         s.input(r'\newenvironment{foo}{\begin{itemize}}{\end{itemize}}\begin{foo}\begin{foo}\item hi\end{foo}\end{foo}')
         res = [x for x in s]
-        assert res[1].nodeName == 'itemize'
+        assert res[1].nodeName == 'bgroup'
         assert res[2].nodeName == 'itemize'
-        assert res[3].nodeName == 'item'
-        assert res[4:6] == list('hi')
-        assert res[6].nodeName == 'itemize'
-        assert res[7].nodeName == 'itemize'
+        assert res[3].nodeName == 'bgroup'
+        assert res[4].nodeName == 'itemize'
+        assert res[5].nodeName == 'item'
+        assert res[6:8] == list('hi')
+        assert res[8].nodeName == 'itemize'
+        assert res[9].nodeName == 'egroup'
+        assert res[10].nodeName == 'itemize'
+        assert res[11].nodeName == 'egroup'
 
     def testReadDecimal(self):
         s = TeX()
@@ -106,8 +110,8 @@ class NewCommands(TestCase):
         for key, value in self.macros.items():
             s.ownerDocument.context[key] = value
         output = [x for x in s]
-        assert type(output[1]) == s.ownerDocument.context['it']
-        assert output[-2:] == ['h','i']
+        assert type(output[2]) == s.ownerDocument.context['it']
+        assert output[-3:-1] == ['h','i']
 
     def testSimpleNewEnvironmentWithArgs(self):
         s = TeX()
@@ -148,7 +152,7 @@ class NewCommands(TestCase):
         assert enddefinition == ['end'] + list('{description}'), enddefinition
         assert s.ownerDocument.context['myenv'].opt == None
         text = [x for x in output if x.nodeType == Node.TEXT_NODE]
-        assert type(output[8]) == s.ownerDocument.context['description']
+        assert type(output[9]) == s.ownerDocument.context['description']
         assert text == list('before:hi:after'), text
 
     def testDef(self):
