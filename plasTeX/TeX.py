@@ -834,14 +834,14 @@ class TeX(object):
             toks = []
             source = [t]
             # A [ ... ], ( ... ), etc. grouping was found
-            if t == begin:
+            if t == begin or unicode(t) == unicode(begin):
                 level = 1
                 for t in tokens:
                     source.append(t)
-                    if t == begin:
+                    if t == begin or unicode(t) == unicode(begin):
                         toks.append(t)
                         level += 1
-                    elif t == end:
+                    elif t == end or unicode(t) == unicode(end):
                         level -= 1
                         if level == 0:
                             break
