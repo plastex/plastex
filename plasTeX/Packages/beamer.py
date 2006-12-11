@@ -8,11 +8,11 @@ from plasTeX.Base import itemize, enumerate_, description
 from plasTeX.Base import part, section, subsection, subsubsection
 from plasTeX.Base import tableofcontents, thebibliography, appendix
 from plasTeX.Base import abstract, verse, quotation, quote, footnote
-from color import color
-from graphicx import includegraphics
-from alltt import alltt as semiverbatim
-from hyperref import hypertarget, hyperlink
-from article import *
+from plasTeX.Packages.color import color
+from plasTeX.Packages.graphicx import includegraphics
+from plasTeX.Packages.alltt import alltt as semiverbatim
+from plasTeX.Packages.hyperref import hypertarget, hyperlink
+from plasTeX.Packages.article import *
 
 class frame(Command):
     args = '< overlay > self'

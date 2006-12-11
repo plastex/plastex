@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 templates = ['*.html','*.htm','*.xml','*.zpt','*.zpts']
-images = ['*.gif','*.png','*.jpg','*.jpeg','*.js']
+images = ['*.gif','*.png','*.jpg','*.jpeg','*.js','*.htc']
 styles = ['*.css']
 
 setup(name="plasTeX",
@@ -36,6 +36,9 @@ setup(name="plasTeX",
          'plasTeX.Renderers.S5',
          'plasTeX.Renderers.S5.Themes',
          'plasTeX.Renderers.S5.Themes.default',
+         'plasTeX.Renderers.S5.Themes.default.ui',
+         'plasTeX.Renderers.S5.Themes.default.ui.default',
+         'plasTeX.Renderers.S5.Themes.default.ui.i18n',
       ],
       package_data = {
          'plasTeX.Base.LaTeX': ['*.xml','*.txt'],
@@ -46,6 +49,10 @@ setup(name="plasTeX",
          'plasTeX.Renderers.XHTML.Themes.python': templates+styles,
          'plasTeX.Renderers.XHTML.Themes.python.icons': images,
          'plasTeX.Renderers.XHTML.Themes.plain': templates,
+         'plasTeX.Renderers.S5': templates,
+         'plasTeX.Renderers.S5.Themes.default': templates,
+         'plasTeX.Renderers.S5.Themes.default.ui.default': templates+styles+images,
+         'plasTeX.Renderers.S5.Themes.default.ui.i18n': templates+styles+images,
       },
       scripts=['plasTeX/plastex','plasTeX/Imagers/cgpdfpng'],
 )
