@@ -22,7 +22,7 @@ name: minilof sectlof partlof
 
 name: minilot sectlot partlot
 
-name: minitoc secttoc parttoc
+name: -minitoc -secttoc -parttoc
 <p><b tal:content="self/title">Contents</b></p>
 <div tal:condition="self/tableofcontents" class="minitoc">
 <ul>
