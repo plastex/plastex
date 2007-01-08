@@ -20,7 +20,7 @@ name: dominitoc dominilof dominilot dosecttoc dosectlot dosectlof \
 
 name: minilof sectlof partlof
 
-name: minilot sectlot partlot
+name: minilot sectlot partlot minitoc secttoc parttoc
 
 name: -minitoc -secttoc -parttoc
 <p><b tal:content="self/title">Contents</b></p>
