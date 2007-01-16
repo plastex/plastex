@@ -59,9 +59,14 @@ class Array(Environment):
 
     class caption(Command):
         """ Table caption """
-        args = '* [ toc ] title'
+        args = '* [ toc ] self'
         labelable = True
         counter = 'table'
+        blockType = True
+        def invoke(self, tex):
+            res = Command.invoke(self, tex)
+            self.title = self.captionName
+            return res
 
     class CellDelimiter(Command):
         """ Cell delimiter """

@@ -2,7 +2,7 @@
 
 from plasTeX.Base.LaTeX.Arrays import tabular
 from plasTeX import Command, DimenCommand, CountCommand, GlueCommand 
-from plasTeX import dimen, glue, count
+from plasTeX import dimen, glue, count, TeXFragment
 
 class LTleft(GlueCommand): value = glue('1fil')
 class LTright(GlueCommand): value = glue('1fil')
@@ -15,8 +15,19 @@ class setlongtables(Command): pass
 
 class longtable(tabular):
     args = '[ position:str ] colspec:nox'
+    tableCaption = None
 
-    class nocountcaption(tabular.caption):
+    class caption(tabular.caption):
+        def digest(self, tokens):
+            tabular.caption.digest(self, tokens)
+            node = self.parentNode
+            # Mark caption row to be moved later
+            while not isinstance(node, tabular.ArrayRow):
+               node = node.parentNode
+            if node is not None:
+                node.isCaptionRow = True
+
+    class nocountcaption(caption):
         """ Caption that doesn't increment the counter """
         counter = None
 
@@ -98,3 +109,17 @@ class longtable(tabular):
                 for cell in item:
                     cell.isHeader = True
                 self.append(item)
+
+        # Move caption before the longtable
+        captionRows = []
+        for i, row in enumerate(self):
+           if getattr(row, 'isCaptionRow', None):
+               while row.childNodes:
+                   cell = row.pop(0)
+                   while cell.childNodes:
+                       para = cell.pop(0)
+                       while para.childNodes:
+                          self.parentNode.append(para.pop(0))
+               captionRows.insert(0,i)
+        for i in captionRows:
+            self.pop(i)
