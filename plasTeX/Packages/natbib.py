@@ -60,10 +60,10 @@ def ProcessOptions(options, document):
             pass
 
 class bibliography(Base.bibliography):
-
-    def invoke(self, tex):
-        tex.loadAuxiliaryFile()
-        return super(bibliography, self).invoke(tex)
+    pass
+#   def invoke(self, tex):
+#       tex.loadAuxiliaryFile()
+#       return Base.bibliography.invoke(self, tex)
 
 class bibstyle(Base.Command):
     args = 'style:str'

@@ -208,10 +208,14 @@ class IndexUtils(object):
             prev = item
 
 class theindex(IndexUtils, Environment, SectionUtils):
-    pass
+    blockType = True
+    level = Environment.CHAPTER_LEVEL
+    counter = 'chapter'
 
 class printindex(IndexUtils, Command, SectionUtils):
-    pass
+    blockType = True
+    level = Command.CHAPTER_LEVEL
+    counter = 'chapter'
 
 class makeindex(Command):
     pass
@@ -299,11 +303,27 @@ class IndexEntry(object):
     """
 
     def __init__(self, key, node, sortkey=None, format=None):
+        """
+        Required Arguments:
+        key -- a list of keys for the index entry
+        node -- the node of the document that the index entry is 
+            associated with
+        sortkey -- a list of sort keys, one per key, to be used for
+            sorting instead of the key values
+        format -- a macro name that should be used to format the 
+            destination of the index entry
+
+        """
         self.key = key
         if not sortkey:
             self.sortkey = key
         else:
-            self.sortkey = sortkey
+            self.sortkey = []
+            for i, sk in enumerate(sortkey):
+                if sk is None:
+                    self.sortkey.append(key[i].textContent)
+                else:
+                    self.sortkey.append(sk)
         self.format = format
         self.node = node
 

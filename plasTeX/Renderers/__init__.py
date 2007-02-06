@@ -315,10 +315,12 @@ class Renderable(object):
 
         # If we don't have childNodes, then we're done
         if not self.hasChildNodes():
+#           if self.filename:
+#               status.info(' [ %s ] ', self.filename)
             return u''
 
-        if self.filename:
-            status.info(' [ %s ', self.filename)
+#       if self.filename:
+#           status.info(' [ %s ', self.filename)
 
         # At the very top level, only render the DOCUMENT_LEVEL node
         if self.nodeType == Node.DOCUMENT_NODE:
@@ -351,6 +353,9 @@ class Renderable(object):
                 modifier = child.attributes.get('*modifier*')
 
             if child.filename:
+
+                status.info(' [ %s ', child.filename)
+
                 # Filename and modifier
                 if modifier:
                     layouts.append('%s-layout%s' % (nodeName, modifier))
@@ -367,7 +372,8 @@ class Renderable(object):
 
             # Locate the rendering callable, and call it with the 
             # current object (i.e. `child`) as its argument.
-            val = r.find(names, r.default)(child)
+            func = r.find(names, r.default)
+            val = func(child)
 
             # If a plain string is returned, we have no idea what 
             # the encoding is, but we'll make a guess.
@@ -400,13 +406,15 @@ class Renderable(object):
                 codecs.open(filename, 'w', 
                             child.config['files']['output-encoding']).write(val)
 
+                status.info(' ] ')
+
                 continue
 
             # Append the resultant unicode object to the output
             s.append(val)
 
-        if self.filename:
-            status.info(' ] ')
+#       if self.filename:
+#           status.info(' ] ')
 
         return r.outputType(u''.join(s))
 
@@ -504,6 +512,8 @@ class Renderable(object):
                 elif isinstance(self.title, basestring):
                     ns['title'] = self.title
             r.files[self] = filename = r.newFilename()
+
+#       print type(self), filename
 
         return filename
 

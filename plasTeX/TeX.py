@@ -108,6 +108,7 @@ class TeX(object):
         # Starting parsing if a source was given
         self.currentInput = (0,0)
 
+        self.jobname = None
         if file is not None:
 
             # Filename
@@ -117,10 +118,12 @@ class TeX(object):
                 except:
                     encoding = 'utf-8'
                 self.input(codecs.open(self.kpsewhich(file), 'r', encoding, 'replace'))
+                self.jobname = os.path.basename(os.path.splitext(file)[0])
 
             # File object
             else:
                 self.input(file)
+                self.jobname = os.path.basename(os.path.splitext(file.name)[0])
 
     def input(self, source):
         """
@@ -133,6 +136,11 @@ class TeX(object):
         """
         if source is None:
             return
+        if self.jobname is None:
+            if isinstance(source, basestring):
+                self.jobname = os.path.basename(os.path.splitext(source)[0])
+            elif isinstance(source, file):
+                self.jobname = os.path.basename(os.path.splitext(source.name)[0])
         t = Tokenizer(source, self.ownerDocument.context)
         self.inputs.append((t, iter(t)))
         self.currentInput = self.inputs[-1]
@@ -1624,8 +1632,9 @@ class TeX(object):
         except OSError, msg:
             log.warning(msg)
 
-    @property
-    def jobname(self):
-        """ Return the basename of the main input file """
-        return os.path.basename(os.path.splitext(self.inputs[0][0].filename)[0])
+#   @property
+#   def jobname(self):
+#       """ Return the basename of the main input file """
+#       print self.inputs
+#       return os.path.basename(os.path.splitext(self.inputs[0][0].filename)[0])
 

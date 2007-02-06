@@ -5,7 +5,7 @@ C.11.3 Bibliography and Citation (p208)
 
 """
 
-import plasTeX
+import plasTeX, codecs
 from plasTeX.Base.LaTeX.Sectioning import chapter
 from plasTeX import Command, Environment
 from Lists import List
@@ -20,12 +20,12 @@ class bibliography(chapter):
     linkType = 'bibliography'
 
     def invoke(self, tex):
-        res = super(bibliography, self).invoke(tex)
+        res = chapter.invoke(self, tex)
         self.attributes['title'] = bibliography.title
         # Load bibtex file
         try:
             file = tex.kpsewhich(tex.jobname+'.bbl')
-            tex.input(open(file))
+            tex.input(codecs.open(file, 'r', self.ownerDocument.config['files']['input-encoding']))
         except OSError, msg:
             log.warning(msg)
 

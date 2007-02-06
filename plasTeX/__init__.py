@@ -859,16 +859,11 @@ class Environment(Macro):
             return
         # Absorb the tokens that belong to us
         dopars = self.forcePars
-#       text = []
-#       print 'DIGEST', type(self)
+#       print 'DIGEST', type(self), self.contextDepth
         for item in tokens:
-#           print type(item), item
-#           if item.nodeType == Node.TEXT_NODE:
-#               text.append(item)
-#               continue
+#           print type(item), (item, self), (item.level, self.level), (item.contextDepth, self.contextDepth)
             # Make sure that we know to group paragraphs if one is found
             if item.level == Node.PAR_LEVEL:
-#               self.appendText(text, self.ownerDocument.charsubs)
                 self.appendChild(item)
                 dopars = True
                 continue
@@ -886,9 +881,8 @@ class Environment(Macro):
             if item.contextDepth < self.contextDepth:
                 tokens.push(item)
                 break
-#           self.appendText(text, self.ownerDocument.charsubs)
+#           print 'APPEND', type(item)
             self.appendChild(item)
-#       self.appendText(text, self.ownerDocument.charsubs)
 #       print 'DONE', type(self)
         if dopars:
             self.paragraphs()

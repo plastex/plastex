@@ -510,6 +510,7 @@ class Context(object):
         Returns: ContextItem instance removed from stack
 
         """
+#       print 'POP', type(obj).__name__, self.contexts[-1]
         if obj is None:
             # Pop until we hit a None in the context
             while len(self.contexts) > 1:
