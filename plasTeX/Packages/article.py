@@ -6,9 +6,9 @@ def ProcessOptions(options, document):
     import report
     report.ProcessOptions(options, document)
     document.context['thesection'].format = '${section}'
-    theindex.counter = 'section'
-    theindex.level = Environment.SECTION_LEVEL
-    printindex.counter = 'section'
-    printindex.level = Command.SECTION_LEVEL
-    bibliography.counter = 'section'
-    bibliography.level = Command.SECTION_LEVEL
+    document.context['theindex'].counter = 'section'
+    document.context['theindex'].level = Environment.SECTION_LEVEL
+    document.context['printindex'].counter = 'section'
+    document.context['printindex'].level = Command.SECTION_LEVEL
+    document.context['bibliography'].counter = 'section'
+    document.context['bibliography'].level = Command.SECTION_LEVEL
