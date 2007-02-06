@@ -114,7 +114,7 @@ class AlignmentChar(Command):
 class SuperScript(Command):
     """ The '^' character in TeX """
     macroName = 'active::^'
-    args = 'arg'
+    args = 'self'
     def invoke(self, tex):
         # If we're not in math mode, just treat this as a normal character
         if not self.ownerDocument.context.isMathMode:
@@ -124,7 +124,7 @@ class SuperScript(Command):
 class SubScript(Command):
     """ The '_' character in TeX """
     macroName = 'active::_'
-    args = 'arg'
+    args = 'self'
     def invoke(self, tex):
         # If we're not in math mode, just treat this as a normal character
         if not self.ownerDocument.context.isMathMode:
