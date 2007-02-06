@@ -777,18 +777,18 @@ class TeX(object):
             # Expand macros and get the argument source string
             if expanded:
 
-                # If we only get back a single token that is an escape sequence
-                # go ahead and expand it.  If we let self.expandTokens do it
-                # it won't work properly.
-                if not(isgroup) and len(toks)==1 and \
-                   toks[0].catcode==Token.CC_ESCAPE:
-                    self.pushToken(toks.pop())
-                    for toks in self:
-                        break
-                    source = toks.source
-    
-                # Expand groupings and all other types
-                else:
+#               # If we only get back a single token that is an escape sequence
+#               # go ahead and expand it.  If we let self.expandTokens do it
+#               # it won't work properly.
+#               if not(isgroup) and len(toks) == 1 and \
+#                  toks[0].catcode == Token.CC_ESCAPE:
+#                   self.pushToken(toks.pop())
+#                   for toks in self:
+#                       break
+#                   source = toks.source
+#   
+#               # Expand groupings and all other types
+#               else:
                     toks = self.expandTokens(toks)
                     if isgroup:
                         s = self.source(toks)
