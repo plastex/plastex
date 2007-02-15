@@ -1185,20 +1185,18 @@ class ConfigManager(UserDict, object):
            current option removed
 
         """
-        try:
-            i = opt.index('=')
-        except ValueError:
-            optarg = None
-        else:
-            opt, optarg = opt[:i], opt[i+1:]
-#           args.insert(0, optarg)
+        forcedarg = False
+        if opt.find('=') + 1:
+            forcedarg = True
+            opt, arg = opt.split('=', 1)
+            args.insert(0, arg)
 
         option = self.get_match(opt, longopts)
         option.actual = opt
         option.file = None
 
         # If we have an argument, but the option doesn't accept one, bail out.
-        if optarg is not None and not(option.acceptsArgument()):
+        if forcedarg and not(option.acceptsArgument()):
             raise UnspecifiedArgument('option %s must not have an argument' \
                                        % opt, opt)
 
@@ -1206,7 +1204,7 @@ class ConfigManager(UserDict, object):
            pass
 
         # Parse the following arguments
-        elif optarg is None and option.acceptsArgument():
+        else:
 
            # See if we have a possible following argument
            if not type(self).has_following_argument(args):
@@ -1220,7 +1218,7 @@ class ConfigManager(UserDict, object):
            optarg, args = option.getArgument(args)
 
         # Convert boolean options to proper value
-        if optarg is None and isinstance(option, BooleanOption):
+        if not forcedarg and isinstance(option, BooleanOption):
            options = option.getPossibleOptions()
            negative = [x.replace('!','',1) for x in options
                                            if x.startswith('!')]
