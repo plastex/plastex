@@ -481,19 +481,21 @@ class Renderable(object):
         try: return r.files[self]
         except KeyError: pass
 
+        filename = None
+
         try:
-            if self.filenameoverride:
+            override = self.filenameoverride
+            if override:
                 userdata = self.ownerDocument.userdata
                 config = self.ownerDocument.config
-                newFilename = Filenames(self.filenameoverride,
+                newFilename = Filenames(override,
                                         (config['files']['bad-chars'],
                                          config['files']['bad-chars-sub']),
                                         {'jobname':userdata.get('jobname','')},
-                                        self.fileExtension)
+                                        r.fileExtension)
                 filename = r.files[self] = newFilename()
-                return filename
 
-        except AttributeError:
+        except AttributeError, msg:
             if not hasattr(self, 'config'):
                 return
 

@@ -149,10 +149,12 @@ class thebibliography(Base.thebibliography):
                 pass
             # We don't have a citation that matches, fill the fields
             # with dummy data
-            value = Base.Command()
+            value = self.ownerDocument.createElement('citation')
+            value.parentNode = self
             value.append('??')
             for item in ['year','author','fullauthor']:
-                obj = Base.Command()
+                obj = self.ownerDocument.createDocumentFragment()
+                obj.parentNode = value
                 obj.append('??')
                 value.attributes[item] = obj
             return value
