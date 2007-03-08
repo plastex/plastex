@@ -720,7 +720,7 @@ class Node(object):
 
         # Render content
         if self.hasChildNodes():
-            if not(self.attributes and 'self' in self.attributes):
+            if not(self.attributes and self.attributes.has_key('self')):
                 for value in self.childNodes:
                     if hasattr(value, 'toXML'):
                         value = value.toXML()
