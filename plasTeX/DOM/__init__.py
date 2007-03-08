@@ -720,12 +720,13 @@ class Node(object):
 
         # Render content
         if self.hasChildNodes():
-            for value in self.childNodes:
-                if hasattr(value, 'toXML'):
-                    value = value.toXML()
-                else: 
-                    value = xmlstr(value)
-                s.append(value)
+            if not(self.attributes and 'self' in self.attributes):
+                for value in self.childNodes:
+                    if hasattr(value, 'toXML'):
+                        value = value.toXML()
+                    else: 
+                        value = xmlstr(value)
+                    s.append(value)
 
         s.append('</%s>' % name)
 
