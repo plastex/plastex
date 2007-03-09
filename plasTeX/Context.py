@@ -167,9 +167,12 @@ class Context(object):
         """
         import pickle
         if os.path.exists(filename):
-            d = pickle.load(open(filename,'rb'))
-            if type not in d:
-                d[type] = {}
+            try:
+                d = pickle.load(open(filename,'rb'))
+                if type not in d:
+                    d[type] = {}
+            except:
+                d = {type:{}}
         else:
             d = {type:{}}
         data = d[type]
