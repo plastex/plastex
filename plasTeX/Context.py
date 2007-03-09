@@ -172,13 +172,17 @@ class Context(object):
                 if type not in d:
                     d[type] = {}
             except:
+                os.remove(filename)
                 d = {type:{}}
         else:
             d = {type:{}}
         data = d[type]
         for key, value in self.persistentLabels.items():
             data[key] = value.persist()
-        pickle.dump(d, open(filename,'wb'))
+        try:
+            pickle.dump(d, open(filename,'wb'))
+        except Exception, msg:
+            log.warning('Could not save auxiliary information. (%s)' % msg)
 
     def restore(self, filename, type='none'):
         """
