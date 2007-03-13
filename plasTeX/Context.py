@@ -152,7 +152,7 @@ class Context(object):
         return locals()
     currenvir = property(**currenvir())
 
-    def persist(self, filename, type='none'):
+    def persist(self, filename, rtype='none'):
         """
         Persist cross-document information for labeled nodes
 
@@ -160,7 +160,7 @@ class Context(object):
         filename -- the name of the file with the shelved data
  
         Keyword Arguments:
-        type -- the key in the shelved data to look under.  This is generally
+        rtype -- the key in the shelved data to look under.  This is generally
             the name of the renderer used since the information for each
             renderer may be different.
 
@@ -169,14 +169,14 @@ class Context(object):
         if os.path.exists(filename):
             try:
                 d = pickle.load(open(filename,'rb'))
-                if type not in d:
-                    d[type] = {}
+                if rtype not in d:
+                    d[rtype] = {}
             except:
                 os.remove(filename)
-                d = {type:{}}
+                d = {rtype:{}}
         else:
-            d = {type:{}}
-        data = d[type]
+            d = {rtype:{}}
+        data = d[rtype]
         for key, value in self.persistentLabels.items():
             data[key] = value.persist()
         try:
@@ -184,7 +184,7 @@ class Context(object):
         except Exception, msg:
             log.warning('Could not save auxiliary information. (%s)' % msg)
 
-    def restore(self, filename, type='none'):
+    def restore(self, filename, rtype='none'):
         """
         Restore cross-document information for labeled nodes
 
@@ -192,7 +192,7 @@ class Context(object):
         filename -- the name of the file with the shelved data
  
         Keyword Arguments:
-        type -- the key in the shelved data to look under.  This is generally
+        rtype -- the key in the shelved data to look under.  This is generally
             the name of the renderer used since the information for each
             renderer may be different.
 
@@ -200,14 +200,16 @@ class Context(object):
         import pickle
         if not os.path.exists(filename):
             return
-        d = pickle.load(open(filename,'rb'))
-        try: data = d[type]
-        except KeyError: return
-        for key, value in data.items():
-            n = self[value.get('macroName','Macro')]()
-            n.restore(value)
-            self.labels[key] = n
-        pickle.dump(d, open(filename,'wb'))
+        try:
+            d = pickle.load(open(filename,'rb'))
+            try: data = d[rtype]
+            except KeyError: return
+            for key, value in data.items():
+                n = self[value.get('macroName','Macro')]()
+                n.restore(value)
+                self.labels[key] = n
+        except Exception, msg:
+            log.warning('Could not load auxiliary information. (%s)' % msg)
 
     @property
     def isMathMode(self):
