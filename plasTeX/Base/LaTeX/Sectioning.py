@@ -68,21 +68,24 @@ class TableOfContents(object):
             return object.__getattribute__(self, name)
 
         # Limit the number of ToC levels
-        if name == 'tableofcontents':
+        if name in ['tableofcontents','fulltableofcontents']:
             if self._toc_level < self._toc_limit:
                 return [type(self)(x._toc_node, self._toc_limit, 
-                        self._toc_level+1) for x in self._toc_node.tableofcontents]
+                        self._toc_level+1) for x in self._toc_node.fulltableofcontents]
             else:
                 return []
 
         # All other attribute accesses get passed on
         return getattr(self._toc_node, name)
 
-
 class SectionUtils(object):
     """ General utilities for getting information about sections """
 
     tocdepth = None
+
+    def invoke(self, tex):
+        self.tocdepth = self.ownerDocument.context.counters['tocdepth'].value
+        Command.invoke(self, tex)
 
     @cachedproperty
     def subsections(self):
@@ -114,6 +117,17 @@ class SectionUtils(object):
 
         # Only include sections that create files in the ToC
         return [TableOfContents(x, tocdepth) for x in self.subsections 
+                                             if x.filename]
+
+    @cachedproperty
+    def fulltableofcontents(self):
+        """ Return a toble of contents object without limits """
+        # Include sections that don't create files in the ToC
+        if self.config['document']['toc-non-files']:
+            return [TableOfContents(x, 1000) for x in self.subsections]
+
+        # Only include sections that create files in the ToC
+        return [TableOfContents(x, 1000) for x in self.subsections 
                                              if x.filename]
 
     @cachedproperty
@@ -274,7 +288,6 @@ class SectionUtils(object):
 class StartSection(SectionUtils, Command):
     blockType = True
     args = '* [ toc ] title'
-
 
 class part(StartSection):
     level = Command.PART_LEVEL

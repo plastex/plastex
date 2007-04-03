@@ -334,12 +334,16 @@ class Context(object):
         return result
    
 
-    def label(self, label):
+    def label(self, label, node=None):
         """ 
         Set a label to the current labelable object
 
         Required Arguments:
         label -- string that contains the label
+
+        Keyword Arguments:
+        node -- a node to apply the label to rather than the currently
+            labelable object
 
         See Also:
         self.ref()
@@ -349,9 +353,12 @@ class Context(object):
         if not label:
             return
 
-        if self.currentlabel is not None:
-            self.persistentLabels[label] = self.labels[label] = self.currentlabel
-            self.currentlabel.id = label
+        if node is None:
+            node = self.currentlabel
+
+        if node is not None:
+            self.persistentLabels[label] = self.labels[label] = node
+            node.id = label
 
         #print label, ''.join(self.currentlabel.ref[:])
 

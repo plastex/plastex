@@ -484,7 +484,7 @@ class Renderable(object):
         filename = None
 
         try:
-            override = self.filenameoverride
+            override = str(self.filenameoverride)
             if override:
                 userdata = self.ownerDocument.userdata
                 config = self.ownerDocument.config
