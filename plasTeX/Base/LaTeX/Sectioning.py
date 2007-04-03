@@ -83,9 +83,9 @@ class SectionUtils(object):
 
     tocdepth = None
 
-    def invoke(self, tex):
-        self.tocdepth = self.ownerDocument.context.counters['tocdepth'].value
-        Command.invoke(self, tex)
+#   def invoke(self, tex):
+#       self.tocdepth = self.ownerDocument.context.counters['tocdepth'].value
+#       Command.invoke(self, tex)
 
     @cachedproperty
     def subsections(self):
