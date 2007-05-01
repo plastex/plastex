@@ -76,11 +76,6 @@ class appendix(Command):
     class thechapter(TheCounter):
         format = '${chapter.Alph}'
 
-    class thesection(TheCounter):
-        format = '${section.Alph}'
-
     def invoke(self, tex):
-        print 'CHANGE APPENDIX'
         self.ownerDocument.context.counters['chapter'].setcounter(0)
         self.ownerDocument.context['thechapter'] = type(self).thechapter 
-        self.ownerDocument.context['thesection'] = type(self).thesection 

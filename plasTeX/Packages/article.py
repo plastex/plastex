@@ -12,3 +12,12 @@ def ProcessOptions(options, document):
     document.context['printindex'].level = Command.SECTION_LEVEL
     document.context['bibliography'].counter = 'section'
     document.context['bibliography'].level = Command.SECTION_LEVEL
+
+class appendix(Command):
+
+    class thesection(TheCounter):
+        format = '${section.Alph}'
+
+    def invoke(self, tex):
+        self.ownerDocument.context.counters['section'].setcounter(0)
+        self.ownerDocument.context['thesection'] = type(self).thesection 
