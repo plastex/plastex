@@ -70,6 +70,8 @@ class thebibliography(List):
             return self.cite()
 
     def digest(self, tokens):
+        if self.macroMode == Command.MODE_END:
+            return
         for tok in tokens:
             if not isinstance(tok, thebibliography.bibitem):
                 continue
