@@ -365,6 +365,8 @@ class Array(Environment):
 
         self.applyBorders()
 
+        self.linkCells()
+
     def processRows(self):
         """
         Subcloss hook to process rows after digest
@@ -376,6 +378,39 @@ class Array(Environment):
 
         """
         pass
+
+    def linkCells(self):
+        """
+        Add attributes to spanning cells to indicate their start and end points
+
+        This information is added mainly for DocBook's table model.
+        It does spans by indicating the starting and ending points within
+        the table rather than just saying how many columns are spanned.
+
+        """
+        # Link cells to colspec
+        if self.colspec:
+            for r, row in enumerate(self):
+                for c, cell in enumerate(row):
+                    colspan = cell.attributes.get('colspan', 0)
+                    if colspan > 1:
+                        try:
+                            cell.colspecStart = self.colspec[c]
+                            cell.colspecEnd = self.colspec[c+colspan-1]
+                        except IndexError:
+                            if hasattr(cell, 'colspecStart'):
+                                del cell.colspecStart
+                            if hasattr(cell, 'colspecEnd'):
+                                del cell.colspecEnd
+
+        # Determine the number of rows by counting cells
+        cols = []
+        for r, row in enumerate(self):
+            numcols = 0
+            for c, cell in enumerate(row):
+                numcols += cell.attributes.get('colspan', 1)
+            cols.append(numcols)
+        #self.numCols = max(cols)
 
     def applyBorders(self):
         """
@@ -481,7 +516,7 @@ class Array(Environment):
 
         if leftborder:
             output[0].style['border-left'] = '1px solid black'
-             
+
         return output
 
     @property
