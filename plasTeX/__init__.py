@@ -13,6 +13,14 @@ deflog = Logging.getLogger('parse.definitions')
 # Utility functions
 #
 
+def idgen():
+    """ Generate a unique ID """
+    i = 1
+    while 1:
+        yield 'a%.10d' % i
+        i += 1
+idgen = idgen()
+
 def subclasses(o):
     """ Return all subclasses of the given class """
     output = [o]
@@ -310,7 +318,12 @@ class Macro(Element):
             else:
                 delattr(self, '@id')
         def fget(self):
-            return getattr(self, '@id', 'a%s' % id(self))
+            id = getattr(self, '@id', None)
+            if id is None: 
+                for id in idgen:
+                    break
+            self.id = id
+            return id
         return locals()
     id = property(**id())
 
