@@ -404,13 +404,14 @@ class Array(Environment):
                                 del cell.colspecEnd
 
         # Determine the number of rows by counting cells
-        cols = []
-        for r, row in enumerate(self):
-            numcols = 0
-            for c, cell in enumerate(row):
-                numcols += cell.attributes.get('colspan', 1)
-            cols.append(numcols)
-        #self.numCols = max(cols)
+        if len(self):
+            cols = []
+            for row in self:
+                numcols = 0
+                for cell in row:
+                    numcols += cell.attributes.get('colspan', 1)
+                cols.append(numcols)
+            self.numCols = max(cols)
 
     def applyBorders(self):
         """
