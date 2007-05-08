@@ -499,8 +499,11 @@ class Renderable(object):
             if not hasattr(self, 'config'):
                 return
 
+            level = getattr(self, 'splitlevel', 
+                            self.config['files']['split-level'])
+
             # If our level doesn't invoke a split, don't return a filename
-            if self.level > self.config['files']['split-level']:
+            if self.level > level:
                 return
 
             # Populate vars of filename generator
