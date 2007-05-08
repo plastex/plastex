@@ -83,10 +83,6 @@ class SectionUtils(object):
 
     tocdepth = None
 
-#   def invoke(self, tex):
-#       self.tocdepth = self.ownerDocument.context.counters['tocdepth'].value
-#       Command.invoke(self, tex)
-
     @cachedproperty
     def subsections(self):
         """ Retrieve a list of all immediate subsections of this section """
