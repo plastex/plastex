@@ -389,7 +389,7 @@ class NamedNodeMap(dict):
         self._resetPosition(value)
         dict.__setitem__(self, name, value)
 
-    def _resetPosition(self, value):
+    def _resetPosition(self, value, parent=None):
         """
         Set the parent node and owner document of the value
 
@@ -399,15 +399,18 @@ class NamedNodeMap(dict):
         """
         nodeType = getattr(value, 'nodeType', None)
 
+        if parent is None:
+            parent = self.parentNode
+
         if value is None:
             return
 
         elif nodeType == Node.DOCUMENT_FRAGMENT_NODE:
             for item in value:
-                self._resetPosition(item)
+                self._resetPosition(item, parent=value)
      
         elif nodeType is not None:
-            value.parentNode = self.parentNode
+            value.parentNode = parent
             value.ownerDocument = self.ownerDocument
 
         elif isinstance(value, list):
@@ -420,7 +423,7 @@ class NamedNodeMap(dict):
 
         else:
             if hasattr(value, 'parentNode'):
-                value.parentNode = self.parentNode
+                value.parentNode = parent
             if hasattr(value, 'ownerDocument'):
                 value.ownerDocument = self.ownerDocument
         
