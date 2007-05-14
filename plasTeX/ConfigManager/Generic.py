@@ -114,10 +114,13 @@ class GenericParser:
          if new_args and new_args[-1].startswith(delim):
             new_args[-1] = new_args[-1][1:]
 
-      _args = []
-      for i in new_args:
-         _args += i.split(delim)
-      new_args = _args
+      if len(range) == 2 and range[0] == 1 and range[1] == 1:
+          pass
+      else:
+          _args = []
+          for i in new_args:
+             _args += i.split(delim)
+          new_args = _args
 
       # Check number of values
       name = self.name
