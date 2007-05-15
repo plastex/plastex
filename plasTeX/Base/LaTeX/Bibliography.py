@@ -14,10 +14,15 @@ log = plasTeX.Logging.getLogger()
 
 class bibliography(chapter):
     args = 'files:str'
-
-    bibitems = {}
-    title = 'References'
     linkType = 'bibliography'
+
+    @property
+    def title(self):
+        if hasattr(self, '@title'):
+            return getattr(self, '@title')
+        t = self.ownerDocument.createElement('bibname').expand(tex)
+        setattr(self, '@title', t)
+        return t
 
     def invoke(self, tex):
         res = chapter.invoke(self, tex)
@@ -38,22 +43,28 @@ class thebibliography(List):
   
     class bibitem(List.item):
         args = '[ label ] key:str'
-        numitems = 0
 
         def invoke(self, tex):
             res = List.item.invoke(self, tex)
             a = self.attributes
             # Put the entry into the global bibliography
-            bibliography.bibitems[a['key']] = self
-            thebibliography.bibitem.numitems += 1
-            self.ref = str(thebibliography.bibitem.numitems)
+            doc = self.ownerDocument
+            bibitems = doc.userdata.getPath('bibliography/bibitems', {})
+            bibitems[a['key']] = self
+            doc.userdata.setPath('bibliography/bibitems', bibitems)
+            numitems = doc.userdata.getPath('bibliography/numitems', 0)
+            numitems += 1
+            doc.userdata.setPath('bibliography/numitems', numitems)
+            self.ref = str(numitems)
             key = a['key']
             label = a.get('label')
-            if not bibcite.citations.has_key(key):
+            citations = doc.userdata.getPath('bibliography/citations', {})
+            if not citations.has_key(key):
                 if label is None:
-                    label = self.ownerDocument.createDocumentFragment()
+                    label = doc.createDocumentFragment()
                     label.extend(self.ref)
-                bibcite.citations[key] = label
+                citations[key] = label
+            doc.userdata.setPath('bibliography/citations', citations)
             return res
 
         @property
@@ -61,8 +72,10 @@ class thebibliography(List):
             return self.attributes['key']
 
         def cite(self):
-            res = self.ownerDocument.createDocumentFragment()
-            res.extend(bibcite.citations.get(self.attributes['key']))
+            doc = self.ownerDocument
+            res = doc.createDocumentFragment()
+            citations = doc.userdata.getPath('bibliography/citations', {})
+            res.extend(citations.get(self.attributes['key']))
             res.idref = self
             return res
 
@@ -86,8 +99,9 @@ class cite(Command):
     def bibitems(self):
         # Get all referenced items
         output = []
+        doc = self.ownerDocument
         for x in self.attributes['keys']:
-            item = bibliography.bibitems.get(x)
+            item = doc.userdata.getPath('bibliography/bibitems', {}).get(x)
             if item is None:
                 log.warning('Bibliography item "%s" has no entry', x)
             else:
@@ -115,13 +129,15 @@ class nocite(Command):
     args = 'keys:str'
 
 class bibcite(Command):
-    citations = {}
     args = 'key:str info'
 
     def invoke(self, tex):
         Command.invoke(self, tex)
         value = self.attributes['info'].firstChild
-        self.citations[self.attributes['key']] = value
+        doc = self.ownerDocument
+        citations = doc.userdata.getPath('bibliography/citations', {})
+        citations[self.attributes['key']] = value
+        doc.userdata.setPath('bibliography/citations', citations)
 
 class citation(Command):
     pass

@@ -321,8 +321,9 @@ class Macro(Element):
             id = getattr(self, '@id', None)
             if id is None: 
                 for id in idgen:
+                    setattr(self, '@hasgenid', True)
+                    self.id = id
                     break
-            self.id = id
             return id
         return locals()
     id = property(**id())
