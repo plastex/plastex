@@ -64,234 +64,6 @@ def unmix(base, mix=None):
             del base._mixed_
 
 
-class Renderer(dict):
-    """
-    Base class for all renderers
-
-    All renderers must act like a dictionary.  Each macro that is encountered
-    in a document must have a corresponding key in the renderer.  This 
-    key points to a callable object which is called with the object to
-    be rendered.
-
-    In addition to callable renderers, the renderer also handles image 
-    generation.  Images are generated when the output document type can 
-    not support the rendering of a macro.  One example of this is equations
-    in HTML.
-
-    """
-
-    textDefault = unicode
-    default = unicode
-    outputType = unicode
-    imageTypes = []
-    vectorImageTypes = []
-    fileExtension = ''
-    imageAttrs = '&${filename}-${attr};'
-    imageUnits = '&${units};'
-
-    def __init__(self, data={}):
-        dict.__init__(self, data)
-
-        # Names of generated files
-        self.files = {}
-
-        # Instantiated at render time
-        self.imager = None
-        self.vectorImager = None
-
-        # Filename generator
-        self.newFilename = None
-
-    def render(self, document, postProcess=None):
-        """
-        Invoke the rendering process
-
-        This method invokes the rendering process as well as handling
-        the setup and shutdown of image processing.
-
-        Required Arguments:
-        document -- the document object to render
-        postProcess -- a function that will be called with the content of 
-
-        """
-        config = document.config
-
-        # If there are no keys, print a warning.  
-        # This is most likely a problem.
-        if not self.keys():
-            log.warning('There are no keys in the renderer.  ' +
-                        'All objects will use the default rendering method.')
-
-        # Mix in required methods and members
-        mixin(Node, Renderable)
-        Node.renderer = self
-
-        # Create a filename generator
-        self.newFilename = Filenames(config['files'].get('filename', raw=True), 
-                                     (config['files']['bad-chars'],
-                                      config['files']['bad-chars-sub']),
-                                     {'jobname':document.userdata.get('jobname', '')}, self.fileExtension)
-                      
-
-        # Instantiate appropriate imager
-        names = [x for x in config['images']['imager'].split() if x]
-        for name in names:
-            if name == 'none':
-                break
-            try: 
-                exec('from plasTeX.Imagers.%s import Imager' % name)
-            except ImportError, msg:
-                log.warning("Could not load imager '%s' because '%s'" % (name, msg))
-                continue
-            
-            self.imager = Imager(document, self.imageTypes)
-    
-            # Make sure that this imager works on this machine
-            if self.imager.verify():
-                log.info('Using the imager "%s".' % name)
-                break
- 
-            self.imager = None
-
-        # Still no imager? Just use the default.
-        if self.imager is None:
-            if 'none' not in names:
-                log.warning('Could not find a valid imager in the list: %s.  The default imager will be used.' % ', '.join(names))
-            from plasTeX.Imagers import Imager
-            self.imager = Imager(document, self.imageTypes)
-
-        if self.imageTypes and self.imager.fileExtension not in self.imageTypes:
-            self.imager.fileExtension = self.imageTypes[0]
-        if self.imageAttrs and not self.imager.imageAttrs:
-            self.imager.imageAttrs = self.imageAttrs
-        if self.imageUnits and not self.imager.imageUnits:
-            self.imager.imageUnits = self.imageUnits
-
-        # Instantiate appropriate vector imager
-        names = [x for x in config['images']['vector-imager'].split() if x]
-        for name in names:
-            if name == 'none':
-                break
-            try: 
-                exec('from plasTeX.Imagers.%s import Imager' % name)
-            except ImportError, msg:
-                log.warning("Could not load imager '%s' because '%s'" % (name, msg))
-                continue
-            
-            self.vectorImager = Imager(document, self.vectorImageTypes)
-    
-            # Make sure that this imager works on this machine
-            if self.vectorImager.verify():
-                log.info('Using the vector imager "%s".' % name)
-                break
- 
-            self.vectorImager = None
-
-        # Still no vector imager? Just use the default.
-        if self.vectorImager is None:
-            if 'none' not in names:
-                log.warning('Could not find a valid vector imager in the list: %s.  The default vector imager will be used.' % ', '.join(names))
-            from plasTeX.Imagers import VectorImager
-            self.vectorImager = VectorImager(document, self.vectorImageTypes)
-
-        if self.vectorImageTypes and \
-           self.vectorImager.fileExtension not in self.vectorImageTypes:
-            self.vectorImager.fileExtension = self.vectorImageTypes[0]
-        if self.imageAttrs and not self.vectorImager.imageAttrs:
-            self.vectorImager.imageAttrs = self.imageAttrs
-        if self.imageUnits and not self.vectorImager.imageUnits:
-            self.vectorImager.imageUnits = self.imageUnits
-
-        # Invoke the rendering process
-        unicode(document)
-
-        # Finish rendering images
-        self.imager.close()
-        self.vectorImager.close()
-
-        # Run any cleanup activities
-        self.cleanup(document, self.files.values(), postProcess=postProcess)
-
-        # Write out auxilliary information
-        pauxname = os.path.join(document.userdata.get('working-dir','.'), 
-                                '%s.paux' % document.userdata.get('jobname',''))
-        rname = config['general']['renderer']
-        document.context.persist(pauxname, rname)
-
-        # Remove mixins
-        del Node.renderer
-        unmix(Node, Renderable)
-
-    def processFileContent(self, document, s):
-        return s
-
-    def cleanup(self, document, files, postProcess=None):
-        """ 
-        Cleanup method called at the end of rendering 
-
-        This method allows you to do arbitrary post-processing after
-        all files have been rendered.
-
-        Note: While I greatly dislike post-processing, sometimes it's 
-              just easier...
-
-        Required Arguments:
-        document -- the document being rendered
-        files -- the list of filenames that were generated
-       
-        Optional Arguments:
-        postProcess -- a function that will be called on the content of 
-            each file.  It is called with the document object and a
-            unicode object with the content of each file.  
-            It must return a unicode object.
-
-        """
-        if self.processFileContent is Renderer.processFileContent:
-            return 
-
-        encoding = document.config['files']['output-encoding']
-
-        for f in files:
-            try:
-                s = codecs.open(str(f), 'r', encoding, 'replace').read()
-            except IOError, msg:
-                log.error(msg)
-                continue
-
-            s = self.processFileContent(document, s)
-
-            if callable(postProcess):
-                s = postProcess(document, s)
-
-            codecs.open(f, 'w', encoding).write(u''.join(s))
-
-    def find(self, keys, default=None):
-        """
-        Locate a renderer given a list of possibilities
-  
-        Required Arguments:
-        keys -- a list of strings containing the requested name of 
-            a renderer.  This list is traversed in order.  The first 
-            renderer that is found is returned.
-
-        Keyword Arguments:
-        default -- the renderer to return if none of the keys exists
-
-        Returns:
-        the requested renderer
-
-        """
-        for key in keys:
-            if self.has_key(key):
-                return self[key]
-
-        # Other nodes supplied default
-        log.warning('Using default renderer for %s' % ', '.join(keys))
-        for key in keys:
-            self[key] = default
-        return default
-
-
 class Renderable(object):
     """
     Base class for all renderable nodes
@@ -521,6 +293,240 @@ class Renderable(object):
 #       print type(self), filename
 
         return filename
+
+
+class Renderer(dict):
+    """
+    Base class for all renderers
+
+    All renderers must act like a dictionary.  Each macro that is encountered
+    in a document must have a corresponding key in the renderer.  This 
+    key points to a callable object which is called with the object to
+    be rendered.
+
+    In addition to callable renderers, the renderer also handles image 
+    generation.  Images are generated when the output document type can 
+    not support the rendering of a macro.  One example of this is equations
+    in HTML.
+
+    """
+
+    renderableClass = Renderable
+    renderMethod = None
+    textDefault = unicode
+    default = unicode
+    outputType = unicode
+    imageTypes = []
+    vectorImageTypes = []
+    fileExtension = ''
+    imageAttrs = '&${filename}-${attr};'
+    imageUnits = '&${units};'
+
+    def __init__(self, data={}):
+        dict.__init__(self, data)
+
+        # Names of generated files
+        self.files = {}
+
+        # Instantiated at render time
+        self.imager = None
+        self.vectorImager = None
+
+        # Filename generator
+        self.newFilename = None
+
+    def render(self, document, postProcess=None):
+        """
+        Invoke the rendering process
+
+        This method invokes the rendering process as well as handling
+        the setup and shutdown of image processing.
+
+        Required Arguments:
+        document -- the document object to render
+        postProcess -- a function that will be called with the content of 
+
+        """
+        config = document.config
+
+        # If there are no keys, print a warning.  
+        # This is most likely a problem.
+        if not self.keys():
+            log.warning('There are no keys in the renderer.  ' +
+                        'All objects will use the default rendering method.')
+
+        # Mix in required methods and members
+        mixin(Node, type(self).renderableClass)
+        Node.renderer = self
+
+        # Create a filename generator
+        self.newFilename = Filenames(config['files'].get('filename', raw=True), 
+                                     (config['files']['bad-chars'],
+                                      config['files']['bad-chars-sub']),
+                                     {'jobname':document.userdata.get('jobname', '')}, self.fileExtension)
+                      
+
+        # Instantiate appropriate imager
+        names = [x for x in config['images']['imager'].split() if x]
+        for name in names:
+            if name == 'none':
+                break
+            try: 
+                exec('from plasTeX.Imagers.%s import Imager' % name)
+            except ImportError, msg:
+                log.warning("Could not load imager '%s' because '%s'" % (name, msg))
+                continue
+            
+            self.imager = Imager(document, self.imageTypes)
+    
+            # Make sure that this imager works on this machine
+            if self.imager.verify():
+                log.info('Using the imager "%s".' % name)
+                break
+ 
+            self.imager = None
+
+        # Still no imager? Just use the default.
+        if self.imager is None:
+            if 'none' not in names:
+                log.warning('Could not find a valid imager in the list: %s.  The default imager will be used.' % ', '.join(names))
+            from plasTeX.Imagers import Imager
+            self.imager = Imager(document, self.imageTypes)
+
+        if self.imageTypes and self.imager.fileExtension not in self.imageTypes:
+            self.imager.fileExtension = self.imageTypes[0]
+        if self.imageAttrs and not self.imager.imageAttrs:
+            self.imager.imageAttrs = self.imageAttrs
+        if self.imageUnits and not self.imager.imageUnits:
+            self.imager.imageUnits = self.imageUnits
+
+        # Instantiate appropriate vector imager
+        names = [x for x in config['images']['vector-imager'].split() if x]
+        for name in names:
+            if name == 'none':
+                break
+            try: 
+                exec('from plasTeX.Imagers.%s import Imager' % name)
+            except ImportError, msg:
+                log.warning("Could not load imager '%s' because '%s'" % (name, msg))
+                continue
+            
+            self.vectorImager = Imager(document, self.vectorImageTypes)
+    
+            # Make sure that this imager works on this machine
+            if self.vectorImager.verify():
+                log.info('Using the vector imager "%s".' % name)
+                break
+ 
+            self.vectorImager = None
+
+        # Still no vector imager? Just use the default.
+        if self.vectorImager is None:
+            if 'none' not in names:
+                log.warning('Could not find a valid vector imager in the list: %s.  The default vector imager will be used.' % ', '.join(names))
+            from plasTeX.Imagers import VectorImager
+            self.vectorImager = VectorImager(document, self.vectorImageTypes)
+
+        if self.vectorImageTypes and \
+           self.vectorImager.fileExtension not in self.vectorImageTypes:
+            self.vectorImager.fileExtension = self.vectorImageTypes[0]
+        if self.imageAttrs and not self.vectorImager.imageAttrs:
+            self.vectorImager.imageAttrs = self.imageAttrs
+        if self.imageUnits and not self.vectorImager.imageUnits:
+            self.vectorImager.imageUnits = self.imageUnits
+
+        # Invoke the rendering process
+        if type(self).renderMethod:
+            getattr(document, type(self).renderMethod)()
+        else:
+            unicode(document)
+
+        # Finish rendering images
+        self.imager.close()
+        self.vectorImager.close()
+
+        # Run any cleanup activities
+        self.cleanup(document, self.files.values(), postProcess=postProcess)
+
+        # Write out auxilliary information
+        pauxname = os.path.join(document.userdata.get('working-dir','.'), 
+                                '%s.paux' % document.userdata.get('jobname',''))
+        rname = config['general']['renderer']
+        document.context.persist(pauxname, rname)
+
+        # Remove mixins
+        del Node.renderer
+        unmix(Node, type(self).renderableClass)
+
+    def processFileContent(self, document, s):
+        return s
+
+    def cleanup(self, document, files, postProcess=None):
+        """ 
+        Cleanup method called at the end of rendering 
+
+        This method allows you to do arbitrary post-processing after
+        all files have been rendered.
+
+        Note: While I greatly dislike post-processing, sometimes it's 
+              just easier...
+
+        Required Arguments:
+        document -- the document being rendered
+        files -- the list of filenames that were generated
+       
+        Optional Arguments:
+        postProcess -- a function that will be called on the content of 
+            each file.  It is called with the document object and a
+            unicode object with the content of each file.  
+            It must return a unicode object.
+
+        """
+        if self.processFileContent is Renderer.processFileContent:
+            return 
+
+        encoding = document.config['files']['output-encoding']
+
+        for f in files:
+            try:
+                s = codecs.open(str(f), 'r', encoding, 'replace').read()
+            except IOError, msg:
+                log.error(msg)
+                continue
+
+            s = self.processFileContent(document, s)
+
+            if callable(postProcess):
+                s = postProcess(document, s)
+
+            codecs.open(f, 'w', encoding).write(u''.join(s))
+
+    def find(self, keys, default=None):
+        """
+        Locate a renderer given a list of possibilities
+  
+        Required Arguments:
+        keys -- a list of strings containing the requested name of 
+            a renderer.  This list is traversed in order.  The first 
+            renderer that is found is returned.
+
+        Keyword Arguments:
+        default -- the renderer to return if none of the keys exists
+
+        Returns:
+        the requested renderer
+
+        """
+        for key in keys:
+            if self.has_key(key):
+                return self[key]
+
+        # Other nodes supplied default
+        log.warning('Using default renderer for %s' % ', '.join(keys))
+        for key in keys:
+            self[key] = default
+        return default
+
 
 
 class StaticNode(object):

@@ -334,7 +334,7 @@ class TeX(object):
         if hasattr(self, '_endcontext'):
             self.ownerDocument.context.pop(self._endcontext)
 
-    def expandTokens(self, tokens, normalize=False):
+    def expandTokens(self, tokens, normalize=False, parentNode=None):
         """
         Expand a list of unexpanded tokens
 
@@ -352,7 +352,9 @@ class TeX(object):
 
         # Push the tokens and expand them
         tex.pushTokens(tokens)
-        out = tex.parse(tex.ownerDocument.createDocumentFragment())
+        frag = tex.ownerDocument.createDocumentFragment()
+        frag.parentNode = parentNode
+        out = tex.parse(frag)
 
         # Pop all of our nested contexts off
         tex.endSubProcess()
@@ -647,7 +649,7 @@ class TeX(object):
                     ParameterCommand.enable()
                     return toks, source
                 else:
-                    toks = self.expandTokens([t])
+                    toks = self.expandTokens([t], parentNode=parentNode)
                     if len(toks) == 1:
                         ParameterCommand.enable()
                         return toks[0], toks[0].source
@@ -675,7 +677,7 @@ class TeX(object):
                 if t.catcode == Token.CC_SPACE:
                     break 
                 toks.append(t)
-            return self.expandTokens(toks), self.source(toks)
+            return self.expandTokens(toks, parentNode=parentNode), self.source(toks)
 
         if type in ['cs']:
             expanded = False
@@ -692,7 +694,7 @@ class TeX(object):
 
             # Get a TeX token (i.e. {...})
             if spec is None:
-                toks, source = self.readToken(expanded)
+                toks, source = self.readToken(expanded, parentNode=parentNode)
 
             # Get a single character argument
             elif len(spec) == 1:
@@ -700,7 +702,7 @@ class TeX(object):
     
             # Get an argument grouped by the given characters (e.g. [...], (...))
             elif len(spec) == 2:
-                toks, source = self.readGrouping(spec, expanded)
+                toks, source = self.readGrouping(spec, expanded, parentNode=parentNode)
     
             # This isn't a correct value
             else:
@@ -736,7 +738,7 @@ class TeX(object):
 
         return res, source
 
-    def readToken(self, expanded=False):
+    def readToken(self, expanded=False, parentNode=None):
         """
         Read a token or token group
 
@@ -789,7 +791,7 @@ class TeX(object):
 #   
 #               # Expand groupings and all other types
 #               else:
-                    toks = self.expandTokens(toks)
+                    toks = self.expandTokens(toks, parentNode=parentNode)
                     if isgroup:
                         s = self.source(toks)
                         source = u'%s%s%s' % (source[0].source, s, 
@@ -823,7 +825,7 @@ class TeX(object):
                 break
         return None, ''
 
-    def readGrouping(self, chars, expanded=False):
+    def readGrouping(self, chars, expanded=False, parentNode=None):
         """
         Read a group delimited by the given characters
 
@@ -860,7 +862,7 @@ class TeX(object):
                 self.pushToken(t)
                 break
             if expanded:
-                toks = self.expandTokens(toks)
+                toks = self.expandTokens(toks, parentNode=parentNode)
                 source = begin + self.source(toks) + end
             else:
                 source = self.source(source)

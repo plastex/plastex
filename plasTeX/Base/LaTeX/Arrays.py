@@ -241,6 +241,8 @@ class Array(Environment):
                     self.attributes['colspan'] = item.attributes['colspan']
                 if hasattr(item, 'colspec') and not isinstance(item, Array):
                     self.colspec = item.colspec
+                if hasattr(item, 'isHeader'):
+                    self.isHeader = item.isHeader
 
             # Cache the border information.  This must be done before
             # grouping paragraphs since a paragraph might swallow 
@@ -326,6 +328,7 @@ class Array(Environment):
     class multicolumn(Command):
         """ Column spanning cell """
         args = 'colspan:int colspec:nox self'
+        isHeader = False
 
         def invoke(self, tex):
             Command.invoke(self, tex)

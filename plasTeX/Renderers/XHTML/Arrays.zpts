@@ -21,3 +21,5 @@ type: xml
 
 name: multicolumn
 <span tal:replace="self"></span>
+
+name: cline

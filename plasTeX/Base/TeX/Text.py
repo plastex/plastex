@@ -54,6 +54,7 @@ class bgroup(Command):
                 if item.contextDepth < self.contextDepth:
                     tokens.push(item)
                     break
+                item.parentNode = self
                 item.digest(tokens)
             self.appendChild(item)
         self.paragraphs(force=False)
