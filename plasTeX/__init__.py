@@ -875,7 +875,7 @@ class Environment(Macro):
         dopars = self.forcePars
 #       print 'DIGEST', type(self), self.contextDepth
         for item in tokens:
-#           print type(item), (item, self), (item.level, self.level), (item.contextDepth, self.contextDepth)
+#           print type(item), (item.level, self.level), (item.contextDepth, self.contextDepth)
             # Make sure that we know to group paragraphs if one is found
             if item.level == Node.PAR_LEVEL:
                 self.appendChild(item)
@@ -892,7 +892,8 @@ class Environment(Macro):
                 item.parentNode = self
                 item.digest(tokens)
             # Stay within our context depth
-            if item.contextDepth < self.contextDepth:
+            if self.level > Node.DOCUMENT_LEVEL and \
+               item.contextDepth < self.contextDepth:
                 tokens.push(item)
                 break
 #           print 'APPEND', type(item)

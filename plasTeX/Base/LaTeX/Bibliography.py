@@ -6,7 +6,7 @@ C.11.3 Bibliography and Citation (p208)
 """
 
 import plasTeX, codecs
-from plasTeX.Base.LaTeX.Sectioning import chapter
+from plasTeX.Base.LaTeX.Sectioning import chapter, section
 from plasTeX import Command, Environment
 from Lists import List
 
@@ -16,17 +16,13 @@ class bibliography(chapter):
     args = 'files:str'
     linkType = 'bibliography'
 
-    @property
-    def title(self):
-        if hasattr(self, '@title'):
-            return getattr(self, '@title')
-        t = self.ownerDocument.createElement('bibname').expand(tex)
-        setattr(self, '@title', t)
-        return t
-
     def invoke(self, tex):
         res = chapter.invoke(self, tex)
-        self.attributes['title'] = bibliography.title
+        self.title = self.ownerDocument.createElement('bibname').expand(tex)
+        self.loadBibliographyFile(tex)
+        return res
+
+    def loadBibliographyFile(self, tex):
         # Load bibtex file
         try:
             file = tex.kpsewhich(tex.jobname+'.bbl')

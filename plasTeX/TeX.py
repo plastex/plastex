@@ -1624,8 +1624,10 @@ class TeX(object):
         if self.jobname in self.auxFiles:
             return
         self.auxFiles.append(self.jobname)
+        warn = self.ownerDocument.context.warnOnUnrecognized
         try:
             f = self.kpsewhich(self.jobname+'.aux')
+            self.ownerDocument.context.warnOnUnrecognized = False
             self.pushToken(plasTeX.Command())
             self.input(open(f))
             for item in self:
@@ -1633,6 +1635,7 @@ class TeX(object):
                     break
         except OSError, msg:
             log.warning(msg)
+        self.ownerDocument.context.warnOnUnrecognized = warn
 
 #   @property
 #   def jobname(self):

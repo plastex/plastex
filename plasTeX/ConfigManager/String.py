@@ -29,7 +29,7 @@ class StringOption(StringParser, GenericOption, UserString):
 
    def cast(self, arg):
       if arg is None: return
-      return str(arg)
+      return unicode(arg)
 
    def __iadd__(self, other):
       if callable(self.callback):

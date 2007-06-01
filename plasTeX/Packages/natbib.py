@@ -10,7 +10,8 @@ TODO:
 """
 
 import plasTeX
-from plasTeX import Base
+from plasTeX import Base, Node
+from plasTeX.Base.LaTeX.Sectioning import chapter, section
 
 log = plasTeX.Logging.getLogger()
 
@@ -60,10 +61,21 @@ def ProcessOptions(options, document):
             pass
 
 class bibliography(Base.bibliography):
-    pass
-#   def invoke(self, tex):
-#       tex.loadAuxiliaryFile()
-#       return Base.bibliography.invoke(self, tex)
+
+    class setcounter(Base.Command):
+        # Added so that setcounters in the aux file don't mess counters up
+        args = 'name:nox num:nox'
+
+    def loadBibliographyFile(self, tex):
+        doc = self.ownerDocument
+        # Clear out any bib info from the standard package.  
+        # We have to get our info from the aux file.
+        doc.userdata.setPath('bibliography/citations', {})
+        self.ownerDocument.context.push(self)
+        self.ownerDocument.context['setcounter'] = self.setcounter
+        tex.loadAuxiliaryFile()
+        self.ownerDocument.context.pop(self)
+        Base.bibliography.loadBibliographyFile(self, tex)
 
 class bibstyle(Base.Command):
     args = 'style:str'
@@ -122,7 +134,6 @@ class bibpunct(Base.Command):
 
 class bibcite(Base.Command):
     """ Auxiliary file information """
-    citations = {}
     args = 'key:str info'
 
     def invoke(self, tex):
@@ -134,17 +145,20 @@ class bibcite(Base.Command):
             value.attributes['fullauthor'] = author
         else:
             value.attributes['fullauthor'] = fullauthor
-        self.citations[self.attributes['key']] = value
+        doc = self.ownerDocument
+        citations = doc.userdata.getPath('bibliography/citations', {})
+        citations[self.attributes['key']] = value
+        doc.userdata.setPath('bibliography/citations', citations)
 
 class thebibliography(Base.thebibliography):
 
     class bibitem(Base.thebibliography.bibitem):
-        cited = []
 
         @property
         def citation(self):
             try: 
-                return bibcite.citations[self.attributes['key']]
+                doc = self.ownerDocument
+                return doc.userdata.getPath('bibliography/citations', {})[self.attributes['key']]
             except KeyError, msg:
                 pass
             # We don't have a citation that matches, fill the fields
@@ -161,10 +175,13 @@ class thebibliography(Base.thebibliography):
 
         def cite(self):
             """ Jones et al. (1990) """
+            doc = self.ownerDocument
+            cited = doc.userdata.getPath('bibliography/cited', [])
             if 'longnamesfirst' in PackageOptions and \
-               self.attributes['key'] not in self.cited:
+               self.attributes['key'] not in cited:
                 full = True
-                self.cited.append(self.attributes['key'])
+                cited.append(self.attributes['key'])
+            doc.userdata.setPath('bibliography/cited', cited)
             if bibpunct.punctuation['style'] == 's':
                 return self.citep(full=full)
             elif bibpunct.punctuation['style'] == 'n':
@@ -191,10 +208,13 @@ class thebibliography(Base.thebibliography):
         
         def citet(self, full=False):
             """ Jones et al. (1990) """
+            doc = self.ownerDocument
+            cited = doc.userdata.getPath('bibliography/cited', [])
             if 'longnamesfirst' in PackageOptions and \
-               self.attributes['key'] not in self.cited:
+               self.attributes['key'] not in cited:
                 full = True
-                self.cited.append(self.attributes['key'])
+                cited.append(self.attributes['key'])
+            doc.userdata.setPath('bibliography/cited', cited)
             if full: which = 'fullauthor'
             else: which = 'author'
             res = self.ownerDocument.createDocumentFragment()
@@ -441,10 +461,13 @@ class citep(NatBibCite):
 
             # Nothing about the previous citation is the same
             else:
+                doc = self.ownerDocument
+                cited = doc.userdata.getPath('bibliography/cited', [])
                 duplicateyears = 0
                 if 'longnamesfirst' in PackageOptions and \
-                   item.attributes['key'] not in item.cited:
-                    item.cited.append(item.attributes['key'])
+                   item.attributes['key'] not in cited:
+                    cited.append(item.attributes['key'])
+                    doc.userdata.setPath('bibliography/cited', cited)
                     res.append(item.citealp(full=True))
                 else:
                     res.append(item.citealp())
