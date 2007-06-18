@@ -511,7 +511,7 @@ class Array(Environment):
 
             output.append(ColumnType.columnTypes.get(tok, ColumnType)())
 
-            if tok in ['p','d']:
+            if tok.lower() in ['p','d']:
                 tex.readArgument()
 
             if before:

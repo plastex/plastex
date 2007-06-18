@@ -75,6 +75,7 @@ a.footnote:hover .footnotetext {
 .flushright, .raggedleft {text-align: right} 
 
 /* Arrays */
+.tabular { border-collapse: collapse }
 .tabular td, .tabular th {
     vertical-align: baseline;
     text-align: left;
