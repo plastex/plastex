@@ -17,6 +17,8 @@ class XHTML(_Renderer):
         s = re.compile(r'(<(?:hr|br|img|link|meta)\b.*?)\s*/?\s*(>)', 
                        re.I|re.S).sub(r'\1 /\2', s)
 
+        s = re.compile(r'(<(td|th)\b[^>]*>)\s*(</\2>)', re.I|re.S).sub(r'\1&nbsp;\3', s)
+
         # Realign eqnarray.  The cells in an eqnarry can really have some
         # deep depths.  This causes the content of those cells to overlap
         # the content below them.  Therefore, all cells in an eqnarray
