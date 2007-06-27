@@ -844,14 +844,17 @@ class TeX(object):
             toks = []
             source = [t]
             # A [ ... ], ( ... ), etc. grouping was found
-            if t == begin or unicode(t) == unicode(begin):
+            if t.catcode != Token.CC_ESCAPE and \
+               (t == begin or unicode(t) == unicode(begin)):
                 level = 1
                 for t in tokens:
                     source.append(t)
-                    if t == begin or unicode(t) == unicode(begin):
+                    if t.catcode != Token.CC_ESCAPE and \
+                       (t == begin or unicode(t) == unicode(begin)):
                         toks.append(t)
                         level += 1
-                    elif t == end or unicode(t) == unicode(end):
+                    elif t.catcode != Token.CC_ESCAPE and \
+                         (t == end or unicode(t) == unicode(end)):
                         level -= 1
                         if level == 0:
                             break
