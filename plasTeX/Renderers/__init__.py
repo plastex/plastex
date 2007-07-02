@@ -15,6 +15,12 @@ logging.getLogger('simpleTALES').setLevel(logging.WARNING)
 
 __all__ = ['Renderer','Renderable']
 
+def baseclasses(cls):
+    output = [cls]
+    for item in cls.__bases__:
+        output.extend(baseclasses(item))
+    return [x for x in output if x is not object] 
+
 def mixin(base, mix, overwrite=False):
     """
     Mix the methods and members of class `mix` into `base`
@@ -27,13 +33,14 @@ def mixin(base, mix, overwrite=False):
     if not vars(base).has_key('_mixed_'):
         base._mixed_ = {}
     mixed = base._mixed_
-    for item, value in vars(mix).items():
-        if item in ['__dict__','__module__','__doc__','__weakref__']:
-            continue
-        if overwrite or not vars(base).has_key(item):
-            old = vars(base).get(item, None)
-            setattr(base, item, value)
-            mixed[item] = (mix, old)
+    for cls in baseclasses(mix):
+        for item, value in vars(cls).items():
+            if item in ['__dict__','__module__','__doc__','__weakref__']:
+                continue
+            if overwrite or not vars(base).has_key(item):
+                old = vars(base).get(item, None)
+                setattr(base, item, value)
+                mixed[item] = (mix, old)
 
 def unmix(base, mix=None):
     """
