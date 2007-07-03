@@ -86,7 +86,7 @@ class GenericParser:
       else:
          new_args = []
          while self._hasFollowingArgument(args, delim):
-   
+
             # If the current argument ends with a delimiter
             if args[0].strip()[-1] == delim:
                new_args.append(args.pop(0).strip()[:-1])
@@ -95,10 +95,13 @@ class GenericParser:
             elif len(args) > 1 and args[1].strip() == delim:
                new_args.append(args.pop(0).strip())
                args.pop(0)
-   
+
             # If next argument begins with a delimiter
             else:
-               new_args.append(args.pop(0).strip()[1:])
+               if args[0].startswith(delim):
+                   new_args.append(args.pop(0).strip()[1:])
+               else:
+                   new_args.append(args.pop(0).strip())
    
                # If this argument ends with a delimiter, rip it off
                # and put it back into the stream.

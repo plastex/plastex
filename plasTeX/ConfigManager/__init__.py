@@ -1200,6 +1200,9 @@ class ConfigManager(UserDict, object):
             raise UnspecifiedArgument('option %s must not have an argument' \
                                        % opt, opt)
 
+        elif forcedarg:
+           optarg, args = option.getArgument(args)
+
         elif not(option.acceptsArgument()):
            pass
 

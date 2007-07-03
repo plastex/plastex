@@ -10,6 +10,15 @@ class IntegerOption(IntegerParser, GenericOption):
 
    synopsis = 'n'
 
+   def _hasFollowingArgument(self, args, delim):
+      """ Return boolean indicating the existence of another argument """
+      try:
+          if args and int(args[0]):
+              return 1
+      except (TypeError, ValueError):
+          pass
+      return 0 
+
    def cast(self, data):
       name = self.name
       if self.actual: name = self.actual
