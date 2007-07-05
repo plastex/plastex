@@ -21,5 +21,5 @@ name: bibliography
 <div tal:replace="self"></div>
 
 name: cite
-<span tal:repeat="item self/citation"><a class="cite" tal:attributes="href item/idref/url" tal:content="item">citation</a></span>
+[<span tal:repeat="item self/bibitems"><a class="cite" tal:attributes="href item/url" tal:content="item/citation">citation</a><span tal:condition="not:repeat/item/end">, </span><span tal:condition="repeat/item/end"><span tal:condition="self/postnote">, <span tal:replace="self/postnote"></span></span></span></span>]
 

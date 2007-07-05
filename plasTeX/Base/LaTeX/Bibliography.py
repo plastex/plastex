@@ -48,10 +48,8 @@ class thebibliography(List):
             bibitems = doc.userdata.getPath('bibliography/bibitems', {})
             bibitems[a['key']] = self
             doc.userdata.setPath('bibliography/bibitems', bibitems)
-            numitems = doc.userdata.getPath('bibliography/numitems', 0)
-            numitems += 1
-            doc.userdata.setPath('bibliography/numitems', numitems)
-            self.ref = str(numitems)
+            self.ref = str(len([x for x in bibitems.values() 
+                                  if not x.attributes['label']]))
             key = a['key']
             label = a.get('label')
             citations = doc.userdata.getPath('bibliography/citations', {})
@@ -112,14 +110,7 @@ class cite(Command):
         return ''
 
     def citation(self):
-        res = []
-        res.append('[')
-        for item in self.bibitems:
-            res.append(item)
-            res.append(', ')
-        res.pop()
-        res.append(self.postnote + ']')
-        return res
+        return self.bibitems
             
 class nocite(Command):
     args = 'keys:str'
