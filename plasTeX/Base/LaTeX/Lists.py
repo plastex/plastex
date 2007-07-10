@@ -26,6 +26,7 @@ class List(Environment):
         args = '[ term ]'
         counter = 'enumi'
         position = 0
+        forcePars = True
 
         def invoke(self, tex):
             """ Set up counter for this list depth """
@@ -49,7 +50,8 @@ class List(Environment):
                 tokens.push(tok)
                 break
             self.digestUntil(tokens, List.item)
-            self.paragraphs()
+            if self.forcePars:
+                self.paragraphs()
 
     def invoke(self, tex):
         """ Set list nesting depth """
