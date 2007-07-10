@@ -397,7 +397,11 @@ class Context(object):
         if not self.refs.has_key(label):
             self.refs[label] = []
         self.refs[label].append(obj)
-        obj.idref[name] = label
+
+        # Make a fake node with the ID on it for now
+        node = self['Macro']()
+        node.id = label
+        obj.idref[name] = node
 
     def __getitem__(self, key):
         """ 
