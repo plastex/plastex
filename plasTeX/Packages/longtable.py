@@ -34,7 +34,7 @@ class longtable(tabular):
             # Attach caption to longtable node in case it is needed
             while not isinstance(node, longtable):
                node = node.parentNode
-            if node is not None:
+            if node is not None and getattr(node, 'caption', None) is not None:
                 node.caption = self
 
     class nocountcaption(caption_):
