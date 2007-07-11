@@ -366,7 +366,7 @@ class Context(object):
         if self.refs.has_key(label) and self.labels.has_key(label):
             for obj in self.refs[label]:
                 for key, value in obj.idref.items():
-                    if value != label:
+                    if value.id != label:
                         continue
                     obj.idref[key] = self.labels[label]
             del self.refs[label]
