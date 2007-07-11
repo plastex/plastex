@@ -15,19 +15,29 @@ class setlongtables(Command): pass
 
 class longtable(tabular):
     args = '[ position:str ] colspec:nox'
-    tableCaption = None
 
-    class caption(tabular.caption):
+    # Caption node
+    caption = None
+
+    class caption_(tabular.caption):
+        macroName = 'caption'
         def digest(self, tokens):
             tabular.caption.digest(self, tokens)
             node = self.parentNode
+
             # Mark caption row to be moved later
             while not isinstance(node, tabular.ArrayRow):
                node = node.parentNode
             if node is not None:
                 node.isCaptionRow = True
 
-    class nocountcaption(caption):
+            # Attach caption to longtable node in case it is needed
+            while not isinstance(node, longtable):
+               node = node.parentNode
+            if node is not None:
+                node.caption = self
+
+    class nocountcaption(caption_):
         """ Caption that doesn't increment the counter """
         counter = None
 
@@ -58,7 +68,7 @@ class longtable(tabular):
         def invoke(self, tex):
             # Store the current table counter value.  If more than one
             # caption exists, we need to set this counter back to this value.
-            self._tabularcount = self.ownerDocument.context.counters[longtable.caption.counter].value
+            self._tabularcount = self.ownerDocument.context.counters[longtable.caption_.counter].value
             return longtable.LongTableEndRow.invoke(self, tex)
 
     class endfoot(LongTableEndRow):
@@ -86,7 +96,7 @@ class longtable(tabular):
                         header = cache
                         # Set counter back to correct value in case there
                         # were multiple captions.
-                        self.ownerDocument.context.counters[longtable.caption.counter].setcounter(node._tabularcount)
+                        self.ownerDocument.context.counters[longtable.caption_.counter].setcounter(node._tabularcount)
                     elif isinstance(current, type(self).endfoot):
                         if footer is None:
                             footer = cache
