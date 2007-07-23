@@ -1428,7 +1428,7 @@ class Counter(object):
 
     def resetcounters(self):
         for counter in self.counters.values():
-            if counter.resetby == self.name: 
+            if counter.resetby and self.name and counter.resetby == self.name: 
                 counter.value = 0
                 counter.resetcounters()
 
