@@ -1,0 +1,9 @@
+Some files that are distributed with plasTeX come under a license separate
+from plasTeX itself.  These files are listed below and the license files
+that are associated with them.
+
+unicode.license		plasTeX/Base/LaTeX/allkeys.txt
+ent.license 		plasTeX/Base/LaTeX/ent.xml
+pyuca.license		plasTeX/Base/LaTeX/pyuca.py
+S5.license		plasTeX/Renderers/S5/Themes/default/ui/default/*
+simpletal.license	plasTeX/Renderers/PageTemplate/simpletal/*
