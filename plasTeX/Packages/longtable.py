@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import sys
 from plasTeX.Base.LaTeX.Arrays import tabular
 from plasTeX import Command, DimenCommand, CountCommand, GlueCommand 
 from plasTeX import dimen, glue, count, TeXFragment
@@ -79,10 +80,18 @@ class longtable(tabular):
 
     class kill(LongTableEndRow):
         """ Throw-away row used for measurement """
+        def digest(self, tokens):
+            longtable.LongTableEndRow.digest(self, tokens)
+            node = self.parentNode
+            while node is not None and not isinstance(node, longtable):
+                node = node.parentNode
+            if node is not None:
+                node[-1].isKillRow = True
 
     def processRows(self):
         # Strip header and footer chunks from the table
         delims = [x for x in self if isinstance(x, type(self).EndRow)]
+        delims = [x for x in delims if not isinstance(x, type(self).kill)] 
         header = footer = None
         for current in delims:
             cache = []
@@ -120,8 +129,8 @@ class longtable(tabular):
                     cell.isHeader = True
                 self.append(item)
 
-        # Move caption before the longtable
-        captionRows = []
+        # Move caption before the longtable, and delete killed rows
+        removeRows = []
         for i, row in enumerate(self):
            if getattr(row, 'isCaptionRow', None):
                while row.childNodes:
@@ -130,6 +139,8 @@ class longtable(tabular):
                        para = cell.pop(0)
                        while para.childNodes:
                           self.parentNode.append(para.pop(0))
-               captionRows.insert(0,i)
-        for i in captionRows:
+               removeRows.insert(0,i)
+           elif getattr(row, 'isKillRow', None):
+               removeRows.insert(0,i)
+        for i in removeRows:
             self.pop(i)
