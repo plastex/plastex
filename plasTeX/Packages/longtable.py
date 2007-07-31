@@ -20,10 +20,10 @@ class longtable(tabular):
     # Caption node
     caption = None
 
-    class caption_(tabular.caption):
+    class caption_(tabular.caption_):
         macroName = 'caption'
         def digest(self, tokens):
-            tabular.caption.digest(self, tokens)
+            tabular.caption_.digest(self, tokens)
             node = self.parentNode
 
             # Mark caption row to be moved later

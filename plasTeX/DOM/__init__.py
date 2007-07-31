@@ -1186,7 +1186,7 @@ def _getElementsByTagName(self, tagname):
     Get a list of nodes with the given name
 
     Required Arguments:
-    tagname -- the name of the elements to find
+    tagname -- the name or list of names of the elements to find
 
     Returns:
     list of elements
@@ -1194,29 +1194,33 @@ def _getElementsByTagName(self, tagname):
     """
     output = NodeList()
 
+    # Allow a list of names
+    if not isinstance(tagname, (tuple,list)):
+        tagname = [tagname]
+
     # Look in attributes dictionary for document fragments as well
     if self.attributes:
         for item in self.attributes.values():
-            if getattr(item, 'tagName', None) == tagname:
+            if getattr(item, 'tagName', None) in tagname:
                  output.append(item)
             if hasattr(item, 'getElementsByTagName'):
                 output += item.getElementsByTagName(tagname)
             elif isinstance(item, list):
                 for e in item:
-                    if getattr(e, 'tagName', None) == tagname:
+                    if getattr(e, 'tagName', None) in tagname:
                         output.append(e) 
                     if hasattr(item, 'getElementsByTagName'):
                         output += item.getElementsByTagName(tagname)
             elif isinstance(item, dict):
                 for e in item.values():
-                    if getattr(e, 'tagName', None) == tagname:
+                    if getattr(e, 'tagName', None) in tagname:
                         output.append(e) 
                     if hasattr(item, 'getElementsByTagName'):
                         output += item.getElementsByTagName(tagname)
 
     # Now look in the child elements
     for item in self:
-        if getattr(item, 'tagName', None) == tagname:
+        if getattr(item, 'tagName', None) in tagname:
             output.append(item)
         if hasattr(item, 'getElementsByTagName'):
             output += item.getElementsByTagName(tagname) 

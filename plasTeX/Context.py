@@ -81,6 +81,49 @@ class Counters(dict):
         return c
 
 
+class LanguageParser(object):
+    """ Parser for language commands """
+
+    def __init__(self, output={}):
+        from xml.parsers import expat
+        self.parser = expat.ParserCreate()
+        self.parser.StartElementHandler = self.startElement
+        self.parser.CharacterDataHandler = self.charData
+        self.data = output
+        self.language = None
+        self.term = None
+
+    def parse(self, file):
+        self.parser.Parse(open(file).read())
+        self.mergeLanguages()
+
+    def mergLanguages(self):
+        # Merge language keys from the major language section, into
+        # the minor language section
+        for key, value in self.data.items():
+            if '-' in key:
+                major, minor = key.split('-',1)
+                if major in self.data:
+                    majordict = self.data[major]
+                    for mkey, mvalue in majordict.items():
+                        if mkey not in value:
+                            value[mkey] = mvalue
+
+    def startElement(self, name, attrs):
+        if name == 'terms':
+            self.term = None
+            self.language = self.data[attrs['lang']] = {}
+            if 'dateFormat' in attrs:
+                self.language['date-format'] = attrs['dateFormat']
+        elif name == 'term':
+            self.term = attrs['name']
+        
+    def charData(self, data):
+        if self.term is not None:
+            self.language[self.term] = data
+            self.term = None
+
+
 class Context(object):
     """
     Object to handle macro contexts within a TeX document
@@ -128,6 +171,9 @@ class Context(object):
 
         # Holds the current environment name stack
         self._currenvir = []
+
+        # Holds the terms for various languages
+        self.languages = {}
 
         # Create a global namespace
         self.push()
@@ -233,6 +279,11 @@ class Context(object):
         lang -- the name of the language file to load
 
         """
+#       if not self.languages:
+#           lp = LanguageParser(self.languages)
+#           lp.parse(os.path.join(os.path.dirname(__file__),
+#                    'Base','LaTeX','Languages','localizedTerms.xml'))
+
         exec('from plasTeX.Base.LaTeX.Languages import %s as language' % lang)
         if hasattr(language, 'ProcessOptions'):
             language.ProcessOptions({}, document)
