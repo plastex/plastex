@@ -729,8 +729,8 @@ class Imager(object):
             # just copy the image to the new location
             if newext == oldext or oldext in self.imageTypes:
                 path = os.path.splitext(path)[0] + os.path.splitext(name)[-1]
-                shutil.copyfile(name, path)
                 if PILImage is None:
+                    shutil.copyfile(name, path)
                     tmpl = string.Template(self.imageAttrs)
                     width = DimensionPlaceholder(tmpl.substitute({'filename':path, 'attr':'width'}))
                     height = DimensionPlaceholder(tmpl.substitute({'filename':path, 'attr':'height'}))
@@ -738,10 +738,24 @@ class Imager(object):
                 else:
                     img = PILImage.open(name)
                     width, height = img.size
+                    scale = self.config['images']['scale-factor']
+                    if scale != 1:
+                        width = int(width * scale)
+                        height = int(height * scale)
+                        img.resize((width,height))
+                        img.save(path)
+                    else:
+                        shutil.copyfile(name, path)
+                    
             # If PIL is available, convert the image to the appropriate type
             else:
                 img = PILImage.open(name)
                 width, height = img.size
+                scale = self.config['images']['scale-factor']
+                if scale != 1:
+                    width = int(width * scale)
+                    height = int(height * scale)
+                    img.resize((width,height))
                 img.save(path)
             img = Image(path, self.ownerDocument.config['images'], width=width, height=height)
             self.staticimages[name] = img

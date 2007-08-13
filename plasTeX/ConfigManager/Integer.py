@@ -12,11 +12,6 @@ class IntegerOption(IntegerParser, GenericOption):
 
    def _hasFollowingArgument(self, args, delim):
       """ Return boolean indicating the existence of another argument """
-      try:
-          if args and int(args[0]):
-              return 1
-      except (TypeError, ValueError):
-          pass
       return 0 
 
    def cast(self, data):

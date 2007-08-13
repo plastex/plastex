@@ -248,6 +248,13 @@ images['baseline-padding'] = IntegerOption(
     category = 'images',
 )
 
+images['scale-factor'] = FloatOption(
+    """ Factor to scale externally included images by """,
+    options = '--image-scale-factor',
+    default = 1.0,
+    category = 'images',
+)
+
 images['compiler'] = StringOption(
     """ LaTeX command to use when compiling image document """,
     options = '--image-compiler',

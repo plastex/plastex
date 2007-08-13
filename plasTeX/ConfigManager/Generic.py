@@ -86,7 +86,6 @@ class GenericParser:
       else:
          new_args = []
          while self._hasFollowingArgument(args, delim):
-
             # If the current argument ends with a delimiter
             if args[0].strip()[-1] == delim:
                new_args.append(args.pop(0).strip()[:-1])
