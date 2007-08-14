@@ -1050,13 +1050,16 @@ class Node(object):
     def textContent(self):
         """ Get the text content of the current node """
         output = []
-        for item in self:
-            if item.nodeType == Node.TEXT_NODE:
-                output.append(item)
-            elif getattr(item, 'unicode', None) is not None:
-                output.append(item.unicode)
-            else:
-                output.append(item.textContent)
+        if getattr(self, 'unicode', None) is not None:
+            output.append(self.unicode)
+        else:
+            for item in self:
+                if item.nodeType == Node.TEXT_NODE:
+                    output.append(item)
+                elif getattr(item, 'unicode', None) is not None:
+                    output.append(item.unicode)
+                else:
+                    output.append(item.textContent)
         if self.ownerDocument is not None:
             return self.ownerDocument.createTextNode(u''.join(output))
         else:
