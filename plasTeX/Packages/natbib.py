@@ -102,12 +102,12 @@ class bibstyle(Base.Command):
 
     def invoke(self, tex):
         res = Base.Command.invoke(self, tex)
-        try: 
-            s = bibstyle.styles[self.attributes['style']]
-        except KeyError:
-            log.warning('Could not find bibstyle: "%s"',
-                         self.attributes['style'])
-            return res
+        #try: 
+        #    s = bibstyle.styles[self.attributes['style']]
+        #except KeyError:
+        #    log.warning('Could not find bibstyle: "%s"',
+        #                 self.attributes['style'])
+        #    return res
         p = bibpunct.punctuation
         p['post']  = s[0]
         p['open']  = s[1]

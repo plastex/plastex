@@ -250,10 +250,13 @@ class Context(object):
             d = pickle.load(open(filename,'rb'))
             try: data = d[rtype]
             except KeyError: return
+            wou = self.warnOnUnrecognized
+            self.warnOnUnrecognized = False
             for key, value in data.items():
                 n = self[value.get('macroName','Macro')]()
                 n.restore(value)
                 self.labels[key] = n
+            self.warnOnUnrecognized = wou
         except Exception, msg:
             log.warning('Could not load auxiliary information. (%s)' % msg)
 
