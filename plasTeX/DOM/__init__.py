@@ -1053,6 +1053,8 @@ class Node(object):
         for item in self:
             if item.nodeType == Node.TEXT_NODE:
                 output.append(item)
+            elif getattr(item, 'unicode', None) is not None:
+                output.append(item.unicode)
             else:
                 output.append(item.textContent)
         if self.ownerDocument is not None:
