@@ -113,6 +113,7 @@ class SectionUtils(object):
         if self.config['document']['toc-non-files']:
             if [x for x in self.subsections if x.filename]:
                 return [TableOfContents(x, tocdepth) for x in self.subsections]
+            return []
 
         # Only include sections that create files in the ToC
         return [TableOfContents(x, tocdepth) for x in self.subsections 
