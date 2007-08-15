@@ -107,9 +107,12 @@ class SectionUtils(object):
         if tocdepth < 1:
             return []
 
-        # Include sections that don't create files in the ToC
+        # Include sections that don't create files in the ToC,
+        # but only if there is at least one file generating node
+        # in subsections.
         if self.config['document']['toc-non-files']:
-            return [TableOfContents(x, tocdepth) for x in self.subsections]
+            if [x for x in self.subsections if x.filename]:
+                return [TableOfContents(x, tocdepth) for x in self.subsections]
 
         # Only include sections that create files in the ToC
         return [TableOfContents(x, tocdepth) for x in self.subsections 
