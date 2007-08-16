@@ -1173,7 +1173,17 @@ class Node(object):
         if self.hasChildNodes():
             return self.childNodes[i]
         raise IndexError, 'object has no childNodes'
-
+        
+    @property
+    def allChildNodes(self):
+        """ Return a list containing all of the child nodes in the branch """
+        nodes = []
+        if not self.hasChildNodes():
+            return nodes
+        for child in self.childNodes:
+            nodes.append(child)
+            nodes.extend(child.allChildNodes)
+        return nodes
 
 class DocumentFragment(Node):
     """

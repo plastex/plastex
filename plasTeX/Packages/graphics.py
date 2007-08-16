@@ -6,6 +6,8 @@ from plasTeX import Command
 class includegraphics(Command):
     args = '[ ll ] [ ur ] file:str'
     packageName = 'graphics'
+    captionable = True
+    
     def invoke(self, tex):
         res = Command.invoke(self, tex)
 

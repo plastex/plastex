@@ -11,6 +11,7 @@ from plasTeX.Tokenizer import Other
 
 class verbatim(Environment):
     blockType = True
+    captionable = True
 
     def invoke(self, tex):
         """ Parse until we reach `\end{verbatim}' or `\endverbatim' """

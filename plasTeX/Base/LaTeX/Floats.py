@@ -8,6 +8,7 @@ C.9 Figures and Other Floating Bodies (p196)
 from plasTeX import Command, Environment, subclasses
 from plasTeX import GlueCommand, DimenCommand
 from plasTeX.Logging import getLogger
+from plasTeX.Base.LaTeX.Arrays import Array
 
 
 class Caption(Command):
@@ -29,26 +30,22 @@ class Float(Environment):
     blockType = True
     forcePars = True
     args = '[ loc:str ]'
-    
-    # List of possible caption node names.  Subclasses of Caption
-    # are automatically included
-    captions = []
-    
-    # List of macros that can have a caption
-    captionable = ['picture','verbatim','listing','includegraphics','tabular'
-                   'tabularx','tabular*','longtable','alltt']
-    
+        
     def digest(self, tokens):
         res = Environment.digest(self, tokens)
-        # Get the names of all caption macros
-        captionsubs = [x.__name__ for x in subclasses(Caption)] + self.captions
         # Apply captions to objects
-        if captionsubs and self.captionable and self.macroMode == self.MODE_BEGIN:
-            captions = self.getElementsByTagName(captionsubs)
-            objects = self.getElementsByTagName(self.captionable)
+        if self.macroMode == self.MODE_BEGIN:
+            # Locate all caption nodes and nodes that are 
+            # capable of being captioned.
+            all = self.allChildNodes
+            captions = [x for x in all if isinstance(x, (Caption, Array.caption))]
+            objects = [x for x in all if getattr(x, 'captionable', False)] 
+            # If there is only one caption, apply it to the float
             if len(captions) == 1:
                 captions[0].attached = True
                 self.title = captions[0]
+            # If there are the same number of captions as there are
+            # captionable items, apply the captions to the objects.
             if len(captions) == len(objects):
                 while captions and objects:
                     captions[0].attached = True
@@ -63,7 +60,7 @@ class FigureStar(figure):
     macroName = 'figure*'
 
 class table(Float):
-    captionable = ['tabular','tabularx','tabular*','longtable']
+    captionable = []
     class caption(Caption):
         counter = 'table'
 

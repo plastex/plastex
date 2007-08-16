@@ -8,6 +8,7 @@ from graphics import DeclareGraphicsExtensions, graphicspath
 class includegraphics(Command):
     args = '[ options:dict ] file:str'
     packageName = 'graphicx'
+    captionable = True
 
     def invoke(self, tex):
         res = Command.invoke(self, tex)

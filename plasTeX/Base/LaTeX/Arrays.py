@@ -56,10 +56,10 @@ class Array(Environment):
 
     colspec = None
     blockType = True
+    captionable = True
 
     class caption(Command):
         """ Table caption """
-        macroName = 'caption'
         args = '* [ toc ] self'
         labelable = True
         counter = 'table'
