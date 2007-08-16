@@ -17,13 +17,9 @@ class setlongtables(Command): pass
 class longtable(tabular):
     args = '[ position:str ] colspec:nox'
 
-    # Caption node
-    caption = None
-
-    class caption_(tabular.caption_):
-        macroName = 'caption'
+    class caption(tabular.caption):
         def digest(self, tokens):
-            tabular.caption_.digest(self, tokens)
+            tabular.caption.digest(self, tokens)
             node = self.parentNode
 
             # Mark caption row to be moved later
@@ -35,10 +31,10 @@ class longtable(tabular):
             # Attach caption to longtable node in case it is needed
             while not isinstance(node, longtable):
                node = node.parentNode
-            if node is not None and getattr(node, 'caption', None) is None:
-                node.caption = self
+            if node is not None and getattr(node, 'title', None) is None:
+                node.title = self
 
-    class nocountcaption(caption_):
+    class nocountcaption(caption):
         """ Caption that doesn't increment the counter """
         counter = None
 
@@ -69,7 +65,7 @@ class longtable(tabular):
         def invoke(self, tex):
             # Store the current table counter value.  If more than one
             # caption exists, we need to set this counter back to this value.
-            self._tabularcount = self.ownerDocument.context.counters[longtable.caption_.counter].value
+            self._tabularcount = self.ownerDocument.context.counters[longtable.caption.counter].value
             return longtable.LongTableEndRow.invoke(self, tex)
 
     class endfoot(LongTableEndRow):
@@ -105,7 +101,7 @@ class longtable(tabular):
                         header = cache
                         # Set counter back to correct value in case there
                         # were multiple captions.
-                        self.ownerDocument.context.counters[longtable.caption_.counter].setcounter(node._tabularcount)
+                        self.ownerDocument.context.counters[longtable.caption.counter].setcounter(node._tabularcount)
                     elif isinstance(current, type(self).endfoot):
                         if footer is None:
                             footer = cache
@@ -133,12 +129,12 @@ class longtable(tabular):
         removeRows = []
         for i, row in enumerate(self):
            if getattr(row, 'isCaptionRow', None):
-               while row.childNodes:
-                   cell = row.pop(0)
-                   while cell.childNodes:
-                       para = cell.pop(0)
-                       while para.childNodes:
-                          self.parentNode.append(para.pop(0))
+               #while row.childNodes:
+               #    cell = row.pop(0)
+               #    while cell.childNodes:
+               #        para = cell.pop(0)
+               #        while para.childNodes:
+               #           self.parentNode.append(para.pop(0))
                removeRows.insert(0,i)
            elif getattr(row, 'isKillRow', None):
                removeRows.insert(0,i)

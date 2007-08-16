@@ -1,9 +1,9 @@
 name: figure figure*
-<div class="figure" tal:attributes="id self/caption/id" tal:content="self">
+<div class="figure" tal:attributes="id self/title/id" tal:content="self">
 </div>
 
 name: table table*
-<div class="table" tal:attributes="id self/caption/id" tal:content="self">
+<div class="table" tal:attributes="id self/title/id" tal:content="self">
 </div>
 
 name: marginpar

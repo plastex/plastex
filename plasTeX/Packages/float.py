@@ -12,9 +12,9 @@ class newfloat(Command):
 
         # Create the float class and the caption class
         floatcls = new.classobj(name, (Float,), {})
-        captioncls = new.classobj('caption_', (Caption,), 
+        captioncls = new.classobj('caption', (Caption,), 
                                   {'macroName':'caption', 'counter':name})
-        floatcls.caption_ = captioncls
+        floatcls.caption = captioncls
         c = self.ownerDocument.context
         c.addGlobal(name, floatcls)
 

@@ -1,5 +1,9 @@
-name: tabular array tabular* tabularx
+name: longtable
 type: xml
+<div tal:attributes="id self/title/id">
+<div tal:condition="self/title" class="caption"><b 
+     tal:content="string:${self/title/title} ${self/title/ref}">Figure 1.1</b>: 
+     <span tal:content="self/title">Caption text</span></div>
 <table class="tabular" cellspacing="0">
 <tr tal:repeat="row self">
 <metal:block tal:repeat="cell row">
@@ -18,8 +22,4 @@ type: xml
 </metal:block>
 </tr>
 </table>
-
-name: multicolumn
-<span tal:replace="self"></span>
-
-name: cline
+</div>
