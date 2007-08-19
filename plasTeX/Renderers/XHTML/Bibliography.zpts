@@ -7,7 +7,7 @@ type: xml
 <dl class="bibliography">
 <metal:block tal:repeat="item self">
 <dt>
-[<a tal:attributes="name item/id" tal:content="item/citation"></a>]
+[<a tal:attributes="name item/id" tal:content="item/bibcite"></a>]
 </dt>
 <dd tal:content="item">information</dd>
 </metal:block>
@@ -21,5 +21,12 @@ name: bibliography
 <div tal:replace="self"></div>
 
 name: cite
-[<span tal:repeat="item self/bibitems"><a class="cite" tal:attributes="href item/url" tal:content="item/citation">citation</a><span tal:condition="not:repeat/item/end">, </span><span tal:condition="repeat/item/end"><span tal:condition="self/postnote">, <span tal:replace="self/postnote"></span></span></span></span>]
+type: xml
+<span class="cite"><metal:block tal:repeat="item self/citation"><a 
+      tal:condition="item/idref/bibitem/url" 
+      tal:attributes="href item/idref/bibitem/url" 
+      tal:content="item"></a><span tal:condition="not:item/idref/bibitem/url" 
+      tal:replace="item"></span></metal:block></span>
 
+name: bibliographyref
+<a tal:attributes="href self/idref/bibitem/url" tal:content="self"></a>

@@ -1,7 +1,7 @@
 name: par 
 <p tal:content="self" tal:omit-tag="self/blockType"></p>
 
-name: active::^
+name: active::^ 
 <sup tal:content="self"></sup>
 
 name: active::_

@@ -7,7 +7,7 @@ C.3.4 Accents and Special Symbols (p173)
 
 from plasTeX import Command, Environment
 from plasTeX.Logging import getLogger
-
+from plasTeX.DOM import Node, Text
 
 #
 # Table 3.1: Accents
@@ -18,8 +18,27 @@ class Accent(Command):
     chars = {}
     @property
     def unicode(self):
-        if self.textContent.strip() in type(self).chars:
-            return type(self).chars[self.textContent]
+        return type(self).chars.get(self.textContent.strip())
+    @property    
+    def textContent(self):
+        """
+        We need a customized textContent that doesn't look up 
+        textContent recursively.
+        
+        """
+        output = []
+        for item in self:
+            if item.nodeType == Node.TEXT_NODE:
+                output.append(item)
+            elif getattr(item, 'unicode', None) is not None:
+                output.append(item.unicode)
+            else:
+                output.append(item.textContent)
+        if self.ownerDocument is not None:
+            return self.ownerDocument.createTextNode(u''.join(output))
+        else:
+            return Text(u''.join(output))        
+
 
 class Grave(Accent):
     macroName = '`'

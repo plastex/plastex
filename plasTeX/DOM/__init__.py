@@ -957,6 +957,8 @@ class Node(object):
     def __radd__(self, other):
         """ other + self """
         obj = type(self)()
+        obj.ownerDocument = self.ownerDocument
+        obj.parentNode = None 
         for item in other:
             obj.append(item)
         for item in self:

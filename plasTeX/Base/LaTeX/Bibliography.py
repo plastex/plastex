@@ -52,29 +52,26 @@ class thebibliography(List):
                                   if not x.attributes['label']]))
             key = a['key']
             label = a.get('label')
-            citations = doc.userdata.getPath('bibliography/citations', {})
-            if not citations.has_key(key):
+            bibcites = doc.userdata.getPath('bibliography/bibcites', {})
+            if not bibcites.has_key(key):
                 if label is None:
                     label = doc.createDocumentFragment()
                     label.extend(self.ref)
-                citations[key] = label
-            doc.userdata.setPath('bibliography/citations', citations)
+                bibcites[key] = label
+            doc.userdata.setPath('bibliography/bibcites', bibcites)
             return res
 
         @property
         def id(self):
             return self.attributes['key']
 
-        def cite(self):
+        @property
+        def bibcite(self):
             doc = self.ownerDocument
             res = doc.createDocumentFragment()
-            citations = doc.userdata.getPath('bibliography/citations', {})
-            res.extend(citations.get(self.attributes['key']))
-            res.idref = self
+            bibcites = doc.userdata.getPath('bibliography/bibcites', {})
+            res.extend(bibcites.get(self.attributes['key']))
             return res
-
-        def citation(self):
-            return self.cite()
 
     def digest(self, tokens):
         if self.macroMode == Command.MODE_END:
@@ -110,8 +107,24 @@ class cite(Command):
         return ''
 
     def citation(self):
-        return self.bibitems
-            
+        """ (Jones et al., 1990) """
+        res = self.ownerDocument.createDocumentFragment()
+        i = 0
+        res.append('[')
+        for i, item in enumerate(self.bibitems):
+            node = self.ownerDocument.createElement('bgroup')
+            node.extend(item.bibcite)
+            node.idref['bibitem'] = item
+            res.append(node)
+            if i < (len(self.bibitems)-1):
+                res.append(', ')
+            else:
+                if self.postnote:
+                    res.append(', ')
+                    res.append(self.postnote)
+                res.append(']')
+        return res
+
 class nocite(Command):
     args = 'keys:str'
 
@@ -122,9 +135,9 @@ class bibcite(Command):
         Command.invoke(self, tex)
         value = self.attributes['info'].firstChild
         doc = self.ownerDocument
-        citations = doc.userdata.getPath('bibliography/citations', {})
-        citations[self.attributes['key']] = value
-        doc.userdata.setPath('bibliography/citations', citations)
+        bibcites = doc.userdata.getPath('bibliography/bibcites', {})
+        bibcites[self.attributes['key']] = value
+        doc.userdata.setPath('bibliography/bibcites', bibcites)
 
 class citation(Command):
     pass
@@ -133,4 +146,10 @@ class bibstyle(Command):
     pass
 
 class bibdata(Command):
+    pass
+
+class newblock(Command):
+    pass
+    
+class bibliographyref(Command):
     pass
