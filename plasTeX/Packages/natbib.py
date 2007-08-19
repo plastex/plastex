@@ -4,7 +4,6 @@
 natbib
 
 TODO: 
-    - superscript style
     - sort&compress (sort works, compress doesn't)
 
 """
@@ -472,7 +471,9 @@ class citep(NatBibCite):
 class cite(citep, citet):
 
     def citation(self, full=False, capitalize=False):
-        return citep.citation(self, full=full, capitalize=capitalize)
+        if self.prenote or self.postnote:
+            return citep.citation(self, full=full, capitalize=capitalize)
+        return citet.citation(self, full=full, capitalize=capitalize)
 
 class Cite(cite):
 
