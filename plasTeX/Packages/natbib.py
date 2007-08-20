@@ -254,7 +254,7 @@ class NatBibCite(Base.cite):
         """ Separator for multiple items """
         return bibpunct.punctuation['sep']
 
-    def selectAuthorField(self, full=False):
+    def selectAuthorField(self, key, full=False):
         """ Determine if author should be a full name or shortened """
         if full or self.attributes.get('*modifier*'):
             return 'fullauthor'
@@ -262,10 +262,9 @@ class NatBibCite(Base.cite):
         # longnamesfirst means that only the first reference
         # gets the full length name, the rest use short names.
         cited = doc.userdata.getPath('bibliography/cited', [])
-        if 'longnamesfirst' in PackageOptions and \
-           self.attributes['key'] not in cited:
+        if 'longnamesfirst' in PackageOptions and key not in cited:
             full = True
-            cited.append(self.attributes['key'])
+            cited.append(key)
         doc.userdata.setPath('bibliography/cited', cited)
         if full:
             return 'fullauthor'
@@ -394,11 +393,11 @@ class citet(NatBibCite):
         """ Jones et al. (1990) """
         if text is None and self.isNumeric():
             return self.numcitation()
-        author = self.selectAuthorField(full)
         res = self.ownerDocument.createDocumentFragment()
         i = 0
         for i, item in enumerate(self.bibitems):
             if text is None:
+                author = self.selectAuthorField(item.attributes['key'], full=full)
                 if i == 0 and capitalize:
                     res.extend(self.capitalize(item.bibcite.attributes[author]))
                 else:
@@ -454,13 +453,13 @@ class citep(NatBibCite):
         """ (Jones et al., 1990) """
         if text is None and self.isNumeric():
             return self.numcitation()
-        author = self.selectAuthorField(full)
         res = self.ownerDocument.createDocumentFragment()
         res.append(bibpunct.punctuation['open'])
         res.append(self.prenote)
         i = 0
         for i, item in enumerate(self.bibitems):
             if text is None:
+                author = self.selectAuthorField(item.attributes['key'], full=full)
                 if i == 0 and capitalize:
                     res.extend(self.capitalize(item.bibcite.attributes[author]))
                 else:            
@@ -524,10 +523,10 @@ class citealt(NatBibCite):
         """ Jones et al. 1990 """
         if self.isNumeric():
             return self.numcitation()
-        author = self.selectAuthorField(full)
         res = self.ownerDocument.createDocumentFragment()
         i = 0
         for i, item in enumerate(self.bibitems):
+            author = self.selectAuthorField(item.attributes['key'], full=full)
             if i == 0 and capitalize:
                 res.extend(self.capitalize(item.bibcite.attributes[author]))
             else:
@@ -577,11 +576,11 @@ class citealp(NatBibCite):
         """ Jones et al., 1990 """
         if self.isNumeric():
             return self.numcitation()
-        author = self.selectAuthorField(full)
         res = self.ownerDocument.createDocumentFragment()
         res.append(self.prenote)
         i = 0
         for i, item in enumerate(self.bibitems):
+            author = self.selectAuthorField(item.attributes['key'], full=full)
             if i == 0 and capitalize:
                 res.extend(self.capitalize(item.bibcite.attributes[author]))
             else:
@@ -629,11 +628,11 @@ class citeauthor(NatBibCite):
         """ Jones et al. """
         if self.isNumeric():
             return
-        author = self.selectAuthorField(full)
         res = self.ownerDocument.createDocumentFragment()
         #res.append(self.prenote)
         i = 0
         for i, item in enumerate(self.bibitems):
+            author = self.selectAuthorField(item.attributes['key'], full=full)
             b = self.ownerDocument.createElement('bibliographyref')
             b.idref['bibitem'] = item
             if i == 0 and capitalize:
