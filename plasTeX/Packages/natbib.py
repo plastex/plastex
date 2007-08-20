@@ -227,6 +227,8 @@ class NatBibCite(Base.cite):
         """ Text that comes before the citation """
         a = self.attributes
         if a.get('text2') is not None and a.get('text') is not None:
+            if not a.get('text').textContent.strip():
+                return ''
             out = self.ownerDocument.createDocumentFragment()
             out.extend(a['text'])
             out.append(' ')
@@ -238,11 +240,15 @@ class NatBibCite(Base.cite):
         """ Text that comes after the citation """
         a = self.attributes
         if a.get('text2') is not None and a.get('text') is not None:
+            if not a.get('text2').textContent.strip():
+                return ''
             out = self.ownerDocument.createDocumentFragment()
             out.append(bibpunct.punctuation['post'])
             out.extend(a['text2'])
             return out
         elif a.get('text') is not None:
+            if not a.get('text').textContent.strip():
+                return ''
             out = self.ownerDocument.createDocumentFragment()
             out.append(bibpunct.punctuation['post'])
             out.extend(a['text'])
@@ -253,6 +259,11 @@ class NatBibCite(Base.cite):
     def separator(self):
         """ Separator for multiple items """
         return bibpunct.punctuation['sep']
+
+    @property
+    def years(self):
+        """ Separator for multiple years """
+        return bibpunct.punctuation['years']
 
     def selectAuthorField(self, key, full=False):
         """ Determine if author should be a full name or shortened """
@@ -395,21 +406,36 @@ class citet(NatBibCite):
             return self.numcitation()
         res = self.ownerDocument.createDocumentFragment()
         i = 0
+        sameauthor = prevauthor = None
         for i, item in enumerate(self.bibitems):
             if text is None:
-                author = self.selectAuthorField(item.attributes['key'], full=full)
-                if i == 0 and capitalize:
-                    res.extend(self.capitalize(item.bibcite.attributes[author]))
+                fullauthor = item.bibcite.attributes['fullauthor'].textContent
+                sameauthor = (prevauthor == fullauthor)
+                prevauthor = fullauthor
+                # Author, only print author if it wasn't equal to the last author
+                if sameauthor:
+                    # Pop punctuation from previous year
+                    res.pop()
+                    res.pop()
+                    # Add year separator
+                    res.append(self.years+' ')
                 else:
-                    res.extend(item.bibcite.attributes[author])
-                res.append(' ')
-                res.append(bibpunct.punctuation['open'])    
-            res.append(self.prenote)
+                    author = self.selectAuthorField(item.attributes['key'], full=full)
+                    if i == 0 and capitalize:
+                        res.extend(self.capitalize(item.bibcite.attributes[author]))
+                    else:
+                        res.extend(item.bibcite.attributes[author])
+                    res.append(' ')
+                    res.append(bibpunct.punctuation['open'])
+                    # Prenote
+                    res.append(self.prenote)
+            # Year or text
             res.append(self.citeValue(item, text=text))
+            # Separator, postnote, and closing punctuation
             if i < (len(self.bibitems)-1):
                 if text is None:
                     res.append(bibpunct.punctuation['close'])
-                res.append(self.separator+' ')
+                    res.append(self.separator+' ')
             else:
                 res.append(self.postnote)
                 if text is None:
@@ -457,14 +483,23 @@ class citep(NatBibCite):
         res.append(bibpunct.punctuation['open'])
         res.append(self.prenote)
         i = 0
+        sameauthor = prevauthor = None
         for i, item in enumerate(self.bibitems):
             if text is None:
-                author = self.selectAuthorField(item.attributes['key'], full=full)
-                if i == 0 and capitalize:
-                    res.extend(self.capitalize(item.bibcite.attributes[author]))
-                else:            
-                    res.extend(item.bibcite.attributes[author])
-                res.append(self.separator+' ')
+                fullauthor = item.bibcite.attributes['fullauthor'].textContent
+                sameauthor = (prevauthor == fullauthor)
+                prevauthor = fullauthor
+                # Author, only print author if it wasn't equal to the last author
+                if sameauthor:
+                    res.pop()
+                    res.append(self.years+' ')
+                else:
+                    author = self.selectAuthorField(item.attributes['key'], full=full)
+                    if i == 0 and capitalize:
+                        res.extend(self.capitalize(item.bibcite.attributes[author]))
+                    else:            
+                        res.extend(item.bibcite.attributes[author])
+                    res.append(self.separator+' ')
             res.append(self.citeValue(item, text=text))
             if i < (len(self.bibitems)-1):
                 res.append(self.separator+' ')
@@ -525,14 +560,23 @@ class citealt(NatBibCite):
             return self.numcitation()
         res = self.ownerDocument.createDocumentFragment()
         i = 0
+        prevauthor = sameauthor = None
         for i, item in enumerate(self.bibitems):
-            author = self.selectAuthorField(item.attributes['key'], full=full)
-            if i == 0 and capitalize:
-                res.extend(self.capitalize(item.bibcite.attributes[author]))
+            fullauthor = item.bibcite.attributes['fullauthor'].textContent
+            sameauthor = (prevauthor == fullauthor)
+            prevauthor = fullauthor
+            # Author, only print author if it wasn't equal to the last author
+            if sameauthor:
+                res.pop()
+                res.append(self.years+' ')
             else:
-                res.extend(item.bibcite.attributes[author])
-            res.append(' ')
-            res.append(self.prenote)
+                author = self.selectAuthorField(item.attributes['key'], full=full)
+                if i == 0 and capitalize:
+                    res.extend(self.capitalize(item.bibcite.attributes[author]))
+                else:
+                    res.extend(item.bibcite.attributes[author])
+                res.append(' ')
+                res.append(self.prenote)
             res.append(self.citeValue(item))
             if i < (len(self.bibitems)-1):
                 res.append(self.separator+' ')
@@ -579,13 +623,22 @@ class citealp(NatBibCite):
         res = self.ownerDocument.createDocumentFragment()
         res.append(self.prenote)
         i = 0
+        prevauthor = sameauthor = None
         for i, item in enumerate(self.bibitems):
-            author = self.selectAuthorField(item.attributes['key'], full=full)
-            if i == 0 and capitalize:
-                res.extend(self.capitalize(item.bibcite.attributes[author]))
+            fullauthor = item.bibcite.attributes['fullauthor'].textContent
+            sameauthor = (prevauthor == fullauthor)
+            prevauthor = fullauthor
+            # Author, only print author if it wasn't equal to the last author
+            if sameauthor:
+                res.pop()
+                res.append(self.years+' ')
             else:
-                res.extend(item.bibcite.attributes[author])              
-            res.append(self.separator+' ')
+                author = self.selectAuthorField(item.attributes['key'], full=full)
+                if i == 0 and capitalize:
+                    res.extend(self.capitalize(item.bibcite.attributes[author]))
+                else:
+                    res.extend(item.bibcite.attributes[author])              
+                res.append(self.separator+' ')
             res.append(self.citeValue(item))
             if i < (len(self.bibitems)-1):
                 res.append(self.separator+' ')
