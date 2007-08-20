@@ -133,7 +133,7 @@ class bibliographystyle(citestyle):
             return res
         p = bibpunct.punctuation
         for i, opt in enumerate(['post','open','close','sep','style','dates','years']):
-            if isinstance(p, bstyleoption):
+            if isinstance(p[opt], bstyleoption):
                 p[opt] = s[i]
         return res    
         
