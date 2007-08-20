@@ -1,5 +1,6 @@
 name: cite citet citep citealt citealp citeauthor citeyear citeyearpar \
-      Cite Citet Citep Citealt Citealp Citeauthor
+      Cite Citet Citep Citealt Citealp Citeauthor citefullauthor citetalias \
+      citepalias
 type: xml
 <span class="cite"><metal:block tal:repeat="item self/citation"><a 
       tal:condition="item/idref/bibitem/url" 
@@ -7,4 +8,7 @@ type: xml
       tal:content="item"></a><span tal:condition="not:item/idref/bibitem/url" 
       tal:replace="item"></span></metal:block></span>
 
-name: newblock nocite
+name: citetext 
+<span tal:replace="self"></span>
+
+name: newblock nocite defcitealias
