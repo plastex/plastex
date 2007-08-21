@@ -4,14 +4,14 @@
 natbib
 
 TODO: 
-    - sort&compress (sort works, compress doesn't)
+    - compress multiple years
     - \shortcites
     - Indexing features
     - Bibliography preamble
 
 """
 
-import plasTeX
+import plasTeX, re, string
 from plasTeX import Base, Node, Text
 from plasTeX.Base.LaTeX.Sectioning import chapter, section
 
@@ -199,7 +199,14 @@ class thebibliography(Base.thebibliography):
                 obj.append('??')
                 value.attributes[item] = obj
             return value
-
+            
+        def ref():
+            def fset(self, value):
+                pass
+            def fget(self):
+                return self.bibcite.textContent
+            return locals()
+        ref = property(**ref())
     
 class harvarditem(thebibliography.bibitem):
     args = '[ abbrlabel ] label year key:str'
@@ -208,20 +215,54 @@ class NatBibCite(Base.cite):
     """ Base class for all natbib-style cite commands """
     args = '* [ text ] [ text2 ] keys:list:str'
 
+    class Connector(str):
+        pass
+
     @property
     def bibitems(self):
         items = []
+        opts = PackageOptions
         doc = self.ownerDocument
         b = doc.userdata.getPath('bibliography/bibitems', {})
         for key in self.attributes['keys']:
             if key in b:
                 items.append(b[key])
-        if PackageOptions.has_key('sort') or \
-           PackageOptions.has_key('sort&compress') or \
-           PackageOptions.has_key('sortandcompress'):
+        if bibpunct.punctuation['style'] in 'ns' and \
+           ('sort' in opts or 'sort&compress' in opts or 'sortandcompress' in opts):
             items.sort(lambda x, y: int(x.ref) - int(y.ref))
+            if 'sort&compress' in opts or 'sortandcompress' in opts:
+                items = self.compressRange(items)
         return items
-
+        
+    def compressRange(self, items):
+        """ Compress ranges of numbers """
+        idx = [int(x.ref) for x in items]
+        output = []
+        for i, value in enumerate(idx):
+            if i == 0:
+                output.append(' ')
+                output.append(value)
+            elif idx[i-1] == (value-1):
+                output.append('-')
+                output.append(value)
+            else:
+                output.append(' ')
+                output.append(value)
+        output.append(' ')
+        output = ''.join([str(x) for x in output])
+        output = re.sub(r'( \d+)-(\d+ )', r'\1 \2', output) 
+        output = re.sub(r'-\d+-', r'-', output)
+        output = [x for x in re.split(r'([ -])', output) if x.strip()]
+        for i, value in enumerate(output):
+            if value in string.digits:
+                output[i] = items[int(value)-1]
+            else:
+                output[i] = self.Connector(value)
+        return output
+        
+    def isConnector(self, value):
+        return isinstance(value, self.Connector)
+          
     @property
     def prenote(self):
         """ Text that comes before the citation """
@@ -455,6 +496,10 @@ class citet(NatBibCite):
         res.append(self.prenote)
         res.append(bibpunct.punctuation['open'])
         for i, item in enumerate(self.bibitems):
+            if self.isConnector(item):
+                res.pop()
+                res.append('-')
+                continue
             res.append(self.citeValue(item))
             if i < (len(self.bibitems)-1):
                 res.append(self.separator+' ')
@@ -521,6 +566,10 @@ class citep(NatBibCite):
         res.append(self.prenote)
         i = 0
         for i, item in enumerate(self.bibitems):
+            if self.isConnector(item):
+                res.pop()
+                res.append('-')
+                continue
             res.append(self.citeValue(item))
             if i < (len(self.bibitems)-1):
                 res.append(self.separator+' ')
@@ -596,6 +645,10 @@ class citealt(NatBibCite):
         i = 0
         res.append(self.prenote)
         for i, item in enumerate(self.bibitems):
+            if self.isConnector(item):
+                res.pop()
+                res.append('-')
+                continue
             res.append(self.citeValue(item))
             if i < (len(self.bibitems)-1):
                 res.append(self.separator+' ')
@@ -658,6 +711,10 @@ class citealp(NatBibCite):
         res.append(self.prenote)
         i = 0
         for i, item in enumerate(self.bibitems):
+            if self.isConnector(item):
+                res.pop()
+                res.append('-')
+                continue
             res.append(self.citeValue(item))
             if i < (len(self.bibitems)-1):
                 res.append(self.separator+' ')
