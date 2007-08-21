@@ -236,7 +236,10 @@ class NatBibCite(Base.cite):
         
     def compressRange(self, items):
         """ Compress ranges of numbers """
-        idx = [int(x.ref) for x in items]
+        idx, idxdict = [], {}
+        for i, value in enumerate(items):
+            idx.append(int(value.ref))
+            idxdict[int(value.ref)] = value
         output = []
         for i, value in enumerate(idx):
             if i == 0:
@@ -251,11 +254,12 @@ class NatBibCite(Base.cite):
         output.append(' ')
         output = ''.join([str(x) for x in output])
         output = re.sub(r'( \d+)-(\d+ )', r'\1 \2', output) 
-        output = re.sub(r'-\d+-', r'-', output)
+        while re.search(r'-\d+-', output):
+            output = re.sub(r'-\d+-', r'-', output)
         output = [x for x in re.split(r'([ -])', output) if x.strip()]
         for i, value in enumerate(output):
             if value in string.digits:
-                output[i] = items[int(value)-1]
+                output[i] = idxdict[int(value)]
             else:
                 output[i] = self.Connector(value)
         return output

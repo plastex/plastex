@@ -16,7 +16,7 @@ Example:
 
 """
 
-import string, os, traceback, sys, plasTeX, codecs, subprocess
+import string, os, traceback, sys, plasTeX, codecs, subprocess, types
 from Tokenizer import Tokenizer, Token, EscapeSequence, Other
 from plasTeX import TeXDocument
 from plasTeX import ParameterCommand, Macro
@@ -276,7 +276,7 @@ class TeX(object):
             # Token is null, ignore it
             if token is None:
                 continue
-
+                
             # Macro that has already been expanded
             elif token.nodeType == ELEMENT_NODE:
                 pass

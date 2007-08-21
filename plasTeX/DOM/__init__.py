@@ -799,6 +799,29 @@ class Node(object):
 
         raise NotFoundErr
 
+    def insertAfter(self, newChild, refChild):
+        """ 
+        Insert `newChild` after `refChild` 
+
+        Required Arguments:
+        newChild -- the child to insert
+        refChild -- the child that `newChild` should be inserted after
+
+        Returns:
+        `newChild`
+
+        """
+        try: self.removeChild(newChild)
+        except NotFoundErr: pass
+
+        # Insert the new item
+        for i, item in enumerate(self):
+            if item is refChild:
+                self.insert(i+1, newChild)
+                return newChild
+
+        raise NotFoundErr
+
     def replaceChild(self, newChild, oldChild):
         """ 
         Replace `newChild` with `oldChild` 

@@ -73,13 +73,36 @@ class Array(Environment):
         """ Cell delimiter """
         macroName = 'active::&'
         def invoke(self, tex):
+            doc = self.ownerDocument
+            # Insert colspec content 
+            table = doc.userdata.getPath('arrays/stack')[-1]
+            colnum = table.colnum
+            before, after = [], []
+            if table.colspec:
+                if table.colspec[colnum-1].after:
+                    after = list(table.colspec[colnum-1].after)
+                if table.colspec[colnum].before:
+                    before = list(table.colspec[colnum].before)
+            table.colnum += 1
+            
+            # Parse after content
+            output = []
+            if after:
+                tex.pushToken(self)
+                tex.pushTokens(after)
+                for tok in tex:
+                    if tok is self:
+                        break
+                    output.append(tok)
+               
             # Pop and push a new context for each cell, this keeps
             # any formatting changes from the previous cell from
             # leaking over into the next cell
-            self.ownerDocument.context.pop()
-            self.ownerDocument.context.push()
+            doc.context.pop()
+            doc.context.push()
+            
             # Add a phantom cell to absorb the appropriate tokens
-            return [self, self.ownerDocument.createElement('ArrayCell')]
+            return output + [self, doc.createElement('ArrayCell')] + before
 
     class EndRow(Command):
         """ End of a row """
@@ -87,15 +110,39 @@ class Array(Environment):
         args = '* [ space ]'
 
         def invoke(self, tex):
+            doc = self.ownerDocument
+            
+            # Insert colspec content 
+            table = doc.userdata.getPath('arrays/stack')[-1]
+            colnum = table.colnum
+            before, after = [], []
+            if table.colspec:
+                if table.colspec[colnum-1].after:
+                    after = list(table.colspec[colnum-1].after)
+                if table.colspec[0].before:
+                    before = list(table.colspec[0].before)
+            table.colnum = 1
+
+            # Parse after content
+            output = []
+            if after:
+                tex.pushToken(self)
+                tex.pushTokens(after)
+                for tok in tex:
+                    if tok is self:
+                        break
+                    output.append(tok)
+
             # Pop and push a new context for each row, this keeps
             # any formatting changes from the previous row from
             # leaking over into the next row
-            self.ownerDocument.context.pop()
+            doc.context.pop()
             self.parse(tex)
-            self.ownerDocument.context.push()
+            doc.context.push()
+
             # Add a phantom row and cell to absorb the appropriate tokens
-            return [self, self.ownerDocument.createElement('ArrayRow'), 
-                          self.ownerDocument.createElement('ArrayCell')]
+            return output + [self, doc.createElement('ArrayRow'), 
+                   doc.createElement('ArrayCell')] + before
 
     class BorderCommand(Command):
         """
@@ -146,6 +193,8 @@ class Array(Environment):
     class hline(BorderCommand):
         """ Full horizontal line """
         locations = ('top','bottom')
+        @property
+        def source(self): return ''
 
     class vline(BorderCommand):
         """ Vertical line """
@@ -315,6 +364,8 @@ class Array(Environment):
                         continue
                     elif isinstance(item, Array.BorderCommand):
                         continue
+                    elif not item.textContent.strip():
+                        continue
                     return False
             return True
 
@@ -333,6 +384,7 @@ class Array(Environment):
 
         def invoke(self, tex):
             Command.invoke(self, tex)
+            self.ownerDocument.userdata.getPath('arrays/stack')[-1].colnum += self.attributes['colspan'] - 1
             self.colspec = Array.compileColspec(tex, self.attributes['colspec']).pop(0)
 
         def digest(self, tokens):
@@ -341,25 +393,35 @@ class Array(Environment):
 
 
     def invoke(self, tex):
+        doc = self.ownerDocument
+        
         if self.macroMode == Macro.MODE_END:
-            self.ownerDocument.context.pop(self) # End of table, row, and cell
+            doc.userdata.getPath('arrays/stack').pop()
+            doc.context.pop(self) # End of table, row, and cell
             return
         
         Environment.invoke(self, tex)
 
-#!!!
-#
-# Need to handle colspec processing here so that tokens that must 
-# be inserted before and after columns are known
-#
-#!!!
+        # Process colspec info
         if self.attributes.has_key('colspec'):
             self.colspec = Array.compileColspec(tex, self.attributes['colspec'])
 
-        self.ownerDocument.context.push() # Beginning of cell
+        doc.context.push() # Beginning of cell
+
+        # Add table to the stack
+        stack = doc.userdata.getPath('arrays/stack', [])
+        stack.append(self)
+        doc.userdata.setPath('arrays/stack', stack)
+
+        # Add colspec info to cell
+        self.colnum = 1
+        before = []
+        if self.colspec and self.colspec[0].before:
+            before = self.colspec[0].before
+
         # Add a phantom row and cell to absorb the appropriate tokens
-        return [self, self.ownerDocument.createElement('ArrayRow'), 
-                      self.ownerDocument.createElement('ArrayCell')]
+        return [self, doc.createElement('ArrayRow')] + \
+               [doc.createElement('ArrayCell')] + before
 
     def digest(self, tokens):
         Environment.digest(self, tokens)
@@ -379,13 +441,17 @@ class Array(Environment):
             return
         between = {}
         for r, row in enumerate(self):
+            spanned = 0
             for c, cell in enumerate(list(row)):
-                if self.colspec[c].between:
+                col = c + spanned
+                if self.colspec[col].between:
                     newcell = self.ArrayCell()
-                    newcell.extend(self.colspec[c].between)
+                    newcell.extend(self.colspec[col].between)
                     newcell.style.update(cell.style)
                     newcell.style['text-align'] = 'center'
                     between[cell] = newcell
+                if cell.attributes.get('colspan',0) > 1:
+                    spanned = spanned + self.attributes['colspan'] - 1
         for key, value in between.items():
             key.parentNode.insertAfter(value, key)
 

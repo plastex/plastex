@@ -74,12 +74,12 @@ def main(argv):
         sys.exit(1)
 
     # Write expanded source file
-#   sourcefile = '%s.source' % jobname
-#   open(sourcefile,'w').write(document.source.encode('utf-8'))
+    sourcefile = '%s.source' % jobname
+    open(sourcefile,'w').write(document.source.encode('utf-8'))
     
     # Write XML dump
-#   outfile = '%s.xml' % jobname
-#   open(outfile,'w').write(document.toXML().encode('utf-8'))
+    outfile = '%s.xml' % jobname
+    open(outfile,'w').write(document.toXML().encode('utf-8'))
     
     # Apply renderer
     Renderer().render(document)
