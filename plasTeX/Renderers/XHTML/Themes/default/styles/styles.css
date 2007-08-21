@@ -173,8 +173,8 @@ big.huge           {font-size: xx-large}
 big.xhuge          {font-size: xx-large}
 
 /* Lists */
-ul.itemize {}
-ol.enumerate {}
+/*ul.itemize {}*/
+/*ol.enumerate {}*/
 dl.description dt {font-weight: bold}
 table.list {
     margin-left: 15px;
