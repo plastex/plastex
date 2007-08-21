@@ -370,6 +370,24 @@ class Array(Environment):
         self.applyBorders()
 
         self.linkCells()
+        
+        self.addColspecContent()
+        
+    def addColspecContent(self):
+        """ Add additional content that comes from the colspec """
+        if not self.colspec:
+            return
+        between = {}
+        for r, row in enumerate(self):
+            for c, cell in enumerate(list(row)):
+                if self.colspec[c].between:
+                    newcell = self.ArrayCell()
+                    newcell.extend(self.colspec[c].between)
+                    newcell.style.update(cell.style)
+                    newcell.style['text-align'] = 'center'
+                    between[cell] = newcell
+        for key, value in between.items():
+            key.parentNode.insertAfter(value, key)
 
     def processRows(self):
         """
@@ -500,7 +518,7 @@ class Array(Environment):
 
             if tok == '@':
                 if output:
-                    output[-1].between = tex.readArgument()
+                    output[-1].between = tex.readArgument(expanded=True)
                 continue
 
             if tok == '*':
