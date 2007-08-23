@@ -688,10 +688,13 @@ class TeX(object):
 
         try:
             # Set catcodes for this argument type
-            if isinstance(self.argtypes[type], (list,tuple)): 
-                for key, value in self.argtypes[type][1].items():
-                    priorcodes[key] = self.ownerDocument.context.whichCode(key)
-                    self.ownerDocument.context.catcode(key, value)
+            try:
+                if isinstance(self.argtypes[type], (list,tuple)): 
+                    for key, value in self.argtypes[type][1].items():
+                        priorcodes[key] = self.ownerDocument.context.whichCode(key)
+                        self.ownerDocument.context.catcode(key, value)
+            except KeyError:
+                pass
 
             # Get a TeX token (i.e. {...})
             if spec is None:
