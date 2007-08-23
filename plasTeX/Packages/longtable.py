@@ -140,3 +140,6 @@ class longtable(tabular):
                removeRows.insert(0,i)
         for i in removeRows:
             self.pop(i)
+
+class LongTableStar(longtable):
+    macroName = 'longtable*'
