@@ -688,11 +688,10 @@ class TeX(object):
 
         try:
             # Set catcodes for this argument type
-            try: 
+            if isinstance(self.argtypes[type], (list,tuple)): 
                 for key, value in self.argtypes[type][1].items():
-                    priorcodes[key] = self.ownerDocument.whichCode(key)
-                    self.ownerDocument.catcode(key, value)
-            except: pass
+                    priorcodes[key] = self.ownerDocument.context.whichCode(key)
+                    self.ownerDocument.context.catcode(key, value)
 
             # Get a TeX token (i.e. {...})
             if spec is None:
@@ -717,7 +716,7 @@ class TeX(object):
 
         # Set catcodes back to original values
         for key, value in priorcodes.items():
-            self.ownerDocument.catcode(key, value)
+            self.ownerDocument.context.catcode(key, value)
 
         if toks is None:
             ParameterCommand.enable()
