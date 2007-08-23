@@ -35,6 +35,8 @@ class documentclass(PackageLoader):
     def invoke(self, tex):
         a = self.parse(tex)
         self.load(tex, a['name'], a['options'])
+        self.ownerDocument.context.packages['documentclass'] = \
+             self.ownerDocument.context.packages[a['name']]
 
 class documentstyle(documentclass):
     pass
