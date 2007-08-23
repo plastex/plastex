@@ -199,6 +199,7 @@ table.list td {
     width: 16ex;
     text-align: center;
 }
+.fleqn {width: 2em}
 
 /* Quotations and Verse */
 .quotation, .quote, .verse {
