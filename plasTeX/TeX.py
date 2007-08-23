@@ -562,7 +562,7 @@ class TeX(object):
 
     def readArgumentAndSource(self, spec=None, type=None, subtype=None, 
                     delim=',', expanded=False, default=None, parentNode=None,
-                    name=None):
+                    name=None, stripLeadingWhitespace=True):
         """ 
         Get an argument and the TeX source that created it
 
@@ -589,6 +589,8 @@ class TeX(object):
         default -- value to return if the argument doesn't exist
         parentNode -- the node that the argument belongs to
         name -- the name of the argument being parsed
+        stripLeadingWhitespace -- if True, whitespace is skipped before
+            looking for the argument
 
         Returns:
         tuple where the first argument is:
@@ -601,8 +603,8 @@ class TeX(object):
         for the argument.
 
         """
-
-        self.readOptionalSpaces()
+        if stripLeadingWhitespace:
+            self.readOptionalSpaces()
 
         # Disable expansion of parameters
         ParameterCommand.disable()
