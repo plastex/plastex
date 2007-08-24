@@ -314,31 +314,72 @@ class Image(object):
         im = self._autoCrop(im)[0]
 
         width, height = im.size
+        
+        # Determine if registration mark is at top or left
+        top = False
+        # Found mark at top
+        if im.getpixel((0,0)) != background:
+            top = True
+            i = 1
+            # Parse past the registration mark
+            # We're fudging the vertical position by 1px to catch 
+            # things sitting right under the baseline.
+            while i < width and im.getpixel((i,1)) != background:
+                i += 1
+            # Look for additional content after mark
+            if i < width:
+                while i < width and im.getpixel((i,1)) == background:
+                    i += 1
+                # If there is non-background content after mark,
+                # consider the mark to be on the left
+                if i < width:
+                    top = False
 
         # Registration mark at the top
-        if im.getpixel((0,0)) != background:
-            depth = 0
-            pos = 0
+        if top:
+            pos = height - 1
+            while pos and im.getpixel((pos,0)) == background:
+                pos -= 1
+            depth = pos - height + 1
 
+            # Get the height of the registration mark so it can be cropped out
+            rheight = 0
+            while rheight < height and im.getpixel((0,rheight)) != background:
+                rheight += 1
+
+            # If the depth is the entire height, just make depth = 0
+            if -depth == (height-rheight):
+                depth = 0
+
+            # Handle empty images
+            bbox = im.getbbox()
+            if bbox is None or rheight == (height-1):
+                return PILImage.new("RGB", (1,1), background), 0
+
+            bbox = list(bbox)
+            bbox[1] = rheight
+
+        # Registration mark on left side
         else:
             pos = height - 1
             while pos and im.getpixel((0,pos)) == background:
                 pos -= 1
             depth = pos - height + 1
 
-        # Get the width of the registration mark so it can be cropped out
-        rwidth = 0
-        while rwidth < width and im.getpixel((rwidth,pos)) != background:
-            rwidth += 1
+            # Get the width of the registration mark so it can be cropped out
+            rwidth = 0
+            while rwidth < width and im.getpixel((rwidth,pos)) != background:
+                rwidth += 1
 
-        # Handle empty images
-        bbox = im.getbbox()
-        if bbox is None or rwidth == (width-1):
-            return PILImage.new("RGB", (1,1), background), 0
+            # Handle empty images
+            bbox = im.getbbox()
+            if bbox is None or rwidth == (width-1):
+                return PILImage.new("RGB", (1,1), background), 0
 
-        # Crop out register mark, and autoCrop result
-        bbox = list(bbox)
-        bbox[0] = rwidth
+            bbox = list(bbox)
+            bbox[0] = rwidth
+            
+        # Crop out register mark, and autoCrop result    
         im, cropped = self._autoCrop(im.crop(bbox), background)
 
         # If the content was entirely above the baseline, 
@@ -435,7 +476,7 @@ class Imager(object):
                           '\\thispagestyle{empty}\\def\\@eqnnum{}' +
                           '\\ignorespaces}{}}{}\n')
         self.source.write('\\@ifundefined{plasTeXregister}{' +
-                          '\\def\\plasTeXregister{\\ifhmode\\hrule' +
+                          '\\def\\plasTeXregister{\\parindent=0pt\\ifhmode\\hrule' +
                           '\\else\\vrule\\fi height 2pt depth 0pt ' +
                           'width 2pt\\hskip2pt}}{}\n')
 
