@@ -2,6 +2,7 @@
 
 import string
 from DOM import Node, Text
+from StringIO import StringIO as UnicodeStringIO
 try: from cStringIO import StringIO
 except: from StringIO import StringIO
 
@@ -200,7 +201,10 @@ class Tokenizer(object):
         self.state = Tokenizer.STATE_N
         self._charBuffer = []
         self._tokBuffer = []
-        if isinstance(source, basestring):
+        if isinstance(source, unicode):
+            source = UnicodeStringIO(source)
+            self.filename = '<string>'
+        elif isinstance(source, basestring):
             source = StringIO(source)
             self.filename = '<string>'
         elif isinstance(source, (tuple,list)):

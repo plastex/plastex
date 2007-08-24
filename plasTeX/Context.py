@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import new, os, ConfigParser, re
+import new, os, ConfigParser, re, time
 import plasTeX
 from plasTeX import ismacro, macroName
 from plasTeX.DOM import Node
@@ -88,6 +88,7 @@ class LanguageParser(object):
         from xml.parsers import expat
         self.parser = expat.ParserCreate()
         self.parser.StartElementHandler = self.startElement
+        self.parser.EndElementHandler = self.endElement
         self.parser.CharacterDataHandler = self.charData
         self.data = output
         self.language = None
@@ -96,8 +97,9 @@ class LanguageParser(object):
     def parse(self, file):
         self.parser.Parse(open(file).read())
         self.mergeLanguages()
+        return self.data
 
-    def mergLanguages(self):
+    def mergeLanguages(self):
         # Merge language keys from the major language section, into
         # the minor language section
         for key, value in self.data.items():
@@ -113,15 +115,19 @@ class LanguageParser(object):
         if name == 'terms':
             self.term = None
             self.language = self.data[attrs['lang']] = {}
-            if 'dateFormat' in attrs:
-                self.language['date-format'] = attrs['dateFormat']
+            if 'babel' in attrs:
+                self.data[attrs['babel']] = self.language
         elif name == 'term':
             self.term = attrs['name']
-        
-    def charData(self, data):
-        if self.term is not None:
-            self.language[self.term] = data
+            self.language[self.term] = u''
+            
+    def endElement(self, name):
+        if name == 'term':
             self.term = None
+            
+    def charData(self, data):
+        if self.term:
+            self.language[self.term] += data
 
 
 class Context(object):
@@ -181,6 +187,7 @@ class Context(object):
         self.warnOnUnrecognized = True
 
         if load:
+            self.loadLanguage('american', None)
             self.loadBaseMacros()
 
     def currenvir():
@@ -282,15 +289,32 @@ class Context(object):
         lang -- the name of the language file to load
 
         """
-#       if not self.languages:
-#           lp = LanguageParser(self.languages)
-#           lp.parse(os.path.join(os.path.dirname(__file__),
-#                    'Base','LaTeX','Languages','localizedTerms.xml'))
+        if not self.languages:
+            lp = LanguageParser(self.languages)
+            self.languages = lp.parse(os.path.join(os.path.dirname(__file__), 'i18n.xml'))
 
-        exec('from plasTeX.Base.LaTeX.Languages import %s as language' % lang)
-        if hasattr(language, 'ProcessOptions'):
-            language.ProcessOptions({}, document)
-        self.importMacros(vars(language))
+        if lang in self.languages:
+            for key, value in self.languages[lang].items():
+                if key == 'today':
+                    self.newcommand(key, definition=self._strftime(value))                
+                else:
+                    self.newcommand('%sname' % key, definition=value)
+        else:
+            log.warning('Could not load language "%s", american will be used instead' % lang)
+
+    def _strftime(self, fmt):
+        if '%f' not in fmt:
+            return time.strftime(fmt)
+            
+        day = time.strftime('%e')
+        suffix = 'th'
+        if day.endswith('1'):
+            suffix = 'st'
+        elif day.endswith('2'):
+            suffix = 'nd'
+        elif day.endswith('3'):
+            suffix = 'rd'
+        return time.strftime(fmt.replace('%f', '%e'+suffix))
 
     def loadINIPackage(self, inifile):
         """ 
@@ -908,10 +932,10 @@ class Context(object):
         if nargs is None:
             nargs = 0
         assert isinstance(nargs, int), 'nargs must be an integer'
-
+        
         if isinstance(definition, basestring):
             definition = [x for x in Tokenizer(definition, self)]
-
+        
         if isinstance(opt, basestring):
             opt = [x for x in Tokenizer(opt, self)]
 

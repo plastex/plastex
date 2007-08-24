@@ -84,8 +84,8 @@ class TeX(Command):
 # Misc
 #
 
-class today(Command):
-    unicode = time.strftime('%B %d, %Y')
+#class today(Command):
+#    unicode = time.strftime('%B %d, %Y')
 
 class emph(Command):
     args = 'self'
