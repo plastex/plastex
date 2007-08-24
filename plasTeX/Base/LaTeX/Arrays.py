@@ -8,6 +8,7 @@ C.10.2 The array and tabular Environments
 import new, sys
 from plasTeX import Macro, Environment, Command, DimenCommand
 from plasTeX import sourceChildren, sourceArguments
+from plasTeX.Tokenizer import EscapeSequence
 
 class ColumnType(Macro):
 
@@ -73,36 +74,8 @@ class Array(Environment):
         """ Cell delimiter """
         macroName = 'active::&'
         def invoke(self, tex):
-            doc = self.ownerDocument
-            # Insert colspec content 
-            table = doc.userdata.getPath('arrays/stack')[-1]
-            colnum = table.colnum
-            before, after = [], []
-            if table.colspec:
-                if table.colspec[colnum-1].after:
-                    after = list(table.colspec[colnum-1].after)
-                if table.colspec[colnum].before:
-                    before = list(table.colspec[colnum].before)
-            table.colnum += 1
-            
-            # Parse after content
-            output = []
-            if after:
-                tex.pushToken(self)
-                tex.pushTokens(after)
-                for tok in tex:
-                    if tok is self:
-                        break
-                    output.append(tok)
-               
-            # Pop and push a new context for each cell, this keeps
-            # any formatting changes from the previous cell from
-            # leaking over into the next cell
-            doc.context.pop()
-            doc.context.push()
-            
             # Add a phantom cell to absorb the appropriate tokens
-            return output + [self, doc.createElement('ArrayCell')] + before
+            return [EscapeSequence('EndArrayCell'), self, EscapeSequence('ArrayCell')]
 
     class EndRow(Command):
         """ End of a row """
@@ -110,39 +83,11 @@ class Array(Environment):
         args = '* [ space ]'
 
         def invoke(self, tex):
-            doc = self.ownerDocument
-            
-            # Insert colspec content 
-            table = doc.userdata.getPath('arrays/stack')[-1]
-            colnum = table.colnum
-            before, after = [], []
-            if table.colspec:
-                if table.colspec[colnum-1].after:
-                    after = list(table.colspec[colnum-1].after)
-                if table.colspec[0].before:
-                    before = list(table.colspec[0].before)
-            table.colnum = 1
-
-            # Parse after content
-            output = []
-            if after:
-                tex.pushToken(self)
-                tex.pushTokens(after)
-                for tok in tex:
-                    if tok is self:
-                        break
-                    output.append(tok)
-
-            # Pop and push a new context for each row, this keeps
-            # any formatting changes from the previous row from
-            # leaking over into the next row
-            doc.context.pop()
             self.parse(tex)
-            doc.context.push()
-
-            # Add a phantom row and cell to absorb the appropriate tokens
-            return output + [self, doc.createElement('ArrayRow'), 
-                   doc.createElement('ArrayCell')] + before
+            # Reset table column counter
+            self.ownerDocument.userdata.getPath('arrays/stack')[-1].colnum = 0                        
+            return [EscapeSequence('EndArrayCell'), EscapeSequence('EndArrayRow'),
+                    self, EscapeSequence('ArrayRow'), EscapeSequence('ArrayCell')]
 
     class BorderCommand(Command):
         """
@@ -193,8 +138,6 @@ class Array(Environment):
     class hline(BorderCommand):
         """ Full horizontal line """
         locations = ('top','bottom')
-        @property
-        def source(self): return ''
 
     class vline(BorderCommand):
         """ Vertical line """
@@ -203,6 +146,16 @@ class Array(Environment):
     class cline(hline):
         """ Partial horizontal line """
         args = 'span:list(-):int'
+
+    class EndArray(Macro):
+        def invoke(self, tex):
+            self.ownerDocument.userdata.getPath('arrays/stack').pop()
+            self.ownerDocument.context.pop(self)
+            return []
+
+    class EndArrayRow(Macro):
+        def invoke(self, tex):
+            return []
 
     class ArrayRow(Macro):
         """ Table row class """
@@ -270,11 +223,49 @@ class Array(Environment):
                     return False
             return True
 
+    class EndArrayCell(Macro):
+    
+        def invoke(self, tex):
+            # Get current table
+            table = self.ownerDocument.userdata.getPath('arrays/stack')[-1]
+
+            # Insert colspec content 
+            after = []
+            if table.colspec and table.colspec[table.colnum-1].after:
+                after = list(table.colspec[table.colnum-1].after)
+
+            return after + [EscapeSequence('PopArrayCell')]
+
+    class PopArrayCell(Macro):
+        """ Just pop the cell context """
+        def invoke(self, tex):
+            self.ownerDocument.context.pop()
+            return []
+
     class ArrayCell(Macro):
         """ Table cell class """
         endToken = None
         isHeader = False
 
+        def invoke(self, tex):
+            doc = self.ownerDocument
+
+            # Get current table
+            table = doc.userdata.getPath('arrays/stack')[-1]
+
+            # Insert colspec content 
+            before = []
+            if table.colspec and table.colspec[table.colnum].before:
+                before = list(table.colspec[table.colnum].before)
+            
+            # Increment table column counter
+            table.colnum += 1
+
+            # Push new context onto stack
+            doc.context.push()
+            
+            return [self] + before 
+            
         def digest(self, tokens):
             self.endToken = self.digestUntil(tokens, (Array.CellDelimiter, 
                                                       Array.EndRow))
@@ -396,9 +387,8 @@ class Array(Environment):
         doc = self.ownerDocument
         
         if self.macroMode == Macro.MODE_END:
-            doc.userdata.getPath('arrays/stack').pop()
-            doc.context.pop(self) # End of table, row, and cell
-            return
+            return [EscapeSequence('EndArrayCell'), EscapeSequence('EndArrayRow'), 
+                    EscapeSequence('EndArray'), self]
         
         Environment.invoke(self, tex)
 
@@ -406,22 +396,18 @@ class Array(Environment):
         if self.attributes.has_key('colspec'):
             self.colspec = Array.compileColspec(tex, self.attributes['colspec'])
 
-        doc.context.push() # Beginning of cell
+        doc.context.push(self) # Beginning of table
 
         # Add table to the stack
         stack = doc.userdata.getPath('arrays/stack', [])
         stack.append(self)
         doc.userdata.setPath('arrays/stack', stack)
 
-        # Add colspec info to cell
-        self.colnum = 1
-        before = []
-        if self.colspec and self.colspec[0].before:
-            before = self.colspec[0].before
+        # Initialize column counter
+        self.colnum = 0
 
         # Add a phantom row and cell to absorb the appropriate tokens
-        return [self, doc.createElement('ArrayRow')] + \
-               [doc.createElement('ArrayCell')] + before
+        return [self, EscapeSequence('ArrayRow'), EscapeSequence('ArrayCell')]
 
     def digest(self, tokens):
         Environment.digest(self, tokens)
@@ -451,7 +437,7 @@ class Array(Environment):
                     newcell.style['text-align'] = 'center'
                     between[cell] = newcell
                 if cell.attributes.get('colspan',0) > 1:
-                    spanned = spanned + self.attributes['colspan'] - 1
+                    spanned = spanned + cell.attributes['colspan'] - 1
         for key, value in between.items():
             key.parentNode.insertAfter(value, key)
 
