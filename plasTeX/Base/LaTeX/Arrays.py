@@ -89,6 +89,10 @@ class Array(Environment):
             return [EscapeSequence('EndArrayCell'), EscapeSequence('EndArrayRow'),
                     self, EscapeSequence('ArrayRow'), EscapeSequence('ArrayCell')]
 
+    class cr(EndRow):
+        macroName = None
+        args = None
+
     class BorderCommand(Command):
         """
         Base class for border commands
@@ -231,7 +235,8 @@ class Array(Environment):
 
             # Insert colspec content 
             after = []
-            if table.colspec and table.colspec[table.colnum-1].after:
+            if table.colspec and len(table.colspec) >= table.colnum and \
+               table.colspec[table.colnum-1].after:
                 after = list(table.colspec[table.colnum-1].after)
 
             return after + [EscapeSequence('PopArrayCell')]
@@ -255,7 +260,8 @@ class Array(Environment):
 
             # Insert colspec content 
             before = []
-            if table.colspec and table.colspec[table.colnum].before:
+            if table.colspec and len(table.colspec) > table.colnum and \
+                table.colspec[table.colnum].before:
                 before = list(table.colspec[table.colnum].before)
             
             # Increment table column counter
