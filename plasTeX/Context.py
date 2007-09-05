@@ -180,6 +180,7 @@ class Context(object):
 
         # Holds the terms for various languages
         self.languages = {}
+        self.currentLanguage = 'american'
 
         # Create a global namespace
         self.push()
@@ -187,7 +188,7 @@ class Context(object):
         self.warnOnUnrecognized = True
 
         if load:
-            self.loadLanguage('american', None)
+            self.loadLanguage(self.currentLanguage, None)
             self.loadBaseMacros()
 
     def currenvir():
@@ -294,6 +295,8 @@ class Context(object):
             self.languages = lp.parse(os.path.join(os.path.dirname(__file__), 'i18n.xml'))
 
         if lang in self.languages:
+            self.currentLanguage = lang
+            self.newcommand('languagename', definition=lang)
             for key, value in self.languages[lang].items():
                 if key == 'today':
                     self.newcommand(key, definition=self._strftime(value))                
