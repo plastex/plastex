@@ -188,6 +188,8 @@ def copytree(src, dest, symlink=None):
             srcpath = os.path.join(root, d)
             destpath = os.path.join(dest, root, d)
             if symlink and os.path.islink(srcpath):
+                if os.path.exists(destpath):
+                    os.remove(destpath)
                 os.symlink(os.readlink(srcpath), destpath)
             elif not os.path.isdir(destpath):
                 os.makedirs(destpath)
@@ -201,6 +203,8 @@ def copytree(src, dest, symlink=None):
             srcpath = os.path.join(root, f)
             destpath = os.path.join(dest, root, f)
             if symlink and os.path.islink(srcpath):
+                if os.path.exists(destpath):
+                    os.remove(destpath)
                 os.symlink(os.readlink(srcpath), destpath)
             else:
                 shutil.copy2(srcpath, destpath)
