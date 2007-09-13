@@ -48,9 +48,7 @@ def ProcessOptions(options, document):
     context.newcounter('dbltopnumber')
 
     language = False
-    from plasTeX.Base.LaTeX import Languages
-    languages = glob.glob(os.path.join(os.path.dirname(Languages.__file__),'*.py'))
-    languages = [os.path.splitext(os.path.basename(x))[0] for x in languages]
+    languages = document.context.languages.keys()
     for key, value in options.items():
         if key == 'language':
             language = True
@@ -58,9 +56,6 @@ def ProcessOptions(options, document):
         elif key in languages:
             language = True
             context.loadLanguage(key, document)
-
-    if not language:
-        context.loadLanguage('american', document)
 
 class frontmatter(Command): 
     pass
