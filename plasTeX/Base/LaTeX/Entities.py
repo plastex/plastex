@@ -36,9 +36,11 @@ class EntityParser(object):
         self.parser.CharacterDataHandler = self.char_data
         self.unicode = None
         self.inseq = False
+        self.defined = {}
 
     def parse(self, file):
         self.parser.Parse(open(file).read())
+        self.defined.clear()
 
     def start_element(self, name, attrs):
         if name == 'char':
@@ -62,9 +64,11 @@ class EntityParser(object):
         m = re.match(r'^\\(\w+|\W)$', data)
         if m:
             name = str(m.group(1)).replace('\\','\\\\')
-            g[name+'_'] = new.classobj(name+'_', (Command,), 
-                                      {'unicode':unichr(self.unicode), 
-                                       'macroName':name})
+            if name not in self.defined:
+                g[name+'_'] = new.classobj(name+'_', (Command,), 
+                                          {'unicode':unichr(self.unicode), 
+                                           'macroName':name})
+                self.defined[name] = True
     
         # Wingdings
         m = re.match(r'^\\ding\{(\d+)\}$', data)
@@ -73,11 +77,12 @@ class EntityParser(object):
             Characters.ding.values[int(m.group(1))] = unichr(self.unicode)
     
         # Accented characters
-        m = re.match(r'^\\(%s)\{([^\}])\}' % 
+        m = re.match(r'^(\\(%s)\{([^\}])\})' % 
                       '|'.join(self.accentmap.keys()), data)
-        if m:
-            accent = self.accentmap[m.group(1)]
-            accent.chars[m.group(2)] = unichr(self.unicode)
+        if m and m.group(1) not in self.defined:
+            accent = self.accentmap[m.group(2)]
+            accent.chars[m.group(3)] = unichr(self.unicode)
+            self.defined[m.group(1)] = True
 
         self.inseq = False
 
