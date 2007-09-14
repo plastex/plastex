@@ -183,7 +183,8 @@ class Renderable(object):
 
                 # Write the file content
                 codecs.open(filename, 'w', 
-                            child.config['files']['output-encoding']).write(val)
+                            child.config['files']['output-encoding'],
+                            errors=r.encodingErrors).write(val)
 
                 status.info(' ] ')
 
@@ -328,6 +329,7 @@ class Renderer(dict):
     fileExtension = ''
     imageAttrs = '&${filename}-${attr};'
     imageUnits = '&${units};'
+    encodingErrors = 'replace'
 
     def __init__(self, data={}):
         dict.__init__(self, data)
@@ -496,7 +498,8 @@ class Renderer(dict):
 
         for f in files:
             try:
-                s = codecs.open(str(f), 'r', encoding, 'replace').read()
+                s = codecs.open(str(f), 'r', encoding, 
+                                errors=self.encodingErrors).read()
             except IOError, msg:
                 log.error(msg)
                 continue

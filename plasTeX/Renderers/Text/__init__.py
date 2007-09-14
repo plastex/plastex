@@ -37,6 +37,13 @@ class TextRenderer(BaseRenderer):
         self['default-layout'] = self['document-layout'] = self.default
         
         self.footnotes = []
+        self.blocks = []
+
+    def addBlock(self, s):
+        """ Create a new block level element placeholder """
+        self.blocks.append(s)
+        width = max([len(x) for x in s.split('\n')])
+        return u'\001[%s%s]' % (len(self.blocks)-1, '@'*width)
 
     def default(self, node):
         """ Rendering method for all non-text nodes """
@@ -49,16 +56,39 @@ class TextRenderer(BaseRenderer):
 
     def processFileContent(self, document, s):
         s = BaseRenderer.processFileContent(self, document, s)
+
+        # Put block level elements back in
+        block_re = re.compile('(\\s*)\001\\[(\\d+)@+\\]')
+        while 1:
+            m = block_re.search(s)
+            if not m:
+                break
+
+            space = ''
+            before = m.group(1)
+            if before is None:
+                before = ''
+            if '\n' in before:
+                spaces = before.split('\n')
+                space = spaces.pop()
+                before = '\n'.join(spaces) + '\n'
+
+            block = self.blocks[int(m.group(2))]
+            block = space + block.replace('\n', u'\n%s' % space) 
+
+            s = block_re.sub('%s%s' % (before, block), s, 1)
+
+        # Clean up newlines
         return re.sub(r'\s*\n\s*\n(\s*\n)+', r'\n\n\n', s)
     
     def textDefault(self, node):
         return unicode(node)
 
     def wrap(self, s, **kwargs):
-        return textwrap.wrap(unicode(s), self.lineWidth, **kwargs)
+        return textwrap.wrap(unicode(s), self.lineWidth, break_long_words=False, **kwargs)
     
     def fill(self, s, **kwargs):
-        return textwrap.fill(unicode(s), self.lineWidth, **kwargs)
+        return textwrap.fill(unicode(s), self.lineWidth, break_long_words=False, **kwargs)
     
     # Alignment
 
@@ -187,8 +217,9 @@ class TextRenderer(BaseRenderer):
         output = ['', 'Bibliography', '']
         for item in node:
             bullet = u'[%s] ' % item.bibcite
+            bulletlen = len(bullet)
             output.append(self.fill(item, initial_indent=bullet,
-                                        subsequent_indent=' '*len(bullet)))
+                                        subsequent_indent=' '*bulletlen))
             output.append('')
         output.append('')
         return u'\n'.join(output)        
@@ -277,28 +308,33 @@ class TextRenderer(BaseRenderer):
     do_printindex = do_index = do_theindex
     
     # Lists
-    
+
     def do_itemize(self, node):
         output = []
         for item in node:
-            output.append(self.fill(item, initial_indent='   * ',
-                                        subsequent_indent='     '))
-        return u'\n'.join(output)
+            bullet = '   * '
+            bulletlen = len(bullet)
+            output.append(self.fill(item, initial_indent=bullet,
+                                        subsequent_indent=' '*bulletlen))
+        return self.addBlock(u'\n'.join(output))
         
     def do_enumerate(self, node):
         output = []
         for i, item in enumerate(node):
             bullet = '   %d. ' % (i+1)
+            bulletlen = len(bullet)
             output.append(self.fill(item, initial_indent=bullet,
-                                        subsequent_indent=' ' * len(bullet)))
-        return u'\n'.join(output)
+                                        subsequent_indent=' '*bulletlen))
+        return self.addBlock(u'\n'.join(output))
         
     def do_description(self, node):
         output = []
         for item in node:
-            output.append(self.fill(item, initial_indent='   %s - ' % item.attributes.get('term',''),
+            bullet = '   %s - ' % item.attributes.get('term','')
+            bulletlen = len(bullet)
+            output.append(self.fill(item, initial_indent=bullet,
                                         subsequent_indent='      '))
-        return u'\n'.join(output)        
+        return self.addBlock(u'\n'.join(output))
 
     do_list = do_trivlist = do_description
     

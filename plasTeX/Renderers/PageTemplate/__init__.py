@@ -9,7 +9,7 @@ support for your own templating engines.
 
 """
 
-import sys, os, re, codecs, plasTeX, shutil, string
+import sys, os, re, plasTeX, shutil, string
 from plasTeX.Renderers import Renderer as BaseRenderer
 from plasTeX.Renderers.PageTemplate.simpletal import simpleTAL, simpleTALES
 from plasTeX.Renderers.PageTemplate.simpletal.simpleTALES import Context as TALContext
@@ -223,6 +223,7 @@ class PageTemplate(BaseRenderer):
 
     outputType = unicode
     fileExtension = '.xml'
+    encodingErrors = 'xmlcharrefreplace'
 
     def __init__(self, *args, **kwargs):
         BaseRenderer.__init__(self, *args, **kwargs)
