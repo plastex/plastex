@@ -1,0 +1,34 @@
+%
+%# natbib.bib
+%
+%* pdflatex multibib
+%* bibtex multibib
+%* pdflatex multibib
+%* pdflatex multibib
+%
+\documentclass[12pt]{article}
+\usepackage{natbib}
+\bibliographystyle{plainnat}
+\bibpunct{[}{]}{,}{a}{,}{;}
+\begin{document}
+
+\textbf{Multiple References}
+
+\begin{enumerate}
+\item
+\verb|\citet[see][]{goossens:companion,goossens:companion2,hagen:metafun}| ---
+\citet[see][]{goossens:companion,goossens:companion2,hagen:metafun}
+\item
+\verb|\citep{goossens:companion,goossens:companion2,hagen:metafun}| ---
+\citep{goossens:companion,goossens:companion2,hagen:metafun}
+\item
+\verb|\citealt[see][]{goossens:companion,goossens:companion2,hagen:metafun}| ---
+\citealt[see][]{goossens:companion,goossens:companion2,hagen:metafun}
+\item
+\verb|\citealp[see][]{goossens:companion,goossens:companion2,hagen:metafun}| ---
+\citealp[see][]{goossens:companion,goossens:companion2,hagen:metafun}
+\end{enumerate}
+
+\bibliography{natbib}
+
+\end{document}

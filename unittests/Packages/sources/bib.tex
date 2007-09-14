@@ -1,0 +1,30 @@
+%
+%# natbib.bib
+%
+%* pdflatex bib
+%* bibtex bib
+%* pdflatex bib
+%* pdflatex bib
+%
+\documentclass[12pt]{article}
+\bibliographystyle{plain}
+\begin{document}
+
+\begin{enumerate}
+\item
+\verb|\cite{goossens:companion}| ---
+\cite{goossens:companion}
+\item
+\verb|\cite{goossens:companion,hagen:metafun}| ---
+\cite{goossens:companion,hagen:metafun}
+\item
+\verb|\cite[page 99ff]{goossens:companion}| ---
+\cite[page 99ff]{goossens:companion}
+\item
+\verb|\cite[page 99ff]{goossens:companion,hagen:metafun}| ---
+\cite[page 99ff]{goossens:companion,hagen:metafun}
+\end{enumerate}
+
+\bibliography{natbib}
+
+\end{document}

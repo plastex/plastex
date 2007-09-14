@@ -1,0 +1,498 @@
+%
+%# natbib.bib
+%
+%* pdflatex natbib
+%* bibtex natbib
+%* pdflatex natbib
+%* pdflatex natbib
+%
+\documentclass[12pt]{article}
+\usepackage{natbib}
+\bibliographystyle{plainnat}
+%\bibpunct{[}{]}{,}{s}{}{, }
+\begin{document}
+
+\title{Citation Test with Package \texttt{natbib}}
+
+\textbf{No prenote, No postnote}
+
+\begin{enumerate}
+\item
+\verb|\cite{goossens:companion}| ---  
+\cite{goossens:companion}
+\item
+\verb|\cite*{goossens:companion}| ---  
+\cite*{goossens:companion}
+\item
+\verb|\cite{goossens:companion,hagen:metafun}| ---  
+\cite{goossens:companion,hagen:metafun}
+\item
+\verb|\cite*{goossens:companion,hagen:metafun}| ---  
+\cite*{goossens:companion,hagen:metafun}
+\item
+\verb|\citet{goossens:companion}| ---  
+\citet{goossens:companion}
+\item
+\verb|\citet*{goossens:companion}| ---  
+\citet*{goossens:companion}
+\item
+\verb|\citet{goossens:companion,hagen:metafun}| ---  
+\citet{goossens:companion,hagen:metafun}
+\item
+\verb|\citet*{goossens:companion,hagen:metafun}| ---  
+\citet*{goossens:companion,hagen:metafun}
+\item
+\verb|\citep{goossens:companion}| ---  
+\citep{goossens:companion}
+\item
+\verb|\citep*{goossens:companion}| ---  
+\citep*{goossens:companion}
+\item
+\verb|\citep{goossens:companion,hagen:metafun}| ---  
+\citep{goossens:companion,hagen:metafun}
+\item
+\verb|\citep*{goossens:companion,hagen:metafun}| ---  
+\citep*{goossens:companion,hagen:metafun}
+\item
+\verb|\citealt{goossens:companion}| ---  
+\citealt{goossens:companion}
+\item
+\verb|\citealt*{goossens:companion}| ---  
+\citealt*{goossens:companion}
+\item
+\verb|\citealt{goossens:companion,hagen:metafun}| ---  
+\citealt{goossens:companion,hagen:metafun}
+\item
+\verb|\citealt*{goossens:companion,hagen:metafun}| ---  
+\citealt*{goossens:companion,hagen:metafun}
+\item
+\verb|\citealp{hagen:metafun}| ---  
+\citealp{hagen:metafun}
+\item
+\verb|\citealp*{hagen:metafun}| ---  
+\citealp*{hagen:metafun}
+\item
+\verb|\citealp{goossens:companion,hagen:metafun}| ---  
+\citealp{goossens:companion,hagen:metafun}
+\item
+\verb|\citealp*{goossens:companion,hagen:metafun}| ---  
+\citealp*{goossens:companion,hagen:metafun}
+\item
+\verb|\citeauthor{hagen:metafun}| ---  
+\citeauthor{hagen:metafun}
+\item
+\verb|\citeauthor*{hagen:metafun}| ---  
+\citeauthor*{hagen:metafun}
+\item
+\verb|\citefullauthor{hagen:metafun}| ---  
+\citefullauthor{hagen:metafun}
+\item
+\verb|\citeauthor{goossens:companion,hagen:metafun}| ---  
+\citeauthor{goossens:companion,hagen:metafun}
+\item
+\verb|\citeauthor*{goossens:companion,hagen:metafun}| ---  
+\citeauthor*{goossens:companion,hagen:metafun}
+\item
+\verb|\citefullauthor{goossens:companion,hagen:metafun}| ---  
+\citefullauthor{goossens:companion,hagen:metafun}
+\item
+\verb|\citeyear{hagen:metafun}| ---  
+\citeyear{hagen:metafun}
+\item
+\verb|\citeyear{goossens:companion,hagen:metafun}| ---  
+\citeyear{goossens:companion,hagen:metafun}
+\item
+\verb|\citeyearpar{hagen:metafun}| ---  
+\citeyearpar{hagen:metafun}
+\item
+\verb|\citeyearpar{goossens:companion,hagen:metafun}| ---  
+\citeyearpar{goossens:companion,hagen:metafun}
+\item
+\verb|\Citet{goossens:companion}| ---  
+\Citet{goossens:companion}
+\item
+\verb|\Citet*{goossens:companion}| ---  
+\Citet*{goossens:companion}
+\item
+\verb|\Citet{goossens:companion,hagen:metafun}| ---  
+\Citet{goossens:companion,hagen:metafun}
+\item
+\verb|\Citet*{goossens:companion,hagen:metafun}| ---  
+\Citet*{goossens:companion,hagen:metafun}
+\item
+\verb|\Citep{goossens:companion}| ---  
+\Citep{goossens:companion}
+\item
+\verb|\Citep*{goossens:companion}| ---  
+\Citep*{goossens:companion}
+\item
+\verb|\Citep{goossens:companion,hagen:metafun}| ---  
+\Citep{goossens:companion,hagen:metafun}
+\item
+\verb|\Citep*{goossens:companion,hagen:metafun}| ---  
+\Citep*{goossens:companion,hagen:metafun}
+\item
+\verb|\Citealt{goossens:companion}| ---  
+\Citealt{goossens:companion}
+\item
+\verb|\Citealt*{goossens:companion}| ---  
+\Citealt*{goossens:companion}
+\item
+\verb|\Citealt{goossens:companion,hagen:metafun}| ---  
+\Citealt{goossens:companion,hagen:metafun}
+\item
+\verb|\Citealt*{goossens:companion,hagen:metafun}| ---  
+\Citealt*{goossens:companion,hagen:metafun}
+\item
+\verb|\Citealp{hagen:metafun}| ---  
+\Citealp{hagen:metafun}
+\item
+\verb|\Citealp*{hagen:metafun}| ---  
+\Citealp*{hagen:metafun}
+\item
+\verb|\Citealp{goossens:companion,hagen:metafun}| ---  
+\Citealp{goossens:companion,hagen:metafun}
+\item
+\verb|\Citealp*{goossens:companion,hagen:metafun}| ---  
+\Citealp*{goossens:companion,hagen:metafun}
+\item
+\verb|\Citeauthor{hagen:metafun}| ---  
+\Citeauthor{hagen:metafun}
+\item
+\verb|\Citeauthor*{hagen:metafun}| ---  
+\Citeauthor*{hagen:metafun}
+\item
+\verb|\Citeauthor{goossens:companion,hagen:metafun}| ---  
+\Citeauthor{goossens:companion,hagen:metafun}
+\item
+\verb|\Citeauthor*{goossens:companion,hagen:metafun}| ---  
+\Citeauthor*{goossens:companion,hagen:metafun}
+\end{enumerate}
+
+\textbf{Postnote only}
+
+\begin{enumerate}
+\item
+\verb|\cite[page 99ff]{goossens:companion}| --- 
+\cite[page 99ff]{goossens:companion}
+\item
+\verb|\cite*[page 99ff]{goossens:companion}| --- 
+\cite*[page 99ff]{goossens:companion}
+\item
+\verb|\cite[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\cite[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\cite*[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\cite*[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citet[page 99ff]{goossens:companion}| --- 
+\citet[page 99ff]{goossens:companion}
+\item
+\verb|\citet*[page 99ff]{goossens:companion}| --- 
+\citet*[page 99ff]{goossens:companion}
+\item
+\verb|\citet[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citet[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citet*[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citet*[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citep[page 99ff]{goossens:companion}| --- 
+\citep[page 99ff]{goossens:companion}
+\item
+\verb|\citep*[page 99ff]{goossens:companion}| --- 
+\citep*[page 99ff]{goossens:companion}
+\item
+\verb|\citep[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citep[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citep*[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citep*[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citealt[page 99ff]{goossens:companion}| --- 
+\citealt[page 99ff]{goossens:companion}
+\item
+\verb|\citealt*[page 99ff]{goossens:companion}| --- 
+\citealt*[page 99ff]{goossens:companion}
+\item
+\verb|\citealt[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citealt[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citealt*[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citealt*[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citealp[page 99ff]{hagen:metafun}| --- 
+\citealp[page 99ff]{hagen:metafun}
+\item
+\verb|\citealp*[page 99ff]{hagen:metafun}| --- 
+\citealp*[page 99ff]{hagen:metafun}
+\item
+\verb|\citealp[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citealp[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citealp*[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citealp*[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citeauthor[page 99ff]{hagen:metafun}| --- 
+\citeauthor[page 99ff]{hagen:metafun}
+\item
+\verb|\citeauthor*[page 99ff]{hagen:metafun}| --- 
+\citeauthor*[page 99ff]{hagen:metafun}
+\item
+\verb|\citefullauthor[page 99ff]{hagen:metafun}| --- 
+\citefullauthor[page 99ff]{hagen:metafun}
+\item
+\verb|\citeauthor[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citeauthor[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citeauthor*[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citeauthor*[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citefullauthor[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citefullauthor[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citeyear[page 99ff]{hagen:metafun}| --- 
+\citeyear[page 99ff]{hagen:metafun}
+\item
+\verb|\citeyear[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citeyear[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citeyearpar[page 99ff]{hagen:metafun}| --- 
+\citeyearpar[page 99ff]{hagen:metafun}
+\item
+\verb|\citeyearpar[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citeyearpar[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\Citet[page 99ff]{goossens:companion}| --- 
+\Citet[page 99ff]{goossens:companion}
+\item
+\verb|\Citet*[page 99ff]{goossens:companion}| --- 
+\Citet*[page 99ff]{goossens:companion}
+\item
+\verb|\Citet[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\Citet[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\Citet*[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\Citet*[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\Citep[page 99ff]{goossens:companion}| --- 
+\Citep[page 99ff]{goossens:companion}
+\item
+\verb|\Citep*[page 99ff]{goossens:companion}| --- 
+\Citep*[page 99ff]{goossens:companion}
+\item
+\verb|\Citep[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\Citep[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\Citep*[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\Citep*[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\Citealt[page 99ff]{goossens:companion}| --- 
+\Citealt[page 99ff]{goossens:companion}
+\item
+\verb|\Citealt*[page 99ff]{goossens:companion}| --- 
+\Citealt*[page 99ff]{goossens:companion}
+\item
+\verb|\Citealt[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\Citealt[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\Citealt*[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\Citealt*[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\Citealp[page 99ff]{hagen:metafun}| --- 
+\Citealp[page 99ff]{hagen:metafun}
+\item
+\verb|\Citealp*[page 99ff]{hagen:metafun}| --- 
+\Citealp*[page 99ff]{hagen:metafun}
+\item
+\verb|\Citealp[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\Citealp[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\Citealp*[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\Citealp*[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\Citeauthor[page 99ff]{hagen:metafun}| --- 
+\Citeauthor[page 99ff]{hagen:metafun}
+\item
+\verb|\Citeauthor*[page 99ff]{hagen:metafun}| --- 
+\Citeauthor*[page 99ff]{hagen:metafun}
+\item
+\verb|\Citeauthor[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\Citeauthor[page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\Citeauthor*[page 99ff]{goossens:companion,hagen:metafun}| --- 
+\Citeauthor*[page 99ff]{goossens:companion,hagen:metafun}
+\end{enumerate}
+
+\textbf{Both prenote and postnote}
+
+\begin{enumerate}
+\item
+\verb|\cite[see][page 99ff]{goossens:companion}| --- 
+\cite[see][page 99ff]{goossens:companion}
+\item
+\verb|\cite*[see][page 99ff]{goossens:companion}| --- 
+\cite*[see][page 99ff]{goossens:companion}
+\item
+\verb|\cite[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\cite[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\cite*[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\cite*[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citet[see][page 99ff]{goossens:companion}| --- 
+\citet[see][page 99ff]{goossens:companion}
+\item
+\verb|\citet*[see][page 99ff]{goossens:companion}| --- 
+\citet*[see][page 99ff]{goossens:companion}
+\item
+\verb|\citet[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citet[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citet*[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citet*[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citep[see][page 99ff]{goossens:companion}| --- 
+\citep[see][page 99ff]{goossens:companion}
+\item
+\verb|\citep*[see][page 99ff]{goossens:companion}| --- 
+\citep*[see][page 99ff]{goossens:companion}
+\item
+\verb|\citep[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citep[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citep*[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citep*[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citealt[see][page 99ff]{goossens:companion}| --- 
+\citealt[see][page 99ff]{goossens:companion}
+\item
+\verb|\citealt*[see][page 99ff]{goossens:companion}| --- 
+\citealt*[see][page 99ff]{goossens:companion}
+\item
+\verb|\citealt[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citealt[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citealt*[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citealt*[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citealp[see][page 99ff]{hagen:metafun}| --- 
+\citealp[see][page 99ff]{hagen:metafun}
+\item
+\verb|\citealp*[see][page 99ff]{hagen:metafun}| --- 
+\citealp*[see][page 99ff]{hagen:metafun}
+\item
+\verb|\citealp[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citealp[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citealp*[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citealp*[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citeauthor[see][page 99ff]{hagen:metafun}| --- 
+\citeauthor[see][page 99ff]{hagen:metafun}
+\item
+\verb|\citeauthor*[see][page 99ff]{hagen:metafun}| --- 
+\citeauthor*[see][page 99ff]{hagen:metafun}
+\item
+\verb|\citefullauthor[see][page 99ff]{hagen:metafun}| --- 
+\citefullauthor[see][page 99ff]{hagen:metafun}
+\item
+\verb|\citeauthor[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citeauthor[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citeauthor*[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citeauthor*[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citefullauthor[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citefullauthor[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citeyear[see][page 99ff]{hagen:metafun}| --- 
+\citeyear[see][page 99ff]{hagen:metafun}
+\item
+\verb|\citeyear[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citeyear[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\citeyearpar[see][page 99ff]{hagen:metafun}| --- 
+\citeyearpar[see][page 99ff]{hagen:metafun}
+\item
+\verb|\citeyearpar[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\citeyearpar[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\Citet[see][page 99ff]{goossens:companion}| --- 
+\Citet[see][page 99ff]{goossens:companion}
+\item
+\verb|\Citet*[see][page 99ff]{goossens:companion}| --- 
+\Citet*[see][page 99ff]{goossens:companion}
+\item
+\verb|\Citet[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\Citet[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\Citet*[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\Citet*[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\Citep[see][page 99ff]{goossens:companion}| --- 
+\Citep[see][page 99ff]{goossens:companion}
+\item
+\verb|\Citep*[see][page 99ff]{goossens:companion}| --- 
+\Citep*[see][page 99ff]{goossens:companion}
+\item
+\verb|\Citep[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\Citep[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\Citep*[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\Citep*[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\Citealt[see][page 99ff]{goossens:companion}| --- 
+\Citealt[see][page 99ff]{goossens:companion}
+\item
+\verb|\Citealt*[see][page 99ff]{goossens:companion}| --- 
+\Citealt*[see][page 99ff]{goossens:companion}
+\item
+\verb|\Citealt[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\Citealt[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\Citealt*[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\Citealt*[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\Citealp[see][page 99ff]{hagen:metafun}| --- 
+\Citealp[see][page 99ff]{hagen:metafun}
+\item
+\verb|\Citealp*[see][page 99ff]{hagen:metafun}| --- 
+\Citealp*[see][page 99ff]{hagen:metafun}
+\item
+\verb|\Citealp[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\Citealp[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\Citealp*[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\Citealp*[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\Citeauthor[see][page 99ff]{hagen:metafun}| --- 
+\Citeauthor[see][page 99ff]{hagen:metafun}
+\item
+\verb|\Citeauthor*[see][page 99ff]{hagen:metafun}| --- 
+\Citeauthor*[see][page 99ff]{hagen:metafun}
+\item
+\verb|\Citeauthor[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\Citeauthor[see][page 99ff]{goossens:companion,hagen:metafun}
+\item
+\verb|\Citeauthor*[see][page 99ff]{goossens:companion,hagen:metafun}| --- 
+\Citeauthor*[see][page 99ff]{goossens:companion,hagen:metafun}
+\end{enumerate}
+
+\textbf{Miscellaneous Commands}
+
+\begin{enumerate}
+\item
+\verb|\citetext{plain text}| --- 
+\citetext{plain text}
+\item
+\verb|\defcitealias{goossens:companion}{Paper~I}\citetalies{plain text}| --- 
+\defcitealias{goossens:companion}{Paper~I}\citetalias{goossens:companion}
+\item
+\verb|\citepalias{goossens:companion}| --- 
+\citepalias{goossens:companion}
+\end{enumerate}
+
+\bibliography{natbib}
+
+\end{document}
