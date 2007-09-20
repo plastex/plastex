@@ -180,6 +180,7 @@ class Context(object):
 
         # Holds the terms for various languages
         self.languages = {}
+        self.terms = {}
         self.currentLanguage = 'american'
 
         # Create a global namespace
@@ -297,6 +298,7 @@ class Context(object):
         if lang in self.languages:
             self.currentLanguage = lang
             self.newcommand('languagename', definition=lang)
+            self.terms = self.languages[lang]
             for key, value in self.languages[lang].items():
                 if key == 'today':
                     self.newcommand(key, definition=self._strftime(value))                
