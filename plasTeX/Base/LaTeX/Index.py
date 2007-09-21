@@ -328,10 +328,10 @@ class IndexEntry(object):
         self.node = node
 
     def __cmp__(self, other):
-        result = cmp(zip([collator(x) for x in self.sortkey], 
+        result = cmp(zip([collator(x) for x in self.sortkey if isinstance(x, basestring)], 
                          [collator(x.textContent) for x in self.key], 
                          self.key), 
-                     zip([collator(x) for x in other.sortkey], 
+                     zip([collator(x) for x in other.sortkey if isinstance(x, basestring)], 
                          [collator(x.textContent) for x in other.key], 
                          other.key))
         if result == 0 and len(self.key) != len(other.key):
