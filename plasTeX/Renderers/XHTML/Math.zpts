@@ -25,7 +25,7 @@ type: xml
     <metal:block tal:define="alignment 
            python:test(path('repeat/cell/start'), 'right', 
                        path('repeat/cell/end'), 'left', 'center')">
-        <td tal:attributes="style string:width:${cell/image/width/em};; vertical-align:baseline;; text-align:${alignment}"><object tal:omit-tag="not:self/renderer/vectorImager/enabled" type="image/svg+xml" tal:attributes="data cell/vectorImage/url; style string:width:${cell/vectorImage/width/em};; height:${cell/vectorImage/height/em};; vertical-align:${cell/vectorImage/depth/em}"><img tal:attributes="src cell/image/url; alt cell/source; style string:vertical-align:${cell/image/depth/px};; width:${cell/image/width/px};; height:${cell/image/height/px}" class="math" /></object></td>
+        <td tal:attributes="style string:width:${cell/image/width/em};; vertical-align:middle;; text-align:${alignment}"><object tal:omit-tag="not:self/renderer/vectorImager/enabled" type="image/svg+xml" tal:attributes="data cell/vectorImage/url; style string:width:${cell/vectorImage/width/em};; height:${cell/vectorImage/height/em};; vertical-align:${cell/vectorImage/depth/em}"><img tal:attributes="src cell/image/url; alt cell/source; style string:vertical-align:${cell/image/depth/px};; width:${cell/image/width/px};; height:${cell/image/height/px}" class="math" /></object></td>
     </metal:block>
     </metal:block>
     <td></td>
