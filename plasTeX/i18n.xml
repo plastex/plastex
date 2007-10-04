@@ -14,8 +14,7 @@
     <term name="Article">Article</term>
     <term name="article">article</term>
     <term name="Author">Author</term>
-    <term name="Bibliography">Bibliography</term>
-    <term name="bibliography">bibliography</term>
+    <term name="bib">Bibliography</term>
     <term name="Book">Book</term>
     <term name="book">book</term>
     <term name="carboncopy">carboncopy</term>
@@ -144,8 +143,7 @@
     <term name="Article">Artikel</term>
     <term name="article">Artikel</term>
     <term name="Author">Autor</term>
-    <term name="Bibliography">Literaturverzeichnis</term>
-    <term name="bibliography">Literaturverzeichnis</term>
+    <term name="bib">Literaturverzeichnis</term>
     <term name="Book">Buch</term>
     <term name="book">Buch</term>
     <term name="carboncopy">Kopie</term>
@@ -242,8 +240,7 @@
     <term name="Article">Art&#237;culo</term>
     <term name="article">art&#237;culo</term>
     <term name="Author">Autor</term>
-    <term name="Bibliography">Bibliograf&#237;a</term>
-    <term name="bibliography">bibliograf&#237;a</term>
+    <term name="bib">Bibliograf&#237;a</term>
     <term name="Book">Libro</term>
     <term name="book">libro</term>
     <term name="carboncopy">con copia</term>
@@ -340,8 +337,7 @@
     <term name="Article">Article</term>
     <term name="article">article</term>
     <term name="Author">Auteur</term>
-    <term name="Bibliography">Bibliographie</term>
-    <term name="bibliography">bibliographie</term>
+    <term name="bib">Bibliographie</term>
     <term name="Book">Livre</term>
     <term name="book">livre</term>
     <term name="carboncopy">copie conforme</term>
@@ -438,8 +434,7 @@
     <term name="Article">Articolo</term>
     <term name="article">Articolo</term>
     <term name="Author">Autore</term>
-    <term name="Bibliography">Bibliografia</term>
-    <term name="bibliography">bibliografia</term>
+    <term name="bib">Bibliografia</term>
     <term name="Book">Libro</term>
     <term name="book">libro</term>
     <term name="carboncopy">copia per conoscenza</term>
@@ -537,7 +532,7 @@
     <term name="article">Artikel</term>
     <term name="Author">Auteur</term>
     <term name="Bibliography">Literatuurlijst</term>
-    <term name="bibliography">Literatuurlijst</term>
+    <term name="bib">Literatuurlijst</term>
     <term name="Book">Boek</term>
     <term name="book">Boek</term>
     <term name="carboncopy">cc</term>
@@ -634,8 +629,7 @@
     <term name="Article">Artigo</term>
     <term name="article">artigo</term>
     <term name="Author">Autor</term>
-    <term name="Bibliography">Bibliografia</term>
-    <term name="bibliography">bibliografia</term>
+    <term name="bib">Bibliografia</term>
     <term name="Book">Livro</term>
     <term name="book">livro</term>
     <term name="carboncopy">Cc</term>

@@ -1,9 +1,5 @@
 name: thebibliography
 type: xml
-<div>
-
-<h1>Bibliography</h1>
-
 <dl class="bibliography">
 <metal:block tal:repeat="item self">
 <dt>
@@ -13,12 +9,14 @@ type: xml
 </metal:block>
 </dl>
 
-</div>
-
 name: bibliographystyle
 
 name: bibliography
+<div>
+<h1 tal:content="self/title">Bibliography</h1>
+
 <div tal:replace="self"></div>
+</div>
 
 name: cite
 type: xml
