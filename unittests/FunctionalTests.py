@@ -72,7 +72,7 @@ class Benched(TestCase):
             bench = open(benchfile).readlines()
             output = output.readlines()
         else:
-            try: os.makedirs('new')
+            try: os.makedirs(os.path.join(root,'new'))
             except: pass
             newfile = os.path.join(root,'new',os.path.basename(outfile))
             open(newfile,'w').write(output.read())
@@ -83,6 +83,8 @@ class Benched(TestCase):
         diff = ''.join(list(difflib.unified_diff(bench, output))).strip()
         if diff:
             shutil.rmtree(outdir, ignore_errors=True)
+            try: os.makedirs(os.path.join(root,'new'))
+            except: pass
             newfile = os.path.join(root,'new',os.path.basename(outfile))
             open(newfile,'w').writelines(output)
             assert not(diff), 'Differences were found: %s' % diff
