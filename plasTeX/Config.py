@@ -328,6 +328,12 @@ doc['index-columns'] = IntegerOption(
     default = 2,
 )
 
+doc['lang-terms'] = StringOption(
+    """ Specifies a '%s' delimited list of files that contain language terms """ % os.pathsep,
+    options = '--lang-terms',
+    category = 'document',
+    default = '',
+)
 
 config.read('~/.plasTeXrc')
 config.read('/usr/local/etc/plasTeXrc')

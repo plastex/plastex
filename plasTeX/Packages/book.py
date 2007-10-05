@@ -47,6 +47,8 @@ def ProcessOptions(options, document):
     context.newcounter('totalnumber')
     context.newcounter('dbltopnumber')
 
+    context.loadLanguage('american', document)
+
     language = False
     languages = document.context.languages.keys()
     for key, value in options.items():

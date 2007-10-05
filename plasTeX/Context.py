@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import new, os, ConfigParser, re, time
+import new, os, ConfigParser, re, time, codecs
 import plasTeX
 from plasTeX import ismacro, macroName
 from plasTeX.DOM import Node
@@ -85,17 +85,22 @@ class LanguageParser(object):
     """ Parser for language commands """
 
     def __init__(self, output={}):
-        from xml.parsers import expat
-        self.parser = expat.ParserCreate()
-        self.parser.StartElementHandler = self.startElement
-        self.parser.EndElementHandler = self.endElement
-        self.parser.CharacterDataHandler = self.charData
         self.data = output
         self.language = None
         self.term = None
 
-    def parse(self, file):
-        self.parser.Parse(open(file).read())
+    def parse(self, files, encoding='utf8'):
+        from xml.parsers import expat
+        if isinstance(files, basestring):
+            files = [files]
+        for file in files:
+            if not os.path.isfile(file):
+                continue
+            self.parser = expat.ParserCreate()
+            self.parser.StartElementHandler = self.startElement
+            self.parser.EndElementHandler = self.endElement
+            self.parser.CharacterDataHandler = self.charData
+            self.parser.Parse(codecs.open(file, 'r', encoding).read())
         self.mergeLanguages()
         return self.data
 
@@ -114,7 +119,10 @@ class LanguageParser(object):
     def startElement(self, name, attrs):
         if name == 'terms':
             self.term = None
-            self.language = self.data[attrs['lang']] = {}
+            if self.data.get(attrs['lang']):
+                self.language = self.data[attrs['lang']] 
+            else:
+                self.language = self.data[attrs['lang']] = {}
             if 'babel' in attrs:
                 self.data[attrs['babel']] = self.language
         elif name == 'term':
@@ -181,7 +189,7 @@ class Context(object):
         # Holds the terms for various languages
         self.languages = {}
         self.terms = {}
-        self.currentLanguage = 'american'
+        self.currentLanguage = ''
 
         # Create a global namespace
         self.push()
@@ -189,7 +197,6 @@ class Context(object):
         self.warnOnUnrecognized = True
 
         if load:
-            self.loadLanguage(self.currentLanguage, None)
             self.loadBaseMacros()
 
     def currenvir():
@@ -292,8 +299,9 @@ class Context(object):
 
         """
         if not self.languages:
-            lp = LanguageParser(self.languages)
-            self.languages = lp.parse(os.path.join(os.path.dirname(__file__), 'i18n.xml'))
+            files = document.config['document']['lang-terms'].split(os.pathsep)
+            files.append(os.path.join(os.path.dirname(__file__), 'i18n.xml'))
+            LanguageParser(self.languages).parse(reversed(files))
 
         if lang in self.languages:
             self.currentLanguage = lang
