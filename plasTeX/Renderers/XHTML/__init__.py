@@ -17,11 +17,11 @@ class XHTML(_Renderer):
         s = re.compile(r'(<(?:hr|br|img|link|meta)\b.*?)\s*/?\s*(>)', 
                        re.I|re.S).sub(r'\1 /\2', s)
 
-        # Add a non-breaking space to empty table cells
-        s = re.compile(r'(<(td|th)\b[^>]*>)\s*(</\2>)', re.I|re.S).sub(r'\1&nbsp;\3', s)
-
         # Remove empty paragraphs
         s = re.compile(r'<p>\s*</p>', re.I).sub(r'', s)
+
+        # Add a non-breaking space to empty table cells
+        s = re.compile(r'(<(td|th)\b[^>]*>)\s*(</\2>)', re.I).sub(r'\1&nbsp;\3', s)
 
         return s
 
