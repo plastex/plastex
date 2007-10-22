@@ -21,7 +21,8 @@ class cbend(Command):
 
 class changebar(Environment):
     args = '[ width:str ]'
-    block = True
+    blockType = True
+    forcePars = True
 
 class cbdelete(Command):
     args = '[ width:str ]'
