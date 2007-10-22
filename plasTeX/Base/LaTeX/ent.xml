@@ -1,74 +1,50 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
-   SGML/XML character entities reference
-   ISO entities and their LaTeX equivalents
-   Datafile with mappings between SGML/XML entities and LaTeX
 
-   (c)2000 Vidar Bronken Gundersen, Rune Mathisen
-   http://www.bitjungle.com/~isoent/
-   Reuse approved as long as this notification is kept.
+SGML/XML character entities reference:
+ISO entities and their LaTeX equivalents.
+Datafile with mappings between SGML/XML entities and LaTeX.
 
-   Work in progress: see comments, category attribute
+
+Copyright (c) 2000,2007
+  Vidar Bronken Gundersen, Rune Mathisen
+  http://www.bitjungle.com/isoent
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+  * Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+  * Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+  * Neither the name of the <organization> nor the
+    names of its contributors may be used to endorse or promote products
+    derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY <copyright holder> ``AS IS'' AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL <copyright holder> BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+Brief documentation, element descriptions:
+   entity*    entity name(s) in famous sgml/xml entity sets
+   unicode?   unicode hex code \u0000
+   latex?     latex command(s) with requirements
+   plain?     7/8 bit character sets
+   escaped?   as used in programming languages: c, java, python, ...
+Work in progress: see comments, category attribute
+
 -->
-<!DOCTYPE isoent [
-
-<!ELEMENT isoent ( char+ ) >
-<!ATTLIST isoent
-             rev    NMTOKEN        #IMPLIED
->
-<!ELEMENT char ( entity*, unicode?, latex?, plain?, comment? ) >
-<!ATTLIST char
-             pos    NMTOKEN        #IMPLIED
-             rev    NMTOKEN        #IMPLIED
-             cat    (alp|dia|pct|
-                     num|spc|hyp|ctl|
-                     rel|neg|arr|
-                     bin|lrg|
-                     cls|opn|
-                     del|del-cls|del-opn|
-                     quo|quo-cls|quo-opn|
-                     geo|box|nml|oth) #IMPLIED
->
-<!ELEMENT entity ( desc? ) >
-<!ATTLIST entity
-             name   CDATA          #REQUIRED
-             set    NMTOKEN        #REQUIRED
-             diff   (renamed|moved)      #IMPLIED
-             from   (ams|wolfram)  #IMPLIED
->
-<!ELEMENT unicode ( desc, comment? ) >
-<!ATTLIST unicode
-             value  NMTOKEN        #REQUIRED
->
-<!ELEMENT latex ( ( seq | mathseq )+, comment? ) >
-<!ELEMENT seq (#PCDATA) >
-<!ATTLIST seq
-             req    CDATA          #IMPLIED
-             env    NMTOKEN        #IMPLIED
-             alt    CDATA          #IMPLIED
->
-<!ELEMENT mathseq (#PCDATA) >
-<!ATTLIST mathseq
-             req    CDATA          #IMPLIED
-             env    NMTOKEN        #IMPLIED
-             alt    CDATA          #IMPLIED
->
-<!ELEMENT plain EMPTY >
-<!ATTLIST plain
-             value  NMTOKEN        #REQUIRED
-             set    NMTOKEN        #REQUIRED
-             glyph  CDATA          #IMPLIED
-             adapt  CDATA          #IMPLIED
->
-<!ELEMENT desc (#PCDATA) >
-<!ELEMENT comment (#PCDATA) >
-<!ENTITY lt     "&#38;#60;">
-<!ENTITY amp    "&#38;#38;">
-<!ENTITY quot   "&#34;">
-
-]>
-
-<isoent rev="2001-01-09">
+<isoent rev="2006-01-24T20:59:17+01:00">
 
 <char pos="001" cat="spc">
  <entity name="emsp" set="iso-8879-pub">
@@ -1435,7 +1411,7 @@
  </unicode>
  <latex>
   <seq>\textgreater</seq>
-  <mathseq>></mathseq>
+  <mathseq>&gt;</mathseq>
  </latex>
  <plain value="3E" set="iso-646-irv" glyph=">"/>
 </char>
@@ -1655,6 +1631,7 @@
   <mathseq>\backslash</mathseq>
  </latex>
  <plain value="5C" set="iso-646-irv" glyph="\"/>
+ <escaped>\\</escaped>
 </char>
 
 <char pos="116">
@@ -2082,7 +2059,8 @@
   <seq>"</seq>
   <seq req="fontenc:T1">\textquotedbl</seq>
  </latex>
- <plain value="22" set="iso-646-irv" glyph="&quot;"/>
+ <plain value="22" set="iso-646-irv" glyph='"'/>
+ <escaped>\"</escaped>
 </char>
 
 <char pos="142" cat="quo">
@@ -2097,6 +2075,7 @@
   <seq req="textcomp">\textquotesingle</seq>
  </latex>
  <plain value="27" set="iso-646-irv" glyph="'"/>
+ <escaped>\'</escaped>
 </char>
 
 <char pos="143">
@@ -7977,7 +7956,7 @@
   <desc>NOT GREATER-THAN</desc>
  </unicode>
  <latex>
-  <mathseq>\not></mathseq>
+  <mathseq>\not&gt;</mathseq>
   <mathseq req="amssymb">\ngtr</mathseq>
  </latex>
 </char>
@@ -14510,6 +14489,14 @@
     -->
 
 <char cat="ctl">
+ <unicode value="0008">
+  <desc>BACKSPACE</desc>
+ </unicode>
+ <plain value="08" set="iso-646-irv"/>
+ <escaped>\b</escaped>
+</char>
+
+<char cat="ctl">
  <entity name="Tab" set="mmlextra">
   <desc>tabulator stop; horizontal tabulation</desc>
  </entity>
@@ -14517,9 +14504,10 @@
   <desc>HORIZONTAL TABULATION</desc>
  </unicode>
  <latex>
-  <seq env="tabular">&amp;</seq>
+  <seq env="tabbing">\>,\=</seq>
  </latex>
  <plain value="09" set="iso-646-irv"/>
+ <escaped>\t</escaped>
 </char>
 
 <char cat="ctl">
@@ -14533,6 +14521,7 @@
   <seq env="tabular">\\</seq>
  </latex>
  <plain value="0A" set="iso-646-irv"/>
+ <escaped>\n</escaped>
 </char>
 
 <char cat="ctl">
@@ -14540,6 +14529,7 @@
   <desc>CARRIAGE RETURN</desc>
  </unicode>
  <plain value="0D" set="iso-646-irv"/>
+ <escaped>\r</escaped>
 </char>
 
 <!--
@@ -16941,7 +16931,7 @@
   <desc>greater, less, apart</desc>
  </entity>
  <latex>
-  <mathseq>>&lt;</mathseq>
+  <mathseq>&gt;&lt;</mathseq>
  </latex>
 </char>
 

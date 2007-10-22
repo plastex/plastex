@@ -16,9 +16,11 @@ from plasTeX.DOM import Node, Text
 class Accent(Command):
     args = 'self'
     chars = {}
+
     @property
     def unicode(self):
-        return type(self).chars.get(self.textContent.strip())
+        return type(self).chars.get(self.textContent.strip(), None)
+
     @property    
     def textContent(self):
         """
