@@ -267,7 +267,16 @@ class Image(object):
 
         if padbaseline and self.depth > padbaseline:
             log.warning('depth of image %s (%d) is greater than the baseline padding (%s).  This may cause the image to be misaligned with surrounding text.', self.filename, self.depth, padbaseline)
-        im.save(self.path)
+
+        if self.config['transparent']:
+            im = im.convert("P")
+            lut = im.resize((256,1))
+            lut.putdata(range(256))
+            index = list(lut.convert("RGB").getdata()).index((255,255,255))
+            im.save(self.path, transparency=index)
+        else:
+            im.save(self.path)
+
         self._cropped = True
 
     def __str__(self):

@@ -264,13 +264,20 @@ images['compiler'] = StringOption(
 images['cache'] = BooleanOption(
     """  Enable image caching between runs """,
     options = '--enable-image-cache !--disable-image-cache',
-    default = True,
+    default = False,
     category = 'images',
 )
 
 images['save-file'] = BooleanOption(
     """ Should the temporary images.tex file be saved for debugging? """,
     options = '--save-image-file !--delete-image-file',
+    default = False,
+    category = 'images',
+)
+
+images['transparent'] = BooleanOption(
+    """ Specifies whether the image backgrounds should be transparent or not """,
+    options = '--transparent-images !--opaque-images',
     default = False,
     category = 'images',
 )
