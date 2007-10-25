@@ -1,0 +1,27 @@
+\documentclass{article}
+\usepackage{amsmath}
+\newcommand\mb{}
+\newcommand\mr{}
+\newcommand\bA{A}
+\begin{document}
+
+\begin{align*}
+   \frac{\partial}{\partial\beta} \mb{x}'\bA^{-1}\mb{x} =&
+      -\mb{x}'\bA^{-1}\dot{\bA}_\beta\bA^{-1}\mb{x} \\
+   \frac{\partial}{\partial\beta}\bA^{-1} =&
+      -\bA^{-1}\dot{\bA}_\beta\bA^{-1}  \\
+   \frac{\partial}{\partial \beta} |\bA| = &
+       \,\,|\bA| \,\mr{trace}\left( \bA^{-1}\dot{\bA}_\beta \right) \\
+   \frac{\partial}{\partial \beta} \log\left\{|\bA|\right\} =&
+       \,\,\frac{1}{|\bA|}\, \frac{\partial}{\partial\beta}\bA =
+       \mr{trace}\left( \bA^{-1}\dot{\bA}_\beta \right) \\
+   \frac{\partial^2}{\partial\beta\partial\theta} \bA^{-1} =&
+       -\bA^{-1}\ddot{\bA}_{\beta\theta}\bA^{-1} +
+        \bA^{-1}\dot{\bA}_\beta \bA^{-1}\dot{\bA}_\theta\bA^{-1} +
+        \bA^{-1}\dot{\bA}_\theta\bA^{-1}\dot{\bA}_\beta \bA^{-1} \\
+   \frac{\partial^2}{\partial\beta\partial\theta} \log\left\{|\bA|\right\} =&
+        \,\,\mr{trace}\left(\bA^{-1}\ddot{\bA}_{\beta\theta} \right)  -
+        \mr{trace}\left(\bA^{-1}\dot{\bA}_\beta\bA^{-1}\dot{\bA}_\theta\right)
+\end{align*}
+
+\end{document}
