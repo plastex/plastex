@@ -20,15 +20,17 @@ type: xml
        tal:attributes="id self/id">
 <tr tal:repeat="row self" tal:attributes="id row/id">
     <td tal:condition="self/ownerDocument/context/packages/documentclass/fleqn" class="fleqn"></td>
-    <td tal:condition="not:self/ownerDocument/context/packages/documentclass/fleqn"></td>
+    <td tal:condition="not:self/ownerDocument/context/packages/documentclass/fleqn" style="width:40%"></td>
     <metal:block tal:repeat="cell row">
     <metal:block tal:define="alignment 
            python:test(path('repeat/cell/start'), 'right', 
                        path('repeat/cell/end'), 'left', 'center')">
-        <td tal:attributes="style string:width:${cell/image/width/em};; vertical-align:middle;; text-align:${alignment}"><object tal:omit-tag="not:self/renderer/vectorImager/enabled" type="image/svg+xml" tal:attributes="data cell/vectorImage/url; style string:width:${cell/vectorImage/width/em};; height:${cell/vectorImage/height/em};; vertical-align:${cell/vectorImage/depth/em}"><img tal:attributes="src cell/image/url; alt cell/source; style string:vertical-align:${cell/image/depth/px};; width:${cell/image/width/px};; height:${cell/image/height/px}" class="math" /></object></td>
+        <td tal:attributes="style string:vertical-align:middle;; text-align:${alignment}"><object tal:omit-tag="not:self/renderer/vectorImager/enabled" type="image/svg+xml" tal:attributes="data cell/vectorImage/url; style string:width:${cell/vectorImage/width/em};; height:${cell/vectorImage/height/em};; vertical-align:${cell/vectorImage/depth/em}"><img tal:attributes="src cell/image/url; alt cell/source; style string:vertical-align:${cell/image/depth/px};; width:${cell/image/width/px};; height:${cell/image/height/px}" class="math" /></object></td>
     </metal:block>
     </metal:block>
-    <td></td>
-    <td class="eqnnum"><span tal:condition="row/ref">(<span tal:content="row/ref">1.1.1</span>)</span></td>
+    <td style="width:40%"></td>
+    <td tal:condition="self/ownerDocument/context/packages/documentclass/fleqn" style="width:80%"></td>
+    <td tal:condition="not:self/ownerDocument/context/packages/documentclass/fleqn" style="width:40%"></td>
+    <td class="eqnnum" style="width:20%"><span tal:condition="row/ref">(<span tal:content="row/ref">1.1.1</span>)</span></td>
 </tr>
 </table>
