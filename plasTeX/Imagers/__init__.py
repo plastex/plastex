@@ -347,6 +347,7 @@ class Image(object):
                     top = False
 
         # Registration mark at the top
+        blank = False
         if top:
             pos = height - 1
             while pos and im.getpixel((0,pos)) == background:
@@ -365,13 +366,13 @@ class Image(object):
             # Handle empty images
             bbox = im.getbbox()
             if bbox is None or rheight == (height-1):
-                return PILImage.new("RGB", (1,1), background), 0
-
-            bbox = list(bbox)
-            bbox[1] = rheight
+                blank = True
+            else:
+                bbox = list(bbox)
+                bbox[1] = rheight
 
         # Registration mark on left side
-        else:
+        if blank or not(top) or im.getbbox()[1] == 0:
             pos = height - 1
             while pos and im.getpixel((0,pos)) == background:
                 pos -= 1
@@ -389,7 +390,7 @@ class Image(object):
 
             bbox = list(bbox)
             bbox[0] = rwidth
-            
+
         # Crop out register mark, and autoCrop result    
         im, cropped = self._autoCrop(im.crop(bbox), background)
 
@@ -675,8 +676,8 @@ class Imager(object):
                 dest.crop()
                 status.dot()
             except Exception, msg:
-#               import traceback
-#               traceback.print_exc()
+                import traceback
+                traceback.print_exc()
                 log.warning('failed to crop %s (%s)', dest.path, msg)
         
         # Remove temporary directory
