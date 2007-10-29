@@ -55,7 +55,7 @@ class XHTML(_Renderer):
                 cells = re.compile(r'(<td\b[^>]*>.+?</td>)', 
                                    re.I|re.S).findall(row) 
                 for j, cell in enumerate(cells):
-                    if not widths[j]:
+                    if j < len(widths) and not widths[j]:
                         continue
                     # Only apply width if it is on the cell
                     if not re.compile(r'<td\b[^>]*\bwidth:', re.S|re.I).search(cell):
@@ -63,9 +63,9 @@ class XHTML(_Renderer):
                     # Set the width to the widest width in the column
                     cells[j] = re.sub(r'(\bwidth\s*):\s*\d*\.?\d*\s*[A-Za-z%]*', 
                                       r'\1:%s' % widths[j], cell, 1)
-                cells = '\n'.join(cells)
-                rows[i] = re.compile(r'(<tr\b[^>]*>).+?(</tr>)', 
-                                     re.S|re.I).sub(r'\1%s\2' % cells, row)
+                m = re.compile(r'(<tr\b[^>]*>)\s*.+?\s*(</tr>)', 
+                                     re.S|re.I).search(row)
+                rows[i] = '%s%s%s' % (m.group(1), '\n'.join(cells), m.group(2))
 
             return begin + '\n'.join(rows) + end
 
