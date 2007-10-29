@@ -261,6 +261,8 @@ class Image(object):
                                              padbaseline)
             self.width, self.height = im.size
         except IOError, msg:
+#           import traceback
+#           traceback.print_exc()
             self._cropped = True
             log.warning(msg)
             return
@@ -347,7 +349,7 @@ class Image(object):
         # Registration mark at the top
         if top:
             pos = height - 1
-            while pos and im.getpixel((pos,0)) == background:
+            while pos and im.getpixel((0,pos)) == background:
                 pos -= 1
             depth = pos - height + 1
 
