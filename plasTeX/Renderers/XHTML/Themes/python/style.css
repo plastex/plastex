@@ -225,3 +225,16 @@ address                 { font-size: 80%; }
 
 
 .titlepage {text-align: center;}
+
+/* Footnotes */
+a.footnote {
+    text-decoration: none;
+}
+#footnotes {
+    padding: 1em;
+    border-top: 1px solid black;
+    font-size: smaller;
+}
+#footnotes li {
+    list-style-type: square;
+}

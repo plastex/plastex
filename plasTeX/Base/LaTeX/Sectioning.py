@@ -82,7 +82,18 @@ class SectionUtils(object):
     """ General utilities for getting information about sections """
 
     tocdepth = None
-
+    
+    @cachedproperty
+    def footnotes(self):
+        output = []
+        for f in self.ownerDocument.userdata.get('footnotes', []):
+            s = f.currentSection
+            while s is not None and not s.filename:
+                s = s.currentSection
+            if s is self:
+                output.append(f)
+        return output
+        
     @cachedproperty
     def subsections(self):
         """ Retrieve a list of all immediate subsections of this section """

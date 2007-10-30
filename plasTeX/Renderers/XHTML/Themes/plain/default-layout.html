@@ -44,6 +44,13 @@
 </ul>
 </div>
 
+<div id="footnotes" tal:condition="self/footnotes">
+<p><b>Footnotes</b></p>
+<ul>
+<li tal:repeat="footnote self/footnotes" tal:content="footnote" tal:attributes="id footnote/id">footnote text</li>
+</ul>
+</div>
+
 <div class="navigation">
 <span tal:condition="links/prev">Previous: <a tal:content="links/prev/title" tal:attributes="href links/prev/url"></a></span>
 <span tal:condition="links/next">Next: <a tal:content="links/next/title" tal:attributes="href links/next/url"></a></span>

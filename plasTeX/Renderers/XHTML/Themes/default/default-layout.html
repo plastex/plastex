@@ -71,6 +71,13 @@
 </ul>
 </div>
 
+<div id="footnotes" tal:condition="self/footnotes">
+<p><b>Footnotes</b></p>
+<ul>
+<li tal:repeat="footnote self/footnotes" tal:content="footnote" tal:attributes="id footnote/id">footnote text</li>
+</ul>
+</div>
+
 <div class="navigation" metal:use-macro="template/macros/navigation">
 <table cellspacing="2" cellpadding="0" width="100%">
 <tr>
