@@ -19,10 +19,10 @@ name: hyperref
 <a tal:attributes="href string:${self/attributes/url}#${self/attributes/category}.${self/attributes/name}" tal:content="self">link text</a>
 
 name: hyperlink
-<a tal:attributes="href string:#${self/attributes/name}" tal:content="self">text</a>
+<a tal:attributes="href string:${self/idref/label/url}" tal:content="self">text</a>
 
 name: hypertarget
-<a tal:attributes="name self/attributes/name" tal:content="self">text</a>
+<a tal:attributes="name self/id" tal:content="self">text</a>
 
 name: phantomsection
 <a tal:attributes="name self/id"></a>

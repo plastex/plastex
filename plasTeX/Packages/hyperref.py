@@ -77,10 +77,11 @@ class hyperref(Command):
         return res
 
 class hyperlink(Command):
-    args = 'name self'
+    args = 'label:idref self'
 
 class hypertarget(Command):
-    args = 'name self'
+    counter = 'hypertarget'  # so we can link to it
+    args = 'label:id self'
 
 class phantomsection(Command):
     pass
