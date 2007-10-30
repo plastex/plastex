@@ -19,7 +19,7 @@
 
 <div tal:content="self">File contents</div>
 
-<div tal:condition="self/tableofcontents" class="contents">
+<div tal:condition="self/tableofcontents" tal:attributes="class string:contents ${self/nodeName}-contents">
 <ul>
 <li tal:repeat="section self/tableofcontents"><a href="." tal:attributes="href section/url" tal:content="section/fullTocEntry">Aliquam est. Aliquam fringilla pede</a>
    <ul tal:condition="section/tableofcontents">
