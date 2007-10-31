@@ -27,7 +27,13 @@ class document(Environment, SectionUtils):
                 self.ownerDocument.context.counters[name].setcounter(counters[name]-1)
 
         return res
-
+ 
+    @property
+    def index(self):
+        idx = self.getElementsByTagName(['theindex','printindex'])
+        if idx:
+            return idx[0]
+        return []
 
 class AtEndDocument(Command):
     args = 'commands:nox'
