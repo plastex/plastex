@@ -60,4 +60,13 @@ class XHTML(_Renderer):
             f.write(idx)
             f.close()
 
+        # Create helpset file
+        if 'javahelp-helpset' in self:
+            idx = self['javahelp-helpset'](latexdoc)
+            idx = re.sub(r'(\n\s*)+', r'\n', idx)
+            f = codecs.open('javahelp-helpset.hs', 'w', encoding)
+            f.write("<?xml version='1.0' encoding='utf-8' ?>\n")
+            f.write(idx)
+            f.close()
+
 Renderer = XHTML 
