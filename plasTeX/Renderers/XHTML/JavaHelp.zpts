@@ -76,20 +76,20 @@ type: xml
       </metal:block>   
    </metal:block>
    <metal:block tal:repeat="item self/index">
-   <metal:block tal:condition="item/pages" tal:repeat="page item/pages">
-      <mapID tal:attributes="target page/id; url page/url" />
-      <metal:block tal:repat="subitem item">
-      <metal:block tal:repeat="subpage subitem/pages">
-         <mapID tal:attributes="target page/id; url page/url" />         
+      <metal:block tal:condition="item/pages" tal:repeat="page item/pages">
+         <mapID tal:attributes="target page/id; url page/url" />
+         <metal:block tal:repeat="subitem item">
+         <metal:block tal:repeat="subpage subitem/pages">
+            <mapID tal:attributes="target subpage/id; url subpage/url" />         
+         </metal:block>
+         </metal:block>
       </metal:block>
-      </metal:block>
-   </metal:block>
-   </metal:block>
-   <metal:block tal:condition="not:item/pages" tal:repeat="page item/pages">
-      <metal:block tal:repat="subitem item">
-      <metal:block tal:repeat="subpage subitem/pages">
-         <mapID tal:attributes="target page/id; url page/url" />         
-      </metal:block>
+      <metal:block tal:condition="not:item/pages">
+         <metal:block tal:repeat="subitem item">
+         <metal:block tal:repeat="subpage subitem/pages">
+            <mapID tal:attributes="target subpage/id; url subpage/url" />         
+         </metal:block>
+         </metal:block>
       </metal:block>
    </metal:block>
 </mapID>
