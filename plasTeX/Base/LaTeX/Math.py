@@ -95,6 +95,17 @@ class EqnarrayStar(Array):
     blockType = True
     mathMode = True
 
+    class lefteqn(Command):
+        args = 'self'
+        def digest(self, tokens):
+            res = Command.digest(self, tokens)
+            obj = self.parentNode
+            while obj is not None and not isinstance(obj, Array.ArrayCell):
+                obj = obj.parentNode
+            if obj is not None:
+                obj.attributes['colspan'] = 3
+            return res
+
     class ArrayCell(Array.ArrayCell):
         @property
         def source(self):

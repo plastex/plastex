@@ -38,7 +38,7 @@ type: xml
            python:test(path('repeat/cell/start'), 'right', 
                        path('repeat/cell/end'), 'left', 'center')">
         <td tal:attributes="style string:vertical-align:middle;; 
-                                  text-align:${alignment}"><object 
+                                  text-align:${alignment}; colspan cell/attributes/colspan"><object 
             tal:omit-tag="not:self/renderer/vectorImager/enabled" type="image/svg+xml" 
             tal:attributes="data cell/vectorImage/url; style string:width:${cell/vectorImage/width/em};; 
             height:${cell/vectorImage/height/em};; vertical-align:${cell/vectorImage/depth/em}"><img 
