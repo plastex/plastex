@@ -1,4 +1,4 @@
-name: eclipse-contents
+name: eclipse-toc
 type: xml
 <toc tal:attributes="label self/title">
     <topic tal:repeat="part self/tableofcontents" tal:attributes="label part/tocEntry/textContent; href part/url">
@@ -26,3 +26,22 @@ type: xml
       <toc file="eclipse-contents.xml" primary="true" />
    </extension>
 </plugin>
+
+name: eclipse-index
+type: xml
+<index version="1.0">    
+<indexentry tal:repeat="item self/index">
+   <term tal:content="item/key/textContent">price endings</term><sortkey tal:content="item/sortkey/textContent">price endings</sortkey>
+   <indextarget tal:repeat="page item/pages">
+      <title tal:content="page/currentSection/title/textContent">Set Price Endings for Regular Prices</title>
+      <target tal:attributes="file page/url"></target>
+   </indextarget>
+   <indexentry tal:repeat="subitem item">
+      <term tal:content="subitem/key/textContent">setting</term><sortkey tal:content="subitem/sortkey/textContent">setting</sortkey>
+      <indextarget tal:repeat="subpage subitem/pages">
+         <title tal:content="subpage/currentSection/title/textContent">Set Price Endings for Regular Prices</title>
+         <target tal:attributes="file subpage/url"></target>
+      </indextarget>
+   </indexentry>
+</indexentry>
+</index>

@@ -37,9 +37,9 @@ class XHTML(_Renderer):
         latexdoc = document.getElementsByTagName('document')[0]
         
         # Create table of contents
-        if 'eclipse-contents' in self:
-            toc = self['eclipse-contents'](latexdoc)
-            f = codecs.open('eclipse-contents.xml', 'w', encoding)
+        if 'eclipse-toc' in self:
+            toc = self['eclipse-toc'](latexdoc)
+            f = codecs.open('eclipse-toc.xml', 'w', encoding)
             toc = re.sub(r'(<topic\b[^>]*[^/])\s*>\s*</topic>', r'\1 />', toc)
             f.write("<?xml version='1.0' encoding='utf-8' ?>\n")
             f.write(toc)
@@ -49,6 +49,14 @@ class XHTML(_Renderer):
         if 'eclipse-plugin' in self:
             toc = self['eclipse-plugin'](latexdoc)
             f = codecs.open('eclipse-plugin.xml', 'w', encoding)
+            f.write("<?xml version='1.0' encoding='utf-8' ?>\n")
+            f.write(toc)
+            f.close()
+
+        # Create index file
+        if 'eclipse-index' in self:
+            toc = self['eclipse-index'](latexdoc)
+            f = codecs.open('eclipse-index.xml', 'w', encoding)
             f.write("<?xml version='1.0' encoding='utf-8' ?>\n")
             f.write(toc)
             f.close()
