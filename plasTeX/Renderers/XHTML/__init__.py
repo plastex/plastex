@@ -12,7 +12,8 @@ class XHTML(_Renderer):
 
     def cleanup(self, document, files, postProcess=None):
         res = _Renderer.cleanup(self, document, files, postProcess=postProcess)
-        self.doJavaHelpFiles(document)
+        self.doJavaHelpFiles(document, version='1')
+        self.doJavaHelpFiles(document, version='2')
         self.doEclipseHelpFiles(document)
         return res
 
@@ -52,42 +53,43 @@ class XHTML(_Renderer):
             f.write(toc)
             f.close()
 
-    def doJavaHelpFiles(self, document, encoding='utf-8'):
+    def doJavaHelpFiles(self, document, encoding='utf-8', version='2'):
         """ Generate files needed to use HTML as Java Help """
         latexdoc = document.getElementsByTagName('document')[0]
+        version = str(version)
         
         # Create table of contents
-        if 'javahelp-contents' in self:
-            toc = self['javahelp-contents'](latexdoc)
+        if ('javahelp-toc-'+version) in self:
+            toc = self['javahelp-toc-'+version](latexdoc)
             toc = re.sub(r'(<tocitem\b[^>]*[^/])\s*>\s*</tocitem>', r'\1 />', toc)
-            f = codecs.open('javahelp-contents.xml', 'w', encoding)
+            f = codecs.open('javahelp%s-toc.xml' % version, 'w', encoding)
             f.write("<?xml version='1.0' encoding='utf-8' ?>\n")
             f.write(toc)
             f.close()
 
         # Create index
-        if 'javahelp-index' in self and latexdoc.index:
-            idx = self['javahelp-index'](latexdoc)
+        if ('javahelp-index-'+version) in self and latexdoc.index:
+            idx = self['javahelp-index-'+version](latexdoc)
             idx = re.sub(r'(\n\s*)+', r'\n', idx)
-            f = codecs.open('javahelp-index.xml', 'w', encoding)
+            f = codecs.open('javahelp%s-index.xml' % version, 'w', encoding)
             f.write("<?xml version='1.0' encoding='utf-8' ?>\n")
             f.write(idx)
             f.close()
 
         # Create map file
-        if 'javahelp-map' in self:
-            idx = self['javahelp-map'](latexdoc)
+        if ('javahelp-map-'+version) in self:
+            idx = self['javahelp-map-'+version](latexdoc)
             idx = re.sub(r'(\n\s*)+', r'\n', idx)
-            f = codecs.open('javahelp-map.jhm', 'w', encoding)
+            f = codecs.open('javahelp%s.jhm' % version, 'w', encoding)
             f.write("<?xml version='1.0' encoding='utf-8' ?>\n")
             f.write(idx)
             f.close()
 
         # Create helpset file
-        if 'javahelp-helpset' in self:
-            idx = self['javahelp-helpset'](latexdoc)
+        if ('javahelp-helpset-'+version) in self:
+            idx = self['javahelp-helpset-'+version](latexdoc)
             idx = re.sub(r'(\n\s*)+', r'\n', idx)
-            f = codecs.open('javahelp-helpset.hs', 'w', encoding)
+            f = codecs.open('javahelp%s.hs' % version, 'w', encoding)
             f.write("<?xml version='1.0' encoding='utf-8' ?>\n")
             f.write(idx)
             f.close()
