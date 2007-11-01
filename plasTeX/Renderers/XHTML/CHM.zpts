@@ -1,0 +1,134 @@
+name: chm-toc
+type: xml
+<html>
+<head>
+<meta name="generator" content="plasTeX - http://plastex.sf.net/" />
+<title>plasTeX Generated Help Table of Contents</title>
+<!-- Sitemap 1.0 -->
+</head>
+<body>
+<object type="text/site properties">
+   <param name="Auto Generated" value="Yes" />
+</object>
+<ul>
+   <li>
+   <object type="text/sitemap">
+      <param name="Name" tal:attributes="value self/title/textContent | 'No Title'" />
+      <param name="Local" tal:attributes="value self/url" />
+   </object>
+   <ul tal:condition="self/tableofcontents">
+      <li tal:repeat="part self/tableofcontents">
+      <object type="text/sitemap">
+         <param name="Name" tal:attributes="value part/tocEntry/textContent" />
+         <param name="Local" tal:attributes="value part/url" />
+      </object>
+      <ul tal:condition="part/tableofcontents">
+         <li tal:repeat="chapter part/tableofcontents">
+         <object type="text/sitemap">
+            <param name="Name" tal:attributes="value chapter/tocEntry/textContent" />
+            <param name="Local" tal:attributes="value chapter/url" />
+         </object>
+         <ul tal:condition="chapter/tableofcontents">
+            <li tal:repeat="section chapter/tableofcontents">
+            <object type="text/sitemap">
+               <param name="Name" tal:attributes="value section/tocEntry/textContent" />
+               <param name="Local" tal:attributes="value section/url" />
+            </object>
+            <ul tal:condition="section/tableofcontents">
+               <li tal:repeat="subsection section/tableofcontents">
+               <object type="text/sitemap">
+                  <param name="Name" tal:attributes="value subsection/tocEntry/textContent" />
+                  <param name="Local" tal:attributes="value subsection/url" />
+               </object>
+               <ul tal:condition="subsection/tableofcontents">
+                  <li tal:repeat="subsubsection subsection/tableofcontents">
+                  <object type="text/sitemap">
+                     <param name="Name" tal:attributes="value subsubsection/tocEntry/textContent" />
+                     <param name="Local" tal:attributes="value subsubsection/url" />
+                  </object>
+                  <ul tal:condition="subsubsection/tableofcontents">
+                     <li tal:repeat="paragraph subsubsection/tableofcontents">
+                     <object type="text/sitemap">
+                        <param name="Name" tal:attributes="value paragraph/tocEntry/textContent" />
+                        <param name="Local" tal:attributes="value paragraph/url" />
+                     </object>
+                     <ul tal:condition="paragraph/tableofcontents">
+                        <li tal:repeat="subparagraph paragraph/tableofcontents">
+                        <object type="text/sitemap">
+                           <param name="Name" tal:attributes="value subparagraph/tocEntry/textContent" />
+                           <param name="Local" tal:attributes="value subparagraph/url" />
+                        </object>
+                        </li>
+                     </ul>
+                     </li>
+                  </ul>
+                  </li>
+               </ul>
+               </li>
+            </ul>
+            </li>
+         </ul>
+         </li>
+      </ul>
+      </li>
+   </ul>
+   </li>
+</ul>
+</body>
+</html>
+
+name: chm-help
+type: xml
+<metal:block>[OPTIONS]
+Compatibility=1.1 or later
+Compiled file=help.chm
+Contents file=chm.hhc
+Default Window=Help
+Default topic=index.html
+Display compile progress=Yes
+Error log file=help.log
+Full-text search=Yes
+Index file=chm.hhk
+Language=0x0 
+Title=<span tal:replace='self/title/textContent'>My Title</span>
+
+[WINDOWS]
+Help="<span tal:replace='self/title/textContent'>My Title</span>","chm.hhc","chm.hhk","index.html","index.html",,,,,0x73520,,0x383e,[271,372,593,566],,,,,,,0
+
+[FILES]
+<metal:block tal:repeat="file templates/files/values"><span tal:replace="file">myhtml.htm</span>
+</metal:block>
+
+[MERGE FILES]
+</metal:block>
+
+name: chm-index
+type: xml
+<html>
+<head>
+<meta name="generator" content="plasTeX - http://plastex.sf.net/" />
+<title>plasTeX Generated Index</title>
+<!-- Sitemap 1.0 -->
+</head>
+<body>
+<object type="text/site properties">
+   <param name="Auto Generated" value="Yes" />
+</object>
+<ul>
+<li tal:repeat="item self/index">
+   <object type="text/sitemap">
+      <param name="Name" tal:attributes="value item/key/textContent" />
+      <param name="Local" tal:repeat="page item/pages" tal:attributes="value page/url" />
+   </object>
+   <ul tal:condition="item">
+   <li tal:repeat="subitem item"> 
+      <object type="text/sitemap">
+         <param name="Name" tal:attributes="value subitem/key/textContent" />
+         <param name="Local" tal:repeat="subpage subitem/pages" tal:attributes="value subpage/url" />
+      </object>
+   </li>
+   </ul>
+</li>
+</ul>
+</body>
+</html>
