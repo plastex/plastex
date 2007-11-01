@@ -1,0 +1,28 @@
+name: eclipse-contents
+type: xml
+<toc tal:attributes="label self/title">
+    <topic tal:repeat="part self/tableofcontents" tal:attributes="label part/tocEntry/textContent; href part/url">
+       <topic tal:repeat="chapter part/tableofcontents" tal:attributes="label chapter/tocEntry/textContent; href chapter/url">
+          <topic tal:repeat="section chapter/tableofcontents" tal:attributes="label section/tocEntry/textContent; href section/url">
+             <topic tal:repeat="subsection section/tableofcontents" tal:attributes="label subsection/tocEntry/textContent; href subsection/url">
+                <topic tal:repeat="subsubsection subsection/tableofcontents" tal:attributes="label subsubsection/tocEntry/textContent; href subsubsection/url">
+                   <topic tal:repeat="paragraph subsubsection/tableofcontents" tal:attributes="label paragraph/tocEntry/textContent; href paragraph/url">
+                      <topic tal:repeat="subparagraph paragraph/tableofcontents" tal:attributes="label subparagraph/tocEntry/textContent; href subparagraph/url">
+                      </topic>
+                   </topic>
+                </topic>
+             </topic>
+          </topic>
+       </topic>
+    </topic>
+</toc>
+
+name: eclipse-plugin
+type: xml
+<plugin tal:attributes="name string:${self/title/textContent}; 
+                        provider-name self/author/textContent;
+                        id self/id" version="1.0.0">
+   <extension point="org.eclipse.help.toc">
+      <toc file="eclipse-contents.xml" primary="true" />
+   </extension>
+</plugin>

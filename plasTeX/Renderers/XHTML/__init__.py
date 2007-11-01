@@ -13,6 +13,7 @@ class XHTML(_Renderer):
     def cleanup(self, document, files, postProcess=None):
         res = _Renderer.cleanup(self, document, files, postProcess=postProcess)
         self.doJavaHelpFiles(document)
+        self.doEclipseHelpFiles(document)
         return res
 
     def processFileContent(self, document, s):
@@ -29,8 +30,30 @@ class XHTML(_Renderer):
         s = re.compile(r'(<(td|th)\b[^>]*>)\s*(</\2>)', re.I).sub(r'\1&nbsp;\3', s)
         
         return s
+    
+    def doEclipseHelpFiles(self, document, encoding='utf-8'):
+        """ Generate files needed to use HTML as Eclipse Help """
+        latexdoc = document.getElementsByTagName('document')[0]
+        
+        # Create table of contents
+        if 'eclipse-contents' in self:
+            toc = self['eclipse-contents'](latexdoc)
+            f = codecs.open('eclipse-contents.xml', 'w', encoding)
+            toc = re.sub(r'(<topic\b[^>]*[^/])\s*>\s*</topic>', r'\1 />', toc)
+            f.write("<?xml version='1.0' encoding='utf-8' ?>\n")
+            f.write(toc)
+            f.close()
+
+        # Create plugin file
+        if 'eclipse-plugin' in self:
+            toc = self['eclipse-plugin'](latexdoc)
+            f = codecs.open('eclipse-plugin.xml', 'w', encoding)
+            f.write("<?xml version='1.0' encoding='utf-8' ?>\n")
+            f.write(toc)
+            f.close()
 
     def doJavaHelpFiles(self, document, encoding='utf-8'):
+        """ Generate files needed to use HTML as Java Help """
         latexdoc = document.getElementsByTagName('document')[0]
         
         # Create table of contents
