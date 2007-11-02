@@ -7,9 +7,9 @@
 <div tal:content="self"></div>
 <div id="footnotes" tal:condition="self/footnotes">
 <p><b>Footnotes</b></p>
-<ul>
+<ol>
 <li tal:repeat="footnote self/footnotes" tal:content="footnote" tal:attributes="id footnote/id">footnote text</li>
-</ul>
+</ol>
 </div>
 </body>
 </html>

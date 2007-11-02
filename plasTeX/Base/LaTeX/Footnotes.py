@@ -11,29 +11,40 @@ from plasTeX.Logging import getLogger
 
 class footnote(Command):
     args = '[ num:int ] self'
+    mark = None
 
-    def digest(self, tokens):
+    def invoke(self, tex):
         # Add the footnote to the document
-        output = Command.digest(self, tokens)
+        output = Command.invoke(self, tex)
         userdata = self.ownerDocument.userdata
         if 'footnotes' not in userdata:
             userdata['footnotes'] = []
         userdata['footnotes'].append(self)
+        self.mark = self
+        return output
 
 class footnotemark(Command):
     args = '[ num:int ]'
+    mark = None
 
-    def digest(self, tokens):
+    def invoke(self, tex):
         # Add the footnotemarks to the document
-        output = Command.digest(self, tokens)
+        output = Command.invoke(self, tex)
         userdata = self.ownerDocument.userdata
         if 'footnotemarks' not in userdata:
             userdata['footnotemarks'] = []
         userdata['footnotemarks'].append(self)
+        self.mark = self
+        return output
 
 class footnotetext(footnote):
     args = '[ num:int ] self'
-
+    mark = None
+    
+    def invoke(self, tex):
+        output = footnote.invoke(self, tex)
+        self.mark = self.ownerDocument.userdata.get('footnotemarks',[None]).pop(0)
+        return output
 
 #
 # Style Parameters

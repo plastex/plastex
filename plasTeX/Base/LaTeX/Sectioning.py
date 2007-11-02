@@ -92,6 +92,8 @@ class SectionUtils(object):
                 s = s.currentSection
             if s is self:
                 output.append(f)
+        for i, f in enumerate(output):
+            f.mark.attributes['num'] = i+1
         return output
         
     @cachedproperty

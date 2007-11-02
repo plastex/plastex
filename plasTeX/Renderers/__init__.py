@@ -132,6 +132,10 @@ class Renderable(object):
                 modifier = child.attributes.get('*modifier*')
 
             if child.filename:
+            
+                # Force footnotes to be cached
+                if hasattr(child, 'footnotes'):
+                    child.footnotes
 
                 status.info(' [ %s ', child.filename)
 
