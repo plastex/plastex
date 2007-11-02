@@ -78,7 +78,7 @@ name: chm-help
 type: xml
 <metal:block>[OPTIONS]
 Compatibility=1.1 or later
-Compiled file=<span tal:replace="self/ownerDocument/userdata/jobname | 'help'"></span>.chm
+Compiled file=<span tal:replace="self/ownerDocument/userdata/jobname | string:help"></span>.chm
 Contents file=chm.hhc
 Default Window=Help
 Default topic=index.html
