@@ -83,6 +83,14 @@ class hypertarget(Command):
     counter = 'hypertarget'  # so we can link to it
     args = 'label:id self'
 
+class hypertargetname(Command):
+    """ Dummy class for hypertarget macro """
+    unicode = ''
+
+class thehypertarget(Command):
+    """ Dummy class for hypertarget macro """
+    unicode = ''
+
 class phantomsection(Command):
     pass
 
