@@ -160,7 +160,7 @@ class Macro(Element):
             if value is None:
                 continue
             if isinstance(value, Node):
-                value = u'%s' % value
+                value = u'%s' % unicode(value)
             attrs[name] = value
         return attrs
 
