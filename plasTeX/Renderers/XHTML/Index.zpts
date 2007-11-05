@@ -40,4 +40,4 @@ name: theindex printindex
 </div>
 
 name: index
-<span tal:attributes="id self/id"></span>
+<span tal:attributes="name self/id; id self/id"></span>
