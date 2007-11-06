@@ -67,15 +67,16 @@ class List(Environment):
         return Environment.invoke(self, tex)
 
     def digest(self, tokens):
-        # Drop any whitespace before the first item
-        for tok in tokens:
-            if tok.isElementContentWhitespace:
-                continue
-#           if tok.nodeName != 'item':
-#               log.warning('dropping non-item from beginning of list')
-#               continue
-            tokens.push(tok)
-            break
+        if self.macroMode != Environment.MODE_END:
+            # Drop any whitespace before the first item
+            for tok in tokens:
+                if tok.isElementContentWhitespace:
+                    continue
+#               if tok.nodeName != 'item':
+#                   log.warning('dropping non-item from beginning of list')
+#                   continue
+                tokens.push(tok)
+                break
         Environment.digest(self, tokens) 
 
 #

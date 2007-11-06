@@ -1635,10 +1635,11 @@ class TeX(object):
         try:
             f = self.kpsewhich(self.jobname+'.aux')
             self.ownerDocument.context.warnOnUnrecognized = False
-            self.pushToken(plasTeX.Command())
+            dummy = plasTeX.Command()
+            self.pushToken(dummy)
             self.input(open(f))
             for item in self:
-                if item is plasTeX.Command():
+                if item is dummy:
                     break
         except OSError, msg:
             log.warning(msg)

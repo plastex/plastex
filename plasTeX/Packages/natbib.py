@@ -454,6 +454,8 @@ class citet(NatBibCite):
         sameauthor = prevauthor = None
         for i, item in enumerate(self.bibitems):
             if text is None:
+                if not item.bibcite.attributes:
+                    continue
                 fullauthor = item.bibcite.attributes['fullauthor'].textContent
                 sameauthor = (prevauthor == fullauthor)
                 prevauthor = fullauthor
@@ -535,6 +537,8 @@ class citep(NatBibCite):
         sameauthor = prevauthor = None
         for i, item in enumerate(self.bibitems):
             if text is None:
+                if item.bibcite.attributes is None:
+                    continue
                 fullauthor = item.bibcite.attributes['fullauthor'].textContent
                 sameauthor = (prevauthor == fullauthor)
                 prevauthor = fullauthor
