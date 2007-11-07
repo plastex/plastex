@@ -29,19 +29,13 @@ type: xml
 
 name: eclipse-index
 type: xml
-<index version="1.0">    
-<indexentry tal:repeat="item self/index">
-   <term tal:content="item/key/textContent">price endings</term><sortkey tal:content="item/sortkey/textContent">price endings</sortkey>
-   <indextarget tal:repeat="page item/pages">
-      <title tal:content="page/currentSection/title/textContent">Set Price Endings for Regular Prices</title>
-      <target tal:attributes="file page/url"></target>
-   </indextarget>
-   <indexentry tal:repeat="subitem item">
-      <term tal:content="subitem/key/textContent">setting</term><sortkey tal:content="subitem/sortkey/textContent">setting</sortkey>
-      <indextarget tal:repeat="subpage subitem/pages">
-         <title tal:content="subpage/currentSection/title/textContent">Set Price Endings for Regular Prices</title>
-         <target tal:attributes="file subpage/url"></target>
-      </indextarget>
-   </indexentry>
-</indexentry>
+<index>    
+<entry tal:repeat="item self/index" tal:attributes="keyword item/key/textContent">
+   <topic tal:condition="python:len(path('item/pages')) &lt;= 1" tal:repeat="page item/pages" tal:attributes="href page/url"/>
+   <topic tal:condition="python:len(path('item/pages')) &gt; 1" tal:repeat="page item/pages" tal:attributes="href page/url; title page/currentSection/title/textContent"/>
+   <entry tal:repeat="subitem item" tal:attributes="keyword subitem/key/textContent">
+      <topic tal:condition="python:len(path('subitem/pages')) &lt;= 1" tal:repeat="subpage subitem/pages" tal:attributes="href subpage/url"/>
+      <topic tal:condition="python:len(path('subitem/pages')) &gt; 1" tal:repeat="subpage subitem/pages" tal:attributes="href subpage/url; title subpage/currentSection/title/textContent"/>
+   </entry>
+</entry>
 </index>
