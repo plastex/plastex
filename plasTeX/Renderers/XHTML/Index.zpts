@@ -20,11 +20,11 @@ name: theindex printindex
     <ul tal:condition="item">
     <li tal:repeat="subitem item">
         <span tal:replace="subitem/key">subitem</span>
-        <span tal:repeat="page subitem/pages"><a tal:attributes="href page/url; title stripped:page/currentSection/title" tal:content="page"></a><span tal:condition="not:repeat/page/end">, </span></span>
+        <span tal:condition="python:not path('subitem/see') and not path('subitem/seealso')" tal:repeat="page subitem/pages"><a tal:attributes="href page/url; title stripped:page/currentSection/title" tal:content="page"></a><span tal:condition="not:repeat/page/end">, </span></span>
         <ul tal:condition="subitem">
         <li tal:repeat="subsubitem subitem">
             <span tal:replace="subsubitem/key">subsubitem</span>
-            <span tal:repeat="page subsubitem/pages"><a tal:attributes="href page/url; title stripped:page/currentSection/title" tal:content="page"></a><span tal:condition="not:repeat/page/end">, </span></span>
+            <span tal:condition="python:not path('subitem/see') and not path('subitem/seealso')" tal:repeat="page subsubitem/pages"><a tal:attributes="href page/url; title stripped:page/currentSection/title" tal:content="page"></a><span tal:condition="not:repeat/page/end">, </span></span>
         </li>
         </ul>
     </li>
@@ -41,3 +41,6 @@ name: theindex printindex
 
 name: index
 <span tal:attributes="name self/id; id self/id"></span>
+
+name: see seealso
+<span tal:replace="self/captionName"></span> <span tal:replace="self"></span>

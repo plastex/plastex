@@ -122,12 +122,25 @@ type: xml
    <metal:block tal:repeat="item self/index">
    <li><object type="text/sitemap">
        <param name="Name" tal:attributes="value item/key/textContent" />
-       <param name="Local" tal:repeat="page item/pages" tal:attributes="value page/url" />
+       <metal:block tal:repeat="page item/pages">
+          <param name="Name" tal:attributes="value page/currentSection/title/textContent" />
+          <param name="Local" tal:attributes="value page/url" />
+       </metal:block>
    </object></li>
    <ul tal:condition="item">
       <li tal:repeat="subitem item"><object type="text/sitemap">
-          <param name="Name" tal:attributes="value subitem/key/textContent" />
-          <param name="Local" tal:repeat="subpage subitem/pages" tal:attributes="value subpage/url" />
+          <metal:block tal:condition="python:path('subitem/see') or path('subitem/seealso')">
+             <param tal:condition="subitem/seealso" name="Name" tal:attributes="value string:${subitem/seealso/captionName} ${subitem/key/textContent}" />
+             <param tal:condition="subitem/see" name="Name" tal:attributes="value string:${subitem/see/captionName} ${subitem/key/textContent}" />
+             <param name="See Also" tal:attributes="value subitem/see/textContent | subitem/seealso/textContent" />
+          </metal:block>
+          <metal:block tal:condition="python:not path('subitem/see') and  not path('subitem/seealso')">
+             <param name="Name" tal:attributes="value subitem/key/textContent" />
+             <metal:block tal:repeat="subpage subitem/pages">
+             <param name="Name" tal:attributes="value subpage/currentSection/title/textContent" />
+             <param name="Local" tal:attributes="value subpage/url" />
+             </metal:block>
+          </metal:block>
       </object></li>
    </ul>
    </metal:block>

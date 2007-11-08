@@ -22,6 +22,8 @@ class IndexUtils(object):
 
     linkType = 'index'
     level = Command.CHAPTER_LEVEL
+    seeNames = ['see']
+    seealsoNames = ['seealso']
 
     class Index(Command):
         """
@@ -34,6 +36,24 @@ class IndexUtils(object):
             self.pages = []
             self.key = []
             self.sortkey = ''
+
+        @property
+        def see(self):
+            if not hasattr(self.key, 'getElementsByTagName'):
+                return
+            elem = self.key.getElementsByTagName(IndexUtils.seeNames)
+            if not elem:
+                return
+            return elem[0]
+
+        @property
+        def seealso(self):
+            if not hasattr(self.key, 'getElementsByTagName'):
+                return
+            elem = self.key.getElementsByTagName(IndexUtils.seealsoNames)
+            if not elem:
+                return
+            return elem[0]
 
         @property
         def totallen(self):

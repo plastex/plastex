@@ -1210,17 +1210,6 @@ class Node(object):
             nodes.extend(child.allChildNodes)
         return nodes
 
-class DocumentFragment(Node):
-    """
-    Document Fragment
-
-    http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html#ID-B63ED1A3
-    """
-    nodeName = '#document-fragment'
-    nodeType = Node.DOCUMENT_FRAGMENT_NODE
-    __slots__ = Node.NODE_SLOTS
-
-
 def _getElementsByTagName(self, tagname):
     """ 
     Get a list of nodes with the given name
@@ -1316,6 +1305,33 @@ def _getElementById(self, elementId):
 
     return None
 
+class DocumentFragment(Node):
+    """
+    Document Fragment
+
+    http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html#ID-B63ED1A3
+    """
+    nodeName = '#document-fragment'
+    nodeType = Node.DOCUMENT_FRAGMENT_NODE
+    __slots__ = Node.NODE_SLOTS
+
+    def getElementsByTagNameNS(self, namespaceURI, localName):
+        """
+        Get list of elements of a specific name and namespace
+
+        Required Arguments:
+        namespaceURI -- namespace of the element
+        localName -- name of the element to find
+
+        Returns:
+        list of elements
+
+        """
+        return self.getElementsByTagName(localName)
+
+    getElementById = _getElementById
+
+    getElementsByTagName = _getElementsByTagName
 
 class Attr(Node):
     """
