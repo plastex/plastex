@@ -3,8 +3,8 @@
 <head>
 <link rel="stylesheet" href="style.css" type='text/css' />
 <link rel="shortcut icon" href="icons/pyfav.png" type="image/png" />
-<link rel='start' tal:attributes='href links/start/url; title links/start/title' />
-<link rel="first" tal:attributes='href links/first/url; title links/first/title' />
+<link rel='start' tal:attributes='href links/start/url; title links/start/title/textContent' />
+<link rel="first" tal:attributes='href links/first/url; title links/first/title/textContent' />
 <link rel='contents' tal:attributes='href links/contents/url' title="Contents" />
 <link rel='index' tal:attributes='href links/index/url' title='Index' />
 <link tal:condition="links/next" rel="next" tal:attributes="href links/next/url" />
