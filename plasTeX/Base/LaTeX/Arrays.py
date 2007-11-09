@@ -155,9 +155,40 @@ class Array(Environment):
         """ Vertical line """
         locations = ('left','right')
 
+    #
+    # booktabs commands
+    #
+
     class cline(hline):
         """ Partial horizontal line """
         args = 'span:list(-):int'
+
+    class _rule(hline):
+        """ Full horizontal line """
+        args = '[ width:str ]'
+
+    class toprule(_rule):
+        pass
+
+    class midrule(_rule):
+        pass
+
+    class bottomrule(_rule):
+        pass
+
+    class cmidrule(cline):
+        args = '[ width:str ] ( trim:str ) ' + cline.args
+
+    class morecmidrules(Command):
+        pass
+
+    class addlinespace(Command):
+        args = '[ width:str ]'
+
+    class specialrule(Command):
+        args = 'width:str above:str below:str'
+
+    # end booktabs
 
     class ArrayRow(Macro):
         """ Table row class """
