@@ -177,7 +177,7 @@ class Array(Environment):
         pass
 
     class cmidrule(cline):
-        args = '[ width:str ] ( trim:str ) ' + cline.args
+        args = '[ width:str ] ( trim:str ) span:list(-):int'
 
     class morecmidrules(Command):
         pass

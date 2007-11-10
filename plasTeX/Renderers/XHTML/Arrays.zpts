@@ -22,4 +22,4 @@ type: xml
 name: multicolumn
 <span tal:replace="self"></span>
 
-name: cline
+name: cline toprule bottomrule midrule cmidrule morecmidrules addlinespace specialrule
