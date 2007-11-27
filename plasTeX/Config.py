@@ -282,6 +282,13 @@ images['transparent'] = BooleanOption(
     category = 'images',
 )
 
+images['resolution'] = IntegerOption(
+    """ Resolution of images document """,
+    options = '--image-resolution',
+    default = 0,
+    category = 'images',
+)
+
 #
 # Document
 #

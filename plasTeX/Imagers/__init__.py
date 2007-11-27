@@ -471,6 +471,27 @@ class Imager(object):
         self.writePreamble(document)
         self.source.write('\\begin{document}\n')
 
+        # Set up additional options
+        self._configOptions = self.formatConfigOptions(self.config['images'])
+
+    def formatConfigOptions(self, config):
+        """
+        Format configuration options as command line options
+
+        Required Arguments:
+        config -- the images section of the configuration object
+
+        Returns: a list of two-element tuples contain option value pairs 
+
+        Example::
+            output = []
+            if config['resolution']:
+                output.append(('-D', config['resolution']))
+            return output
+
+        """
+        return []
+
     def writePreamble(self, document):
         """ Write any necessary code to the preamble of the document """
         self.source.write(document.preamble.source)
@@ -617,7 +638,14 @@ class Imager(object):
 
         """
         open('images.out', 'wb').write(output.read())
-        return os.system('%s %s' % (self.command, 'images.out')), None
+        options = ''
+        if self._configOptions:
+            for opt, value in self._configOptions:
+                opt, value = str(opt), str(value)
+                if ' ' in value:
+                    value = '"%s"' % value
+                options += '%s %s ' % (opt, value)
+        return os.system('%s %s%s' % (self.command, options, 'images.out')), None
 
     def convert(self, output):
         """

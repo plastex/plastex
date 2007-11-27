@@ -40,4 +40,10 @@ class GSPDFPNG(plasTeX.Imagers.Imager):
             return 255
         return pixel
 
+    def formatConfigOptions(self, config):
+        options = []
+        if config['resolution']:
+            options.append(('-r%s' % config['resolution'], '')) 
+        return options
+
 Imager = GSPDFPNG

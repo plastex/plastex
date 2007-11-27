@@ -14,4 +14,10 @@ class DVI2Bitmap(plasTeX.Imagers.Imager):
         self.source.write('\\special{dvi2bitmap default imageformat png}\n')
         self.source.write('\\special{dvi2bitmap default unit pixels}\n')
 
+    def formatConfigOptions(self, config):
+        options = []
+        if config['resolution']:
+            options.append(('--resolution=%s' % config['resolution'], '')) 
+        return options
+
 Imager = DVI2Bitmap
