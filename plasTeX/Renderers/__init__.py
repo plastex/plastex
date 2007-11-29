@@ -348,6 +348,23 @@ class Renderer(dict):
         # Filename generator
         self.newFilename = None
 
+    def cacheFilenames(self, node):
+        """ 
+        Generate filenames in order 
+
+        Since filenames are generated on demand, in order to make the
+        nodes have a filename that corresponds to its position in the document,
+        the filenames must be generated before rendering the document.
+
+        Required Arguments:
+        node -- the top-level node in the document
+
+        """
+        # Using the side-effect of the filename property
+        node.filename  
+        for child in node.childNodes:
+            self.cacheFilenames(child)
+
     def render(self, document, postProcess=None):
         """
         Invoke the rendering process
@@ -377,7 +394,8 @@ class Renderer(dict):
                                      (config['files']['bad-chars'],
                                       config['files']['bad-chars-sub']),
                                      {'jobname':document.userdata.get('jobname', '')}, self.fileExtension)
-                      
+
+        self.cacheFilenames(document)
 
         # Instantiate appropriate imager
         names = [x for x in config['images']['imager'].split() if x]
