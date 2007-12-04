@@ -97,6 +97,10 @@ class Array(Environment):
             return [self, self.ownerDocument.createElement('ArrayRow'), 
                           self.ownerDocument.createElement('ArrayCell')]
 
+    class cr(EndRow):
+        macroName = None
+        args = ''
+
     class tabularnewline(EndRow):
         macroName = None
         args = ''
