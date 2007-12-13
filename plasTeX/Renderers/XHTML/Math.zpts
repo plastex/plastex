@@ -35,7 +35,8 @@ type: xml
     <td tal:condition="not:self/ownerDocument/context/packages/documentclass/fleqn" style="width:40%"></td>
     <metal:block tal:repeat="cell row">
     <metal:block tal:define="alignment 
-           python:test(path('repeat/cell/start'), 'right', 
+           python:test(cell.style.get('text-align'), cell.style.get('text-align'),
+                       path('repeat/cell/start'), 'right', 
                        path('repeat/cell/end'), 'left', 'center')">
         <td tal:attributes="style string:vertical-align:middle;; 
                                   text-align:${alignment}; colspan cell/attributes/colspan"><object 

@@ -104,6 +104,7 @@ class EqnarrayStar(Array):
                 obj = obj.parentNode
             if obj is not None:
                 obj.attributes['colspan'] = 3
+                obj.style['text-align'] = 'left'
             return res
 
     class ArrayCell(Array.ArrayCell):
