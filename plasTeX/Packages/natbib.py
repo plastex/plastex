@@ -274,7 +274,7 @@ class NatBibCite(Base.cite):
         if a.get('text2') is not None and a.get('text') is not None:
             if not a.get('text').textContent.strip():
                 return ''
-            out = self.ownerDocument.createDocumentFragment()
+            out = self.ownerDocument.createElement('bgroup')
             out.extend(a['text'])
             out.append(' ')
             return out
@@ -287,14 +287,14 @@ class NatBibCite(Base.cite):
         if a.get('text2') is not None and a.get('text') is not None:
             if not a.get('text2').textContent.strip():
                 return ''
-            out = self.ownerDocument.createDocumentFragment()
+            out = self.ownerDocument.createElement('bgroup')
             out.append(bibpunct.punctuation['post'])
             out.extend(a['text2'])
             return out
         elif a.get('text') is not None:
             if not a.get('text').textContent.strip():
                 return ''
-            out = self.ownerDocument.createDocumentFragment()
+            out = self.ownerDocument.createElement('bgroup')
             out.append(bibpunct.punctuation['post'])
             out.extend(a['text'])
             return out

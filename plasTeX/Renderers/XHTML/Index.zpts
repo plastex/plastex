@@ -40,7 +40,7 @@ name: theindex printindex
 </div>
 
 name: index
-<span tal:attributes="name self/id; id self/id"></span>
+<a tal:attributes="name self/id; id self/id"></a>
 
 name: see seealso
 <span tal:replace="self/captionName"></span> <span tal:replace="self"></span>
