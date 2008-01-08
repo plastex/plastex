@@ -124,22 +124,17 @@ type: xml
        <param name="Name" tal:attributes="value item/key/textContent" />
        <metal:block tal:repeat="page item/pages">
           <param name="Name" tal:attributes="value page/currentSection/title/textContent" />
-          <param name="Local" tal:attributes="value page/url" />
+          <param tal:condition="page/normal" name="Local" tal:attributes="value page/url" />
+          <param tal:condition="not:page/normal" name="See Also" tal:attributes="value page/textContent" />
        </metal:block>
    </object></li>
    <ul tal:condition="item">
       <li tal:repeat="subitem item"><object type="text/sitemap">
-          <metal:block tal:condition="python:path('subitem/see') or path('subitem/seealso')">
-             <param tal:condition="subitem/seealso" name="Name" tal:attributes="value string:${subitem/seealso/captionName} ${subitem/key/textContent}" />
-             <param tal:condition="subitem/see" name="Name" tal:attributes="value string:${subitem/see/captionName} ${subitem/key/textContent}" />
-             <param name="See Also" tal:attributes="value subitem/see/textContent | subitem/seealso/textContent" />
-          </metal:block>
-          <metal:block tal:condition="python:not path('subitem/see') and  not path('subitem/seealso')">
-             <param name="Name" tal:attributes="value subitem/key/textContent" />
-             <metal:block tal:repeat="subpage subitem/pages">
-             <param name="Name" tal:attributes="value subpage/currentSection/title/textContent" />
-             <param name="Local" tal:attributes="value subpage/url" />
-             </metal:block>
+          <param name="Name" tal:attributes="value subitem/key/textContent" />
+          <metal:block tal:repeat="subpage subitem/pages">
+          <param name="Name" tal:attributes="value subpage/currentSection/title/textContent" />
+          <param tal:condition="subpage/normal" name="Local" tal:attributes="value subpage/url" />
+          <param tal:condition="not:subpage/normal" name="See Also" tal:attributes="value subpage/textContent" />
           </metal:block>
       </object></li>
    </ul>

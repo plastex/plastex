@@ -23,7 +23,7 @@ def stringtemplate(s, encoding='utf8'):
     def renderstring(obj):
         tvars = {'here':obj, 'self':obj, 'container':obj.parentNode,
                  'config':obj.ownerDocument.config, 'template':template,
-                 'templates':obj.renderer}
+                 'templates':obj.renderer, 'context':obj.ownerDocument.context}
         return unicode(template.substitute(tvars))
     return renderstring
 
@@ -33,7 +33,7 @@ def pythontemplate(s, encoding='utf8'):
     def renderpython(obj):
         tvars = {'here':obj, 'self':obj, 'container':obj.parentNode,
                  'config':obj.ownerDocument.config, 'template':template,
-                 'templates':obj.renderer}
+                 'templates':obj.renderer, 'context':obj.ownerDocument.context}
         return unicode(template, encoding) % tvars
     return renderpython
 
@@ -46,6 +46,7 @@ def htmltemplate(s, encoding='utf8'):
         context.addGlobal('self', obj)
         context.addGlobal('container', obj.parentNode)
         context.addGlobal('config', obj.ownerDocument.config)
+        context.addGlobal('context', obj.ownerDocument.context)
         context.addGlobal('template', template)
         context.addGlobal('templates', obj.renderer)
         output = StringIO()
@@ -61,6 +62,7 @@ def xmltemplate(s, encoding='utf8'):
         context.addGlobal('self', obj)
         context.addGlobal('container', obj.parentNode)
         context.addGlobal('config', obj.ownerDocument.config)
+        context.addGlobal('context', obj.ownerDocument.context)
         context.addGlobal('template', template)
         context.addGlobal('templates', obj.renderer)
         output = StringIO()
@@ -80,6 +82,7 @@ try:
         def rendercheetah(obj, s=s):
             tvars = {'here':obj, 'container':obj.parentNode,
                      'config':obj.ownerDocument.config,
+                     'context':obj.ownerDocument.context,
                      'templates':obj.renderer}
             return unicode(CheetahTemplate(source=s, 
                            searchList=[tvars], filter=CheetahUnicode).respond(), encoding)
@@ -103,6 +106,7 @@ try:
         def renderkid(obj, s=s):
             tvars = {'here':obj, 'container':obj.parentNode, 
                      'config':obj.ownerDocument.config,
+                     'context':obj.ownerDocument.context,
                      'templates':obj.renderer}
             return unicode(KidTemplate(source=s, 
                    **tvars).serialize(encoding=encoding, fragment=1), encoding)
@@ -132,6 +136,7 @@ try:
         def rendergenshixml(obj):
             tvars = {'here':obj, 'container':obj.parentNode, 'markup':markup,
                      'config':obj.ownerDocument.config, 'template':template,
+                     'context':obj.ownerDocument.context,
                      'templates':obj.renderer}
             return unicode(template.generate(**tvars).render(method='xml', 
                            encoding=encoding), encoding)
@@ -144,6 +149,7 @@ try:
         def rendergenshihtml(obj):
             tvars = {'here':obj, 'container':obj.parentNode, 'markup':markup,
                      'config':obj.ownerDocument.config, 'template':template,
+                     'context':obj.ownerDocument.context,
                      'templates':obj.renderer}
             return unicode(template.generate(**tvars).render(method='html', 
                            encoding=encoding), encoding)
@@ -154,6 +160,7 @@ try:
         def rendergenshitext(obj):
             tvars = {'here':obj, 'container':obj.parentNode, 'markup':markup,
                      'config':obj.ownerDocument.config, 'template':template,
+                     'context':obj.ownerDocument.context,
                      'templates':obj.renderer}
             return unicode(template.generate(**tvars).render(method='text', 
                            encoding=encoding), encoding)

@@ -6,7 +6,7 @@ C.11.5 Index and Glossary (p211)
 """
 
 import string, os
-from plasTeX.Tokenizer import Token
+from plasTeX.Tokenizer import Token, EscapeSequence
 from plasTeX import Command, Environment
 from plasTeX.Logging import getLogger
 from Sectioning import SectionUtils
@@ -22,8 +22,6 @@ class IndexUtils(object):
 
     linkType = 'index'
     level = Command.CHAPTER_LEVEL
-    seeNames = ['see']
-    seealsoNames = ['seealso']
 
     class Index(Command):
         """
@@ -36,24 +34,6 @@ class IndexUtils(object):
             self.pages = []
             self.key = []
             self.sortkey = ''
-
-        @property
-        def see(self):
-            if not hasattr(self.key, 'getElementsByTagName'):
-                return
-            elem = self.key.getElementsByTagName(IndexUtils.seeNames)
-            if not elem:
-                return
-            return elem[0]
-
-        @property
-        def seealso(self):
-            if not hasattr(self.key, 'getElementsByTagName'):
-                return
-            elem = self.key.getElementsByTagName(IndexUtils.seealsoNames)
-            if not elem:
-                return
-            return elem[0]
 
         @property
         def totallen(self):
@@ -216,16 +196,42 @@ class IndexUtils(object):
                 i += 1
 
             # Add the current page and format it
-            current.pages.append(item.node)
+            current.pages.append(IndexDestination(item.type, item.node))
             if item.format is not None:
-                node = doc.createElement(item.format)
                 text = doc.createTextNode(str(len(current.pages)))
-                node.append(text)
-                item.node.append(node)
+                ipn = item.format.getElementsByTagName('index-page-number')
+                if ipn:
+                    ipn = ipn[0]
+                    ipn.parentNode.replaceChild(text, ipn)
+                item.node.append(item.format)
             else:
                 text = doc.createTextNode(str(len(current.pages)))
                 item.node.append(text)
             prev = item
+
+class IndexDestination(object):
+    def __init__(self, type, node):
+        self._cr_type = type
+        self._cr_node = node
+
+    @property
+    def see(self):
+        return self._cr_type == IndexEntry.TYPE_SEE
+
+    @property
+    def seealso(self):
+        return self._cr_type == IndexEntry.TYPE_SEEALSO
+
+    @property
+    def normal(self):
+        return not(self.see) and not(self.seealso)
+
+    def __getattribute__(self, name):
+        if name.startswith('_cr_') or name in ['see', 'seealso', 'normal']:
+            return object.__getattribute__(self, name)
+        if self._cr_type and name in ['url']:
+            return None
+        return getattr(self._cr_node, name)
 
 class theindex(IndexUtils, Environment, SectionUtils):
     blockType = True
@@ -301,16 +307,28 @@ class index(Command):
             key[i] = tex.expandTokens(item) 
 
         # Get the format element
-        if format:
-            format = u''.join(format)
-        else:
+        type = IndexEntry.TYPE_NORMAL
+        if not format:
             format = None
+        else:
+            macro = []
+            while format and format[0].catcode == Token.CC_LETTER:
+                macro.append(format.pop(0))
+            if macro:
+                macro = ''.join(macro)
+                format.insert(0, EscapeSequence(macro))
+                if macro == 'see':
+                    type = IndexEntry.TYPE_SEE 
+                elif macro == 'seealso':
+                    type = IndexEntry.TYPE_SEEALSO
+            format.append(EscapeSequence('index-page-number'))
+            format = tex.expandTokens(format)
 
         # Store the index information in the document
         userdata = self.ownerDocument.userdata
         if 'index' not in userdata:
             userdata['index'] = []
-        userdata['index'].append(IndexEntry(key, self, sortkey, format))
+        userdata['index'].append(IndexEntry(key, self, sortkey, format, type))
 
         return result
 
@@ -322,7 +340,11 @@ class IndexEntry(object):
 
     """
 
-    def __init__(self, key, node, sortkey=None, format=None):
+    TYPE_NORMAL = 0
+    TYPE_SEE = 1
+    TYPE_SEEALSO = 2
+
+    def __init__(self, key, node, sortkey=None, format=None, type=0):
         """
         Required Arguments:
         key -- a list of keys for the index entry
@@ -330,8 +352,10 @@ class IndexEntry(object):
             associated with
         sortkey -- a list of sort keys, one per key, to be used for
             sorting instead of the key values
-        format -- a macro name that should be used to format the 
+        format -- formatting that should be used to format the 
             destination of the index entry
+        type -- the type of entry that this is: TYPE_NORMAL, TYPE_SEE,
+            or TYPE_SEEALSO
 
         """
         self.key = key
@@ -346,6 +370,19 @@ class IndexEntry(object):
                     self.sortkey.append(sk)
         self.format = format
         self.node = node
+        self.type = type
+
+    @property
+    def see(self):
+        return self.type == type(self).TYPE_SEE
+
+    @property
+    def seealso(self):
+        return self.type == type(self).TYPE_SEEALSO
+
+    @property
+    def normal(self):
+        return not(self.see) and not(self.seealso)
 
     def __cmp__(self, other):
         result = cmp(zip([collator(x) for x in self.sortkey if isinstance(x, basestring)], 
@@ -359,9 +396,16 @@ class IndexEntry(object):
         return result
 
     def __repr__(self):
-        return ' '.join(['@'.join(self.sortkey), 
-                         '!'.join([x.source for x in self.key]), 
-                         str(self.format)])
+        if self.format is None:
+            return ' '.join(['@'.join(self.sortkey), 
+                             '!'.join([x.source for x in self.key])])
+        else:
+            return ' '.join(['@'.join(self.sortkey), 
+                             '!'.join([x.source for x in self.key]), 
+                             ' '.join([x.source for x in self.format])])
 
     def __str__(self):
         return repr(self)
+
+class IndexPageNumber(Command):
+    macroName = 'index-page-number'
