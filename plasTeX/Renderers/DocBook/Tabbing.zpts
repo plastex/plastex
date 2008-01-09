@@ -1,0 +1,19 @@
+name: tabbing
+<span tal:omit-tag="">
+  <mediaobject tal:condition="self/renderer/vectorImager/enabled">
+    <imageobject>
+      <imagedata format="SVG" tal:attributes="fileref self/vectorImage/url" />
+    </imageobject>
+    <textobject>
+      <phrase tal:content="self/source"></phrase>
+    </textobject>
+  </mediaobject>
+  <mediaobject tal:condition="not:self/renderer/vectorImager/enabled">
+    <imageobject>
+      <imagedata tal:attributes="fileref self/image/url" />
+    </imageobject>
+    <textobject>
+      <phrase tal:content="self/source"></phrase>
+    </textobject>
+  </mediaobject>
+</span>

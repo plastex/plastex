@@ -1,0 +1,51 @@
+name: $
+$ 
+
+name: %
+%
+
+name: {
+{
+
+name: }
+}
+
+name: _
+_
+
+name: &
+&amp;
+
+name: #
+#
+
+name:
+&#160;
+
+name: LaTeX
+<application class="software">L<superscript>a</superscript>T<subscript>e</subscript>X</application>
+
+name: TeX
+<application class="software">T<subscript>e</subscript>X</application>
+
+name: emph em
+<emphasis tal:content="self"></emphasis>
+
+name: active::~
+&#160;
+
+name: enspace enskip
+&#8194;
+
+name: quad
+&#8195;
+
+name: qquad
+&#8195;&#8195;
+
+name: thinspace /
+&#8201;
+
+name: underbar
+<phrase remap="underbar">_</phrase>
+

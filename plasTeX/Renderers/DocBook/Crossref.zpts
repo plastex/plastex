@@ -1,0 +1,16 @@
+name: ref
+type:xml
+<link 
+   tal:attributes="linkend self/idref/label/url" 
+   tal:content="self/idref/label/ref"></link>
+
+name: pageref
+type:xml
+<link 
+   tal:attributes="linkend self/idref/label/url" 
+   tal:content="self/idref/label/ref">*</link>
+
+name: label
+type:xml
+<anchor tal:attributes="id self/id"/>
+

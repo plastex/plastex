@@ -1,0 +1,33 @@
+name: itemize
+<itemizedlist>
+  <listitem tal:repeat="item self">
+    <para  tal:content="item"></para>
+  </listitem>
+</itemizedlist>
+
+name: enumerate
+<orderedlist>
+  <listitem tal:repeat="item self">
+    <para  tal:content="item"></para>
+  </listitem>
+</orderedlist>
+
+name: description
+<variablelist>
+  <varlistentry tal:repeat="item self">
+    <term>tal:content="item/attributes/term"></term>
+    <listitem tal:repeat="item self">
+      <para  tal:content="item"></para>
+    </listitem>
+  </varlistentry>
+</variablelist>
+
+name: list trivlist
+type:xml
+<simplelist type="inline">
+  <metal:block tal:repeat="item self">
+    <member 
+    tal:content="string:${item/attributes/term} |${self/attributes/defaultlabel} ${item}"></member>
+  </metal:block>
+</simplelist>
+

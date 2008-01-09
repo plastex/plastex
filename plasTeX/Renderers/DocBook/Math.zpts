@@ -1,0 +1,75 @@
+name: math ensuremath
+<span tal:omit-tag="">
+  <mediaobject remap="math" tal:condition="self/renderer/vectorImager/enabled">
+    <imageobject>
+      <imagedata format="SVG" tal:attributes="fileref self/vectorImage/url" />
+    </imageobject>
+    <textobject>
+      <phrase tal:content="self/source"></phrase>
+    </textobject>
+  </mediaobject>
+  <mediaobject tal:condition="not:self/renderer/vectorImager/enabled">
+    <imageobject>
+      <imagedata tal:attributes="fileref self/image/url" />
+    </imageobject>
+    <textobject>
+      <phrase tal:content="self/source"></phrase>
+    </textobject>
+  </mediaobject>
+</span>
+
+name: displaymath equation
+<informaltable remap="equation" tal:attributes="id self/id">
+<tr>
+<td>
+<span tal:omit-tag="">
+  <mediaobject remap="math" tal:condition="self/renderer/vectorImager/enabled">
+    <imageobject>
+      <imagedata format="SVG" tal:attributes="fileref self/vectorImage/url" />
+    </imageobject>
+    <textobject>
+      <phrase tal:content="self/source"></phrase>
+    </textobject>
+  </mediaobject>
+  <mediaobject tal:condition="not:self/renderer/vectorImager/enabled">
+    <imageobject>
+      <imagedata tal:attributes="fileref self/image/url" />
+    </imageobject>
+    <textobject>
+      <phrase tal:content="self/source"></phrase>
+    </textobject>
+  </mediaobject>
+</span>
+</td>
+<td class="eqnnum" style="width:20%" tal:condition="self/ref" tal:content="self/ref"></td>
+</tr>
+</informaltable>
+
+name: eqnarray eqnarray* align align* gather gather* falign falign* \
+      multiline multiline* alignat alignat* split
+type: xml
+<informaltable remap="eqnarray" tal:attributes="id self/id">
+<tr tal:repeat="row self" tal:attributes="id row/id">
+    <metal:block tal:repeat="cell row">
+    <td>
+  <mediaobject remap="math" tal:condition="self/renderer/vectorImager/enabled">
+    <imageobject>
+      <imagedata format="SVG" tal:attributes="fileref self/vectorImage/url" />
+    </imageobject>
+    <textobject>
+      <phrase tal:content="self/source"></phrase>
+    </textobject>
+  </mediaobject>
+  <mediaobject tal:condition="not:self/renderer/vectorImager/enabled">
+    <imageobject>
+      <imagedata tal:attributes="fileref self/image/url" />
+    </imageobject>
+    <textobject>
+      <phrase tal:content="self/source"></phrase>
+    </textobject>
+  </mediaobject>
+</td>
+    </metal:block>
+    <td class="eqnnum" style="width:20%" tal:condition="row/ref" tal:content="row/ref"></td>
+</tr>
+</informaltable>

@@ -1,0 +1,42 @@
+name: tabular array tabular* longtable longtable* tabularx
+type: xml
+<metal:block>
+   <metal:block tal:condition="self/title">
+     <table tal:attributes="id self/title/id" reMap="tabular">
+     <title tal:content="string:${self/title/captionName} ${self/title/ref}  ${self/title}"></title>
+     <tr tal:repeat="row self">
+     <metal:block tal:repeat="cell row">
+       <th tal:condition="cell/isHeader"
+           tal:attributes="colspan cell/attributes/colspan"
+           tal:content="cell">
+       </th>
+       <td tal:condition="not:cell/isHeader"
+           tal:attributes="colspan cell/attributes/colspan"
+           tal:content="cell">
+       </td>
+     </metal:block>
+     </tr>
+     </table>
+   </metal:block>
+   <metal:block tal:condition="not:self/title">
+     <informaltable reMap="tabular">
+     <tr tal:repeat="row self">
+     <metal:block tal:repeat="cell row">
+       <th tal:condition="cell/isHeader"
+           tal:attributes="colspan cell/attributes/colspan"
+           tal:content="cell">
+       </th>
+       <td tal:condition="not:cell/isHeader"
+           tal:attributes="colspan cell/attributes/colspan"
+           tal:content="cell">
+       </td>
+     </metal:block>
+     </tr>
+     </informaltable>
+   </metal:block>
+</metal:block>
+
+name: multicolumn
+<span tal:replace="self"></span>
+
+name: cline toprule bottomrule midrule cmidrule morecmidrules addlinespace specialrule

@@ -1,0 +1,8 @@
+name: par 
+<para tal:content="self" tal:omit-tag="self/blockType"></para>
+
+name: active::^ 
+<superscript tal:content="self"></superscript>
+
+name: active::_
+<subscript tal:content="self"></subscript>

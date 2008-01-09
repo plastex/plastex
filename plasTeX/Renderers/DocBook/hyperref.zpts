@@ -1,0 +1,47 @@
+name: href
+type:xml
+<link tal:attributes="linkend self/attributes/url" tal:content="self"></link>
+
+name: url
+<ulink tal:attributes="url self"></ulink>
+
+name: nolinkurl
+<span tal:replace="self/attributes/url">url</span>
+
+name: hyperbaseurl
+
+name: hyperimage
+<imageobject>
+  <imagedata tal:attributes="fileref self/attributes/url" />
+</imageobject>
+
+name: hyperdef
+<anchor tal:attributes="id string:${self/attributes/category}.${self/attributes/name}" />
+
+name: hyperref
+type:xml
+<link tal:attributes="linkend string:${self/attributes/url}#${self/attributes/category}.${self/attributes/name}" tal:content="self">link text</link>
+
+name: hyperlink
+type:xml
+<link tal:attributes="linkend string:${self/idref/label/url}" tal:content="self"></link>
+
+name: hypertarget
+<anchor tal:attributes="name self/id" />
+
+name: phantomsection
+<anchor tal:attributes="name self/id" />
+
+name: autoref
+type:xml
+<link tal:attributes="linkend self/idref/label/url" tal:content="string:${self/idref/label/captionName} ${self/idref/label/ref}"></link>
+
+name: ref*
+<phrase tal:content="self/idref/label/ref">#.#.#</phrase>
+
+name: pageref*
+*
+
+name: Form TextField CheckBox ChoiceMenu PushButton Submit Reset
+
+

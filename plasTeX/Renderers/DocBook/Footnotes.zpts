@@ -1,0 +1,4 @@
+name: footnote
+<footnote tal:content="self"></footnote>
+
+name: footnotemark footnotetext

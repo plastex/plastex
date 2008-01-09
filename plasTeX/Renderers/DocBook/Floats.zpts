@@ -1,0 +1,20 @@
+name: caption
+
+name: figure figure*
+<span tal:omit-tag="">
+  <informalfigure tal:condition="not:self/title"  tal:content="self"></informalfigure>
+  <figure tal:condition="self/title" 
+          tal:attributes="label self/title/id" 
+          tal:content="self">
+    <title tal:content="string:${self/captionName} ${self/ref} ${self/title}"></title>
+  </figure>
+</span>
+
+name: table table*
+alias:tabular
+
+name: marginpar
+<para remap="marginpar" tal:content="self/attributes/right"></para>
+
+
+

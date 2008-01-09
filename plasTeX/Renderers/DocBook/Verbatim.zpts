@@ -1,0 +1,5 @@
+name: verbatim
+<literallayout class="mono" tal:content="self"></literallayout>
+
+name: verb
+<phrase remap="verb" tal:content="self"></phrase>

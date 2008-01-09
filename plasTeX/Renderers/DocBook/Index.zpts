@@ -1,0 +1,11 @@
+name: index
+<indexterm>
+  <primary tal:attributes="sortas self/prisort" 
+           tal:content="self/primary/textNode"></primary>
+  <secondary tal:condition="self/secondary"
+             tal:attributes="sortas self/secsort" 
+             tal:content="self/secondary/textNode"></secondary>
+</indexterm>
+
+name: see seealso
+<span tal:replace="self/captionName"></span> <span tal:replace="self"></span>

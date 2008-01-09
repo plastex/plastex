@@ -1,0 +1,63 @@
+name:part
+<part tal:attributes="id self/id">
+  <title tal:condition="self/title" tal:content="self/title"></title>
+  <div tal:replace="self"></div>
+</part>
+
+name:chapter
+<chapter tal:attributes="id self/id">
+  <title  tal:content="self/title"></title>
+  <div tal:replace="self"></div>
+</chapter>
+
+name:section
+<sect1 remap="section" tal:attributes="id self/id">
+  <title tal:content="self/title"></title>
+    <div tal:replace="self"></div>
+</sect1>
+
+name:subsection
+<sect2 remap="subsection" tal:attributes="id self/id">
+  <title tal:content="self/title"></title>
+    <div tal:replace="self"></div>
+</sect2>
+
+name:subsubsection
+<sect3 remap="subsubsection" tal:attributes="id self/id">
+  <title tal:content="self/title"></title>
+    <div tal:replace="self"></div>
+</sect3>
+
+name:paragraph
+<sect4 remap="paragraph" tal:attributes="id self/id">
+  <title tal:content="self/title"></title>
+    <div tal:replace="self"></div>
+</sect4>
+
+name:subparagraph
+<sect5 remap="subparagraph" tal:attributes="id self/id">
+  <title tal:content="self/title"></title>
+    <div tal:replace="self"></div>
+</sect5>
+
+name: abstract
+<abstract tal:content="self"></abstract>
+
+name: title author date thanks
+
+name: maketitle
+type:xml
+<span tal:omit-tag="" tal:define="metadata self/ownerDocument/userdata">
+<articleinfo>
+  <title tal:content="metadata/title"></title>
+  <authorgroup>
+    <author tal:repeat="auth metadata/author" tal:content="metadata/author"></author>
+  </authorgroup>
+  <date tal:condition="metadata/date" tal:content="metadata/date"></date>
+  <othercredit tal:condition="metadata/thanks" tal:content="metadata/thanks"></othercredit>
+</articleinfo>
+</span>
+
+name: document
+<para tal:replace="self"></para>
+

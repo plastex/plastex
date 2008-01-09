@@ -1,0 +1,33 @@
+name: bfseries textbf
+<emphasis role="bold" tal:content="self"></emphasis>
+
+name: itshape textit
+<emphasis tal:content="self"></emphasis>
+
+name: mdseries textmd
+
+name: rmfamily textrm
+
+name: sffamily textsf
+
+name: ttfamily texttt
+
+name: upshape textup
+
+name: slshape textsl
+
+name: scshape textsc
+
+name: tiny scriptsize footnotesize small
+
+name: normalsize
+
+name: large Large LARGE huge Huge
+
+name: symbol
+<mediaobject remap="symbol" tal:omit-tag="not:self/renderer/vectorImager/enabled" 
+  format="SVG" tal:attributes="fileref self/vectorImage/url">
+  <imageobject>
+    <imagedata tal:attributes="fileref self/image/url"  />
+  </imageobject>
+</mediaobject>

@@ -1,0 +1,7 @@
+name: color textcolor
+<phrase remap="color" tal:content="self"></phrase>
+
+name: colorbox fcolorbox
+<para remap="colorbox" tal:content="self"></para>
+
+name: pagecolor definecolor

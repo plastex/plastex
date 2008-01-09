@@ -1,0 +1,32 @@
+name: bibliographystyle
+
+name: thebibliography
+type: xml
+<bibliomixed tal:repeat="item self">
+    <abbrev tal:content="item/bibcite"></abbrev>
+   <bibliomisc tal:content="item"></bibliomisc>
+</bibliomixed>
+
+
+
+name: bibliography
+type: xml
+<bibliography>
+  <title  tal:content="document/languageNames/Bibliographyname"></title>
+  <div tal:replace="self"></div>
+</bibliography>
+
+name: cite
+type: xml
+<citation tal:repeat="item self/citation">
+  <link tal:condition="item/idref/bibitem/url" 
+        tal:attributes="linkend item/idref/bibitem/url" 
+        tal:content="item">
+  </link>
+  <span tal:omit-tag="item/idref/bibitem/url" 
+        tal:replace="item"></span>
+</citation>
+
+name: bibliographyref
+type:xml
+<link tal:attributes="linkend self/idref/bibitem/url" tal:content="self"></link>
