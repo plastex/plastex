@@ -172,11 +172,22 @@ files['split-level'] = IntegerOption(
     category = 'files',
 )
 
+def setFilename(data):
+    """ If there is only one filename specified, turn off splitting """
+    data = data.strip()
+    if ' ' in data:
+        return data
+    if '[' in data:
+        return data
+    files['split-level'] = -10
+    return data
+
 files['filename'] = StringOption(
     """ Template for output filenames """,
     options = '--filename',
     default = 'index [$id, sect$num(4)]',
     category = 'files',
+    callback = setFilename,
 )
 
 files['bad-chars'] = StringOption(
