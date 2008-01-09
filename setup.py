@@ -45,6 +45,7 @@ setup(name="plasTeX",
       package_data = {
          'plasTeX': ['*.xml'],
          'plasTeX.Base.LaTeX': ['*.xml','*.txt'],
+         'plasTeX.Renderers.DocBook': templates,
          'plasTeX.Renderers.XHTML': templates,
          'plasTeX.Renderers.XHTML.Themes.default': templates,
          'plasTeX.Renderers.XHTML.Themes.default.icons': images,
