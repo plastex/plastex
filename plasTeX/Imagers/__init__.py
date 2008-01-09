@@ -495,7 +495,7 @@ class Imager(object):
     def writePreamble(self, document):
         """ Write any necessary code to the preamble of the document """
         self.source.write(document.preamble.source)
-        self.source.write('\\makeatletter\n')
+        self.source.write('\\makeatletter\\oddsidemargin -0.25in\\evensidemargin -0.25in\n')
 
 #       self.source.write('\\tracingoutput=1\n')
 #       self.source.write('\\tracingonline=1\n')
@@ -509,7 +509,7 @@ class Imager(object):
                           '\\thispagestyle{empty}\\def\\@eqnnum{}' +
                           '\\ignorespaces}{}}{}\n')
         self.source.write('\\@ifundefined{plasTeXregister}{' +
-                          '\\def\\plasTeXregister{\\parindent=0pt\\ifhmode\\hrule' +
+                          '\\def\\plasTeXregister{\\parindent=-0.5in\\ifhmode\\hrule' +
                           '\\else\\vrule\\fi height 2pt depth 0pt ' +
                           'width 2pt\\hskip2pt}}{}\n')
 
