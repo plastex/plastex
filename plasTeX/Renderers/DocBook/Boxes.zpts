@@ -2,13 +2,13 @@ name: mbox makebox
 <phrase remap="mbox" tal:content="self"></phrase>
 
 name: fbox framebox
-<para remap="fbox" tal:content="self"></para>
+<phrase remap="fbox" tal:content="self"></phrase>
 
 name: parbox
-<para remap="parbox" tal:content="self"></para>
+<span tal:replace="self"></span>
 
 name: minipage
-<para remap="minipage" tal:content="self"></para>
+<span tal:replace="self"></span>
 
 name: raisebox rule
 <span tal:omit-tag="">

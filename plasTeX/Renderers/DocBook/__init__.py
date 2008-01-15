@@ -14,6 +14,13 @@ class DocBook(_Renderer):
 
     def processFileContent(self, document, s):
         s = _Renderer.processFileContent(self, document, s)
+        s = re.compile(r'</partintro>\s*<partintro>',re.I).sub(r'',s)
+        s = re.compile(r'(<informalfigure>)\s*<para>',re.I).sub(r'\1',s)
+        s = re.compile(r'</para>\s*(</informalfigure>)',re.I).sub(r'\1',s)
+        s = re.compile(r'(<para>)\s*<para>',re.I).sub(r'\1',s)
+        s = re.compile(r'</para>\s*(</para>)',re.I).sub(r'\1',s)
+        s = s.replace('&','&amp;')
+        return s
 
         # Remove empty paragraphs
         s = re.compile(r'<para>\s*</para>', re.I).sub(r'', s)

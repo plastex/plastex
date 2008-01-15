@@ -1,4 +1,4 @@
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
-          "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
-<book tal:content="self">
+<book>
+ <div tal:replace="self"></div>
 </book>
+

@@ -1,24 +1,23 @@
 name: itemize
+type:xml
 <itemizedlist>
-  <listitem tal:repeat="item self">
-    <para  tal:content="item"></para>
-  </listitem>
+  <metal:block tal:repeat="item self">
+    <listitem tal:content="item"></listitem>
+  </metal:block>
 </itemizedlist>
 
 name: enumerate
 <orderedlist>
-  <listitem tal:repeat="item self">
-    <para  tal:content="item"></para>
-  </listitem>
+  <metal:block tal:repeat="item self">
+  <listitem tal:content="item"></listitem>
+  </metal:block>
 </orderedlist>
 
 name: description
 <variablelist>
   <varlistentry tal:repeat="item self">
-    <term>tal:content="item/attributes/term"></term>
-    <listitem tal:repeat="item self">
-      <para  tal:content="item"></para>
-    </listitem>
+    <term tal:content="item/attributes/term"></term>
+      <listitem tal:content="item"></listitem>
   </varlistentry>
 </variablelist>
 

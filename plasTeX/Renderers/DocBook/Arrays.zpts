@@ -1,9 +1,9 @@
-name: tabular array tabular* longtable longtable* tabularx
+name: tabular array tabular* table table* tabularx
 type: xml
 <metal:block>
    <metal:block tal:condition="self/title">
-     <table tal:attributes="id self/title/id" reMap="tabular">
-     <title tal:content="string:${self/title/captionName} ${self/title/ref}  ${self/title}"></title>
+     <table tal:attributes="id self/title/id" remap="tabular">
+     <caption tal:content="self/title"></caption>
      <tr tal:repeat="row self">
      <metal:block tal:repeat="cell row">
        <th tal:condition="cell/isHeader"
@@ -19,7 +19,7 @@ type: xml
      </table>
    </metal:block>
    <metal:block tal:condition="not:self/title">
-     <informaltable reMap="tabular">
+     <informaltable remap="tabular">
      <tr tal:repeat="row self">
      <metal:block tal:repeat="cell row">
        <th tal:condition="cell/isHeader"

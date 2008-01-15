@@ -1,8 +1,11 @@
 name: center centering centerline
+<span tal:replace="self"></span>
 
 name: flushleft raggedright leftline
+<span tal:replace="self"></span>
 
 name: raggedleft flushright llap
+<span tal:replace="self"></span>
 
 name: raggedbottom
 

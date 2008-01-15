@@ -1,22 +1,22 @@
 name: math ensuremath
-<span tal:omit-tag="">
-  <mediaobject remap="math" tal:condition="self/renderer/vectorImager/enabled">
+<inlineequation>
+  <inlinemediaobject remap="math" tal:condition="self/renderer/vectorImager/enabled">
     <imageobject>
       <imagedata format="SVG" tal:attributes="fileref self/vectorImage/url" />
     </imageobject>
     <textobject>
       <phrase tal:content="self/source"></phrase>
     </textobject>
-  </mediaobject>
-  <mediaobject tal:condition="not:self/renderer/vectorImager/enabled">
+  </inlinemediaobject>
+  <inlinemediaobject tal:condition="not:self/renderer/vectorImager/enabled">
     <imageobject>
       <imagedata tal:attributes="fileref self/image/url" />
     </imageobject>
     <textobject>
       <phrase tal:content="self/source"></phrase>
     </textobject>
-  </mediaobject>
-</span>
+  </inlinemediaobject>
+</inlineequation>
 
 name: displaymath equation
 <informaltable remap="equation" tal:attributes="id self/id">

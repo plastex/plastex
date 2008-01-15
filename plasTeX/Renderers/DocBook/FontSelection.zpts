@@ -5,24 +5,16 @@ name: itshape textit
 <emphasis tal:content="self"></emphasis>
 
 name: mdseries textmd
+<span tal:replace="self"></span>
 
-name: rmfamily textrm
+name: rmfamily textrm sffamily textsf ttfamily texttt
+<span tal:replace="self"></span>
 
-name: sffamily textsf
+name: upshape textup slshape textsl scshape textsc
+<span tal:replace="self"></span>
 
-name: ttfamily texttt
-
-name: upshape textup
-
-name: slshape textsl
-
-name: scshape textsc
-
-name: tiny scriptsize footnotesize small
-
-name: normalsize
-
-name: large Large LARGE huge Huge
+name: tiny scriptsize footnotesize small normalsize large Large LARGE huge Huge
+<span tal:replace="self"></span>
 
 name: symbol
 <mediaobject remap="symbol" tal:omit-tag="not:self/renderer/vectorImager/enabled" 

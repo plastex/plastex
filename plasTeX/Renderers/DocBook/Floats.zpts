@@ -6,15 +6,15 @@ name: figure figure*
   <figure tal:condition="self/title" 
           tal:attributes="label self/title/id" 
           tal:content="self">
-    <title tal:content="string:${self/captionName} ${self/ref} ${self/title}"></title>
+    <title tal:content="self/title"></title>
   </figure>
 </span>
 
 name: table table*
-alias:tabular
+<div tal:replace="self"></div>
 
 name: marginpar
-<para remap="marginpar" tal:content="self/attributes/right"></para>
+<phrase remap="marginpar" tal:content="self/attributes/right"></phrase>
 
 
 
