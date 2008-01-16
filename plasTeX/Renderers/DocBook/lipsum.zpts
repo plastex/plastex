@@ -1,0 +1,4 @@
+name:lipsum
+<para tal:replace="self/text"></para>
+
+

@@ -1,0 +1,4 @@
+<article>
+ <div tal:replace="self"></div>
+</article>
+

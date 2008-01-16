@@ -52,7 +52,9 @@ type:xml
 <articleinfo>
   <title tal:content="metadata/title"></title>
   <authorgroup>
-    <author tal:repeat="auth metadata/author" tal:content="metadata/author"></author>
+    <author tal:repeat="auth metadata/author">
+      <surname tal:content="auth"></surname>
+    </author>
   </authorgroup>
   <date tal:condition="metadata/date" tal:content="metadata/date"></date>
   <othercredit tal:condition="metadata/thanks" tal:content="metadata/thanks"></othercredit>

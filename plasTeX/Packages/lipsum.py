@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 import pickle
 from plasTeX import Base
-
 lipsumdefault = [1,7]
-
 class setlipsumdefault(Base.Command):
     args = 'pkey:str'
     global lipsumdefault
@@ -17,19 +15,19 @@ class setlipsumdefault(Base.Command):
             lipsumdefault = [newDefault,newDefault]
     
 class lipsum(Base.Command):
-    opts = '[pkey:str]'
+    args = '[pkey:str]'
     global lorem,lipsumdefault
 
     def invoke(self,tex):
         Base.Command.invoke(self,tex)
-        paras = self.attributes['opts']
+        paras = self.attributes['pkey']
         self.text = ''
         if not paras:
             first, last = lipsumdefault
         elif paras.count('-'):
-            first,last = map(int,self.attributes['pkey'].split('-'))
+            first,last = map(int,paras.split('-'))
         else:
-            first = last = int(self.attributes['pkey'])
+            first = last = int(paras)
 
         for i in range(first,last+1):
             self.text += lorem[i]
