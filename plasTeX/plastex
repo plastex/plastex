@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.4
+#!/usr/bin/env python
 
 import os, sys, codecs, string, glob
 import plasTeX
@@ -9,7 +9,7 @@ from plasTeX.Logging import getLogger
 
 log = getLogger()
 
-__version__ = '0.8'
+__version__ = '0.9'
 
 def main(argv):
     """ Main program routine """
@@ -78,8 +78,8 @@ def main(argv):
     #open(sourcefile,'w').write(document.source.encode('utf-8'))
     
     # Write XML dump
-    #outfile = '%s.xml' % jobname
-    #open(outfile,'w').write(document.toXML().encode('utf-8'))
+    outfile = '%s.xml' % jobname
+    open(outfile,'w').write(document.toXML().encode('utf-8'))
     
     # Apply renderer
     Renderer().render(document)
