@@ -2,17 +2,17 @@ name: math ensuremath
 <inlineequation>
   <inlinemediaobject remap="math" tal:condition="self/renderer/vectorImager/enabled">
     <imageobject>
-      <imagedata format="SVG" tal:attributes="fileref self/vectorImage/url" />
+      <imagedata role="math" format="SVG" tal:attributes="fileref self/vectorImage/url" />
     </imageobject>
-    <textobject>
+    <textobject role="tex">
       <phrase tal:content="self/source"></phrase>
     </textobject>
   </inlinemediaobject>
-  <inlinemediaobject tal:condition="not:self/renderer/vectorImager/enabled">
+  <inlinemediaobject remap="math" tal:condition="not:self/renderer/vectorImager/enabled">
     <imageobject>
-      <imagedata tal:attributes="fileref self/image/url" />
+      <imagedata role="math" tal:attributes="fileref self/image/url" />
     </imageobject>
-    <textobject>
+    <textobject role="tex">
       <phrase tal:content="self/source"></phrase>
     </textobject>
   </inlinemediaobject>
@@ -25,17 +25,17 @@ name: displaymath equation
 <span tal:omit-tag="">
   <mediaobject remap="math" tal:condition="self/renderer/vectorImager/enabled">
     <imageobject>
-      <imagedata format="SVG" tal:attributes="fileref self/vectorImage/url" />
+      <imagedata role="math" format="SVG" tal:attributes="fileref self/vectorImage/url" />
     </imageobject>
-    <textobject>
+    <textobject role="tex">
       <phrase tal:content="self/source"></phrase>
     </textobject>
   </mediaobject>
-  <mediaobject tal:condition="not:self/renderer/vectorImager/enabled">
+  <mediaobject remap="math" tal:condition="not:self/renderer/vectorImager/enabled">
     <imageobject>
-      <imagedata tal:attributes="fileref self/image/url" />
+      <imagedata role="math" tal:attributes="fileref self/image/url" />
     </imageobject>
-    <textobject>
+    <textobject role="tex">
       <phrase tal:content="self/source"></phrase>
     </textobject>
   </mediaobject>
@@ -54,17 +54,17 @@ type: xml
     <td>
   <mediaobject remap="math" tal:condition="self/renderer/vectorImager/enabled">
     <imageobject>
-      <imagedata format="SVG" tal:attributes="fileref cell/vectorImage/url" />
+      <imagedata role="math" format="SVG" tal:attributes="fileref cell/vectorImage/url" />
     </imageobject>
-    <textobject>
+    <textobject role="tex">
       <phrase tal:content="cell/source"></phrase>
     </textobject>
   </mediaobject>
-  <mediaobject tal:condition="not:self/renderer/vectorImager/enabled">
+  <mediaobject remap="math" tal:condition="not:self/renderer/vectorImager/enabled">
     <imageobject>
-      <imagedata tal:attributes="fileref cell/image/url" />
+      <imagedata role="math" tal:attributes="fileref cell/image/url" />
     </imageobject>
-    <textobject>
+    <textobject role="tex">
       <phrase tal:content="cell/source"></phrase>
     </textobject>
   </mediaobject>

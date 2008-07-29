@@ -84,14 +84,14 @@ class thebibliography(List):
         return List.digest(self, tokens)
 
 class cite(Command):
-    args = '[ text ] keys:list:str'
+    args = '[ text ] bibkeys:list:str'
 
     @property
     def bibitems(self):
         # Get all referenced items
         output = []
         doc = self.ownerDocument
-        for x in self.attributes['keys']:
+        for x in self.attributes['bibkeys']:
             item = doc.userdata.getPath('bibliography/bibitems', {}).get(x)
             if item is None:
                 log.warning('Bibliography item "%s" has no entry', x)
@@ -126,7 +126,7 @@ class cite(Command):
         return res
 
 class nocite(Command):
-    args = 'keys:str'
+    args = 'bibkeys:str'
 
 class bibcite(Command):
     args = 'key:str info'

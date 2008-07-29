@@ -213,7 +213,7 @@ class harvarditem(thebibliography.bibitem):
 
 class NatBibCite(Base.cite):
     """ Base class for all natbib-style cite commands """
-    args = '* [ text ] [ text2 ] keys:list:str'
+    args = '* [ text ] [ text2 ] bibkeys:list:str'
 
     class Connector(str):
         pass
@@ -224,7 +224,7 @@ class NatBibCite(Base.cite):
         opts = PackageOptions
         doc = self.ownerDocument
         b = doc.userdata.getPath('bibliography/bibitems', {})
-        for key in self.attributes['keys']:
+        for key in self.attributes['bibkeys']:
             if key in b:
                 items.append(b[key])
         if bibpunct.punctuation['style'] in 'ns' and \
@@ -832,17 +832,17 @@ class defcitealias(Base.Command):
         return res
 
 class citetalias(citet):
-    args = 'keys:list:str'
+    args = 'bibkeys:list:str'
     def citation(self):
-        return citet.citation(self, text=defcitealias.aliases.get(self.attributes['keys'][0],''))
+        return citet.citation(self, text=defcitealias.aliases.get(self.attributes['bibkeys'][0],''))
 
 class citepalias(citep):
-    args = 'keys:list:str'
+    args = 'bibkeys:list:str'
     def citation(self):
-        return citep.citation(self, text=defcitealias.aliases.get(self.attributes['keys'][0],''))
+        return citep.citation(self, text=defcitealias.aliases.get(self.attributes['bibkeys'][0],''))
 
 class shortcites(Base.Command):
-    args = 'keys:list:str'
+    args = 'bibkeys:list:str'
 
 class urlstyle(Base.Command):
     pass
