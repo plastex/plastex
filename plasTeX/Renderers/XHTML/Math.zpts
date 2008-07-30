@@ -18,7 +18,7 @@ name: displaymath equation
                                                                     height:${self/vectorImage/height/em}"><img 
             tal:attributes="src self/image/url; alt self/source; 
                             style string:width:${self/image/width/px};; 
-                            height:${self/image/height/px}" /></object></td>
+                            height:${self/image/height/px}" class="math" /></object></td>
     <td tal:condition="self/ownerDocument/context/packages/documentclass/fleqn" style="width:80%"></td>
     <td tal:condition="not:self/ownerDocument/context/packages/documentclass/fleqn" style="width:40%"></td>
     <td class="eqnnum" style="width:20%"><span tal:condition="self/ref">(<span tal:content="self/ref">1.1.1</span>)</span></td>
