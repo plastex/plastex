@@ -6,7 +6,7 @@ name: math ensuremath
         tal:attributes="src self/image/url; alt self/source; 
                         style string:vertical-align:${self/image/depth/px};; 
                                      width:${self/image/width/px};; 
-                                     height:${self/image/height/px}" class="math" /></object>
+                                     height:${self/image/height/px}" class="math gen" /></object>
 
 name: displaymath equation
 <table class="equation" width="100%" tal:attributes="id self/id" cellspacing="0" cellpadding="7">
@@ -18,7 +18,7 @@ name: displaymath equation
                                                                     height:${self/vectorImage/height/em}"><img 
             tal:attributes="src self/image/url; alt self/source; 
                             style string:width:${self/image/width/px};; 
-                            height:${self/image/height/px}" class="math" /></object></td>
+                            height:${self/image/height/px}" class="math gen" /></object></td>
     <td tal:condition="self/ownerDocument/context/packages/documentclass/fleqn" style="width:80%"></td>
     <td tal:condition="not:self/ownerDocument/context/packages/documentclass/fleqn" style="width:40%"></td>
     <td class="eqnnum" style="width:20%"><span tal:condition="self/ref">(<span tal:content="self/ref">1.1.1</span>)</span></td>
@@ -45,7 +45,7 @@ type: xml
             height:${cell/vectorImage/height/em};; vertical-align:${cell/vectorImage/depth/em}"><img 
             tal:attributes="src cell/image/url; alt cell/source; style 
             string:vertical-align:${cell/image/depth/px};; width:${cell/image/width/px};; 
-                   height:${cell/image/height/px}" class="math" /></object></td>
+                   height:${cell/image/height/px}" class="math gen" /></object></td>
     </metal:block>
     </metal:block>
     <td tal:condition="self/ownerDocument/context/packages/documentclass/fleqn" style="width:80%"></td>
