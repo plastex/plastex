@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from plasTeX.Renderers import Renderer as BaseRenderer
-import textwrap, re
+import textwrap, re, string
 
 class TextRenderer(BaseRenderer):
     """ Renderer for plain text documents """
@@ -22,6 +22,8 @@ class TextRenderer(BaseRenderer):
         'hashmark': '#',
         'space': ' ',
         'tilde': 'active::~',
+        'at': '@',
+        'backslash': '\\',
     }
     
     def __init__(self, *args, **kwargs):
@@ -402,15 +404,15 @@ class TextRenderer(BaseRenderer):
         return s
 
     def do__superscript(self, node):
-        return self.default(self, node)
+        return self.default(node)
     
     def do__subscript(self, node):
-        return self.default(self, node)
+        return self.default(node)
     
     # Quotations
     
     def do_quote(self, node):
-        return self.center(self, node)
+        return self.center(node)
     
     do_quotation = do_verse = do_quote
 
@@ -512,7 +514,7 @@ class TextRenderer(BaseRenderer):
         return u''
         
     do_bigskip = do_medskip = do_smallskip = do_vspace
-    
+
     # Tabbing - not implemented yet
     
     # Verbatim
@@ -521,5 +523,14 @@ class TextRenderer(BaseRenderer):
         return re.sub(r'^\s*\n', r'', unicode(node)).rstrip()
 
     do_alltt = do_verbatim
+
+    def do_mbox(self, node):
+        return self.default(node)
+
+    def do__at(self, node):
+        return u''
+
+    def do__backslash(self, node):
+        return u'\\'
 
 Renderer = TextRenderer

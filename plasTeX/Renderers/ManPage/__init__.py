@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from plasTeX.Renderers import Renderer as BaseRenderer
-import textwrap, re
+import textwrap, re, string
 
 class ManPageRenderer(BaseRenderer):
     """ Renderer for UNIX man pages """
@@ -21,6 +21,8 @@ class ManPageRenderer(BaseRenderer):
         'hashmark': '#',
         'space': ' ',
         'tilde': 'active::~',
+        'at': '@',
+        'backslash': '\\',
     }
     
     def __init__(self, *args, **kwargs):
@@ -311,15 +313,15 @@ class ManPageRenderer(BaseRenderer):
         return u'\n%s\n' % unicode(node).strip()
 
     def do__superscript(self, node):
-        return self.default(self, node)
+        return self.default(node)
     
     def do__subscript(self, node):
-        return self.default(self, node)
+        return self.default(node)
     
     # Quotations
     
     def do_quote(self, node):
-        return self.center(self, node)
+        return self.center(node)
     
     do_quotation = do_verse = do_quote
 
@@ -437,5 +439,14 @@ class ManPageRenderer(BaseRenderer):
         return u'\n.Bd -literal%s.Ed\n' % node
 
     do_alltt = do_verbatim
+
+    def do_mbox(self, node):
+        return self.default(node)
+
+    def do__at(self, node):
+        return u''
+
+    def do__backslash(self, node):
+        return u'\\'
 
 Renderer = ManPageRenderer
