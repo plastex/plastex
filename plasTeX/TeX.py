@@ -19,6 +19,7 @@ Example:
 import string, os, traceback, sys, plasTeX, codecs, subprocess, types
 from Tokenizer import Tokenizer, Token, EscapeSequence, Other
 from plasTeX import TeXDocument
+from plasTeX.Base.TeX.Primitives import MathShift
 from plasTeX import ParameterCommand, Macro
 from plasTeX import glue, muglue, mudimen, dimen, number
 from plasTeX.Logging import getLogger, disableLogging
@@ -756,12 +757,7 @@ class TeX(object):
         for t in tokens:
             toks = []
             source = [t]
-            #
             # A { ... } grouping was found
-            #
-            # Normally, this will be an unexpanded token, but if a 
-            # a TeX primitive was read before this, the first one 
-            # will be expanded (hence the t.nodeName == 'bgroup').
             if t.catcode == Token.CC_BGROUP:
                 isgroup = True
                 level = 1
@@ -777,31 +773,26 @@ class TeX(object):
                         toks.append(t)
                     else:
                         toks.append(t)
+            # A math token was found (i.e., $ ... $)
+            elif t.catcode == Token.CC_MATHSHIFT or isinstance(t, MathShift):
+                toks.append(t)
+                for t in tokens:
+                    source.append(t)
+                    toks.append(t)
+                    if t.catcode == Token.CC_MATHSHIFT or isinstance(t, MathShift):
+                        break
             else:
                 toks.append(t)
 
             # Expand macros and get the argument source string
             if expanded:
-
-#               # If we only get back a single token that is an escape sequence
-#               # go ahead and expand it.  If we let self.expandTokens do it
-#               # it won't work properly.
-#               if not(isgroup) and len(toks) == 1 and \
-#                  toks[0].catcode == Token.CC_ESCAPE:
-#                   self.pushToken(toks.pop())
-#                   for toks in self:
-#                       break
-#                   source = toks.source
-#   
-#               # Expand groupings and all other types
-#               else:
-                    toks = self.expandTokens(toks, parentNode=parentNode)
-                    if isgroup:
-                        s = self.source(toks)
-                        source = u'%s%s%s' % (source[0].source, s, 
-                                              source[-1].source)
-                    else:
-                        source = self.source(toks)
+                toks = self.expandTokens(toks, parentNode=parentNode)
+                if isgroup:
+                    s = self.source(toks)
+                    source = u'%s%s%s' % (source[0].source, s, 
+                                          source[-1].source)
+                else:
+                    source = self.source(toks)
             else:
                 source = self.source(source)
 
