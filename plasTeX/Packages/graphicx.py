@@ -6,7 +6,7 @@ from plasTeX import Command
 from graphics import DeclareGraphicsExtensions, graphicspath
 
 class includegraphics(Command):
-    args = '[ options:dict ] file:str'
+    args = '* [ options:dict ] file:str'
     packageName = 'graphicx'
     captionable = True
 

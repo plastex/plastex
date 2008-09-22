@@ -4,7 +4,7 @@ import os
 from plasTeX import Command
 
 class includegraphics(Command):
-    args = '[ ll ] [ ur ] file:str'
+    args = '* [ ll ] [ ur ] file:str'
     packageName = 'graphics'
     captionable = True
     
