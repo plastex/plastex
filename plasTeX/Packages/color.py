@@ -46,10 +46,19 @@ def latex2htmlcolor(arg, model='rgb', named={}):
     if model == 'named':
         return named.get(arg, '')
     if ',' in arg:
-        red, green, blue = [float(x) for x in arg.split(',')]
-        red = min(int(red * 255), 255)
-        green = min(int(green * 255), 255)
-        blue = min(int(blue * 255), 255)
+        parts = [float(x) for x in arg.split(',')]
+        # rgb
+        if len(parts) == 3:
+            red, green, blue = parts
+            red = min(int(red * 255), 255)
+            green = min(int(green * 255), 255)
+            blue = min(int(blue * 255), 255)
+        # cmyk
+        elif len(parts) == 4:
+            c, m, y, k = parts
+            red, green, blue = [int(255*x) for x in [1-c*(1-k)-k, 1-m*(1-k)-k, 1-y*(1-k)-k]]
+        else:
+            return arg.strip()
     else:
         try: 
             red = green = blue = float(arg)
