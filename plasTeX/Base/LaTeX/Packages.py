@@ -6,7 +6,7 @@ C.5 Classes, Packages, and Page Styles (p176)
 """
 
 import codecs, sys, os
-from plasTeX import Command, Environment, DimenCommand
+from plasTeX import Command, Environment, DimenCommand, Token
 from plasTeX.Logging import getLogger
 
 # Put the plasTeX packages into the path
@@ -66,9 +66,13 @@ class usepackage(PackageLoader):
     args = '[ options:dict ] names:list:str'
     extension = '.sty'
     def invoke(self, tex):
+        # Allow & in option names (this happens in natbib)
+        catcode = self.ownerDocument.context.whichCode('&')
+        self.ownerDocument.context.catcode('&', Token.CC_LETTER)
         a = self.parse(tex)
         for file in a['names']:
             self.load(tex, file, a['options'])
+        self.ownerDocument.context.catcode('&', catcode)
 
 class RequirePackage(usepackage):
     pass
