@@ -1287,13 +1287,32 @@ class TeX(object):
         full path to file -- if it is found
 
         """
-        program = self.ownerDocument.config['general']['kpsewhich']
-        output = subprocess.Popen([program, name], 
-                              stdout=subprocess.PIPE).communicate()[0].strip()
-        if output:
-            return output
+        # When, for example, ``\Input{name}`` is encountered, we should look in
+        # the directory containing the file being processed. So the following
+        # code adds the directory to the start of $TEXINPUTS.
+        TEXINPUTS = None
+        try:
+            srcDir = os.path.dirname(self.filename)
+        except AttributeError:
+            # I think this happens only for the command line file.
+            pass
+        else:
+            TEXINPUTS = os.environ["TEXINPUTS"]
+            os.environ["TEXINPUTS"] = "%s:%s" % (srcDir, TEXINPUTS)
 
-        raise OSError, 'Could not find any file named: %s' % name
+        try:
+            program = self.ownerDocument.config['general']['kpsewhich']
+            output = subprocess.Popen([program, name], 
+                                  stdout=subprocess.PIPE).communicate()[0].strip()
+            if output:
+                return output
+
+            raise OSError, 'Could not find any file named: %s' % name
+
+        finally:
+            # Undo any mods to $TEXINPUTS.
+            if TEXINPUTS is not None:
+                os.environ["TEXINPUTS"] = TEXINPUTS
 
 #
 # Parsing helper methods for parsing numbers, spaces, dimens, etc.
