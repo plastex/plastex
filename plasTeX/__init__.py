@@ -439,6 +439,10 @@ class Macro(Element):
                 s += sourceChildren(self)
         return s
 
+    @property
+    def childrenSource(self):
+        return sourceChildren(self)
+
     def parse(self, tex): 
         """ 
         Parse the arguments defined in the `args` variable 
