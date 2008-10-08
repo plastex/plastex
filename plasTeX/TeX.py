@@ -73,7 +73,7 @@ class TeX(object):
 
         # TeX arguments types and their casting functions
         self.argtypes = {
-            'url': (self.castString, {'#':12,'~':12}),
+            'url': (self.castNone, {'#':12,'~':12}),
             'str': self.castString,
             str: self.castString,
             'chr': self.castString,
@@ -942,6 +942,9 @@ class TeX(object):
         if getattr(tokens,'nodeType',None) == Macro.DOCUMENT_FRAGMENT_NODE:
             tokens.parentNode = parentNode
 
+        return tokens
+
+    def castNone(self, tokens, **kwargs):
         return tokens
 
     def castControlSequence(self, tokens, **kwargs):

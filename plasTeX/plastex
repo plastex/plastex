@@ -9,7 +9,7 @@ from plasTeX.Logging import getLogger
 
 log = getLogger()
 
-__version__ = '0.9'
+__version__ = '0.9.1'
 
 def main(argv):
     """ Main program routine """
