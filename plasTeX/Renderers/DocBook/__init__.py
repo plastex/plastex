@@ -22,8 +22,8 @@ class DocBook(_Renderer):
         s = re.compile(r'(<informalfigure>)\s*<para>',re.I).sub(r'\1',s)
         s = re.compile(r'</para>\s*(</informalfigure>)',re.I).sub(r'\1',s)
         #
-        s = re.compile(r'(<para>)\s*<para>',re.I).sub(r'\1',s)
-        s = re.compile(r'</para>\s*(</para>)',re.I).sub(r'\1',s)
+        s = re.compile(r'(<para>)(\s*<para>)+',re.I).sub(r'\1',s)
+        s = re.compile(r'(</para>\s*)+(</para>)',re.I).sub(r'\2',s)
         #
 #        s = s.replace('&','&amp;')
         #
