@@ -361,7 +361,7 @@ class Renderer(dict):
 
         """
         # Using the side-effect of the filename property
-        node.filename  
+        node.filename
         for child in node.childNodes:
             self.cacheFilenames(child)
 

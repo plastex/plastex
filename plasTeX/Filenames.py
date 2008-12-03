@@ -161,7 +161,7 @@ class Filenames(object):
     
         # Locate all key names and formats in the string
         keysre = re.compile(r'\$\{(\w+)(?:\.(\d+))?}')
-    
+
         # Return static filenames
         for item in static:
             currentns = self.vars.copy()
@@ -236,6 +236,8 @@ class Filenames(object):
                     if result not in self.invalid:
                         self.invalid[result] = None
                         yield result
+                    else:
+                        continue
                     break
                 except KeyError, key:
                     if 'num' in self.vars:
