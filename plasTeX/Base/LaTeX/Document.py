@@ -24,7 +24,10 @@ class document(Environment, SectionUtils):
             for name in counters.keys():
                 if name.startswith(';'):
                     continue
-                self.ownerDocument.context.counters[name].setcounter(counters[name]-1)
+                try:
+                    self.ownerDocument.context.counters[name].setcounter(counters[name]-1)
+                except TypeError:
+                    self.ownerDocument.context.counters[name].setcounter(int(counters[name])-1)
 
         return res
  
