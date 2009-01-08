@@ -808,7 +808,7 @@ class TeXDocument(Document):
     ]
 
     def __init__(self, *args, **kwargs):
-        Document.__init__(self, *args, **kwargs)
+        super(Document, self).__init__(*args, **kwargs)
 
         if 'context' not in kwargs:
             import Context
@@ -1276,7 +1276,7 @@ class glue(dimen):
         return dimen.__new__(cls, g)
         
     def __init__(self, g, plus=None, minus=None):
-        dimen.__init__(self, g)
+        super(dimen, self).__init__(g)
         self.stretch = self.shrink = None
         if plus is not None:
             self.stretch = dimen(plus)

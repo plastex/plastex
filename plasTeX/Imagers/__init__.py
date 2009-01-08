@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
-import os, time, tempfile, shutil, re, string, pickle, md5, codecs
+import os, time, tempfile, shutil, re, string, pickle, codecs
+try: from hashlib import md5
+except ImportError: from md5 import new as md5
 from plasTeX.Logging import getLogger
 from StringIO import StringIO
 from plasTeX.Filenames import Filenames
@@ -551,7 +553,7 @@ class Imager(object):
 
         for value in self._cache.values():
             if value.checksum and os.path.isfile(value.path):
-                 d = md5.new(open(value.path,'r').read()).digest()
+                 d = md5(open(value.path,'r').read()).digest()
                  if value.checksum != d:
                      log.warning('The image data for "%s" on the disk has changed.  You may want to clear the image cache.' % value.filename)
 
@@ -573,7 +575,7 @@ class Imager(object):
 
         for value in self._cache.values():
             if value.checksum is None and os.path.isfile(value.path):
-                 value.checksum = md5.new(open(value.path,'r').read()).digest()
+                 value.checksum = md5(open(value.path,'r').read()).digest()
 
         if not os.path.isdir(os.path.dirname(self._filecache)):
             os.makedirs(os.path.dirname(self._filecache))

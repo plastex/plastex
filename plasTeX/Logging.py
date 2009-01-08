@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-import textwrap
-from logging import *
+import textwrap, types
+from logging import CRITICAL, DEBUG, INFO, Logger, StreamHandler, Formatter
+from logging import addLevelName, setLoggerClass
 from plasTeX.Config import config as _config
 
 MAX_WIDTH = 75
@@ -69,7 +70,7 @@ class StreamFormatter(Formatter):
     def format(self, record):
         """ Format the specified record as text. """
         record.message = record.getMessage()
-        if string.find(self._fmt,"%(asctime)") >= 0:
+        if self._fmt.count("%(asctime)"):
             record.asctime = self.formatTime(record, self.datefmt)
         s = self._fmt % record.__dict__
         if record.exc_info:
