@@ -1300,7 +1300,7 @@ class TeX(object):
             # I think this happens only for the command line file.
             pass
         else:
-            TEXINPUTS = os.environ["TEXINPUTS"]
+            TEXINPUTS = os.environ.get("TEXINPUTS",'')
             os.environ["TEXINPUTS"] = "%s:%s" % (srcDir, TEXINPUTS)
 
         try:
