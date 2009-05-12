@@ -226,7 +226,7 @@ class Macro(Element):
             except AttributeError:
                 if self.ref is not None:
                     fullTitle = self.ownerDocument.createDocumentFragment()
-                    fullTitle.extend([self.ref, ' ', self.title])
+                    fullTitle.extend([self.ref, ' ', self.title], setParent=False)
                 else:
                     fullTitle = self.title
                 setattr(self, '@fullTitle', fullTitle)
@@ -266,7 +266,7 @@ class Macro(Element):
                 except AttributeError:
                     if self.ref is not None:
                         fullTocEntry = self.ownerDocument.createDocumentFragment()
-                        fullTocEntry.extend([self.ref, ' ', self.tocEntry])
+                        fullTocEntry.extend([self.ref, ' ', self.tocEntry], setParent=False)
                     else:
                         fullTocEntry = self.tocEntry
                     setattr(self, '@fullTocEntry', fullTocEntry)

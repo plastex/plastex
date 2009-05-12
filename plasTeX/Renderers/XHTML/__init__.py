@@ -62,7 +62,7 @@ class XHTML(_Renderer):
         # Create help file
         if 'chm-help' in self:
             help = self['chm-help'](latexdoc)
-            f = codecs.open('chm.hhp', 'w', encoding)
+            f = codecs.open('chm.hhp', 'w', encoding, errors='xmlcharrefreplace')
             f.write(help)
             f.close()
 

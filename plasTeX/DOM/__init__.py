@@ -878,7 +878,7 @@ class Node(object):
         try: return self.childNodes.pop(index)
         except: raise IndexError, 'object has no childNodes'
 
-    def append(self, newChild):
+    def append(self, newChild, setParent=True):
         """ 
         Append `newChild` to child list 
 
@@ -893,19 +893,20 @@ class Node(object):
             newChild = self.ownerDocument.createTextNode(newChild)
         if newChild.nodeType == Node.DOCUMENT_FRAGMENT_NODE:
             for item in newChild:
-                self.append(item)
+                self.append(item, setParent=setParent)
         else:
             self.childNodes.append(newChild) 
-        if self.nodeType == self.DOCUMENT_FRAGMENT_NODE:
-            newChild.parentNode = self.parentNode
-        else:
-            newChild.parentNode = self
+        if setParent:
+            if self.nodeType == self.DOCUMENT_FRAGMENT_NODE:
+                newChild.parentNode = self.parentNode
+            else:
+                newChild.parentNode = self
         newChild.ownerDocument = self.ownerDocument
         return newChild
 
     appendChild = append
 
-    def insert(self, i, newChild):
+    def insert(self, i, newChild, setParent=True):
         """ 
         Insert `newChild` into child list at position `i` 
 
@@ -921,14 +922,15 @@ class Node(object):
             newChild = self.ownerDocument.createTextNode(newChild)
         if newChild.nodeType == Node.DOCUMENT_FRAGMENT_NODE:
             for item in newChild:
-                self.insert(i, item)
+                self.insert(i, item, setParent=setParent)
                 i += 1
         else:
             self.childNodes.insert(i, newChild)
-        if self.nodeType == self.DOCUMENT_FRAGMENT_NODE:
-            newChild.parentNode = self.parentNode
-        else:
-            newChild.parentNode = self
+        if setParent:
+            if self.nodeType == self.DOCUMENT_FRAGMENT_NODE:
+                newChild.parentNode = self.parentNode
+            else:
+                newChild.parentNode = self
         newChild.ownerDocument = self.ownerDocument
         return newChild
 
@@ -964,7 +966,7 @@ class Node(object):
 
     __iadd__ = extend
 
-    def appendText(self, text, charsubs=[]):
+    def appendText(self, text, charsubs=[], setParent=True):
         """ Append a list of text nodes as one node """
         if not text:
             return
@@ -973,7 +975,8 @@ class Node(object):
             value = value.replace(src, dest)
         text[:] = []
         value = self.ownerDocument.createTextNode(value)
-        value.parentNode = self
+        if setParent:
+            value.parentNode = self
         value.ownerDocument = self.ownerDocument
         self.appendChild(value)
 

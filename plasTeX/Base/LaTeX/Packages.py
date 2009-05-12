@@ -155,7 +155,7 @@ class maketitle(Command):
     blockType = True
 
 class title(Command):
-    args = 'self'
+    args = '[ toc ] self'
     def invoke(self, tex):
         Command.invoke(self, tex)
         if not self.ownerDocument.userdata.has_key('title'):
