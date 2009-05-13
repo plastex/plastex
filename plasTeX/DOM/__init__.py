@@ -958,10 +958,10 @@ class Node(object):
             self.insert(i, node)
             self.pop(i+1)
 
-    def extend(self, other):
+    def extend(self, other, setParent=True):
         """ self += other """
         for item in other:
-            self.append(item)
+            self.append(item, setParent=setParent)
         return self
 
     __iadd__ = extend
