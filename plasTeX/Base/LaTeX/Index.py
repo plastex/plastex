@@ -255,6 +255,10 @@ class glossary(Command):
 class index(Command):
     args = 'entry:nox'
 
+    @property
+    def textContent(self):
+        return ''
+
     def invoke(self, tex):
         result = Command.invoke(self, tex)
         sortkey, key, format = [], [], []
