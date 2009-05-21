@@ -49,7 +49,7 @@ class GenericParser:
 
       return 0
 
-   def getArgument(self, args, range=[1,1], delim=','):
+   def getArgument(self, args, range=[1,1], delim=',', forcedarg=False):
       """ Parse argument """
 
       range = self.validateRange(range[:])
@@ -86,6 +86,8 @@ class GenericParser:
       else:
          new_args = []
          while self._hasFollowingArgument(args, delim):
+            forcedarg = False
+
             # If the current argument ends with a delimiter
             if args[0].strip()[-1] == delim:
                new_args.append(args.pop(0).strip()[:-1])
@@ -107,10 +109,10 @@ class GenericParser:
                if new_args[-1].endswith(delim):
                   args.insert(0, delim)
                   new_args[-1] = new_args[-1][:-1]
-                   
+
          # The following argument is always part of the list
          # unless the user accidentally put a trailing delimiter.
-         if ConfigManager.has_following_argument(args):
+         if forcedarg or ConfigManager.has_following_argument(args):
             new_args.append(args.pop(0).strip())
 
          if new_args and new_args[-1].startswith(delim):

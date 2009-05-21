@@ -9,12 +9,12 @@ from UserList import UserList
 
 class MultiParser(GenericParser):
 
-   def getArgument(self, args, range=None, delim=None):
+   def getArgument(self, args, range=None, delim=None, forcedarg=False):
       if range is None:
          range = self.range[:]
       if delim is None:
          delim = self.delim
-      new_args, args = GenericParser.getArgument(self, args, range, delim)
+      new_args, args = GenericParser.getArgument(self, args, range, delim, forcedarg=forcedarg)
       if type(new_args) in [list, tuple]:
          return new_args, args
       elif new_args is None:

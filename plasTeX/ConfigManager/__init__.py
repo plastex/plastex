@@ -1201,7 +1201,7 @@ class ConfigManager(UserDict, object):
                                        % opt, opt)
 
         elif forcedarg:
-           optarg, args = option.getArgument(args)
+           optarg, args = option.getArgument(args, forcedarg=True)
 
         elif not(option.acceptsArgument()):
            pass
