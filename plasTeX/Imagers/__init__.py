@@ -508,7 +508,7 @@ class Imager(object):
         self.source.write('\\@ifundefined{plasTeXimage}{'
                           '\\newenvironment{plasTeXimage}[1]{' +
                           '\\vfil\\break\\plasTeXregister' +
-                          '\\thispagestyle{empty}\\def\\@eqnnum{}' +
+                          '\\thispagestyle{empty}\\def\\@eqnnum{}\\def\\tagform@{\\@gobble}' +
                           '\\ignorespaces}{}}{}\n')
         self.source.write('\\@ifundefined{plasTeXregister}{' +
                           '\\def\\plasTeXregister{\\parindent=-0.5in\\ifhmode\\hrule' +

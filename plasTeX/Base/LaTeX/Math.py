@@ -143,6 +143,9 @@ class nonumber(Command):
             row = row.parentNode
         row.ref = None
 
+class notag(nonumber):
+    pass
+
 class lefteqn(Command):
     args = 'self'
 
