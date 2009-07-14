@@ -8,7 +8,7 @@ name: math ensuremath
                                      width:${self/image/width/px};; 
                                      height:${self/image/height/px}" class="math gen" /></object>
 
-name: displaymath equation
+name: displaymath equation equation*
 <table class="equation" width="100%" tal:attributes="id self/id" cellspacing="0" cellpadding="7">
 <tr>
     <td tal:condition="self/ownerDocument/context/packages/documentclass/fleqn" class="fleqn"></td>
