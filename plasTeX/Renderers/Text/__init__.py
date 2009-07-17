@@ -131,8 +131,11 @@ class TextRenderer(BaseRenderer):
                     s = getattr(cell, render)().strip()
                 else:
                     s = render(cell).strip()
-                maxlength = max([len(x) for x in s.split('\n')])
-                minlength = min([len(x) for x in s.split() if x.strip()])
+                if s.strip():
+                    maxlength = max([len(x) for x in s.split('\n')])
+                    minlength = min([len(x) for x in s.split() if x.strip()])
+                else:
+                    minlength = maxlength = 0
                 if r == 0:
                     colwidths.append([minlength, maxlength])
                 else:
