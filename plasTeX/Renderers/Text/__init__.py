@@ -415,7 +415,17 @@ class TextRenderer(BaseRenderer):
     # Quotations
     
     def do_quote(self, node):
-        return self.center(node)
+        backslash = self['\\']
+        self['\\'] = lambda *args: u'\001'
+        res = [x.strip() for x in unicode(node).split(u'\001')]
+        output = []
+        for par in [x.strip() for x in unicode(node).split(u'\n\n')]:
+            for item in [x.strip() for x in par.split(u'\001')]:
+                output.append(self.fill(item, initial_indent='   ', subsequent_indent='      '))
+            output.append('')
+        output.pop()
+        self['\\'] = backslash
+        return u'\n'.join(output)
     
     do_quotation = do_verse = do_quote
 
@@ -434,7 +444,8 @@ class TextRenderer(BaseRenderer):
         if 'title' in metadata:
             output.append(self.center(metadata['title']).rstrip())
         if 'author' in metadata:
-            output.append(self.center(metadata['author']).rstrip())
+            for author in metadata['author']:
+                output.append(self.center(author).rstrip())
         if 'date' in metadata:
             output.append(self.center(metadata['date']).rstrip())
         if 'thanks' in metadata:

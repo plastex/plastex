@@ -8,6 +8,7 @@ styles = ['*.css']
 
 setup(name="plasTeX",
       description="LaTeX document processing framework",
+      version="0.9.3",
       author="Kevin D. Smith",
       author_email="Kevin.Smith@sas.com",
       #url="",

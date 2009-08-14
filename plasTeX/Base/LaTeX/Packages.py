@@ -165,7 +165,10 @@ class author(Command):
     args = 'self'
     def invoke(self, tex):
         Command.invoke(self, tex)
-        self.ownerDocument.userdata['author'] = self
+        userdata = self.ownerDocument.userdata
+        if userdata.get('author') is None:
+            userdata['author'] = []
+        userdata['author'].append(self)
 
 class date(Command):
     args = 'self'

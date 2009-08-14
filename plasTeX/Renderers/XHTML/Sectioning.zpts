@@ -6,7 +6,9 @@ name: title author date thanks
 name: maketitle
 <div class="titlepage" tal:define="metadata self/ownerDocument/userdata">
 <h1 tal:content="metadata/title">title</h1>
-<p tal:condition="metadata/author" tal:content="metadata/author">authors</p>
+<p tal:condition="metadata/author">
+<div tal:repeat="author metadata/author" tal:content="author">authors</div>
+</p>
 <p tal:condition="metadata/date" tal:content="metadata/date">date</p>
 <p tal:condition="metadata/thanks" tal:content="metadata/thanks">thanks</p>
 </div>
