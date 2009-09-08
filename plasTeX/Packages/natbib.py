@@ -619,7 +619,10 @@ class citealt(NatBibCite):
         i = 0
         prevauthor = sameauthor = None
         for i, item in enumerate(self.bibitems):
-            fullauthor = item.bibcite.attributes['fullauthor'].textContent
+            if not item.bibcite.attributes:
+                fullauthor = '???'
+            else:
+                fullauthor = item.bibcite.attributes['fullauthor'].textContent
             sameauthor = (prevauthor == fullauthor)
             prevauthor = fullauthor
             # Author, only print author if it wasn't equal to the last author
@@ -628,7 +631,9 @@ class citealt(NatBibCite):
                 res.append(self.years+' ')
             else:
                 author = self.selectAuthorField(item.attributes['key'], full=full)
-                if i == 0 and capitalize:
+                if not item.bibcite.attributes:
+                    res.extend('???')
+                elif i == 0 and capitalize:
                     res.extend(self.capitalize(item.bibcite.attributes[author]))
                 else:
                     res.extend(item.bibcite.attributes[author])
@@ -686,7 +691,10 @@ class citealp(NatBibCite):
         i = 0
         prevauthor = sameauthor = None
         for i, item in enumerate(self.bibitems):
-            fullauthor = item.bibcite.attributes['fullauthor'].textContent
+            if not item.bibcite.attributes:
+                fullauthor = '???'
+            else:
+                fullauthor = item.bibcite.attributes['fullauthor'].textContent
             sameauthor = (prevauthor == fullauthor)
             prevauthor = fullauthor
             # Author, only print author if it wasn't equal to the last author
@@ -695,7 +703,9 @@ class citealp(NatBibCite):
                 res.append(self.years+' ')
             else:
                 author = self.selectAuthorField(item.attributes['key'], full=full)
-                if i == 0 and capitalize:
+                if not item.bibcite.attributes:
+                    res.extend('???')
+                elif i == 0 and capitalize:
                     res.extend(self.capitalize(item.bibcite.attributes[author]))
                 else:
                     res.extend(item.bibcite.attributes[author])              
@@ -753,7 +763,9 @@ class citeauthor(NatBibCite):
             author = self.selectAuthorField(item.attributes['key'], full=full)
             b = self.ownerDocument.createElement('bibliographyref')
             b.idref['bibitem'] = item
-            if i == 0 and capitalize:
+            if not item.bibcite.attributes:
+                b.append('???')
+            elif i == 0 and capitalize:
                 b.append(self.capitalize(item.bibcite.attributes[author]))
             else:
                 b.append(item.bibcite.attributes[author])
@@ -787,7 +799,10 @@ class citeyear(NatBibCite):
         for i, item in enumerate(self.bibitems):
             b = self.ownerDocument.createElement('bibliographyref')
             b.idref['bibitem'] = item
-            b.append(item.bibcite.attributes['year'])
+            if not item.bibcite.attributes:
+                b.append('???')
+            else:
+                b.append(item.bibcite.attributes['year'])
             res.append(b)
             if i < (len(self.bibitems)-1):
                 res.append(self.separator+' ')
@@ -808,7 +823,10 @@ class citeyearpar(NatBibCite):
         for i, item in enumerate(self.bibitems):
             b = self.ownerDocument.createElement('bibliographyref')
             b.idref['bibitem'] = item
-            b.append(item.bibcite.attributes['year'])
+            if not item.bibcite.attributes:
+                b.append('???')
+            else:
+                b.append(item.bibcite.attributes['year'])
             res.append(b)
             if i < (len(self.bibitems)-1):
                 res.append(self.separator+' ')
