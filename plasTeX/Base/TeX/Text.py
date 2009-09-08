@@ -207,4 +207,5 @@ class raggedright(Environment):
 # Accents are done in the LaTeX package
 #
 
-
+class dots(Command):
+    unicode = unichr(8230)
