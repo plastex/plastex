@@ -34,6 +34,12 @@ general['kpsewhich'] = StringOption(
     default = 'kpsewhich',
 )
 
+general['xml'] = BooleanOption(
+    """ Dump XML representation of the document (for debugging) """,
+    options = '--xml',
+    default = False,
+)
+
 def readconfig(file):
     """ Read a configuration file """
     if not os.path.isfile(file):
