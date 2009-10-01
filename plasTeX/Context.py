@@ -316,18 +316,18 @@ class Context(object):
             log.warning('Could not load language "%s", american will be used instead' % lang)
 
     def _strftime(self, fmt):
-        if '%f' not in fmt:
-            return time.strftime(fmt)
-            
-        day = time.strftime('%e')
-        suffix = 'th'
-        if day.endswith('1'):
-            suffix = 'st'
-        elif day.endswith('2'):
-            suffix = 'nd'
-        elif day.endswith('3'):
-            suffix = 'rd'
-        return time.strftime(fmt.replace('%f', '%e'+suffix))
+        if '%f' in fmt or '%e' in fmt:
+            day = time.strftime('%d')
+            suffix = 'th'
+            if day.endswith('1'):
+                suffix = 'st'
+            elif day.endswith('2'):
+                suffix = 'nd'
+            elif day.endswith('3'):
+                suffix = 'rd'
+            day = str(int(day))
+            return time.strftime(fmt.replace('%f', day+suffix).replace('%e', day))
+        return time.strftime(fmt)
 
     def loadINIPackage(self, inifile):
         """ 

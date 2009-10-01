@@ -99,6 +99,7 @@ class labelitemiv(Command):
 
 class enumerate_(List): 
     macroName = 'enumerate'
+    args = '[ type ]'  # Actually defined in the enumerate package, but it doesn't hurt
 
 class description(List): 
     pass

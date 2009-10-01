@@ -4,5 +4,5 @@ name: quote
 name: quotation
 <blockquote class="quotation" tal:content="self"></blockquote>
 
-name: verse
+name: verse altverse patverse
 <blockquote class="verse" tal:content="self"></blockquote>

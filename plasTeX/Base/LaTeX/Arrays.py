@@ -42,8 +42,13 @@ class ColumnType(Macro):
         return '%s: %s' % (type(self).__name__, self.style)
 
 ColumnType.new('r', {'text-align':'right'})
+ColumnType.new('R', {'text-align':'right'})
 ColumnType.new('c', {'text-align':'center'})
+ColumnType.new('C', {'text-align':'center'})
 ColumnType.new('l', {'text-align':'left'})
+ColumnType.new('L', {'text-align':'left'})
+ColumnType.new('J', {'text-align':'left'})
+ColumnType.new('X', {'text-align':'left'})
 ColumnType.new('p', {'text-align':'left'}, args='width:str')
 ColumnType.new('d', {'text-align':'right'}, args='delim:str')
 
@@ -611,6 +616,12 @@ class tabular(Array):
 class TabularStar(tabular):
     macroName = 'tabular*'
     args = 'width:dimen [ pos:str ] colspec:nox'
+
+class tabularx(Array):
+    args = 'width:nox colspec:nox'
+
+class tabulary(Array):
+    args = 'width:nox colspec:nox'
 
 # Style Parameters
 

@@ -1301,21 +1301,28 @@ class TeX(object):
             pass
         else:
             TEXINPUTS = os.environ.get("TEXINPUTS",'')
-            os.environ["TEXINPUTS"] = "%s:%s" % (srcDir, TEXINPUTS)
+            os.environ["TEXINPUTS"] = "%s%s%s" % (srcDir, os.path.pathsep, TEXINPUTS)
 
         try:
             program = self.ownerDocument.config['general']['kpsewhich']
-            output = subprocess.Popen([program, name], 
-                                  stdout=subprocess.PIPE).communicate()[0].strip()
+
+            kwargs = {'stdout':subprocess.PIPE}
+            if sys.platform.lower().startswith('win'):
+                kwargs['shell'] = True
+
+            output = subprocess.Popen([program, name], **kwargs).communicate()[0].strip()
             if output:
                 return output
 
-            raise OSError, 'Could not find any file named: %s' % name
+        except:
+            pass
 
         finally:
             # Undo any mods to $TEXINPUTS.
-            if TEXINPUTS is not None:
+            if TEXINPUTS:
                 os.environ["TEXINPUTS"] = TEXINPUTS
+
+        raise OSError, 'Could not find any file named: %s' % name
 
 #
 # Parsing helper methods for parsing numbers, spaces, dimens, etc.
