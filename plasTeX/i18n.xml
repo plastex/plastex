@@ -62,10 +62,10 @@
     <term name="also">siehe auch</term>
     <term name="proof">Beweis</term>
     <term name="glossary">Glossar</term>
-    <term name="section">abschnitt</term>
-    <term name="subsection">unterabschnitt</term>
-    <term name="subsubsection">unter-Unterabschnitt</term>
-    <term name="paragraph">absatz</term>
+    <term name="section">Abschnitt</term>
+    <term name="subsection">Unterabschnitt</term>
+    <term name="subsubsection">Unter-Unterabschnitt</term>
+    <term name="paragraph">Absatz</term>
     <term name="Hfootnote">Fu&#223;note</term>
     <term name="AMS">Equation</term>
     <term name="equation">Gleichung</term>
