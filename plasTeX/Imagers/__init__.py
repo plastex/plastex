@@ -79,9 +79,9 @@ def autoCrop(im, bgcolor=None, margin=0):
             bbox[2] += margin
             bbox[3] += margin
             bbox = tuple([max(0,x) for x in bbox])
-        return im.crop(bbox), tuple([abs(x-y) for x,y in zip(origbbox,bbox)])
-    return PILImage.new("RGB", (1,1), bgcolor), (0,0,0,0)
-    return None, None # no contents
+        return im.crop(bbox), tuple([abs(x-y) for x,y in zip(origbbox,bbox)]), bgcolor
+    return PILImage.new("RGB", (1,1), bgcolor), (0,0,0,0), bgcolor
+    return None, None, bgcolor # no contents
 
 class Box(object):
     pass
@@ -321,10 +321,9 @@ class Image(object):
             im = im.convert("RGB")
 
         depth = 0
-        background = im.getpixel((0,0))
 
         # Crop the image so that the regitration mark is on the left edge
-        im = self._autoCrop(im)[0]
+        im, box, background = self._autoCrop(im)
 
         width, height = im.size
         
@@ -394,7 +393,7 @@ class Image(object):
             bbox[0] = rwidth
 
         # Crop out register mark, and autoCrop result    
-        im, cropped = self._autoCrop(im.crop(bbox), background)
+        im, cropped, background = self._autoCrop(im.crop(bbox), background)
 
         # If the content was entirely above the baseline, 
         # we need to keep that whitespace
