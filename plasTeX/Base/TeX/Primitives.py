@@ -289,8 +289,8 @@ class ifvbox(IfCommand):
 
 class ifeof(IfCommand):
     """ Test for end of file """
-    args = 'value:Number'
     def invoke(self, tex):
+        tex.readNumber(optspace=False)
         tex.processIfContent(False)
         return []
 
