@@ -942,7 +942,8 @@ class NewIf(Macro):
     state = False
 
     def invoke(self, tex):
-        return tex.readIfContent(type(self).state)
+        tex.processIfContent(type(self).state)
+        return []
 
     @classmethod
     def setState(cls, state):

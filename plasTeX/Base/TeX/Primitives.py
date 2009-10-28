@@ -164,7 +164,8 @@ class if_(IfCommand):
     def invoke(self, tex):
         self.parse(tex)
         a = self.attributes
-        return tex.readIfContent(a['a'] == a['b'])
+        tex.processIfContent(a['a'] == a['b'])
+        return []
 
 class else_(Command):
     macroName = 'else'
@@ -174,18 +175,22 @@ class fi(Command):
         
 class ifnum(IfCommand):
     """ Compare two integers """
-    args = 'a:Number rel:Tok b:Number'
+    args = 'a:Number rel:Tok'
     def invoke(self, tex):
         self.parse(tex)
         attrs = self.attributes
+        attrs['b'] = tex.readNumber(optspace=False)
         relation = attrs['rel']
         a, b = attrs['a'], attrs['b']
         if relation == '<':
-            return tex.readIfContent(a < b)
+            tex.processIfContent(a < b)
+            return []
         elif relation == '>':
-            return tex.readIfContent(a > b)
+            tex.processIfContent(a > b)
+            return []
         elif relation == '=':
-            return tex.readIfContent(a == b)
+            tex.processIfContent(a == b)
+            return []
         raise ValueError, '"%s" is not a valid relation' % relation
 
 class ifdim(IfCommand):
@@ -197,49 +202,51 @@ class ifdim(IfCommand):
         relation = attrs['rel']
         a, b = attrs['a'], attrs['b']
         if relation == '<':
-            return tex.readIfContent(a < b)
+            tex.processIfContent(a < b)
+            return []
         elif relation == '>':
-            return tex.readIfContent(a > b)
+            tex.processIfContent(a > b)
+            return []
         elif relation == '=':
-            return tex.readIfContent(a == b)
+            tex.processIfContent(a == b)
+            return []
         raise ValueError, '"%s" is not a valid relation' % relation
 
 class ifodd(IfCommand):
     """ Test for odd integer """   
-    args = 'value:Number'
     def invoke(self, tex):
-        self.parse(tex)
-        return tex.readIfContent(not(not(self.attributes['value'] % 2)))
+        tex.processIfContent(not(not(tex.readNumber(optspace=False) % 2)))
+        return []
 
 class ifeven(IfCommand):
     """ Test for even integer """
-    args = 'value:Number'
     def invoke(self, tex):
-        self.parse(tex)
-        return tex.readIfContent(not(self.attributes['value'] % 2))
+        tex.processIfContent(not(tex.readNumber(optspace=False) % 2))
+        return []
 
 class ifvmode(IfCommand):
     """ Test for vertical mode """
     def invoke(self, tex):
-        self.parse(tex)
-        return tex.readIfContent(False)
+        tex.processIfContent(False)
+        return []
 
 class ifhmode(IfCommand):
     """ Test for horizontal mode """
     def invoke(self, tex):
-        self.parse(tex)
-        return tex.readIfContent(True)
+        tex.processIfContent(True)
+        return []
 
 class ifmmode(IfCommand):
     """ Test for math mode """
     def invoke(self, tex):
-        self.parse(tex)
-        return tex.readIfContent(self.ownerDocument.context.isMathMode)
+        tex.processIfContent(self.ownerDocument.context.isMathMode)
+        return []
 
 class ifinner(IfCommand):
     """ Test for internal mode """
     def invoke(self, tex):
-        return tex.readIfContent(False)
+        tex.processIfContent(False)
+        return []
 
 class ifcat(IfCommand):
     """ Test if category codes agree """
@@ -247,7 +254,8 @@ class ifcat(IfCommand):
     def invoke(self, tex):
         self.parse(tex)
         a = self.attributes
-        return tex.readIfContent(a['a'].catcode == a['b'].catcode)
+        tex.processIfContent(a['a'].catcode == a['b'].catcode)
+        return []
 
 class ifx(IfCommand):
     """ Test if tokens agree """
@@ -255,41 +263,42 @@ class ifx(IfCommand):
     def invoke(self, tex):
         self.parse(tex)
         a = self.attributes
-        return tex.readIfContent(a['a'] == a['b'])
+        tex.processIfContent(a['a'] == a['b'])
+        return []
 
 class ifvoid(IfCommand):
     """ Test a box register """
-    args = 'value:Number'
     def invoke(self, tex):
-        self.parse(tex)
-        return tex.readIfContent(False)
+        tex.readNumber(optspace=False)
+        tex.processIfContent(False)
+        return []
 
 class ifhbox(IfCommand):
     """ Test a box register """
-    args = 'value:Number'
     def invoke(self, tex):
-        self.parse(tex)
-        return tex.readIfContent(False)
+        tex.readNumber(optspace=False)
+        tex.processIfContent(False)
+        return []
 
 class ifvbox(IfCommand):
     """ Test a box register """
-    args = 'value:Number'
     def invoke(self, tex):
-        self.parse(tex)
-        return tex.readIfContent(False)
+        tex.readNumber(optspace=False)
+        tex.processIfContent(False)
+        return []
 
 class ifeof(IfCommand):
     """ Test for end of file """
     args = 'value:Number'
     def invoke(self, tex):
-        self.parse(tex)
-        return tex.readIfContent(False)
+        tex.processIfContent(False)
+        return []
 
 class iftrue(IfCommand):
     """ Always true """
     def invoke(self, tex):
-        self.parse(tex)
-        return tex.readIfContent(True)
+        tex.processIfContent(True)
+        return []
 
 class ifplastex(iftrue): pass
 class plastexfalse(Command): pass
@@ -302,7 +311,8 @@ class htmltrue(Command): pass
 class iffalse(IfCommand):
     """ Always false """
     def invoke(self, tex):
-        return tex.readIfContent(False)
+        tex.processIfContent(False)
+        return []
 
 class ifpdf(iffalse): pass
 class pdffalse(Command): pass
@@ -311,9 +321,9 @@ class pdftrue(Command): pass
 
 class ifcase(IfCommand):
     """ Cases """
-    args = 'value:Number'
     def invoke(self, tex):
-        return tex.readIfContent(self.parse(tex)['value'])
+        tex.processIfContent(tex.readNumber(optspace=False))
+        return []
 
 
 class let(Command):

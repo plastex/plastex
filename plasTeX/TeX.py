@@ -255,6 +255,31 @@ class TeX(object):
             except IndexError:
                 break
 
+    def iterchars(self):
+        """ 
+        Iterate over input characters (untokenized)
+
+        Returns:
+        generator that iterates through the untokenized characters
+
+        """
+        # Create locals before going into generator loop
+        inputs = self.inputs
+        context = self.ownerDocument.context
+        endInput = self.endInput
+        ownerDocument = self.ownerDocument
+
+        while inputs:
+            # Walk through characters
+            try:
+                for char in inputs[-1][0].iterchars():
+                    yield char
+                else:
+                    endInput()
+            # This really shouldn't happen, but just in case...
+            except IndexError:
+                break
+
     def __iter__(self):
         """ 
         Iterate over tokens while expanding them 
@@ -499,18 +524,15 @@ class TeX(object):
                           if getattr(x, 'catcode', Token.CC_OTHER) 
                              not in grouptokens])).strip()
 
-    def readIfContent(self, which, debug=False):
+    def processIfContent(self, which, debug=False):
         """
-        Return the requested portion of the `if' block
+        Process the requested portion of the `if' block
 
         Required Arguments:
         which -- the case to return.  If this is a boolean, a value of 
             `True' will return the first part of the `if' block.  If it
             is `False', it will return the `else' portion.  If this is 
             an integer, the `case' matching this integer will be returned.
-
-        Returns:
-        list of tokens from the requested portion of the `if' block
 
         """
         # Since the true content always comes first, we need to set
@@ -519,37 +541,49 @@ class TeX(object):
         if isinstance(which, bool):
             if which: which = 0
             else: which = 1
+
         cases = [[]]
         nesting = 0
-        for t in self.itertokens():
+        escape = self.ownerDocument.context.categories[Token.CC_ESCAPE][0]
+        if_ = [escape, 'i', 'f']
+        else_ = [escape, 'e', 'l', 's', 'e']
+        or_ = [escape, 'o', 'r']
+        fi_ = [escape, 'f', 'i']
+
+        for c in self.iterchars():
+            cases[-1].append(c)
             # This is probably going to cause some trouble, there 
             # are bound to be macros that start with 'if' that aren't
             # actually 'if' constructs...
-            if t.nodeType == Macro.ELEMENT_NODE:
-                if t.nodeName.startswith('if'):
-                    nesting += 1
-            elif t.startswith('if'):
+            if cases[-1][-3:] == if_:
                 nesting += 1
-            elif t == 'fi':
+            elif cases[-1][-3:] == fi_:
                 if not nesting:
-                    self.readOptionalSpaces()
+                    for i in range(3):
+                        cases[-1].pop()
                     break
                 nesting -= 1
-            elif not(nesting) and t == 'else':
-                self.readOptionalSpaces()
+            elif not(nesting) and cases[-1][-5:] == else_:
+                for i in range(5):
+                    cases[-1].pop()
                 cases.append([])
                 elsefound = True
                 continue
-            elif not(nesting) and t == 'or':
-                self.readOptionalSpaces()
+            elif not(nesting) and cases[-1][-3:] == or_:
+                for i in range(3):
+                    cases[-1].pop()
                 cases.append([])
                 continue
-            cases[-1].append(t)
+
         if debug:
             print 'CASES', cases
+
         if not elsefound:
             cases.append([])
-        return cases[which]
+
+        # Push if-selected characters back into tokenizer
+        for c in reversed(cases[which]):
+            self.inputs[-1][0].pushChar(c)
 
     def readArgument(self, *args, **kwargs):
         """
@@ -1537,7 +1571,7 @@ class TeX(object):
             return default
         return u''.join(output)
 
-    def readInteger(self):
+    def readInteger(self, optspace=True):
         """
         Read an integer from the stream
 
@@ -1558,7 +1592,8 @@ class TeX(object):
                     break
             # integer constant
             elif t in string.digits:
-                num = number(sign * int(t + self.readSequence(string.digits)))
+                num = number(sign * int(t + self.readSequence(string.digits,
+                                                              optspace=optspace)))
                 for t in self:
                     if t.nodeType == Macro.ELEMENT_NODE and \
                        isinstance(t, ParameterCommand):
@@ -1568,10 +1603,12 @@ class TeX(object):
                     break
             # octal constant
             elif t == "'":
-                num = number(sign * int('0' + self.readSequence(string.octdigits, default='0'), 8))
+                num = number(sign * int('0' + self.readSequence(string.octdigits,
+                                                   default='0', optspace=optspace), 8))
             # hex constant
             elif t == '"':
-                num = number(sign * int('0x' + self.readSequence(string.hexdigits, default='0'), 16))
+                num = number(sign * int('0x' + self.readSequence(string.hexdigits,
+                                               default='0', optspace=optspace), 16))
             # character token
             elif t == '`':
                 for t in self.itertokens():

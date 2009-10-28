@@ -251,10 +251,10 @@ class Tokenizer(object):
         CC_INVALID = Token.CC_INVALID
 
         while 1:
-            while buffer:
-                yield buffer.pop(0)
-
-            token = read(1)
+            if buffer:
+                token = buffer.pop(0)
+            else:
+                token = read(1)
 
             if not token:
                 break
