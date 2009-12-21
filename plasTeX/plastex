@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.4
 
 import os, sys, codecs, string, glob
 import plasTeX
@@ -54,8 +54,8 @@ def main(argv):
     tex.parse()
 
     # Set up TEXINPUTS to include the current directory for the renderer
-    os.environ['TEXINPUTS'] = '%s:%s' % (os.getcwd(), 
-                                         os.environ.get('TEXINPUTS',''))
+    os.environ['TEXINPUTS'] = '%s%s%s%s' % (os.getcwd(), os.pathsep,
+                                         os.environ.get('TEXINPUTS',''), os.pathsep)
 
     # Change to specified directory to output to
     outdir = config['files']['directory']

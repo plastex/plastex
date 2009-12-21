@@ -1335,7 +1335,7 @@ class TeX(object):
             pass
         else:
             TEXINPUTS = os.environ.get("TEXINPUTS",'')
-            os.environ["TEXINPUTS"] = "%s%s%s" % (srcDir, os.path.pathsep, TEXINPUTS)
+            os.environ["TEXINPUTS"] = "%s%s%s%s" % (srcDir, os.path.pathsep, TEXINPUTS, os.path.pathsep)
 
         try:
             program = self.ownerDocument.config['general']['kpsewhich']
