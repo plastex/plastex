@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" 
+      tal:attributes="content string:text/html;; charset=${config/files/output-encoding}" />
+<title tal:content="self/title"></title>
+</head>
+<body>
+<div tal:content="self">File contents</div>
+<div tal:condition="self/tableofcontents" tal:attributes="class string:contents ${self/nodeName}-contents">
+<ul>
+<li tal:repeat="section self/tableofcontents"><a href="." tal:attributes="href section/url" tal:content="section/fullTocEntry"></a>
+   <ul tal:condition="section/tableofcontents">
+   <li tal:repeat="subsection section/tableofcontents"><a href="." tal:attributes="href subsection/url" tal:content="subsection/fullTocEntry"></a>
+       <ul tal:condition="subsection/tableofcontents">
+       <li tal:repeat="subsubsection subsection/tableofcontents"><a href="." tal:attributes="href subsubsection/url" tal:content="subsubsection/fullTocEntry"></a>
+           <ul tal:condition="subsubsection/tableofcontents">
+           <li tal:repeat="paragraph subsubsection/tableofcontents"><a href="." tal:attributes="href paragraph/url" tal:content="paragraph/fullTocEntry"></a>
+               <ul tal:condition="paragraph/tableofcontents">
+               <li tal:repeat="subparagraph paragraph/tableofcontents"><a href="." tal:attributes="href subparagraph/url" tal:content="subparagraph/fullTocEntry"></a></li>
+               </ul>
+           </li>
+           </ul>
+       </li>
+       </ul>
+   </li>
+   </ul>
+</li>
+</ul>
+</div>
+</body>
+</html>
