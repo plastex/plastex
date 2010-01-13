@@ -212,12 +212,10 @@ table.list td {
 
 /* Quotations and Verse */
 .quotation, .quote, .verse {
-    text-indent: 2em;
 }
 .quotation p, .quote p, .verse p {
-    text-indent: 2em;
     margin-top: 0px;
-    margin-bottom: 0px;
+    margin-bottom: 0.5em;
 }
 
 /* Rules */
