@@ -60,7 +60,7 @@ class List(Environment):
         else:
             List.depth -= 1
         try:
-            for i in range(List.depth+1, len(List.counters)):
+            for i in range(List.depth, len(List.counters)):
                 self.ownerDocument.context.counters[List.counters[i]].setcounter(0)
         except (IndexError, KeyError):
             pass
