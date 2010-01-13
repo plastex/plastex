@@ -240,7 +240,7 @@ images['enabled'] = BooleanOption(
 images['imager'] = StringOption(
     """ LaTeX to image program """,
     options = '--imager',
-    default = 'dvipng dvi2bitmap gspdfpng gsdvipng OSXCoreGraphics',
+    default = 'dvipng dvi2bitmap pdftoppm gspdfpng gsdvipng OSXCoreGraphics',
     category = 'images',
 )
 
