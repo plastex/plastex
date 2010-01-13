@@ -1054,7 +1054,7 @@ class Definition(Macro):
 
             # Beginning a new parameter
             if a.catcode == Token.CC_PARAMETER:
-
+                
                 # Adjacent parameters, just get the next token
                 if inparam:
                     params.append(tex.readArgument(parentNode=self,
@@ -1066,6 +1066,9 @@ class Definition(Macro):
                     if a in string.digits:
                         inparam = True
 
+                    elif a.catcode == Token.CC_PARAMETER:
+                        continue
+                    
                     # Handle #{ case here
                     elif a.catcode == Token.CC_BGROUP:
                         param = []

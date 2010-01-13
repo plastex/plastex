@@ -139,6 +139,32 @@ class DefCommand(Command):
         self.parse(tex)
         a = self.attributes
         deflog.debug('def %s %s %s', a['name'], a['args'], a['definition'])
+        # See if this definiton has nested parameters
+        nested = False
+        aiter = iter(a['args'])
+        for t in aiter:
+            if t.catcode == t.CC_PARAMETER:
+                for t in aiter:
+                    if t.catcode == t.CC_PARAMETER:
+                        nested = True
+                    break
+            if nested:
+                break
+        # If we are nested, get rid of one level of #s
+        if nested:
+            for key in ['args','definition']:
+                params = 0
+                newarg = []
+                for t in a[key]:
+                    if t.catcode == t.CC_PARAMETER:
+                        params += 1
+                        newarg.append(t)
+                    else:
+                        if params > 1:
+                            newarg.pop()
+                        newarg.append(t)
+                        params = 0
+                a[key] = newarg
         self.ownerDocument.context.newdef(a['name'], a['args'], a['definition'], local=self.local)
 
 class def_(DefCommand): 
