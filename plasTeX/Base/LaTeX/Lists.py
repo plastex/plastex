@@ -72,6 +72,9 @@ class List(Environment):
             for tok in tokens:
                 if tok.isElementContentWhitespace:
                     continue
+                elif tok.nodeName == 'setcounter':
+                    tok.digest([])
+                    continue
 #               if tok.nodeName != 'item':
 #                   log.warning('dropping non-item from beginning of list')
 #                   continue

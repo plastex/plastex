@@ -5,7 +5,7 @@ name: itemize
 
 name: enumerate
 <ol class="enumerate">
-<li tal:repeat="item self" tal:content="item"></li>
+<li tal:repeat="item self" tal:content="item" tal:attributes="value item/position"></li>
 </ol>
 
 name: description
