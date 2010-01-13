@@ -1519,7 +1519,7 @@ class TheCounter(Command):
 
             # If there is a reference to another \\thecounter, invoke it
             if name.startswith('the'):
-                return u''.join(self.ownerDocument.createElement(name).invoke(tex))
+                return u''.join(tex.expandTokens(self.ownerDocument.createElement(name).invoke(tex)))
 
             # Get formatted value of the requested counter
             format = m.group(2)
