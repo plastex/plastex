@@ -192,6 +192,8 @@ def copytree(src, dest, symlink=None):
     """
     for root, dirs, files in os.walk(src, True):
         for d in dirs:
+            if d.startswith('.'):
+                continue
             srcpath = os.path.join(root, d)
             destpath = os.path.join(dest, root, d)
             if symlink and os.path.islink(srcpath):
@@ -207,6 +209,8 @@ def copytree(src, dest, symlink=None):
                     shutil.copystat(srcpath, destpath)
                 except: pass
         for f in files:
+            if f.startswith('.'):
+                continue
             srcpath = os.path.join(root, f)
             destpath = os.path.join(dest, root, f)
             if symlink and os.path.islink(srcpath):
