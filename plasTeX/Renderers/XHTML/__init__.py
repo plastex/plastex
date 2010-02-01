@@ -22,7 +22,7 @@ class XHTML(_Renderer):
         s = _Renderer.processFileContent(self, document, s)
 
         # Force XHTML syntax on empty tags
-        s = re.compile(r'(<(?:hr|br|img|link|meta)\b.*?)\s*/?\s*(>)', 
+        s = re.compile(r'(<(?:hr|br|img|link|meta|col)\b.*?)\s*/?\s*(>)', 
                        re.I|re.S).sub(r'\1 /\2', s)
 
         # Remove empty paragraphs

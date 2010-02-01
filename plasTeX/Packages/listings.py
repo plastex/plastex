@@ -8,11 +8,14 @@ except: pygments = None
 
 class listingsname(Base.Command):
     unicode = 'Listing'
+    
+PackageOptions = {}
 
 def ProcessOptions(options, document):
     document.context.newcounter('listings', 
                                 resetby='chapter',
                                 format='${thechapter}.${listings}')
+    PackageOptions.update(options)
 
 class lstset(Base.Command):
     args = 'arguments:dict'
@@ -49,6 +52,10 @@ class lstinputlisting(Base.Command):
 def _format(self, file):
     if self.attributes['arguments'] is None:
         self.attributes['arguments'] = {}
+        
+    linenos = False
+    if 'numbers' in self.attributes['arguments'] or 'numbers' in PackageOptions:
+        linenos = 'inline'
 
     # If this listing includes a label, inform plasTeX.
     if 'label' in self.attributes['arguments']:
@@ -89,4 +96,4 @@ def _format(self, file):
             lexer = lexers.get_lexer_by_name(self.ownerDocument.context.current_language.lower())
         except Exception, msg: 
             lexer = lexers.TextLexer()
-        self.xhtml_listing = pygments.highlight(self.plain_listing, lexer, formatters.HtmlFormatter())
+        self.xhtml_listing = pygments.highlight(self.plain_listing, lexer, formatters.HtmlFormatter(linenos=linenos))
