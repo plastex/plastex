@@ -222,8 +222,12 @@ class Tokenizer(object):
 # There seems to be a problem with readline in Python 2.4 !!!
     def readline(self):
         read = self.read
+        buffer = self._charBuffer
         while 1:
-            char = read(1)
+            if buffer:
+                char = buffer.pop(0)
+            else:
+                char = read(1)
             if not char or ord(char) == 10:
                 break
 
