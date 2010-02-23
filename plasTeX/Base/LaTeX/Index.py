@@ -232,6 +232,9 @@ class IndexDestination(object):
         if self._cr_type and name in ['url']:
             return None
         return getattr(self._cr_node, name)
+    
+    def __unicode__(self):
+        return unicode(self._cr_node)
 
 class theindex(IndexUtils, Environment, SectionUtils):
     blockType = True
