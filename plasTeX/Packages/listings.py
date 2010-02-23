@@ -31,7 +31,8 @@ class lstlisting(Base.verbatim):
     def invoke(self, tex):
         if self.macroMode == Base.Environment.MODE_END:
             return
-        _format(self, ''.join(Base.verbatim.invoke(self, tex)[1:]).split('\n'))
+        s = ''.join(Base.verbatim.invoke(self, tex)[1:]).replace('\r','').split('\n')
+        _format(self, s)
         
 class lstinline(Base.verb):
     args = '[ arguments:dict ]'
@@ -87,7 +88,7 @@ def _format(self, file):
             line = re.sub('/\*@[^@]*@\*/', '', line)
 
             # Add the just-read line to the listing.
-            self.plain_listing += line
+            self.plain_listing += '\n' + line
 
     # Create a syntax highlighted XHTML version of the file using Pygments
     if pygments is not None:
