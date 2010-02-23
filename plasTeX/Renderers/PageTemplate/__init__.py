@@ -84,8 +84,8 @@ try:
                      'config':obj.ownerDocument.config,
                      'context':obj.ownerDocument.context,
                      'templates':obj.renderer}
-            return unicode(CheetahTemplate(source=s, 
-                           searchList=[tvars], filter=CheetahUnicode).respond(), encoding)
+            return CheetahTemplate(source=s, searchList=[tvars], 
+                                   filter=CheetahUnicode).respond()
         return rendercheetah
 
 except ImportError:
@@ -239,7 +239,8 @@ class PageTemplate(BaseRenderer):
     def __init__(self, *args, **kwargs):
         BaseRenderer.__init__(self, *args, **kwargs)
         self.engines = {}
-        htmlexts = ['.html','.htm','.xhtml','.xhtm','.zpt']
+        htmlexts = ['.html','.htm','.xhtml','.xhtm','.zpt','.pt']
+        self.registerEngine('pt', None, htmlexts, htmltemplate)
         self.registerEngine('zpt', None, htmlexts, htmltemplate)
         self.registerEngine('zpt', 'xml', '.xml', xmltemplate)
         self.registerEngine('tal', None, htmlexts, htmltemplate)
@@ -319,9 +320,9 @@ class PageTemplate(BaseRenderer):
                 log.info('Importing templates from %s' % theme)
                 self.importDirectory(theme)
 
-                extensions = ['.zpts','.pts']
+                extensions = []
                 for e in self.engines.values():
-                    extensions += e.ext
+                    extensions += e.ext + [x+'s' for x in e.ext]
 
                 if document.config['general']['copy-theme-extras']:
                     # Copy all theme extras
@@ -364,10 +365,15 @@ class PageTemplate(BaseRenderer):
         """
         # Create a list for resolving aliases
         self.aliases = {}
-
+        
+        enames = {}
+        for key, value in self.engines.items():
+            for i in value.ext:
+                enames[i+'s'] = key[0]
+                
         if templatedir and os.path.isdir(templatedir):
             files = os.listdir(templatedir)
-
+            
             # Compile multi-pt files first
             for f in files:
                 ext = os.path.splitext(f)[-1]
@@ -377,8 +383,8 @@ class PageTemplate(BaseRenderer):
                     continue
 
                 # Multi-pt files
-                if ext.lower() in ['.zpts','.pts']:
-                    self.parseTemplates(f)
+                if ext.lower() in enames:
+                    self.parseTemplates(f, {'engine':enames[ext.lower()]})
 
             # Now compile macros in individual files.  These have
             # a higher precedence than macros found in multi-pt files.
@@ -472,7 +478,7 @@ class PageTemplate(BaseRenderer):
         options = options.copy()
         defaults = {}
         name = None
-        if not options:
+        if not options or 'name' not in options:
             f = open(filename, 'r')
             for i, line in enumerate(f):
                 # Found a meta-data command
