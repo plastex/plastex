@@ -371,6 +371,11 @@ class PageTemplate(BaseRenderer):
             for i in value.ext:
                 enames[i+'s'] = key[0]
                 
+        singleenames = {}
+        for key, value in self.engines.items():
+            for i in value.ext:
+                singleenames[i] = key[0]
+                
         if templatedir and os.path.isdir(templatedir):
             files = os.listdir(templatedir)
             
@@ -399,7 +404,9 @@ class PageTemplate(BaseRenderer):
 
                 for value in self.engines.values():
                     if ext in value.ext:
+                        options['engine'] = singleenames[ext.lower()]
                         self.parseTemplates(f, options)                
+                        del options['engine']
                         break
 
         if self.aliases:
