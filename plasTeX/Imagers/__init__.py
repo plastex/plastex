@@ -698,7 +698,10 @@ class Imager(object):
             directory = os.path.dirname(dest.path)
             if directory and not os.path.isdir(directory):
                 os.makedirs(directory)
-            shutil.copy2(os.path.join(tempdir,src), dest.path)
+            try:
+                shutil.copy2(os.path.join(tempdir,src), dest.path)
+            except OSError:
+                shutil.copy(os.path.join(tempdir,src), dest.path)
 
             # Crop the image
             try: 
