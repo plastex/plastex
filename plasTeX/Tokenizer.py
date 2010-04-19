@@ -451,6 +451,14 @@ class Tokenizer(object):
 
                 # Check for any \let aliases
                 token = context.lets.get(token, token)
+                
+                # TODO: This action should be generalized so that the 
+                #       tokens are processed recursively
+                if token is not token and token.catcode == CC_COMMENT:
+                    self.readline()
+                    self.lineNumber += 1
+                    self.state = STATE_N
+                    continue
 
             elif code == CC_COMMENT:
                 self.readline() 
