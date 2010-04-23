@@ -17,9 +17,8 @@ name: tiny scriptsize footnotesize small normalsize large Large LARGE huge Huge
 <span tal:replace="self"></span>
 
 name: symbol
-<mediaobject remap="symbol" tal:omit-tag="not:self/renderer/vectorImager/enabled" 
-  format="SVG" tal:attributes="fileref self/vectorImage/url">
+<mediaobject remap="symbol" tal:omit-tag="not:self/renderer/vectorImager/enabled">
   <imageobject>
-    <imagedata tal:attributes="fileref self/image/url"  />
+    <imagedata tal:attributes="fileref self/image/url" format="SVG" />
   </imageobject>
 </mediaobject>

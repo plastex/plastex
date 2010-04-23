@@ -12,7 +12,7 @@ name: hyperbaseurl
 
 name: hyperimage
 <imageobject>
-  <imagedata tal:attributes="fileref self/attributes/url" />
+  <imagedata tal:attributes="fileref self/attributes/url;contentwidth self/image/width/px;contentdepth self/image/height/px" />
 </imageobject>
 
 name: hyperdef
