@@ -606,7 +606,7 @@ class Node(object):
     NODE_SLOTS = ['parentNode','contextDepth','ownerDocument',
                   '_dom_childNodes','_dom_userdata']
     ELEMENT_SLOTS = NODE_SLOTS + ['_dom_attributes','nodeName']
-    TEXT_SLOTS = ['parentNode','contextDepth','ownerDocument']
+    TEXT_SLOTS = ['parentNode','contextDepth','ownerDocument','isMarkup']
 
     __slots__ = []
 

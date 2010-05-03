@@ -283,9 +283,10 @@ class PageTemplate(BaseRenderer):
         node -- the Text node to process
 
         """
-        node = node.replace('&', '&amp;')
-        node = node.replace('<', '&lt;')
-        node = node.replace('>', '&gt;')
+        if not(getattr(node, 'isMarkup', None)):
+            node = node.replace('&', '&amp;')
+            node = node.replace('<', '&lt;')
+            node = node.replace('>', '&gt;')
         return self.outputType(node)
 
     def render(self, document):

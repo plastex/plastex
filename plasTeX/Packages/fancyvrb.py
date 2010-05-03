@@ -107,5 +107,4 @@ class Verbatim(verbatim):
             char = options['commentchar']
             self.ownerDocument.context.catcode(char, Token.CC_COMMENT)
 
-        print self.style
         return self.attributes
