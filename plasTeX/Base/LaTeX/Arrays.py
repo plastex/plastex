@@ -220,7 +220,7 @@ class Array(Environment):
             at a time.
 
             """
-            name = self.parentNode.nodeName
+            name = self.parentNode.nodeName or 'array'
             escape = '\\'
             s = []
             argSource = sourceArguments(self.parentNode)
@@ -366,8 +366,12 @@ class Array(Environment):
         @property
         def source(self):
             # Don't put paragraphs into math mode arrays
+            if self.parentNode is None:
+               # no parentNode, assume mathMode==False
+               return sourceChildren(self, True)
             return sourceChildren(self, 
                        par=not(self.parentNode.parentNode.mathMode))
+        
 
 
     class multicolumn(Command):

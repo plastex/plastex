@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys, re
+import sys, re, codecs
 from plasTeX import Base
 
 try: import pygments
@@ -21,8 +21,12 @@ class lstset(Base.Command):
     args = 'arguments:dict'
     def invoke(self, tex):
         Base.Command.invoke(self, tex)
-        self.ownerDocument.context.current_language = \
-            self.attributes['arguments']['language']
+        if 'language' in self.attributes:
+            self.ownerDocument.context.current_language = \
+                self.attributes['arguments']['language']
+        else:
+            self.ownerDocument.context.current_language = \
+                self.attributes['arguments']['language']
         
 class lstlisting(Base.verbatim):
     args = '[ arguments:dict ]'
@@ -48,7 +52,8 @@ class lstinputlisting(Base.Command):
         Base.Command.invoke(self, tex)
         if 'file' not in self.attributes or not self.attributes['file']:
             raise ValueError('Malformed \\lstinputlisting macro.')
-        _format(self, open(self.attributes['file'], 'r'))
+        _format(self, codecs.open(self.attributes['file'], 'r',
+            self.config['files']['input-encoding'], 'replace'))
         
 def _format(self, file):
     if self.attributes['arguments'] is None:
@@ -60,8 +65,12 @@ def _format(self, file):
 
     # If this listing includes a label, inform plasTeX.
     if 'label' in self.attributes['arguments']:
-        self.ownerDocument.context.label(
-            self.attributes['arguments']['label'])
+        if hasattr(self.attributes['arguments']['label'], textContent):
+            self.ownerDocument.context.label(
+                self.attributes['arguments']['label'].textContent)
+        else:
+            self.ownerDocument.context.label(
+                self.attributes['arguments']['label'])
 
     # Check the textual LaTeX arguments and convert them to Python
     # attributes.
