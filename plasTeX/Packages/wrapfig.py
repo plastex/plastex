@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from plasTeX import Environment
+from plasTeX.Base.LaTeX.Floats import Caption
 
 class wrapfigure(Environment):
     args = '[ lines ] place:str [ overhang ] width'
@@ -12,6 +13,9 @@ class wrapfigure(Environment):
             if a in ['r','o']:
                 self.float = 'right'
         return res
+    
+    class caption(Caption):
+        counter = 'figure'
 
 class wraptable(wrapfigure):
     pass
