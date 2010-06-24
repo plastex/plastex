@@ -21,10 +21,7 @@ class lstset(Base.Command):
     args = 'arguments:dict'
     def invoke(self, tex):
         Base.Command.invoke(self, tex)
-        if 'language' in self.attributes:
-            self.ownerDocument.context.current_language = \
-                self.attributes['arguments']['language']
-        else:
+        if 'language' in self.attributes['arguments']:
             self.ownerDocument.context.current_language = \
                 self.attributes['arguments']['language']
         
@@ -65,7 +62,7 @@ def _format(self, file):
 
     # If this listing includes a label, inform plasTeX.
     if 'label' in self.attributes['arguments']:
-        if hasattr(self.attributes['arguments']['label'], textContent):
+        if hasattr(self.attributes['arguments']['label'], 'textContent'):
             self.ownerDocument.context.label(
                 self.attributes['arguments']['label'].textContent)
         else:
