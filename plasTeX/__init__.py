@@ -793,6 +793,8 @@ class TeXDocument(Document):
     charsubs = [
         ('``', unichr(8220)),
         ("''", unichr(8221)),
+        ('"`', unichr(8222)),
+        ('"\'', unichr(8220)),
         ('`',  unichr(8216)),
         ("'",  unichr(8217)),
         ('---',unichr(8212)),
