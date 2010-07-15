@@ -1,4 +1,11 @@
+name: -math-explanation
+<span> imagedata in inline math needs a depth param to be used the html
+       so we surface the depth=depth, width=contentwidth, height=contentdepth
+       and catch the depth parm in the XSLT 
+</span>
+
 name: math ensuremath
+type:xml
 <inlineequation>
   <inlinemediaobject remap="math" tal:condition="self/renderer/vectorImager/enabled">
     <imageobject>
@@ -10,8 +17,9 @@ name: math ensuremath
   </inlinemediaobject>
   <inlinemediaobject remap="math" tal:condition="not:self/renderer/vectorImager/enabled">
     <imageobject>
-      <imagedata role="math" 
-        tal:attributes="fileref self/image/url;contentwidth self/image/width/px;contentdepth self/image/height/px" />
+      <imagedata role="math" tal:attributes="depth string:${self/image/depth/px};fileref
+      self/image/url;contentwidth self/image/width/px;contentdepth
+      self/image/height/px" />
     </imageobject>
     <textobject role="tex">
       <phrase tal:content="text self/source"></phrase>
@@ -34,8 +42,9 @@ name: displaymath equation  equation*
   </mediaobject>
   <mediaobject remap="math" tal:condition="not:self/renderer/vectorImager/enabled">
     <imageobject>
-      <imagedata role="math"  
-        tal:attributes="fileref self/image/url;contentwidth self/image/width/px; contentdepth self/image/height/px" />
+      <imagedata role="math" tal:attributes="depth string:${self/image/depth/px};fileref
+      self/image/url;contentwidth self/image/width/px;contentdepth
+      self/image/height/px" />
     </imageobject>
     <textobject role="tex">
       <phrase tal:content="text self/source"></phrase>
@@ -65,7 +74,9 @@ type: xml
     <mediaobject remap="math" tal:condition="not:self/renderer/vectorImager/enabled">
     <imageobject>
       <imagedata role="math" 
-       tal:attributes="fileref cell/image/url;contentwidth cell/image/width/px;contentdepth cell/image/height/px" />
+       tal:attributes="fileref cell/image/url;depth
+       string:${self/image/depth/px};contentwidth
+       cell/image/width/px;contentdepth cell/image/height/px" />
     </imageobject>
     <textobject role="tex">
       <phrase tal:content="text cell/source"></phrase>
