@@ -40,7 +40,7 @@ class ContextItem(dict):
         try: 
             return dict.__getitem__(self, key)
         except KeyError:
-            if self.parent is not None:
+            if self.parent is not None and self.parent is not self:
                 return self.parent[key]
             raise
 
