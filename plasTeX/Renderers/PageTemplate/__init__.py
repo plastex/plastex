@@ -289,7 +289,7 @@ class PageTemplate(BaseRenderer):
             node = node.replace('>', '&gt;')
         return self.outputType(node)
 
-    def render(self, document):
+    def loadTemplates(self, document):
         """ Load and compile page templates """
         themename = document.config['general']['theme']
 
@@ -340,6 +340,9 @@ class PageTemplate(BaseRenderer):
 
                 break
 
+    def render(self, document):
+        """ Load templates and render the document """
+        self.loadTemplates(document)
         BaseRenderer.render(self, document)
 
     def importDirectory(self, templatedir):
