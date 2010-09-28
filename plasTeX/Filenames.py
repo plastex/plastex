@@ -161,7 +161,7 @@ class Filenames(object):
     
         # Locate all key names and formats in the string
         keysre = re.compile(r'\$\{(\w+)(?:\.(\d+))?}')
-
+        
         # Return static filenames
         for item in static:
             currentns = self.vars.copy()
@@ -202,7 +202,9 @@ class Filenames(object):
         # We've reached the wildcard stage.  The wildcard gives us
         # multiple alternatives of filenames to choose from.  Keep trying
         # each one with the current namespace until one works.
+        passes = 0
         while 1:
+            passes += 1
             for item in wildcard:
                 currentns = self.vars.copy()
                 for key, value in currentns.items():
@@ -244,6 +246,9 @@ class Filenames(object):
                         del self.vars['num']
                     continue
             else:
-                break
+                # We tried 100 different names and still don't have a unique
+                # one, we better just bail out.
+                if passes > 100:
+                    break
     
         raise ValueError, 'Filename could not be created.'
