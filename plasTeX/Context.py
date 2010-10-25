@@ -89,18 +89,18 @@ class LanguageParser(object):
         self.language = None
         self.term = None
 
-    def parse(self, files, encoding='utf8'):
+    def parse(self, files, encoding='UTF-8'):
         from xml.parsers import expat
         if isinstance(files, basestring):
             files = [files]
         for file in files:
             if not os.path.isfile(file):
                 continue
-            self.parser = expat.ParserCreate()
+            self.parser = expat.ParserCreate('UTF-8')
             self.parser.StartElementHandler = self.startElement
             self.parser.EndElementHandler = self.endElement
             self.parser.CharacterDataHandler = self.charData
-            self.parser.Parse(codecs.open(file, 'r', encoding).read())
+            self.parser.Parse(codecs.open(file, 'r', encoding).read().encode('UTF-8'))
         self.mergeLanguages()
         return self.data
 

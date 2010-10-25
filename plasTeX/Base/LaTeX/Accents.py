@@ -117,6 +117,7 @@ class Circumflex(Accent):
         'w': unichr(373),
         'Y': unichr(374),
         'y': unichr(375),
+        '': '^',
     }
 
 class Umlaut(Accent):
