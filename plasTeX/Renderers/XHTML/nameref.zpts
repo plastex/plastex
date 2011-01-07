@@ -1,0 +1,2 @@
+name: Nameref nameref
+<a tal:attributes="href string:${self/idref/label/url}" tal:content="self/idref/label/title">text</a>
