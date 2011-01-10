@@ -50,7 +50,7 @@ def ismacro(o):
 
 def issection(o): 
     """ Is the given object a section? """
-    return o.level >= Node.DOCUMENT_LEVEL and o.level < Node.END_SECTIONS_LEVEL 
+    return o.level >= Node.DOCUMENT_LEVEL and o.level < Node.ENDSECTIONS_LEVEL 
 
 def macroName(o):
      """ Return the macro name of the given object """
