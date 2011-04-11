@@ -1,7 +1,27 @@
 #!/usr/bin/env python
 
-import unittest, re, os, tempfile, shutil, glob, difflib, subprocess
+import sys, unittest, re, os, tempfile, shutil, glob, difflib, subprocess
 from unittest import TestCase
+
+def which(name, path=None, exts=('',)):
+    """
+    Search PATH for a binary.
+
+    Args:
+    name -- the filename to search for
+    path -- the optional path string (default: os.environ['PATH')
+    exts -- optional list/tuple of extensions to try (default: ('',))
+
+    Returns:
+    The abspath to the binary or None if not found.
+    """
+    path = os.environ.get('PATH', path)
+    for dir in path.split(os.pathsep):
+        for ext in exts:
+            binpath = os.path.abspath(os.path.join(dir, name) + ext)
+            if os.path.isfile(binpath):
+                return binpath
+    return None
 
 class Process(object):
     """ Simple subprocess wrapper """
@@ -55,7 +75,9 @@ class Benched(TestCase):
 
         # Run plastex
         outfile = os.path.join(outdir, os.path.splitext(os.path.basename(src))[0]+'.html')
-        p = Process('plastex','--split-level=0','--no-theme-extras',
+        plastex = which('plastex') or 'plastex'
+        python = sys.executable 
+        p = Process(python, plastex,'--split-level=0','--no-theme-extras',
                     '--dir=%s' % outdir,'--theme=minimal',
                     '--filename=%s' % os.path.basename(outfile), os.path.basename(src),
                     cwd=outdir)

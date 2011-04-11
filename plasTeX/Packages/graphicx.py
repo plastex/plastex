@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os
+import os, re
 from plasTeX import Command
 
 from graphics import DeclareGraphicsExtensions, graphicspath
@@ -43,7 +43,15 @@ class includegraphics(Command):
         options = self.attributes['options']
 
         if options is not None:
-
+            
+            scale = options.get('scale')
+            if scale is not None:
+                scale = float(scale)
+                from PIL import Image
+                w, h = Image.open(img).size
+                self.style['width'] = '%spx' % (w * scale)
+                self.style['height'] = '%spx' % (h * scale)
+                
             height = options.get('height')
             if height is not None:
                 self.style['height'] = height
@@ -51,6 +59,33 @@ class includegraphics(Command):
             width = options.get('width')
             if width is not None:
                 self.style['width'] = width
+                
+            def getdimension(s):
+                m = re.match(r'^([\d\.]+)\s*([a-z]*)$', s)
+                if m and '.' in m.group(1):
+                    return float(m.group(1)), m.group(2)
+                elif m:
+                    return int(m.group(1)), m.group(2)
+
+            keepaspectratio = options.get('keepaspectratio')
+            if img is not None and keepaspectratio == 'true' and \
+               height is not None and width is not None:
+                from PIL import Image
+                w, h = Image.open(img).size
+                
+                height, hunit = getdimension(height)
+                width, wunit = getdimension(width)
+                
+                scalex = float(width) / w
+                scaley = float(height) / h
+                
+                if scaley > scalex:
+                    height = h * scalex
+                else:
+                    width = w * scaley
+                    
+                self.style['width'] = '%s%s' % (width, wunit)
+                self.style['height'] = '%s%s' % (height, hunit)
 
         self.imageoverride = img
 

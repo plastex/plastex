@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+__version__ = '9.3'
+
 import string, re
 from DOM import Element, Text, Node, DocumentFragment, Document
 from Tokenizer import Token, BeginGroup, EndGroup, Other
