@@ -7,10 +7,13 @@ from plasTeX.Logging import getLogger
 from StringIO import StringIO
 from plasTeX.Filenames import Filenames
 from plasTeX.dictutils import ordereddict
+import subprocess
+import shlex
 
 log = getLogger()
 depthlog = getLogger('render.images.depth')
 status = getLogger('status')
+imagelog = getLogger('imager')
 
 try:
     import Image as PILImage
@@ -611,7 +614,19 @@ class Imager(object):
         program = self.config['images']['compiler']
         if not program:
             program = self.compiler
-        os.system(r"%s %s" % (program, filename))
+
+        cmd = r'%s %s' % (program, filename)
+        p = subprocess.Popen(shlex.split(cmd),
+                     stdout=subprocess.PIPE,
+                     stderr=subprocess.STDOUT,
+                     )
+        while True:
+            line = p.stdout.readline()
+            done = p.poll()
+            if line:
+                imagelog.info(str(line.strip()))        
+            elif done is not None:
+                break
 
         output = None
         for ext in ['.dvi','.pdf','.ps']:
@@ -646,7 +661,21 @@ class Imager(object):
                 if ' ' in value:
                     value = '"%s"' % value
                 options += '%s %s ' % (opt, value)
-        return os.system('%s %s%s' % (self.command, options, 'images.out')), None
+
+        cmd = r'%s %s%s' % (self.command, options, 'images.out')
+        p = subprocess.Popen(shlex.split(cmd),
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.STDOUT,
+                           )
+        done = None
+        while True:
+            line = p.stdout.readline()
+            done = p.poll()
+            if line:
+                imagelog.info(str(line.strip()))        
+            elif done is not None:
+                break
+        return done, None
 
     def convert(self, output):
         """
