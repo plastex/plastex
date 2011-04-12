@@ -9,6 +9,11 @@ def ProcessOptions(options, document):
     for key, value in options.items():
         if key in languages:
             context.loadLanguage(key, document)
+        if key in ['german','ngerman']:
+            class glqq(Command): unicode = u'\u201e'
+            class grqq(Command): unicode = u'\u201c'
+            context.addGlobal('glqq', glqq)
+            context.addGlobal('grqq', grqq)
 
 class selectlanguage(Command):
     args = 'lang:str'
