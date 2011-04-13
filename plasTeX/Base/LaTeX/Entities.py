@@ -88,5 +88,5 @@ class EntityParser(object):
 
 
 # Parse the entities file
-e = EntityParser()
-e.parse(os.path.join(os.path.dirname(__file__),'ent.xml'))
+#e = EntityParser()
+#e.parse(os.path.join(os.path.dirname(__file__),'ent.xml'))

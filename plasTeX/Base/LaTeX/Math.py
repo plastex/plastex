@@ -19,24 +19,28 @@ class MathEnvironment(Environment):
 
     class ThinSpace(Command):
         macroName = '.'
+        unicode = u'\u2009'
 
-    class NegativeThisSpace(Command):
+    class NegativeThinSpace(Command):
         macroName = '!'
-    
+
     class MediumSpace(Command):
         macroName = ':'
-    
+        unicode = u'\u8196'
+
     class ThickSpace(Command):
         macroName = ';'
-    
+        unicode = u'\u8194'
+
     class ThinSpace_(Command):
         macroName = '/'
+        unicode = u'\u2009'
 
 # Need \newcommand\({\begin{math}} and \newcommand\){\end{math}}
 
-class math(MathEnvironment): 
+class math(MathEnvironment):
     @property
-    def source(self): 
+    def source(self):
         if self.hasChildNodes():
             return '$%s$' % sourceChildren(self)
         return '$'
@@ -90,7 +94,7 @@ class equation(MathEnvironment):
     blockType = True
     counter = 'equation'
 
-class EqnarrayStar(Array): 
+class EqnarrayStar(Array):
     macroName = 'eqnarray*'
     blockType = True
     mathMode = True
@@ -176,7 +180,7 @@ class belowdisplayshortskip(GlueCommand):
 # C.7.2 Common Structures
 #
 
-# _ 
+# _
 # ^
 # '
 
@@ -186,8 +190,8 @@ class frac(Command):
 class sqrt(Command):
     args = '[ n ] self'
 
-class ldots(Command): 
-    pass
+class ldots(Command):
+    unicode = u'\u2026'
 
 class cdots(Command):
     pass
@@ -206,95 +210,96 @@ class ddots(Command):
 # Table 3.3: Greek Letters
 #
 
-class MathSymbol(Command): 
+class MathSymbol(Command):
     pass
 
 # Lowercase
-class alpha(MathSymbol): pass
-class beta(MathSymbol): pass
-class gamma(MathSymbol): pass
-class delta(MathSymbol): pass
-class epsilon(MathSymbol): pass
-class varepsilon(MathSymbol): pass
-class zeta(MathSymbol): pass
-class eta(MathSymbol): pass
-class theta(MathSymbol): pass
-class vartheta(MathSymbol): pass
-class iota(MathSymbol): pass
-class kappa(MathSymbol): pass
+class alpha(MathSymbol): unicode = unichr(945)
+class beta(MathSymbol): unicode = unichr(946)
+class gamma(MathSymbol): unicode = unichr(947)
+class delta(MathSymbol): unicode = unichr(948)
+class epsilon(MathSymbol): unicode = unichr(949)
+class varepsilon(MathSymbol): unicode = unichr(949)
+class zeta(MathSymbol): unicode = unichr(950)
+class eta(MathSymbol): unicode = unichr(951)
+class theta(MathSymbol): unicode = unichr(952)
+class vartheta(MathSymbol): unicode = unichr(977)
+class iota(MathSymbol): unicode = unichr(953)
+class kappa(MathSymbol): unicode = unichr(954)
 class GreekLamda(MathSymbol):
     macroName = 'lambda'
-class mu(MathSymbol): pass
-class nu(MathSymbol): pass
-class xi(MathSymbol): pass
-class pi(MathSymbol): pass
-class varpi(MathSymbol): pass
-class rho(MathSymbol): pass
-class varrho(MathSymbol): pass
-class sigma(MathSymbol): pass
-class varsigma(MathSymbol): pass
-class tau(MathSymbol): pass
-class upsilon(MathSymbol): pass
-class phi(MathSymbol): pass
-class varphi(MathSymbol): pass
-class chi(MathSymbol): pass
-class psi(MathSymbol): pass
-class omega(MathSymbol): pass
+    unicode = unichr(955)
+class mu(MathSymbol): unicode = unichr(956)
+class nu(MathSymbol): unicode = unichr(957)
+class xi(MathSymbol): unicode = unichr(958)
+class pi(MathSymbol): unicode = unichr(960)
+class varpi(MathSymbol): unicode = unichr(982)
+class rho(MathSymbol): unicode = unichr(961)
+class varrho(MathSymbol): unicode = unichr(1009)
+class sigma(MathSymbol): unicode = unichr(963)
+class varsigma(MathSymbol): unicode = unichr(962)
+class tau(MathSymbol): unicode = unichr(964)
+class upsilon(MathSymbol): unicode = unichr(965)
+class phi(MathSymbol): unicode = unichr(966)
+class varphi(MathSymbol): unicode = unichr(981)
+class chi(MathSymbol): unicode = unichr(967)
+class psi(MathSymbol): unicode = unichr(968)
+class omega(MathSymbol): unicode = unichr(969)
 
 # Uppercase
-class Gamma(MathSymbol): pass
-class Delta(MathSymbol): pass
-class Theta(MathSymbol): pass
-class Lambda(MathSymbol): pass
-class Xi(MathSymbol): pass
-class Pi(MathSymbol): pass
-class Sigma(MathSymbol): pass
-class Upsilon(MathSymbol): pass
-class Phi(MathSymbol): pass
-class Psi(MathSymbol): pass
-class Omega(MathSymbol): pass
+class Gamma(MathSymbol): unicode = unichr(915)
+class Delta(MathSymbol): unicode = unichr(916)
+class Theta(MathSymbol): unicode = unichr(920)
+class Lambda(MathSymbol): unicode = unichr(923)
+class Xi(MathSymbol): unicode = unichr(926)
+class Pi(MathSymbol): unicode = unichr(928)
+class Sigma(MathSymbol): unicode = unichr(931)
+class Upsilon(MathSymbol): unicode = unichr(978)
+class Phi(MathSymbol): unicode = unichr(934)
+class Psi(MathSymbol): unicode = unichr(936)
+class Omega(MathSymbol): unicode = unichr(8486)
 
 
 #
 # Table 3.4: Binary Operation Symbols
 #
 
-class pm(MathSymbol): pass
-class mp(MathSymbol): pass
-class times(MathSymbol): pass
-class div(MathSymbol): pass
-class ast(MathSymbol): pass
-class star(MathSymbol): pass
-class circ(MathSymbol): pass
-class bullet(MathSymbol): pass
-class cdot(MathSymbol): pass
-class cap(MathSymbol): pass
-class cup(MathSymbol): pass
-class uplus(MathSymbol): pass
-class sqcap(MathSymbol): pass
-class sqcup(MathSymbol): pass
-class vee(MathSymbol): pass
-class wedge(MathSymbol): pass
-class setminus(MathSymbol): pass
-class wr(MathSymbol): pass
-class diamond(MathSymbol): pass
-class bigtriangleup(MathSymbol): pass
-class bigtriangledown(MathSymbol): pass
-class triangleleft(MathSymbol): pass
-class triangleright(MathSymbol): pass
+class pm(MathSymbol): unicode = unichr(177)
+class mp(MathSymbol): unicode = unichr(8723)
+class times(MathSymbol): unicode = unichr(215)
+class div(MathSymbol): unicode = unichr(247)
+class ast(MathSymbol): unicode = unichr(42)
+class star(MathSymbol): unicode = unichr(8902)
+class circ(MathSymbol): unicode = unichr(9675)
+class bullet(MathSymbol): unicode = unichr(8226)
+class cdot(MathSymbol): unicode = unichr(183)
+class cap(MathSymbol): unicode = unichr(8745)
+class cup(MathSymbol): unicode = unichr(8746)
+class uplus(MathSymbol): unicode = unichr(8846)
+class sqcap(MathSymbol): unicode = unichr(8851)
+class sqcup(MathSymbol): unicode = unichr(8852)
+class vee(MathSymbol): unicode = unichr(8744)
+class wedge(MathSymbol): unicode = unichr(8743)
+class setminus(MathSymbol): unicode = unichr(8726)
+class wr(MathSymbol): unicode = unichr(8768)
+class diamond(MathSymbol): unicode = unichr(8900)
+class bigtriangleup(MathSymbol): unicode = unichr(9651)
+class bigtriangledown(MathSymbol): unicode = unichr(9661)
+class triangleleft(MathSymbol): unicode = unichr(9667)
+class triangleright(MathSymbol): unicode = unichr(9657)
 class lhd(MathSymbol): pass
 class rhd(MathSymbol): pass
 class unlhd(MathSymbol): pass
 class unrhd(MathSymbol): pass
-class oplus(MathSymbol): pass
-class ominus(MathSymbol): pass
-class otimes(MathSymbol): pass
-class oslash(MathSymbol): pass
-class odot(MathSymbol): pass
-class bigcirc(MathSymbol): pass
-class dagger(MathSymbol): pass
-class ddagger(MathSymbol): pass
-class amalg(MathSymbol): pass
+class oplus(MathSymbol): unicode = unichr(8853)
+class ominus(MathSymbol): unicode = unichr(8854)
+class otimes(MathSymbol): unicode = unichr(8855)
+class oslash(MathSymbol): unicode = unichr(8856)
+class odot(MathSymbol): unicode = unichr(8857)
+class bigcirc(MathSymbol): unicode = unichr(9711)
+class dagger(MathSymbol): unicode = unichr(8224)
+class ddagger(MathSymbol): unicode = unichr(8225)
+class amalg(MathSymbol): unicode = unichr(8720)
 
 #
 # Table 3.5: Relation Symbols
@@ -303,63 +308,63 @@ class amalg(MathSymbol): pass
 class Not(MathSymbol):
     macroName = 'not'
     args = 'symbol'
-class leq(MathSymbol): pass
-class le(MathSymbol): pass
-class prec(MathSymbol): pass
-class preceq(MathSymbol): pass
-class ll(MathSymbol): pass
-class subset(MathSymbol): pass
-class subseteq(MathSymbol): pass
-class sqsubseteq(MathSymbol): pass
+class leq(MathSymbol): unicode = unichr(8804)
+class le(MathSymbol): unicode = unichr(8804)
+class prec(MathSymbol): unicode = unichr(8826)
+class preceq(MathSymbol): unicode = unichr(8828)
+class ll(MathSymbol): unicode = unichr(8810)
+class subset(MathSymbol): unicode = unichr(8834)
+class subseteq(MathSymbol): unicode = unichr(8838)
+class sqsubseteq(MathSymbol): unicode = unichr(8849)
 class In(MathSymbol):
     macroName = 'in'
-class vdash(MathSymbol): pass
-class geq(MathSymbol): pass
-class ge(MathSymbol): pass
-class succ(MathSymbol): pass
-class succeq(MathSymbol): pass
-class gg(MathSymbol): pass
-class supset(MathSymbol): pass
-class supseteq(MathSymbol): pass
-class sqsupset(MathSymbol): pass
-class sqsupseteq(MathSymbol): pass
-class ni(MathSymbol): pass
-class dashv(MathSymbol): pass
-class equiv(MathSymbol): pass
-class sim(MathSymbol): pass
-class simeq(MathSymbol): pass
-class asymp(MathSymbol): pass
-class approx(MathSymbol): pass
-class cong(MathSymbol): pass
-class neq(MathSymbol): pass
-class ne(MathSymbol): pass
-class doteq(MathSymbol): pass
+class vdash(MathSymbol): unicode = unichr(8866)
+class geq(MathSymbol): unicode = unichr(8805)
+class ge(MathSymbol): unicode = unichr(8805)
+class succ(MathSymbol): unicode = unichr(8827)
+class succeq(MathSymbol): unicode = unichr(8829)
+class gg(MathSymbol): unicode = unichr(8811)
+class supset(MathSymbol): unicode = unichr(8835)
+class supseteq(MathSymbol): unicode = unichr(8839)
+class sqsupset(MathSymbol): unicode = unichr(8848)
+class sqsupseteq(MathSymbol): unicode = unichr(8850)
+class ni(MathSymbol): unicode = unichr(8715)
+class dashv(MathSymbol): unicode = unichr(8867)
+class equiv(MathSymbol): unicode = unichr(8801)
+class sim(MathSymbol): unicode = unichr(8764)
+class simeq(MathSymbol): unicode = unichr(8771)
+class asymp(MathSymbol): unicode = unichr(8781)
+class approx(MathSymbol): unicode = unichr(8776)
+class cong(MathSymbol): unicode = unichr(8773)
+class neq(MathSymbol): unicode = unichr(8800)
+class ne(MathSymbol): unicode = unichr(8800)
+class doteq(MathSymbol): unicode = unichr(8784)
 class notin(MathSymbol): pass
-class models(MathSymbol): pass
-class perp(MathSymbol): pass
-class mid(MathSymbol): pass
-class parallel(MathSymbol): pass
-class bowtie(MathSymbol): pass
+class models(MathSymbol): unicode = unichr(8871)
+class perp(MathSymbol): unicode = unichr(8869)
+class mid(MathSymbol): unicode = unichr(8739)
+class parallel(MathSymbol): unicode = unichr(8741)
+class bowtie(MathSymbol): unicode = unichr(8904)
 class Join(MathSymbol): pass
-class smile(MathSymbol): pass
-class frown(MathSymbol): pass
-class propto(MathSymbol): pass
+class smile(MathSymbol): unicode = unichr(8995)
+class frown(MathSymbol): unicode = unichr(8994)
+class propto(MathSymbol): unicode = unichr(8733)
 
 #
 # Table 3.6: Arrow Symbols
 #
 
-class leftarrow(MathSymbol): pass
-class Leftarrow(MathSymbol): pass
-class rightarrow(MathSymbol): pass
-class Rightarrow(MathSymbol): pass
-class leftrightarrow(MathSymbol): pass
-class Leftrightarrow(MathSymbol): pass
-class mapsto(MathSymbol): pass
-class hookleftarrow(MathSymbol): pass
-class leftharpoonup(MathSymbol): pass
-class leftharpoondown(MathSymbol): pass
-class rightleftharpoons(MathSymbol): pass
+class leftarrow(MathSymbol): unicode = unichr(8592)
+class Leftarrow(MathSymbol): unicode = unichr(8656)
+class rightarrow(MathSymbol): unicode = unichr(8594)
+class Rightarrow(MathSymbol): unicode = unichr(8658)
+class leftrightarrow(MathSymbol): unicode = unichr(8596)
+class Leftrightarrow(MathSymbol): unicode = unichr(8660)
+class mapsto(MathSymbol): unicode = unichr(8614)
+class hookleftarrow(MathSymbol): unicode = unichr(8617)
+class leftharpoonup(MathSymbol): unicode = unichr(8636)
+class leftharpoondown(MathSymbol): unicode = unichr(8637)
+class rightleftharpoons(MathSymbol): unicode = unichr(8652)
 class longleftarrow(MathSymbol): pass
 class Longleftarrow(MathSymbol): pass
 class longrightarrow(MathSymbol): pass
@@ -367,68 +372,68 @@ class Longrightarrow(MathSymbol): pass
 class longleftrightarrow(MathSymbol): pass
 class Longleftrightarrow(MathSymbol): pass
 class longmapsto(MathSymbol): pass
-class hookrightarrow(MathSymbol): pass
-class rightharpoonup(MathSymbol): pass
-class rightharpoondown(MathSymbol): pass
+class hookrightarrow(MathSymbol): unicode = unichr(8618)
+class rightharpoonup(MathSymbol): unicode = unichr(8640)
+class rightharpoondown(MathSymbol): unicode = unichr(8641)
 class leadsto(MathSymbol): pass
-class uparrow(MathSymbol): pass
-class Uparrow(MathSymbol): pass
-class downarrow(MathSymbol): pass
-class Downarrow(MathSymbol): pass
-class updownarrow(MathSymbol): pass
-class Updownarrow(MathSymbol): pass
-class nearrow(MathSymbol): pass
-class searrow(MathSymbol): pass
-class swarrow(MathSymbol): pass
-class nwarrow(MathSymbol): pass
+class uparrow(MathSymbol): unicode = unichr(8593)
+class Uparrow(MathSymbol): unicode = unichr(8657)
+class downarrow(MathSymbol): unicode = unichr(8595)
+class Downarrow(MathSymbol): unicode = unichr(8659)
+class updownarrow(MathSymbol): unicode = unichr(8597)
+class Updownarrow(MathSymbol): unicode = unichr(8661)
+class nearrow(MathSymbol): unicode = unichr(8599)
+class searrow(MathSymbol): unicode = unichr(8600)
+class swarrow(MathSymbol): unicode = unichr(8601)
+class nwarrow(MathSymbol): unicode = unichr(8598)
 
 #
 # Table 3.7: Miscellaneous Symbols
 #
 
-class aleph(MathSymbol): pass
-class hbar(MathSymbol): pass
+class aleph(MathSymbol): unicode = unichr(8501)
+class hbar(MathSymbol): unicode = unichr(8463)
 class imath(MathSymbol): pass
 class jmath(MathSymbol): pass
-class ell(MathSymbol): pass
-class wp(MathSymbol): pass
-class Re(MathSymbol): pass
-class Im(MathSymbol): pass
-class mho(MathSymbol): pass
+class ell(MathSymbol): unicode = unichr(8467)
+class wp(MathSymbol): unicode = unichr(8472)
+class Re(MathSymbol): unicode = unichr(8476)
+class Im(MathSymbol): unicode = unichr(8465)
+class mho(MathSymbol): unicode = unichr(8487)
 class prime(MathSymbol): pass
-class emptyset(MathSymbol): pass
-class nabla(MathSymbol): pass
-class surd(MathSymbol): pass
-class top(MathSymbol): pass
-class bot(MathSymbol): pass
+class emptyset(MathSymbol): unicode = unichr(8709)
+class nabla(MathSymbol): unicode = unichr(8711)
+class surd(MathSymbol): unicode = unichr(8730)
+class top(MathSymbol): unicode = unichr(8868)
+class bot(MathSymbol): unicode = unichr(8869)
 class VerticalBar(MathSymbol):
     macroName = '|'
-class forall(MathSymbol): pass
-class exists(MathSymbol): pass
+class forall(MathSymbol): unicode = unichr(8704)
+class exists(MathSymbol): unicode = unichr(8707)
 class neg(MathSymbol): pass
-class flat(MathSymbol): pass
-class natural(MathSymbol): pass
-class sharp(MathSymbol): pass
-class backslash(MathSymbol): pass
-class partial(MathSymbol): pass
-class infty(MathSymbol): pass
+class flat(MathSymbol): unicode = unichr(9837)
+class natural(MathSymbol): unicode = unichr(9838)
+class sharp(MathSymbol): unicode = unichr(9839)
+class backslash(MathSymbol): unicode = unichr(92)
+class partial(MathSymbol): unicode = unichr(8706)
+class infty(MathSymbol): unicode = unichr(8734)
 class Box(MathSymbol): pass
 class Diamond(MathSymbol): pass
-class triangle(MathSymbol): pass
-class clubsuit(MathSymbol): pass
-class diamondsuit(MathSymbol): pass
-class heartsuit(MathSymbol): pass
-class spadesuit(MathSymbol): pass
+class triangle(MathSymbol): unicode = unichr(9653)
+class clubsuit(MathSymbol): unicode = unichr(9827)
+class diamondsuit(MathSymbol): unicode = unichr(9830)
+class heartsuit(MathSymbol): unicode = unichr(9829)
+class spadesuit(MathSymbol): unicode = unichr(9824)
 
 #
 # Table 3.8: Variable-sized Symbols
 #
 
-class sum(MathSymbol): pass
-class prod(MathSymbol): pass
-class coprod(MathSymbol): pass
-class int(MathSymbol): pass
-class oint(MathSymbol): pass
+class sum(MathSymbol): unicode = unichr(8721)
+class prod(MathSymbol): unicode = unichr(8719)
+class coprod(MathSymbol): unicode = unichr(8720)
+class int(MathSymbol): unicode = unichr(8747)
+class oint(MathSymbol): unicode = unichr(8750)
 class bigcap(MathSymbol): pass
 class bigcup(MathSymbol): pass
 class bigsqcup(MathSymbol): pass
@@ -490,7 +495,7 @@ class tanh(MathSymbol): pass
 # C.7.5 Delimiters
 #
 
-class left(Command): 
+class left(Command):
     args = 'delim'
 
 class right(Command):
@@ -598,7 +603,7 @@ class stackrel(MathAccent):
 
 #
 # C.7.7 Spacing
-# 
+#
 
 # These are nested inside the MathEnvironemnt
 
@@ -646,6 +651,3 @@ class scriptstyle(Command):
 
 class scriptscriptstyle(Command):
     pass
-
-
-

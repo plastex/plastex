@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from Entities import *
+#from Entities import *
 
 from Accents import *
 from Alignment import *

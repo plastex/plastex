@@ -29,15 +29,19 @@ from plasTeX.Logging import getLogger
 
 class SmallSpace(Command):
     macroName = ','
+    unicode = u'\u2009'
 
 class InterWordSpace(Command):
     macroName = ' '
+    unicode = u' '
 
 class NoLineBreak(Command):
     macroName = 'active::~'
+    unicode = u'\u00A0'
 
 class EndOfSentence(Command):
     macroName = '@'
+    unicode = u''
 
 class frenchspacing(Command): 
     pass
@@ -51,24 +55,31 @@ class nonfrenchspacing(Command):
 
 class Dollar(Command):
     macroName = '$'
+    unicode = '$'
 
 class Percent(Command):
     macroName = '%'
+    unicode = '%'
 
 class LeftBrace(Command):
     macroName = '{'
+    unicode = '{'
 
 class Underscore(Command):
     macroName = '_'
+    unicode = '_'
 
 class Ampersand(Command):
     macroName = '&'
+    unicode = '&'
 
 class HashMark(Command):
     macroName = '#'
+    unicode = '#'
 
 class RightBrace(Command):
     macroName = '}'
+    unicode = '}'
 
 #
 # Logos
