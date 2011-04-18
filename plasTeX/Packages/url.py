@@ -3,8 +3,8 @@
 import new
 from plasTeX.Base import Command, verb
 
-class url(verb):
-    args = ''
+class url(Command):
+    args = 'url:url'
 
 class urldef(Command):
     args = 'name:cs type:cs'
