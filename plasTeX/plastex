@@ -80,7 +80,7 @@ def main(argv):
     # Write XML dump
     if config['general']['xml']:
         outfile = '%s.xml' % jobname
-        open(outfile,'w').write(document.toXML().encode('utf-8'))
+        codecs.open(outfile,'w',encoding='utf-8').write(document.toXML())
     
     # Apply renderer
     Renderer().render(document)

@@ -546,8 +546,12 @@ def xmlstr(obj):
     """ Escape special characters to create a legal xml string """
     if isinstance(obj, basestring):
         return obj.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;')
+    elif isinstance(obj, list):
+        return unicode([xmlstr(x) for x in obj])
+    elif isinstance(obj, dict):
+        return unicode(dict([(xmlstr(x),xmlstr(y)) for x,y in obj.items()]))
     else:
-        return xmlstr(str(obj))
+        return xmlstr(unicode(obj))
 
 class Node(object):
     """
