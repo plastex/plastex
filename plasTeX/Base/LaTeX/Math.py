@@ -400,7 +400,7 @@ class wp(MathSymbol): unicode = unichr(8472)
 class Re(MathSymbol): unicode = unichr(8476)
 class Im(MathSymbol): unicode = unichr(8465)
 class mho(MathSymbol): unicode = unichr(8487)
-class prime(MathSymbol): pass
+class prime(MathSymbol): unicode = unichr(2032)
 class emptyset(MathSymbol): unicode = unichr(8709)
 class nabla(MathSymbol): unicode = unichr(8711)
 class surd(MathSymbol): unicode = unichr(8730)
