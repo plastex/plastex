@@ -14,27 +14,30 @@ from plasTeX.Logging import getLogger
 # C.7.1
 #
 
+# These space commands are only documented as being available in math mode,
+# but it was requested to have them be in the global namespace.
+
+class ThinSpace(Command):
+    macroName = '.'
+    unicode = u'\u2009'
+
+class NegativeThinSpace(Command):
+    macroName = '!'
+
+class MediumSpace(Command):
+    macroName = ':'
+    unicode = u'\u8196'
+
+class ThickSpace(Command):
+    macroName = ';'
+    unicode = u'\u8194'
+
+class ThinSpace_(Command):
+    macroName = '/'
+    unicode = u'\u2009'
+
 class MathEnvironment(Environment):
     mathMode = True
-
-    class ThinSpace(Command):
-        macroName = '.'
-        unicode = u'\u2009'
-
-    class NegativeThinSpace(Command):
-        macroName = '!'
-
-    class MediumSpace(Command):
-        macroName = ':'
-        unicode = u'\u8196'
-
-    class ThickSpace(Command):
-        macroName = ';'
-        unicode = u'\u8194'
-
-    class ThinSpace_(Command):
-        macroName = '/'
-        unicode = u'\u2009'
 
 # Need \newcommand\({\begin{math}} and \newcommand\){\end{math}}
 
