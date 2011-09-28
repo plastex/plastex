@@ -442,12 +442,21 @@ class TextRenderer(BaseRenderer):
         output = []
         metadata = node.ownerDocument.userdata
         if 'title' in metadata:
-            output.append(self.center(metadata['title']).rstrip())
+            output.append(self.center(metadata['title']).rstrip().upper())
+            output.append('')
         if 'author' in metadata:
             for author in metadata['author']:
-                output.append(self.center(author).rstrip())
+                if [a for a in author if getattr(a,'macroName','') == '\\']:
+                    for a in author:
+                        if getattr(a,'macroName','') == '\\':
+                            continue
+                        output.append(self.center(a).rstrip())
+                else:
+                    output.append(self.center(author).rstrip())
+            output.append('')
         if 'date' in metadata:
             output.append(self.center(metadata['date']).rstrip())
+            output.append('')
         if 'thanks' in metadata:
             output.append(self.center(metadata['thanks']).rstrip())
         return u'\n%s\n\n' % u'\n'.join(output)
