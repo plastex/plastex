@@ -30,7 +30,7 @@ class TextRenderer(BaseRenderer):
         BaseRenderer.__init__(self, *args, **kwargs)
         
         # Load dictionary with methods
-        for key in vars(type(self)):
+        for key in dir(self):
             if key.startswith('do__'):
                 self[self.aliases[key[4:]]] = getattr(self, key)
             elif key.startswith('do_'):
