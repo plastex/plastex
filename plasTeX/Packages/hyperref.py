@@ -189,4 +189,16 @@ class DefaultHeightofText(Command):
     args = 'size:dimen'
 
 class DefaultWidthofText(Command):
-    args = 'size:dimen'
+    args = 'size:dimen'    
+    
+class pdfbookmark(Command):
+    args = '[level:number] text name'
+
+class currentpdfbookmark(Command):
+    args = 'text name'
+
+class subpdfbookmark(Command):
+    args = 'text name'
+
+class belowpdfbookmark(Command):
+    args = 'text name'
