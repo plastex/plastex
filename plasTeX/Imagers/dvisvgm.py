@@ -15,7 +15,7 @@ class DVISVGM(plasTeX.Imagers.VectorImager):
         page = 1
         while 1:
             filename = 'img%d.svg' % page
-            rc = os.system('dvisvgm --scale=1.6 --no-fonts --output=%s --page=%d images.dvi' % (filename, page))
+            rc = os.system('dvisvgm --exact --scale=1.6 --no-fonts --output=%s --page=%d images.dvi' % (filename, page))
             if rc:
                 break
             
