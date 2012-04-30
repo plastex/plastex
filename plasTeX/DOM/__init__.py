@@ -698,6 +698,9 @@ class Node(object):
         if debug:
             extra = ' parentNode="%s" ownerDocument="%s"' % \
                     (id(self.parentNode), id(self.ownerDocument))
+            
+        if not self.parentNode:
+            extra += ' xmlns:plastex="http://plastex.sf.net/"' 
 
         # Bail out early if the element is empty
         if not(self.attributes) and not(self.hasChildNodes()):
