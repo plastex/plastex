@@ -4,7 +4,7 @@ name: figure figure*
 <span tal:omit-tag="">
   <informalfigure tal:condition="not:self/title"  tal:content="self"></informalfigure>
   <figure tal:condition="self/title" 
-          tal:attributes="label self/title/id" 
+          tal:attributes="id self/title/id" 
           tal:content="self">
     <title tal:content="self/title"></title>
   </figure>
