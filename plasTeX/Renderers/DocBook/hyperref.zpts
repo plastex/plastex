@@ -3,7 +3,7 @@ type:xml
 <link tal:attributes="linkend self/attributes/url" tal:content="self"></link>
 
 name: url
-<ulink tal:attributes="url self/attributes/url | self" tal:content="self/attributes/url | self">link text</ulink>
+<ulink tal:attributes="url self/attributes/url"></ulink>
 
 name: nolinkurl
 <span tal:replace="self/attributes/url">url</span>

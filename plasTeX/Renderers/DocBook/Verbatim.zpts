@@ -1,5 +1,8 @@
 name: verbatim
 <literallayout class="monospaced" tal:content="self"></literallayout>
 
+name: verbatimtab
+<literallayout class="monospaced" tal:content="self"></literallayout>
+
 name: verb
-<phrase remap="verb" tal:content="self"></phrase>
+<literal remap="verb" tal:content="self"></literal>
