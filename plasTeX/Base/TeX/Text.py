@@ -50,6 +50,7 @@ class bgroup(Command):
                     tokens.push(item)
                     break
                 if isinstance(item, (egroup,endgroup)):
+                    self.endit = True
                     break
                 if item.contextDepth < self.contextDepth:
                     tokens.push(item)
@@ -63,6 +64,8 @@ class bgroup(Command):
     def source(self):
         if self.hasChildNodes():
             return '{%s}' % sourceChildren(self)
+        elif hasattr(self, 'endit'):
+            return '{}'
         return '{'
 
 class begingroup(bgroup):
