@@ -306,6 +306,11 @@ class NatBibCite(Base.cite):
         return bibpunct.punctuation['sep']
 
     @property
+    def dates(self):
+        """ Separator between author and dates """
+        return bibpunct.punctuation['dates']
+
+    @property
     def years(self):
         """ Separator for multiple years """
         return bibpunct.punctuation['years']
@@ -552,12 +557,7 @@ class citep(NatBibCite):
                         res.extend(self.capitalize(item.bibcite.attributes[author]))
                     else:            
                         res.extend(item.bibcite.attributes[author])
-                    if i < (len(self.bibitems)-1) and self.bibitems[i+1].bibcite.attributes['fullauthor'].textContent != fullauthor:
-                        res.append(self.years+' ')
-                    elif i == (len(self.bibitems)-1):
-                        res.append(self.years+' ')
-                    else:
-                        res.append(self.separator+' ')
+                    res.append(self.dates+' ')
             res.append(self.citeValue(item, text=text))
             if i < (len(self.bibitems)-1):
                 res.append(self.separator+' ')
