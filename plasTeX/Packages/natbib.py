@@ -552,7 +552,12 @@ class citep(NatBibCite):
                         res.extend(self.capitalize(item.bibcite.attributes[author]))
                     else:            
                         res.extend(item.bibcite.attributes[author])
-                    res.append(self.separator+' ')
+                    if i < (len(self.bibitems)-1) and self.bibitems[i+1].bibcite.attributes['fullauthor'].textContent != fullauthor:
+                        res.append(self.years+' ')
+                    elif i == (len(self.bibitems)-1):
+                        res.append(self.years+' ')
+                    else:
+                        res.append(self.separator+' ')
             res.append(self.citeValue(item, text=text))
             if i < (len(self.bibitems)-1):
                 res.append(self.separator+' ')
