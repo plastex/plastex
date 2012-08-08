@@ -33,7 +33,7 @@ class SmallSpace(Command):
 
 class InterWordSpace(Command):
     macroName = ' '
-    unicode = u' '
+    unicode = u'\u0020'
 
 class NoLineBreak(Command):
     macroName = 'active::~'
