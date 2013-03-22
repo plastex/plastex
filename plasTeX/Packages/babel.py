@@ -20,7 +20,7 @@ class selectlanguage(Command):
 
     def invoke(self, tex):
         res = Command.invoke(self, tex)
-        context.loadLanguage(self.attributes['lang'], self.ownerDocument)
+        self.ownerDocument.context.loadLanguage(self.attributes['lang'], self.ownerDocument)
         return res
 
 class otherlanguage(Environment):
