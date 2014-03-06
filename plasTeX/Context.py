@@ -326,8 +326,8 @@ class Context(object):
             elif day.endswith('3'):
                 suffix = 'rd'
             day = str(int(day))
-            return time.strftime(fmt.replace('%f', day+suffix).replace('%e', day))
-        return time.strftime(fmt)
+            return unicode(time.strftime(fmt.replace('%f', day+suffix).replace('%e', day)), 'utf8')
+        return unicode(time.strftime(fmt), 'utf8')
 
     def loadINIPackage(self, inifile):
         """ 
