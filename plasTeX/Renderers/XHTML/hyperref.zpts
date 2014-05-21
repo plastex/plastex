@@ -15,8 +15,11 @@ name: hyperimage
 name: hyperdef
 <a tal:attributes="name string:${self/attributes/category}.${self/attributes/name}" tal:content="self">text</a>
 
-name: hyperref
+name: -hyperref
 <a tal:attributes="href string:${self/attributes/url}#${self/attributes/category}.${self/attributes/name}" tal:content="self">link text</a>
+
+name: hyperref
+<a tal:attributes="href self/idref/label/url" tal:content="self">link text</a>
 
 name: hyperlink
 <a tal:attributes="href string:${self/idref/label/url}" tal:content="self">text</a>

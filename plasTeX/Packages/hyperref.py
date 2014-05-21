@@ -71,11 +71,17 @@ class hyperdef(Command):
     args = 'category name self'
 
 class hyperref(Command):
-    args = 'url:url category name self'
-    def invoke(self, tex):
-        res = Command.invoke(self, tex)
-        self.attributes['url'] = addBaseURL(self, 'url')
-        return res
+    '''
+    hyperref has a dual personality depending on whether or not
+    the first argument is square-bracketed. We only support the
+    square bracket version for now.
+    '''
+    #args = 'url:url category name self'
+    args = '[label:idref] self'
+    #def invoke(self, tex):
+    #    res = Command.invoke(self, tex)
+    #    self.attributes['url'] = addBaseURL(self, 'url')
+    #    return res
 
 class hyperlink(Command):
     args = 'label:idref self'
