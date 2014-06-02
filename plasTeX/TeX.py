@@ -73,7 +73,7 @@ class TeX(object):
 
         # TeX arguments types and their casting functions
         self.argtypes = {
-            'url': (self.castNone, {'#':12,'~':12,'%':12}),
+            'url': (self.castNone, {'#':12,'~':12,'%':12,'&':12}),
             'str': self.castString,
             str: self.castString,
             'chr': self.castString,
