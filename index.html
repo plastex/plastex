@@ -28,44 +28,129 @@
         </ul>
       </header>
       <section>
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+        <h3>LaTeX + DOM = <i>plas</i>TeX</h3>
+  <table class="content" cellspacing="10" cellpadding="0" border="0">
+    <tbody>
+      <tr>
+        <td valign="top">
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+          <p>
+            plasTeX is a
+            <a href="http://www.tug.org/">LaTeX</a>
+            document processing framework written entirely in
+            <a title="Go to the Python web site" href="http://www.python.org/">Python</a>.
+It currently comes bundled with an
+            <a href="http://www.w3.org/MarkUp/">XHTML</a>
+            renderer (including multiple themes), as well as a way to simply dump the document
+to a generic form of
+            <a href="http://www.w3.org/XML/">XML</a>.
+Other renderers can be added as well and are planned for future releases.
+          </p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+          <p>
+            Here is
+            <a href="http://plastex.sourceforge.net/sample2e/sample2e.txt">an example LaTeX document</a>
+            converted to
+            <a href="http://plastex.sourceforge.net/sample2e/">HTML</a>
+            using plasTeX.
+For reference, the
+            <a href="http://plastex.sourceforge.net/sample2e/sample2e.pdf">PDF</a>
+            version of
+the document is also available.
+          </p>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+          <p>
+            plasTeX differs from other tools like
+            <a href="http://saftsack.fs.uni-bayreuth.de/~latex2ht/" title="Go to the the LaTeX2HTML web site">LaTeX2HTML</a>,
+            <a href="http://www.cse.ohio-state.edu/~gurari/TeX4ht/mn.html" title="Go to the TeX4ht web site">TeX4ht</a>,            <a href="http://hutchinson.belmont.ma.us/tth/" title="Go to the TtH web site">TtH</a>,
+            , etc.
+in that the parsing and rendering of the document are completely
+separated.  This separation makes it possible to render the document
+in multiple output formats.  It also allows the parser to create
+a cleaner document object, so that the rendering process is easier.
+          </p>
 
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+          <p>
+            Since the renderer has complete control over which pieces of the
+document are rendered, it is possible that the resultant document
+is structured quite differently than the input document.  This object
+actually allows you to traverse and edit the document tree.
+          </p>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+          <p>
+            The documentation for plasTeX is available in
+            <a href="http://plastex.sourceforge.net/plastex/plastex.pdf">PDF</a>
+            and
+            <a href="http://plastex.sourceforge.net/plastex/index.html">HTML format</a>.
+Of course, the original document is written in LaTeX.  The PDF version
+was generated using pdflatex, and the HTML version was generated using
+plasTeX.
+          </p>
 
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+          <h2>Getting Started</h2>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+          <p>
+            We are working on a series of documents for beginning plasTeX users.  The first
+in the series is entitled Getting Started with plasTeX.  It is available in
+both
+            <a href="http://plastex.sourceforge.net/getting-started/">HTML</a>
+            and
+            <a href="http://plastex.sourceforge.net/getting-started/getting-started.pdf">PDF</a>
+            format.  The
+            <a href="http://plastex.sourceforge.net/getting-started/getting-started.txt">LaTeX source</a>
+            of this document is also available.
+          </p>
 
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+          <h2>plasTeX Users</h2>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+          <p>
+            If you are interested in who else is using plasTeX, we are keeping a list
+of the projects that we know of right here.  If you are using plasTeX,
+            <a href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=Kevin.Smith@sas.com" target="_blank">let us know</a>
+            so we can post your project's name as well.
+          </p>
+          <ul>
+            <li>
+              <p>
+                <a href="http://brltex.sourceforge.net/">BrlTex</a>
+                is an open source
+LaTeX to braille translator built on top of plasTeX.
+              </p>
+            </li>
+            <li>
+              <p>
+                The
+                <a href="http://download.ikaaro.org/doc/itools/">itools</a>
+                package for Python uses plasTeX for its documentation.
+              </p>
+            </li>
+            <li>
+              <p>
+                <a href="http://www.sas.com/">SAS</a>
+                is currently using plasTeX to generate HTML and DocBook for 10,000+ pages of scientific documentation nightly.
+              </p>
+            </li>
+            <li>
+              <p>
+                The German Society for Tropical Surgery is using plasTeX to post medical documentation on their
+                <a href="http://www.primary-surgery.org/">Primary Surgery</a>
+                web site.
+              </p>
+            </li>
+          </ul>
 
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
       </section>
       <footer>
-        <p>This project is maintained by <a href="https://github.com/tiarno">tiarno</a></p>
+        <p>This project is maintained by <a href="https://github.com/tiarno">tiarno</a>
+          and <a href="https://github.kesmit13">kesmit13</a></p>
         <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
     <script src="javascripts/scale.fix.js"></script>
-    
+
   </body>
 </html>
