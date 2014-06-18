@@ -92,6 +92,15 @@ class textunderscore(Command):
 class textvisiblespace(Command):
     unicode = unichr(160)
 
+class texttrademark(Command):
+   unicode = unichr(8482)
+
+class textregistered(Command):
+   unicode = unichr(174)
+
+class textcopyright(Command):
+   unicode = unichr(169)
+
 class AE(Command):
     unicode = unichr(198)
 
