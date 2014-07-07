@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+
+<title>Getting Started with plasTeX</title>
+
+
+
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+<td class="navtitle" align="center">Getting Started with plasTeX</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+
+
+<div>   <div class="titlepage">
+<h1>Getting Started with plasTeX</h1>
+<p>Tim Arnold</p>
+
+
+</div><h1 id="a0000000008">1 Overview</h1>
+<p> This document is part one of a “Getting Started with plasTeX” series to explain how to extend plasTeX so it can understand, parse, and render your customized LaTeX source. </p><p>If you have standard ’plain-vanilla’ LaTeX files, plasTeX will work for you already (see the main user documentation to use the <tt class="ttfamily">plastex</tt> command). And if you have simple customizations, plasTeX can read your package files and work as-is. But when you have more complex styles or classes, you’ll need to extend plasTeX to work with your customized files. It’s quite easily done: there are two tasks to get started: </p><ol class="enumerate">
+<li><p>add a Python class corresponding to each macro you have defined. You’ll inherit from a standard plasTeX class; often there’s little more to it than that. You define the classes so plasTeX can understand how to parse your new commands. </p></li><li><p>add a template to render the content resulting from plasTex parsing. Your command will have some data or text that needs to be handled in some way in order to display itself correctly, depending on what format you want to render to. The template tells the renderer how to do that. </p></li>
+</ol><p>Once you have those tasks completed, you set your environment PATHs and run plastex. That’s all there is to it. We’ll do a silly start-up example just to run through the steps. Afterwards we’ll do some more interesting things. Note that this example is so simple, plasTeX could easily understand the customization with no action on your part–it can often recognize new commands and deal with their definitions by itself. However, sometimes you’ll have new commands or environments that more easily handled by writing your own classes. Let’s get started and go through this step-by-step so you can see how plasTeX works. </p><h1 id="a0000000019">2 Getting Started: Setting Up</h1>
+<p>To get started, we’ll set up a workspace so we can scale it up with increasingly complex needs and new commands. First, create directories hold the new Python classes and the html templates corresponding to those classes. Also create a corresponding directory to hold containers for the LaTeX packages. That’s three new directories: </p><dl class="description">
+
+    <dt>src/</dt>
+    <dd><p>contains python classes corresponding to new packages<br /><b class="bfseries">Action:</b> create a file called <tt class="ttfamily">mypackage.py</tt> </p></dd>
+
+    <dt>render/</dt>
+    <dd><p>contains html template files corresponding to new packages<br /><b class="bfseries">Action:</b> create a file called <tt class="ttfamily">mypackage.zpts</tt> </p></dd>
+
+    <dt>tex/</dt>
+    <dd><p>contains style files corresponding to new packages<br /><b class="bfseries">Action:</b> create a file called <tt class="ttfamily">mypackage.sty</tt> </p></dd>
+
+</dl><p>Finally set three environment variables to tell plasTeX where to look for instructions: </p><ul class="itemize">
+<li><p>set PYTHONPATH to include the <tt class="ttfamily">src</tt> directory </p></li><li><p>set TEXINPUTS to include the <tt class="ttfamily">tex</tt> (and current ’.’) directory </p></li><li><p>set XHTMLTEMPLATES to the <tt class="ttfamily">render</tt> directory </p></li>
+</ul><p>How you do that depends on what operating system you use. On my machine, the commands look like this: </p><pre>
+   setenv PYTHONPATH      ~/example/src
+   setenv TEXINPUTS       ~/example/tex:.::
+   setenv XHTMLTEMPLATES  ~/example/render
+</pre><h2 id="a0000000053">2.1 Example for Testing: the LaTeX source</h2>
+<p>To get started, we’ll create a new command <tt>myBold</tt> that will render its text as bold. Create a file in the current directory called <tt class="ttfamily">testing.tex</tt> with the following lines: </p><pre>
+  \documentclass{article}
+  \usepackage{mypackage}
+  \begin{document}
+    Hello \myBold{World}
+  \end{document}
+</pre><h2 id="a0000000059">2.2 mypackage.sty</h2>
+<p> In the <tt class="ttfamily">tex</tt> directory, write the <tt class="ttfamily">mypackage.sty</tt> file to contain these lines: </p><pre>
+  \ProvidesPackage{mypackage}
+  \newcommand{\myBold}[1]{\textbf{#1}}
+</pre><p><b class="bfseries">Note:</b> Recall that at the beginning I said that if you have very simple customizations, plasTeX can read your package files and work as-is. Our example certainly falls into that category. We’re only using this as an example to focus on the steps involved in extending plasTeX. </p><p><b class="bfseries">Note:</b> This LaTeX code is not necessary as far as plasTeX is concerned; I include it here since you probably want to use LaTeX to create a pdf or postscript file from your sources, and LaTeX has to have the definition. But as long as plasTeX can find your definitions (i.e., classes) corresponding to the commands in your source, this file could just as well be blank. In fact, sometimes it’s quite useful to spoof plasTeX in that way, but that’s a trick for another article. </p><h1 id="a0000000069">3 Getting Started: Coding</h1>
+<p>There are two parts to code: the Python class called <tt class="ttfamily">myBold</tt> and the HTML template called <tt class="ttfamily">myBold</tt>. These names match the new command we’re defining. Since this command takes a single argument, we’ll inherit from the plasTeX <tt class="ttfamily">Base.Command</tt> class. The only thing the python class needs to do is to parse the command and its arguments so we can get to the data it contains when we need to render it. </p><h2 id="a0000000074">3.1 Create the <tt class="ttfamily">myBold</tt> class</h2>
+<p> In mypackage.py: </p><pre>
+   from plasTeX import Base
+   class myBold(Base.Command):
+       args = 'text:str'
+       def invoke(self, tex):
+           Base.Command.invoke(self, tex)
+</pre><p>Once plasTeX sees the <tt class="ttfamily">myBold</tt> command in your source, it will parse it and the node will contain a string attribute called ’text’. See the main user documentation for details. For now that’s really all we need to know–we only need the text argument given to the <tt class="ttfamily">myBold</tt> command. </p><h2 id="a0000000082">3.2 Create the <tt class="ttfamily">myBold</tt> Renderer</h2>
+<p>The renderer takes the data from the node and renders it according to the template. Here we set the argument in a <tt class="ttfamily">b</tt> tag. I like to set the class on my tags to the name of the command they came from. </p><pre>
+   name:myBold
+   &lt;b class='myBold' tal:content='self/attributes/text'&gt;&lt;/b&gt;
+</pre><p>Each node you want to render has the same structure: the <tt class="ttfamily">name:</tt> specifies the name of the command you’re rendering, followed immediately by a template defining how to render the command and its data. </p><h2 id="a0000000090">3.3 Parse and Render with plastex</h2>
+<p> That’s it for setting up and coding. Now plasTeX knows enough to parse the tex file, create a document object and render the nodes of that object. </p><pre>
+  plastex testing.tex
+</pre><h1 id="a0000000094">4 Results</h1>
+<p> In your <tt class="ttfamily">work</tt> directory, you’ll see these entries: </p><pre>
+  testing/   testing.paux   testing.tex
+</pre><p>The subdirectory <tt class="ttfamily">testing</tt> contains a number of things, but for now focus on the main file, <tt class="ttfamily">index.html</tt>. That file contains the results of rendering our simple LaTeX source. It was rendered using the <tt class="ttfamily">default</tt> theme; inside it you’ll see the result of the <tt class="ttfamily">myBold</tt> command: </p><pre>
+  Hello &lt;b class="myBold"&gt;World&lt;/b&gt; 
+</pre><p>We’ll talk about the other items in that directory as well as the <tt class="ttfamily">testing.paux</tt> file later on. </p><h1 id="a0000000108">5 Getting Deeper</h1>
+<p> To add more functionality in terms of new commands and environments, you add more classes to your package.py file, plus the corresponding render templates in the package.zpts file. </p><p>There are a lot of questions remaining; how do you use a different theme, what kinds of things can you do in the template, what is the <tt class="ttfamily">zpts</tt> extension mean, how do you get DocBook XML from your LaTeX sources, etc. Future articles will deal with those questions and more. </p><p>Comments are welcome: a_jtim at bellsouth dot net </p></div>
+
+
+
+
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+<td class="navtitle" align="center">Getting Started with plasTeX</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>
