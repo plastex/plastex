@@ -1,0 +1,401 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: ConfigSection Objects</title>
+
+<link href="sect0028.html" title="Configuration Option Types" rel="next" />
+<link href="sect0026.html" title="ConfigManager Objects" rel="prev" />
+<link href="module-plasTeX-ConfigManager.html" title="plasTeX.ConfigManager — plasConfiguration" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0026.html" title="ConfigManager Objects"><img alt="Previous: ConfigManager Objects" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="module-plasTeX-ConfigManager.html" title="plasTeX.ConfigManager — plasTeX Configuration"><img alt="Up: plasTeX.ConfigManager — plasTeX Configuration" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0028.html" title="Configuration Option Types"><img alt="Next: Configuration Option Types" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sect0024.html">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="module-plasTeX-ConfigManager.html"><tt class="ttfamily">plasTeX.ConfigManager</tt> — plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Configuration</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current">ConfigSection Objects</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h2 id="a0000007871">6.2.2 ConfigSection Objects</h2>
+<p>   <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><b class="bf">class </b><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">ConfigSection</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">name, data={ }</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000007938" id="a0000007938"></a>  Instantiate a <tt class="ttfamily">ConfigSection</tt> object. </p><p><span class="rmfamily"><i class="itshape">name</i></span> is the name of the section. </p><p><span class="rmfamily"><i class="itshape">data</i></span>, if specified, is the dictionary of data to initalize the section contents with. </p></dd>
+
+</dl> </p><p><tt class="ttfamily">ConfigSection</tt> objects are rarely instantiated manually. They are generally created using the <tt class="ttfamily">ConfigManager</tt> API (either the direct methods or the Python dictionary syntax). </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">data</b></tt></span></dt>
+    <dd><p><a name="a0000007976" id="a0000007976"></a> dictionary that contains the option instances. This is only accessed if you want to retrieve the real option instances. Normally, you would use standard dictionary key access syntax on the section itself to retrieve the option values. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">name</b></tt></span></dt>
+    <dd><p><a name="a0000007998" id="a0000007998"></a> the name given to the section. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">copy</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000008059" id="a0000008059"></a> make a deep copy of the section object. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">defaults</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000008120" id="a0000008120"></a> return the dictionary of default options associated with the parent <tt class="ttfamily">ConfigManager</tt>. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">get</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">option, raw=0, vars={ }</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000008185" id="a0000008185"></a> retrieve the value of <span class="rmfamily"><i class="itshape">option</i></span>. Setting <span class="rmfamily"><i class="itshape">raw</i></span> to true prevents any string interpolation from occurring in that value. <span class="rmfamily"><i class="itshape">vars</i></span> is a dictionary of addition value to use when interpolating values into the option. </p><p><b class="bf">Note:</b> You can alsouse the alternative dictionary syntax: section.get(option). </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">getboolean</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">section, option</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000008264" id="a0000008264"></a> retrieve the specified value and cast it to a boolean </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">__getitem__</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">key</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000008325" id="a0000008325"></a> retrieve the value of an option. This method allows you to use Python’s dictionary syntax on a section as shown below. </p><pre>
+# Print the value of the 'optionname' option
+print mysection['optionname'] 
+</pre></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">getint</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">section, option</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000008388" id="a0000008388"></a> retrieve the specified value and cast it to and integer </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">getfloat</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">section, option</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000008449" id="a0000008449"></a> retrieve the specified value and cast it to a float </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">getraw</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">section, option</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000008510" id="a0000008510"></a> return the raw (i.e. un-interpolated) value of the option </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">parent</b></tt></span></dt>
+    <dd><p><a name="a0000008532" id="a0000008532"></a> a reference to the parent <tt class="ttfamily">ConfigManager</tt> object. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">__repr__</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000008594" id="a0000008594"></a> return a string containing an INI file representation of the section. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">set</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">option, value</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000008655" id="a0000008655"></a> create a new option or set an existing option with the name <span class="rmfamily"><i class="itshape">option</i></span> and the value of <span class="rmfamily"><i class="itshape">value</i></span>. If the given value is already an option instance, it is simply inserted into the section. If it is not an option instance, an appropriate type of option is chosen for the given type. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">__setitem__</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">key, value</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000008726" id="a0000008726"></a> create a new option or set an existing option with the name <span class="rmfamily"><i class="itshape">key</i></span> and the value of <span class="rmfamily"><i class="itshape">value</i></span>. This method allows you to use Python’s dictionary syntax to set options as shown below. </p><pre>
+# Create a new option called 'optionname'
+mysection['optionname'] = 10
+</pre></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">__str__</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000008799" id="a0000008799"></a> return a string containing an INI file representation of the section. Options set from Python code are not included in this representation. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">to_string</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span>source<span class="textnormal"><big class="xlarge">]</big></span></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000008868" id="a0000008868"></a> return a string containing an INI file representation of the section. The <span class="rmfamily"><i class="itshape">source</i></span> option allows you to only display options from certain sources. See the <tt class="ttfamily">ConfigManager.source()</tt> method for more information. </p></dd>
+
+</dl> </p></div>
+
+
+
+
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0026.html" title="ConfigManager Objects"><img alt="Previous: ConfigManager Objects" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="module-plasTeX-ConfigManager.html" title="plasTeX.ConfigManager — plasTeX Configuration"><img alt="Up: plasTeX.ConfigManager — plasTeX Configuration" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0028.html" title="Configuration Option Types"><img alt="Next: Configuration Option Types" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

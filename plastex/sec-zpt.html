@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: Page Template Renderer</title>
+
+<link href="sect0018.html" title="Defining and Using Templates" rel="next" />
+<link href="sect0017.html" title="Static Images" rel="prev" />
+<link href="sect0010.html" title="Renderers" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0017.html" title="Static Images"><img alt="Previous: Static Images" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0010.html" title="Renderers"><img alt="Up: Renderers" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0018.html" title="Defining and Using Templates"><img alt="Next: Defining and Using Templates" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sect0010.html">Renderers</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current">Page Template Renderer</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h1 id="sec:zpt">5.3 Page Template Renderer</h1>
+<p>The Page Template (PT) renderer is a renderer for plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document objects that supports various page template engines such as <a href="http://www.zope.org/Documentation/Books/ZopeBook/2_6Edition/ZPT.stx">Zope Page Templates (ZPT)</a>, <a href="http://www.cheetahtemplate.org/">Cheetah templates</a>, <a href="http://kid-templating.org/">Kid templates</a>, <a href="http://genshi.edgewall.org/">Genshi templates</a>, <a href="http://docs.python.org/lib/node40.html">Python string templates</a>, as well as plain old <a href="http://docs.python.org/lib/typesseq-strings.html">Python string formatting</a>. It is also possible to add support for other template engines. Note that all template engines except ZPT, Python formats, and Python string templates must be installed in your Python installation. They are not included. </p><p>ZPT is the most supported page template language at the moment. This is the template engine that is used for all of the plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X delivered templates in the XHTML renderer; however, the other templates work in a very similar way. The actual ZPT implementation used is SimpleTAL (<a href="http://www.owlfish.com/software/simpleTAL/">http://www.owlfish.com/software/simpleTAL/</a>). This implementation implements almost all of the ZPT API and is very stable. However, some changes were made to this package to make it more convenient to use within plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X. These changes are discussed in detail in the ZPT Tutorial (see section <a href="sec-zpttutorial.html">5.3.3</a>). </p><p>Since the above template engines can be used to generate any form of XML or HTML, the PT renderer is a general solution for rendering XML or HTML from a plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document object. When switching from one DTD to another, you simply need to use a different set of templates. </p><p>As in all <tt class="ttfamily">Renderer</tt>-based renderers, each key in the PT renderer returns a function. These functions are actually generated when the template files are parsed by the PT renderer. As is the case with all rendering methods, the only argument is the node to be rendered, and the output is a unicode object containing the rendered output. In addition to the rendering methods, the <tt class="ttfamily">textDefault</tt> method escapes all characters that are special in XML and HTML (i.e. &lt;, &gt;, and &amp;). </p><p>The following sections describe how templates are loaded into the renderer, how to extend the set of templates with your own, as well as a theming mechanism that allows you to apply different looks to output types that are visual (e.g. HTML). </p></div>
+
+<div class="contents section-contents"><!--<strong>Subsections</strong>-->
+<ul>
+<li><a href="sect0018.html">5.3.1 Defining and Using Templates</a>
+   
+</li><li><a href="sect0019.html">5.3.2 Defining and Using Themes</a>
+   
+</li><li><a href="sec-zpttutorial.html">5.3.3 Zope Page Template Tutorial</a>
+   
+</li>
+
+
+
+</ul>
+</div>
+
+
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0017.html" title="Static Images"><img alt="Previous: Static Images" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0010.html" title="Renderers"><img alt="Up: Renderers" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0018.html" title="Defining and Using Templates"><img alt="Next: Defining and Using Templates" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

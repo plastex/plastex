@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: plasTeX.Imagers — The plasTeX Imaging Framework</title>
+
+<link href="sect0043.html" title="Imager Objects" rel="next" />
+<link href="sect0042.html" title="Renderable MixIn" rel="prev" />
+<link href="sect0024.html" title="plasFrameworks and APIs" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0042.html" title="Renderable MixIn"><img alt="Previous: Renderable MixIn" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0024.html" title="plasTeX Frameworks and APIs"><img alt="Up: plasTeX Frameworks and APIs" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0043.html" title="Imager Objects"><img alt="Next: Imager Objects" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sect0024.html">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current"><tt class="ttfamily">plasTeX.Imagers</tt> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Imaging Framework</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h1 id="module-plasTeX.Imagers">6.7 <tt class="ttfamily">plasTeX.Imagers</tt> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Imaging Framework</h1>
+<p>      <a name="a0000018758" id="a0000018758"></a>       </p><p>The imager framework is used when an output format is incapable of representing part of a L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document natively. One example of this is equations in HTML. In cases like this you can use an <tt class="ttfamily">Imager</tt> to generate images of the commands and environments that cannot be rendered in any other way. </p><p>Currently, plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X comes with several imager implementations based on <b class="bf">dvi2bitmap</b> (<a href="http://dvi2bitmap.sourceforge.net/">http://dvi2bitmap.sourceforge.net/</a>), <b class="bf">dvipng</b> (<a href="http://savannah.nongnu.org/projects/dvipng/">http://savannah.nongnu.org/projects/dvipng/</a>), and <b class="bf">ghostscript</b> with the PNG driver (<a href="http://www.cs.wisc.edu/~ghost/doc/GPL/index.htm">http://www.cs.wisc.edu/~ghost/doc/GPL/index.htm</a>) called gspdfpng and gspspng, as well as one that uses OS X’s CoreGraphics library. Creating imagers based on other programs is quite simple, and more are planned for future releases. </p><p>In addition to imagers that generate bitmap images, it is also possible to generate vector images using programs like dvisvg (<a href="http://dvisvg.sourceforge.net/">http://dvisvg.sourceforge.net/</a>) or dvisvgm (<a href="http://dvisvgm.sourceforge.net/">http://dvisvgm.sourceforge.net/</a>). </p><p>The <tt class="ttfamily">Imager</tt> framework does all of its work in temporary directories the one requirement that it has is that <tt class="ttfamily">Imager</tt> subclasses need to generate images with the basenames ‘<span class="sffamily">img%d</span>’ where ‘<span class="sffamily">%d</span>’ is the number of the image. </p><p>The only requirement by the plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X framework is that the imager class within the imager module is called “Imager” and should be installed in the <tt class="ttfamily">plasTeX.Imagers</tt> package. The basename of the imager module is the name used when plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X looks for a specified imager. </p></div>
+
+<div class="contents section-contents"><!--<strong>Subsections</strong>-->
+<ul>
+<li><a href="sect0043.html">6.7.1 Imager Objects</a>
+   
+</li><li><a href="sect0044.html">6.7.2 Image Objects</a>
+   
+</li>
+
+
+
+</ul>
+</div>
+
+
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0042.html" title="Renderable MixIn"><img alt="Previous: Renderable MixIn" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0024.html" title="plasTeX Frameworks and APIs"><img alt="Up: plasTeX Frameworks and APIs" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0043.html" title="Imager Objects"><img alt="Next: Imager Objects" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

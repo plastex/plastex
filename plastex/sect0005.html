@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: Counters</title>
+
+<link href="sec-config-links.html" title="Document Links" rel="next" />
+<link href="sec-config-document.html" title="Document Properties" rel="prev" />
+<link href="sect0003.html" title="Command-Line and Configuration Options" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sec-config-document.html" title="Document Properties"><img alt="Previous: Document Properties" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0003.html" title="Command-Line and Configuration Options"><img alt="Up: Command-Line and Configuration Options" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-config-links.html" title="Document Links"><img alt="Next: Document Links" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sect0002.html"><b class="bf">plastex</b> — The Command-Line Interface</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sect0003.html">Command-Line and Configuration Options</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current">Counters</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h2 id="a0000000401">2.1.3 Counters</h2>
+<p>It is possible to set the initial value of a counter from the command-line using the <b class="bf">--counter</b> option or the “counters” section in a configuration file. The configuration file format for setting counters is very simple. The option name in the configuration file corresponds to the counter name, and the value is the value to set the counter to. </p><pre>
+[counters]
+chapter=4
+part=2
+</pre><p>The sample configuration above sets the chapter counter to 4, and the part counter to 2. </p><p>The <b class="bf">--counter</b> can also set counters. It accepts multiple arguments which must be surrounded by square brackets ([ ]). Each counter set in the <b class="bf">--counter</b> option requires two values: the name of the counter and the value to set the counter to. An example of <b class="bf">--counter</b> is shown below. </p><pre>
+plastex --counter [ part 2 chapter 4 ] file.tex
+</pre><p>Just as in the configuration example, this command-line sets the part counter to 2, and the chapter counter to 4. </p><p><dl class="description">
+
+    <dt><b class="bfseries">Set initial counter values</b></dt>
+    <dd><p><br /><b class="bfseries">Command-Line Options:</b> <tt class="ttfamily"><b class="bf">--counter=<span class="rmfamily"><i class="itshape">[ counter-name initial-value ]</i></span></b></tt><br />specifies the initial counter values. </p></dd>
+
+</dl> </p></div>
+
+
+
+
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sec-config-document.html" title="Document Properties"><img alt="Previous: Document Properties" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0003.html" title="Command-Line and Configuration Options"><img alt="Up: Command-Line and Configuration Options" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-config-links.html" title="Document Links"><img alt="Next: Document Links" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: Document Properties</title>
+
+<link href="sect0005.html" title="Counters" rel="next" />
+<link href="sect0004.html" title="General Options" rel="prev" />
+<link href="sect0003.html" title="Command-Line and Configuration Options" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0004.html" title="General Options"><img alt="Previous: General Options" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0003.html" title="Command-Line and Configuration Options"><img alt="Up: Command-Line and Configuration Options" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0005.html" title="Counters"><img alt="Next: Counters" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sect0002.html"><b class="bf">plastex</b> — The Command-Line Interface</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sect0003.html">Command-Line and Configuration Options</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current">Document Properties</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h2 id="sec:config-document">2.1.2 Document Properties</h2>
+<p><dl class="description">
+
+    <dt><b class="bfseries">Base URL</b></dt>
+    <dd><p><br /><b class="bfseries">Command-Line Options:</b> <tt class="ttfamily"><b class="bf">--base-url=<span class="rmfamily"><i class="itshape">url</i></span></b></tt><br /><b class="bfseries">Config File:</b> [ document ] base-url<br />specifies a base URL to prepend to the path of all links. </p></dd>
+
+</dl> </p><p><dl class="description">
+
+    <dt><b class="bfseries">Number of Columns in the Index</b></dt>
+    <dd><p><br /><b class="bfseries">Command-Line Options:</b> <tt class="ttfamily"><b class="bf">--index-columns=<span class="rmfamily"><i class="itshape">integer</i></span></b></tt><br /><b class="bfseries">Config File:</b> [ document ] index-columns<br />specifies the number of columns to group the index into. </p></dd>
+
+</dl> </p><p><dl class="description">
+
+    <dt><b class="bfseries">Section number depth</b></dt>
+    <dd><p><br /><b class="bfseries">Command-Line Options:</b> <tt class="ttfamily"><b class="bf">--sec-num-depth=<span class="rmfamily"><i class="itshape">integer</i></span></b></tt><br /><b class="bfseries">Config File:</b> [ document ] sec-num-depth<br /><b class="bfseries">Default:</b> 6<br />specifies the section level depth that should appear in section numbers. This value overrides the value of the secnumdepth counter in the document. </p></dd>
+
+</dl> </p><p><dl class="description">
+
+    <dt><b class="bfseries">Title for the document</b></dt>
+    <dd><p><br /><b class="bfseries">Command-Line Options:</b> <tt class="ttfamily"><b class="bf">--title=<span class="rmfamily"><i class="itshape">string</i></span></b></tt><br /><b class="bfseries">Config File:</b> [ document ] title<br />specifies a title to use for the document instead of the title given in the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X source document </p></dd>
+
+</dl> </p><p><dl class="description">
+
+    <dt><b class="bfseries">Table of contents depth</b></dt>
+    <dd><p><br /><b class="bfseries">Command-Line Options:</b> <tt class="ttfamily"><b class="bf">--toc-depth=<span class="rmfamily"><i class="itshape">integer</i></span></b></tt><br /><b class="bfseries">Config File:</b> [ document ] toc-depth<br />specifies the number of levels to include in each table of contents. </p></dd>
+
+</dl> </p><p><dl class="description">
+
+    <dt><b class="bfseries">Display sections in the table of contents that do not create files</b></dt>
+    <dd><p><br /><b class="bfseries">Command-Line Options:</b> <tt class="ttfamily"><b class="bf">--toc-non-files</b></tt><br /><b class="bfseries">Config File:</b> [ document ] toc-non-files<br />specifies that sections that do not create files should still appear in the table of contents. By default, only sections that create files will show up in the table of contents. </p></dd>
+
+</dl> </p></div>
+
+
+
+
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0004.html" title="General Options"><img alt="Previous: General Options" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0003.html" title="Command-Line and Configuration Options"><img alt="Up: Command-Line and Configuration Options" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0005.html" title="Counters"><img alt="Next: Counters" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

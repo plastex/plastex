@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: Renderers</title>
+
+<link href="sect0011.html" title="Simple Renderer Example" rel="next" />
+<link href="sec-packages.html" title="Packages" rel="prev" />
+<link href="index.html" title="plasTeX — A Python Framework for Processing LaTeX Documents" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sec-packages.html" title="Packages"><img alt="Previous: Packages" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="index.html" title="plasTeX — A Python Framework for Processing LaTeX Documents"><img alt="Up: plasTeX — A Python Framework for Processing LaTeX Documents" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0011.html" title="Simple Renderer Example"><img alt="Next: Simple Renderer Example" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current">Renderers</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h1 id="a0000003059">5 Renderers</h1>
+<p>Renderers allow you to convert a plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document object into viewable output such as HTML, RTF, or PDF, or simply a data structure format such as DocBook or tBook. Since the plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document object gives you everything that you could possibly want to know about the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document, it should, in theory, be possible to generate any type of output from the plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document object while preserving as much information as the output format is capable of. In addition, since the document object is not affected by the rendering process, you can apply multiple renderers in sequence so that the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document only needs to be parsed one time for all output types. </p><p>While it is possible to write a completely custom renderer, one possible rendeerer implementation is included with the plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X framework. While the rendering process in this implementation is fairly simple, it is also very powerful. Some of the main features are listed below. </p><ul class="itemize">
+<li><p>ability to generate multiple output files </p></li><li><p>automatic splitting of files is configurable by section level, or can be invoked using ad-hoc methods in the <tt class="ttfamily">filenameoverride</tt> property </p></li><li><p>powerful output filename generation utility </p></li><li><p>image generation for portions of the document that cannot be easily rendered in a particular output formate (e.g. equations in HTML) </p></li><li><p>themeing support </p></li><li><p>hooks for post-processing of output files </p></li><li><p>configurable output encodings </p></li>
+</ul><p>The API of the renderer itself is very small. In fact, there are only a couple of methods that are of real interest to an end user: <tt class="ttfamily">render</tt> and <tt class="ttfamily">cleanup</tt>. The <tt class="ttfamily">render</tt> method is the method that starts the rendering process. It’s only argument is a plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document object. The <tt class="ttfamily">cleanup</tt> method is called at the end of the rendering process. It is passed the document object and a list of all of the files that were generated. This method allows you to do post-processing on the output files. In general, this method will probably only be of interest to someone writing a subclass of the <tt class="ttfamily">Renderer</tt> class, so most users of plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X will only use the <tt class="ttfamily">render</tt> method. The real work of the rendering process is handled in the <tt class="ttfamily">Renderable</tt> class which is discussed later in this chapter. </p><p>The <tt class="ttfamily">Renderer</tt> class is a subclass of the Python dictionary. Each key in the renderer corresponds to the name of a node in the document object. The value stored under each key is a function. As each node in the document object is traversed, the renderer is queried to see if there is a key that matches the name of the node. If a key is found, the value at that key (which must be a function) is called with the node as its only argument. The return value from this call must be a unicode object that contains the rendered output. Based on the configuration, the renderer will handle all of the file generation and encoding issues. </p><p>If a node is traversed that doesn’t correspond to a key in the renderer dictionary, the default rendering method is called. The default rendering method is stored in the <tt class="ttfamily">default</tt> attribute. One exception to this rule is for text nodes. The default rendering method for text nodes is actually stored in <tt class="ttfamily">textDefault</tt>. Again, these attributes simply need to reference any Python function that returns a unicode object of the rendered output. The default method in both of these attributes is the <tt class="ttfamily">unicode</tt> built-in function. </p><p>As mention previously, most of the work of the renderer is actually done by the <tt class="ttfamily">Renderable</tt> class. This is a mixin class<a href="#a0000003111" class="footnote"><sup class="footnotemark">1</sup></a> that is mixed into the <tt class="ttfamily">Node</tt> class in the <tt class="ttfamily">render</tt> method. It is unmixed at the end of the <tt class="ttfamily">render</tt> method. The details of the <tt class="ttfamily">Renderable</tt> class are discussed in section <a href="sec-renderable.html">5.2</a>. </p></div>
+
+<div class="contents chapter-contents"><!--<strong>Subsections</strong>-->
+<ul>
+<li><a href="sect0011.html">5.1 Simple Renderer Example</a>
+   <ul>
+   <li><a href="sect0012.html">5.1.1 Extending the Simple Renderer</a>
+       
+   </li>
+   </ul>
+</li><li><a href="sec-renderable.html">5.2 Renderable Objects</a>
+   <ul>
+   <li><a href="sect0013.html">5.2.1 Determining the Correct Rendering Method</a>
+       
+   </li><li><a href="sect0014.html">5.2.2 Generating Files</a>
+       
+   </li><li><a href="sect0015.html">5.2.3 Generating Images</a>
+       
+   </li><li><a href="sect0016.html">5.2.4 Generating Vector Images</a>
+       
+   </li><li><a href="sect0017.html">5.2.5 Static Images</a>
+       
+   </li>
+   </ul>
+</li><li><a href="sec-zpt.html">5.3 Page Template Renderer</a>
+   <ul>
+   <li><a href="sect0018.html">5.3.1 Defining and Using Templates</a>
+       
+   </li><li><a href="sect0019.html">5.3.2 Defining and Using Themes</a>
+       
+   </li><li><a href="sec-zpttutorial.html">5.3.3 Zope Page Template Tutorial</a>
+       
+   </li>
+   </ul>
+</li><li><a href="sect0020.html">5.4 XHTML Renderer</a>
+   <ul>
+   <li><a href="sect0021.html">5.4.1 Themes</a>
+       
+   </li>
+   </ul>
+</li><li><a href="sect0022.html">5.5 DocBook Renderer</a>
+   
+</li><li><a href="sect0023.html">5.6 ManPage and Text Renderers</a>
+   
+</li>
+
+
+
+</ul>
+</div>
+
+<div id="footnotes">
+<p><b>Footnotes</b></p>
+<ol>
+<li id="a0000003111"> A mixin class is simply a class that is merely a collection of methods that are intended to be included in the namespace of another class.</li>
+</ol>
+</div>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sec-packages.html" title="Packages"><img alt="Previous: Packages" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="index.html" title="plasTeX — A Python Framework for Processing LaTeX Documents"><img alt="Up: plasTeX — A Python Framework for Processing LaTeX Documents" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0011.html" title="Simple Renderer Example"><img alt="Next: Simple Renderer Example" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

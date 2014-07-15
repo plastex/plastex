@@ -1,0 +1,350 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: Zope Page Template Tutorial</title>
+
+<link href="sect0020.html" title="XHTML Renderer" rel="next" />
+<link href="sect0019.html" title="Defining and Using Themes" rel="prev" />
+<link href="sec-zpt.html" title="Page Template Renderer" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0019.html" title="Defining and Using Themes"><img alt="Previous: Defining and Using Themes" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-zpt.html" title="Page Template Renderer"><img alt="Up: Page Template Renderer" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0020.html" title="XHTML Renderer"><img alt="Next: XHTML Renderer" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sect0010.html">Renderers</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sec-zpt.html">Page Template Renderer</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current">Zope Page Template Tutorial</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h2 id="sec:zpttutorial">5.3.3 Zope Page Template Tutorial</h2>
+<p>The Zope Page Template (ZPT) language is actually just a set of XML attributes that can be applied to markup of an DTD. These attributes tell the ZPT interpreter how to process the element. There are seven different attributes that you can use to direct the processing of an XML or HTML file (in order of evaluation): define, condition, repeat, content, replace, attributes, and omit-tag. These attributes are described in section <a href="sec-zpttutorial.html#sec:talattributes"></a>. For a more complete description, see the official ZPT documentation at <a href="http://www.zope.org/Documentation/Books/ZopeBook/2_6Edition/ZPT.stx">http://www.zope.org/Documentation/Books/ZopeBook/2_6Edition/ZPT.stx</a>. </p><h3 id="a0000003676">Template Attribute Language Expression Syntax (TALES)</h3>
+<p>The Template Attribute Language Expression Syntax (TALES) is used by the attribute language described in the next section. The TALES syntax is used to evaluate expressions based on objects in the template namespace. The results of these expressions can be used to define variables, produce output, or be used as booleans. There are also several operators used to modify the behavior or interpretation of an expression. The expressions and their modifiers are described below. </p><h4 id="sec:pathoperator">path: operator</h4>
+<p>A “path” is the most basic form on an expression in ZPT. The basic form is shown below. </p><pre>
+[path:]string [ | TALES expression ]
+</pre><p>The <span class="rmfamily"><i class="itshape">path:</i></span> operator is actually optional on all paths. Leaving it off makes no difference. The “string” in the above syntax is a ’/’ delimited string of names. Each name refers to a property of the previous name in the string. Properties can include attributes, methods, or keys in a dictionary. These properties can in turn have properties of their own. Some examples of paths are shown below. </p><pre>
+# Access the parentNode attribute of chapter, then get its title
+chapter/parentNode/title
+
+# Get the key named 'foo' from the dictionary bar
+bar/foo
+
+# Call the title method on the string in the variable booktitle
+booktitle/title
+</pre><p>It is possible to specify multiple paths separated by a pipe (|). These paths are evaluated from left to right. The first one to return a non-None value is used. </p><pre>
+# Look for the title on the current chapter node as well as its parents
+chapter/title | chapter/parentNode/title | chapter/parentNode/parentNode/title
+
+# Look for the value of the option otherwise get its default value
+myoptions/encoding | myoptions/defaultencoding
+</pre><p>There are a few keywords that can be used in place of a path in a TALES expression as well. <center><table cellspacing="0" class="tabular">
+<tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><b class="bf">Name</b></p></td>
+
+    
+    <td style="text-align:left"><p><b class="bf">Purpose</b> </p></td>
+
+</tr><tr>
+
+    
+    <td style="border-top-style:solid; text-align:left; border-top-color:black; border-top-width:1px; border-right:1px solid black"><p> <span class="rmfamily"><i class="itshape">nothing</i></span></p></td>
+
+    
+    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left"><p>same as <span class="rmfamily"><i class="itshape">None</i></span> in Python</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">default</i></span></p></td>
+
+    
+    <td style="text-align:left"><p>keeps whatever the existing value of the element or attribute is</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">options</i></span></p></td>
+
+    
+    <td style="text-align:left"><p>dictionary of values passed in to the template when instatiated</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">repeat</i></span></p></td>
+
+    
+    <td style="text-align:left"><p>the repeat variable (see <a href="sec-zpttutorial.html#sec:talrepeat"></a>)</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">attrs</i></span></p></td>
+
+    
+    <td style="text-align:left"><p>dictonary of the original attributes of the element</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">CONTEXTS</i></span></p></td>
+
+    
+    <td style="text-align:left"><p>dictionary containing all of the above</p></td>
+
+</tr>
+</table></center> </p><h4 id="a0000003774">exists: operator</h4>
+<p>This operator returns true if the path exists. If the path does not exist, the operator returns false. The syntax is as follows. </p><pre>
+exists:path
+</pre><p>The “path” in the code above is a path as described in section <a href="sec-zpttutorial.html#sec:pathoperator"></a>. This operator is commonly combined with the not: operator. </p><h4 id="a0000003780">nocall: operator</h4>
+<p>By default, if a property that is retrieved is callable, it will be called automatically. Using the nocall: operator, prevents this execution from happening. The syntax is shown below. </p><pre>
+nocall:path
+</pre><h4 id="a0000003784">not: operator</h4>
+<p>The not: operator simply negates the boolean result of the path. If the path is a boolean true, the not: operator will return false, and vice versa. The syntax is shown below. </p><pre>
+not:path
+</pre><h4 id="a0000003788">string: operator</h4>
+<p>The string: operator allows you to combine literal strings and paths into one string. Paths are inserted into the literal string using a syntax much like that of Python Templates: $path or ${path}. The general syntax is: </p><pre>
+string:text
+</pre><p>Here are some examples of using the string: operator. </p><pre>
+string:Next - ${section/links/next}
+string:($pagenumber)
+string:[${figure/number}] ${figure/caption}
+</pre><h4 id="a0000003799">python: operator</h4>
+<p>The python: operator allows you to evaluate a Python expression. The syntax is as follows. </p><pre>
+python:python-code
+</pre><p>The “python-code” in the expression above can include any of the Python built-in functions and operators as well as four new functions that correspond to the TALES operators: path, string, exists, and nocall. Each of these functions takes a string containing the path to be evaluated (e.g. path(’foo/bar’), exists(’chapter/title’), etc.). </p><p>When using Python operators, you must escape any characters that would not be legal in an XML/HTML document (i.e. &lt;&gt;&amp;). For example, to write an expression to test if a number was less than or greater than two numbers, you would need to do something like the following example. </p><pre>
+# See if the figure number is less than 2 or greater than 4
+python: path('figure/number') &amp;lt; 2 or path('figure/number') &amp;gt; 4
+</pre><h4 id="a0000003808">stripped: operator</h4>
+<p>The stripped: operator only exists in the SimpleTAL distribution provided by plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X. It evaluates the given path and removes any markup from that path. Essentially, it is a way to get a plain text representation of the path. The syntax is as follows. </p><pre>
+stripped:path
+</pre><h3 id="sec:talattributes">Template Attribute Language (TAL) Attributes</h3>
+<h4 id="a0000003814">tal:define</h4>
+<p>The <tt class="ttfamily">tal:define</tt> attribute allows you to define a variable for use later in the template. Variables can be specifies as local (only for use in the scope of the current element) or global (for use anywhere in the template). The syntax of the define attribute is shown below. </p><pre>
+tal:define="[ local | global ] name expression [; define-expression ]"
+</pre><p>The define attributes sets the value of “name” to “expression.” By default, the scope of the variable is local, but can be specified as global by including the “global” keyword before the name of the variable. As shown in the grammar above, you can specify multiple variables in one <tt class="ttfamily">tal:define</tt> attribute by separating the define expressions by semi-colons. </p><p>Examples of using the <tt class="ttfamily">tal:define</tt> attribute are shown belaw. </p><pre>
+&lt;p tal:define="global title document/title; 
+               next self/links/next;
+               previous self/links/previous;
+               length python:len(self);
+               up string:Up - ${self/links/up}"&gt;
+...
+&lt;/p&gt;
+</pre><h4 id="a0000003825">tal:condition</h4>
+<p>The <tt class="ttfamily">tal:condition</tt> attribute allows you to conditionally include an element. The syntax is shown below. </p><pre>
+tal:condition="expression"
+</pre><p>The <tt class="ttfamily">tal:condition</tt> attribute is very simple. If the expression evaluates to true, the element and its children will be evaluated and included in the output. If the expression evaluates to false, the element and its children will not be evaluated or included in the output. Valid expressions for the <tt class="ttfamily">tal:condition</tt> attribute are the same as those for the expressions in the <tt class="ttfamily">tal:define</tt> attribute. </p><pre>
+&lt;p tal:condition="python:len(self)"&gt;
+    &lt;b tal:condition="self/caption"&gt;Caption for paragraph&lt;/b&gt;
+    ...
+&lt;/p&gt;
+</pre><h4 id="sec:talrepeat">tal:repeat</h4>
+<p>The <tt class="ttfamily">tal:repeat</tt> attribute allows you to repeat an element multiple times; the syntax is shown below. </p><pre>
+tal:repeat="name expression"
+</pre><p>When the <tt class="ttfamily">tal:repeat</tt> attribute is used on an element, the result of“expression” is iterated over, and a new element is generated for each item in the iteration. The value of the current item is set to “name” much like in the <tt class="ttfamily">tal:define</tt> attribute. </p><p>Within the scope of the repeated element, another variable is available: <span class="rmfamily"><i class="itshape">repeat</i></span>. This variable contains several properties related to the loop. <center><table cellspacing="0" class="tabular">
+<tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><b class="bf">Name</b></p></td>
+
+    
+    <td style="text-align:left"><p><b class="bf">Purpose</b> </p></td>
+
+</tr><tr>
+
+    
+    <td style="border-top-style:solid; text-align:left; border-top-color:black; border-top-width:1px; border-right:1px solid black"><p> <span class="rmfamily"><i class="itshape">index</i></span></p></td>
+
+    
+    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left"><p>number of the current iteration starting from zero</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">number</i></span></p></td>
+
+    
+    <td style="text-align:left"><p>number of the current iteration starting from one</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">even</i></span></p></td>
+
+    
+    <td style="text-align:left"><p>is true if the iteration number is even</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">odd</i></span></p></td>
+
+    
+    <td style="text-align:left"><p>is true if the iteration number is odd</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">start</i></span></p></td>
+
+    
+    <td style="text-align:left"><p>is true if this is the first iteration</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">end</i></span></p></td>
+
+    
+    <td style="text-align:left"><p>is true if this is the last iteration; This is never true if the repeat expression returns an iterator</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">length</i></span></p></td>
+
+    
+    <td style="text-align:left"><p>the length of the sequence being iterated over; This is set to <span class="rmfamily"><i class="itshape">sys.maxint</i></span> for iterators.</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">letter</i></span></p></td>
+
+    
+    <td style="text-align:left"><p>lower case letter corresponding to the current iteration number starting with ’a’</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">Letter</i></span></p></td>
+
+    
+    <td style="text-align:left"><p>upper case letter corresponding to the current iteration number starting with ’A’</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">roman</i></span></p></td>
+
+    
+    <td style="text-align:left"><p>lower case Roman numeral corresponding to the current iteration number starting with ’i’</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">Roman</i></span></p></td>
+
+    
+    <td style="text-align:left"><p>upper case Roman numeral corresponding to the current iteration number starting with ’I’</p></td>
+
+</tr>
+</table></center> </p><p>To access the properties listed above, you must use the property of the <span class="rmfamily"><i class="itshape">repeat</i></span> variable that corresponds to the repeat variable name. For example, if your repeat variable name is “item”, you would access the above variables using the expressions <span class="rmfamily"><i class="itshape">repeat/item/index</i></span>, <span class="rmfamily"><i class="itshape">repeat/item/number</i></span>, <span class="rmfamily"><i class="itshape">repeat/item/even</i></span>, etc. </p><p>A simple example of the <tt class="ttfamily">tal:repeat</tt> attribute is shown below. </p><pre>
+&lt;ol&gt;
+&lt;li tal:repeat="option options" tal:content="option/name"&gt;option name&lt;/li&gt;
+&lt;/ol&gt;
+</pre><p>One commonly used feature of rendering tables is alternating row colors. This is a little bit tricky with ZPT since the <tt class="ttfamily">tal:condition</tt> attribute is evaluated before the <tt class="ttfamily">tal:repeat</tt> directive. You can get around this by using the <tt class="ttfamily">metal:</tt> namespace. This is the namespace used by ZPT’s macro language<a href="#a0000004008" class="footnote"><sup class="footnotemark">1</sup></a> You can create another element around the element you want to be conditional. This wrapper element is simply there to do the iterating, but is not included in the output. The example below shows how to do alternating row colors in an HTML table. </p><pre>
+&lt;table&gt;
+&lt;metal:block tal:repeat="employee employees"&gt;
+&lt;!-- even rows --&gt;
+&lt;tr tal:condition="repeat/employee/even" style="background-color: white"&gt;
+    &lt;td tal:content="employee/name"&gt;&lt;/td&gt;
+    &lt;td tal:content="employee/title"&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;!-- odd rows --&gt;
+&lt;tr tal:condition="repeat/employee/odd" style="background-color: gray"&gt;
+    &lt;td tal:content="employee/name"&gt;&lt;/td&gt;
+    &lt;td tal:content="employee/title"&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/metal:block&gt;
+&lt;/table&gt;
+</pre><h4 id="a0000004011">tal:content</h4>
+<p>The <tt class="ttfamily">tal:content</tt> attribute evaluates an expression and replaces the content of the element with the result of the expression. The syntax is shown below. </p><pre>
+tal:content="[ text | structure ] expression"
+</pre><p>The <span class="rmfamily"><i class="itshape">text</i></span> and <span class="rmfamily"><i class="itshape">structure</i></span> options in the <tt class="ttfamily">tal:content</tt> attribute indicate whether or not the content returned by the expression should be escaped (i.e. "&amp;&lt;&gt; replaced by &amp;quot;, &amp;amp;, &amp;lt;, and &amp;gt;, respectively). When the <span class="rmfamily"><i class="itshape">text</i></span> option is used, these special characters are escaped; this is the default behavior. When the <span class="rmfamily"><i class="itshape">structure</i></span> option is specified, the result of the expression is assumed to be valid markup and is not escaped. </p><p>In SimpleTAL, the default behavior is the same as using the <span class="rmfamily"><i class="itshape">text</i></span> option. However, in plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X, 99.9% of the time the content returned by the expression is valid markup, so the default was changed to <span class="rmfamily"><i class="itshape">structure</i></span> in the SimpleTAL package distributed with plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X. </p><h4 id="a0000004057">tal:replace</h4>
+<p>The <tt class="ttfamily">tal:replace</tt> attribute is much like the <tt class="ttfamily">tal:content</tt> attribute. They both evaluate an expression and include the content of that expression in the output, and they both have a <span class="rmfamily"><i class="itshape">text</i></span> and <span class="rmfamily"><i class="itshape">structure</i></span> option to indicate escaping of special characters. The difference is that when the <tt class="ttfamily">tal:replace</tt> attribute is used, the element with the <tt class="ttfamily">tal:replace</tt> attribute on it is not included in the output. Only the content of the evaluated expression is returned. The syntax of the <tt class="ttfamily">tal:replace</tt> attribute is shown below. </p><pre>
+tal:replace="[ text | structure ] expression"
+</pre><h4 id="a0000004076">tal:attributes</h4>
+<p>The <tt class="ttfamily">tal:attributes</tt> attribute allows you to programatically create attributes on the element. The syntax is shown below. </p><pre>
+tal:attributes="name expression [; attribute-expression ]"
+</pre><p>The syntax of the <tt class="ttfamily">tal:attributes</tt> attribute is very similar to that of the <tt class="ttfamily">tal:define</tt> attribute. However, in the case of the <tt class="ttfamily">tal:attributes</tt> attribute, the name is the name of the attribute to be created on the element and the expression is evaluated to get the value of the attribute. If an error occurs or <span class="rmfamily"><i class="itshape">None</i></span> is returned by the expression, then the attribute is removed from the element. </p><p>Just as in the case of the <tt class="ttfamily">tal:define</tt> attribute, you can specify multiple attributes separated by semi-colons (;). If a semi-colon character is needed in the expression, then it must be represented by a double semi-colon (;;). </p><p>An example of using the <tt class="ttfamily">tal:attributes</tt> is shown below. </p><pre>
+&lt;a tal:attributes="href self/links/next/url; 
+                   title self/links/next/title"&gt;link text&lt;/a&gt;
+</pre><h4 id="a0000004096">tal:omit-tag</h4>
+<p>The <tt class="ttfamily">tal:omit-tag</tt> attribute allows you to conditionally omit an element. The syntax is shown below. </p><pre>
+tal:omit-tag="expression"
+</pre><p>If the value of “expression” evaluates to true (or is empty), the element is omitted; however, the content of the element is still sent to the output. If the expression evaluates to false, the element is included in the output. </p></div>
+
+
+
+<div id="footnotes">
+<p><b>Footnotes</b></p>
+<ol>
+<li id="a0000004008">The macro language isn’t discussed here. See the official ZPT documentation for more information.</li>
+</ol>
+</div>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0019.html" title="Defining and Using Themes"><img alt="Previous: Defining and Using Themes" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-zpt.html" title="Page Template Renderer"><img alt="Up: Page Template Renderer" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0020.html" title="XHTML Renderer"><img alt="Next: XHTML Renderer" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

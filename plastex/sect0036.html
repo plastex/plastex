@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: Environment Objects</title>
+
+<link href="sect0037.html" title="TeXFragment Objects" rel="next" />
+<link href="sect0035.html" title="Command Objects" rel="prev" />
+<link href="module-plasTeX-DOM.html" title="plasTeX.DOM — The plasDocument Object Model (DOM)" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0035.html" title="Command Objects"><img alt="Previous: Command Objects" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="module-plasTeX-DOM.html" title="plasTeX.DOM — The plasTeX Document Object Model (DOM)"><img alt="Up: plasTeX.DOM — The plasTeX Document Object Model (DOM)" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0037.html" title="TeXFragment Objects"><img alt="Next: TeXFragment Objects" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sect0024.html">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="module-plasTeX-DOM.html"><tt class="ttfamily">plasTeX.DOM</tt> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document Object Model (DOM)</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current">Environment Objects</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h2 id="a0000013789">6.3.8 Environment Objects</h2>
+<p>   <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><b class="bf">class </b><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">Environment</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000013853" id="a0000013853"></a>  The <tt class="ttfamily">Environment</tt> class is a subclass of <tt class="ttfamily">Macro</tt>. This is the class that should be subclassed when creating Python based macros that correspond to L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X environments. The main difference between the processing of <tt class="ttfamily">Command</tt>s and <tt class="ttfamily">Environment</tt>s is that the <tt class="ttfamily">invoke()</tt> method does special handling of the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document context, and the <tt class="ttfamily">digest()</tt> method absorbs the output stream tokens that are encapsulated by the \<tt class="ttfamily">begin</tt> and \<tt class="ttfamily">end</tt> tokens. </p><p>For more information on the <tt class="ttfamily">Environment</tt> class’ API, see the <tt class="ttfamily">Macro</tt> class. </p></dd>
+
+</dl> </p></div>
+
+
+
+
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0035.html" title="Command Objects"><img alt="Previous: Command Objects" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="module-plasTeX-DOM.html" title="plasTeX.DOM — The plasTeX Document Object Model (DOM)"><img alt="Up: plasTeX.DOM — The plasTeX Document Object Model (DOM)" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0037.html" title="TeXFragment Objects"><img alt="Next: TeXFragment Objects" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

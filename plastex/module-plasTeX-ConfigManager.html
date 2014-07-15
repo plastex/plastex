@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: plasTeX.ConfigManager — plasTeX Configuration</title>
+
+<link href="sect0026.html" title="ConfigManager Objects" rel="next" />
+<link href="sect0025.html" title="Macro Objects" rel="prev" />
+<link href="sect0024.html" title="plasFrameworks and APIs" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0025.html" title="Macro Objects"><img alt="Previous: Macro Objects" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0024.html" title="plasTeX Frameworks and APIs"><img alt="Up: plasTeX Frameworks and APIs" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0026.html" title="ConfigManager Objects"><img alt="Next: ConfigManager Objects" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sect0024.html">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current"><tt class="ttfamily">plasTeX.ConfigManager</tt> — plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Configuration</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h1 id="module-plasTeX.ConfigManager">6.2 <tt class="ttfamily">plasTeX.ConfigManager</tt> — plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Configuration</h1>
+<p>      <a name="a0000005717" id="a0000005717"></a>       </p><p>The configuration system in plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X that parses the command-line options and configuration files is very flexible. While many options are setup by the plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X framework, it is possible for you to add your own options. This is useful if you have macros that may need to be configured by configurable options, or if you write a renderer that surfaces special options to control it. </p><p>The config files that <tt class="ttfamily">ConfigManager</tt> supports are standard INI-style files. This is the same format supported by Python’s <tt class="ttfamily">ConfigParser</tt>. However, this API has been extended with some dictionary-like behaviors to make it more Python friendly. </p><p>In addition to the config files, <tt class="ttfamily">ConfigManager</tt> can also parse command-line options and merge the options from the command-line into the options set by the given config files. In fact, when adding options to a <tt class="ttfamily">ConfigManager</tt>, you specify both how they appear in the config file as well as how they appear on the command-line. Below is a basic example. </p><pre>
+from plasTeX.ConfigManager import *
+c = ConfigManager()
+
+# Create a new section in the config file.  This corresponds to the
+# [ sectionname ] sections in an INI file.  The returned value is 
+# a reference to the new section
+d = c.add_section('debugging')
+
+# Add an option to the 'debugging' section called 'verbose'.
+# This corresponds to the config file setting:
+#
+# [debugging]
+# verbose = no
+#
+d['verbose'] = BooleanOption(
+    """ Increase level of debugging information """,
+    options = '-v --verbose !-q !--quiet',
+    default = False,
+)
+
+# Read system-level config file
+c.read('/etc/myconfig.ini')
+
+# Read user-level config file
+c.read('~/myconfig.ini')
+
+# Parse the current command-line arguments
+opts, args = c.getopt(sys.argv[1:])
+
+# Print the value of the 'verbose' option in the 'debugging' section
+print c['debugging']['verbose']
+</pre><p>One interesting thing to note about retrieving values from a <tt class="ttfamily">ConfigManager</tt> is that you get the value of the option rather than the option instance that you put in. For example, in the code above. A <tt class="ttfamily">BooleanOption</tt> in put into the ‘verbose’ option slot, but when it is retrieved in the <tt class="ttfamily">print</tt> statement at the end, it prints out a boolean value. This is true of all option types. You can access the option instance in the <tt class="ttfamily">data</tt> attribute of the section (e.g. <span class="rmfamily"><tt class="ttfamily">c[’debugging’].data[’verbose’]</tt></span>). </p></div>
+
+<div class="contents section-contents"><!--<strong>Subsections</strong>-->
+<ul>
+<li><a href="sect0026.html">6.2.1 ConfigManager Objects</a>
+   
+</li><li><a href="sect0027.html">6.2.2 ConfigSection Objects</a>
+   
+</li><li><a href="sect0028.html">6.2.3 Configuration Option Types</a>
+   
+</li>
+
+
+
+</ul>
+</div>
+
+
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0025.html" title="Macro Objects"><img alt="Previous: Macro Objects" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0024.html" title="plasTeX Frameworks and APIs"><img alt="Up: plasTeX Frameworks and APIs" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0026.html" title="ConfigManager Objects"><img alt="Next: ConfigManager Objects" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

@@ -1,0 +1,750 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: Node Objects</title>
+
+<link href="sect0031.html" title="DocumentFragment Objects" rel="next" />
+<link href="sect0029.html" title="plasvs. XML" rel="prev" />
+<link href="module-plasTeX-DOM.html" title="plasTeX.DOM — The plasDocument Object Model (DOM)" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0029.html" title="plasTeX vs. XML"><img alt="Previous: plasTeX vs. XML" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="module-plasTeX-DOM.html" title="plasTeX.DOM — The plasTeX Document Object Model (DOM)"><img alt="Up: plasTeX.DOM — The plasTeX Document Object Model (DOM)" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0031.html" title="DocumentFragment Objects"><img alt="Next: DocumentFragment Objects" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sect0024.html">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="module-plasTeX-DOM.html"><tt class="ttfamily">plasTeX.DOM</tt> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document Object Model (DOM)</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current">Node Objects</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h2 id="a0000010552">6.3.2 Node Objects</h2>
+<p>   <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><b class="bf">class </b><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">Node</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000010616" id="a0000010616"></a>  The <tt class="ttfamily">Node</tt> class is the base class for all nodes in the plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X DOM inluding elements, text, etc. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">attributes</b></tt></span></dt>
+    <dd><p><a name="a0000010641" id="a0000010641"></a> a dictionary containing the attributes, in the case of plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X  the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X macro arguments </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">childNodes</b></tt></span></dt>
+    <dd><p><a name="a0000010667" id="a0000010667"></a> a list of the nodes that are contained by this one. In plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X, this generally contains the contents of a L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X environment. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">isElementContentWhitespace</b></tt></span></dt>
+    <dd><p><a name="a0000010692" id="a0000010692"></a> boolean indicating whether or not the node only contains whitespace. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">lastChild</b></tt></span></dt>
+    <dd><p><a name="a0000010714" id="a0000010714"></a> the last node in the <tt class="ttfamily">childNodes</tt> list. If there are no child nodes, the value is <span class="rmfamily"><i class="itshape">None</i></span>. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">nodeName</b></tt></span></dt>
+    <dd><p><a name="a0000010742" id="a0000010742"></a> the name of the node. This is either the special node name as specified in the XML DOM (e.g. #document-fragment, #text, etc.), or, if the node corresponds to an element, it is the name of the element. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">nodeType</b></tt></span></dt>
+    <dd><p><a name="a0000010766" id="a0000010766"></a> integer indicating the type of the node. The node types are defined as: </p><ul class="itemize">
+<li><p><tt class="ttfamily">Node.ELEMENT_NODE</tt> </p></li><li><p><tt class="ttfamily">Node.ATTRIBUTE_NODE</tt> </p></li><li><p><tt class="ttfamily">Node.TEXT_NODE</tt> </p></li><li><p><tt class="ttfamily">Node.CDATA_SECTION_NODE</tt> </p></li><li><p><tt class="ttfamily">Node.ENTITY_REFERENCE_NODE</tt> </p></li><li><p><tt class="ttfamily">Node.ENTITY_NODE</tt> </p></li><li><p><tt class="ttfamily">Node.PROCESSING_INSTRUCTION_NODE</tt> </p></li><li><p><tt class="ttfamily">Node.COMMENT_NODE</tt> </p></li><li><p><tt class="ttfamily">Node.DOCUMENT_NODE</tt> </p></li><li><p><tt class="ttfamily">Node.DOCUMENT_TYPE_NODE</tt> </p></li><li><p><tt class="ttfamily">Node.DOCUMENT_FRAGMENT_NODE</tt> </p></li><li><p><tt class="ttfamily">Node.NOTATION_NODE</tt> </p></li>
+</ul><p> <b class="bf">Note:</b> These are defined by the XML DOM, not all of them are used by plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">parentNode</b></tt></span></dt>
+    <dd><p><a name="a0000010847" id="a0000010847"></a> refers to the node that contains this node </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">previousSibling</b></tt></span></dt>
+    <dd><p><a name="a0000010869" id="a0000010869"></a> the node in the document that is adjacent to and immediately before this node. If one does not exist, the value is <span class="rmfamily"><i class="itshape">None</i></span>. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">nextSibling</b></tt></span></dt>
+    <dd><p><a name="a0000010896" id="a0000010896"></a> the node in the document that is adjacent to and immediately after this node. If one does not exist, the value is <span class="rmfamily"><i class="itshape">None</i></span>. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">ownerDocument</b></tt></span></dt>
+    <dd><p><a name="a0000010923" id="a0000010923"></a> the node that owner of, and ultimate parent of, all nodes in the document </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">textContent</b></tt></span></dt>
+    <dd><p><a name="a0000010945" id="a0000010945"></a> contains just the text content of this node </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">unicode</b></tt></span></dt>
+    <dd><p><a name="a0000010967" id="a0000010967"></a> specifies a unicode string that could be used in place of the node. This unicode string will be converted into tokens in the plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X  output stream. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">userdata</b></tt></span></dt>
+    <dd><p><a name="a0000010991" id="a0000010991"></a> dictionary used for holding user-defined data </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">__add__</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">other</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000011052" id="a0000011052"></a> create a new node that is the sum of <span class="rmfamily"><i class="itshape">self</i></span> and <span class="rmfamily"><i class="itshape">other</i></span>. This allows you to use nodes in Python statements like: node + other. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">append</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">newChild</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000011123" id="a0000011123"></a> adds a new child to the end of the child nodes </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">appendChild</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">newChild</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000011184" id="a0000011184"></a> same as <tt class="ttfamily">append</tt> </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">cloneNode</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">deep=False</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000011246" id="a0000011246"></a> create a clone of the current node. If <span class="rmfamily"><i class="itshape">deep</i></span> is true, then the attributes and child nodes are cloned as well. Otherwise, all references to attributes and child nodes will be shared between the nodes. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">__cmp__</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">other</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000011312" id="a0000011312"></a> same as <tt class="ttfamily">isEqualNode</tt>, but allows you to compare nodes using the Python statement: node == other. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">extend</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">other</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000011374" id="a0000011374"></a> appends <span class="rmfamily"><i class="itshape">other</i></span> to list of children then returns <span class="rmfamily"><i class="itshape">self</i></span> </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">__getitem__</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">i</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000011445" id="a0000011445"></a> returns the child node at the index given by <span class="rmfamily"><i class="itshape">i</i></span>. This allows you to use Python’s slicing syntax to retrieve child nodes: node[i]. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">getUserData</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">key</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000011511" id="a0000011511"></a> retrieves the data in the <tt class="ttfamily">userdata</tt> dictionary under the name <span class="rmfamily"><i class="itshape">key</i></span> </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">hasAttributes</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000011578" id="a0000011578"></a> returns a boolean indicating whether or not this node has attributes defined </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">hasChildNodes</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000011639" id="a0000011639"></a> returns a boolean indicating whether or not the node has child nodes </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">__iadd__</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">other</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000011700" id="a0000011700"></a> same as <tt class="ttfamily">extend</tt>. This allows you to use nodes in Python statements like: node += other. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">insert</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">i, newChild</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000011762" id="a0000011762"></a> inserts node <span class="rmfamily"><i class="itshape">newChild</i></span> into position <span class="rmfamily"><i class="itshape">i</i></span> in the child nodes list </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">insertBefore</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">newChild, refChild</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000011833" id="a0000011833"></a> inserts <span class="rmfamily"><i class="itshape">newChild</i></span> before <span class="rmfamily"><i class="itshape">refChild</i></span> in this node. If <span class="rmfamily"><i class="itshape">refChild</i></span> is not found, a <tt class="ttfamily">NotFoundErr</tt> exception is raised. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">isEqualNode</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">other</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000011910" id="a0000011910"></a> indicates whether the given node is equivalent to this one </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">isSameNode</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">other</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000011971" id="a0000011971"></a> indicates whether the given node is the same node as this one </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">__iter__</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000012032" id="a0000012032"></a> returns an iterator that iterates over the child nodes. This allows you to use Python’s <tt class="ttfamily">iter()</tt> function on nodes. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">__len__</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000012094" id="a0000012094"></a> returns the number of child nodes. This allows you to use Python’s <tt class="ttfamily">len()</tt> function on nodes. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">normalize</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000012156" id="a0000012156"></a> combine consecutive text nodes and remove comments in this node </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">pop</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">index=-1</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000012217" id="a0000012217"></a> removes child node and the index given by <span class="rmfamily"><i class="itshape">index</i></span>. If no index is specified, the last child is removed. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">__radd__</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">other</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000012283" id="a0000012283"></a> create a new node that is the sum of <span class="rmfamily"><i class="itshape">other</i></span> and <span class="rmfamily"><i class="itshape">self</i></span>. This allows you to use nodes in Python statements like: other + node. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">replaceChild</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">newChild, oldChild</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000012354" id="a0000012354"></a> replaces <span class="rmfamily"><i class="itshape">oldChild</i></span> with <span class="rmfamily"><i class="itshape">newChild</i></span> in this node. If <span class="rmfamily"><i class="itshape">oldChild</i></span> is not found, a <tt class="ttfamily">NotFoundErr</tt> exception is raised. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">removeChild</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">oldChild</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000012431" id="a0000012431"></a> removes <span class="rmfamily"><i class="itshape">oldChild</i></span> from this node. If <span class="rmfamily"><i class="itshape">oldChild</i></span> is not found, a <tt class="ttfamily">NotFoundErr</tt> exception is raised. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">__setitem__</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">i, node</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000012503" id="a0000012503"></a> sets the item at index <span class="rmfamily"><i class="itshape">i</i></span> to <span class="rmfamily"><i class="itshape">node</i></span>. This allows you to use Python’s slicing syntax to insert child nodes; see the example below. </p><pre>
+mynode[5] = othernode
+mynode[6:10] = [node1, node2]
+</pre></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">setUserData</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">key, data</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000012576" id="a0000012576"></a> put data specified in <span class="rmfamily"><i class="itshape">data</i></span> into the <tt class="ttfamily">userdata</tt> dictionary under the name given by <span class="rmfamily"><i class="itshape">key</i></span> </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">toXML</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000012648" id="a0000012648"></a> return an XML representation of the node </p></dd>
+
+</dl> </p></div>
+
+
+
+
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0029.html" title="plasTeX vs. XML"><img alt="Previous: plasTeX vs. XML" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="module-plasTeX-DOM.html" title="plasTeX.DOM — The plasTeX Document Object Model (DOM)"><img alt="Up: plasTeX.DOM — The plasTeX Document Object Model (DOM)" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0031.html" title="DocumentFragment Objects"><img alt="Next: DocumentFragment Objects" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

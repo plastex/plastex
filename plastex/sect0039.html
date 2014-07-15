@@ -1,0 +1,526 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: TeX Objects</title>
+
+<link href="module-plasTeX-Context.html" title="plasTeX.Context — The Context" rel="next" />
+<link href="module-plasTeX-TeX.html" title="plasTeX.TeX — The Stream" rel="prev" />
+<link href="module-plasTeX-TeX.html" title="plasTeX.TeX — The Stream" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="module-plasTeX-TeX.html" title="plasTeX.TeX — The TeX Stream"><img alt="Previous: plasTeX.TeX — The TeX Stream" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="module-plasTeX-TeX.html" title="plasTeX.TeX — The TeX Stream"><img alt="Up: plasTeX.TeX — The TeX Stream" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="module-plasTeX-Context.html" title="plasTeX.Context — The TeX Context"><img alt="Next: plasTeX.Context — The TeX Context" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sect0024.html">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="module-plasTeX-TeX.html"><tt class="ttfamily">plasTeX.TeX</tt> — The T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Stream</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current">TeX Objects</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h2 id="a0000014138">6.4.1 TeX Objects</h2>
+<p>   <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><b class="bf">class </b><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">TeX</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span>ownerDocument, file<span class="textnormal"><big class="xlarge">]</big></span></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000014210" id="a0000014210"></a>  The <tt class="ttfamily">TeX</tt> class is the central T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X engine that does all of the parsing, invoking of macros, and other document building tasks. You can pass in an owner document if you have a customized document node, or if it contains a customized configuration; otherwise, the default <tt class="ttfamily">TeXDocument</tt> class is instantiated. The <span class="rmfamily"><i class="itshape">file</i></span> argument is the name of a L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X file. This file will be searched for using the standard L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X technique and will be read using the default input encoding in the document’s configuration. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">disableLogging</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000014284" id="a0000014284"></a> disables logging. This is useful if you are using the <tt class="ttfamily">TeX</tt> object within another library and do not want all of the status information to be printed to the screen. </p><p><b class="bf">Note:</b> This is a class method. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">filename</b></tt></span></dt>
+    <dd><p><a name="a0000014310" id="a0000014310"></a> the current filename being processed </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">jobname</b></tt></span></dt>
+    <dd><p><a name="a0000014332" id="a0000014332"></a> the name of the basename at the top of the input stack </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">lineNumber</b></tt></span></dt>
+    <dd><p><a name="a0000014354" id="a0000014354"></a> the line number of the current file being processed </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">expandTokens</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">tokens, normalize=False</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000014415" id="a0000014415"></a> expand a list of unexpanded tokens. This method can be used to expand tokens without having them sent to the output stream. The returned value is a <tt class="ttfamily">TeXFragment</tt> populated with the expanded tokens. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">input</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">source</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000014477" id="a0000014477"></a> add a new input source to the input stack. <span class="rmfamily"><i class="itshape">source</i></span> should be a Python file object. This can be used to add additional input sources to the stream after the <tt class="ttfamily">TeX</tt> object has been instantiated. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">__iter__</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000014544" id="a0000014544"></a> return a generator that iterates through the tokens in the source. This method allows you to treat the <tt class="ttfamily">TeX</tt> stream as an iterable and use it in looping constructs. While the looping is generally handled in the <tt class="ttfamily">parse()</tt> method, you can manually expand the tokens in the source by looping over the <tt class="ttfamily">TeX</tt> object as well. </p><pre>
+for tok in TeX(open('myfile.tex')):
+    print tok
+</pre></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">itertokens</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000014610" id="a0000014610"></a> return an iterator that iterates over the unexpanded tokens in the input document. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">kpsewhich</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">name</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000014671" id="a0000014671"></a> locate the given file in a kpsewhich-like manner. The full path to the file is returned if it is found; otherwise, <span class="rmfamily"><i class="itshape">None</i></span> is returned. <b class="bf">Note:</b> Currently, only the directories listed in the environment variable TEXINPUTS<a name="a0000014679" id="a0000014679"></a><a name="a0000014680" id="a0000014680"></a> are searched. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">normalize</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">tokens</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000014741" id="a0000014741"></a> joins consecutive text tokens into a string. If the list of tokens contain tokens that are not text tokens, the original list of tokens is returned. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">parse</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">output=None</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000014802" id="a0000014802"></a> parse the sources currently in the input stack until they are empty. The <span class="rmfamily"><i class="itshape">output</i></span> argument is an optional <tt class="ttfamily">Document</tt> node to put the resulting nodes into. If none is supplied, a <tt class="ttfamily">TeXDocument</tt> instance will be created. The return value is the document from the <span class="rmfamily"><i class="itshape">output</i></span> argument or the instantiated <tt class="ttfamily">TeXDocument</tt> object. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">pushToken</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">token</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000014876" id="a0000014876"></a> pushes a token back into the input stream to be re-read. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">pushTokens</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">tokens</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000014937" id="a0000014937"></a> pushes a list of tokens back into the input stream to be re-read. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">readArgument</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">*args, **kwargs</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000014998" id="a0000014998"></a> parse a macro argument without the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X source that created it. This method is just a thin wrapper around <tt class="ttfamily">readArgumentAndSource</tt>. See that method for more information. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">readArgumentAndSource</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">spec=None, subtype=None, delim=’,’, expanded=False, default=None, parentNode=None, name=None</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000015062" id="a0000015062"></a> parse a macro argument. Return the argument and the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X source that created it. The arguments are described below. </p><p><center><table cellspacing="0" class="tabular">
+<tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><b class="bf">Option</b></p></td>
+
+    
+    <td style="text-align:left"><p><b class="bf">Description</b> </p></td>
+
+</tr><tr>
+
+    
+    <td style="border-top-style:solid; text-align:left; border-top-color:black; border-top-width:1px; border-right:1px solid black"><p> <span class="rmfamily"><i class="itshape">spec</i></span></p></td>
+
+    
+    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left"><p>string containing information about the type of argument to get. If it is ’None’, the next token is returned. If it is a two-character string, a grouping delimited by those two characters is returned (i.e. ’[]’). If it is a single-character string, the stream is checked to see if the next character is the one specified. In all cases, if the specified argument is not found, ’None’ is returned.</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">type</i></span></p></td>
+
+    
+    <td style="text-align:left"><p>data type to cast the argument to. New types can be added to the self.argtypes dictionary. The key should match this ’type’ argument and the value should be a callable object that takes a list of tokens as the first argument and a list of unspecified keyword arguments (i.e. **kwargs) for type specific information such as list delimiters.</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">subtype</i></span></p></td>
+
+    
+    <td style="text-align:left"><p>data type to use for elements of a list or dictionary</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">delim</i></span></p></td>
+
+    
+    <td style="text-align:left"><p>item delimiter for list and dictionary types</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">expanded</i></span></p></td>
+
+    
+    <td style="text-align:left"><p>boolean indicating whether the argument content should be expanded or just returned as an unexpanded text string</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">default</i></span></p></td>
+
+    
+    <td style="text-align:left"><p>value to return if the argument doesn’t exist</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">parentNode</i></span></p></td>
+
+    
+    <td style="text-align:left"><p>the node that the argument belongs to</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">name</i></span></p></td>
+
+    
+    <td style="text-align:left"><p>the name of the argument being parsed</p></td>
+
+</tr>
+</table></center> </p><p>The return value is always a two-element tuple. The second value is always a string. However, the first value can take the following values. </p><p><center><table cellspacing="0" class="tabular">
+<tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><b class="bf">Value</b></p></td>
+
+    
+    <td style="text-align:left"><p><b class="bf">Condition</b> </p></td>
+
+</tr><tr>
+
+    
+    <td style="border-top-style:solid; text-align:left; border-top-color:black; border-top-width:1px; border-right:1px solid black"><p> None</p></td>
+
+    
+    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left"><p>the requested argument wasn’t found</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p>object of requested type</p></td>
+
+    
+    <td style="text-align:left"><p>if <span class="rmfamily"><i class="itshape">type</i></span> was specified</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p>list of tokens</p></td>
+
+    
+    <td style="text-align:left"><p>all other arguments</p></td>
+
+</tr>
+</table></center> </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">source</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">tokens</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000015262" id="a0000015262"></a> return the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X representation of the tokens in <span class="rmfamily"><i class="itshape">tokens</i></span> </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">textTokens</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">text</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000015330" id="a0000015330"></a> convert a string of text into a series of tokens </p></dd>
+
+</dl> </p></div>
+
+
+
+
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="module-plasTeX-TeX.html" title="plasTeX.TeX — The TeX Stream"><img alt="Previous: plasTeX.TeX — The TeX Stream" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="module-plasTeX-TeX.html" title="plasTeX.TeX — The TeX Stream"><img alt="Up: plasTeX.TeX — The TeX Stream" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="module-plasTeX-Context.html" title="plasTeX.Context — The TeX Context"><img alt="Next: plasTeX.Context — The TeX Context" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

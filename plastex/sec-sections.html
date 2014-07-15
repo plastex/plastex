@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: Sections</title>
+
+<link href="sec-links.html" title="Navigation and Links" rel="next" />
+<link href="sec-document.html" title="The plasDocument" rel="prev" />
+<link href="sec-document.html" title="The plasDocument" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sec-document.html" title="The plasTeX Document"><img alt="Previous: The plasTeX Document" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-document.html" title="The plasTeX Document"><img alt="Up: The plasTeX Document" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-links.html" title="Navigation and Links"><img alt="Next: Navigation and Links" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sec-document.html">The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current">Sections</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h1 id="sec:sections">3.1 Sections</h1>
+<p>“Sections” in plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X refer to any macro that creates a section-like construct in a document including the <tt class="ttfamily">document</tt> environment, \<tt class="ttfamily">part</tt>, \<tt class="ttfamily">chapter</tt>, \<tt class="ttfamily">section</tt>, \<tt class="ttfamily">subsection</tt>, \<tt class="ttfamily">subsubsection</tt>, \<tt class="ttfamily">paragraph</tt>, and \<tt class="ttfamily">subparagraph</tt>. While these are the sectioning macros defined by L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X, you are not limited to using just those commands to create sections in your own documents. There are two elements that must exist for a Python macro class to act like a section: 1) the <tt class="ttfamily">level</tt> attribute must be set to a value less than 100, and 2) the class should inherit from <tt class="ttfamily">plasTeX.Base.LaTeX.Sectioning.SectionUtils</tt>. </p><p>The <tt class="ttfamily">level</tt> attribute refers to the section level in the document. The values for this attribute are the same values that L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X uses for its section levels, namely: </p><dl class="description">
+
+    <dt>-1 <i class="it">or</i> <tt class="ttfamily">Node.PART_LEVEL</tt></dt>
+    <dd><p>corresponds to \<tt class="ttfamily">part</tt> </p></dd>
+
+    <dt>0 <i class="it">or</i> <tt class="ttfamily">Node.CHAPTER_LEVEL</tt></dt>
+    <dd><p>corresponds to \<tt class="ttfamily">chapter</tt> </p></dd>
+
+    <dt>1 <i class="it">or</i> <tt class="ttfamily">Node.SECTION_LEVEL</tt></dt>
+    <dd><p>corresponds to \<tt class="ttfamily">section</tt> </p></dd>
+
+    <dt>2 <i class="it">or</i> <tt class="ttfamily">Node.SUBSECTION_LEVEL</tt></dt>
+    <dd><p>corresponds to \<tt class="ttfamily">subsection</tt> </p></dd>
+
+    <dt>3 <i class="it">or</i> <tt class="ttfamily">Node.SUBSUBSECTION_LEVEL</tt></dt>
+    <dd><p>corresponds to \<tt class="ttfamily">subsubsection</tt> </p></dd>
+
+    <dt>4 <i class="it">or</i> <tt class="ttfamily">Node.PARAGRAPH_LEVEL</tt></dt>
+    <dd><p>corresponds to \<tt class="ttfamily">paragraph</tt> </p></dd>
+
+    <dt>5 <i class="it">or</i> <tt class="ttfamily">Node.SUBPARAGRAPH_LEVEL</tt></dt>
+    <dd><p>corresponds to \<tt class="ttfamily">subparagraph</tt> </p></dd>
+
+</dl><p>plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X adds the following section related levels: </p><dl class="description">
+
+    <dt>-<span class="rmfamily"><tt class="ttfamily">sys.maxint</tt></span> <i class="it">or</i> <tt class="ttfamily">Node.DOCUMENT_LEVEL</tt></dt>
+    <dd><p>corresponds to the <tt class="ttfamily">document</tt> environment and is always the top-level section </p></dd>
+
+    <dt>6 <i class="it">or</i> <tt class="ttfamily">Node.SUBSUBPARAGRAPH_LEVEL</tt></dt>
+    <dd><p>this level was added to correspond to the sixth level of headings defined in HTML </p></dd>
+
+    <dt>100 <i class="it">or</i> <tt class="ttfamily">Node.ENDSECTIONS_LEVEL</tt></dt>
+    <dd><p>flag that indicates the last possible section nesting level. This is mainly used for internal purposes. </p></dd>
+
+</dl><p>plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X uses the <tt class="ttfamily">level</tt> attribute to build the appropriate document structure. If all you need is a proper document structure, the <tt class="ttfamily">level</tt> attribute is the only thing that needs to be set on a macro. However, there are many convenience properties in the <tt class="ttfamily">plasTeX.Base.LaTeX.Sectioning.SectionUtils</tt> class that are used in the rendering process. If you plan on rendering your document, your section classes should inherit from this class. Below is a list of the additional properties and their purpose. <center><table cellspacing="0" class="tabular">
+<tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><b class="bf">Name</b></p></td>
+
+    
+    <td style="text-align:left"><p><b class="bf">Purpose</b> </p></td>
+
+</tr><tr>
+
+    
+    <td style="border-top-style:solid; text-align:left; border-top-color:black; border-top-width:1px; border-right:1px solid black"><p> <tt class="ttfamily">allSections</tt></p></td>
+
+    
+    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left"><p>contains a sequential list of all of the sections within and including the current section</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><tt class="ttfamily">documentSections</tt></p></td>
+
+    
+    <td style="text-align:left"><p>contains a sequential list of all of the sections within the entire document</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><tt class="ttfamily">links</tt></p></td>
+
+    
+    <td style="text-align:left"><p>contains a dictionary contain various amounts of navigation information corresponding mostly to the link types described at <a href="http://fantasai.tripod.com/qref/Appendix/LinkTypes/ltdef.html">http://fantasai.tripod.com/qref/Appendix/LinkTypes/ltdef.html</a>. This includes things like breadcrumb trails, previous and next links, links to the overall table of contents, etc. See section <a href="sec-links.html">3.1.1</a> for more information.</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><tt class="ttfamily">siblings</tt></p></td>
+
+    
+    <td style="text-align:left"><p>contains a list of all of the sibling sections</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><tt class="ttfamily">subsections</tt></p></td>
+
+    
+    <td style="text-align:left"><p>contains a list of all of the sections within the current section</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><tt class="ttfamily">tableofcontents</tt></p></td>
+
+    
+    <td style="text-align:left"><p>contains an object that corresponds to the table of contents for the section. The table of contents is configurable as well. For more information on how to configure the table of contents see section <a href="sec-tableofcontents.html">3.1.2</a></p></td>
+
+</tr>
+</table></center> <b class="bf">Note:</b> When first accessed, each of these properties actually navigates the document and builds the returned object. Since these operations can be rather costly, the values are cached. Therefore, if you modify the document after accessing one of these properties you will not see the change reflected. </p></div>
+
+<div class="contents section-contents"><!--<strong>Subsections</strong>-->
+<ul>
+<li><a href="sec-links.html">3.1.1 Navigation and Links</a>
+   
+</li><li><a href="sec-tableofcontents.html">3.1.2 Table of Contents</a>
+   
+</li>
+
+
+
+</ul>
+</div>
+
+
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sec-document.html" title="The plasTeX Document"><img alt="Previous: The plasTeX Document" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-document.html" title="The plasTeX Document"><img alt="Up: The plasTeX Document" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-links.html" title="Navigation and Links"><img alt="Next: Navigation and Links" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

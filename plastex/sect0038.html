@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: TeXDocument Objects</title>
+
+<link href="module-plasTeX-TeX.html" title="plasTeX.TeX — The Stream" rel="next" />
+<link href="sect0037.html" title="TeXFragment Objects" rel="prev" />
+<link href="module-plasTeX-DOM.html" title="plasTeX.DOM — The plasDocument Object Model (DOM)" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0037.html" title="TeXFragment Objects"><img alt="Previous: TeXFragment Objects" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="module-plasTeX-DOM.html" title="plasTeX.DOM — The plasTeX Document Object Model (DOM)"><img alt="Up: plasTeX.DOM — The plasTeX Document Object Model (DOM)" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="module-plasTeX-TeX.html" title="plasTeX.TeX — The TeX Stream"><img alt="Next: plasTeX.TeX — The TeX Stream" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sect0024.html">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="module-plasTeX-DOM.html"><tt class="ttfamily">plasTeX.DOM</tt> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document Object Model (DOM)</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current">TeXDocument Objects</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h2 id="a0000013962">6.3.10 TeXDocument Objects</h2>
+<p>   <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><b class="bf">class </b><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">TeXDocument</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000014026" id="a0000014026"></a>  A complete L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">charsubs</b></tt></span></dt>
+    <dd><p><a name="a0000014050" id="a0000014050"></a> a list of two element tuples containing character substitutions for all text nodes in a document. This is used to convert charcter strings like “---” into “—”. The first element in each tuple in the string to replace, the second element is the unicode character or sequence to replace the original string with. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">preamble</b></tt></span></dt>
+    <dd><p><a name="a0000014074" id="a0000014074"></a> returns the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X source representation of the document preamble (i.e. everything before the \<tt class="ttfamily">begin{document}</tt>) </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">source</b></tt></span></dt>
+    <dd><p><a name="a0000014102" id="a0000014102"></a> the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X source representation of the document </p></dd>
+
+</dl>  </p></div>
+
+
+
+
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0037.html" title="TeXFragment Objects"><img alt="Previous: TeXFragment Objects" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="module-plasTeX-DOM.html" title="plasTeX.DOM — The plasTeX Document Object Model (DOM)"><img alt="Up: plasTeX.DOM — The plasTeX Document Object Model (DOM)" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="module-plasTeX-TeX.html" title="plasTeX.TeX — The TeX Stream"><img alt="Next: plasTeX.TeX — The TeX Stream" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

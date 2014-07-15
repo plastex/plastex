@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: plasTeX — The Python Macro and Document Interfaces</title>
+
+<link href="sect0025.html" title="Macro Objects" rel="next" />
+<link href="sect0024.html" title="plasFrameworks and APIs" rel="prev" />
+<link href="sect0024.html" title="plasFrameworks and APIs" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0024.html" title="plasTeX Frameworks and APIs"><img alt="Previous: plasTeX Frameworks and APIs" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0024.html" title="plasTeX Frameworks and APIs"><img alt="Up: plasTeX Frameworks and APIs" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0025.html" title="Macro Objects"><img alt="Next: Macro Objects" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sect0024.html">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current"><tt class="ttfamily">plasTeX</tt> — The Python Macro and Document Interfaces</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h1 id="module-plasTeX">6.1 <tt class="ttfamily">plasTeX</tt> — The Python Macro and Document Interfaces</h1>
+<p>     <a name="a0000004150" id="a0000004150"></a>       </p><p>While plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X does a respectable job expanding L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X macros, some macros may be too complicated for it to handle. These macros may have to be re-coded as Python objects. Another reason you may want to use Python-based macros is for performance reasons. In most cases, macros coded using Python will be faster than those expanded as true L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X macros. </p><p>The API for Python macros is much higher-level than that of L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X macros. This has good and bad ramifications. The good is that most common forms of L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X macros can be parsed and processed very easily using Python code which is easier to read than L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X code. The bad news is that if you are doing something that isn’t common, you will have more work to do. Below is a basic example. </p><pre>
+from plasTeX import Command
+
+class mycommand(Command):
+    """ \mycommand[name]{title} """
+    args = '[ name ] title'
+</pre><p>The code above demonstrates how to create a Python-based macro corresponding to L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X macro with the form \<tt class="ttfamily">mycommand[name]{title}</tt> where ‘name’ is an optional argument and ‘title’ is a mandatory argument. In the Python version of the macro, you simply declare the arguments in the <tt class="ttfamily">args</tt> attribute as they would be used in the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X macro, while leaving the braces off of the mandatory arguments. When parsed in a L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document, an instance of the class <tt class="ttfamily">mycommand</tt> in created and the arguments corresponding to ‘name’ and ‘title’ are set in the <tt class="ttfamily">attributes</tt> dictionary for that instance. This is very similar to the way an XML DOM works, and there are more DOM similarities yet to come. In addition, there are ways to handle casting of the arguments to various data types in Python. The API documentation below goes into more detail on these and many more aspects of the Python macro API. </p></div>
+
+<div class="contents section-contents"><!--<strong>Subsections</strong>-->
+<ul>
+<li><a href="sect0025.html">6.1.1 Macro Objects</a>
+   
+</li>
+
+
+
+</ul>
+</div>
+
+
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0024.html" title="plasTeX Frameworks and APIs"><img alt="Previous: plasTeX Frameworks and APIs" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0024.html" title="plasTeX Frameworks and APIs"><img alt="Up: plasTeX Frameworks and APIs" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0025.html" title="Macro Objects"><img alt="Next: Macro Objects" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

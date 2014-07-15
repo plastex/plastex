@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: Packages</title>
+
+<link href="sect0010.html" title="Renderers" rel="next" />
+<link href="sec-contextmacros.html" title="The Document Context" rel="prev" />
+<link href="sec-macros.html" title="Understanding Macros and Packages" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sec-contextmacros.html" title="The Document Context"><img alt="Previous: The Document Context" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-macros.html" title="Understanding Macros and Packages"><img alt="Up: Understanding Macros and Packages" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0010.html" title="Renderers"><img alt="Next: Renderers" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sec-macros.html">Understanding Macros and Packages</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current">Packages</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h1 id="sec:packages">4.3 Packages</h1>
+<p>Packages in plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X are loaded in one of three ways: standard L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X package, Python package, and INI file. L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X packages are loaded in much the same way that L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X itself loads packages. The <b class="bf">kpsewhich</b> program is used to locate the requested file which can be either in the search path of your L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X distribution or in one of the directories specified in the <tt class="ttfamily">TEXINPUTS</tt> environment variable. plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X read the file and expand the macros therein just as L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X would do. </p><p>Python packages are located using Python’s search path. This includes all directories listed in <span class="rmfamily"><i class="itshape">sys.path</i></span> as well as those listed in the <tt class="ttfamily">PYTHONPATH</tt> environment variable. After a package is loaded, it is checked to see if there is a function called <tt class="ttfamily">ProcessOptions</tt> in its namespace. If there is, that function is called with two arguments: 1) the dictionary of options that were specified when loading the package, and 2) the document object that is currently being processed. This function allows you to make adjustments to the loaded macros based on the options specified, and define new commands in the document’s context (see section <a href="sec-contextmacros.html">4.2.3</a> for more information). Of course, you can also define Python based macros (section <a href="sec-macroclasses.html">4.2.1</a>) in the Python package as well. </p><p>The last type of packages is based on the INI file format. This format is discussed in more detail in section <a href="sec-inimacros.html">4.2.2</a>. INI formatted packages are loaded in conjunction with a L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X or Python package. When a package is loaded, an INI file with the same basename is searched for in the same director as the package. If it exists, it is loaded as well. For example, if you had a package called ‘<span class="sffamily">python.sty</span>’ and a file called ‘<span class="sffamily">python.ini</span>’ in the same package directory, ‘<span class="sffamily">python.sty</span>’ would be loaded first, then ‘<span class="sffamily">python.ini</span>’ would be loaded. The same operation applies for Python based packages.  </p></div>
+
+
+
+
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sec-contextmacros.html" title="The Document Context"><img alt="Previous: The Document Context" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-macros.html" title="Understanding Macros and Packages"><img alt="Up: Understanding Macros and Packages" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0010.html" title="Renderers"><img alt="Next: Renderers" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

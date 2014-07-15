@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: Lists</title>
+
+<link href="sect0006.html" title="Bibliography" rel="next" />
+<link href="sec-complexdoc.html" title="Complex Structures" rel="prev" />
+<link href="sec-complexdoc.html" title="Complex Structures" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sec-complexdoc.html" title="Complex Structures"><img alt="Previous: Complex Structures" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-complexdoc.html" title="Complex Structures"><img alt="Up: Complex Structures" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0006.html" title="Bibliography"><img alt="Next: Bibliography" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sec-document.html">The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sec-complexdoc.html">Complex Structures</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current">Lists</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h2 id="sec:lists">3.3.1 Lists</h2>
+<p>Lists are normalized slightly more than the rest of the document. They are treated almost like sections in that they are only allowed to contain a minimal set of child node types. In fact, lists can only contain one type of child node: list item. The consequence of this is that any content before the first item in a list will be thrown out. In turn, list items will only contain paragraph nodes. The structure of all list structures will look like the structure in Figure <a href="sec-lists.html#fig:liststruct">3.4</a>. </p><div id="fig:liststruct" class="figure"><center> 
+<img src="images/img-0003.png" alt="\includegraphics[width=3in]{liststruct}" style="width:3in" /> </center><div class="caption"><b>Figure 3.4</b>: <span>Normalized structure of all lists</span></div></div><p>This structure allows you to easily traverse a list with code like the following. </p><pre>
+# Iterate through the items in the list node
+for item in listnode:
+
+    # Iterate through the paragraphs in each item
+    for par in item:
+
+        # Print the text content of each paragraph
+        print par.textContent
+
+    # Print a blank line to separate each item
+    print
+</pre></div>
+
+
+
+
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sec-complexdoc.html" title="Complex Structures"><img alt="Previous: Complex Structures" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-complexdoc.html" title="Complex Structures"><img alt="Up: Complex Structures" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0006.html" title="Bibliography"><img alt="Next: Bibliography" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: Simple Renderer Example</title>
+
+<link href="sect0012.html" title="Extending the Simple Renderer" rel="next" />
+<link href="sect0010.html" title="Renderers" rel="prev" />
+<link href="sect0010.html" title="Renderers" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0010.html" title="Renderers"><img alt="Previous: Renderers" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0010.html" title="Renderers"><img alt="Up: Renderers" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0012.html" title="Extending the Simple Renderer"><img alt="Next: Extending the Simple Renderer" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sect0010.html">Renderers</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current">Simple Renderer Example</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h1 id="a0000003117">5.1 Simple Renderer Example</h1>
+<p>It is possible to write a renderer with just a couple of methods: <tt class="ttfamily">default</tt> and <tt class="ttfamily">textDefault</tt>. The code below demonstrates how one might create a generic XML renderer that simply uses the node names as XML tag names. The text node renderer escapes the &lt;, &gt;, and &amp; characters. </p><pre>
+import string
+from plasTeX.Renderers import Renderer
+
+class Renderer(Renderer):
+    
+    def default(self, node):
+        """ Rendering method for all non-text nodes """
+        s = []
+
+        # Handle characters like \&amp;, \$, \%, etc.
+        if len(node.nodeName) == 1 and node.nodeName not in string.letters:
+            return self.textDefault(node.nodeName)
+
+        # Start tag
+        s.append('&lt;%s&gt;' % node.nodeName)
+
+        # See if we have any attributes to render
+        if node.hasAttributes():
+            s.append('&lt;attributes&gt;')
+            for key, value in node.attributes.items():
+                # If the key is 'self', don't render it
+                # these nodes are the same as the child nodes
+                if key == 'self':
+                    continue
+                s.append('&lt;%s&gt;%s&lt;/%s&gt;' % (key, unicode(value), key))
+            s.append('&lt;/attributes&gt;')
+
+        # Invoke rendering on child nodes
+        s.append(unicode(node))
+
+        # End tag
+        s.append('&lt;/%s&gt;' % node.nodeName)
+
+        return u'\n'.join(s)
+
+    def textDefault(self, node):
+        """ Rendering method for all text nodes """
+        return node.replace('&amp;','&amp;amp;').replace('&lt;','&amp;lt;').replace('&gt;','&amp;gt;')
+</pre><p>To use the renderer, simply parse a L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document and apply the renderer using the <tt class="ttfamily">render</tt> method. </p><pre>
+# Import renderer from previous code sample
+from MyRenderer import Renderer
+
+from plasTeX.TeX import TeX
+
+# Instantiate a TeX processor and parse the input text
+tex = TeX()
+tex.ownerDocument.config['files']['split-level'] = -100
+tex.ownerDocument.config['files']['filename'] = 'test.xml'
+tex.input(r'''
+\documentclass{book}
+\begin{document}
+
+Previous paragraph.
+
+\section{My Section}
+
+\begin{center}
+Centered text with &lt;, &gt;, and \&amp; charaters.
+\end{center}
+
+Next paragraph.
+
+\end{document}
+''')
+document = tex.parse()
+
+# Render the document
+renderer = Renderer()
+renderer.render(document)
+</pre><p>The output from the renderer, located in ‘<span class="sffamily">test.xml</span>’, looks like the following. </p><pre>
+&lt;document&gt;
+&lt;par&gt;
+Previous paragraph.
+&lt;/par&gt;&lt;section&gt;
+    &lt;attributes&gt;
+        &lt;toc&gt;None&lt;/toc&gt;
+        &lt;*modifier*&gt;None&lt;/*modifier*&gt;
+        &lt;title&gt;My Section&lt;/title&gt;
+    &lt;/attributes&gt;
+&lt;par&gt;
+&lt;center&gt;
+ Centered text with &amp;lt;, &amp;gt;, and &amp;amp; charaters.
+&lt;/center&gt;
+&lt;/par&gt;&lt;par&gt;
+Next paragraph.
+&lt;/par&gt;
+&lt;/section&gt;
+&lt;/document&gt;
+</pre></div>
+
+<div class="contents section-contents"><!--<strong>Subsections</strong>-->
+<ul>
+<li><a href="sect0012.html">5.1.1 Extending the Simple Renderer</a>
+   
+</li>
+
+
+
+</ul>
+</div>
+
+
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0010.html" title="Renderers"><img alt="Previous: Renderers" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0010.html" title="Renderers"><img alt="Up: Renderers" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0012.html" title="Extending the Simple Renderer"><img alt="Next: Extending the Simple Renderer" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

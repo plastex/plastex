@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: Introduction</title>
+
+<link href="sect0002.html" title="plastex — The Command-Line Interface" rel="next" />
+<link href="index.html" title="plasTeX — A Python Framework for Processing LaTeX Documents" rel="prev" />
+<link href="index.html" title="plasTeX — A Python Framework for Processing LaTeX Documents" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="index.html" title="plasTeX — A Python Framework for Processing LaTeX Documents"><img alt="Previous: plasTeX — A Python Framework for Processing LaTeX Documents" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="index.html" title="plasTeX — A Python Framework for Processing LaTeX Documents"><img alt="Up: plasTeX — A Python Framework for Processing LaTeX Documents" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0002.html" title="plastex — The Command-Line Interface"><img alt="Next: plastex — The Command-Line Interface" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current">Introduction</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h1 id="a0000000039">1 Introduction</h1>
+<p>plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>Xis a collection of Python frameworks that allow you to process L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X documents. This processing includes, but is not limited to, conversion of L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X documents to various document formats. Of course, it is capable of converting to HTML or XML formats such as DocBook and tBook, but it is an open framework that allows you to drive any type of rendering. This means that it could be used to drive a COM object that creates a MS Word Document. </p><p>The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X framework allows you to control all of the processes including tokenizing, object creation, and rendering through API calls. You also have access to all of the internals such as counters, the states of “if” commands, locally and globally defined macros, labels and references, etc. In essence, it is a L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document processor that gives you the advantages of an XML document in the context of a language as superb as Python. </p><p>Here are some of the main features and benefits of plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X. </p><dl class="description">
+
+    <dt>Simple High-Level API</dt>
+    <dd><p>The API for processing a L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document is simple enough that you can write a L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X to HTML converter in one line of code (not including the Python <span class="rmfamily"><tt class="ttfamily">import</tt></span> lines). Just to prove it, here it is! </p><pre>
+import sys
+from plasTeX.TeX import TeX
+from plasTeX.Renderers.XHTML import Renderer
+Renderer().render(TeX(file=sys.argv[-1]).parse())
+</pre></dd>
+
+    <dt>Full Configuration File and Command-Line Option Control</dt>
+    <dd><p>The configuration object included with plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X can be extended to include your own options. </p></dd>
+
+    <dt>Low-Level Tokenizing Control</dt>
+    <dd><p>The tokenizer in plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X works very much like the tokenizer in T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X itself. In your macro classes, you can actually control the draining of tokens and even change category codes. </p></dd>
+
+    <dt>Document Object</dt>
+    <dd><p>While most other L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X converters translate from L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X source another type of markup, plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X actually converts the document into a document object very similar to the DOM used in XML. Of course, there are many Python constructs built on top of this object to make it more Pythonic, so you don’t have to deal with the objects using only DOM methods. What’s really nice about this is that you can actually manipulate the document object prior to rendering. While this may be an esoteric feature, not many other converters let you get between the parser and the renderer. </p></dd>
+
+    <dt>Full Rendering Control</dt>
+    <dd><p>In plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X  you get full control over the renderer. There is a Zope Page Template (ZPT) based renderer included for HTML and XML applications, but that is merely an example of what you can do. A renderer is simply a collection of functions<a href="#a0000000097" class="footnote"><sup class="footnotemark">1</sup></a>. During the rendering process, each node in the document object is passed to the function in the renderer that has the same name as the node. What that function does is up to the renderer. In the case of the ZPT-based renderer, the node is simply applied to the template using the <tt class="ttfamily">expand()</tt> method. If you don’t like ZPT, there is nothing preventing you from populating a renderer with functions that invoke other types of templates, or functions that simply generate markup with print statements. You could even drive a COM interface to create a MS Word document. </p></dd>
+
+</dl></div>
+
+
+
+<div id="footnotes">
+<p><b>Footnotes</b></p>
+<ol>
+<li id="a0000000097">“functions” is being used loosely here. Actually, any callable Python object (i.e. function, method, or any object with the <tt class="ttfamily">__call__</tt> method implemented) can be used.</li>
+</ol>
+</div>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="index.html" title="plasTeX — A Python Framework for Processing LaTeX Documents"><img alt="Previous: plasTeX — A Python Framework for Processing LaTeX Documents" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="index.html" title="plasTeX — A Python Framework for Processing LaTeX Documents"><img alt="Up: plasTeX — A Python Framework for Processing LaTeX Documents" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0002.html" title="plastex — The Command-Line Interface"><img alt="Next: plastex — The Command-Line Interface" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

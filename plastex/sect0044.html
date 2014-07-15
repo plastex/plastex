@@ -1,0 +1,221 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: Image Objects</title>
+
+<link href="sect0045.html" title="About This Document" rel="next" />
+<link href="sect0043.html" title="Imager Objects" rel="prev" />
+<link href="module-plasTeX-Imagers.html" title="plasTeX.Imagers — The plasImaging Framework" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0043.html" title="Imager Objects"><img alt="Previous: Imager Objects" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="module-plasTeX-Imagers.html" title="plasTeX.Imagers — The plasTeX Imaging Framework"><img alt="Up: plasTeX.Imagers — The plasTeX Imaging Framework" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0045.html" title="About This Document"><img alt="Next: About This Document" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sect0024.html">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="module-plasTeX-Imagers.html"><tt class="ttfamily">plasTeX.Imagers</tt> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Imaging Framework</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current">Image Objects</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h2 id="a0000019802">6.7.2 Image Objects</h2>
+<p>   <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><b class="bf">class </b><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">Image</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">filename, config, <span class="textnormal"><big class="xlarge">[</big></span>width, height, alt, depth, longdesc<span class="textnormal"><big class="xlarge">]</big></span></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000019874" id="a0000019874"></a>  Instantiate an <tt class="ttfamily">Image</tt> object. </p><p>Image objects contain information about the generated images. This information includes things such as width, height, filename, absolute path, etc. Images objects also have the ability to crop the image that they reference and return information about the baseline of the image that can be used to properly align the image with surrounding text. </p><p><span class="rmfamily"><i class="itshape">filename</i></span> is the input filename of the image. </p><p><span class="rmfamily"><i class="itshape">config</i></span> is the “images” section of the document configuration. </p><p><span class="rmfamily"><i class="itshape">width</i></span> is the width of the image. This is usually extracted from the image file automatically. </p><p><span class="rmfamily"><i class="itshape">height</i></span> is the height of the image. This is usually extracted from the image file automatically. </p><p><span class="rmfamily"><i class="itshape">alt</i></span> is a text alternative of the image to be use by renderers such as HTML. </p><p><span class="rmfamily"><i class="itshape">depth</i></span> is the depth of the image below the baseline of the surrounding text. This is generally calculated automatically when the image is cropped. </p><p><span class="rmfamily"><i class="itshape">longdesc</i></span> is a long description used to describe the content of the image for renderers such as HTML. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">alt</b></tt></span></dt>
+    <dd><p><a name="a0000019940" id="a0000019940"></a> a text alternative of the image to be use by renderers such as HTML. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">config</b></tt></span></dt>
+    <dd><p><a name="a0000019962" id="a0000019962"></a> the “images” section of the document’s configuration. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">depth</b></tt></span></dt>
+    <dd><p><a name="a0000019984" id="a0000019984"></a> the depth of the image below the baseline of the surrounding text. This is generally calculated automatically when the image is cropped. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">filename</b></tt></span></dt>
+    <dd><p><a name="a0000020006" id="a0000020006"></a> the filename of the image. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">height</b></tt></span></dt>
+    <dd><p><a name="a0000020028" id="a0000020028"></a> the heigt of the image in pixels. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">longdesc</b></tt></span></dt>
+    <dd><p><a name="a0000020050" id="a0000020050"></a> a long description used to describe the content of the image for renderers such as HTML. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">path</b></tt></span></dt>
+    <dd><p><a name="a0000020072" id="a0000020072"></a> the absolute path of the image file. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">url</b></tt></span></dt>
+    <dd><p><a name="a0000020094" id="a0000020094"></a> the URL of the image. This may be used during rendering. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd> </dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">width</b></tt></span></dt>
+    <dd><p><a name="a0000020116" id="a0000020116"></a> the width of the image in pixels. </p></dd>
+
+</dl> </p><p>  <dl class="description">
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd>  </dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt></dt>
+    <dd></dd>
+
+    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">crop</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
+    <dd><p><a name="a0000020177" id="a0000020177"></a> crops the image so that the image edges are flush with the image content. It also sets the <tt class="ttfamily">depth</tt> attribute of the image to the number of pixels that the image extends below the baseline of the surrounding text. </p></dd>
+
+</dl> </p></div>
+
+
+
+
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0043.html" title="Imager Objects"><img alt="Previous: Imager Objects" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="module-plasTeX-Imagers.html" title="plasTeX.Imagers — The plasTeX Imaging Framework"><img alt="Up: plasTeX.Imagers — The plasTeX Imaging Framework" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0045.html" title="About This Document"><img alt="Next: About This Document" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

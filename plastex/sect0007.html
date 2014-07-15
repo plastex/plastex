@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: Indexes</title>
+
+<link href="sec-macros.html" title="Understanding Macros and Packages" rel="next" />
+<link href="sec-arrays.html" title="Arrays and Tabular Environments" rel="prev" />
+<link href="sec-complexdoc.html" title="Complex Structures" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sec-arrays.html" title="Arrays and Tabular Environments"><img alt="Previous: Arrays and Tabular Environments" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-complexdoc.html" title="Complex Structures"><img alt="Up: Complex Structures" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-macros.html" title="Understanding Macros and Packages"><img alt="Next: Understanding Macros and Packages" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sec-document.html">The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sec-complexdoc.html">Complex Structures</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current">Indexes</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h2 id="a0000002039">3.3.4 Indexes</h2>
+<p>All index building and sorting is done internally in plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X. It is done this way because the information that tools like <b class="bf">makeindex</b> generate is only useful to L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X itself since the refence to the place where the index tag was inserted is simply a page number. Since plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X wants to be able to reference the index tag node, it has to do all of the index processing natively. </p><p>There are actually two index structures. The default structure is simply the index nodes sorted and grouped into the appropriate hierarchies. This structure looks like the structure pictured in Figure <a href="sect0007.html#fig:defaultindex">3.6</a>. </p><div id="fig:defaultindex" class="figure"><center> 
+<img src="images/img-0005.png" alt="\includegraphics[width=4in]{defaultindex}" style="width:4in" /> </center><div class="caption"><b>Figure 3.6</b>: <span>Default index structure</span></div></div><p>Each item, subitem, and subsubitem has an attribute called <tt class="ttfamily">key</tt> that contains a document fragment of the key for that index item. The document nodes that this key corresponds to are held in a list in the <tt class="ttfamily">pages</tt> attribute. These nodes are the actual nodes corresponding to the index entry macros from the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document. The content of the node is a number corresponding to the index entry that is formatted according to the formatting rules specified in the index entry. </p><p>While the structure above works well for paged media, it is sometimes nice to have the index entries grouped by first letter and possibly even arranged into multiple columns. This alternate representation can be accessed in the <tt class="ttfamily">groups</tt> property. The structure for this type of index is shown in Figure <a href="sect0007.html#fig:groupedindex">3.7</a>. </p><div id="fig:groupedindex" class="figure"><center> 
+<img src="images/img-0006.png" alt="\includegraphics[width=4in]{groupedindex}" style="width:4in" /> </center><div class="caption"><b>Figure 3.7</b>: <span>Grouped index structure</span></div></div><p>In this case, the item, subitem, and subsubitem nodes are the same as in the default scheme. The group has a <tt class="ttfamily">title</tt> attribute that contains the first letter of the entries in that group. Entries that start with something other than a letter or an underscore are put into a group called “Symbols”. The columns are approximately equally sized columns of index entries. The number of columns is determined by the <tt class="ttfamily">document:index-columns</tt> configuration item.  </p></div>
+
+
+
+
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sec-arrays.html" title="Arrays and Tabular Environments"><img alt="Previous: Arrays and Tabular Environments" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-complexdoc.html" title="Complex Structures"><img alt="Up: Complex Structures" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-macros.html" title="Understanding Macros and Packages"><img alt="Next: Understanding Macros and Packages" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

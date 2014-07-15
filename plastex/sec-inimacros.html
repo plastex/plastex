@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: INI Files</title>
+
+<link href="sec-contextmacros.html" title="The Document Context" rel="next" />
+<link href="sec-macroclasses.html" title="Python Classes" rel="prev" />
+<link href="sect0009.html" title="Defining Macros in Python" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sec-macroclasses.html" title="Python Classes"><img alt="Previous: Python Classes" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0009.html" title="Defining Macros in Python"><img alt="Up: Defining Macros in Python" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-contextmacros.html" title="The Document Context"><img alt="Next: The Document Context" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sec-macros.html">Understanding Macros and Packages</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sect0009.html">Defining Macros in Python</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current">INI Files</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h2 id="sec:inimacros">4.2.2 INI Files</h2>
+<p>Using INI files is the simplest way of creating customized Python macro classes. It does require a little bit of knowledge of writing macros in Python classes (section <a href="sec-macroclasses.html">4.2.1</a>), but not much. The only two pieces of information about Python macro classes you need to know are 1) the <tt class="ttfamily">args</tt> string format, and 2) the superclass name (in most cases, you can simply use <tt class="ttfamily">Command</tt> or <tt class="ttfamily">Environment</tt>). The INI file features correspond to Python macros in the following way. <center><table cellspacing="0" class="tabular">
+<tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><b class="bf">INI File</b></p></td>
+
+    
+    <td style="text-align:left"><p><b class="bf">Python Macro Use</b> </p></td>
+
+</tr><tr>
+
+    
+    <td style="border-top-style:solid; text-align:left; border-top-color:black; border-top-width:1px; border-right:1px solid black"><p> section name</p></td>
+
+    
+    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left"><p>the Python class to inherit from</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p>option name</p></td>
+
+    
+    <td style="text-align:left"><p>the name of the macro to create</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p>option value</p></td>
+
+    
+    <td style="text-align:left"><p>the args string for the macro</p></td>
+
+</tr>
+</table></center> </p><p>Here is an example of an INI file that defines several macros. </p><pre>
+[Command]
+; \program{ self }
+program=self
+; \programopt{ self }
+programopt=self
+
+[Environment]
+; \begin{methoddesc}[ classname ]{ name  { args } ... \end{methoddesc}
+methoddesc=[ classname ] name args
+; \begin{memberdesc}[ classname ]{ name  { args } ... \end{memberdesc}
+memberdesc=[ classname ] name args
+
+[section]
+; \headi( options:dict )[ toc ]{ title }
+headi=( options:dict ) [ toc ] title
+
+[subsection]
+; \headii( options:dict )[ toc ]{ title }
+headii=( options:dict ) [ toc ] title
+</pre><p>In the INI file above, six macro are being defined. \<tt class="ttfamily">program</tt> and \<tt class="ttfamily">programopt</tt> both inherit from <tt class="ttfamily">Command</tt>, the generic L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X macro superclass. They also both take a single mandatory argument called “self.” There are two environments defined also: <tt class="ttfamily">methoddesc</tt> and <tt class="ttfamily">memberdesc</tt>. Each of these has three arguments where the first argument is optional. The last two macros actually inherit from standard L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X sectioning commands. They add an option, surrounded by parentheses, to the options that \<tt class="ttfamily">section</tt> and \<tt class="ttfamily">subsection</tt> already had defined. </p><p>INI versions of plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X packages are loaded much in the same way as Python plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X packages. For details on how packages are loaded, see section <a href="sec-packages.html">4.3</a>. </p></div>
+
+
+
+
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sec-macroclasses.html" title="Python Classes"><img alt="Previous: Python Classes" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0009.html" title="Defining Macros in Python"><img alt="Up: Defining Macros in Python" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-contextmacros.html" title="The Document Context"><img alt="Next: The Document Context" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: Generating Images</title>
+
+<link href="sect0016.html" title="Generating Vector Images" rel="next" />
+<link href="sect0014.html" title="Generating Files" rel="prev" />
+<link href="sec-renderable.html" title="Renderable Objects" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0014.html" title="Generating Files"><img alt="Previous: Generating Files" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-renderable.html" title="Renderable Objects"><img alt="Up: Renderable Objects" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0016.html" title="Generating Vector Images"><img alt="Next: Generating Vector Images" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sect0010.html">Renderers</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sec-renderable.html">Renderable Objects</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current">Generating Images</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h2 id="a0000003197">5.2.3 Generating Images</h2>
+<p>Not all output types that you might render are going to support everything that L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X is capable of. For example, HTML has no way of representing equations, and most output types won’t be capable of rendering L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X’s <tt class="ttfamily">picture</tt> environment. In cases like these, you can let plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X generate images of the document node. Generating images is done with a subclass of <tt class="ttfamily">plasTeX.Imagers.Imager</tt>. The imager is responsible for creating a L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document from the requested document fragments, compiling the document and converting each page of the output document into individual images. Currently, there are two <tt class="ttfamily">Imager</tt> subclasses included with plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X. Each of them use the standard L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X compiler to generate a DVI file. The DVI file is then converted into images using one of the available imagers (see section <a href="sec-config-images.html">2.1.6</a> on how to select different imagers). </p><p>To generate an image of a document node, simply access the <tt class="ttfamily">image</tt> property during the rendering process. This property will return an <tt class="ttfamily">plasTeX.Imagers.Image</tt> instance. In most cases, the image file will not be available until the rendering process is finished since most renderers will need the generated L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document to be complete before compiling it and generating the final images. </p><p>The example below demonstrates how to generate an image for the <tt class="ttfamily">equation</tt> environment. </p><pre>
+# Import renderer from first renderer example
+from MyRenderer import Renderer
+
+from plasTeX.TeX import TeX
+
+def handle_equation(node):
+    return u'&lt;div&gt;&lt;img src="%s"/&gt;&lt;/div&gt;' % node.image.url
+
+# Instantiate a TeX processor and parse the input text
+tex = TeX()
+tex.input(r'''
+\documentclass{book}
+\begin{document}
+
+Previous paragraph.
+
+\begin{equation}
+\Sigma_{x=0}^{x+n} = \beta^2
+\end{equation}
+
+Next paragraph.
+
+\end{document}
+''')
+document = tex.parse()
+
+# Instantiate the renderer
+renderer = Renderer()
+
+# Insert the rendering method into all of the environments that might need it
+renderer['equation'] = handle_equation
+renderer['displaymath'] = handle_equation
+renderer['eqnarray'] = handle_equation
+
+# Render the document
+renderer.render(document)
+</pre><p>The rendered output looks like the following, and the image is generated is located in ‘<span class="sffamily">images/img-0001.png</span>’. </p><pre>
+&lt;document&gt;
+&lt;par&gt;
+Previous paragraph.
+&lt;/par&gt;&lt;par&gt;
+&lt;div&gt;&lt;img src="images/img-0001.png"/&gt;&lt;/div&gt;
+&lt;/par&gt;&lt;par&gt;
+Next paragraph.
+&lt;/par&gt;
+&lt;/document&gt;
+</pre><p>The names of the image files are determined by the document’s configuration. The filename generator is very powerful, and is in fact, the same filename generator used to create the other output filenames. For more information on customizing the image filenames see section <a href="sec-config-images.html">2.1.6</a>. </p><p>In addition, the image types are customizable as well. plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X uses the Python Imaging Library (PIL) to do the final cropping and saving of the image files, so any image format that PIL supports can be used. The format that PIL saves the images in is determined by the file extension in the generated filenames, so you must use a file extension that PIL recognizes. </p><p>It is possible to write your own <tt class="ttfamily">Imager</tt> subclass if necessary. See the <tt class="ttfamily">Imager</tt> API documentation for more information (see <a href="module-plasTeX-Imagers.html">6.7</a>). </p></div>
+
+
+
+
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0014.html" title="Generating Files"><img alt="Previous: Generating Files" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-renderable.html" title="Renderable Objects"><img alt="Up: Renderable Objects" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0016.html" title="Generating Vector Images"><img alt="Next: Generating Vector Images" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

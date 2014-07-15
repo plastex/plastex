@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: Determining the Correct Rendering Method</title>
+
+<link href="sect0014.html" title="Generating Files" rel="next" />
+<link href="sec-renderable.html" title="Renderable Objects" rel="prev" />
+<link href="sec-renderable.html" title="Renderable Objects" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sec-renderable.html" title="Renderable Objects"><img alt="Previous: Renderable Objects" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-renderable.html" title="Renderable Objects"><img alt="Up: Renderable Objects" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0014.html" title="Generating Files"><img alt="Next: Generating Files" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sect0010.html">Renderers</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sec-renderable.html">Renderable Objects</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current">Determining the Correct Rendering Method</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h2 id="a0000003166">5.2.1 Determining the Correct Rendering Method</h2>
+<p>Looking up the correct rendering method is quite straight-forward. If the node is a text node, the <tt class="ttfamily">textDefault</tt> attribute on the renderer is used. If it is not a text node, then the node’s name determines the key name in the renderer. In most cases, the node’s name is the same name as the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X macro that created it. If the macro used some type of modifier argument (i.e. *, +, -), a name with that modifier applied to it is also searched for first. For example, if you used the <tt class="ttfamily">tablular*</tt> environment in your L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document, the renderer will look for “tabular*” first, then “tabular”. This allows you to use different rendering methods for modified and unmodified macros. If no rendering method is found, the method in the renderer’s <tt class="ttfamily">default</tt> attribute is used. </p></div>
+
+
+
+
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sec-renderable.html" title="Renderable Objects"><img alt="Previous: Renderable Objects" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-renderable.html" title="Renderable Objects"><img alt="Up: Renderable Objects" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0014.html" title="Generating Files"><img alt="Next: Generating Files" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: Arrays and Tabular Environments</title>
+
+<link href="sect0007.html" title="Indexes" rel="next" />
+<link href="sect0006.html" title="Bibliography" rel="prev" />
+<link href="sec-complexdoc.html" title="Complex Structures" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0006.html" title="Bibliography"><img alt="Previous: Bibliography" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-complexdoc.html" title="Complex Structures"><img alt="Up: Complex Structures" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0007.html" title="Indexes"><img alt="Next: Indexes" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sec-document.html">The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sec-complexdoc.html">Complex Structures</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current">Arrays and Tabular Environments</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h2 id="sec:arrays">3.3.3 Arrays and Tabular Environments</h2>
+<p>Arrays and tabular environments are the most complex structures in a plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document. This because tables can include spanning columns, spanning rows, and borders specified on the table, rows, and individual cells. In addition, there are alignments associated with each column and alignments can be specified by any \<tt class="ttfamily">multicolumn</tt> command. It is also possible with some packages to create your own column declarations. Add to that the fact that the longtable package allows you to specify multiple headers, footers, and coptions, and you can see why tabular environments can be rather tricky to deal with. </p><p>As with all parts of the document, plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X tries to normalize all tables to have a consistent structure. The structure for arrays and tables is shown in Figure <a href="sec-arrays.html#fig:tablestruct">3.5</a>. </p><div id="fig:tablestruct" class="figure"><center> 
+<img src="images/img-0004.png" alt="\includegraphics[width=4in]{tablestruct}" style="width:4in" /> </center><div class="caption"><b>Figure 3.5</b>: <span>Normalized structure of all tables and arrays</span></div></div><p>Luckily, the array macro class that comes with plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X was made to handle all of the work for you. In fact, it also handles the work of some extra packages such as longtable to make processing them transparent. The details of the tabular environments are described in the following sections. </p><p>With this normalized structure, you can traverse all array and table structures with code like the following. </p><pre>
+# Iterate through all rows in the table
+for row in tablenode:
+
+    # Iterate through all cells in the row
+    for cell in row:
+
+        # Iterate through all paragraphs in the cell
+        for par in cell:
+
+            # Print the text content of each cell
+            print '   ' + par.textContent 
+
+        # Print a blank line after each cell
+        print
+
+    # Print a blank line after each row
+    print
+</pre><h3 id="a0000001994">Borders</h3>
+<p>Borders in a tabular environment are generally handled by \<tt class="ttfamily">hline</tt>, \<tt class="ttfamily">vline</tt>, \<tt class="ttfamily">cline</tt>, as well as the column specifications on the tabular environment and the \<tt class="ttfamily">multicolumn</tt> command. plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X merges all of the border specifications and puts them into CSS formatted values in the <tt class="ttfamily">style</tt> attribute of each of the table cell nodes. To get the CSS information formatted such that it can be used in an inline style, simply access the <tt class="ttfamily">inline</tt> property of the style object. </p><p>Here is an example of a <tt class="ttfamily">tabular</tt> environment. </p><pre>
+\begin{tabular}{|l|l|}\hline
+x &amp; y \\
+1 &amp; 2 \\\hline
+\end{tabular}
+</pre><p>The table node can be traversed as follows. </p><pre>
+# Print the CSS for the borders of each cell
+for rownum, row in enumerate(table):
+    for cellnum, cell in enumerate(row):
+        print '(%s,%s) %s -- %s' % (rownum, cellnum, 
+               cell.textContent.strip(), cell.style.inline)
+</pre><p>The code above will print the following output (whitespace has been added to make the output easier to read). </p><pre>
+(0,0) x -- border-top-style:solid; 
+           border-left:1px solid black; 
+           border-right:1px solid black; 
+           border-top-color:black; 
+           border-top-width:1px; 
+           text-align:left
+(0,1) y -- border-top-style:solid; 
+           text-align:left; 
+           border-top-color:black; 
+           border-top-width:1px; 
+           border-right:1px solid black
+(1,0) 1 -- border-bottom-style:solid; 
+           border-bottom-width:1px; 
+           border-left:1px solid black; 
+           border-right:1px solid black; 
+           text-align:left; 
+           border-bottom-color:black
+(1,1) 2 -- border-bottom-color:black; 
+           border-bottom-width:1px; 
+           text-align:left; 
+           border-bottom-style:solid; 
+           border-right:1px solid black
+</pre><h3 id="a0000002018">Alignments</h3>
+<p>Alignments can be specified in the column specification of the tabular environment as well as in the column specification of \<tt class="ttfamily">multicolumn</tt> commands. Just like the border information, the alignment information is also stored in CSS formatted values in each cell’s <tt class="ttfamily">style</tt> attribute. </p><h3 id="a0000002023">Longtables</h3>
+<p>Longtables are treated just like regular tables. Only the first header and the last footer are supported in the resulting table structure. To indicate that these are verifiable header or footer cells, the <tt class="ttfamily">isHeader</tt> attribute of the corresponding cells is set to <span class="rmfamily"><tt class="ttfamily">True</tt></span>. This information can be used by the renderer to more accurately represent the table cells. </p></div>
+
+
+
+
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sect0006.html" title="Bibliography"><img alt="Previous: Bibliography" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-complexdoc.html" title="Complex Structures"><img alt="Up: Complex Structures" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0007.html" title="Indexes"><img alt="Next: Indexes" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta name="generator" content="plasTeX" />
+<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<title>plasTeX — A Python Framework for Processing LaTeX Documents: Defining and Using Templates</title>
+
+<link href="sect0019.html" title="Defining and Using Themes" rel="next" />
+<link href="sec-zpt.html" title="Page Template Renderer" rel="prev" />
+<link href="sec-zpt.html" title="Page Template Renderer" rel="up" />
+<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sec-zpt.html" title="Page Template Renderer"><img alt="Previous: Page Template Renderer" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-zpt.html" title="Page Template Renderer"><img alt="Up: Page Template Renderer" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0019.html" title="Defining and Using Themes"><img alt="Next: Defining and Using Themes" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<div class="breadcrumbs">
+<span>
+<span>
+<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sect0010.html">Renderers</a> <b>:</b>
+</span>
+
+</span><span>
+<span>
+<a href="sec-zpt.html">Page Template Renderer</a> <b>:</b>
+</span>
+
+</span><span>
+
+<span>
+<b class="current">Defining and Using Templates</b>
+</span>
+</span>
+<hr />
+</div>
+
+<div><h2 id="a0000003288">5.3.1 Defining and Using Templates</h2>
+<p><b class="bf">Note:</b> If you are not familiar with the ZPT language, you should read the tutorial in section <a href="sec-zpttutorial.html">5.3.3</a> before continuing in this section. See the links in the previous section for documentation on the other template engines. </p><p>By default, templates are loaded from the directory where the renderer module was imported from. In addition, the templates from each of the parent renderer class modules are also loaded. This makes it very easy to extend a renderer and add just a few new templates to support the additions that were made. </p><p>The template files in the module directories can have three different forms. The first is HTML. HTML templates must have an extension of ‘<span class="sffamily">.htm</span>’ or ‘<span class="sffamily">.html</span>’. These templates are compiled using SimpleTAL’s HTML compiler. XML templates, the second form of template, uses SimpleTAL’s XML compiler, so they must be well-formed XML fragments. XML templates must have the file extension ‘<span class="sffamily">.xml</span>’, ‘<span class="sffamily">.xhtml</span>’, or ‘<span class="sffamily">.xhtm</span>’. In any case, the basename of the template file is used as the key to store the template in the renderer. Keep in mind that the names of the keys in the renderer correspond to the node names in the document object. </p><p>The extensions used for all templating engines are shown in the table below. <center><table cellspacing="0" class="tabular">
+<tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><b class="bf">Engine</b></p></td>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><b class="bf">Extension</b></p></td>
+
+    
+    <td style="text-align:left"><p><b class="bf">Output Type</b> </p></td>
+
+</tr><tr>
+
+    
+    <td style="border-top-style:solid; text-align:left; border-top-color:black; border-top-width:1px; border-right:1px solid black"><p> ZPT</p></td>
+
+    
+    <td style="border-top-style:solid; text-align:left; border-top-color:black; border-top-width:1px; border-right:1px solid black"><p>.html, .htm, .zpt</p></td>
+
+    
+    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left"><p>HTML</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black">&nbsp;</td>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p>.xhtml, .xhtm, .xml</p></td>
+
+    
+    <td style="text-align:left"><p>XML/XHTML</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p>Python string formatting</p></td>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p>.pyt</p></td>
+
+    
+    <td style="text-align:left"><p>Any</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p>Python string templates</p></td>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p>.st</p></td>
+
+    
+    <td style="text-align:left"><p>Any</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p>Kid</p></td>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p>.kid</p></td>
+
+    
+    <td style="text-align:left"><p>XML/XHTML</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p>Cheetah</p></td>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p>.che</p></td>
+
+    
+    <td style="text-align:left"><p>XML/XHTML</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p>Genshi</p></td>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p>.gen</p></td>
+
+    
+    <td style="text-align:left"><p>HTML</p></td>
+
+</tr>
+</table></center> </p><p>The file listing below is an example of a directory of template files. In this case the templates correspond to nodes in the document created by the <tt class="ttfamily">description</tt> environment, the <tt class="ttfamily">tabular</tt> environment, \<tt class="ttfamily">textbf</tt>, and \<tt class="ttfamily">textit</tt>. </p><pre>
+description.xml
+tabular.xml
+textbf.html
+textit.html
+</pre><p>Since there are a lot of templates that are merely one line, it would be inconvenient to have to create a new file for each template. In cases like this, you can use the ‘<span class="sffamily">.zpts</span>’ extension for collections of ZPT templates, or more generally ‘<span class="sffamily">.pts</span>’ for collections of various template types. Files with this extension have multiple templates in them. Each template is separated from the next by the template metadata which includes things like the name of the template, the type (xml, html, or text), and can also alias template names to another template in the renderer. The following metadata names are currently supported. <center><table cellspacing="0" class="tabular">
+<tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><b class="bf">Name</b></p></td>
+
+    
+    <td style="text-align:left"><p><b class="bf">Purpose</b> </p></td>
+
+</tr><tr>
+
+    
+    <td style="border-top-style:solid; text-align:left; border-top-color:black; border-top-width:1px; border-right:1px solid black"><p> engine</p></td>
+
+    
+    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left"><p>the name of the templating engine to use. At the time of this writing, the value could be zpt, tal (same as zpt), html (ZPT HTML template), xml (ZPT XML template), python (Python formatted string), string (Python string template), kid, cheetah, or genshi.</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p>name</p></td>
+
+    
+    <td style="text-align:left"><p>the name or names of the template that is to follow. This name is used as the key in the renderer, and also corresponds to the node name that will be rendered by the template. If more than one name is desired, they are simply separated by spaces.</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p>type</p></td>
+
+    
+    <td style="text-align:left"><p>the type of the template: xml, html, or text. XML templates must contain a well-formed XML fragment. HTML templates are more forgiving, but do not support all features of ZPT (see the SimpleTAL documentation).</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p>alias</p></td>
+
+    
+    <td style="text-align:left"><p>specifies the name of another template that the given names should be aliased to. This allows you to simply reference another template to use rather than redefining one. For example, you might create a new section heading called \<tt class="ttfamily">introduction</tt> that should render the same way as \<tt class="ttfamily">section</tt>. In this case, you would set the name to “introduction” and the alias to “section”.</p></td>
+
+</tr>
+</table></center> </p><p>There are also some defaults that you can set at the top of the file that get applied to the entire file unles overridden by the meta-data on a particular template. <center><table cellspacing="0" class="tabular">
+<tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p><b class="bf">Name</b></p></td>
+
+    
+    <td style="text-align:left"><p><b class="bf">Purpose</b> </p></td>
+
+</tr><tr>
+
+    
+    <td style="border-top-style:solid; text-align:left; border-top-color:black; border-top-width:1px; border-right:1px solid black"><p> default-engine</p></td>
+
+    
+    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left"><p>the name of the engine to use for all templates in the file.</p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p>default-type</p></td>
+
+    
+    <td style="text-align:left"><p>the default template type for all templates in the file.</p></td>
+
+</tr>
+</table></center> </p><p>The code sample below shows the basic format of a zpts file. </p><pre>
+name: textbf bfseries
+&lt;b tal:content="self"&gt;bold content&lt;/b&gt;
+
+name: textit
+&lt;i tal:content="self"&gt;italic content&lt;/i&gt;
+
+name: introduction introduction*
+alias: section
+
+name: description
+type: xml
+&lt;dl&gt;
+&lt;metal:block tal:repeat="item self"&gt;
+    &lt;dt tal:content="item/attributes/term"&gt;definition term&lt;/dt&gt;
+    &lt;dd tal:content="item"&gt;definition content&lt;/dd&gt;
+&lt;/metal:block&gt;
+&lt;/dl&gt;
+</pre><p>The code above is a zpts file that contains four templates. Each template begins when a line starts with “name:”. Other directives have the same format (i.e. the name of the directive followed by a colon) and must immediately follow the name directive. The first template definition actually applies to two types of nodes <span class="rmfamily"><i class="itshape">textbf</i></span> and <span class="rmfamily"><i class="itshape">bfseries</i></span>. You can specify ony number of names on the name line. The third template isn’t a template at all; it is an alias. When an alias is specified, the name (or names) given use the same template as the one specified in the alias directive. Notice also that starred versions of a macro can be specified separately. This means that they can use a different template than the un-starred versions of the command. The last template is just a simple XML formatted template. By default, templates in a zpts file use the HTML compiler in SimpleTAL. You can specify that a template is an XML template by using the type directive. </p><p>Here is an example of using various types of templates in a single file. </p><pre>
+name: textbf
+type: python
+&lt;b&gt;%(self)s&lt;/b&gt;
+
+name: textit
+type: string
+&lt;i&gt;${self}&lt;/i&gt;
+
+name: textsc
+type: cheetah
+&lt;span class="textsc"&gt;${here}&lt;/span&gt;
+
+name: textrm
+type: kid
+&lt;span class="textrm" py:content="XML(unicode(here))"&gt;normal text&lt;/span&gt;
+
+name: textup
+type: genshi
+&lt;span class="textup" py:content="markup(here)"&gt;upcase text&lt;/span&gt;
+</pre><p>There are several variables inserted into the template namespace. Here is a list of the variables and the templates that support them. </p><center> <table cellspacing="0" class="tabular">
+<tr>
+
+    
+    <td style="border-top-style:solid; border-left:1px solid black; border-right:1px solid black; border-top-color:black; border-top-width:1px; text-align:left"><p><b class="bfseries">Object</b> </p></td>
+
+    
+    <td style="border-top-style:solid; text-align:left; border-top-color:black; border-top-width:1px; border-right:1px solid black"><p> <b class="bfseries">ZPT/Python Formats/String Template</b> </p></td>
+
+    
+    <td style="border-top-style:solid; text-align:left; border-top-color:black; border-top-width:1px; border-right:1px solid black"><p> <b class="bfseries">Cheetah</b> </p></td>
+
+    
+    <td style="border-top-style:solid; text-align:left; border-top-color:black; border-top-width:1px; border-right:1px solid black"><p> <b class="bfseries">Kid/Genshi</b></p></td>
+
+</tr><tr>
+
+    
+    <td style="border-top-style:solid; border-left:1px solid black; border-right:1px solid black; border-top-color:black; border-top-width:1px; text-align:left"><p>document node </p></td>
+
+    
+    <td style="border-top-style:solid; text-align:left; border-top-color:black; border-top-width:1px; border-right:1px solid black"><p> <span class="rmfamily"><i class="itshape">self</i></span> or <span class="rmfamily"><i class="itshape">here</i></span> </p></td>
+
+    
+    <td style="border-top-style:solid; text-align:left; border-top-color:black; border-top-width:1px; border-right:1px solid black"><p> <span class="rmfamily"><i class="itshape">here</i></span> </p></td>
+
+    
+    <td style="border-top-style:solid; text-align:left; border-top-color:black; border-top-width:1px; border-right:1px solid black"><p> <span class="rmfamily"><i class="itshape">here</i></span> </p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black; border-left:1px solid black"><p>parent node </p></td>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p> <span class="rmfamily"><i class="itshape">container</i></span> </p></td>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p> <span class="rmfamily"><i class="itshape">container</i></span> </p></td>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p> <span class="rmfamily"><i class="itshape">container</i></span> </p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black; border-left:1px solid black"><p>document config </p></td>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p> <span class="rmfamily"><i class="itshape">config</i></span> </p></td>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p> <span class="rmfamily"><i class="itshape">config</i></span> </p></td>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p> <span class="rmfamily"><i class="itshape">config</i></span> </p></td>
+
+</tr><tr>
+
+    
+    <td style="text-align:left; border-right:1px solid black; border-left:1px solid black"><p>template instance </p></td>
+
+    
+    <td style="text-align:left; border-right:1px solid black"><p> <span class="rmfamily"><i class="itshape">template</i></span> </p></td>
+
+    
+    <td style="text-align:left; border-right:1px solid black">&nbsp;</td>
+
+    
+    <td style="text-align:left; border-right:1px solid black">&nbsp;</td>
+
+</tr><tr>
+
+    
+    <td style="border-bottom-style:solid; border-bottom-width:1px; border-left:1px solid black; border-right:1px solid black; text-align:left; border-bottom-color:black"><p>renderer instance </p></td>
+
+    
+    <td style="border-bottom-color:black; border-bottom-width:1px; text-align:left; border-bottom-style:solid; border-right:1px solid black"><p> <span class="rmfamily"><i class="itshape">templates</i></span> </p></td>
+
+    
+    <td style="border-bottom-color:black; border-bottom-width:1px; text-align:left; border-bottom-style:solid; border-right:1px solid black"><p> <span class="rmfamily"><i class="itshape">templates</i></span> </p></td>
+
+    
+    <td style="border-bottom-color:black; border-bottom-width:1px; text-align:left; border-bottom-style:solid; border-right:1px solid black"><p> <span class="rmfamily"><i class="itshape">templates</i></span> </p></td>
+
+</tr>
+</table> </center><p>You’ll notice that Kid and Genshi templates require some extra processing of the variables in order to get the proper markup. By default, these templates escape characters like &lt;, &gt;, and &amp;. In order to get HTML/XML markup from the variables you must wrap them in the code shown in the example above. Hopefully, this limitation will be removed in the future. </p><h3 id="sec:tmploverrides">Template Overrides</h3>
+<p>It is possible to override the templates located in a renderer’s directory with templates defined elsewhere. This is done using the <tt class="ttfamily">*TEMPLATES</tt> environment variable. The “*” in the name <tt class="ttfamily">*TEMPLATES</tt> is a wildcard and must be replaced by the name of the renderer. For example, if you are using the XHTML renderer, the environment variable would be <tt class="ttfamily">XHTMLTEMPLATES</tt>. For the PageTemplate renderer, the environment variable would be <tt class="ttfamily">PAGETEMPLATETEMPLATES</tt>. </p><p>The format of this variable is the same as that of the <tt class="ttfamily">PATH</tt> environment variable which means that you can put multiple directory names in this variable. In addition, the environment variables for each of the parent renderers is also used, so that you can use multiple layers of template directories. </p><p>You can actually create an entire renderer just using overrides and the PT renderer. Since the PT renderer doesn’t actually define any templates, it is just a framework for defining other XML/HTML renderers, you can simply load the PT renderer and set the <tt class="ttfamily">PAGETEMPLATETEMPLATES</tt> environment variable to the locations of your templates. This method of creating renderers will work for any XML/HTML that doesn’t require any special post-processing. </p></div>
+
+
+
+
+
+<div class="navigation">
+<table cellspacing="2" cellpadding="0" width="100%">
+<tr>
+<td><a href="sec-zpt.html" title="Page Template Renderer"><img alt="Previous: Page Template Renderer" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+
+<td><a href="sec-zpt.html" title="Page Template Renderer"><img alt="Up: Page Template Renderer" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0019.html" title="Defining and Using Themes"><img alt="Next: Defining and Using Themes" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+
+<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
+<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+
+<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+
+<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
+</tr>
+</table>
+</div>
+
+<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+
+</body>
+</html>
