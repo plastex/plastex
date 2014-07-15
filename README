@@ -27,5 +27,5 @@ import commands):
     Renderer().render(TeX(file=sys.argv[1]).parse())
 
 plasTeX is really much more than just a LaTeX-to-other-format converter 
-though.  See the documentation at http://plastex.sf.net/ for a complete
+though.  See the documentation at http://tiarno.github.io/plastex/ for a complete
 view of what it is capable of.
