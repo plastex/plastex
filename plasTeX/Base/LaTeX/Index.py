@@ -7,7 +7,7 @@ C.11.5 Index and Glossary (p211)
 
 import string, os
 from plasTeX.Tokenizer import Token, EscapeSequence
-from plasTeX import Command, Environment
+from plasTeX import Command, Environment, IgnoreCommand
 from plasTeX.Logging import getLogger
 from Sectioning import SectionUtils
 
@@ -16,7 +16,13 @@ try:
     collator = Collator(os.path.join(os.path.dirname(__file__), 'allkeys.txt')).sort_key
 except ImportError:
     collator = lambda x: x.lower()
+    
+class hyperpage(IgnoreCommand):
+    args = 'page:nox'
 
+class hyperindexformat(IgnoreCommand):
+    args = 'fmt:nox page:nox'
+    
 class IndexUtils(object):
     """ Helper functions for generating indexes """
 

@@ -544,46 +544,32 @@ class TeX(object):
 
         cases = [[]]
         nesting = 0
-        escape = self.ownerDocument.context.categories[Token.CC_ESCAPE][0]
-        if_ = [escape, 'i', 'f']
-        else_ = [escape, 'e', 'l', 's', 'e']
-        or_ = [escape, 'o', 'r']
-        fi_ = [escape, 'f', 'i']
 
-        for c in self.iterchars():
-            cases[-1].append(c)
-            # This is probably going to cause some trouble, there 
-            # are bound to be macros that start with 'if' that aren't
-            # actually 'if' constructs...
-            if cases[-1][-3:] == if_:
+        for t in self.itertokens():
+            name = getattr(t, 'macroName', '') or ''
+            if name.startswith('if'):
+                cases[-1].append(t)
                 nesting += 1
-            elif cases[-1][-3:] == fi_:
-                if not nesting:
-                    for i in range(3):
-                        cases[-1].pop()
+            elif name == 'fi':
+                if nesting > 1:
+                    cases[-1].append(t)
+                elif not nesting:
                     break
                 nesting -= 1
-            elif not(nesting) and cases[-1][-5:] == else_:
-                for i in range(5):
-                    cases[-1].pop()
-                cases.append([])
-                elsefound = True
-                continue
-            elif not(nesting) and cases[-1][-3:] == or_:
-                for i in range(3):
-                    cases[-1].pop()
+            elif not(nesting) and name == 'else':
                 cases.append([])
                 continue
+            elif not(nesting) and name == 'or':
+                cases.append([])
+                continue
+            else:
+                cases[-1].append(t)
 
-        if debug:
-            print 'CASES', cases
+        # else case for ifs without elses
+        cases.append([])
 
-        if not elsefound:
-            cases.append([])
-
-        # Push if-selected characters back into tokenizer
-        for c in reversed(cases[which]):
-            self.inputs[-1][0].pushChar(c)
+        # Push if-selected tokens back into tokenizer
+        self.pushTokens(cases[which])
 
     def readArgument(self, *args, **kwargs):
         """

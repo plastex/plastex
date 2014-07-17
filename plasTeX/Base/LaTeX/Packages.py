@@ -70,9 +70,9 @@ class usepackage(PackageLoader):
         catcode = self.ownerDocument.context.whichCode('&')
         self.ownerDocument.context.catcode('&', Token.CC_LETTER)
         a = self.parse(tex)
+        self.ownerDocument.context.catcode('&', catcode)
         for file in a['names']:
             self.load(tex, file, a['options'])
-        self.ownerDocument.context.catcode('&', catcode)
 
 class RequirePackage(usepackage):
     pass

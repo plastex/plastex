@@ -96,28 +96,28 @@ class TestIfs(TestCase):
         s = TeX()
         s.input(r'\ifx!!bye\else text\fi\ifx!( one\else two\fi')
         output = ''.join([x for x in s]).strip()
-        expected = 'bye two'
+        expected = 'byetwo'
         assert output == expected, '"%s" != "%s"' % (output, expected)
 
     def testIfVoid(self):
         s = TeX()
         s.input(r'\ifvoid12 bye\else text\fi\ifvoid16 one\else two\fi')
         output = ''.join([x for x in s]).strip()
-        expected = 'text two'
+        expected = 'texttwo'
         assert output == expected, '"%s" != "%s"' % (output, expected)
 
     def testIfHBox(self):
         s = TeX()
         s.input(r'\ifhbox12 bye\else text\fi\ifhbox16 one\else two\fi')
         output = ''.join([x for x in s]).strip()
-        expected = 'text two'
+        expected = 'texttwo'
         assert output == expected, '"%s" != "%s"' % (output, expected)
 
     def testIfVBox(self):
         s = TeX()
         s.input(r'\ifvbox12 bye\else text\fi\ifvbox16 one\else two\fi')
         output = ''.join([x for x in s]).strip()
-        expected = 'text two'
+        expected = 'texttwo'
         assert output == expected, '"%s" != "%s"' % (output, expected)
 
     def testIfEOF(self):
@@ -159,7 +159,7 @@ class TestIfs(TestCase):
         s = TeX()
         s.input(r'\ifnum 2 > 3 bye\iftrue text\ifcat() hi\fi\else one\fi\fi')
         output = [x for x in s]
-        expected = [' ']
+        expected = []
         assert output == expected, '"%s" != "%s"' % (output, expected)
 
 if __name__ == '__main__':
