@@ -5,7 +5,7 @@ __version__ = '9.3'
 import string, re
 from DOM import Element, Text, Node, DocumentFragment, Document
 from Tokenizer import Token, BeginGroup, EndGroup, Other
-from plasTeX import Logging
+from plasTeX import Logging, encoding
 
 log = Logging.getLogger()
 status = Logging.getLogger('status')
@@ -429,7 +429,7 @@ class Macro(Element):
         argSource = sourceArguments(self)
         if not argSource:
             argSource = ' '
-        elif argSource[0] in string.letters:
+        elif argSource[0] in encoding.stringletters():
             argSource = ' %s' % argSource
         s = '%s%s%s' % (escape, name, argSource)
 
@@ -633,7 +633,7 @@ class Macro(Element):
                 pass
 
             # Argument name (and possibly type)
-            elif item[0] in string.letters:
+            elif item[0] in encoding.stringletters():
                 parts = item.split(':')
                 item = parts.pop(0)
                 # Parse for types and subtypes
@@ -1139,11 +1139,11 @@ class dimen(float):
     def __new__(cls, v):
         if isinstance(v, Macro):
             return v.__dimen__()
-        elif isinstance(v, basestring) and v[-1] in string.letters:
+        elif isinstance(v, basestring) and v[-1] in encoding.stringletters():
             # Get rid of glue components
             v = list(v.split('plus').pop(0).split('minus').pop(0).strip())
             units = []
-            while v and v[-1] in string.letters:
+            while v and v[-1] in encoding.stringletters():
                 units.insert(0, v.pop())
             v = float(''.join(v))
             units = ''.join(units) 
@@ -1503,7 +1503,7 @@ class Counter(object):
 
     @property
     def Alph(self):
-        return string.letters[self.value-1].upper()
+        return encoding.stringletters()[self.value-1].upper()
 
     @property
     def alph(self):

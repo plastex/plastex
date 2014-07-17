@@ -7,7 +7,7 @@ C.11.5 Index and Glossary (p211)
 
 import string, os
 from plasTeX.Tokenizer import Token, EscapeSequence
-from plasTeX import Command, Environment, IgnoreCommand
+from plasTeX import Command, Environment, IgnoreCommand, encoding
 from plasTeX.Logging import getLogger
 from Sectioning import SectionUtils
 
@@ -75,7 +75,7 @@ class IndexUtils(object):
         for item in self:
             try: 
                 label = title = item.sortkey[0].upper()
-                if title in string.letters:
+                if title in encoding.stringletters():
                     pass
                 elif title == '_':
                      title = '_ (Underscore)'

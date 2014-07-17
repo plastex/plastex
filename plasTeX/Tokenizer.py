@@ -2,6 +2,7 @@
 
 import string
 from DOM import Node, Text
+from plasTeX import encoding
 from StringIO import StringIO as UnicodeStringIO
 try: from cStringIO import StringIO
 except: from StringIO import StringIO
@@ -19,7 +20,7 @@ DEFAULT_CATEGORIES = [
    '_',   # 8  - Subscript
    '\x00',# 9  - Ignored character
    ' \t\r\f', # 10 - Space
-   string.letters + '@', # - Letter
+   encoding.stringletters() + '@', # - Letter
    '',    # 12 - Other character - This isn't explicitly defined.  If it
           #                        isn't any of the other categories, then
           #                        it's an "other" character.
@@ -29,7 +30,7 @@ DEFAULT_CATEGORIES = [
 ]
 
 VERBATIM_CATEGORIES = [''] * 16
-VERBATIM_CATEGORIES[11] = string.letters
+VERBATIM_CATEGORIES[11] = encoding.stringletters()
 
 class Token(Text):
     """ Base class for all TeX tokens """
@@ -441,7 +442,7 @@ class Tokenizer(object):
 # HACK: I couldn't get the parse() thing to work so I'm just not
 #       going to parse whitespace after EscapeSequences that end in
 #       non-letter characters as a half-assed solution.
-                        if token[-1] in string.letters:
+                        if token[-1] in encoding.stringletters():
                             # Absorb following whitespace
                             self.state = STATE_S
 
