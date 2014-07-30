@@ -1,0 +1,65 @@
+name: index
+<indexterm>
+  <primary tal:attributes="sortas self/prisort" 
+           tal:content="self/primary"></primary>
+<secondary tal:condition="self/secondary"
+           tal:attributes="sortas self/secsort" 
+           tal:content="self/secondary"></secondary>
+</indexterm>
+
+name:exercise
+<example role="exercise" tal:attributes="id self/id">
+  <title></title>
+  <div tal:replace="self"></div>
+</example>
+
+name:verbatim
+<programlisting tal:content="self"></programlisting>
+
+name: ref
+type:xml
+<xref tal:attributes="linkend self/idref/label/id" />
+
+name: it
+<emphasis tal:content="self"></emphasis>
+
+name: mathit
+<emphasis role="math" tal:content="self"></emphasis>
+
+name: inlineequation
+<inlineequation tal:content="self"></inlineequation>
+
+name: informalequation
+<informalequation tal:content="self"></informalequation>
+
+name: mathphrase
+<inlineequation><mathphrase tal:content="self"></mathphrase>
+</inlineequation>
+
+name: displaymathphrase
+<informalequation><mathphrase tal:content="self"></mathphrase>
+</informalequation>
+
+name: bf
+<emphasis role="bold" tal:content="self"></emphasis>
+
+name: tt
+<literal tal:content="self"></literal>
+
+name: super
+<emphasis><superscript tal:content="self"></superscript></emphasis>
+
+name: sub
+<emphasis><subscript tal:content="self"></subscript></emphasis>
+
+name:Anchor
+<anchor tal:attributes="id self/id" />
+
+name: includegraphics
+<title></title>
+<mediaobject>
+  <imageobject remap="includegraphics">
+    <imagedata tal:attributes="fileref self/image/url;width self/image/width/in" />
+  </imageobject>
+</mediaobject>
+
