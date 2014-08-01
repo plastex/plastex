@@ -2,6 +2,7 @@
 
 import sys, os, re, codecs, plasTeX
 from plasTeX.Renderers.PageTemplate import Renderer as _Renderer
+from lxml import etree
 
 class XHTML(_Renderer):
     """ Renderer for XHTML documents """
@@ -9,7 +10,7 @@ class XHTML(_Renderer):
     fileExtension = '.html'
     imageTypes = ['.png','.jpg','.jpeg','.gif']
     vectorImageTypes = ['.svg']
-
+            
     def cleanup(self, document, files, postProcess=None):
         res = _Renderer.cleanup(self, document, files, postProcess=postProcess)
         self.doJavaHelpFiles(document, version='1')

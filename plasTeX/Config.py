@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import sys
 from ConfigManager import *
 
 c = config = ConfigManager()
@@ -39,11 +40,15 @@ general['xml'] = BooleanOption(
     options = '--xml',
     default = False,
 )
-
-def readconfig(file):
+general['mathml'] = BooleanOption(
+    """ Create MathML representation of the math in the document """,
+    options = '--mathml',
+    default = False,
+)
+def readconfig(filename):
     """ Read a configuration file """
     if not os.path.isfile(file):
-        print >>sys.stderr, "WARNING: Could not load config file '%s'" % file
+        print >>sys.stderr, "WARNING: Could not load config file '%s'" % filename
         return
     config.read(file)
 

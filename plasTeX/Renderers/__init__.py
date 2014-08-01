@@ -1,15 +1,18 @@
 #!/usr/bin/env python
 
-import codecs, os, shutil, string
-from plasTeX.Filenames import Filenames
+import codecs
+import os
+import shutil
+import string
+import logging
+
 from plasTeX.DOM import Node
-from plasTeX.Logging import getLogger
+from plasTeX.Filenames import Filenames
 from plasTeX.Imagers import Image, PILImage
+from plasTeX.Logging import getLogger
 
 log = getLogger()
 status = getLogger('status')
-
-import logging
 logging.getLogger('simpleTAL').setLevel(logging.WARNING)
 logging.getLogger('simpleTALES').setLevel(logging.WARNING)
 
@@ -377,6 +380,7 @@ class Renderer(dict):
         postProcess -- a function that will be called with the content of 
 
         """
+        self.preclean(document)
         config = document.config
 
         # If there are no keys, print a warning.  
@@ -491,6 +495,45 @@ class Renderer(dict):
 
     def processFileContent(self, document, s):
         return s
+    
+    def preclean(self, document):
+        'clean tree before rendering begins and do mathml if needed'
+        self.walk(document, self.fix_par)
+        
+    def walk(self, node, func):
+        """Walks a node tree and invokes a function on each node."""
+        for child in node.childNodes:
+            self.walk(child, func)
+        func(node)
+        
+    def fix_par(self, node):
+        """Checks for elements that should not be embedded in par."""
+        bad_elems = set(['itemize', 'description', 'enumerate', 'quote',
+                         'verbatim', 'par', 'figure', 'centerline', 'label'])
+        children = node.childNodes
+        if node.nodeName != 'par' or len(children) == 0:
+            return
+
+        first = children[0]
+        if first.nodeName not in bad_elems or first.nodeName == '#text':
+            return
+
+        self.replace(node, children)
+        
+    def replace(self, child, replacements):
+        """Replaces a node with a list of nodes. Modifies the parent of child."""
+        parent = child.parentNode
+        for i, node in enumerate(parent):
+            if node == child:
+                parent.pop(i)
+                for j, replacement in enumerate(replacements):
+                    parent.insert(i+j, replacement)
+                return
+        raise ValueError('Child not found.')
+    
+    def unpack(self, node):
+        """Replaces a node with its children."""
+        self.replace(node, node.childNodes)
 
     def cleanup(self, document, files, postProcess=None):
         """ 

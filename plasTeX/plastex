@@ -1,39 +1,48 @@
 #!/usr/bin/env python
 
-import os, sys, codecs, string, glob
+import os
+import sys
+import codecs
+import string
+import glob
+import subprocess
+
 import plasTeX
-from plasTeX.TeX import TeX
 from plasTeX.Config import config
 from plasTeX.ConfigManager import *
 from plasTeX.Logging import getLogger
+from plasTeX.TeX import TeX
 
 log = getLogger()
-
 __version__ = '1.0'
 
 def main(argv):
     """ Main program routine """
-    print >>sys.stderr, 'plasTeX version %s' % __version__
+    print >> sys.stderr, 'plasTeX version %s' % __version__
 
     # Parse the command line options
-    try: 
-        opts, args = config.getopt(argv[1:])
+    try:
+        _, args = config.getopt(argv[1:])
+        
     except Exception, msg:
         log.error(msg)
-        print >>sys.stderr, config.usage()
+        print >> sys.stderr, config.usage()
         sys.exit(1)
 
     if not args:
-        print >>sys.stderr, config.usage()
+        print >> sys.stderr, config.usage()
         sys.exit(1)
 
-    file = args.pop(0)
-
+    if config['general']['mathml']:
+        if not check_mathml():
+            sys.exit(1)
+    
+    filename = args.pop(0)
     # Create document instance that output will be put into
     document = plasTeX.TeXDocument(config=config)
 
     # Instantiate the TeX processor and parse the document
-    tex = TeX(document, file=file)
+    tex = TeX(document, file=filename)
 
     # Populate variables for use later
     if config['document']['title']:
@@ -55,7 +64,7 @@ def main(argv):
 
     # Set up TEXINPUTS to include the current directory for the renderer
     os.environ['TEXINPUTS'] = '%s%s%s%s' % (os.getcwd(), os.pathsep,
-                                         os.environ.get('TEXINPUTS',''), os.pathsep)
+                                         os.environ.get('TEXINPUTS', ''), os.pathsep)
 
     # Change to specified directory to output to
     outdir = config['files']['directory']
@@ -63,48 +72,79 @@ def main(argv):
         outdir = string.Template(outdir).substitute({'jobname':jobname})
         if not os.path.isdir(outdir):
             os.makedirs(outdir)
-        log.info('Directing output files to directory: %s.' % outdir)        
+        log.info('Directing output files to directory: %s.' % outdir)
         os.chdir(outdir)
-    
+
     # Load renderer
-    try: 
+    try:
         exec('from plasTeX.Renderers.%s import Renderer' % rname)
     except ImportError, msg:
         log.error('Could not import renderer "%s".  Make sure that it is installed correctly, and can be imported by Python.' % rname)
         sys.exit(1)
 
     # Write expanded source file
-    #sourcefile = '%s.source' % jobname
-    #open(sourcefile,'w').write(document.source.encode('utf-8'))
-    
+    # sourcefile = '%s.source' % jobname
+    # open(sourcefile,'w').write(document.source.encode('utf-8'))
+
     # Write XML dump
     if config['general']['xml']:
         outfile = '%s.xml' % jobname
-        codecs.open(outfile,'w',encoding='utf-8').write(document.toXML())
-    
+        codecs.open(outfile, 'w', encoding='utf-8').write(document.toXML())
+
     # Apply renderer
     Renderer().render(document)
 
     print
 
-def info(type, value, tb):
-   if hasattr(sys, 'ps1') or not sys.stderr.isatty():
-      # we are in interactive mode or we don't have a tty-like
-      # device, so we call the default hook
-      sys.__excepthook__(type, value, tb)
-   else:
-      import traceback, pdb
-      # we are NOT in interactive mode, print the exception...
-      traceback.print_exception(type, value, tb)
-      print
-      # ...then start the debugger in post-mortem mode.
-      pdb.pm()
-
-#sys.excepthook = info
-
-#sys.setrecursionlimit(10000)
+def check_mathml():
+    tralics_binary = False
+    lxml_package = False
+    pexpect_package = False
+    error_message = 'Specify a different Imager. You must have tralics and lxml installed to generate MathML.'
+    with open(os.devnull, 'w') as null:
+        try:
+            subprocess.Popen('/AppDocs/local/bin/tralics --help', shell=True, stdout=null, stderr=null,)
+        except OSError as e:
+            log.error(error_message)
+            print 'Tralics not installed. %s' % e
+        else:
+            tralics_binary = True
     
-#main(sys.argv)
+    try:
+        import lxml
+    except ImportError:
+        log.error(error_message)
+        print 'lxml not installed'
+    else:
+        lxml_package=True
+    try:
+        import pexpect
+    except ImportError:
+        log.error(error_message)
+        print 'pexpect not installed'
+    else:
+        pexpect_package=True
+    
+    return tralics_binary and lxml_package and pexpect_package
+    
+def info(etype, value, tb):
+    if hasattr(sys, 'ps1') or not sys.stderr.isatty():
+        # we are in interactive mode or we don't have a tty-like
+        # device, so we call the default hook
+        sys.__excepthook__(etype, value, tb)
+    else:
+        import traceback, pdb
+        # we are NOT in interactive mode, print the exception...
+        traceback.print_exception(etype, value, tb)
+        print
+        # ...then start the debugger in post-mortem mode.
+        pdb.pm()
+
+# sys.excepthook = info
+
+# sys.setrecursionlimit(10000)
+
+# main(sys.argv)
 try:
     main(sys.argv)
 except KeyboardInterrupt:
