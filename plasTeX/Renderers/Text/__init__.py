@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from plasTeX.Renderers import Renderer as BaseRenderer
+from plasTeX import encoding
 import textwrap, re, string
 
 class TextRenderer(BaseRenderer):
@@ -50,7 +51,7 @@ class TextRenderer(BaseRenderer):
     def default(self, node):
         """ Rendering method for all non-text nodes """
         # Handle characters like \&, \$, \%, etc.
-        if len(node.nodeName) == 1 and node.nodeName not in string.letters:
+        if len(node.nodeName) == 1 and node.nodeName not in encoding.stringletters():
             return self.textDefault(node.nodeName)
             
         # Render child nodes
