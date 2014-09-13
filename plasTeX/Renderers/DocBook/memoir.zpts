@@ -1,3 +1,0 @@
-name: titleref
-type:xml
-<link remap="titleref" tal:attributes="linkend self/idref/label/url" tal:content="self/idref/label/title"></link>

@@ -115,17 +115,65 @@ engine:cheetah
  #end if
 remap="$here.nodeName" />
 
-name: -----------BLOCK ELEMENTS--------------------------
+name: titleref
+type:xml
+<link remap="titleref" tal:attributes="linkend self/idref/label/url" 
+      tal:content="self/idref/label/title"></link>
 
-name: newfloat floatstyle restylefloat floatname floatplacement listof
+name: href
+type:xml
+<link tal:attributes="linkend self/attributes/url" tal:content="self"></link>
+
+name: url
+<ulink tal:attributes="url self/attributes/url"></ulink>
+
+name: nolinkurl
+<span tal:replace="self/attributes/url">url</span>
+
+name: hyperbaseurl
+
+name: hyperimage
+<imageobject>
+  <imagedata tal:attributes="fileref self/attributes/url;contentwidth self/image/width/px;contentdepth self/image/height/px" />
+</imageobject>
+
+name: hyperdef
+<anchor tal:attributes="id string:${self/attributes/category}.${self/attributes/name}" />
+
+name: hyperref
+type:xml
+<link tal:attributes="linkend string:${self/attributes/url}#${self/attributes/category}.${self/attributes/name}" tal:content="self">link text</link>
+
+name: hyperlink
+type:xml
+<link tal:attributes="linkend string:${self/idref/label/url}" tal:content="self"></link>
+
+name: hypertarget
+<anchor tal:attributes="name self/id" />
+
+name: phantomsection
+<anchor tal:attributes="name self/id" />
+
+name: autoref
+type:xml
+<link tal:attributes="linkend self/idref/label/url" tal:content="string:${self/idref/label/captionName} ${self/idref/label/ref}"></link>
+
+name: ref*
+<phrase tal:content="self/idref/label/ref">#.#.#</phrase>
+
+name: pageref*
+*
+
+name: Form TextField CheckBox ChoiceMenu PushButton Submit Reset
+
+
+name: -----------BLOCK ELEMENTS--------------------------
 
 name: par
 <para tal:content="self" tal:omit-tag="self/blockType"></para>
 
 name: multicolumn
 <span tal:replace="self"></span>
-
-name: cline toprule bottomrule midrule cmidrule morecmidrules addlinespace specialrule
 
 name: figure figure*
 <span tal:omit-tag="">
@@ -222,7 +270,7 @@ type: xml
 </metal:block>
 
 name: marginpar
-<para class="marginpar" tal:content="self/attributes/right">margin par</para>
+<para remap="marginpar" tal:content="self/attributes/right">margin par</para>
 
 name: itemize
 type:xml
@@ -300,6 +348,10 @@ name: DeclareGraphicsExtensions graphicspath
 
 
 name: -----------BIBLIOGRAPHY--------------------------
+
+name: bibliographyref
+type:xml
+<link tal:attributes="linkend self/idref/bibitem/url" tal:content="self"></link>
 
 name:bibliography
 engine:cheetah
@@ -396,7 +448,7 @@ name:alltt
 engine:cheetah
 <literallayout class="monospaced" remap="$here.nodeName">${here}</literallayout>
 
-name:verbatim
+name:verbatim verbatimtab
 engine:cheetah
 <programlisting remap="$here.nodeName">${here}</programlisting>
 
@@ -464,6 +516,12 @@ name: thinspace /
 name: active::~
 &#160;
 
+name: active::^
+<superscript tal:content="self"></superscript>
+
+name: active::_
+<subscript tal:content="self"></subscript>
+
 name: enspace enskip
 &#8194;
 
@@ -506,6 +564,28 @@ engine:cheetah
 name:-uppercase
 engine:cheetah
 ${here.attributes.argument}
+
+name: bfseries textbf
+<emphasis role="bold" tal:content="self"></emphasis>
+
+name: itshape textit
+<emphasis tal:content="self"></emphasis>
+
+name: mdseries textmd
+<span tal:replace="self"></span>
+
+name: rmfamily textrm sffamily textsf ttfamily texttt
+<span tal:replace="self"></span>
+
+name: upshape textup slshape textsl scshape textsc
+<span tal:replace="self"></span>
+
+name: tiny scriptsize footnotesize small normalsize large Large LARGE huge Huge
+<span tal:replace="self"></span>
+
+name:footnote
+type:xml
+<footnote><para tal:content="self"></para></footnote>
 
 
 name: -----------MATH----------------
@@ -574,6 +654,18 @@ ${here}
 
 name: -----------MISCELLANEOUS------------------
 
+name:lipsum
+<para tal:replace="self/text"></para>
+
+name: center centering centerline
+<span tal:replace="self"></span>
+
+name: flushleft raggedright leftline
+<span tal:replace="self"></span>
+
+name: raggedleft flushright llap
+<span tal:replace="self"></span>
+
 name: foreignlanguage otherlanguage
 <foreignphrase tal:replace="self"></foreignphrase>
 
@@ -583,19 +675,19 @@ name: color textcolor
 name: colorbox fcolorbox
 <para remap="colorbox" tal:content="self"></para>
 
-name: bgroup footnotesize
+name: bgroup
 <span tal:replace="self"></span>
-
-name:footnote
-type:xml
-<footnote><para tal:content="self"></para></footnote>
 
 name:landscape
 type:xml
 <phrase tal:omit-tag="" tal:content="self"></phrase>
 
-name:mbox
+name:mbox fbox parbox
 <para tal:replace="self"></para>
+
+name:makebox framebox minipage
+<phrase remap="makebox" tal:content="self"></phrase>
+
 
 name:par
 type:xml
@@ -605,12 +697,36 @@ name:rotatebox
 engine:cheetah
 ${here}
 
-name:textcolor raisebox
+name:raisebox
 engine:cheetah
 ${here.text}
 
 
 name: -----------IGNORED------------------
+
+name: newblock nocite defcitealias
+
+name: symbol hspace hspace* vspace vspace*
+
+name: bigskip medskip smallskip
+
+name: enlargethispage
+
+name: tabbing
+
+name: linebreak \ newline
+
+name: pagebreak newpage clearpage cleardoublepage cleartorecto
+
+name: newfloat floatstyle restylefloat floatname floatplacement listof
+
+name: raisebox rule
+
+name: bibliographystyle
+
+name: cline toprule bottomrule midrule cmidrule morecmidrules addlinespace specialrule
+
+name: raggedbottom
 
 name:egroup strut
 
@@ -630,11 +746,9 @@ name:LTleft LTright
 
 name:addcontentsline addtocontents chapterend
 
-name:definecolor colorlet color
+name:definecolor colorlet color pagecolor normalcolor
 
 name:onecolumn twocolumn
-
-name: pagecolor definecolor
 
 name:hyphenation pagestyle phantom providecommand nocite
 
@@ -642,7 +756,7 @@ name:unitlength enlargethispage nobreak vfill vskip
 
 name:leftskip hrulefill
 
-name:ifcopyedit normalcolor
+name:ifcopyedit 
 
 name:tabularnewline
 

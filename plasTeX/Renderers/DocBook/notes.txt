@@ -1,0 +1,11 @@
+what to do about table vs tabular
+
+Boldurl, url, href, emph needs attributes
+
+index problems
+
+appendix is chapter
+
+title author date thanks????
+
+

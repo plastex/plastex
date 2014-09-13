@@ -1,4 +1,0 @@
-name: footnote
-<footnote><para tal:content="self"></para></footnote>
-
-name: footnotemark footnotetext
