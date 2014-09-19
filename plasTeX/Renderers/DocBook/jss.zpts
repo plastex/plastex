@@ -1,0 +1,17 @@
+name: proglang
+<application remap="proglang" tal:content="self/attributes/argument"></application>
+
+name: pkg
+<application remap="pkg" tal:content="self/attributes/argument"></application>
+
+name: code
+<code tal:content="self/attributes/argument"></code>
+
+name: CodeChunk
+<span tal:replace="self"></span>
+
+name: CodeInput
+<programlisting tal:content="self"></programlisting>
+
+name: citeauthoryear
+
