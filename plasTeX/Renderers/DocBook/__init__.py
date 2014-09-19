@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 import re
 from plasTeX.Renderers.PageTemplate import Renderer as _Renderer
+from plasTeX.Base.LaTeX import table as Ptable, tabular as Ptabular
+
+class table(Ptable):
+    class tabular(Ptabular):
+        pass
+
 
 class DocBook(_Renderer):
     """ Renderer for DocBook documents """
@@ -27,5 +33,5 @@ class DocBook(_Renderer):
         #
         s = re.compile(r'<para>\s*</para>', re.I).sub(r'', s)
         return s
-    
+
 Renderer = DocBook

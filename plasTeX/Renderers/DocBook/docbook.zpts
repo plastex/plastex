@@ -4,17 +4,26 @@ name: -----------TOC-----------------
   block elements
   bibliography
   indexing
-  code and syntax
-  font switching and related
+  code
+  font switching
   math
   characters and symbols
-  conditional text
   miscellaneous
 
 name: -----------SECTIONING----------------------
 
 name: document
 <para tal:replace="self"></para>
+
+name:article
+engine:cheetah
+<article remap="$here.captionName"
+         xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:mml="http://www.w3.org/1998/Math/MathML"
+         xmlns:xl="http://www.w3.org/1999/xlink"  xml:id="${here.id}">
+  <info><title>${here.title}</title></info>
+  ${here}
+</article>
 
 name: abstract
 <abstract tal:content="self"></abstract>
@@ -47,15 +56,6 @@ engine:cheetah
 
 name:chapter
 engine:cheetah
-#if $here.appendix
-<appendix remap="$here.captionName"
-         xmlns="http://docbook.org/ns/docbook" version="5.0"
-         xmlns:mml="http://www.w3.org/1998/Math/MathML"
-         xmlns:xl="http://www.w3.org/1999/xlink"  xml:id="${here.id}">
-  <info><title>${here.title}</title></info>
-  ${here}
-</appendix>
-#else
 <chapter remap="$here.captionName"
          xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:mml="http://www.w3.org/1998/Math/MathML"
@@ -63,7 +63,6 @@ engine:cheetah
   <info><title>${here.title}</title></info>
   ${here}
 </chapter>
-#end if
 
 name:chapter*
 engine:cheetah
@@ -87,23 +86,24 @@ name: phantomsection
 
 name: -----------REFERENCING----------------------
 
+name: autoref
+type:xml
+<link tal:attributes="linkend self/idref/label/url" tal:content="string:${self/idref/label/captionName} ${self/idref/label/ref}"></link>
+
 name: ref
 type:xml
 <xref remap="ref" tal:attributes="linkend self/idref/label/id" />
 
-name:-href
+name: ref*
+<phrase tal:content="self/idref/label/ref"></phrase>
+
+name:href
 engine:cheetah
-<link remap="href" xl:href="${here.attributes.url}">${here.attributes.text}</link>
+<link remap="href" xl:href="${here.attributes.url}">${here.attributes.url}</link>
 
 name:url
 engine:cheetah
-<link remap="murl" xl:href="${here}">${here}</link>
-
-name:-Boldurl
-engine:cheetah
-<emphasis role="bold">
-  <link xl:href="${here.attributes.url}" remap="Boldurl">${here.attributes.url}</link>
-</emphasis>
+<link remap="url" xl:href="${here.attributes.url}">${here.attributes.url}</link>
 
 name:label
 engine:cheetah
@@ -117,15 +117,8 @@ remap="$here.nodeName" />
 
 name: titleref
 type:xml
-<link remap="titleref" tal:attributes="linkend self/idref/label/url" 
+<link remap="titleref" tal:attributes="linkend self/idref/label/url"
       tal:content="self/idref/label/title"></link>
-
-name: href
-type:xml
-<link tal:attributes="linkend self/attributes/url" tal:content="self"></link>
-
-name: url
-<ulink tal:attributes="url self/attributes/url"></ulink>
 
 name: nolinkurl
 <span tal:replace="self/attributes/url">url</span>
@@ -154,19 +147,6 @@ name: hypertarget
 name: phantomsection
 <anchor tal:attributes="name self/id" />
 
-name: autoref
-type:xml
-<link tal:attributes="linkend self/idref/label/url" tal:content="string:${self/idref/label/captionName} ${self/idref/label/ref}"></link>
-
-name: ref*
-<phrase tal:content="self/idref/label/ref">#.#.#</phrase>
-
-name: pageref*
-*
-
-name: Form TextField CheckBox ChoiceMenu PushButton Submit Reset
-
-
 name: -----------BLOCK ELEMENTS--------------------------
 
 name: par
@@ -186,25 +166,29 @@ name: figure figure*
   </figure>
 </span>
 
-name: table table* sidewaystable
-type: xml
+name:index
 <metal:block>
-   <metal:block tal:condition="self/title">
-     <table tal:attributes="xml:id self/title/id">
-       <caption tal:content="self/title"></caption>
-       <para tal:replace="self"></para>
-     </table>
-  </metal:block>
-  <metal:block tal:condition="not:self/title">
-     <informaltable>
-       <para tal:replace="self"></para>
-     </informaltable>
-  </metal:block>
+  <indexterm>
+    <primary tal:attributes="sortas self/data/prisort"
+             tal:content="self/data/primary"></primary>
+    <secondary tal:condition="self/data/secondary"
+               tal:attributes="sortas self/data/secsort"
+               tal:content="self/data/secondary"></secondary>
+    <see tal:condition="self/data/see"
+         tal:content="self/data/see"></see>
+    <seealso tal:condition="self/data/seealso"
+             tal:content="self/data/seealso"></seealso>
+  </indexterm>
 </metal:block>
 
-name: tabular ctabular array tabular* tabularx
-type: xml
-<metal:block>
+name: table
+<table tal:condition="self/title" remap="table" tal:attributes="xml:id self/title/id">
+  <caption remap="tablecaption" tal:content="self/title"></caption>
+<span tal:replace="self"></span>
+</table>
+
+name: doctabular
+<tbody remap="nestedtabular">
   <tr tal:repeat="row self">
     <metal:block tal:repeat="cell row">
      <th tal:condition="cell/isHeader"
@@ -221,7 +205,28 @@ type: xml
      </td>
     </metal:block>
   </tr>
-</metal:block>
+</tbody>
+
+name: tabular ctabular array tabular* tabularx
+type: xml
+<informaltable remap="tabular">
+  <tr tal:repeat="row self">
+    <metal:block tal:repeat="cell row">
+     <th tal:condition="cell/isHeader"
+         tal:attributes="style cell/style/inline;
+                     rowspan cell/attributes/rowspan;
+                     colspan cell/attributes/colspan"
+         tal:content="cell">
+     </th>
+     <td tal:condition="not:cell/isHeader"
+         tal:attributes="style cell/style/inline;
+                     rowspan cell/attributes/rowspan;
+                     colspan cell/attributes/colspan"
+         tal:content="cell">
+     </td>
+    </metal:block>
+  </tr>
+</informaltable>
 
 name: longtable longtable*
 type: xml
@@ -275,9 +280,7 @@ name: marginpar
 name: itemize
 type:xml
 <itemizedlist>
-  <metal:block tal:repeat="item self">
-    <listitem tal:content="item"></listitem>
-  </metal:block>
+    <listitem tal:repeat="item self" tal:content="item"></listitem>
 </itemizedlist>
 
 name: enumerate
@@ -338,20 +341,18 @@ type:xml
 
 name: includegraphics rotatebox scalebox reflectbox resizebox
 <imageobject remap="includegraphics">
-  <imagedata tal:attributes="fileref self/image/url;contentwidth self/image/width/px;contentdepth self/image/height/px" />
+  <imagedata tal:attributes="fileref self/image/url;contentwidth
+    self/image/width/px;contentdepth self/image/height/px" />
   <textobject>
     <phrase tal:content="text self/source"></phrase>
   </textobject>
 </imageobject>
 
-name: DeclareGraphicsExtensions graphicspath
-
+name:footnote
+type:xml
+<footnote><para tal:content="self"></para></footnote>
 
 name: -----------BIBLIOGRAPHY--------------------------
-
-name: bibliographyref
-type:xml
-<link tal:attributes="linkend self/idref/bibitem/url" tal:content="self"></link>
 
 name:bibliography
 engine:cheetah
@@ -365,7 +366,7 @@ engine:cheetah
 name:thebibliography
 engine:cheetah
 #for $item in $here
-<listitem remap="bibitem" id="${item.id}">
+<listitem remap="bibitem" xml:id="${item.id}">
   <para>${item}</para>
 </listitem>
 #end for
@@ -375,7 +376,7 @@ name: cite citet citep citealt citealp citeauthor citeyear citeyearpar \
       citepalias
 type: xml
 <citation remap="cite"><metal:block tal:repeat="item self/citation"><link tal:condition="item/idref/bibitem/url"
-      tal:attributes="linkend item/idref/bibitem/url"
+      tal:attributes="linkend item/idref/bibitem/id"
       tal:content="item" ></link><span tal:condition="not:item/idref/bibitem/url"
       tal:replace="item"></span></metal:block></citation>
 
@@ -384,29 +385,10 @@ name: citetext
 
 name: -----------------INDEXING---------------------
 
-name: index
-<indexterm>
-  <primary tal:attributes="sortas self/prisort"
-           tal:content="self/primary/textNode"></primary>
-  <secondary tal:condition="self/secondary"
-             tal:attributes="sortas self/secsort"
-             tal:content="self/secondary/textNode"></secondary>
-</indexterm>
-
-name: see seealso
-<span tal:replace="self/captionName"></span> <span tal:replace="self"></span>
-
-
-name: Printindex
-
-name:Subidx Synidx
+name:-index
 engine:cheetah
-<indexterm remap="$here.nodeName" xml:id="${here.id}"
-#if $here.nodeName == 'Synidx'
-  type="syntaxindex"
-#end if
->
-  #if $here.attributes.prisort
+<indexterm remap="$here.nodeName" xml:id="${here.id}">
+  #if $varExists('here.attributes.prisort')
     <primary sortas="${here.attributes.prisort}" >${here.attributes.prisort}</primary>
   #else
     <primary>${here.attributes.primary}</primary>
@@ -418,35 +400,19 @@ engine:cheetah
       <secondary>${here.attributes.secondary}</secondary>
     #end if
   #end if
-</indexterm>
-
-name:Subsee Synsee
-engine:cheetah
-<indexterm remap="$here.nodeName" >
-  #if $here.attributes.prisort
-    <primary sortas="${here.attributes.prisort}">${here.attributes.prisort}</primary>
-  #else
-    <primary>${here.attributes.primary}</primary>
+  #if $varExists('here.attributes.see')
+    <see>${here.attributes.see}</see>
   #end if
-  <see>${here.attributes.secondary}</see>
-</indexterm>
-
-name:Subseealso Synseealso
-engine:cheetah
-<indexterm remap="$here.nodeName" xml:id="${here.id}">
-  #if $here.attributes.prisort
-    <primary sortas="${here.attributes.prisort}">${here.attributes.prisort}</primary>
-  #else
-    <primary>${here.attributes.primary}</primary>
+  #if $varExists('here.attributes.seealso')
+    <seealso>${here.attributes.seealso}</seealso>
   #end if
-  <seealso>${here.attributes.secondary}</seealso>
 </indexterm>
 
 name: -------------------CODE---------------------
 
 name:alltt
 engine:cheetah
-<literallayout class="monospaced" remap="$here.nodeName">${here}</literallayout>
+<programlisting class="monospaced" remap="$here.nodeName">${here}</programlisting>
 
 name:verbatim verbatimtab
 engine:cheetah
@@ -478,59 +444,12 @@ name: ` ' ^ " ~ = . u v H t c d b l L
   </mediaobject>
 </span>
 
-name: $
-$
-
-name: %
-%
-
-name: {
-{
-
-name: }
-}
-
-name: _
-_
-
-name: &
-&amp;
-
-name: #
-#
-
-name:
-&#160;
-
-name:@
-
 name: LaTeX
 <application class="software">LaTeX</application>
 
 name: TeX
 <application class="software">TeX</application>
 
-name: thinspace /
-&#8201;
-
-name: active::~
-&#160;
-
-name: active::^
-<superscript tal:content="self"></superscript>
-
-name: active::_
-<subscript tal:content="self"></subscript>
-
-name: enspace enskip
-&#8194;
-
-name: underbar
-<phrase remap="underbar">_</phrase>
-
-name:footnotemark
-engine:cheetah
-<superscript remap="footnotemark">${here.marker}</superscript>
 
 name:footnotetext
 engine:cheetah
@@ -548,20 +467,19 @@ name:texttt
 engine:cheetah
 <literal remap="texttt">${here}</literal>
 
-
-name:-emph
+name:emph
 engine:cheetah
-<emphasis remap="Emph">${here.attributes.argument}</emphasis>
+<emphasis remap="Emph">${here}</emphasis>
 
-name:-textsubscript
+name:textsubscript
 engine:cheetah
 <subscript remap="textsubscript">${here.attributes.argument}</subscript>
 
-name:-textsuperscript
+name:textsuperscript
 engine:cheetah
 <superscript  remap="textsuperscript">${here.attributes.argument}</superscript>
 
-name:-uppercase
+name:uppercase
 engine:cheetah
 ${here.attributes.argument}
 
@@ -582,11 +500,6 @@ name: upshape textup slshape textsl scshape textsc
 
 name: tiny scriptsize footnotesize small normalsize large Large LARGE huge Huge
 <span tal:replace="self"></span>
-
-name:footnote
-type:xml
-<footnote><para tal:content="self"></para></footnote>
-
 
 name: -----------MATH----------------
 
@@ -619,14 +532,57 @@ name: displaymath equation  equation* eqnarray eqnarray* gather gather* \
 
 name: -----------CHARACTERS AND SYMBOLS------------------------
 
+name: $
+$
+
+name: %
+%
+
+name: {
+{
+
+name: }
+}
+
+name: _
+_
+
+name: &
+&amp;
+
+name: #
+#
+
+name:
+&#160;
+
+name:@
+
+name: thinspace /
+&#8201;
+
+name: active::~
+&#160;
+
+name: active::^
+<superscript tal:content="self"></superscript>
+
+name: active::_
+<subscript tal:content="self"></subscript>
+
+name: enspace enskip
+&#8194;
+
+name: underbar
+<phrase remap="underbar">_</phrase>
+
+name:footnotemark
+engine:cheetah
+<superscript remap="footnotemark">${here.marker}</superscript>
+
+
 name:Euro euro
 <phrase tal:omit-tag="">&#8364;</phrase>
-
-name: Reg
-<superscript>&#174; </superscript>
-
-name: TM
-<superscript>&#8482;</superscript>
 
 name:ldots
 <phrase tal:omit-tag="">&#8230;</phrase>
@@ -704,7 +660,15 @@ ${here.text}
 
 name: -----------IGNORED------------------
 
-name: newblock nocite defcitealias
+name: DeclareGraphicsExtensions graphicspath
+
+
+name: pageref*
+
+name: Form TextField CheckBox ChoiceMenu PushButton Submit Reset
+
+
+name: newblock nocite defcitealias fontseries selectfont
 
 name: symbol hspace hspace* vspace vspace*
 
@@ -756,7 +720,7 @@ name:unitlength enlargethispage nobreak vfill vskip
 
 name:leftskip hrulefill
 
-name:ifcopyedit 
+name:ifcopyedit
 
 name:tabularnewline
 

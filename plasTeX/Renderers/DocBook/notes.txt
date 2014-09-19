@@ -1,11 +1,28 @@
-what to do about table vs tabular
+postprocess:
+    table para(remove) tabular
+    itemizedlist para(remove) listitem
 
-Boldurl, url, href, emph needs attributes
-
-index problems
-
-appendix is chapter
+working on:
+    appendix is chapter
 
 title author date thanks????
+
+XSL:
+    article-level toc + section tocs
+    styling changes
+
+FABRIC:
+    install plastex, pillow, lxml
+    install tralics
+    install docbook xsl
+    install saxon
+    install tralics driver+main.xsl+master script
+
+
+ftp://ftp-sop.inria.fr/marelle/tralics/src/tralics-src-2.15.1.tar.gz
+
+http://sourceforge.net/projects/docbook/files/docbook-xsl-ns/1.78.1/docbook-xsl-ns-1.78.1.zip/download
+
+http://prdownloads.sourceforge.net/saxon/saxon6-5-5.zip
 
 
