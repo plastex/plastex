@@ -127,30 +127,39 @@ class Renderable(object):
             nodeName = child.nodeName
             modifier = None
 
+            # Does the macro specify an alternative templateName
             templateName = getattr(child, 'templateName', None)
-            if templateName:
-                names.append(templateName)
 
             # Does the macro have a modifier (i.e. '*')
             if child.attributes:
                 modifier = child.attributes.get('*modifier*')
 
             if child.filename:
-
                 # Force footnotes to be cached
                 if hasattr(child, 'footnotes'):
                     child.footnotes
 
                 status.info(' [ %s ', child.filename)
 
+                # Filename and templateName
+                if templateName:
+                    layouts.append('%s-layout' % (templateName))
+                    if modifier:
+                        layouts.append('%s-layout%s' % (templateName, modifier))
+
                 # Filename and modifier
                 if modifier:
                     layouts.append('%s-layout%s' % (nodeName, modifier))
 
-                # Filename only
+                # Add nodeName to list
                 layouts.append('%s-layout' % nodeName)
 
-            # Modifier only
+            # templateName
+            if templateName:
+                names.append(templateName)
+                if modifier:
+                    names.append('%s%s' % (templateName, modifier))
+            # Modifier
             if modifier:
                 names.append('%s%s' % (nodeName, modifier))
 
