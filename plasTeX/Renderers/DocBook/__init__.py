@@ -2,10 +2,98 @@
 import re
 from plasTeX.Renderers.PageTemplate import Renderer as _Renderer
 from plasTeX.Base.LaTeX import table as Ptable, tabular as Ptabular
+from plasTeX import Command
+try:
+    from lxml import etree
+except ImportError:
+    have_lxml = False
+else:
+    have_lxml = True
+xns = {'d': 'http://docbook.org/ns/docbook'}
+
+def drop_tag(elem):
+    """
+    Remove the tag, but not its children or text.
+    The children and text are merged into the parent.
+    """
+    parent = elem.getparent()
+    previous = elem.getprevious()
+    if elem.text and isinstance(elem.tag, basestring):
+        if previous is None:
+            parent.text = (parent.text or '') + elem.text
+        else:
+            previous.tail = (previous.tail or '') + elem.text
+    if elem.tail:
+        if len(elem):
+            last = elem[-1]
+            last.tail = (last.tail or '') + elem.tail
+        elif previous is None:
+            parent.text = (parent.text or '') + elem.tail
+        else:
+            previous.tail = (previous.tail or '') + elem.tail
+    index = parent.index(elem)
+    parent[index:index + 1] = elem[:]
+
+def clean_para(tree, name):
+    for elem in tree.findall('//d:%s' % name, namespaces=xns):
+        e = elem.findall('d:para', namespaces=xns)
+        if e:
+            drop_tag(e[0])
+
+    return tree
+
+def get_see(term):
+    see = None
+    seealso = None
+    if term.find('|') != -1:
+        term, fmt = term.split('|')
+        if fmt.find('seealso') != -1:
+            seealso = fmt
+        elif fmt.find('see') != -1:
+            see = fmt
+
+    return term, see, seealso
+
+def parse_indexentry(s):
+    term = s
+    sortstr = None
+    if term.find('@') != -1:
+        term, sortstr = term.split('@')
+    term, see, seealso = get_see(term)
+    return (term, sortstr, see, seealso)
+
+class index(Command):
+    args = 'argument:str'
+
+    def invoke(self, tex):
+        Command.invoke(self, tex)
+        entry = self.attributes['argument']
+        if entry.find('!') != -1:
+            primary, secondary = entry.split('!')
+
+            primary, prisort, see, seealso= parse_indexentry(primary)
+            if see or seealso:
+                secondary, secsort, _, _ = parse_indexentry(secondary)
+            else:
+                secondary, secsort, see, seealso = parse_indexentry(secondary)
+        else:
+            primary, prisort, see, seealso = parse_indexentry(entry)
+
+        self.data = {
+            'primary': primary,
+            'secondary':secondary,
+            'prisort': prisort,
+            'secsort': secsort,
+            'see': see,
+            'seealso': seealso,
+            }
+
 
 class table(Ptable):
+
     class tabular(Ptabular):
-        pass
+        args = '[ pos:str ] colspec:nox'
+        templateName = 'doctabular'
 
 
 class DocBook(_Renderer):
@@ -20,18 +108,21 @@ class DocBook(_Renderer):
 
     def processFileContent(self, document, s):
         s = _Renderer.processFileContent(self, document, s)
-        s = re.compile(r'</partintro>\s*<partintro>',re.I).sub(r'',s)
-        #
-        s = re.compile(r'<para>\s*(<articleinfo>)',re.I).sub(r'\1',s)
-        s = re.compile(r'(</articleinfo>)\s*</para>',re.I).sub(r'\1',s)
-        #
-        s = re.compile(r'(<informalfigure>)\s*<para>',re.I).sub(r'\1',s)
-        s = re.compile(r'</para>\s*(</informalfigure>)',re.I).sub(r'\1',s)
-        #
-        s = re.compile(r'(<para>)(\s*<para>)+',re.I).sub(r'\1',s)
-        s = re.compile(r'(</para>\s*)+(</para>)',re.I).sub(r'\2',s)
-        #
-        s = re.compile(r'<para>\s*</para>', re.I).sub(r'', s)
+        if have_lxml:
+            tree = etree.fromstring(s)
+            for name in ['itemizedlist', 'table', 'term', 'para']:
+                tree = clean_para(tree, name)
+            s = etree.tostring(tree)
+        else:
+            s = re.sub(r'</partintro>\s*<partintro>','', s, flags=re.I)
+            s = re.sub(r'<para>\s*(<articleinfo>)', r'\1', s, flags=re.I)
+            s = re.sub(r'(</articleinfo>)\s*</para>', r'\1', s, flags=re.I)
+            s = re.sub(r'<para>\s*</para>', '', s, flags=re.I)
+
+            for name in ['itemizedlist', 'table', 'term', 'para']:
+                s = re.sub(r'(<%s>)\s*<para>' % name, r'\1', s, flags=re.I)
+                s = re.sub(r'</para>\s*(</%s>)' % name, r'\1', s, flags=re.I)
+
         return s
 
 Renderer = DocBook
