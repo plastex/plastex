@@ -129,7 +129,6 @@ class Renderable(object):
 
             # Does the macro specify an alternative templateName
             templateName = getattr(child, 'templateName', None)
-
             # Does the macro have a modifier (i.e. '*')
             if child.attributes:
                 modifier = child.attributes.get('*modifier*')

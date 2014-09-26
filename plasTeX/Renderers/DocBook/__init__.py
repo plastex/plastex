@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import re
 from plasTeX.Renderers.PageTemplate import Renderer as _Renderer
-from plasTeX.Base.LaTeX import table as Ptable, tabular as Ptabular
 from plasTeX import Command
 try:
     from lxml import etree
@@ -88,14 +87,6 @@ class index(Command):
             'seealso': seealso,
             }
 
-
-class table(Ptable):
-
-    class tabular(Ptabular):
-        args = '[ pos:str ] colspec:nox'
-        templateName = 'doctabular'
-
-
 class DocBook(_Renderer):
     """ Renderer for DocBook documents """
     fileExtension = '.xml'
@@ -119,7 +110,7 @@ class DocBook(_Renderer):
             s = re.sub(r'(</articleinfo>)\s*</para>', r'\1', s, flags=re.I)
             s = re.sub(r'<para>\s*</para>', '', s, flags=re.I)
 
-            for name in ['itemizedlist', 'table', 'term', 'para']:
+            for name in ['itemizedlist', 'term', 'para']:
                 s = re.sub(r'(<%s>)\s*<para>' % name, r'\1', s, flags=re.I)
                 s = re.sub(r'</para>\s*(</%s>)' % name, r'\1', s, flags=re.I)
 

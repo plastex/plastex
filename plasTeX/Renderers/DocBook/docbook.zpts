@@ -187,7 +187,9 @@ name: table
 <span tal:replace="self"></span>
 </table>
 
-name: doctabular
+name: nestedtablecaption nestedfigurecaption
+
+name: nestedtabular
 <tbody remap="nestedtabular">
   <tr tal:repeat="row self">
     <metal:block tal:repeat="cell row">
