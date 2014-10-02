@@ -1,2 +1,0 @@
-name: foreignlanguage otherlanguage
-<foreignphrase tal:replace="self"></foreignphrase>

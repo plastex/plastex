@@ -19,7 +19,7 @@ def baseclasses(cls):
     output = [cls]
     for item in cls.__bases__:
         output.extend(baseclasses(item))
-    return [x for x in output if x is not object] 
+    return [x for x in output if x is not object]
 
 def mixin(base, mix, overwrite=False):
     """
@@ -44,7 +44,7 @@ def mixin(base, mix, overwrite=False):
 
 def unmix(base, mix=None):
     """
-    Remove mixed in methods and members 
+    Remove mixed in methods and members
 
     Required Arguments:
     base -- the base class to remove mixins from
@@ -75,7 +75,7 @@ class Renderable(object):
     """
     Base class for all renderable nodes
 
-    This class is mixed into nodes of the document object prior to 
+    This class is mixed into nodes of the document object prior to
     rendering.  The actual rendering method is __unicode__.
 
     """
@@ -89,7 +89,7 @@ class Renderable(object):
 
         # Short circuit macros that have unicode equivalents
         uni = self.unicode
-        if uni is not None: 
+        if uni is not None:
             return r.outputType(r.textDefault(uni))
 
         # If we don't have childNodes, then we're done
@@ -103,7 +103,7 @@ class Renderable(object):
 
         # At the very top level, only render the DOCUMENT_LEVEL node
         if self.nodeType == Node.DOCUMENT_NODE:
-            childNodes = [x for x in self.childNodes 
+            childNodes = [x for x in self.childNodes
                             if x.level == Node.DOCUMENT_LEVEL]
         else:
             childNodes = self.childNodes
@@ -119,7 +119,7 @@ class Renderable(object):
 
             # Short circuit macros that have unicode equivalents
             uni = child.unicode
-            if uni is not None: 
+            if uni is not None:
                 s.append(r.textDefault(uni))
                 continue
 
@@ -127,38 +127,50 @@ class Renderable(object):
             nodeName = child.nodeName
             modifier = None
 
+            # Does the macro specify an alternative templateName
+            templateName = getattr(child, 'templateName', None)
             # Does the macro have a modifier (i.e. '*')
             if child.attributes:
                 modifier = child.attributes.get('*modifier*')
 
             if child.filename:
-            
                 # Force footnotes to be cached
                 if hasattr(child, 'footnotes'):
                     child.footnotes
 
                 status.info(' [ %s ', child.filename)
 
+                # Filename and templateName
+                if templateName:
+                    layouts.append('%s-layout' % (templateName))
+                    if modifier:
+                        layouts.append('%s-layout%s' % (templateName, modifier))
+
                 # Filename and modifier
                 if modifier:
                     layouts.append('%s-layout%s' % (nodeName, modifier))
 
-                # Filename only
+                # Add nodeName to list
                 layouts.append('%s-layout' % nodeName)
 
-            # Modifier only
+            # templateName
+            if templateName:
+                names.append(templateName)
+                if modifier:
+                    names.append('%s%s' % (templateName, modifier))
+            # Modifier
             if modifier:
                 names.append('%s%s' % (nodeName, modifier))
 
             names.append(nodeName)
             layouts.append('default-layout')
 
-            # Locate the rendering callable, and call it with the 
+            # Locate the rendering callable, and call it with the
             # current object (i.e. `child`) as its argument.
             func = r.find(names, r.default)
             val = func(child)
 
-            # If a plain string is returned, we have no idea what 
+            # If a plain string is returned, we have no idea what
             # the encoding is, but we'll make a guess.
             if type(val) is not unicode:
                 log.warning('The renderer for %s returned a non-unicode string.  Using the default input encoding.' % type(child).__name__)
@@ -179,14 +191,14 @@ class Renderable(object):
                 if func is not None:
                     val = func(StaticNode(child, val))
 
-                    # If a plain string is returned, we have no idea what 
+                    # If a plain string is returned, we have no idea what
                     # the encoding is, but we'll make a guess.
                     if type(val) is not unicode:
                         log.warning('The renderer for %s returned a non-unicode string.  Using the default input encoding.' % type(child).__name__)
                         val = unicode(val, child.config['files']['input-encoding'])
 
                 # Write the file content
-                codecs.open(filename, 'w', 
+                codecs.open(filename, 'w',
                             child.config['files']['output-encoding'],
                             errors=r.encodingErrors).write(val)
 
@@ -223,8 +235,8 @@ class Renderable(object):
         Return the relative URL of the object
 
         If the object actually creates a file, just the filename will
-        be returned (e.g. foo.html).  If the object is within a file, 
-        both the filename and the anchor will be returned 
+        be returned (e.g. foo.html).  If the object is within a file,
+        both the filename and the anchor will be returned
         (e.g. foo.html#bar).
 
         """
@@ -234,7 +246,7 @@ class Renderable(object):
         base = self.config['document']['base-url']
         if base and base.endswith('/'):
             base = base[:-1]
-        
+
         # If this generates a file, return that filename
         if self.filename:
             if base:
@@ -283,7 +295,7 @@ class Renderable(object):
             if not hasattr(self, 'config'):
                 return
 
-            level = getattr(self, 'splitlevel', 
+            level = getattr(self, 'splitlevel',
                             self.config['files']['split-level'])
 
             # If our level doesn't invoke a split, don't return a filename
@@ -312,12 +324,12 @@ class Renderer(dict):
     Base class for all renderers
 
     All renderers must act like a dictionary.  Each macro that is encountered
-    in a document must have a corresponding key in the renderer.  This 
+    in a document must have a corresponding key in the renderer.  This
     key points to a callable object which is called with the object to
     be rendered.
 
-    In addition to callable renderers, the renderer also handles image 
-    generation.  Images are generated when the output document type can 
+    In addition to callable renderers, the renderer also handles image
+    generation.  Images are generated when the output document type can
     not support the rendering of a macro.  One example of this is equations
     in HTML.
 
@@ -349,8 +361,8 @@ class Renderer(dict):
         self.newFilename = None
 
     def cacheFilenames(self, node):
-        """ 
-        Generate filenames in order 
+        """
+        Generate filenames in order
 
         Since filenames are generated on demand, in order to make the
         nodes have a filename that corresponds to its position in the document,
@@ -374,12 +386,12 @@ class Renderer(dict):
 
         Required Arguments:
         document -- the document object to render
-        postProcess -- a function that will be called with the content of 
+        postProcess -- a function that will be called with the content of
 
         """
         config = document.config
 
-        # If there are no keys, print a warning.  
+        # If there are no keys, print a warning.
         # This is most likely a problem.
         if not self.keys():
             log.warning('There are no keys in the renderer.  ' +
@@ -390,7 +402,7 @@ class Renderer(dict):
         Node.renderer = self
 
         # Create a filename generator
-        self.newFilename = Filenames(config['files'].get('filename', raw=True), 
+        self.newFilename = Filenames(config['files'].get('filename', raw=True),
                                      (config['files']['bad-chars'],
                                       config['files']['bad-chars-sub']),
                                      {'jobname':document.userdata.get('jobname', '')}, self.fileExtension)
@@ -402,19 +414,19 @@ class Renderer(dict):
         for name in names:
             if name == 'none':
                 break
-            try: 
+            try:
                 exec('from plasTeX.Imagers.%s import Imager' % name)
             except ImportError, msg:
                 log.warning("Could not load imager '%s' because '%s'" % (name, msg))
                 continue
-            
+
             self.imager = Imager(document, self.imageTypes)
-    
+
             # Make sure that this imager works on this machine
             if self.imager.verify():
                 log.info('Using the imager "%s".' % name)
                 break
- 
+
             self.imager = None
 
         # Still no imager? Just use the default.
@@ -436,19 +448,19 @@ class Renderer(dict):
         for name in names:
             if name == 'none':
                 break
-            try: 
+            try:
                 exec('from plasTeX.Imagers.%s import Imager' % name)
             except ImportError, msg:
                 log.warning("Could not load imager '%s' because '%s'" % (name, msg))
                 continue
-            
+
             self.vectorImager = Imager(document, self.vectorImageTypes)
-    
+
             # Make sure that this imager works on this machine
             if self.vectorImager.verify():
                 log.info('Using the vector imager "%s".' % name)
                 break
- 
+
             self.vectorImager = None
 
         # Still no vector imager? Just use the default.
@@ -480,7 +492,7 @@ class Renderer(dict):
         self.cleanup(document, self.files.values(), postProcess=postProcess)
 
         # Write out auxilliary information
-        pauxname = os.path.join(document.userdata.get('working-dir','.'), 
+        pauxname = os.path.join(document.userdata.get('working-dir','.'),
                                 '%s.paux' % document.userdata.get('jobname',''))
         rname = config['general']['renderer']
         document.context.persist(pauxname, rname)
@@ -493,34 +505,34 @@ class Renderer(dict):
         return s
 
     def cleanup(self, document, files, postProcess=None):
-        """ 
-        Cleanup method called at the end of rendering 
+        """
+        Cleanup method called at the end of rendering
 
         This method allows you to do arbitrary post-processing after
         all files have been rendered.
 
-        Note: While I greatly dislike post-processing, sometimes it's 
+        Note: While I greatly dislike post-processing, sometimes it's
               just easier...
 
         Required Arguments:
         document -- the document being rendered
         files -- the list of filenames that were generated
-       
+
         Optional Arguments:
-        postProcess -- a function that will be called on the content of 
+        postProcess -- a function that will be called on the content of
             each file.  It is called with the document object and a
-            unicode object with the content of each file.  
+            unicode object with the content of each file.
             It must return a unicode object.
 
         """
         if self.processFileContent is Renderer.processFileContent:
-            return 
+            return
 
         encoding = document.config['files']['output-encoding']
 
         for f in files:
             try:
-                s = codecs.open(str(f), 'r', encoding, 
+                s = codecs.open(str(f), 'r', encoding,
                                 errors=self.encodingErrors).read()
             except IOError, msg:
                 log.error(msg)
@@ -536,10 +548,10 @@ class Renderer(dict):
     def find(self, keys, default=None):
         """
         Locate a renderer given a list of possibilities
-  
+
         Required Arguments:
-        keys -- a list of strings containing the requested name of 
-            a renderer.  This list is traversed in order.  The first 
+        keys -- a list of strings containing the requested name of
+            a renderer.  This list is traversed in order.  The first
             renderer that is found is returned.
 
         Keyword Arguments:
@@ -566,15 +578,15 @@ class StaticNode(object):
     Object to assist in rendering files
 
     This object is used to wrap objects that need to have a layout
-    file wrapped around them.  The layout wrapper generally includes 
-    all of the navigation links, table of contents, etc.  
+    file wrapped around them.  The layout wrapper generally includes
+    all of the navigation links, table of contents, etc.
 
     This is simply a proxy object that returns the attributes of
     the given object.  The exceptions are __unicode__ and __str__
     which simply return the rendered string that was passed in.
     This allows you to use two templates: one that renders the content
-    and another that is wrapped around any node that generates a 
-    file.  Without this, you can easily run into infinite recursion 
+    and another that is wrapped around any node that generates a
+    file.  Without this, you can easily run into infinite recursion
     problems.
 
     """
@@ -583,7 +595,7 @@ class StaticNode(object):
         Initialize the static node
 
         Arguments:
-        obj -- the object that contains navigation and table of 
+        obj -- the object that contains navigation and table of
             contents information
         content -- the rendered object in a unicode string
 
@@ -604,27 +616,27 @@ class URL(unicode):
     def relativeTo(self, src):
         """
         Get the path of this URL relative to `src'
-    
+
         """
         if isinstance(src, Node):
             src = src.url
-    
+
         dest, src = os.path.normpath(str(self)), os.path.normpath(src)
         base = os.path.join(*(['a/'] * max(dest.count('/'), src.count('/'))))
         src = os.path.join(base, src).split('/')
         dest = os.path.join(base, dest).split('/')
-    
+
         same = 0
         for d, s in zip(dest, src):
             if d == s:
                 same += 1
                 continue
-            break 
-    
+            break
+
         dest, src = dest[same:], src[same:-1]
-    
+
         if src:
-            return type(self)(os.path.join(os.path.join(*(['..'] * len(src))), 
+            return type(self)(os.path.join(os.path.join(*(['..'] * len(src))),
                                            os.path.join(*dest)))
 
         return type(self)(os.path.join(*dest))

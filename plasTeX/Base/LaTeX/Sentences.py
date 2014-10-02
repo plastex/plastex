@@ -103,4 +103,10 @@ class emph(Command):
 
 class em(Environment):
     pass
+    
+class textsubscript(Command):
+     args = 'self'
+ 
+class textsuperscript(Command):
+    args = 'self'
 

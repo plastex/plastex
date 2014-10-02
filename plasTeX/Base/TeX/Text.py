@@ -194,6 +194,13 @@ class centerline(Command):
 class underbar(Command):
     args = 'self'
 
+class uppercase(Command):
+    args = 'argument:str'
+
+    def invoke(self, tex):
+        Command.invoke(self, tex)
+        self.attributes['argument'] = self.attributes['argument'].upper()
+
 class hang(Command):
     pass
 
