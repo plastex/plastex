@@ -34,7 +34,7 @@ def drop_tag(elem):
     parent[index:index + 1] = elem[:]
 
 def clean_para(tree, name):
-    for elem in tree.findall('//d:%s' % name, namespaces=xns):
+    for elem in tree.findall('.//d:%s' % name, namespaces=xns):
         e = elem.findall('d:para', namespaces=xns)
         if e:
             drop_tag(e[0])
