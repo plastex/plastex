@@ -510,7 +510,8 @@ type:xml
 <inlineequation>
   <inlinemediaobject remap="math">
     <imageobject role="math_images">
-      <imagedata role="math" tal:attributes="fileref self/image/url" />
+      <imagedata role="math" tal:condition="self/image/url" tal:attributes="fileref self/image/url" />
+      <imagedata role="math" tal:condition="not:self/image/url" fileref="dummy.png" />
     </imageobject>
     <textobject role="tex">
       <phrase tal:content="text self/source"></phrase>
@@ -524,7 +525,8 @@ name: displaymath equation  equation* eqnarray eqnarray* gather gather* \
 <informalequation>
   <mediaobject remap="math">
     <imageobject role="math_images">
-      <imagedata role="math" tal:attributes="fileref self/image/url" />
+      <imagedata role="math" tal:condition="self/image/url" tal:attributes="fileref self/image/url" />
+      <imagedata role="math" tal:condition="not:self/image/url" fileref="dummy.png" />
     </imageobject>
     <textobject role="tex">
       <phrase tal:content="text self/source"></phrase>
