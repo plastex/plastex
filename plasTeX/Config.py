@@ -48,8 +48,8 @@ def readconfig(file):
     config.read(file)
 
 general['config'] = StringOption(
-    """ 
-    Load additional configuration file 
+    """
+    Load additional configuration file
 
     This configuration file will be loaded during the processing of
     command-line options.  However, configuration files cannot override
@@ -101,7 +101,7 @@ def getstring(data):
             continue
         break
     return ''.join(s), ''.join(data)
-    
+
 
 def setlinks(data):
     """ Set links in the configuration """
@@ -175,6 +175,13 @@ files['split-level'] = IntegerOption(
     """ Highest section level that generates a new file """,
     options = '--split-level',
     default = 2,
+    category = 'files',
+)
+
+files['log'] = BooleanOption(
+    """ Log messages go to log file instead of console """,
+    options = '--log',
+    default = False,
     category = 'files',
 )
 
@@ -320,8 +327,8 @@ doc['base-url'] = StringOption(
 )
 
 doc['title'] = StringOption(
-    """ 
-    Title for the document 
+    """
+    Title for the document
 
     This option specifies a title to use instead of the title
     specified in the LaTeX document.

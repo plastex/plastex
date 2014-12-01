@@ -2,7 +2,7 @@
 
 import textwrap, types
 from logging import CRITICAL, DEBUG, INFO, Logger, StreamHandler, Formatter
-from logging import addLevelName, setLoggerClass
+from logging import addLevelName, setLoggerClass, FileHandler, Filter
 from plasTeX.Config import config as _config
 
 MAX_WIDTH = 75
@@ -46,22 +46,22 @@ class Logger(_Logger):
         if level is not None:
             self.setLevel(level)
 
-    def debug1(self, *args, **kwargs): 
+    def debug1(self, *args, **kwargs):
         return self.log(DEBUG1, *args, **kwargs)
 
-    def debug2(self, *args, **kwargs): 
+    def debug2(self, *args, **kwargs):
         return self.log(DEBUG2, *args, **kwargs)
 
-    def debug3(self, *args, **kwargs): 
+    def debug3(self, *args, **kwargs):
         return self.log(DEBUG3, *args, **kwargs)
 
-    def debug4(self, *args, **kwargs): 
+    def debug4(self, *args, **kwargs):
         return self.log(DEBUG4, *args, **kwargs)
 
-    def debug5(self, *args, **kwargs): 
+    def debug5(self, *args, **kwargs):
         return self.log(DEBUG5, *args, **kwargs)
 
-    def dot(self): 
+    def dot(self):
         return self.info('.')
 
 
@@ -108,13 +108,13 @@ class StreamHandler(_StreamHandler):
     def checkLastWrite(self):
         if StreamHandler.lastwrite == StatusHandler:
             self.stream.write('\n')
-            StreamHandler.currentpos = 0 
+            StreamHandler.currentpos = 0
 
     def checkPos(self, length):
         pos = StreamHandler.currentpos
         if pos and pos + length > MAX_WIDTH:
             self.stream.write('\n')
-            StreamHandler.currentpos = 0 
+            StreamHandler.currentpos = 0
         StreamHandler.currentpos += length
 
 
@@ -167,3 +167,23 @@ def disableLogging():
     """ Disable all logging """
     for logger in _loggers.values():
         logger.setLevel(CRITICAL)
+
+def fileLogging(fname):
+    """
+    Remove all StreamHandlers;
+    Add a single FileHandler (filename given as arg);
+    Add a filter to omit dots.
+
+    """
+    def dotfilter(record):
+        if record.msg.strip() != '.':
+            return True
+    logfilter = Filter()
+    logfilter.filter = dotfilter
+
+    fhandler = FileHandler(fname, 'w')
+    for logger in _loggers.values():
+        for handler in logger.handlers:
+            logger.removeHandler(handler)
+        logger.addHandler(fhandler)
+        logger.addFilter(logfilter)

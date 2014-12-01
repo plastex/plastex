@@ -5,7 +5,7 @@ TeX
 
 This module contains the facilities for parsing TeX and LaTeX source.
 The `TeX' class is an iterator interface to (La)TeX source.  Simply
-feed a `TeX' instance using the input method, then iterate over the 
+feed a `TeX' instance using the input method, then iterate over the
 expanded tokens through the standard Python iterator interface.
 
 Example:
@@ -22,7 +22,7 @@ from plasTeX import TeXDocument
 from plasTeX.Base.TeX.Primitives import MathShift
 from plasTeX import ParameterCommand, Macro
 from plasTeX import glue, muglue, mudimen, dimen, number
-from plasTeX.Logging import getLogger, disableLogging
+from plasTeX.Logging import getLogger, disableLogging, fileLogging
 
 # Only export the TeX class
 __all__ = ['TeX']
@@ -54,7 +54,7 @@ class TeX(object):
     """
     TeX Stream
 
-    This class is the central TeX engine that does all of the 
+    This class is the central TeX engine that does all of the
     parsing, invoking of macros, etc.
 
     """
@@ -148,8 +148,8 @@ class TeX(object):
         return self
 
     def endInput(self):
-        """ 
-        Pop the most recent input source from the stack 
+        """
+        Pop the most recent input source from the stack
 
         """
         if self.inputs:
@@ -223,8 +223,12 @@ class TeX(object):
         """ Turn off logging """
         disableLogging()
 
+    def fileLogging(self):
+        fname = '%s/%s.log' % (os.path.dirname(self.filename), self.jobname)
+        fileLogging(fname)
+
     def itertokens(self):
-        """ 
+        """
         Iterate over unexpanded tokens
 
         Returns:
@@ -256,7 +260,7 @@ class TeX(object):
                 break
 
     def iterchars(self):
-        """ 
+        """
         Iterate over input characters (untokenized)
 
         Returns:
@@ -281,8 +285,8 @@ class TeX(object):
                 break
 
     def __iter__(self):
-        """ 
-        Iterate over tokens while expanding them 
+        """
+        Iterate over tokens while expanding them
 
         Returns:
         generator that iterates through the expanded tokens
@@ -302,7 +306,7 @@ class TeX(object):
             # Token is null, ignore it
             if token is None:
                 continue
-                
+
             # Macro that has already been expanded
             elif token.nodeType == ELEMENT_NODE:
                 pass
@@ -392,8 +396,8 @@ class TeX(object):
 
 
     def parse(self, output=None):
-        """ 
-        Parse stream content until it is empty 
+        """
+        Parse stream content until it is empty
 
         Keyword Arguments:
         output -- object to put the content in.  This should be either
@@ -492,8 +496,8 @@ class TeX(object):
             return tokens
 
         grouptokens = [Token.CC_EGROUP, Token.CC_BGROUP]
-        textTokens = [Token.CC_LETTER, Token.CC_OTHER, 
-                      Token.CC_EGROUP, Token.CC_BGROUP, 
+        textTokens = [Token.CC_LETTER, Token.CC_OTHER,
+                      Token.CC_EGROUP, Token.CC_BGROUP,
                       Token.CC_SPACE]
 
         try: iter(tokens)
@@ -520,8 +524,8 @@ class TeX(object):
                 t.normalize(getattr(self.ownerDocument, 'charsubs', []))
                 return t
 
-        return (u''.join([x for x in tokens 
-                          if getattr(x, 'catcode', Token.CC_OTHER) 
+        return (u''.join([x for x in tokens
+                          if getattr(x, 'catcode', Token.CC_OTHER)
                              not in grouptokens])).strip()
 
     def processIfContent(self, which, debug=False):
@@ -529,9 +533,9 @@ class TeX(object):
         Process the requested portion of the `if' block
 
         Required Arguments:
-        which -- the case to return.  If this is a boolean, a value of 
+        which -- the case to return.  If this is a boolean, a value of
             `True' will return the first part of the `if' block.  If it
-            is `False', it will return the `else' portion.  If this is 
+            is `False', it will return the `else' portion.  If this is
             an integer, the `case' matching this integer will be returned.
 
         """
@@ -581,10 +585,10 @@ class TeX(object):
         """
         return self.readArgumentAndSource(*args, **kwargs)[0]
 
-    def readArgumentAndSource(self, spec=None, type=None, subtype=None, 
+    def readArgumentAndSource(self, spec=None, type=None, subtype=None,
                     delim=',', expanded=False, default=None, parentNode=None,
                     name=None, stripLeadingWhitespace=True):
-        """ 
+        """
         Get an argument and the TeX source that created it
 
         Optional Arguments:
@@ -593,7 +597,7 @@ class TeX(object):
             returned.  If it is a two-character string, a grouping
             delimited by those two characters is returned (i.e. '[]').
             If it is a single-character string, the stream is checked
-            to see if the next character is the one specified.  
+            to see if the next character is the one specified.
             In all cases, if the specified argument is not found,
             'None' is returned.
         type -- data type to cast the argument to.  New types can be
@@ -605,7 +609,7 @@ class TeX(object):
         subtype -- data type to use for elements of a list or dictionary
         delim -- item delimiter for list and dictionary types
         expanded -- boolean indicating whether the argument content
-            should be expanded or just returned as an unexpanded 
+            should be expanded or just returned as an unexpanded
             text string
         default -- value to return if the argument doesn't exist
         parentNode -- the node that the argument belongs to
@@ -620,7 +624,7 @@ class TeX(object):
         object of type `type` -- if `type` was specified
         list of tokens -- for all other arguments
 
-        The second argument is a string containing the TeX source 
+        The second argument is a string containing the TeX source
         for the argument.
 
         """
@@ -687,7 +691,7 @@ class TeX(object):
                     self.pushToken(t)
                     break
                 else:
-                    args.append(t) 
+                    args.append(t)
             else: pass
             ParameterCommand.enable()
             return args, self.source(args)
@@ -698,7 +702,7 @@ class TeX(object):
                 if t is None or t == '':
                     continue
                 if t.catcode == Token.CC_SPACE:
-                    break 
+                    break
                 toks.append(t)
             return self.expandTokens(toks, parentNode=parentNode), self.source(toks)
 
@@ -710,7 +714,7 @@ class TeX(object):
         try:
             # Set catcodes for this argument type
             try:
-                if isinstance(self.argtypes[type], (list,tuple)): 
+                if isinstance(self.argtypes[type], (list,tuple)):
                     for key, value in self.argtypes[type][1].items():
                         priorcodes[key] = self.ownerDocument.context.whichCode(key)
                         self.ownerDocument.context.catcode(key, value)
@@ -724,11 +728,11 @@ class TeX(object):
             # Get a single character argument
             elif len(spec) == 1:
                 toks, source = self.readCharacter(spec)
-    
+
             # Get an argument grouped by the given characters (e.g. [...], (...))
             elif len(spec) == 2:
                 toks, source = self.readGrouping(spec, expanded, parentNode=parentNode)
-    
+
             # This isn't a correct value
             else:
                 raise ValueError, 'Unrecognized specifier "%s"' % spec
@@ -736,7 +740,7 @@ class TeX(object):
         except Exception, msg:
             log.error('Error while reading argument "%s" of %s%s (%s)' % \
                           (name, parentNode.nodeName, self.lineInfo, msg))
-            raise 
+            raise
 
         # Set catcodes back to original values
         for key, value in priorcodes.items():
@@ -809,7 +813,7 @@ class TeX(object):
                 toks = self.expandTokens(toks, parentNode=parentNode)
                 if isgroup:
                     s = self.source(toks)
-                    source = u'%s%s%s' % (source[0].source, s, 
+                    source = u'%s%s%s' % (source[0].source, s,
                                           source[-1].source)
                 else:
                     source = self.source(toks)
@@ -915,14 +919,14 @@ class TeX(object):
 
         return result
 
-    def cast(self, tokens, dtype, subtype=None, delim=',', 
+    def cast(self, tokens, dtype, subtype=None, delim=',',
                    parentNode=None, name=None):
-        """ 
+        """
         Cast the tokens to the appropriate type
 
         This method is used to convert tokens into Python objects.
         This happens when the user has specified that a macro argument
-        should be a dictionary (e.g. foo:dict), 
+        should be a dictionary (e.g. foo:dict),
         a list (e.g. foo:list), etc.
 
         Required Arguments:
@@ -955,10 +959,10 @@ class TeX(object):
 
         # Casting to specified type
         else:
-            tokens = argtypes[dtype](tokens, subtype=subtype, 
+            tokens = argtypes[dtype](tokens, subtype=subtype,
                      delim=delim, parentNode=parentNode, name=name)
 
-        # Set parent node as needed 
+        # Set parent node as needed
         if getattr(tokens,'nodeType',None) == Macro.DOCUMENT_FRAGMENT_NODE:
             tokens.parentNode = parentNode
 
@@ -1040,7 +1044,7 @@ class TeX(object):
         ref = self.castString(tokens, **kwargs)
         self.ownerDocument.context.ref(kwargs['parentNode'], kwargs['name'], ref)
         return ref
-        
+
     def castNumber(self, tokens, **kwargs):
         """
         Join the tokens into a string and turn the result into an integer
@@ -1062,7 +1066,7 @@ class TeX(object):
 #       try: return number(self.castString(tokens, **kwargs))
 #       except: return number(0)
         return self.readInternalType(tokens, self.readNumber)
-        
+
     def castDecimal(self, tokens, **kwargs):
         """
         Join the tokens into a string and turn the result into a float
@@ -1141,7 +1145,7 @@ class TeX(object):
 #       try: return glue(self.castString(tokens, **kwargs))
 #       except: return glue(0)
         return self.readInternalType(tokens, self.readGlue)
- 
+
     def castMuGlue(self, tokens, **kwargs):
         """
         Jain the tokens into a string and convert the result into a `MuGlue`
@@ -1160,7 +1164,7 @@ class TeX(object):
 #       try: return muglue(self.castString(tokens, **kwargs))
 #       except: return muglue(0)
         return self.readInternalType(tokens, self.readMuGlue)
-                             
+
     def castList(self, tokens, type=list, **kwargs):
         """
         Parse items delimited by the given delimiter into a list
@@ -1209,7 +1213,7 @@ class TeX(object):
                 listarg[-1].append(current)
 
             else:
-                listarg[-1].append(current) 
+                listarg[-1].append(current)
 
         return type([self.normalize(self.cast(x, subtype)) for x in listarg])
 
@@ -1232,7 +1236,7 @@ class TeX(object):
         self.readArgument()
         self.cast()
 
-        """      
+        """
         delim = kwargs.get('delim')
         if delim is None:
             delim = ','
@@ -1300,7 +1304,7 @@ class TeX(object):
         return dictarg
 
     def kpsewhich(self, name):
-        """ 
+        """
         Locate the given file using kpsewhich
 
         Required Arguments:
@@ -1358,12 +1362,12 @@ class TeX(object):
                 continue
             elif t.catcode != Token.CC_SPACE:
                 self.pushToken(t)
-                break 
+                break
             tokens.append(t)
         return tokens
 
     def readKeyword(self, words, optspace=True):
-        """ 
+        """
         Read keyword from the stream
 
         Required Arguments:
@@ -1389,7 +1393,7 @@ class TeX(object):
                 if t.upper() == letters[0]:
                     letters.pop(0)
                     if not letters:
-                        if optspace: 
+                        if optspace:
                             self.readOneOptionalSpace()
                         return word
                 else:
@@ -1478,18 +1482,18 @@ class TeX(object):
         true = self.readKeyword(['true'])
         unit = self.readKeyword(units)
         if unit is None:
-            log.warning('Missing unit (expecting %s)%s, treating as `%s`', 
+            log.warning('Missing unit (expecting %s)%s, treating as `%s`',
                         ', '.join(units), self.lineInfo, units[0])
             unit = units[0]
         ParameterCommand.enable()
         return dimen('1%s' % unit)
 
     def readOptionalSigns(self):
-        """ 
-        Read optional + and - signs 
+        """
+        Read optional + and - signs
 
         Returns:
-        +1 or -1 
+        +1 or -1
 
         """
         sign = 1
@@ -1528,11 +1532,11 @@ class TeX(object):
 
         Required Arguments:
         chars -- sequence of characters that should be accepted
-        
+
         Keyword Arguments:
-        optspace -- boolean indicating if an optional space should 
+        optspace -- boolean indicating if an optional space should
             be absorbed after the sequence of characters
-        default -- string to return if none of the characters in 
+        default -- string to return if none of the characters in
             the given set are found
 
         Returns:
@@ -1544,7 +1548,7 @@ class TeX(object):
         for t in self:
             if t.nodeType == Macro.ELEMENT_NODE:
                 self.pushToken(t)
-                break 
+                break
             if t not in chars:
                 if optspace and t.catcode == Token.CC_SPACE:
                     pass
@@ -1631,7 +1635,7 @@ class TeX(object):
         if self.readKeyword(['plus']):
             return self.readDimen(units=dimen.units+['filll','fill','fil'])
         return None
-            
+
     def readShrink(self):
         """ Read a shrink parameter from the stream """
         if self.readKeyword(['minus']):
@@ -1661,7 +1665,7 @@ class TeX(object):
         if self.readKeyword(['plus']):
             return self.readDimen(units=mudimen.units+['filll','fill','fil'])
         return None
-            
+
     def readMuShrink(self):
         """ Read a mushrink parameter from the stream """
         if self.readKeyword(['minus']):
