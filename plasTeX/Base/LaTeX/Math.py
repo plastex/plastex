@@ -138,17 +138,19 @@ class eqnarray(EqnarrayStar):
             return res
         res[1].ref = self.ref
         return res
-
 class nonumber(Command):
 
     def invoke(self, tex):
         self.ownerDocument.context.counters['equation'].addtocounter(-1)
 
     def digest(self, tokens):
-        row = self.parentNode
-        while not isinstance(row, Array.ArrayRow):
-            row = row.parentNode
-        row.ref = None
+        try:
+            row = self.parentNode
+            while not isinstance(row, Array.ArrayRow):
+                row = row.parentNode
+            row.ref = None
+        except AttributeError as e:
+            print 'problem encountered %s' % e
 
 class notag(nonumber):
     pass
