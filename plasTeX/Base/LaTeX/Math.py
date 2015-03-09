@@ -97,6 +97,9 @@ class equation(MathEnvironment):
     blockType = True
     counter = 'equation'
 
+    class nonumber(Command):
+        pass
+
 class EqnarrayStar(Array):
     macroName = 'eqnarray*'
     blockType = True
@@ -144,13 +147,10 @@ class nonumber(Command):
         self.ownerDocument.context.counters['equation'].addtocounter(-1)
 
     def digest(self, tokens):
-        try:
-            row = self.parentNode
-            while not isinstance(row, Array.ArrayRow):
-                row = row.parentNode
-            row.ref = None
-        except AttributeError as e:
-            print 'problem encountered %s' % e
+        row = self.parentNode
+        while not isinstance(row, Array.ArrayRow):
+            row = row.parentNode
+        row.ref = None
 
 class notag(nonumber):
     pass
