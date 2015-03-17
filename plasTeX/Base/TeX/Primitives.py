@@ -370,6 +370,12 @@ class chardef(Command):
     def invoke(self, tex):
         a = self.parse(tex)
         self.ownerDocument.context.chardef(a['command'], a['num'])
+
+class mathchardef(Command):
+    args = 'command:cs = num:Number'
+    def invoke(self, tex):
+        a = self.parse(tex)
+        self.ownerDocument.context.mathchardef(a['command'], a['num'])
       
 class NameDef(Command):
     macroName = '@namedef'

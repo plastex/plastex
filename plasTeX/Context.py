@@ -1075,7 +1075,23 @@ class Context(object):
         """
         name = str(name)
         # Generate a new chardef class
-        macrolog.debug('creating chardef %s', name)
+        macrolog.debug('creating chardef (8-bit) %s', name)
         newclass = new.classobj(name, (plasTeX.Command,), 
                                 {'unicode':chr(num)})
+        self.addGlobal(name, newclass)
+
+    def mathchardef(self, name, num):
+        """ 
+        Create a \\mathchardef
+
+        Required Arguments:
+        name -- name of command to create
+        num -- character number to use
+      
+        """
+        name = str(name)
+        # Generate a new chardef class
+        macrolog.debug('creating mathchardef (16-bit) %s', name)
+        newclass = new.classobj(name, (plasTeX.Command,), 
+                                {'unicode':unichr(num)})
         self.addGlobal(name, newclass)
