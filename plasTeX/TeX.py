@@ -114,10 +114,20 @@ class TeX(object):
 
             # Filename
             if isinstance(file, basestring):
+                '''
+                if config has no files structure
+                or encoding is not specified
+                or encoding is utf-8, make encoding utf_8_sig.
+                otherwise, use the specified encoding.
+                '''
                 try:
-                    encoding = self.ownerDocument.config['files']['input-encoding']
-                except:
-                    encoding = 'utf-8'
+                    encoding = self.ownerDocument.config['files'].get('input-encoding', 'utf_8_sig')
+                except (KeyError, AttributeError):
+                    encoding = 'utf_8_sig'
+
+                if encoding in ['utf8', 'utf-8', 'utf_8']:
+                    encoding = 'utf_8_sig'
+
                 self.input(codecs.open(self.kpsewhich(file), 'r', encoding, 'replace'))
                 self.jobname = os.path.basename(os.path.splitext(file)[0])
 
