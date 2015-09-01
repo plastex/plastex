@@ -94,7 +94,7 @@ def _format(self, file):
             line = re.sub('/\*@[^@]*@\*/', '', line)
 
             # Add the just-read line to the listing.
-            self.plain_listing += '\n' + line
+            self.plain_listing += line
 
     # Create a syntax highlighted XHTML version of the file using Pygments
     if pygments is not None:
