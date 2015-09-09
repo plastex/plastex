@@ -59,7 +59,7 @@ class verbatim(Environment):
                         res = [end]
                     tex.pushTokens(res)
                     break
-            elif len(tokens) >= endlength2:
+            if len(tokens) >= endlength2:
                 if tokens[-endlength2:] == endpattern2:
                     tokens = tokens[:-endlength2]
                     self.ownerDocument.context.pop(self)
