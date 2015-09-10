@@ -31,8 +31,9 @@ class verbatim(Environment):
 
         # Get the name of the currently expanding environment
         name = self.nodeName
-        if self.ownerDocument.context.currenvir is not None:
-            name = self.ownerDocument.context.currenvir
+        if self.macroMode != Environment.MODE_NONE:
+            if self.ownerDocument.context.currenvir is not None:
+                name = self.ownerDocument.context.currenvir
 
         # If we were invoke by a \begin{...} look for an \end{...}
         endpattern = list(r'%send%s%s%s' % (escape, bgroup, name, egroup))
