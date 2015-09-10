@@ -76,32 +76,22 @@ class MathShift(Command):
 
         """
         inEnv = type(self).inEnv
-        math = self.ownerDocument.createElement('math')
-        displaymath = self.ownerDocument.createElement('displaymath')
+
+        t = next(tex.itertokens())
+        if t.catcode == Token.CC_MATHSHIFT:
+            current = self.ownerDocument.createElement('displaymath')
+        else:
+            current = self.ownerDocument.createElement('math')
+            tex.pushToken(t)
 
         # See if this is the end of the environment
-        if inEnv and inEnv[-1] is not None:
-            env = inEnv.pop()
-            if type(env) is type(displaymath):
-                for t in tex.itertokens():
-                    break
-                displaymath.macroMode = Command.MODE_END
-                self.ownerDocument.context.pop(displaymath)
-                return [displaymath]
-            else:
-                math.macroMode = Command.MODE_END
-                self.ownerDocument.context.pop(math)
-                return [math]
+        if inEnv and inEnv[-1] is not None and type(inEnv[-1]) is type(current):
+            inEnv.pop()
+            current.macroMode = Command.MODE_END
+            self.ownerDocument.context.pop(current)
+            return [current]
 
-        for t in tex.itertokens():
-            if t.catcode == Token.CC_MATHSHIFT:
-                inEnv.append(displaymath)
-            else:
-                inEnv.append(math)
-                tex.pushToken(t)
-            break
-
-        current = inEnv[-1]
+        inEnv.append(current)
         mathshiftlog.debug('%s (%s)' % (current.tagName, id(current)))
         self.ownerDocument.context.push(current)
 
