@@ -1581,6 +1581,7 @@ class TeX(object):
         ParameterCommand.disable()
         num = None
         sign = self.readOptionalSigns()
+        t = None
         for t in self:
             # internal/coerced integers
             if t.nodeType == Macro.ELEMENT_NODE:
