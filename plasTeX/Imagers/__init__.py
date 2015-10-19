@@ -113,16 +113,16 @@ class Dimension(float):
         return '%spx' % self.format(self)
     @property
     def mm(self): 
-        return '%smm' % self.format(self.cm * 10.0)
+        return '%smm' % self.format(self / 72.0 * 25.4)
     @property
     def inch(self): 
-        return '%sin' % self.format(self.pt / 72.0)
+        return '%sin' % self.format(self / 72.0)
     @property
     def cm(self): 
-        return '%scm' % self.format(self.inch * 2.54)
+        return '%scm' % self.format(self / 72.0 * 2.54)
     @property
     def pc(self): 
-        return '%spc' % self.format(self.pt / 12.0)
+        return '%spc' % self.format(self / 12.0)
 
     def __getattribute__(self, name):
         if name in ['in']:
