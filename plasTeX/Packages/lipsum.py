@@ -25,7 +25,7 @@ class lipsum(Base.Command):
         if not paras:
             first, last = lipsumdefault
         elif paras.count('-'):
-            first,last = map(int,paras.split('-'))
+            first,last = list(map(int,paras.split('-')))
         else:
             first = last = int(paras)
 

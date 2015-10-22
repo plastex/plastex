@@ -22,10 +22,10 @@ class cachedproperty(object):
         if obj is None:
             return self
         try: 
-            return getattr(obj, '@%s' % self._func.func_name)
+            return getattr(obj, '@%s' % self._func.__name__)
         except AttributeError:
             result = self._func(obj)
-            setattr(obj, '@%s' % self._func.func_name, result)
+            setattr(obj, '@%s' % self._func.__name__, result)
             return result
 
 
@@ -258,13 +258,13 @@ class SectionUtils(object):
 
         # Get navigation info from the linkTypes
         navinfo = self.ownerDocument.userdata.get('links', {})
-        for key, value in navinfo.items():
+        for key, value in list(navinfo.items()):
             nav[key] = value
 
         # Get user-defined links
         links = {}
-        if self.config.has_key('links'):
-            for key in self.config['links'].keys():
+        if 'links' in self.config:
+            for key in list(self.config['links'].keys()):
                 if '-' not in key:
                     continue
                 newkey, type = key.strip().split('-',1)
@@ -273,7 +273,7 @@ class SectionUtils(object):
                 links[newkey][type] = self.config['links'][key]
 
         # Set links in nav object
-        for key, value in links.items():
+        for key, value in list(links.items()):
             if key not in nav or nav[key] is None:
                 nav[key] = value
 

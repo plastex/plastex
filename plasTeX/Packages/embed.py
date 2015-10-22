@@ -13,9 +13,9 @@ document as-is.
 
 \newif\ifplastex\plastexfalse
 \ifplastex
-    \usepackage{embed}
+    \\usepackage{embed}
 \else
-    \usepackage{comment}\excludecomment{HTML}
+    \\usepackage{comment}\excludecomment{HTML}
     \def\html#1{\def\@html##1#1{}\@html}
 \fi
 
@@ -45,8 +45,8 @@ class HTML(verbatim):
     
     def digest(self, tokens):
         verbatim.digest(self, tokens)
-        self.unicode = Text(''.join(self))
-        self.unicode.isMarkup = True
+        self.str = Text(''.join(self))
+        self.str.isMarkup = True
         return []
     
 class XHTML(HTML):
@@ -57,8 +57,8 @@ class html(verb):
     
     def digest(self, tokens):
         verb.digest(self, tokens)
-        self.unicode = Text(''.join(self))
-        self.unicode.isMarkup = True
+        self.str = Text(''.join(self))
+        self.str.isMarkup = True
         return []
     
 class xhtml(html):

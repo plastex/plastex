@@ -3,7 +3,7 @@
 import os, re
 from plasTeX import Command
 
-from graphics import DeclareGraphicsExtensions, graphicspath
+from .graphics import DeclareGraphicsExtensions, graphicspath
 
 class includegraphics(Command):
     args = '* [ options:dict ] file:str'

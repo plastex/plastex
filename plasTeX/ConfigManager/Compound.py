@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 
 import re
-from Generic import GenericArgument
-from String import StringOption
+from .Generic import GenericArgument
+from .String import StringOption
 from plasTeX.ConfigManager import GetoptError
+import collections
 
 
 class UnknownCompoundGroup(GetoptError):
-    """ Exception for an unknown grouping character used for a compound """  
+    """ Exception for an unknown grouping character used for a compound """
     def __init__(self, msg=''):
         GetoptError.__init__(self, msg, '')
 
@@ -32,7 +33,7 @@ class CompoundParser:
       begin = args[0].strip()[0]
       try:
           end = groups[args[0].strip()[0]]
-      except KeyError, info:
+      except KeyError as info:
           name = self.name
           if self.actual: name = self.actual
           raise UnknownCompoundGroup(
@@ -55,7 +56,7 @@ class CompoundParser:
           if ' ' in item:
               item = "'%s'" % item
           output.append(item)
-      
+
       value = '%s %s %s' % (begin, ' '.join(output), end)
 
       return value, args
@@ -87,7 +88,7 @@ class CompoundOption(CompoundParser, StringOption):
           return len(self.data)
 
    def __iadd__(self, other):
-      if callable(self.callback):
+      if isinstance(self.callback, collections.Callable):
          other = self.callback(self.cast(other))
 
       if self.data is None:

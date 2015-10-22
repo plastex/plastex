@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from Generic import GenericArgument
-from Boolean import BooleanOption
+from .Generic import GenericArgument
+from .Boolean import BooleanOption
 from plasTeX.ConfigManager import InvalidOptionError, COMMANDLINE
 
 class CountedOption(BooleanOption):
@@ -11,7 +11,7 @@ class CountedOption(BooleanOption):
    This option is just like a boolean option except that the value
    of the option is the number of times that the option has been
    specified.  This is commonly used to set a verbosity or debugging
-   level.  
+   level.
 
    """
 

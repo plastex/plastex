@@ -8,7 +8,7 @@ C.11.3 Bibliography and Citation (p208)
 import plasTeX, codecs
 from plasTeX.Base.LaTeX.Sectioning import chapter, section
 from plasTeX import Command, Environment
-from Lists import List
+from .Lists import List
 
 log = plasTeX.Logging.getLogger()
 
@@ -27,7 +27,7 @@ class bibliography(chapter):
         try:
             file = tex.kpsewhich(tex.jobname+'.bbl')
             tex.input(codecs.open(file, 'r', self.ownerDocument.config['files']['input-encoding']))
-        except OSError, msg:
+        except OSError as msg:
             log.warning(msg)
 
 class bibliographystyle(Command):
@@ -48,12 +48,12 @@ class thebibliography(List):
             bibitems = doc.userdata.getPath('bibliography/bibitems', {})
             bibitems[a['key']] = self
             doc.userdata.setPath('bibliography/bibitems', bibitems)
-            self.ref = str(len([x for x in bibitems.values() 
+            self.ref = str(len([x for x in list(bibitems.values()) 
                                   if not x.attributes['label']]))
             key = a['key']
             label = a.get('label')
             bibcites = doc.userdata.getPath('bibliography/bibcites', {})
-            if not bibcites.has_key(key):
+            if key not in bibcites:
                 if label is None:
                     label = doc.createDocumentFragment()
                     label.extend(self.ref)

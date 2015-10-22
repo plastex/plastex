@@ -9,10 +9,10 @@ import string, os
 from plasTeX.Tokenizer import Token, EscapeSequence
 from plasTeX import Command, Environment, IgnoreCommand, encoding
 from plasTeX.Logging import getLogger
-from Sectioning import SectionUtils
+from .Sectioning import SectionUtils
 
 try:
-    from pyuca import Collator
+    from .pyuca import Collator
     collator = Collator(os.path.join(os.path.dirname(__file__), 'allkeys.txt')).sort_key
 except ImportError:
     collator = lambda x: x.lower()
@@ -171,8 +171,8 @@ class IndexUtils(object):
             # See how many levels we need to add/subtract between this one 
             # and the previous
             common = 0
-            for prevkey, itemkey in zip(zip(prev.sortkey, prev.key), 
-                                        zip(item.sortkey, item.key)):
+            for prevkey, itemkey in zip(list(zip(prev.sortkey, prev.key)), 
+                                        list(zip(item.sortkey, item.key))):
                 if prevkey == itemkey:
                     common += 1
                     continue
@@ -240,7 +240,7 @@ class IndexDestination(object):
         return getattr(self._cr_node, name)
     
     def __unicode__(self):
-        return unicode(self._cr_node)
+        return str(self._cr_node)
 
 class theindex(IndexUtils, Environment, SectionUtils):
     blockType = True
@@ -398,12 +398,12 @@ class IndexEntry(object):
         return not(self.see) and not(self.seealso)
 
     def __cmp__(self, other):
-        result = cmp(zip([collator(x) for x in self.sortkey if isinstance(x, basestring)], 
+        result = cmp(list(zip([collator(x) for x in self.sortkey if isinstance(x, str)], 
                          [collator(x.textContent) for x in self.key], 
-                         self.key), 
-                     zip([collator(x) for x in other.sortkey if isinstance(x, basestring)], 
+                         self.key)), 
+                     list(zip([collator(x) for x in other.sortkey if isinstance(x, str)], 
                          [collator(x.textContent) for x in other.key], 
-                         other.key))
+                         other.key)))
         if result == 0 and len(self.key) != len(other.key):
             return cmp(len(self.key), len(other.key))
         return result

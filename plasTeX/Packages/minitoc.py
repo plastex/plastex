@@ -201,31 +201,31 @@ class mtcaddsection(Command):
 #
 
 class mtctitle(Command):
-    unicode = 'Contents'
+    str = 'Contents'
 
 class mlftitle(Command):
-    unicode = 'Figures'
+    str = 'Figures'
 
 class mlttitle(Command):
-    unicode = 'Tables'
+    str = 'Tables'
 
 class ptctitle(Command):
-    unicode = 'Table of Contents'
+    str = 'Table of Contents'
 
 class plftitle(Command):
-    unicode = 'List of Figures'
+    str = 'List of Figures'
 
 class plttitle(Command):
-    unicode = 'List of Tables'
+    str = 'List of Tables'
 
 class stctitle(Command):
-    unicode = 'Contents'
+    str = 'Contents'
 
 class slftitle(Command):
-    unicode = 'Figures'
+    str = 'Figures'
 
 class slttitle(Command):
-    unicode = 'Tables'
+    str = 'Tables'
 
 class mtcsettitle(Command):
     args = 'which:str title'

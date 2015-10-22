@@ -22,7 +22,7 @@ class PackageLoader(Command):
     def load(self, tex, file, options={}):
         try:
             self.ownerDocument.context.loadPackage(tex, file+self.extension, options)
-        except Exception, msg:
+        except Exception as msg:
             log.error('Could not load package "%s": %s' % (file, msg)) 
 
 #
@@ -158,7 +158,7 @@ class title(Command):
     args = '[ toc ] self'
     def invoke(self, tex):
         Command.invoke(self, tex)
-        if not self.ownerDocument.userdata.has_key('title'):
+        if 'title' not in self.ownerDocument.userdata:
             self.ownerDocument.userdata['title'] = self
 
 class author(Command):

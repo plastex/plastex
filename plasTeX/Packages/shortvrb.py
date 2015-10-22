@@ -9,17 +9,17 @@ class MakeShortVerb(Command):
     def invoke(self, tex):
         # Parse arguments
         res = Command.invoke(self, tex)
-        # Get the specified character from the command sequence in 
+        # Get the specified character from the command sequence in
         # the `char` attribute
         char = str(self.attributes['char'].macroName)
         # Set the specified character as active
         self.ownerDocument.context.catcode(char, Token.CC_ACTIVE)
         # Create a new macro for the active character that calls _ShortVerb
-        newclass = new.classobj('active::%s' % char, (_ShortVerb,),{})
+        newclass = type('active::%s' % char, (_ShortVerb,),{})
         # Add the new macro to the global namespace
-        self.ownerDocument.context['active::%s' % char] = newclass        
+        self.ownerDocument.context['active::%s' % char] = newclass
         return res
-        
+
 class _ShortVerb(Command):
     """ Command to handle short verbatims """
     def invoke(self, tex):

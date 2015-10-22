@@ -11,7 +11,7 @@ import os
 import sgmllib
 import zipfile
 #
-import templates
+from . import templates
 
 NCX_DOCTYPE = '''<!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN"
         "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">'''
@@ -243,12 +243,12 @@ class EpubRenderer(XHTMLRenderer):
         def addEntry(entry):
             entryList = list()
             for e in entry.fulltableofcontents:
-                title = u'%s' % unicode(e.tocEntry.textContent)
+                title = '%s' % str(e.tocEntry.textContent)
                 if title == 'Index':
                     break
                 tocDict = {'chapter': document.userdata.get('jobname','index'),
                             'entry':title,
-                            'url': u'%s' % unicode(e.url), }
+                            'url': '%s' % str(e.url), }
                 tocDict['subs'] = addEntry(e)
                 entryList.append(tocDict)
             return entryList

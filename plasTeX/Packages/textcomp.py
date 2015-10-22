@@ -4,97 +4,97 @@ from plasTeX import Command
 from plasTeX.Base.LaTeX import Accents
 
 class textonequarter(Command):
-    unicode = u'\u00BC'
+    str = '\u00BC'
 
 class textonehalf(Command):
-    unicode = u'\u00BD'
+    str = '\u00BD'
 
 class textthreequarters(Command):
-    unicode = u'\u00BE'
+    str = '\u00BE'
 
 class textzerooldstyle(Command):
-    unicode = '0'
+    str = '0'
 
 class textoneoldstyle(Command):
-    unicode = '1'
+    str = '1'
 
 class texttwooldstyle(Command):
-    unicode = '2'
+    str = '2'
 
 class textthreeoldstyle(Command):
-    unicode = '3'
+    str = '3'
 
 class textfouroldstyle(Command):
-    unicode = '4'
+    str = '4'
 
 class textfiveoldstyle(Command):
-    unicode = '5'
+    str = '5'
 
 class textsixoldstyle(Command):
-    unicode = '6'
+    str = '6'
 
 class textsevenoldstyle(Command):
-    unicode = '7'
+    str = '7'
 
 class texteightoldstyle(Command):
-    unicode = '8'
+    str = '8'
 
 class textnineoldstyle(Command):
-    unicode = '9'
+    str = '9'
 
 class textflorin(Command):
-    unicode = u'\u0192'
+    str = '\u0192'
 
 class textyen(Command):
-    unicode = u'\u00a5'
+    str = '\u00a5'
 
 class textwon(Command):
-    unicode = u'\u20a9'
+    str = '\u20a9'
 
 class textnaira(Command):
-    unicode = u'\u20a6'
+    str = '\u20a6'
 
 class textpeso(Command):
-    unicode = u'\u20b1'
+    str = '\u20b1'
 
 class textborn(Command):
-    unicode = u'\u2605'
+    str = '\u2605'
 
 class textdied(Command):
-    unicode = u'\u2020'
+    str = '\u2020'
 
 class textmarried(Command):
-    unicode = u'\u26ad'
+    str = '\u26ad'
 
 class textdivorced(Command):
-    unicode = u'\u26ae'
+    str = '\u26ae'
 
 class textcelsius(Command):
-    unicode = u'\u00b0C'
+    str = '\u00b0C'
 
 class textopenbullet(Command):
-    unicode = u'\u25e6'
+    str = '\u25e6'
 
 class textdollaroldstyle(Command):
-    unicode = '$'
+    str = '$'
 
 class textsterling(Command):
-    unicode = u'\u00a3'
+    str = '\u00a3'
 
 class textlira(Command):
-    unicode = u'\u20a4'
+    str = '\u20a4'
 
 class textguarani(Command):
-    unicode = u'\u20b2'
+    str = '\u20b2'
 
 class texteuro(Command):
-    unicode = u'\u20ac'
+    str = '\u20ac'
 
 class textcentoldstyle(Command):
-    unicode = u'\u00a2'
+    str = '\u00a2'
 
 class textestimated(Command):
-    unicode = u'\u212e'
+    str = '\u212e'
 
 class newtie(Accents.t):
     macroName = None

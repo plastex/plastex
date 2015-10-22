@@ -5,7 +5,7 @@ This package is dynamically generated.  It loads data from the ent.xml file.
 
 """
 
-import re, new, os, Accents, Characters
+import re, os, Accents, Characters
 from xml.parsers import expat
 from plasTeX import Command
 
@@ -34,7 +34,7 @@ class EntityParser(object):
         self.parser = expat.ParserCreate()
         self.parser.StartElementHandler = self.start_element
         self.parser.CharacterDataHandler = self.char_data
-        self.unicode = None
+        self.str = None
         self.inseq = False
         self.defined = {}
 
@@ -44,16 +44,16 @@ class EntityParser(object):
 
     def start_element(self, name, attrs):
         if name == 'char':
-            self.unicode = None
-        elif name == 'unicode':
-            self.unicode = int('0x%s' % attrs['value'], 16)
+            self.str = None
+        elif name == 'str':
+            self.str = int('0x%s' % attrs['value'], 16)
         elif name in ['seq','mathseq']:
             self.inseq = True
         else:
             self.inseq = False
-        
+
     def char_data(self, data):
-        if self.unicode is None:
+        if self.str is None:
             self.inseq = False
             return
 
@@ -65,23 +65,23 @@ class EntityParser(object):
         if m:
             name = str(m.group(1)).replace('\\','\\\\')
             if name not in self.defined:
-                g[name+'_'] = new.classobj(name+'_', (Command,), 
-                                          {'unicode':unichr(self.unicode), 
+                g[name+'_'] = type(name+'_', (Command,),
+                                          {'str':chr(self.str),
                                            'macroName':name})
                 self.defined[name] = True
-    
+
         # Wingdings
         m = re.match(r'^\\ding\{(\d+)\}$', data)
         if m:
             int(m.group(1))
-            Characters.ding.values[int(m.group(1))] = unichr(self.unicode)
-    
+            Characters.ding.values[int(m.group(1))] = chr(self.str)
+
         # Accented characters
-        m = re.match(r'^(\\(%s)\{([^\}])\})' % 
-                      '|'.join(self.accentmap.keys()), data)
+        m = re.match(r'^(\\(%s)\{([^\}])\})' %
+                      '|'.join(list(self.accentmap.keys())), data)
         if m and m.group(1) not in self.defined:
             accent = self.accentmap[m.group(2)]
-            accent.chars[m.group(3)] = unichr(self.unicode)
+            accent.chars[m.group(3)] = chr(self.str)
             self.defined[m.group(1)] = True
 
         self.inseq = False

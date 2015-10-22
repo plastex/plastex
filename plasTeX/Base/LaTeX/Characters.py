@@ -12,167 +12,167 @@ class ding(Command):
     args = 'self'
     values = {}
     @property
-    def unicode(self):
+    def str(self):
         if int(self.textContent.strip()) in type(self).values:
             return type(self).values[int(self.textContent)]
 
 class textogonekcentered(Command):
-    unicode = unichr(731)
+    str = chr(731)
 
 class textperthousand(Command):
-    unicode = unichr(8240)
+    str = chr(8240)
 
 class textpertenthousand(Command):
-    unicode = unichr(8241)
+    str = chr(8241)
 
 class textasciicircum(Command):
-    unicode = '^'
+    str = '^'
 
 class textasciitilde(Command):
-    unicode = '~'
+    str = '~'
 
 class textbackslash(Command):
-    unicode = '\\'
+    str = '\\'
 
 class textbar(Command):
-    unicode = '|'
+    str = '|'
 
 class textbraceleft(Command):
-    unicode = '{'
+    str = '{'
 
 class textbraceright(Command):
-    unicode = '}'
+    str = '}'
 
 class textcompwordmark(Command): pass
 
 class textdollar(Command):
-    unicode = '$'
+    str = '$'
 
 class textemdash(Command):
-    unicode = unichr(8212)
+    str = chr(8212)
 
 class textendash(Command):
-    unicode = unichr(8211)
+    str = chr(8211)
 
 class textexclamdown(Command):
-    unicode = unichr(161)
+    str = chr(161)
 
 class textgreater(Command):
-    unicode = '>'
+    str = '>'
 
 class textless(Command):
-    unicode = '<'
+    str = '<'
 
 class textquestiondown(Command):
-    unicode = unichr(191)
+    str = chr(191)
 
 class textquotedblleft(Command):
-    unicode = unichr(8220)
+    str = chr(8220)
 
 class textquotedblright(Command):
-    unicode = unichr(8221)
+    str = chr(8221)
 
 class textquotedbl(Command):
-    unicode = '"'
+    str = '"'
 
 class textquoteright(Command):
-    unicode = unichr(8217)
+    str = chr(8217)
 
 class textquoteleft(Command):
-    unicode = unichr(8216)
+    str = chr(8216)
 
 class textsection(Command):
-    unicode = unichr(167)
+    str = chr(167)
 
 class textsterling(Command): pass
 
 class textunderscore(Command):
-    unicode = '_'
+    str = '_'
 
 class textvisiblespace(Command):
-    unicode = unichr(160)
+    str = chr(160)
 
 class texttrademark(Command):
-   unicode = unichr(8482)
+   str = chr(8482)
 
 class textregistered(Command):
-   unicode = unichr(174)
+   str = chr(174)
 
 class textcopyright(Command):
-   unicode = unichr(169)
+   str = chr(169)
 
 class AE(Command):
-    unicode = unichr(198)
+    str = chr(198)
 
 class DH(Command):
-    unicode = unichr(272)
+    str = chr(272)
 
 class DJ(Command):
-    unicode = unichr(272)
+    str = chr(272)
 
 class L(Command):
-    unicode = unichr(321)
+    str = chr(321)
 
 class NG(Command):
-    unicode = unichr(330)
+    str = chr(330)
 
 class OE(Command):
-    unicode = unichr(338)
+    str = chr(338)
 
 class O(Command):
-    unicode = unichr(216)
+    str = chr(216)
 
 class SS(Command):
-    unicode = unichr(223)
+    str = chr(223)
 
 class TH(Command):
-    unicode = unichr(222)
+    str = chr(222)
 
 class ae(Command):
-    unicode = unichr(230)
+    str = chr(230)
 
 class dh(Command): pass
 
 class dj(Command):
-    unicode = unichr(273)
+    str = chr(273)
 
 class guillmotleft(Command):
-    unicode = unichr(171)
+    str = chr(171)
 
 class guillemotright(Command):
-    unicode = unichr(187)
+    str = chr(187)
 
 class guilsinglleft(Command):
-    unicode = unichr(8249)
+    str = chr(8249)
 
 class guilsinglright(Command):
-    unicode = unichr(8250)
+    str = chr(8250)
 
 class i(Command):
-    unicode = unichr(305)
+    str = chr(305)
 
 class j(Command): pass
 
 class l(Command):
-    unicode = unichr(322)
+    str = chr(322)
 
 class ng(Command):
-    unicode = unichr(331)
+    str = chr(331)
 
 class oe(Command):
-    unicode = unichr(339)
+    str = chr(339)
 
 class o(Command):
-    unicode = unichr(248)
+    str = chr(248)
 
 class quotedblbase(Command):
-    unicode = unichr(8222)
+    str = chr(8222)
 
 class quotesinglbase(Command):
-    unicode = unichr(8218)
+    str = chr(8218)
 
 class ss(Command):
-    unicode = 'SS'
+    str = 'SS'
 
 class th(Command):
-    unicode = unichr(254)
+    str = chr(254)

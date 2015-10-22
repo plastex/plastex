@@ -6,7 +6,7 @@ C.2 The Structure of the Document (p170)
 """
 
 from plasTeX import Command, Environment
-from Sectioning import SectionUtils
+from .Sectioning import SectionUtils
 
 class document(Environment, SectionUtils):
     level = Environment.DOCUMENT_LEVEL
@@ -19,9 +19,9 @@ class document(Environment, SectionUtils):
         res = Environment.invoke(self, tex)
 
         # Set initial counter values
-        if self.config.has_key('counters'):
+        if 'counters' in self.config:
             counters = self.config['counters']
-            for name in counters.keys():
+            for name in list(counters.keys()):
                 if name.startswith(';'):
                     continue
                 try:

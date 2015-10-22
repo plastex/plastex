@@ -124,9 +124,9 @@ class Filenames(object):
         return files
 
     def __call__(self):
-        return self.next()
+        return next(self)
 
-    def next(self):
+    def __next__(self):
         for name in self.newFilename:
             return name
 
@@ -165,7 +165,7 @@ class Filenames(object):
         # Return static filenames
         for item in static:
             currentns = self.vars.copy()
-            for key, value in currentns.items():
+            for key, value in list(currentns.items()):
                 if self.charsub:
                     for char in self.charsub[0]:
                         value = value.replace(char, self.charsub[1])
@@ -196,7 +196,7 @@ class Filenames(object):
                 if result not in self.invalid:
                     self.invalid[result] = None
                     yield result
-            except KeyError, key:
+            except KeyError as key:
                 continue
                 
         # We've reached the wildcard stage.  The wildcard gives us
@@ -207,7 +207,7 @@ class Filenames(object):
             passes += 1
             for item in wildcard:
                 currentns = self.vars.copy()
-                for key, value in currentns.items():
+                for key, value in list(currentns.items()):
                     if self.charsub:
                         for char in self.charsub[0]:
                             value = value.replace(char, self.charsub[1])
@@ -241,7 +241,7 @@ class Filenames(object):
                     else:
                         continue
                     break
-                except KeyError, key:
+                except KeyError as key:
                     if 'num' in self.vars:
                         del self.vars['num']
                     continue
@@ -251,4 +251,4 @@ class Filenames(object):
                 if passes > 100:
                     break
     
-        raise ValueError, 'Filename could not be created.'
+        raise ValueError('Filename could not be created.')

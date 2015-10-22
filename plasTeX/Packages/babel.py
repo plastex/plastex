@@ -5,13 +5,13 @@ from plasTeX import Command, Environment
 def ProcessOptions(options, document):
     context = document.context
 
-    languages = document.context.languages.keys()
-    for key, value in options.items():
+    languages = list(document.context.languages.keys())
+    for key, value in list(options.items()):
         if key in languages:
             context.loadLanguage(key, document)
         if key in ['german','ngerman']:
-            class glqq(Command): unicode = u'\u201e'
-            class grqq(Command): unicode = u'\u201c'
+            class glqq(Command): str = '\u201e'
+            class grqq(Command): str = '\u201c'
             context.addGlobal('glqq', glqq)
             context.addGlobal('grqq', grqq)
 

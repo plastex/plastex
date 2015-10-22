@@ -7,7 +7,7 @@ import textwrap, re, string
 class ManPageRenderer(BaseRenderer):
     """ Renderer for UNIX man pages """
 
-    outputType = unicode
+    outputType = str
     fileExtension = '.man'
     
     aliases = {
@@ -48,10 +48,10 @@ class ManPageRenderer(BaseRenderer):
             return self.textDefault(node.nodeName)
             
         # Render child nodes
-        return unicode(node)
+        return str(node)
 
     def textDefault(self, node):
-        return unicode(node)
+        return str(node)
 
     def processFileContent(self, document, s):
         s = BaseRenderer.processFileContent(self, document, s)
@@ -68,26 +68,26 @@ class ManPageRenderer(BaseRenderer):
     # Alignment
 
     def do_flushleft(self, node):
-        return u'\n.Bd -ragged\n%s\n.Ed\n' % node
+        return '\n.Bd -ragged\n%s\n.Ed\n' % node
         
     do_raggedbottom = do_raggedright = do_leftline = do_flushleft
     
     def center(self, text):
-        return u'\n.Bd -centered\n%s\n.Ed\n' % text
+        return '\n.Bd -centered\n%s\n.Ed\n' % text
             
     def do_center(self, node):
-        return self.center(unicode(node))
+        return self.center(str(node))
         
     do_centering = do_centerline = do_center
 
     def do_flushright(self, node):
-        return u'\n.Bd -offset right\n%s\n.Ed\n' % node
+        return '\n.Bd -offset right\n%s\n.Ed\n' % node
         
     do_raggedleft = do_llap = do_flushright
     
     # Arrays
     
-    def do_array(self, node, render=unicode):
+    def do_array(self, node, render=str):
         output = ['.TS']
 
         # Process colspecs
@@ -111,7 +111,7 @@ class ManPageRenderer(BaseRenderer):
         output.append('.TE')
         output.append('')
 
-        return re.sub(r'\s*.TE\s*', r'\n.TE\n', u'\n'.join(output))
+        return re.sub(r'\s*.TE\s*', r'\n.TE\n', '\n'.join(output))
         
     do_tabular = do_tabularx = do_longtable = do_array
     
@@ -119,21 +119,21 @@ class ManPageRenderer(BaseRenderer):
         return ''
         
     def do_multicolumn(self, node):
-        return unicode(node)
+        return str(node)
 
     # Bibliography
     def do_thebibliography(self, node):
         output = ['','.Sh Bibliography','']
         output.append('.Bl -tag -width indent')
         for item in node:
-            output.append('.It %s' % unicode(item.bibcite).strip())
-            output.append(unicode(item).strip())
+            output.append('.It %s' % str(item.bibcite).strip())
+            output.append(str(item).strip())
         output.append('.El')
         output.append('')
-        return u'\n'.join(output)        
+        return '\n'.join(output)        
 
     def do_bibliographystyle(self, node):
-        return u''
+        return ''
 
     def do_bibliography(self, node):
         return self.default(node)
@@ -141,8 +141,8 @@ class ManPageRenderer(BaseRenderer):
     def do_cite(self, node):
         output = []
         for item in node.citation():
-            output.append(unicode(item))
-        return u''.join(output)
+            output.append(str(item))
+        return ''.join(output)
 
     def do_bibliographyref(self, node):
         return self.default(node)
@@ -155,30 +155,30 @@ class ManPageRenderer(BaseRenderer):
     # Breaking
     
     def do_linebreak(self, node):
-        return u'\n\n'
+        return '\n\n'
         
     do_newline = do_pagebreak = do_newpage = do_clearpage = do_cleardoublepage = do_linebreak
 
     # Crossref
     
     def do_ref(self, node):
-        return unicode(node.idref['label'].ref)
+        return str(node.idref['label'].ref)
 
     def do_pageref(self, node):
-        return u'*'
+        return '*'
 
     def do_label(self, node):
-        return u''
+        return ''
 
     # Floats
     
     def do_figure(self, node):
-        return unicode(node)
+        return str(node)
         
     do_table = do_marginpar = do_figure
 
     def do_caption(self, node):
-        return u'\n%s %s: %s\n' % (node.title, node.ref, unicode(node).strip())
+        return '\n%s %s: %s\n' % (node.title, node.ref, str(node).strip())
 
     # Font Selection
     
@@ -190,32 +190,32 @@ class ManPageRenderer(BaseRenderer):
     do_normalsize = do_large = do_Large = do_LARGE = do_huge = do_HUGE = default
 
     def do_textbf(self, node):
-        return u'\\fB%s\\fP' % node
+        return '\\fB%s\\fP' % node
 
     do_bfseries = do_bf = do_textbf
 
     def do_textit(self, node):
-        return u'\\fI%s\\fP' % node
+        return '\\fI%s\\fP' % node
         
     do_itshape = do_it = do_slshape = do_textsl = do_sl = do_cal = do_textit
     
     def do_texttt(self, node):
-        return u'\\fC%s\\fP' % node
+        return '\\fC%s\\fP' % node
     
     do_ttfamily = do_tt = do_texttt
 
     def do_textmd(self, node):
-        return u'\\fR%s\\fP' % node
+        return '\\fR%s\\fP' % node
     
     do_mdseries = do_rmfamily = do_textrm = do_textnormal = do_rm = do_textmd
 
     def do_symbol(self, node):
-        return u'*'
+        return '*'
 
     # Footnotes
     def do_footnote(self, node):
-        mark = u'[%s]' % (len(self.footnotes)+1)
-        self.footnotes.append(unicode(node))
+        mark = '[%s]' % (len(self.footnotes)+1)
+        self.footnotes.append(str(node))
         return mark
         
     def do_footnotetext(self, node):
@@ -223,12 +223,12 @@ class ManPageRenderer(BaseRenderer):
         return ''
     
     def do_footnotemark(self, node):
-        return u'[%s]' % (len(self.footnotes)+1)
+        return '[%s]' % (len(self.footnotes)+1)
     
     # Index
     
     def do_theindex(self, node):
-        return u''
+        return ''
         
     do_printindex = do_index = do_theindex
     
@@ -238,28 +238,28 @@ class ManPageRenderer(BaseRenderer):
         output =['','.Bl -bullet -offset 3n -compact']
         for item in node:
             output.append('.It')
-            output.append(unicode(item).strip())
+            output.append(str(item).strip())
         output.append('.El')
         output.append('')
-        return u'\n'.join(output)        
+        return '\n'.join(output)        
         
     def do_enumerate(self, node):
         output = ['','.Bl -enum -offset 3n -compact']
         for item in node:
             output.append('.It')
-            output.append(unicode(item).strip())
+            output.append(str(item).strip())
         output.append('.El')
         output.append('')
-        return u'\n'.join(output)        
+        return '\n'.join(output)        
         
     def do_description(self, node):
         output = ['','.Bl -tag -width 3n']
         for item in node:
-            output.append('.It %s' % unicode(item.attributes.get('term','')).strip())
-            output.append(unicode(item).strip())
+            output.append('.It %s' % str(item.attributes.get('term','')).strip())
+            output.append(str(item).strip())
         output.append('.El')
         output.append('')
-        return u'\n'.join(output)        
+        return '\n'.join(output)        
 
     do_list = do_trivlist = do_description
     
@@ -271,7 +271,7 @@ class ManPageRenderer(BaseRenderer):
     do_ensuremath = do_math
     
     def do_equation(self, node):
-        s = u'   %s' % re.compile(r'^\s*\S+\s*(.*?)\s*\S+\s*$', re.S).sub(r'\1', node.source.replace('\\','\\\\'))
+        s = '   %s' % re.compile(r'^\s*\S+\s*(.*?)\s*\S+\s*$', re.S).sub(r'\1', node.source.replace('\\','\\\\'))
         return re.sub(r'\s*(_|\^)\s*', r'\1', s)
 
     do_displaymath = do_equation
@@ -290,7 +290,7 @@ class ManPageRenderer(BaseRenderer):
     do_bgroup = default
     
     def do_def(self, node):
-        return u''
+        return ''
     
     do_tableofcontents = do_input = do_protect = do_let = do_def
     do_newcommand = do_hfill = do_hline = do_openout = do_renewcommand = do_def
@@ -301,17 +301,17 @@ class ManPageRenderer(BaseRenderer):
     do_newcounter = do_typeout = do_sloppypar = do_hfil = do_thispagestyle = do_def
 
     def do_egroup(self, node):
-        return u''
+        return ''
     
     # Pictures
     
     def do_picture(self, node):
-        return u''
+        return ''
         
     # Primitives
     
     def do_par(self, node):
-        return u'\n%s\n' % unicode(node).strip()
+        return '\n%s\n' % str(node).strip()
 
     def do__superscript(self, node):
         return self.default(node)
@@ -323,23 +323,23 @@ class ManPageRenderer(BaseRenderer):
      
     def do_quote(self, node):
         backslash = self['\\']
-        self['\\'] = lambda *args: u'\001'
-        res = [x.strip() for x in unicode(node).split(u'\001')]
+        self['\\'] = lambda *args: '\001'
+        res = [x.strip() for x in str(node).split('\001')]
         output = []
-        for par in [x.strip() for x in unicode(node).split(u'\n\n')]:
-            for item in [x.strip() for x in par.split(u'\001')]:
+        for par in [x.strip() for x in str(node).split('\n\n')]:
+            for item in [x.strip() for x in par.split('\001')]:
                 output.append(self.fill(item, initial_indent='   ', subsequent_indent='      '))
             output.append('')
         output.pop()
         self['\\'] = backslash
-        return u'\n'.join(output)
+        return '\n'.join(output)
     
     do_quotation = do_verse = do_quote
 
     # Sectioning
 
     def do_document(self, node):
-        content = unicode(node).rstrip()
+        content = str(node).rstrip()
         footnotes = ''
         if self.footnotes:
             output = ['','.Bl -tag -offset indent']
@@ -349,7 +349,7 @@ class ManPageRenderer(BaseRenderer):
             output.append('.El')
             output.append('')
             footnotes = '\n'.join(output)
-        return u'%s%s' % (content, footnotes)
+        return '%s%s' % (content, footnotes)
         
     def do_maketitle(self, node):
         output = []
@@ -357,59 +357,59 @@ class ManPageRenderer(BaseRenderer):
         if 'date' in metadata:
             output.append('.Dd %s' % metadata['date'])
         if 'title' in metadata:
-            output.append('.Dt %s' % unicode(metadata['title']).upper())
+            output.append('.Dt %s' % str(metadata['title']).upper())
         output.append('')
-        return u'\n'.join(output)
+        return '\n'.join(output)
 
     def do_section(self, node):
-        return u'.Sh %s\n%s' % (node.title, node)
+        return '.Sh %s\n%s' % (node.title, node)
 
     do_part = do_chapter = do_section
 
     def do_subsection(self, node):
-        return u'.Ss %s\n%s' % (node.title, node)
+        return '.Ss %s\n%s' % (node.title, node)
 
     do_subsubsection = do_paragraph = do_subparagraph = do_subsubparagraph = do_subsection
 
     def do_title(self, node):
-        return u''
+        return ''
         
     do_author = do_date = do_thanks = do_title
     
     def do_abstract(self, node):
-        return self.center(unicode(node).strip())
+        return self.center(str(node).strip())
 
     # Sentences
 
     def do__dollar(self, node):
-        return u'$'
+        return '$'
         
     def do__percent(self, node):
-        return u'%'
+        return '%'
         
     def do__opencurly(self, node):
-        return u'{'
+        return '{'
         
     def do__closecurly(self, node):
-        return u'}'
+        return '}'
     
     def do__underscore(self, node):
-        return u'_'
+        return '_'
         
     def do__ampersand(self, node):
-        return u'&'
+        return '&'
         
     def do__hashmark(self, node):
-        return u'#'
+        return '#'
     
     def do__space(self, node):
-        return u' '
+        return ' '
 
     def do_LaTeX(self, node):
-        return u'LaTeX'
+        return 'LaTeX'
 
     def do_TeX(self, node):
-        return u'TeX'
+        return 'TeX'
 
     def do_emph(self, node):
         return self.default(node)
@@ -417,15 +417,15 @@ class ManPageRenderer(BaseRenderer):
     do_em = do_emph
 
     def do__tilde(self, node):
-        return u' '
+        return ' '
 
     def do_enspace(self, node):
-        return u' '
+        return ' '
 
     do_quad = do_qquad = do_enspace
         
     def do_enskip(self, node):
-        return u''
+        return ''
 
     do_thinspace = do_enskip
 
@@ -435,10 +435,10 @@ class ManPageRenderer(BaseRenderer):
     # Space
     
     def do_hspace(self, node):
-        return u' '
+        return ' '
     
     def do_vspace(self, node):
-        return u''
+        return ''
         
     do_bigskip = do_medskip = do_smallskip = do_vspace
     
@@ -447,7 +447,7 @@ class ManPageRenderer(BaseRenderer):
     # Verbatim
     
     def do_verbatim(self, node):
-        return u'\n.Bd -literal%s.Ed\n' % node
+        return '\n.Bd -literal%s.Ed\n' % node
 
     do_alltt = do_verbatim
 
@@ -455,9 +455,9 @@ class ManPageRenderer(BaseRenderer):
         return self.default(node)
 
     def do__at(self, node):
-        return u''
+        return ''
 
     def do__backslash(self, node):
-        return u'\\'
+        return '\\'
 
 Renderer = ManPageRenderer

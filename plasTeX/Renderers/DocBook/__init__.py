@@ -17,7 +17,7 @@ def drop_tag(elem):
     """
     parent = elem.getparent()
     previous = elem.getprevious()
-    if elem.text and isinstance(elem.tag, basestring):
+    if elem.text and isinstance(elem.tag, str):
         if previous is None:
             parent.text = (parent.text or '') + elem.text
         else:

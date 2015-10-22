@@ -19,19 +19,19 @@ class CJK(Environment):
 class CJKchar(Command):
     args = '[ encoding:str ] char1:int char2:int'
     @property
-    def unicode(self):
+    def str(self):
         a = self.attributes
         enc = encodings[a['encoding'].strip()]
         if not enc:
             log.warning('Unknown encoding: %s' % a['encoding'])
-            raise AttributeError, 'unicode'
-        return unicode(chr(a['char1'])+chr(a['char2']), enc)
+            raise AttributeError('unicode')
+        return str(chr(a['char1'])+chr(a['char2']), enc)
 
 class Unicode(Command):
     args = 'char1:int char2:int'
     @property
-    def unicode(self):
-        return unicode(chr(a['char1'])+chr(a['char2']), 'utf_8')
+    def str(self):
+        return str(chr(a['char1'])+chr(a['char2']), 'utf_8')
 
 class CJKcaption(Command):
     args = 'caption:str'

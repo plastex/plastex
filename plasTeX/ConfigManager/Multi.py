@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
 import os
-from Generic import *
+from .Generic import *
 from plasTeX.ConfigManager import TooManyValues
-from String import StringOption
-from UserList import UserList
+from .String import StringOption
+from collections import UserList
+import collections
 
 
 class MultiParser(GenericParser):
@@ -87,7 +88,7 @@ class MultiOption(MultiParser, GenericOption, UserList):
       if self.data and self.source & COMMANDLINE:
          return self.data
 
-      if self.environ and os.environ.has_key(str(self.environ)):
+      if self.environ and str(self.environ) in os.environ:
          self.source = ENVIRONMENT
          self.file = None
          return self.cast(os.environ[str(self.environ)])
@@ -128,16 +129,16 @@ class MultiOption(MultiParser, GenericOption, UserList):
 
    def __iadd__(self, other):
       """ Append a value to the list """
-      if callable(self.callback):
+      if isinstance(self.callback, collections.Callable):
          other = self.callback(self.cast(other))
       self.data += self.validate(other)
       range = self.validateRange(self.range)
       name = self.name
       if self.actual: name = self.actual
       if len(self.data) > range[1]:
-         raise TooManyValues, "Expecting at most %s values for option '%s'." % (range[1], name)
+         raise TooManyValues("Expecting at most %s values for option '%s'." % (range[1], name))
       return self
- 
+
    def validate(self, arg):
       """ Validate the value of the option """
       new_values = []
@@ -148,7 +149,7 @@ class MultiOption(MultiParser, GenericOption, UserList):
 
    def checkValues(self, value):
       return self.template.checkValues(value)
-  
+
    def __str__(self):
       if self.delim and self.delim.strip():
          delim = '%s ' % self.delim
@@ -179,7 +180,7 @@ class MultiOption(MultiParser, GenericOption, UserList):
       if value is None or ((type(value) in [list,tuple]) and not(value)):
          self.clearValue()
       else:
-         if callable(self.callback):
+         if isinstance(self.callback, collections.Callable):
             value = self.callback(self.cast(value))
          self.data = self.validate(value)
 

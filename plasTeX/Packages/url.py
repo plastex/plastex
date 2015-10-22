@@ -23,7 +23,7 @@ class urldef(Command):
         obj.parentNode = self.parentNode
         obj.ownerDocument = self.ownerDocument
         result = obj.invoke(tex)
-        c.addGlobal(name, new.classobj(name, (self.DefinedURL,), {'result':result}))
+        c.addGlobal(name, type(name, (self.DefinedURL,), {'result':result}))
 
 class urlstyle(Command):
     args = 'style:str'
@@ -34,4 +34,4 @@ class DeclareUrlCommand(Command):
         Command.invoke(self, tex)
         name = str(self.attributes['name'])
         c = self.ownerDocument.context
-        c.addGlobal(name, new.classobj(name, (url,), {}))
+        c.addGlobal(name, type(name, (url,), {}))

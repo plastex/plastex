@@ -19,12 +19,12 @@ log = plasTeX.Logging.getLogger()
 
 # Support for Python string templates
 def stringtemplate(s, encoding='utf8'):
-    template = string.Template(unicode(s, encoding))
+    template = string.Template(str(s, encoding))
     def renderstring(obj):
         tvars = {'here':obj, 'self':obj, 'container':obj.parentNode,
                  'config':obj.ownerDocument.config, 'template':template,
                  'templates':obj.renderer, 'context':obj.ownerDocument.context}
-        return unicode(template.substitute(tvars))
+        return str(template.substitute(tvars))
     return renderstring
 
 # Support for Python string interpolations
@@ -34,7 +34,7 @@ def pythontemplate(s, encoding='utf8'):
         tvars = {'here':obj, 'self':obj, 'container':obj.parentNode,
                  'config':obj.ownerDocument.config, 'template':template,
                  'templates':obj.renderer, 'context':obj.ownerDocument.context}
-        return unicode(template, encoding) % tvars
+        return str(template, encoding) % tvars
     return renderpython
 
 # Support for ZPT HTML and XML templates
@@ -51,7 +51,7 @@ def htmltemplate(s, encoding='utf8'):
         context.addGlobal('templates', obj.renderer)
         output = StringIO()
         template.expand(context, output, encoding)
-        return unicode(output.getvalue(), encoding)
+        return str(output.getvalue(), encoding)
     return renderhtml
 
 def xmltemplate(s, encoding='utf8'):
@@ -67,7 +67,7 @@ def xmltemplate(s, encoding='utf8'):
         context.addGlobal('templates', obj.renderer)
         output = StringIO()
         template.expand(context, output, encoding, docType=None, suppressXMLDeclaration=1)
-        return unicode(output.getvalue(), encoding)
+        return str(output.getvalue(), encoding)
     return renderxml
 
 # Support for Cheetah templates
@@ -77,7 +77,7 @@ try:
     from Cheetah.Filters import Filter as CheetahFilter
     class CheetahUnicode(CheetahFilter):
         def filter(self, val, encoding='utf-8', **kw):
-            return unicode(val).encode(encoding)
+            return str(val).encode(encoding)
     def cheetahtemplate(s, encoding='utf8'):
         def rendercheetah(obj, s=s):
             tvars = {'here':obj, 'container':obj.parentNode,
@@ -92,7 +92,7 @@ except ImportError:
 
     def cheetahtemplate(s, encoding='utf8'):
         def rendercheetah(obj):
-            return unicode(s, encoding)
+            return str(s, encoding)
         return rendercheetah
 
 # Support for Kid templates
@@ -108,7 +108,7 @@ try:
                      'config':obj.ownerDocument.config,
                      'context':obj.ownerDocument.context,
                      'templates':obj.renderer}
-            return unicode(KidTemplate(source=s, 
+            return str(KidTemplate(source=s, 
                    **tvars).serialize(encoding=encoding, fragment=1), encoding)
         return renderkid
 
@@ -116,7 +116,7 @@ except ImportError:
 
     def kidtemplate(s, encoding='utf8'):
         def renderkid(obj):
-            return unicode(s, encoding)
+            return str(s, encoding)
         return renderkid
 
 # Support for Genshi templates
@@ -127,7 +127,7 @@ try:
     from genshi.core import Markup
 
     def markup(obj):
-        return Markup(unicode(obj))
+        return Markup(str(obj))
 
     def genshixmltemplate(s, encoding='utf8'):
         # Add namespace py: in
@@ -138,7 +138,7 @@ try:
                      'config':obj.ownerDocument.config, 'template':template,
                      'context':obj.ownerDocument.context,
                      'templates':obj.renderer}
-            return unicode(template.generate(**tvars).render(method='xml', 
+            return str(template.generate(**tvars).render(method='xml', 
                            encoding=encoding), encoding)
         return rendergenshixml
 
@@ -151,7 +151,7 @@ try:
                      'config':obj.ownerDocument.config, 'template':template,
                      'context':obj.ownerDocument.context,
                      'templates':obj.renderer}
-            return unicode(template.generate(**tvars).render(method='html', 
+            return str(template.generate(**tvars).render(method='html', 
                            encoding=encoding), encoding)
         return rendergenshihtml
 
@@ -162,7 +162,7 @@ try:
                      'config':obj.ownerDocument.config, 'template':template,
                      'context':obj.ownerDocument.context,
                      'templates':obj.renderer}
-            return unicode(template.generate(**tvars).render(method='text', 
+            return str(template.generate(**tvars).render(method='text', 
                            encoding=encoding), encoding)
         return rendergenshitext
 
@@ -170,17 +170,17 @@ except ImportError:
 
     def genshixmltemplate(s, encoding='utf8'):
         def rendergenshixml(obj):
-            return unicode(s, encoding)
+            return str(s, encoding)
         return rendergenshixml
 
     def genshihtmltemplate(s, encoding='utf8'):
         def rendergenshihtml(obj):
-            return unicode(s, encoding)
+            return str(s, encoding)
         return rendergenshihtml
 
     def genshitexttemplate(s, encoding='utf8'):
         def rendergenshitext(obj):
-            return unicode(s, encoding)
+            return str(s, encoding)
         return rendergenshitext
 
 
@@ -232,7 +232,7 @@ class TemplateEngine(object):
 class PageTemplate(BaseRenderer):
     """ Renderer for page template based documents """
 
-    outputType = unicode
+    outputType = str
     fileExtension = '.xml'
     encodingErrors = 'xmlcharrefreplace'
 
@@ -322,7 +322,7 @@ class PageTemplate(BaseRenderer):
                 self.importDirectory(theme)
 
                 extensions = []
-                for e in self.engines.values():
+                for e in list(self.engines.values()):
                     extensions += e.ext + [x+'s' for x in e.ext]
 
                 if document.config['general']['copy-theme-extras']:
@@ -371,12 +371,12 @@ class PageTemplate(BaseRenderer):
         self.aliases = {}
         
         enames = {}
-        for key, value in self.engines.items():
+        for key, value in list(self.engines.items()):
             for i in value.ext:
                 enames[i+'s'] = key[0]
                 
         singleenames = {}
-        for key, value in self.engines.items():
+        for key, value in list(self.engines.items()):
             for i in value.ext:
                 singleenames[i] = key[0]
                 
@@ -406,7 +406,7 @@ class PageTemplate(BaseRenderer):
 
                 options = {'name':basename}
 
-                for value in self.engines.values():
+                for value in list(self.engines.values()):
                     if ext in value.ext:
                         options['engine'] = singleenames[ext.lower()]
                         self.parseTemplates(f, options)                
@@ -415,7 +415,7 @@ class PageTemplate(BaseRenderer):
 
         if self.aliases:
            log.warning('The following aliases were unresolved: %s' 
-                       % ', '.join(self.aliases.keys())) 
+                       % ', '.join(list(self.aliases.keys()))) 
 
     def setTemplate(self, template, options):
         """ 
@@ -434,7 +434,7 @@ class PageTemplate(BaseRenderer):
             if not names:
                 names = [' ']
         except KeyError:
-            raise ValueError, 'No name given for template'
+            raise ValueError('No name given for template')
 
         # If an alias was specified, link the names to the 
         # already specified template.
@@ -446,7 +446,7 @@ class PageTemplate(BaseRenderer):
                 log.warning('Both an alias and a template were specified for: %s' % ', '.join(names))
 
         # Resolve remaining aliases
-        for key, value in self.aliases.items():
+        for key, value in list(self.aliases.items()):
             if value in self:
                 self[key] = self[value]
             self.aliases.pop(key)
@@ -466,9 +466,9 @@ class PageTemplate(BaseRenderer):
      
         try:
             template = templateeng.compile(template)
-        except Exception, msg:
+        except Exception as msg:
 #           print msg
-            raise ValueError, 'Could not compile template "%s"' % names[0]
+            raise ValueError('Could not compile template "%s"' % names[0])
 
         for name in names:
             self[name] = template
@@ -499,8 +499,8 @@ class PageTemplate(BaseRenderer):
                     if template:
                         try:
                             self.setTemplate(''.join(template), options)
-                        except ValueError, msg:
-                            print 'ERROR: %s at line %s in file %s' % (msg, i, filename)
+                        except ValueError as msg:
+                            print('ERROR: %s at line %s in file %s' % (msg, i, filename))
                         options = defaults.copy()
                         template = []
     
@@ -536,8 +536,8 @@ class PageTemplate(BaseRenderer):
         if template:
             try:
                 self.setTemplate(''.join(template), options)
-            except ValueError, msg:
-                print 'ERROR: %s in template %s in file %s' % (msg, ''.join(template), filename)
+            except ValueError as msg:
+                print('ERROR: %s in template %s in file %s' % (msg, ''.join(template), filename))
 
         elif name and not(template):
             self.setTemplate('', options)
@@ -553,7 +553,7 @@ class PageTemplate(BaseRenderer):
             for i, item in enumerate(s):
                 if ord(item) > 127:
                     s[i] = '&#%.3d;' % ord(item)
-            s = u''.join(s)
+            s = ''.join(s)
 
         return BaseRenderer.processFileContent(self, document, s)
              

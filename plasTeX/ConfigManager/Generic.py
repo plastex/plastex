@@ -4,6 +4,7 @@ import re, os, copy
 from plasTeX.ConfigManager import BUILTIN, CODE, ENVIRON, ENVIRONMENT
 from plasTeX.ConfigManager import CODE, REGISTRY, COMMANDLINE, InvalidOptionError
 from plasTeX.ConfigManager import ConfigManager, TooManyValues, TooFewValues
+import collections
 
 DEFAULTS = \
 {
@@ -34,7 +35,7 @@ class GenericParser:
       """ Return boolean indicating the existence of another argument """
       if not ConfigManager.has_following_argument(args):
          return 0
-      
+
       # No arguments left
       if not args:
          return 0
@@ -68,11 +69,11 @@ class GenericParser:
             name = self.name
             if self.actual: name = self.actual
             if range[0] != range[1]:
-               raise TooFewValues, "Expecting at least %s value(s) for '%s'." % (range[0], name)
+               raise TooFewValues("Expecting at least %s value(s) for '%s'." % (range[0], name))
             elif range[0] == 1:
-               raise TooFewValues, "Expecting a value for '%s'." % name
+               raise TooFewValues("Expecting a value for '%s'." % name)
             else:
-               raise TooFewValues, "Expecting %s values for '%s'." % (range[0], name)
+               raise TooFewValues("Expecting %s values for '%s'." % (range[0], name))
          if self.optional:
             return self.optional, args
          else:
@@ -91,7 +92,7 @@ class GenericParser:
             # If the current argument ends with a delimiter
             if args[0].strip()[-1] == delim:
                new_args.append(args.pop(0).strip()[:-1])
-   
+
             # If next argument is an isolated delimiter character
             elif len(args) > 1 and args[1].strip() == delim:
                new_args.append(args.pop(0).strip())
@@ -103,7 +104,7 @@ class GenericParser:
                    new_args.append(args.pop(0).strip()[1:])
                else:
                    new_args.append(args.pop(0).strip())
-   
+
                # If this argument ends with a delimiter, rip it off
                # and put it back into the stream.
                if new_args[-1].endswith(delim):
@@ -133,9 +134,9 @@ class GenericParser:
          plural = 's'
          if range[0] == 1:
             plural = ''
-         raise TooFewValues, "Expecting at least %s value%s for '%s'." % (range[0], plural, name)
+         raise TooFewValues("Expecting at least %s value%s for '%s'." % (range[0], plural, name))
       elif len(new_args) > range[1]:
-         raise TooManyValues, "Expecting at most %s values for '%s'." % (range[1], name)
+         raise TooManyValues("Expecting at most %s values for '%s'." % (range[1], name))
 
       # Collapse argument list to a value if possible
       if len(new_args) < 1:
@@ -146,7 +147,7 @@ class GenericParser:
       elif len(new_args) < 2:
          new_args = new_args[0]
 
-      return new_args, args 
+      return new_args, args
 
    def _getSpaceDelimitedArguments(self, args, range=[1,'*']):
       """ Slurp up any following arguments that don't begin with '-' """
@@ -163,7 +164,7 @@ class GenericParser:
           return new_args, args
       else:
           if len(new_args) == arg_len:
-              minimum = min(len(new_args), minimum) 
+              minimum = min(len(new_args), minimum)
               return new_args[:minimum], new_args[minimum:]
           else:
               return new_args, args
@@ -178,7 +179,7 @@ class GenericParser:
       range[0] = int(range[0])
       range[1] = int(range[1])
       return range
- 
+
 
 class GenericOption(object):
    """
@@ -240,10 +241,10 @@ class GenericOption(object):
 
       values -- valid values for the option.  This argument can take
          the following forms:
-        
+
          single value -- for StringOption this this is a string, for
             IntegerOption this is an integer, for FloatOption this is
-            a float.  The single value mode is most useful when the 
+            a float.  The single value mode is most useful when the
             value is a regular expression.  For example, to specify
             that a StringOption must be a string of characters followed
             by a digit, 'values' would be set to re.compile(r'\w+\d').
@@ -252,17 +253,17 @@ class GenericOption(object):
             the endpoints of a range of valid values.  This is probably
             most useful on IntegerOption and FloatOption.  For example,
             to specify that an IntegerOption can only take the values
-            from 0 to 10, 'values' would be set to [0,10]. 
+            from 0 to 10, 'values' would be set to [0,10].
 
             NOTE: This mode must *always* use a Python list since using
                   a tuple means something else entirely.
 
-         tuple of values -- a tuple of values can be used to specify 
+         tuple of values -- a tuple of values can be used to specify
             a complete list of valid values.  For example, to specify
             that an IntegerOption can take the values 1, 2, or 3, 'values'
-            would be set to (1,2,3).  If a string value can only take 
+            would be set to (1,2,3).  If a string value can only take
             the values, 'hi', 'bye', and any string of characters beginning
-            with the letter 'z', 'values' would be set to 
+            with the letter 'z', 'values' would be set to
             ('hi','bye',re.compile(r'z.*?')).
 
             NOTE: This mode must *always* use a Python tuple since using
@@ -270,7 +271,7 @@ class GenericOption(object):
 
       category -- a category key which specifies which category the
          option belongs to (see Option.add_category())
-      
+
       callback -- a function to call after the value of the option has
          been validated.  This function will be called with the validated
          option value as its only argument.
@@ -372,8 +373,8 @@ class GenericOption(object):
 
       """
       if type(self.__class__) is GenericOption:
-         raise ValueError, 'GenericOption cannot be instantiated ' + \
-                           'directly, you must use a subclass.'
+         raise ValueError('GenericOption cannot be instantiated ' + \
+                           'directly, you must use a subclass.')
       self.parent = None
       self.initialize(locals())
       self.data = None
@@ -392,10 +393,11 @@ class GenericOption(object):
       synopsis = vars.get('synopsis', DEFAULTS['synopsis'])
       environ = vars.get('environ', DEFAULTS['environ'])
       mandatory = vars.get('mandatory')
+
       if mandatory is None:
          mandatory = isinstance(self, GenericArgument)
       registry = vars.get('registry', DEFAULTS['registry'])
-      
+
       self.actual = None  # Actual option used on the command-line
       self.name = name
       self.options = options
@@ -424,7 +426,7 @@ class GenericOption(object):
                        # set if self.source == CONFIGFILE.
 
       if source <= ENVIRONMENT:
-         if self.environ and os.environ.has_key(str(self.environ)):
+         if self.environ and str(self.environ) in os.environ:
             self.default = self.cast(os.environ[str(self.environ)])
             self.source = ENVIRONMENT
          else:
@@ -444,7 +446,7 @@ class GenericOption(object):
          return self.data
 
       # See if it was set in the environment
-      if self.environ and os.environ.has_key(str(self.environ)):
+      if self.environ and str(self.environ) in os.environ:
          self.source = ENVIRONMENT
          self.file = None
          return self.cast(os.environ[str(self.environ)])
@@ -476,7 +478,7 @@ class GenericOption(object):
    def copy(self):
       """ Make a deep copy of self """
       newcopy = self.__class__()
-      for key, value in vars(self).copy().items():
+      for key, value in list(vars(self).copy().items()):
          if key == 'data':
             setattr(newcopy, key, copy.copy(value))
          else:
@@ -558,7 +560,7 @@ class GenericOption(object):
 
       """
       return {}
-      return {'name': self.name, 'default': self.default, 
+      return {'name': self.name, 'default': self.default,
               'option': self.actual, 'synopsis': self.synopsis}
 
    def __lt__(self, other): return self.compare(other) < 0
@@ -603,7 +605,7 @@ class GenericOption(object):
       if value is None:
          self.clearValue()
       else:
-         if callable(self.callback):
+         if isinstance(self.callback, collections.Callable):
             value = self.callback(self.cast(value))
          self.data = self.validate(value)
 
@@ -670,7 +672,7 @@ class GenericOption(object):
             return value
 
          if self.error:
-            raise InvalidOptionError(name, value, 
+            raise InvalidOptionError(name, value,
                                      msg=self.error % self.names())
          else:
             raise InvalidOptionError(name, value,
@@ -689,11 +691,11 @@ class GenericOption(object):
 
          # Look for regular expressions in the list
          for regex in [x for x in self.values if isinstance(x, RegexType)]:
-            if regex.search(value): 
+            if regex.search(value):
                return value
-            
+
          if self.error:
-            raise InvalidOptionError(name, value, 
+            raise InvalidOptionError(name, value,
                                      msg=self.error % self.names())
          else:
             raise InvalidOptionError(name, value,
@@ -707,7 +709,7 @@ class GenericOption(object):
             return value
 
          if self.error:
-            raise InvalidOptionError(name, value, 
+            raise InvalidOptionError(name, value,
                                      msg=self.error % self.names())
          else:
             raise InvalidOptionError(name, value,
@@ -722,26 +724,26 @@ class GenericOption(object):
             return value
 
          if self.error:
-            raise InvalidOptionError(name, value, 
+            raise InvalidOptionError(name, value,
                                      msg=self.error % self.names())
          else:
             raise InvalidOptionError(name, value,
                                      msg='Given value is not a valid value')
 
       # Use the user defined validation function
-      elif callable(self.values):
+      elif isinstance(self.values, collections.Callable):
          if self.values(value):
             return value
 
          if self.error:
-            raise InvalidOptionError(name, value, 
+            raise InvalidOptionError(name, value,
                                      msg=self.error % self.names())
          else:
             raise InvalidOptionError(name, value,
                                      msg='Given value is not a valid value')
 
       # Bail out if we don't know what this is
-      raise ValueError, 'Unknown valid values type'
+      raise ValueError('Unknown valid values type')
 
 
 class GenericArgument(GenericOption):

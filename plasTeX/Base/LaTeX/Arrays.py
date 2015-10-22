@@ -5,7 +5,7 @@ C.10.2 The array and tabular Environments
 
 """
 
-import new, sys
+import sys
 from plasTeX import Macro, Environment, Command, DimenCommand
 from plasTeX import sourceChildren, sourceArguments
 
@@ -17,7 +17,7 @@ class ColumnType(Macro):
     def __init__(self, *args, **kwargs):
         Macro.__init__(self, *args, **kwargs)
         self.style.update(self.columnAttributes)
-        
+
     @classmethod
     def new(cls, name, attributes, args='', before=[], after=[], between=[]):
         """
@@ -33,7 +33,7 @@ class ColumnType(Macro):
         after -- tokens to insert after this column
 
         """
-        newclass = new.classobj(name, (cls,), 
+        newclass = type(name, (cls,),
             {'columnAttributes':attributes, 'args':args,
              'before':before, 'after':after, 'between':between})
         cls.columnTypes[name] = newclass
@@ -99,7 +99,7 @@ class Array(Environment):
             self.parse(tex)
             self.ownerDocument.context.push()
             # Add a phantom row and cell to absorb the appropriate tokens
-            return [self, self.ownerDocument.createElement('ArrayRow'), 
+            return [self, self.ownerDocument.createElement('ArrayRow'),
                           self.ownerDocument.createElement('ArrayCell')]
 
     class cr(EndRow):
@@ -125,21 +125,21 @@ class Array(Environment):
             Apply borders to the given cells
 
             Required Arguments:
-            location -- place where the border should be applied. 
+            location -- place where the border should be applied.
                 This should be 'top', 'bottom', 'left', or 'right'
             cells -- iterable containing cell instances to apply
                 the borders
 
             """
-            # Find out if the border should start and stop, or just 
+            # Find out if the border should start and stop, or just
             # span the whole table.
             a = self.attributes
-            if a and a.has_key('span'):
+            if a and 'span' in a:
                 try: start, end = a['span']
                 except TypeError: start = end = a['span']
             else:
-                start = -sys.maxint
-                end = sys.maxint
+                start = -sys.maxsize
+                end = sys.maxsize
             # Determine the position of the border
             if location is None:
                 location = self.locations[self.position]
@@ -207,16 +207,16 @@ class Array(Environment):
             # Absorb tokens until the end of the row
             self.endToken = self.digestUntil(tokens, Array.EndRow)
             if self.endToken is not None:
-                tokens.next()
+                next(tokens)
                 self.endToken.digest(tokens)
 
         @property
         def source(self):
             """
-            This source property is a little different than most.  
+            This source property is a little different than most.
             Instead of printing just the source of the row, it prints
             out the entire environment with just this row as its content.
-            This allows renderers to render images for arrays a row 
+            This allows renderers to render images for arrays a row
             at a time.
 
             """
@@ -224,7 +224,7 @@ class Array(Environment):
             escape = '\\'
             s = []
             argSource = sourceArguments(self.parentNode)
-            if not argSource: 
+            if not argSource:
                 argSource = ' '
             s.append('%sbegin{%s}%s' % (escape, name, argSource))
             for cell in self:
@@ -237,8 +237,8 @@ class Array(Environment):
             return ''.join(s)
 
         def applyBorders(self, tocells=None, location=None):
-            """ 
-            Apply borders to every cell in the row 
+            """
+            Apply borders to every cell in the row
 
             Keyword Arguments:
             row -- the row of cells to apply borders to.  If none
@@ -250,7 +250,7 @@ class Array(Environment):
             for cell in self:
                 horiz, vert = cell.borders
                 # Horizontal borders go across all columns
-                for border in horiz: 
+                for border in horiz:
                     border.applyBorders(tocells, location=location)
                 # Vertical borders only get applied to the same column
                 for applyto in tocells:
@@ -271,10 +271,10 @@ class Array(Environment):
         isHeader = False
 
         def digest(self, tokens):
-            self.endToken = self.digestUntil(tokens, (Array.CellDelimiter, 
+            self.endToken = self.digestUntil(tokens, (Array.CellDelimiter,
                                                       Array.EndRow))
             if isinstance(self.endToken, Array.CellDelimiter):
-                tokens.next()
+                next(tokens)
                 self.endToken.digest(tokens)
             else:
                 self.endToken = None
@@ -282,7 +282,7 @@ class Array(Environment):
             # Check for multicols
             hasmulticol = False
             for item in self:
-                if item.attributes and item.attributes.has_key('colspan'):
+                if item.attributes and 'colspan' in item.attributes:
                     self.attributes['colspan'] = item.attributes['colspan']
                 if hasattr(item, 'colspec') and not isinstance(item, Array):
                     self.colspec = item.colspec
@@ -290,7 +290,7 @@ class Array(Environment):
                     self.isHeader = item.isHeader
 
             # Cache the border information.  This must be done before
-            # grouping paragraphs since a paragraph might swallow 
+            # grouping paragraphs since a paragraph might swallow
             # an hline/vline/cline command.
             h,v = self.borders
 
@@ -369,9 +369,9 @@ class Array(Environment):
             if self.parentNode is None:
                # no parentNode, assume mathMode==False
                return sourceChildren(self, True)
-            return sourceChildren(self, 
+            return sourceChildren(self,
                        par=not(self.parentNode.parentNode.mathMode))
-        
+
 
 
     class multicolumn(Command):
@@ -392,21 +392,21 @@ class Array(Environment):
         if self.macroMode == Macro.MODE_END:
             self.ownerDocument.context.pop(self) # End of table, row, and cell
             return
-        
+
         Environment.invoke(self, tex)
 
 #!!!
 #
-# Need to handle colspec processing here so that tokens that must 
+# Need to handle colspec processing here so that tokens that must
 # be inserted before and after columns are known
 #
 #!!!
-        if self.attributes.has_key('colspec'):
+        if 'colspec' in self.attributes:
             self.colspec = Array.compileColspec(tex, self.attributes['colspec'])
 
         self.ownerDocument.context.push() # Beginning of cell
         # Add a phantom row and cell to absorb the appropriate tokens
-        return [self, self.ownerDocument.createElement('ArrayRow'), 
+        return [self, self.ownerDocument.createElement('ArrayRow'),
                       self.ownerDocument.createElement('ArrayCell')]
 
     def digest(self, tokens):
@@ -506,14 +506,14 @@ class Array(Environment):
 
     @classmethod
     def compileColspec(cls, tex, colspec):
-        """ 
-        Compile colspec into an object 
+        """
+        Compile colspec into an object
 
         Required Arguments:
         colspec -- an unexpanded token list that contains a LaTeX colspec
 
         Returns:
-        list of `ColumnType` instances 
+        list of `ColumnType` instances
 
         """
         output = []
@@ -590,7 +590,7 @@ class Array(Environment):
         if self.macroMode == Macro.MODE_BEGIN:
             s = []
             argSource = sourceArguments(self)
-            if not argSource: 
+            if not argSource:
                 argSource = ' '
             s.append('%sbegin{%s}%s' % (escape, name, argSource))
             if self.hasChildNodes():
@@ -642,4 +642,4 @@ class doublerulesep(DimenCommand):
     value = DimenCommand.new(0)
 
 class arraystretch(Command):
-    unicode = '1'
+    str = '1'

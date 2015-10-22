@@ -15,8 +15,8 @@ class rawhtml(verbatim):
     blockType = False
     def digest(self, tokens):
         verbatim.digest(self, tokens)
-        self.unicode = Text(''.join(self))
-        self.unicode.isMarkup = True
+        self.str = Text(''.join(self))
+        self.str.isMarkup = True
         return []
         
 class latexonly(IgnoreCommand):

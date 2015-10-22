@@ -27,7 +27,7 @@ class newsubfloat(Command):
         options = self.attributes['options'] or {}
 
         # Create new subfloat class
-        newclass = new.classobj(name, (subfloat,), 
+        newclass = type(name, (subfloat,), 
                                 {'options':options,'counter':name})
         c.addGlobal(name, newclass)
 
@@ -41,7 +41,7 @@ class DeclareCaptionListOfFormat(Command):
     args = 'keyword code'
 
 class subfloatname(Command):
-    unicode = ''
+    str = ''
 
 class subfloat(Command):
     args = '[ toc ] [ caption ] self'
@@ -50,7 +50,7 @@ class subfloat(Command):
 
     def preParse(self, tex):
         """
-        This is getting tricky.  The ContinuedFloat tells whether or not 
+        This is getting tricky.  The ContinuedFloat tells whether or not
         the counter should be incremented.  We save the lastvalue of the
         counter in the userdata so we can get it back here.
 
@@ -59,12 +59,12 @@ class subfloat(Command):
         c = doc.context
 
         if doc.userdata.getPath('packages/subfig/continued'):
-            v = doc.userdata.getPath('packages/subfig/subfloats/%s/lastvalue' % 
+            v = doc.userdata.getPath('packages/subfig/subfloats/%s/lastvalue' %
                                      self.tagName, 1)
             c.counters[self.counter].setcounter(v+1)
             doc.userdata.setPath('packages/subfig/continued', False)
         else:
-            doc.userdata.setPath('packages/subfig/subfloats/%s/lastvalue' % 
+            doc.userdata.setPath('packages/subfig/subfloats/%s/lastvalue' %
                                  self.tagName, c.counters[self.counter].value)
 
         return Command.preParse(self, tex)
@@ -89,7 +89,7 @@ class subfloat(Command):
             while node is not None and not(isinstance(node, Float)):
                 node = node.parentNode
             parentFloat = node
-    
+
             # Add the float number to the ref value
             doc = self.ownerDocument
             frag = doc.createDocumentFragment()
@@ -98,10 +98,10 @@ class subfloat(Command):
             return frag
         return locals()
     ref = property(**ref())
-        
+
 class subref(Command):
     args = '* label:idref'
-        
+
 class ContinuedFloat(Command):
     def invoke(self, tex):
         Command.invoke(self, tex)

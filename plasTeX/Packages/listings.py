@@ -7,7 +7,7 @@ try: import pygments
 except: pygments = None
 
 class listingsname(Base.Command):
-    unicode = 'Listing'
+    str = 'Listing'
     
 PackageOptions = {}
 
@@ -79,7 +79,7 @@ def _format(self, file):
     if 'lastline' in self.attributes['arguments']:
         last_line_number = int(self.attributes['arguments']['lastline'])
     else:
-        last_line_number = sys.maxint
+        last_line_number = sys.maxsize
 
     # Read the file, all the while respecting the "firstline" and
     # "lastline" arguments given in the document.
@@ -94,13 +94,17 @@ def _format(self, file):
             line = re.sub('/\*@[^@]*@\*/', '', line)
 
             # Add the just-read line to the listing.
-            self.plain_listing += '\n' + line
+            if hasattr(file, 'read'):
+                self.plain_listing += line
+            else:
+                self.plain_listing += '\n' + line
+
 
     # Create a syntax highlighted XHTML version of the file using Pygments
     if pygments is not None:
         from pygments import lexers, formatters
         try: 
             lexer = lexers.get_lexer_by_name(self.ownerDocument.context.current_language.lower())
-        except Exception, msg: 
+        except Exception as msg: 
             lexer = lexers.TextLexer()
         self.xhtml_listing = pygments.highlight(self.plain_listing, lexer, formatters.HtmlFormatter(linenos=linenos))

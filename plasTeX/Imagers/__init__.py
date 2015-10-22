@@ -4,7 +4,7 @@ import os, time, tempfile, shutil, re, string, pickle, codecs
 try: from hashlib import md5
 except ImportError: from md5 import new as md5
 from plasTeX.Logging import getLogger
-from StringIO import StringIO
+from io import StringIO
 from plasTeX.Filenames import Filenames
 from plasTeX.dictutils import ordereddict
 import subprocess
@@ -265,7 +265,7 @@ class Image(object):
             im, self.depth = self._stripBaseline(PILImage.open(self.path), 
                                              padbaseline)
             self.width, self.height = im.size
-        except IOError, msg:
+        except IOError as msg:
 #           import traceback
 #           traceback.print_exc()
             self._cropped = True
@@ -278,7 +278,7 @@ class Image(object):
         if self.config['transparent']:
             im = im.convert("P")
             lut = im.resize((256,1))
-            lut.putdata(range(256))
+            lut.putdata(list(range(256)))
             index = list(lut.convert("RGB").getdata()).index((255,255,255))
             im.save(self.path, transparency=index)
         else:
@@ -450,7 +450,7 @@ class Imager(object):
         if self.config['images']['cache'] and os.path.isfile(self._filecache):
             try: 
                 self._cache = pickle.load(open(self._filecache, 'r'))
-                for key, value in self._cache.items():
+                for key, value in list(self._cache.items()):
                     if not os.path.isfile(value.filename):
                         del self._cache[key]
                         continue
@@ -553,7 +553,7 @@ class Imager(object):
         # Finish the document
         self.source.write('\n\\end{document}\\endinput')
 
-        for value in self._cache.values():
+        for value in list(self._cache.values()):
             if value.checksum and os.path.isfile(value.path):
                  d = md5(open(value.path,'r').read()).digest()
                  if value.checksum != d:
@@ -575,7 +575,7 @@ class Imager(object):
 
         self.convert(output)
 
-        for value in self._cache.values():
+        for value in list(self._cache.values()):
             if value.checksum is None and os.path.isfile(value.path):
                  value.checksum = md5(open(value.path,'r').read()).digest()
 
@@ -722,7 +722,7 @@ class Imager(object):
                         'Images will not be cropped.')
             
         # Move images to their final location
-        for src, dest in zip(images, self.images.values()):
+        for src, dest in zip(images, list(self.images.values())):
             # Move the image
             directory = os.path.dirname(dest.path)
             if directory and not os.path.isdir(directory):
@@ -736,7 +736,7 @@ class Imager(object):
             try: 
                 dest.crop()
                 status.dot()
-            except Exception, msg:
+            except Exception as msg:
                 import traceback
                 traceback.print_exc()
                 log.warning('failed to crop %s (%s)', dest.path, msg)
@@ -779,7 +779,7 @@ class Imager(object):
         key = text
 
         # See if this image has been cached
-        if self._cache.has_key(key):
+        if key in self._cache:
             return self._cache[key]
             
         # Generate a filename
@@ -876,7 +876,7 @@ class Imager(object):
             return img
 
         # If anything fails, just let the imager handle it...
-        except Exception, msg:
+        except Exception as msg:
             #log.warning('%s in image "%s".  Reverting to LaTeX to generate the image.' % (msg, name))
             pass
         return self.newImage(node.source)

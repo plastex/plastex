@@ -15,10 +15,10 @@ def ProcessOptions(options, document):
                        format='${thetable}.${subtable.alph}')
 
 class subfigurename(Command):
-    unicode = ''
+    str = ''
 
 class subtablename(Command):
-    unicode = ''
+    str = ''
 
 class subfigure(Command):
     args = '[ title ] self'

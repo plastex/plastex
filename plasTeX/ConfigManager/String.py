@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-from UserString import UserString
-from Generic import GenericOption, DEFAULTS, GenericParser, GenericArgument
+from collections import UserString
+from .Generic import GenericOption, DEFAULTS, GenericParser, GenericArgument
+import collections
 
 
 class StringParser(GenericParser): pass
@@ -29,10 +30,10 @@ class StringOption(StringParser, GenericOption, UserString):
 
    def cast(self, arg):
       if arg is None: return
-      return unicode(arg)
+      return str(arg)
 
    def __iadd__(self, other):
-      if callable(self.callback):
+      if isinstance(self.callback, collections.Callable):
          other = self.callback(self.cast(other))
 
       if other is None:

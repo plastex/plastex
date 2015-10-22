@@ -39,7 +39,7 @@ class baselineskip(DimenCommand):
     value = DimenCommand.new('12pt')
 
 class baselinestretch(Command):
-    unicode = '1'
+    str = '1'
 
 class parskip(DimenCommand):
     value = DimenCommand.new(0)

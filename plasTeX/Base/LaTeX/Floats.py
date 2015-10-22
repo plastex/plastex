@@ -94,22 +94,22 @@ class suppressfloats(Command):
 # Counters
 
 class topfraction(Command):
-    unicode = '0.25'
+    str = '0.25'
 
 class bottomfraction(Command):
-    unicode = '0.25'
+    str = '0.25'
 
 class textfraction(Command):
-    unicode = '0.25'
+    str = '0.25'
 
 class floatpagefraction(Command):
-    unicode = '0.25'
+    str = '0.25'
 
 class dbltopfraction(Command):
-    unicode = '0.25'
+    str = '0.25'
 
 class dblfloatpagefraction(Command):
-    unicode = '0.25'
+    str = '0.25'
 
 class floatsep(GlueCommand):
     value = GlueCommand.new(0)

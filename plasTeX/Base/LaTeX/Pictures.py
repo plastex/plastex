@@ -9,7 +9,7 @@ from plasTeX import Command, Environment, DimenCommand
 from plasTeX.Logging import getLogger
 
 class qbeziermax(Command):
-    unicode = '250'
+    str = '250'
 
 class unitlength(DimenCommand):
     value = DimenCommand.new('1pt')

@@ -12,13 +12,13 @@ TO DO:
 
 from plasTeX import Command, Environment
 from plasTeX.Base.LaTeX.Crossref import ref, pageref
-from nameref import Nameref, nameref
-import urlparse
+from .nameref import Nameref, nameref
+import urllib.parse
 
 def addBaseURL(self, urlarg):
     try:
         baseurl = self.ownerDocument.userdata['packages']['hyperref']['baseurl']
-        return urlparse.urljoin(baseurl, self.attributes[urlarg])            
+        return urllib.parse.urljoin(baseurl, self.attributes[urlarg])            
     except KeyError: pass
     return self.attributes[urlarg]
 
@@ -92,11 +92,11 @@ class hypertarget(Command):
 
 class hypertargetname(Command):
     """ Dummy class for hypertarget macro """
-    unicode = ''
+    str = ''
 
 class thehypertarget(Command):
     """ Dummy class for hypertarget macro """
-    unicode = ''
+    str = ''
 
 class phantomsection(Command):
     pass

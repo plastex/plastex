@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-from report import *
+from .report import *
 
 def ProcessOptions(options, document):
-    import report
+    from . import report
     report.ProcessOptions(options, document)
     document.context['thesection'].format = '${section}'
     document.context['theindex'].counter = 'section'

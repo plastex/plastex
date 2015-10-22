@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-from types import SliceType as _SliceType
+# from types import SliceType as _SliceType
 
 class ordereddict(dict):
-    """ 
+    """
     Dictionary where key/value pairs are kept in the original order
 
     Every method in this dictionary-based class returns its results
@@ -14,15 +14,15 @@ class ordereddict(dict):
     """
 
     def __iter__(self):
-        return iter(self.keys())
+        return iter(list(self.keys()))
 
     iterkeys = __iter__
 
     def iteritems(self):
-        return iter(self.items())
+        return iter(list(self.items()))
 
     def itervalues(self):
-        return iter(self.values())
+        return iter(list(self.values()))
 
     def popitem(self):
         if not hasattr(self, '_keys'): self._keys = []
@@ -33,7 +33,7 @@ class ordereddict(dict):
 
     def items(self):
         if not hasattr(self, '_keys'): self._keys = []
-        return [(x,self[x]) for x in self._keys] 
+        return [(x,self[x]) for x in self._keys]
 
     def keys(self):
         if not hasattr(self, '_keys'): self._keys = []
@@ -41,7 +41,7 @@ class ordereddict(dict):
 
     def values(self):
         if not hasattr(self, '_keys'): self._keys = []
-        return [self[x] for x in self._keys] 
+        return [self[x] for x in self._keys]
 
     def __setitem__(self, key, value):
         if not hasattr(self, '_keys'): self._keys = []
@@ -55,16 +55,17 @@ class ordereddict(dict):
         dict.__delitem__(self, key)
 
     def __getitem__(self, key):
-        if type(key) == _SliceType:
+        if isinstance(key, slice):
+        # if type(key) == _SliceType:
             return self.__getslice__(key.start, key.stop)
         return dict.__getitem__(self, key)
 
     def update(self, other):
-        for key, value in other.items():
+        for key, value in list(other.items()):
             self[key] = value
 
     def __getslice__(self, start, stop):
-        keys = self.keys()
+        keys = list(self.keys())
         if start is None:
            start = 0
         else:
@@ -76,7 +77,7 @@ class ordereddict(dict):
         return [self[x] for x in keys[start:stop]]
 
     def __delslice__(self, start, stop):
-        keys = self.keys()
+        keys = list(self.keys())
         if start is None:
            start = 0
         else:
@@ -90,7 +91,7 @@ class ordereddict(dict):
 
 
 class sorteddict(ordereddict):
-    """ 
+    """
     Dictionary where key/value pairs are sorted by their key
 
     Every method in this dictionary-based class returns its results

@@ -8,7 +8,7 @@ B.4 Font Information
 from plasTeX import Command, Environment
 
 class magstephalf(Command):
-    unicode = '1095 '
+    str = '1095 '
 
 class magstep(Command):
     args = 'value:Number'

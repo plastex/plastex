@@ -12,7 +12,7 @@ class seealso(Command):
 
 # Dummy macros to accompany counters above
 class thesee(Command):
-    unicode = ''
+    str = ''
 
 class thealso(Command):
-    unicode = ''
+    str = ''

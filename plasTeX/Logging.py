@@ -165,7 +165,7 @@ def getLogger(name=None):
 
 def disableLogging():
     """ Disable all logging """
-    for logger in _loggers.values():
+    for logger in list(_loggers.values()):
         logger.setLevel(CRITICAL)
 
 def fileLogging(fname):
@@ -182,7 +182,7 @@ def fileLogging(fname):
     logfilter.filter = dotfilter
 
     fhandler = FileHandler(fname, 'w')
-    for logger in _loggers.values():
+    for logger in list(_loggers.values()):
         for handler in logger.handlers:
             logger.removeHandler(handler)
         logger.addHandler(fhandler)

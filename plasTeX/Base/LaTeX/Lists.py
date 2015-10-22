@@ -11,10 +11,10 @@ from plasTeX import Logging
 
 log = Logging.getLogger()
 
-class enuminame(Command): unicode = ''
-class enumiiname(Command): unicode = ''
-class enumiiiname(Command): unicode = ''
-class enumivname(Command): unicode = ''
+class enuminame(Command): str = ''
+class enumiiname(Command): str = ''
+class enumiiiname(Command): str = ''
+class enumivname(Command): str = ''
 
 class List(Environment):
     """ Base class for all list-based environments """

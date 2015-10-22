@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 
 import string
-from DOM import Node, Text
+from .DOM import Node, Text
 from plasTeX import encoding
-from StringIO import StringIO as UnicodeStringIO
-try: from cStringIO import StringIO
-except: from StringIO import StringIO
+from io import StringIO
 
 # Default TeX categories
 DEFAULT_CATEGORIES = [
@@ -54,7 +52,7 @@ class Token(Text):
     CC_INVALID = 15
 
     TOKEN_SLOTS = __slots__ = Text.TEXT_SLOTS
-    
+
     catcode = None       # TeX category code
     macroName = None     # Macro to invoke in place of this token
 
@@ -65,10 +63,10 @@ class Token(Text):
         # Token comparison -- character and code must match
         if isinstance(other, Token):
             if self.catcode == other.catcode:
-                return cmp(unicode(self), unicode(other))
+                return cmp(str(self), str(other))
             return cmp(self.catcode, other.catcode)
         # Not comparing to token, just do a string match
-        return cmp(unicode(self), unicode(other))
+        return cmp(str(self), str(other))
 
     @property
     def source(self):
@@ -193,7 +191,7 @@ class Tokenizer(object):
 
         Required Arguments:
         source -- the source to tokenize.  This can be a string containing
-            TeX source, a file object that contains TeX source, or a 
+            TeX source, a file object that contains TeX source, or a
             list of tokens
         context -- the document's context object
 
@@ -202,10 +200,7 @@ class Tokenizer(object):
         self.state = Tokenizer.STATE_N
         self._charBuffer = []
         self._tokBuffer = []
-        if isinstance(source, unicode):
-            source = UnicodeStringIO(source)
-            self.filename = '<string>'
-        elif isinstance(source, basestring):
+        if isinstance(source, str):
             source = StringIO(source)
             self.filename = '<string>'
         elif isinstance(source, (tuple,list)):
@@ -233,12 +228,12 @@ class Tokenizer(object):
                 break
 
     def iterchars(self):
-        """ 
+        """
         Get the next character in the stream and its category code
 
         This function handles automatically converts characters like
         ^^M, ^^@, etc. into the correct character.  It also bypasses
-        ignored and invalid characters. 
+        ignored and invalid characters.
 
         If you are iterating through the characters in a TeX instance
         and you go too far, you can put the character back with
@@ -293,8 +288,8 @@ class Tokenizer(object):
             yield classes[code](token)
 
     def pushChar(self, char):
-        """ 
-        Push a character back into the stream to be re-read 
+        """
+        Push a character back into the stream to be re-read
 
         Required Arguments:
         char -- the character to push back
@@ -328,20 +323,20 @@ class Tokenizer(object):
                 self.pushToken(t)
 
     def __iter__(self):
-        """ 
+        """
         Iterate over tokens in the input stream
 
         Returns:
         generator that iterates through tokens in the stream
 
         """
-        # Cache variables to prevent globol lookups during generator 
+        # Cache variables to prevent globol lookups during generator
         global Space, EscapeSequence
         Space = Space
         EscapeSequence = EscapeSequence
         buffer = self._tokBuffer
         charIter = self.iterchars()
-        next = charIter.next
+        next = charIter.__next__
         context = self.context
         pushChar = self.pushChar
         STATE_N = self.STATE_N
@@ -368,7 +363,7 @@ class Tokenizer(object):
             token = next()
 
             if token.nodeType == ELEMENT_NODE:
-                raise ValueError, 'Expanded tokens should never make it here'
+                raise ValueError('Expanded tokens should never make it here')
 
             code = token.catcode
 
@@ -381,7 +376,7 @@ class Tokenizer(object):
                 if self.state  == STATE_S or self.state == STATE_N:
                     continue
                 self.state = STATE_S
-                token = Space(u' ')
+                token = Space(' ')
 
             # End of line
             elif code == CC_EOL:
@@ -393,7 +388,7 @@ class Tokenizer(object):
                     token = Space(' ')
                     code = CC_SPACE
                     self.state = STATE_N
-                elif state == STATE_N: 
+                elif state == STATE_N:
                     # ord(token) != 10 is the same as saying token != '\n'
                     # but it is much faster.
                     if ord(token) != 10:
@@ -412,12 +407,12 @@ class Tokenizer(object):
                 self.state = STATE_M
 
                 for token in charIter:
- 
+
                     if token.catcode == CC_LETTER:
                         word = [token]
                         for t in charIter:
                             if t.catcode == CC_LETTER:
-                                word.append(t) 
+                                word.append(t)
                             else:
                                 pushChar(t)
                                 break
@@ -432,9 +427,9 @@ class Tokenizer(object):
                     else:
                         token = EscapeSequence(token)
 #
-# Because we can implement macros both in LaTeX and Python, we don't 
+# Because we can implement macros both in LaTeX and Python, we don't
 # always want the whitespace to be eaten.  For example, implementing
-# \chardef\%=`% would be \char{`%} in TeX, but in Python it's just 
+# \chardef\%=`% would be \char{`%} in TeX, but in Python it's just
 # another macro class that would eat whitspace incorrectly.  So we
 # have to do this kind of thing in the parse() method of Macro.
 #
@@ -452,8 +447,8 @@ class Tokenizer(object):
 
                 # Check for any \let aliases
                 token = context.lets.get(token, token)
-                
-                # TODO: This action should be generalized so that the 
+
+                # TODO: This action should be generalized so that the
                 #       tokens are processed recursively
                 if token is not token and token.catcode == CC_COMMENT:
                     self.readline()
@@ -462,7 +457,7 @@ class Tokenizer(object):
                     continue
 
             elif code == CC_COMMENT:
-                self.readline() 
+                self.readline()
                 self.lineNumber += 1
                 self.state = STATE_N
                 continue

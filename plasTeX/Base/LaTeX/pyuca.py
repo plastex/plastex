@@ -118,7 +118,7 @@ class Collator:
             value, lookup_key = self.table.find_prefix(lookup_key)
             if not value:
                 # @@@
-                raise ValueError, map(hex, lookup_key)
+                raise ValueError(list(map(hex, lookup_key)))
             collation_elements.extend(value)
     
         sort_key = []

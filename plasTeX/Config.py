@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import os
-from ConfigManager import *
+from .ConfigManager import *
 
 c = config = ConfigManager()
 
@@ -43,7 +43,7 @@ general['xml'] = BooleanOption(
 def readconfig(file):
     """ Read a configuration file """
     if not os.path.isfile(file):
-        print >>sys.stderr, "WARNING: Could not load config file '%s'" % file
+        print("WARNING: Could not load config file '%s'" % file)
         return
     config.read(file)
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from Generic import GenericOption, GenericParser, GenericArgument
+from .Generic import GenericOption, GenericParser, GenericArgument
 from plasTeX.ConfigManager import InvalidOptionError
 
 class IntegerParser(GenericParser): pass
@@ -12,7 +12,7 @@ class IntegerOption(IntegerParser, GenericOption):
 
    def _hasFollowingArgument(self, args, delim):
       """ Return boolean indicating the existence of another argument """
-      return 0 
+      return 0
 
    def cast(self, data):
       name = self.name

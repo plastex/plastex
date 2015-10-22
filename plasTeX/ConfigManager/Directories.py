@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 import os
-from String import StringOption
-from Generic import InvalidOptionError, GenericArgument
+from .String import StringOption
+from .Generic import InvalidOptionError, GenericArgument
 
 class InputDirectoryOption(StringOption):
    """ Input directory configuration option """
@@ -41,7 +41,7 @@ class OutputDirectoryOption(StringOption):
             raise InvalidOptionError(name, value,
                   "Directory is not writable, please check the permissions")
       elif not os.path.isdir(value):
-         try: os.makedirs(value, 0755)
+         try: os.makedirs(value, 0o755)
          except OSError:
             raise InvalidOptionError(name, value,
                   "Could not create output directory")
@@ -50,4 +50,3 @@ class OutputDirectoryOption(StringOption):
 
 class OutputDirectoryArgument(GenericArgument, OutputDirectoryOption):
    """ Output directory command-line argument """
-

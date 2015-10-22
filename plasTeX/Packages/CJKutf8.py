@@ -1,3 +1,3 @@
 #!/usr/bin/env python
 
-from CJK import *
+from .CJK import *

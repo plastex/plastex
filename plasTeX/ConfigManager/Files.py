@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 import os
-from String import StringOption
-from Generic import InvalidOptionError, GenericArgument
+from .String import StringOption
+from .Generic import InvalidOptionError, GenericArgument
 
 class InputFileOption(StringOption):
    """ Input file configuration option """
@@ -48,7 +48,7 @@ class OutputFileOption(StringOption):
       elif not os.path.dirname(value):
          pass
       elif not os.path.isdir(os.path.dirname(value)):
-         try: os.makedirs(os.path.dirname(value), 0755)
+         try: os.makedirs(os.path.dirname(value), 0o755)
          except OSError:
             raise InvalidOptionError(name, value,
                   "Could not create output directory for file")

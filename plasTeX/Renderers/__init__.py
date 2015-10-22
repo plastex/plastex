@@ -5,6 +5,7 @@ from plasTeX.Filenames import Filenames
 from plasTeX.DOM import Node
 from plasTeX.Logging import getLogger
 from plasTeX.Imagers import Image, PILImage
+import collections
 
 log = getLogger()
 status = getLogger('status')
@@ -30,14 +31,14 @@ def mixin(base, mix, overwrite=False):
     mix -- the mixin class
 
     """
-    if not vars(base).has_key('_mixed_'):
+    if '_mixed_' not in vars(base):
         base._mixed_ = {}
     mixed = base._mixed_
     for cls in baseclasses(mix):
-        for item, value in vars(cls).items():
+        for item, value in list(vars(cls).items()):
             if item in ['__dict__','__module__','__doc__','__weakref__']:
                 continue
-            if overwrite or not vars(base).has_key(item):
+            if overwrite or item not in vars(base):
                 old = vars(base).get(item, None)
                 setattr(base, item, value)
                 mixed[item] = (mix, old)
@@ -54,14 +55,14 @@ def unmix(base, mix=None):
 
     """
     if mix is None:
-        for key, value in base._mixed_.items():
+        for key, value in list(base._mixed_.items()):
             if value[1] is not None:
                 setattr(base, key, value[1])
             else:
                 delattr(base, key)
         del base._mixed_
     else:
-        for key, value in base._mixed_.items():
+        for key, value in list(base._mixed_.items()):
             if value[0] is mix:
                 if value[1] is not None:
                     setattr(base, key, value[1])
@@ -88,7 +89,7 @@ class Renderable(object):
         r = Node.renderer
 
         # Short circuit macros that have unicode equivalents
-        uni = self.unicode
+        uni = self.str
         if uni is not None:
             return r.outputType(r.textDefault(uni))
 
@@ -96,7 +97,7 @@ class Renderable(object):
         if not self.hasChildNodes():
 #           if self.filename:
 #               status.info(' [ %s ] ', self.filename)
-            return u''
+            return ''
 
 #       if self.filename:
 #           status.info(' [ %s ', self.filename)
@@ -118,7 +119,7 @@ class Renderable(object):
                 continue
 
             # Short circuit macros that have unicode equivalents
-            uni = child.unicode
+            uni = child.str
             if uni is not None:
                 s.append(r.textDefault(uni))
                 continue
@@ -172,9 +173,9 @@ class Renderable(object):
 
             # If a plain string is returned, we have no idea what
             # the encoding is, but we'll make a guess.
-            if type(val) is not unicode:
+            if type(val) is not str:
                 log.warning('The renderer for %s returned a non-unicode string.  Using the default input encoding.' % type(child).__name__)
-                val = unicode(val, child.config['files']['input-encoding'])
+                val = str(val, child.config['files']['input-encoding'])
 
             # If the content should go to a file, write it and go
             # to the next child.
@@ -193,9 +194,9 @@ class Renderable(object):
 
                     # If a plain string is returned, we have no idea what
                     # the encoding is, but we'll make a guess.
-                    if type(val) is not unicode:
+                    if type(val) is not str:
                         log.warning('The renderer for %s returned a non-unicode string.  Using the default input encoding.' % type(child).__name__)
-                        val = unicode(val, child.config['files']['input-encoding'])
+                        val = str(val, child.config['files']['input-encoding'])
 
                 # Write the file content
                 codecs.open(filename, 'w',
@@ -212,10 +213,10 @@ class Renderable(object):
 #       if self.filename:
 #           status.info(' ] ')
 
-        return r.outputType(u''.join(s))
+        return r.outputType(''.join(s))
 
     def __str__(self):
-        return unicode(self)
+        return str(self)
 
     @property
     def image(self):
@@ -291,7 +292,7 @@ class Renderable(object):
                                         r.fileExtension)
                 filename = r.files[self] = newFilename()
 
-        except AttributeError, msg:
+        except AttributeError as msg:
             if not hasattr(self, 'config'):
                 return
 
@@ -310,7 +311,7 @@ class Renderable(object):
             if hasattr(self, 'title'):
                 if hasattr(self.title, 'textContent'):
                     ns['title'] = self.title.textContent
-                elif isinstance(self.title, basestring):
+                elif isinstance(self.title, str):
                     ns['title'] = self.title
             r.files[self] = filename = r.newFilename()
 
@@ -337,9 +338,9 @@ class Renderer(dict):
 
     renderableClass = Renderable
     renderMethod = None
-    textDefault = unicode
-    default = unicode
-    outputType = unicode
+    textDefault = str
+    default = str
+    outputType = str
     imageTypes = []
     vectorImageTypes = []
     fileExtension = ''
@@ -393,7 +394,7 @@ class Renderer(dict):
 
         # If there are no keys, print a warning.
         # This is most likely a problem.
-        if not self.keys():
+        if not list(self.keys()):
             log.warning('There are no keys in the renderer.  ' +
                         'All objects will use the default rendering method.')
 
@@ -416,7 +417,7 @@ class Renderer(dict):
                 break
             try:
                 exec('from plasTeX.Imagers.%s import Imager' % name)
-            except ImportError, msg:
+            except ImportError as msg:
                 log.warning("Could not load imager '%s' because '%s'" % (name, msg))
                 continue
 
@@ -450,7 +451,7 @@ class Renderer(dict):
                 break
             try:
                 exec('from plasTeX.Imagers.%s import Imager' % name)
-            except ImportError, msg:
+            except ImportError as msg:
                 log.warning("Could not load imager '%s' because '%s'" % (name, msg))
                 continue
 
@@ -482,14 +483,14 @@ class Renderer(dict):
         if type(self).renderMethod:
             getattr(document, type(self).renderMethod)()
         else:
-            unicode(document)
+            str(document)
 
         # Finish rendering images
         self.imager.close()
         self.vectorImager.close()
 
         # Run any cleanup activities
-        self.cleanup(document, self.files.values(), postProcess=postProcess)
+        self.cleanup(document, list(self.files.values()), postProcess=postProcess)
 
         # Write out auxilliary information
         pauxname = os.path.join(document.userdata.get('working-dir','.'),
@@ -534,16 +535,16 @@ class Renderer(dict):
             try:
                 s = codecs.open(str(f), 'r', encoding,
                                 errors=self.encodingErrors).read()
-            except IOError, msg:
+            except IOError as msg:
                 log.error(msg)
                 continue
 
             s = self.processFileContent(document, s)
 
-            if callable(postProcess):
+            if isinstance(postProcess, collections.Callable):
                 s = postProcess(document, s)
 
-            codecs.open(f, 'w', encoding).write(u''.join(s))
+            codecs.open(f, 'w', encoding).write(''.join(s))
 
     def find(self, keys, default=None):
         """
@@ -562,7 +563,7 @@ class Renderer(dict):
 
         """
         for key in keys:
-            if self.has_key(key):
+            if key in self:
                 return self[key]
 
         # Other nodes supplied default
@@ -608,10 +609,10 @@ class StaticNode(object):
     def __unicode__(self):
         return self._node_data[1]
     def __str__(self):
-        return unicode(self)
+        return str(self)
 
 
-class URL(unicode):
+class URL(str):
 
     def relativeTo(self, src):
         """

@@ -1,3 +1,3 @@
 #!/usr/bin/env python
 
-from article import *
+from .article import *

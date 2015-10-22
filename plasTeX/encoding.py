@@ -6,6 +6,6 @@ import string
 def stringletters():
     encoding = locale.getlocale()[1]
     if encoding:
-        return unicode(string.letters, encoding)
+        return str(string.ascii_letters, encoding)
     else:
-        return unicode(string.letters)
+        return str(string.ascii_letters)

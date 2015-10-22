@@ -50,8 +50,8 @@ def ProcessOptions(options, document):
     context.loadLanguage('american', document)
 
     language = False
-    languages = document.context.languages.keys()
-    for key, value in options.items():
+    languages = list(document.context.languages.keys())
+    for key, value in list(options.items()):
         if key == 'language':
             language = True
             context.loadLanguage(value, document)

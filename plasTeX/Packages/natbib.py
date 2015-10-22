@@ -25,7 +25,7 @@ def ProcessOptions(options, document):
     if options is None:
         return
     PackageOptions.update(options)
-    for key, value in options.items():
+    for key, value in list(options.items()):
         if key == 'numbers':
             bibpunct.punctuation['style'] = 'n'
             ProcessOptions({'square':True, 'comma':True}, document)
@@ -150,10 +150,10 @@ class bibpunct(Base.Command):
                    'years':bstyleoption(',')}
     def invoke(self, tex):
         res = Base.Command.invoke(self, tex)
-        for key, value in self.attributes.items():
+        for key, value in list(self.attributes.items()):
             if value is None:
                 continue
-            elif type(value) == str or type(value) == unicode:
+            elif type(value) == str or type(value) == str:
                 bibpunct.punctuation[key] = value
             else:
                 bibpunct.punctuation[key] = value.textContent            
@@ -186,7 +186,7 @@ class thebibliography(Base.thebibliography):
             try: 
                 doc = self.ownerDocument
                 return doc.userdata.getPath('bibliography/bibcites', {})[self.attributes['key']]
-            except KeyError, msg:
+            except KeyError as msg:
                 pass
             # We don't have a citation that matches, fill the fields
             # with dummy data

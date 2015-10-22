@@ -3,14 +3,14 @@
 import sys, re
 from plasTeX.Logging import getLogger
 
-class DOMString(unicode):
+class DOMString(str):
     """
     DOM String
 
     http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html#ID-C74D1578
     """
 
-class DOMTimeStamp(long):
+class DOMTimeStamp(int):
     """
     DOM Time Stamp
 
@@ -24,8 +24,8 @@ class DOMUserData(dict):
     http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html#Core-DOMUserData
     """
     def setPath(self, path, value):
-        """ 
-        Traverse the nested dictionary `d` and set the value 
+        """
+        Traverse the nested dictionary `d` and set the value
 
         Arguments:
         path -- a '/' delimited string of keys
@@ -46,8 +46,8 @@ class DOMUserData(dict):
         self[keys[-1]] = value
 
     def getPath(self, path, default=None):
-        """ 
-        Return the value of the nested dictionary `d` at the path 
+        """
+        Return the value of the nested dictionary `d` at the path
 
         Arguments:
         path -- a '/' delimited string of keys
@@ -93,8 +93,8 @@ INVALID_ACCESS_ERR             = 15
 VALIDATION_ERR                 = 16
 
 class DOMException(Exception):
-    """ 
-    DOM Exception 
+    """
+    DOM Exception
 
     http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html#ID-17189187
     """
@@ -177,7 +177,7 @@ class DOMStringList(_DOMList):
     """
 
 class NameList(_DOMList):
-    """ 
+    """
     Name List
 
     http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html#NameList
@@ -237,25 +237,25 @@ class DOMImplementation(object):
         raise NotSupportedErr
 
 class NamedNodeMap(dict):
-    """ 
-    DOM Named Node Map 
+    """
+    DOM Named Node Map
 
-    This class is a Python dictionary that also supports the 
+    This class is a Python dictionary that also supports the
     DOM Named Node Map interface.  It is used for the `attributes`
-    attribute on Node.  Since LaTeX's attributes are actually 
+    attribute on Node.  Since LaTeX's attributes are actually
     objects instead of strings, 'parentNode' and 'ownerDocument'
     attributes were also added.  Whenever a new object is added to
-    the dictionary, the object's parent and owner are set to 
+    the dictionary, the object's parent and owner are set to
     the parent and owner of this object.
 
     """
 
     def parentNode():
-        """ 
+        """
         Get/Set the parent node
 
         Since the children of this object can contain document fragments
-        when it is set we have to reset the parentNode of all of 
+        when it is set we have to reset the parentNode of all of
         our children.
 
         """
@@ -264,7 +264,7 @@ class NamedNodeMap(dict):
         def fset(self, value):
             if getattr(self, '_dom_parentNode', None) is not value:
                 self._dom_parentNode = value
-                for value in self.values():
+                for value in list(self.values()):
                     self._resetPosition(value.parentNode)
         return locals()
     parentNode = property(**parentNode())
@@ -318,7 +318,7 @@ class NamedNodeMap(dict):
             value = self[name]
             del self[name]
         except KeyError:
-            raise NotFoundErr, 'Could not find name "%s"' % name
+            raise NotFoundErr('Could not find name "%s"' % name)
         return value
 
     def item(self, index):
@@ -332,7 +332,7 @@ class NamedNodeMap(dict):
         the requested value, or None if it doesn't exist
 
         """
-        items = self.items()
+        items = list(self.items())
         items.sort()
         try: return items[num][1]
         except IndexError: return None
@@ -383,7 +383,7 @@ class NamedNodeMap(dict):
 
         Required Arguments:
         name -- the name to use
-        value -- the value to put under `name` 
+        value -- the value to put under `name`
 
         """
         self._resetPosition(value)
@@ -408,7 +408,7 @@ class NamedNodeMap(dict):
         elif nodeType == Node.DOCUMENT_FRAGMENT_NODE:
             for item in value:
                 self._resetPosition(item, parent=value)
-     
+
         elif nodeType is not None:
             value.parentNode = parent
             value.ownerDocument = self.ownerDocument
@@ -418,7 +418,7 @@ class NamedNodeMap(dict):
                 self._resetPosition(item)
 
         elif isinstance(value, dict):
-            for item in value.values():
+            for item in list(value.values()):
                 self._resetPosition(item)
 
         else:
@@ -426,16 +426,16 @@ class NamedNodeMap(dict):
                 value.parentNode = parent
             if hasattr(value, 'ownerDocument'):
                 value.ownerDocument = self.ownerDocument
-        
+
     def update(self, other):
         """
         Merge another named node map into this one
- 
+
         Required Arguments:
         other -- another instance of a NamedNodeMap
 
         """
-        for key, value in other.items():
+        for key, value in list(other.items()):
             self[key] = value
 
 
@@ -474,7 +474,7 @@ def _compareDocumentPosition(self, other):
             return Node.DOCUMENT_POSITION_CONTAINS
         sparents.append(parent)
         parent = parent.parentNode
-        
+
     oparents = []
     parent = other
     while parent is not None:
@@ -501,16 +501,16 @@ def _compareDocumentPosition(self, other):
 
 
 def _previousSibling(self):
-    """ 
-    Return the previous sibling 
+    """
+    Return the previous sibling
 
-    NOTE: This is fairly inefficient.  The reason that it has 
+    NOTE: This is fairly inefficient.  The reason that it has
     to be done this way is because Text nodes are a subclass of
-    `unicode` which is an immutable object.  This means that 
+    `unicode` which is an immutable object.  This means that
     we can't have two references to the same Text object (i.e.
     `previousSibling` and `nextSibling` can't be variables).
 
-    """ 
+    """
     if not self.parentNode:
         return None
     previous = None
@@ -522,16 +522,16 @@ def _previousSibling(self):
 
 
 def _nextSibling(self):
-    """ 
-    Return the next sibling 
+    """
+    Return the next sibling
 
-    NOTE: This is fairly inefficient.  The reason that it has 
+    NOTE: This is fairly inefficient.  The reason that it has
     to be done this way is because Text nodes are a subclass of
-    `unicode` which is an immutable object.  This means that 
+    `unicode` which is an immutable object.  This means that
     we can't have two references to the same Text object (i.e.
     `previousSibling` and `nextSibling` can't be variables).
 
-    """ 
+    """
     if not self.parentNode:
         return None
     next = False
@@ -544,14 +544,14 @@ def _nextSibling(self):
 
 def xmlstr(obj):
     """ Escape special characters to create a legal xml string """
-    if isinstance(obj, basestring):
+    if isinstance(obj, str):
         return obj.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;')
     elif isinstance(obj, list):
-        return unicode([xmlstr(x) for x in obj])
+        return str([xmlstr(x) for x in obj])
     elif isinstance(obj, dict):
-        return unicode(dict([(xmlstr(x),xmlstr(y)) for x,y in obj.items()]))
+        return str(dict([(xmlstr(x),xmlstr(y)) for x,y in list(obj.items())]))
     else:
-        return xmlstr(unicode(obj))
+        return xmlstr(str(obj))
 
 class Node(object):
     """
@@ -563,7 +563,7 @@ class Node(object):
 # LaTeX Node extensions
 #
     # LaTeX document hierarchy
-    DOCUMENT_LEVEL = -sys.maxint
+    DOCUMENT_LEVEL = -sys.maxsize
     VOLUME_LEVEL = -2
     PART_LEVEL = -1
     CHAPTER_LEVEL = 0
@@ -620,7 +620,7 @@ class Node(object):
     prefix = None
     localName = None
     baseURI = None
-  
+
     nodeName = None
     nodeValue = None
     nodeType = None
@@ -628,15 +628,15 @@ class Node(object):
     ownerDocument = None
     attributes = None
 
-    unicode = None
+    str = None
 
     # String containing type of node relating to navigation.
     # Common values are: glossary, bibliography, contents, index, search, etc.
     linkType = None
 
     def toXML(self, debug=False):
-        """ 
-        Dump the object as XML 
+        """
+        Dump the object as XML
 
         Returns:
         string in XML format
@@ -698,24 +698,24 @@ class Node(object):
         if debug:
             extra = ' parentNode="%s" ownerDocument="%s"' % \
                     (id(self.parentNode), id(self.ownerDocument))
-            
+
         if not self.parentNode:
-            extra += ' xmlns:plastex="http://plastex.sf.net/"' 
+            extra += ' xmlns:plastex="http://plastex.sf.net/"'
 
         # Bail out early if the element is empty
         if not(self.attributes) and not(self.hasChildNodes()):
             return '<%s%s%s%s%s%s%s/>' % (name, modifier, style, source, ref, label, extra)
 
         s = ['<%s%s%s%s%s%s%s>\n' % (name, modifier, style, source, ref, label, extra)]
-            
+
         # Render attributes
         if self.attributes:
-            for key, value in self.attributes.items():
+            for key, value in list(self.attributes.items()):
                 if value is None:
                     s.append('    <plastex:arg name="%s"/>\n' % key)
                 elif isinstance(value, dict):
                     newdict = {}
-                    for k, v in value.items():
+                    for k, v in list(value.items()):
                         if hasattr(v, 'toXML'):
                             newdict[k] = v.toXML()
                         else:
@@ -730,11 +730,11 @@ class Node(object):
 
         # Render content
         if self.hasChildNodes():
-            if not(self.attributes and self.attributes.has_key('self')):
+            if not(self.attributes and 'self' in self.attributes):
                 for value in self.childNodes:
                     if hasattr(value, 'toXML'):
                         value = value.toXML()
-                    else: 
+                    else:
                         value = xmlstr(value)
                     s.append(value)
 
@@ -750,7 +750,7 @@ class Node(object):
             pass
         # Allow the `self` key of attributes to act as the `childNodes`
         a = self.attributes
-        if a and a.has_key('self'):
+        if a and 'self' in a:
             nodes = a['self']
             if nodes is None:
                 nodes = []
@@ -765,7 +765,7 @@ class Node(object):
         if hasattr(self, '_dom_childNodes'):
             return True
         a = self.attributes
-        return a and a.has_key('self')
+        return a and 'self' in a
 
     @property
     def firstChild(self):
@@ -784,8 +784,8 @@ class Node(object):
     compareDocumentPosition = _compareDocumentPosition
 
     def insertBefore(self, newChild, refChild):
-        """ 
-        Insert `newChild` before `refChild` 
+        """
+        Insert `newChild` before `refChild`
 
         Required Arguments:
         newChild -- the child to insert
@@ -807,8 +807,8 @@ class Node(object):
         raise NotFoundErr
 
     def insertAfter(self, newChild, refChild):
-        """ 
-        Insert `newChild` after `refChild` 
+        """
+        Insert `newChild` after `refChild`
 
         Required Arguments:
         newChild -- the child to insert
@@ -830,8 +830,8 @@ class Node(object):
         raise NotFoundErr
 
     def replaceChild(self, newChild, oldChild):
-        """ 
-        Replace `newChild` with `oldChild` 
+        """
+        Replace `newChild` with `oldChild`
 
         Required Arguments:
         newChild -- the child to insert
@@ -854,9 +854,9 @@ class Node(object):
         raise NotFoundErr
 
     def removeChild(self, oldChild):
-        """ 
-        Remove 'oldChild' from list of children 
- 
+        """
+        Remove 'oldChild' from list of children
+
         Required Arguments:
         oldChild -- the child to remove
 
@@ -883,11 +883,11 @@ class Node(object):
 
         """
         try: return self.childNodes.pop(index)
-        except: raise IndexError, 'object has no childNodes'
+        except: raise IndexError('object has no childNodes')
 
     def append(self, newChild, setParent=True):
-        """ 
-        Append `newChild` to child list 
+        """
+        Append `newChild` to child list
 
         Required Arguments:
         newChild -- the child to add
@@ -896,13 +896,13 @@ class Node(object):
         `newChild`
 
         """
-        if type(newChild) is str or type(newChild) is unicode:
+        if isinstance(newChild, str):
             newChild = self.ownerDocument.createTextNode(newChild)
         if newChild.nodeType == Node.DOCUMENT_FRAGMENT_NODE:
             for item in newChild:
                 self.append(item, setParent=setParent)
         else:
-            self.childNodes.append(newChild) 
+            self.childNodes.append(newChild)
         if setParent:
             if self.nodeType == self.DOCUMENT_FRAGMENT_NODE:
                 newChild.parentNode = self.parentNode
@@ -914,8 +914,8 @@ class Node(object):
     appendChild = append
 
     def insert(self, i, newChild, setParent=True):
-        """ 
-        Insert `newChild` into child list at position `i` 
+        """
+        Insert `newChild` into child list at position `i`
 
         Required Arguments:
         i -- the position to insert the new child
@@ -925,7 +925,7 @@ class Node(object):
         `newChild`
 
         """
-        if type(newChild) is str or type(newChild) is unicode:
+        if isinstance(newChild, str):
             newChild = self.ownerDocument.createTextNode(newChild)
         if newChild.nodeType == Node.DOCUMENT_FRAGMENT_NODE:
             for item in newChild:
@@ -950,7 +950,7 @@ class Node(object):
         node -- the object to put at that index
 
         """
-        if type(node) is str or type(node) is unicode:
+        if isinstance(node, str):
             node = self.ownerDocument.createTextNode(node)
         # If a DocumentFragment is being inserted, but it isn't replacing
         # a slice, we need to put each child in manually.
@@ -960,7 +960,7 @@ class Node(object):
                 self.insert(i, item)
                 i += 1
             self.pop(i)
-            
+
         else:
             self.insert(i, node)
             self.pop(i+1)
@@ -977,7 +977,7 @@ class Node(object):
         """ Append a list of text nodes as one node """
         if not text:
             return
-        value = u''.join(text)
+        value = ''.join(text)
         for src, dest in charsubs:
             value = value.replace(src, dest)
         text[:] = []
@@ -991,7 +991,7 @@ class Node(object):
         """ other + self """
         obj = type(self)()
         obj.ownerDocument = self.ownerDocument
-        obj.parentNode = None 
+        obj.parentNode = None
         for item in other:
             obj.append(item)
         for item in self:
@@ -1002,7 +1002,7 @@ class Node(object):
         """ self + other """
         obj = type(self)()
         obj.ownerDocument = self.ownerDocument
-        obj.parentNode = None 
+        obj.parentNode = None
         for item in self:
             obj.append(item)
         for item in other:
@@ -1010,8 +1010,8 @@ class Node(object):
         return obj
 
     def cloneNode(self, deep=False):
-        """ 
-        Clone the current node 
+        """
+        Clone the current node
 
         Required Arguments:
         deep -- boolean indicating if the copy is a deep copy
@@ -1039,11 +1039,11 @@ class Node(object):
             if self.hasChildNodes():
                 for x in self.childNodes:
                     node.append(x)
-        return node 
+        return node
 
     def normalize(self, charsubs=[]):
-        """ 
-        Combine consecutive text nodes and remove comments 
+        """
+        Combine consecutive text nodes and remove comments
 
         Keyword Arguments:
         charsubs -- a list of two-element tuples that contain string
@@ -1053,7 +1053,7 @@ class Node(object):
 
         """
         if self.hasAttributes():
-            for value in self.attributes.values():
+            for value in list(self.attributes.values()):
                 if isinstance(value, Node):
                     value.normalize(charsubs)
 
@@ -1086,20 +1086,20 @@ class Node(object):
         """ Get the text content of the current node """
         output = []
         if getattr(self, 'unicode', None) is not None:
-            output.append(self.unicode)
+            output.append(self.str)
         else:
             for item in self:
                 if item.nodeType == Node.TEXT_NODE:
                     output.append(item)
                 elif getattr(item, 'unicode', None) is not None:
-                    output.append(item.unicode)
+                    output.append(item.str)
                 else:
                     output.append(item.textContent)
         if self.ownerDocument is not None:
-            return self.ownerDocument.createTextNode(u''.join(output))
+            return self.ownerDocument.createTextNode(''.join(output))
         else:
-            return Text(u''.join(output))
- 
+            return Text(''.join(output))
+
     def isSameNode(self, other):
         """ Is this the same node as `other`? """
         return other is self
@@ -1109,7 +1109,7 @@ class Node(object):
         return None
 
     def isDefaultNamespace(self, ns):
-        """ 
+        """
         Is `ns` the default namespace?
 
         Required Arguments:
@@ -1142,9 +1142,9 @@ class Node(object):
     def __cmp__(self, other):
         try:
             res = cmp(self.nodeName, other.nodeName)
-            if res: return res 
+            if res: return res
             res = cmp(self.attributes, other.attributes)
-            if res: return res 
+            if res: return res
             if self.hasChildNodes() and other.hasChildNodes():
                 return cmp(self.childNodes, other.childNodes)
         except AttributeError:
@@ -1162,7 +1162,7 @@ class Node(object):
         Required Arguments:
         key -- the name to store the data under
         data -- the data to store
-  
+
         Keyword Arguments:
         handler -- data handler
 
@@ -1207,8 +1207,8 @@ class Node(object):
     def __getitem__(self, i):
         if self.hasChildNodes():
             return self.childNodes[i]
-        raise IndexError, 'object has no childNodes'
-        
+        raise IndexError('object has no childNodes')
+
     @property
     def allChildNodes(self):
         """ Return a list containing all of the child nodes in the branch """
@@ -1221,7 +1221,7 @@ class Node(object):
         return nodes
 
 def _getElementsByTagName(self, tagname):
-    """ 
+    """
     Get a list of nodes with the given name
 
     Required Arguments:
@@ -1239,7 +1239,7 @@ def _getElementsByTagName(self, tagname):
 
     # Look in attributes dictionary for document fragments as well
     if self.attributes:
-        for item in self.attributes.values():
+        for item in list(self.attributes.values()):
             if getattr(item, 'tagName', None) in tagname:
                  output.append(item)
             if hasattr(item, 'getElementsByTagName'):
@@ -1247,13 +1247,13 @@ def _getElementsByTagName(self, tagname):
             elif isinstance(item, list):
                 for e in item:
                     if getattr(e, 'tagName', None) in tagname:
-                        output.append(e) 
+                        output.append(e)
                     if hasattr(item, 'getElementsByTagName'):
                         output += item.getElementsByTagName(tagname)
             elif isinstance(item, dict):
-                for e in item.values():
+                for e in list(item.values()):
                     if getattr(e, 'tagName', None) in tagname:
-                        output.append(e) 
+                        output.append(e)
                     if hasattr(item, 'getElementsByTagName'):
                         output += item.getElementsByTagName(tagname)
 
@@ -1262,7 +1262,7 @@ def _getElementsByTagName(self, tagname):
         if getattr(item, 'tagName', None) in tagname:
             output.append(item)
         if hasattr(item, 'getElementsByTagName'):
-            output += item.getElementsByTagName(tagname) 
+            output += item.getElementsByTagName(tagname)
 
     return output
 
@@ -1280,7 +1280,7 @@ def _getElementById(self, elementId):
     """
     # Look in attributes dictionary for document fragments as well
     if hasattr(self, 'attributes'):
-        for item in self.attributes.values():
+        for item in list(self.attributes.values()):
             if id(item) == elementId:
                  return item
             if hasattr(item, 'getElementById'):
@@ -1296,7 +1296,7 @@ def _getElementById(self, elementId):
                         if e is not None:
                             return e
             elif isinstance(item, dict):
-                for e in item.values():
+                for e in list(item.values()):
                     if id(e) == elementId:
                         return e
                     if hasattr(item, 'getElementById'):
@@ -1309,7 +1309,7 @@ def _getElementById(self, elementId):
         if id(item) == elementId:
             return item
         if hasattr(item, 'getElementById'):
-            e = item.getElementById(elementId) 
+            e = item.getElementById(elementId)
             if e is not None:
                 return e
 
@@ -1403,7 +1403,7 @@ class Element(Node):
         def fset(self, value): self.nodeName = value
         return locals()
     tagName = property(**tagName())
-        
+
     def getAttribute(self, name):
         """
         Get attribute with name `name`
@@ -1419,7 +1419,7 @@ class Element(Node):
 
     def setAttribute(self, name, value):
         """
-        Set attribute 
+        Set attribute
 
         Required Arguments:
         name -- name of attribute to set
@@ -1446,7 +1446,7 @@ class Element(Node):
         Set an attribute node
 
         Required Arguments:
-        newAttr -- attribute node 
+        newAttr -- attribute node
 
         """
         self.setAttribute(newAttr.name, newAttr)
@@ -1472,7 +1472,7 @@ class Element(Node):
         localName -- name of attribute
 
         Returns:
-        attribute 
+        attribute
 
         """
         return self.getAttribute(localName)
@@ -1503,7 +1503,7 @@ class Element(Node):
     def getAttributeNodeNS(self, namespaceURI, localName):
         """
         Get attribute from given namespace
-  
+
         Required Arguments:
         namespaceURI -- namespace of attribute
         localName -- name of attribute
@@ -1515,9 +1515,9 @@ class Element(Node):
         return self.getAttributeNode(localName)
 
     setAttributeNodeNS = setAttributeNode
-  
+
     def getElementsByTagNameNS(self, namespaceURI, localName):
-        """ 
+        """
         Get elements with tag name in given namespace
 
         Required Arguments:
@@ -1541,7 +1541,7 @@ class Element(Node):
         boolean indicating whether or not the attribute exists
 
         """
-        return self.attributes.has_key(name)
+        return name in self.attributes
 
     def hasAttributeNS(self, namespaceURI, localName):
         """
@@ -1563,7 +1563,7 @@ class Element(Node):
 
         Required Arguments:
         name -- name of attribute
-        
+
         Keyword Arguments:
         isId -- boolean indicating whether this attribute should be an
             ID attribute or not
@@ -1579,7 +1579,7 @@ class Element(Node):
         Required Arguments:
         namespaceURI -- namespace of attribute
         localName -- name of attribute
-        
+
         Keyword Arguments:
         isId -- boolean indicating whether this attribute should be an
             ID attribute or not
@@ -1593,7 +1593,7 @@ class Element(Node):
 
         Required Arguments:
         idAttr -- attribute node
-        
+
         Keyword Arguments:
         isId -- boolean indicating whether this attribute should be an
             ID attribute or not
@@ -1602,11 +1602,11 @@ class Element(Node):
         self.setIdAttribute(idAttr.name, isId)
 
 
-class CharacterData(unicode, Node):
+class CharacterData(str, Node):
     """
     Character Data
 
-    http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html#ID-FF21A306 
+    http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html#ID-FF21A306
 
     This class doesn't follow the entire API. Because it is also
     a subclass of unicode it is immutable making methods like insertData,
@@ -1627,7 +1627,7 @@ class CharacterData(unicode, Node):
         return self
 
     @property
-    def unicode(self):
+    def str(self):
         return self
 
     def toXML(self, *args, **kwargs):
@@ -1654,7 +1654,7 @@ class CharacterData(unicode, Node):
 
     def _notImplemented(self, *args, **kwargs):
         raise NotImplementedError
-    
+
     substringData = _notImplemented
     appendData = _notImplemented
     insertData = _notImplemented
@@ -1676,20 +1676,20 @@ class CharacterData(unicode, Node):
         return []
 
     def __add__(self, other):
-        return unicode.__add__(self, other)
+        return str.__add__(self, other)
 
     def __radd__(self, other):
         return other.__add__(self)
 
     def __len__(self):
-        return unicode.__len__(self)
+        return str.__len__(self)
 
     def __iter__(self):
         for i in range(len(self)):
             yield self[i]
 
     def __getitem__(self, i):
-        return unicode.__getitem__(self, i)
+        return str.__getitem__(self, i)
 
     def __str__(self):
         return self
@@ -1844,7 +1844,7 @@ class DOMConfiguration(dict):
     @property
     def parameterNames(self):
         """ Return list of all possible parameter names """
-        return self.keys()
+        return list(self.keys())
 
     def setParameter(self, name, value):
         """
@@ -1855,7 +1855,7 @@ class DOMConfiguration(dict):
         value -- value of parameter
 
         """
-        if self.has_key(name):
+        if name in self:
             raise NotFoundErr
         self[name] = value
 
@@ -1907,7 +1907,7 @@ class DocumentType(Node):
     """
     nodeType = Node.DOCUMENT_TYPE_NODE
     __slots__ = Node.NODE_SLOTS
-    
+
     name = None
     entities = None
     notations = None
@@ -2006,7 +2006,7 @@ class Document(Node):
 
     nodeName = '#document'
     nodeType = Node.DOCUMENT_NODE
-    __slots__ = Node.NODE_SLOTS
+    #__slots__ = Node.NODE_SLOTS
 
     doctype = None
     implementation = None
@@ -2050,10 +2050,10 @@ class Document(Node):
         o.ownerDocument = self
         o.parentNode = None
         return o
-         
+
     def createTextNode(self, data):
-        """ 
-        Instantiate a new text node 
+        """
+        Instantiate a new text node
 
         Required Arguments:
         data -- string to initialize text node with
@@ -2068,8 +2068,8 @@ class Document(Node):
         return o
 
     def createComment(self, data):
-        """ 
-        Instantiate a new comment node 
+        """
+        Instantiate a new comment node
 
         Required Arguments:
         data -- string to initialize the comment with
@@ -2084,8 +2084,8 @@ class Document(Node):
         return o
 
     def createCDATASection(self, data):
-        """ 
-        Instantiate a new CDATA section 
+        """
+        Instantiate a new CDATA section
 
         Required Arguments:
         data -- string to initialize CDATA section with
@@ -2098,13 +2098,13 @@ class Document(Node):
         o.ownerDocument = self
         o.parentNode = None
         return o
-                         
+
     def createProcessingInstruction(self, target, data):
-        """ 
-        Instantiate a new processing instruction node 
+        """
+        Instantiate a new processing instruction node
 
         Required Arguments:
-        target -- 
+        target --
         data -- string to initialize processing instruction with
 
         Returns:
@@ -2117,8 +2117,8 @@ class Document(Node):
         return o
 
     def createAttribute(self, name):
-        """ 
-        Instantiate a new attribute node 
+        """
+        Instantiate a new attribute node
 
         Required Arguments:
         name -- name of attribute
@@ -2132,10 +2132,10 @@ class Document(Node):
         o.ownerDocument = self
         o.parentNode = None
         return o
-                   
+
     def createEntityReference(self, name):
-        """ 
-        Instantiate a new entity reference 
+        """
+        Instantiate a new entity reference
 
         Required Arguments:
         name -- name of entity
@@ -2155,7 +2155,7 @@ class Document(Node):
     def importNode(self, importedNode, deep=False):
         """
         Import a node from another document
- 
+
         Required Arguments:
         importedNode -- node to import
 
@@ -2170,7 +2170,7 @@ class Document(Node):
         node.parentNode = self
         node.ownerDocument = self
         return node
-  
+
     def createElementNS(self, namespaceURI, qualifiedName):
         """
         Create an element in the given namespace

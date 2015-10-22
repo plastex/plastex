@@ -15,9 +15,9 @@ Example:
         print token
 
 """
-
+from io import IOBase
 import string, os, traceback, sys, plasTeX, codecs, subprocess, types
-from Tokenizer import Tokenizer, Token, EscapeSequence, Other
+from .Tokenizer import Tokenizer, Token, EscapeSequence, Other
 from plasTeX import TeXDocument
 from plasTeX.Base.TeX.Primitives import MathShift
 from plasTeX import ParameterCommand, Macro
@@ -36,11 +36,11 @@ _type = type
 class bufferediter(object):
     """ Buffered iterator """
     def __init__(self, obj):
-        self._next = iter(obj).next
+        self._next = iter(obj).__next__
         self._buffer = []
     def __iter__(self):
         return self
-    def next(self):
+    def __next__(self):
         if self._buffer:
             return self._buffer.pop()
         return self._next()
@@ -113,7 +113,7 @@ class TeX(object):
         if file is not None:
 
             # Filename
-            if isinstance(file, basestring):
+            if isinstance(file, str):
                 '''
                 if config has no files structure
                 or encoding is not specified
@@ -148,9 +148,9 @@ class TeX(object):
         if source is None:
             return
         if self.jobname is None:
-            if isinstance(source, basestring):
+            if isinstance(source, str):
                 self.jobname = os.path.basename(os.path.splitext(source)[0])
-            elif isinstance(source, file):
+            elif isinstance(source, IOBase):
                 self.jobname = os.path.basename(os.path.splitext(source.name)[0])
         t = Tokenizer(source, self.ownerDocument.context)
         self.inputs.append((t, iter(t)))
@@ -182,7 +182,7 @@ class TeX(object):
 
         try:
             path = self.kpsewhich(file)
-        except OSError, msg:
+        except OSError as msg:
             log.warning(msg)
             return False
 
@@ -204,7 +204,7 @@ class TeX(object):
                 if tok is flag:
                     break
 
-        except (OSError, IOError, TypeError), msg:
+        except (OSError, IOError, TypeError) as msg:
             if msg:
                 msg = ' ( %s )' % msg
             # Failed to load LaTeX style file
@@ -255,7 +255,7 @@ class TeX(object):
             # Always get next token from top of input stack
             try:
                 while 1:
-                    t = inputs[-1][-1].next()
+                    t = next(inputs[-1][-1])
                     # Save context depth of each token for use in digestion
                     t.contextDepth = context.depth
                     t.ownerDocument = ownerDocument
@@ -303,7 +303,7 @@ class TeX(object):
 
         """
         # Cache variables before starting the generator
-        next = self.itertokens().next
+        next = self.itertokens().__next__
         pushToken = self.pushToken
         pushTokens = self.pushTokens
         createElement = self.ownerDocument.createElement
@@ -340,7 +340,7 @@ class TeX(object):
 #                       log.info('expanding %s %s', token.macroName, ''.join([x.source for x in tokens]))
                         pushTokens(tokens)
                     continue
-                except Exception, msg:
+                except Exception as msg:
                     if str(msg).strip():
                         msg = ' (%s)' % str(msg).strip()
                     log.error('Error while expanding "%s"%s%s',
@@ -428,7 +428,7 @@ class TeX(object):
                     item.parentNode = output
                     item.digest(tokens)
                 output.append(item)
-        except Exception, msg:
+        except Exception as msg:
             if str(msg).strip():
                msg = ' (%s)' % str(msg).strip()
             log.error('An error occurred while building the document object%s%s', self.lineInfo, msg)
@@ -444,7 +444,7 @@ class TeX(object):
         text -- string containing text to be tokenized
 
         """
-        return [Other(x) for x in unicode(text)]
+        return [Other(x) for x in str(text)]
 
     def pushToken(self, token):
         """
@@ -487,7 +487,7 @@ class TeX(object):
         string containing the TeX source
 
         """
-        return u''.join([x.source for x in tokens])
+        return ''.join([x.source for x in tokens])
 
     def normalize(self, tokens):
         """
@@ -514,7 +514,7 @@ class TeX(object):
         except TypeError: return tokens
 
         for t in tokens:
-            if isinstance(t, basestring):
+            if isinstance(t, str):
                 continue
             # Element nodes can't be part of normalized text
             if t.nodeType == Macro.ELEMENT_NODE:
@@ -534,7 +534,7 @@ class TeX(object):
                 t.normalize(getattr(self.ownerDocument, 'charsubs', []))
                 return t
 
-        return (u''.join([x for x in tokens
+        return (''.join([x for x in tokens
                           if getattr(x, 'catcode', Token.CC_OTHER)
                              not in grouptokens])).strip()
 
@@ -725,7 +725,7 @@ class TeX(object):
             # Set catcodes for this argument type
             try:
                 if isinstance(self.argtypes[type], (list,tuple)):
-                    for key, value in self.argtypes[type][1].items():
+                    for key, value in list(self.argtypes[type][1].items()):
                         priorcodes[key] = self.ownerDocument.context.whichCode(key)
                         self.ownerDocument.context.catcode(key, value)
             except KeyError:
@@ -745,15 +745,15 @@ class TeX(object):
 
             # This isn't a correct value
             else:
-                raise ValueError, 'Unrecognized specifier "%s"' % spec
+                raise ValueError('Unrecognized specifier "%s"' % spec)
 
-        except Exception, msg:
+        except Exception as msg:
             log.error('Error while reading argument "%s" of %s%s (%s)' % \
                           (name, parentNode.nodeName, self.lineInfo, msg))
             raise
 
         # Set catcodes back to original values
-        for key, value in priorcodes.items():
+        for key, value in list(priorcodes.items()):
             self.ownerDocument.context.catcode(key, value)
 
         if toks is None:
@@ -823,7 +823,7 @@ class TeX(object):
                 toks = self.expandTokens(toks, parentNode=parentNode)
                 if isgroup:
                     s = self.source(toks)
-                    source = u'%s%s%s' % (source[0].source, s,
+                    source = '%s%s%s' % (source[0].source, s,
                                           source[-1].source)
                 else:
                     source = self.source(toks)
@@ -874,16 +874,16 @@ class TeX(object):
             source = [t]
             # A [ ... ], ( ... ), etc. grouping was found
             if t.catcode != Token.CC_ESCAPE and \
-               (t == begin or unicode(t) == unicode(begin)):
+               (t == begin or str(t) == str(begin)):
                 level = 1
                 for t in tokens:
                     source.append(t)
                     if t.catcode != Token.CC_ESCAPE and \
-                       (t == begin or unicode(t) == unicode(begin)):
+                       (t == begin or str(t) == str(begin)):
                         toks.append(t)
                         level += 1
                     elif t.catcode != Token.CC_ESCAPE and \
-                         (t == end or unicode(t) == unicode(end)):
+                         (t == end or str(t) == str(end)):
                         level -= 1
                         if level == 0:
                             break
@@ -952,7 +952,7 @@ class TeX(object):
 
         """
         argtypes = {}
-        for key, t in self.argtypes.items():
+        for key, t in list(self.argtypes.items()):
             if isinstance(t, tuple):
                 argtypes[key] = t[0]
             else:
@@ -963,7 +963,7 @@ class TeX(object):
             pass
 
         # Could not find specified type
-        elif not argtypes.has_key(dtype):
+        elif dtype not in argtypes:
             log.warning('Could not find datatype "%s"' % dtype)
             pass
 
@@ -995,7 +995,7 @@ class TeX(object):
         """
         return [x for x in tokens if x.catcode == Token.CC_ESCAPE].pop(0)
 
-    def castString(self, tokens, type=unicode, **kwargs):
+    def castString(self, tokens, type=str, **kwargs):
         """
         Join the tokens into a string
 
@@ -1355,7 +1355,7 @@ class TeX(object):
         if TEXINPUTS:
             os.environ["TEXINPUTS"] = TEXINPUTS
 
-        raise OSError, 'Could not find any file named: %s' % name
+        raise OSError('Could not find any file named: %s' % name)
 
 #
 # Parsing helper methods for parsing numbers, spaces, dimens, etc.
@@ -1568,7 +1568,7 @@ class TeX(object):
             output.append(t)
         if not output:
             return default
-        return u''.join(output)
+        return ''.join(output)
 
     def readInteger(self, optspace=True):
         """
@@ -1581,6 +1581,7 @@ class TeX(object):
         ParameterCommand.disable()
         num = None
         sign = self.readOptionalSigns()
+        t = None
         for t in self:
             # internal/coerced integers
             if t.nodeType == Macro.ELEMENT_NODE:
@@ -1697,7 +1698,7 @@ class TeX(object):
             for item in self:
                 if item is dummy:
                     break
-        except OSError, msg:
+        except OSError as msg:
             log.warning(msg)
         self.ownerDocument.context.warnOnUnrecognized = warn
 
@@ -1706,4 +1707,3 @@ class TeX(object):
 #       """ Return the basename of the main input file """
 #       print self.inputs
 #       return os.path.basename(os.path.splitext(self.inputs[0][0].filename)[0])
-

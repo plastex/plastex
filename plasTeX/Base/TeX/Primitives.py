@@ -76,32 +76,23 @@ class MathShift(Command):
 
         """
         inEnv = type(self).inEnv
-        math = self.ownerDocument.createElement('math')
-        displaymath = self.ownerDocument.createElement('displaymath')
 
-        # See if this is the end of the environment
-        if inEnv and inEnv[-1] is not None:
-            env = inEnv.pop()
-            if type(env) is type(displaymath):
-                for t in tex.itertokens():
-                    break
-                displaymath.macroMode = Command.MODE_END
-                self.ownerDocument.context.pop(displaymath)
-                return [displaymath]
-            else:
-                math.macroMode = Command.MODE_END
-                self.ownerDocument.context.pop(math)
-                return [math]
-
+        current = self.ownerDocument.createElement('math')
         for t in tex.itertokens():
             if t.catcode == Token.CC_MATHSHIFT:
-                inEnv.append(displaymath)
+                current = self.ownerDocument.createElement('displaymath')
             else:
-                inEnv.append(math)
                 tex.pushToken(t)
             break
 
-        current = inEnv[-1]
+        # See if this is the end of the environment
+        if inEnv and inEnv[-1] is not None and type(inEnv[-1]) is type(current):
+            inEnv.pop()
+            current.macroMode = Command.MODE_END
+            self.ownerDocument.context.pop(current)
+            return [current]
+
+        inEnv.append(current)
         mathshiftlog.debug('%s (%s)' % (current.tagName, id(current)))
         self.ownerDocument.context.push(current)
 
@@ -217,7 +208,7 @@ class ifnum(IfCommand):
         elif relation == '=':
             tex.processIfContent(a == b)
             return []
-        raise ValueError, '"%s" is not a valid relation' % relation
+        raise ValueError('"%s" is not a valid relation' % relation)
 
 class ifdim(IfCommand):
     """ Compare two dimensions """
@@ -236,7 +227,7 @@ class ifdim(IfCommand):
         elif relation == '=':
             tex.processIfContent(a == b)
             return []
-        raise ValueError, '"%s" is not a valid relation' % relation
+        raise ValueError('"%s" is not a valid relation' % relation)
 
 class ifodd(IfCommand):
     """ Test for odd integer """   
@@ -426,7 +417,7 @@ class input(Command):
             tex.input(codecs.open(path, 'r', encoding, 'replace'))
             status.info(' ) ')
 
-        except (OSError, IOError), msg:
+        except (OSError, IOError) as msg:
             log.warning(msg)
             status.info(' ) ')
 
@@ -460,7 +451,7 @@ class hrule(Command): pass
 
 class jobname(Command):
     def invoke(self, tex):
-        self.unicode = tex.jobname
+        self.str = tex.jobname
 
 class long(Command): pass
 

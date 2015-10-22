@@ -8,34 +8,34 @@ B.5 Macros for text
 from plasTeX import Command, Environment, sourceChildren
 
 class frenchspacing(Command):
-    unicode = u''
+    str = ''
 
 class nonfrenchspacing(Command):
-    unicode = u''
+    str = ''
 
 class normalbaselines(Command):
-    unicode = u''
+    str = ''
 
 class lq(Command):
-    unicode = unichr(8216)
+    str = chr(8216)
 
 class rq(Command):
-    unicode = unichr(8217)
+    str = chr(8217)
 
 class lbrack(Command):
-    unicode = u'['
+    str = '['
 
 class rbrack(Command):
-    unicode = u']'
+    str = ']'
 
 class space(Command):
-    unicode = u' '
+    str = ' '
 
 class empty(Command):
-    unicode = u''
+    str = ''
 
 class null(Command):
-    unicode = u''
+    str = ''
 
 class bgroup(Command):
 
@@ -72,7 +72,7 @@ class begingroup(bgroup):
     pass
 
 class egroup(Command):
-    unicode = u''
+    str = ''
 
     def invoke(self, tex):
         self.ownerDocument.context.pop()
@@ -85,20 +85,20 @@ class egroup(Command):
         return
 
 class endgroup(egroup):
-    unicode = u''
+    str = ''
 
 class obeyspaces(Command):
-    unicode = u''
+    str = ''
 
 class loop(Command):
     args = 'var:Tok'
-    unicode = u''
+    str = ''
 
 class iterate(Command):
-    unicode = u''
+    str = ''
 
 class repeat(Command):
-    unicode = u''
+    str = ''
 
 class enskip(Command):
     pass
@@ -144,10 +144,10 @@ class bigskip(Command):
 
 class TeXBreak(Command):
     macroName = 'break'
-    unicode = u''
+    str = ''
 
 class allowbreak(Command):
-    unicode = u''
+    str = ''
 
 class ControlSpace(Command):
     macroName = 'active::~'
@@ -162,10 +162,10 @@ class goodbreak(Command):
     pass
 
 class eject(Command):
-    unicode = u''
+    str = ''
 
 class supereject(Command):
-    unicode = u''
+    str = ''
 
 class removelastskip(Command):
     pass
@@ -218,4 +218,4 @@ class raggedright(Environment):
 #
 
 class dots(Command):
-    unicode = unichr(8230)
+    str = chr(8230)
