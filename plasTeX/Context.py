@@ -1030,7 +1030,11 @@ class Context(object):
             c.newdef('put', '(#1,#2)#3', '\\dostuff{#1}{#2}{#3}')
 
         """
-        name = str(name)
+        try:
+            name = str(name)
+        except UnicodeEncodeError:
+            import uuid
+            name = 'def_' + uuid.uuid4().replace('-', '')
         # Macro already exists
 #       if self.has_key(name):
 #           if not issubclass(self[name], (plasTeX.NewCommand, 
