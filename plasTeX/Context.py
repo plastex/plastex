@@ -1030,6 +1030,7 @@ class Context(object):
             c.newdef('put', '(#1,#2)#3', '\\dostuff{#1}{#2}{#3}')
 
         """
+        defname = name
         try:
             name = str(name)
         except UnicodeEncodeError:
@@ -1045,14 +1046,14 @@ class Context(object):
         if isinstance(definition, basestring):
             definition = [x for x in Tokenizer(definition, self)]
 
-        macrolog.debug('creating def %s', name)
+        macrolog.debug('creating def %s', defname)
         newclass = new.classobj(name, (plasTeX.Definition,),
                        {'args':args,'definition':definition})
 
         if local:
-            self.addLocal(name, newclass)
+            self.addLocal(defname, newclass)
         else:
-            self.addGlobal(name, newclass)
+            self.addGlobal(defname, newclass)
 
     def let(self, dest, source):
         """
