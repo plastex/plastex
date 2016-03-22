@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from collections import UserString
-from .Generic import GenericOption, DEFAULTS, GenericParser, GenericArgument
+from plasTeX.ConfigManager.Generic import GenericOption, DEFAULTS, GenericParser, GenericArgument
 import collections
 
 

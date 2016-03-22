@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 import os
-from .String import StringOption
-from .Generic import InvalidOptionError, GenericArgument
+from plasTeX.ConfigManager.String import StringOption
+from plasTeX.ConfigManager.Generic import InvalidOptionError, GenericArgument
 
 class InputDirectoryOption(StringOption):
    """ Input directory configuration option """

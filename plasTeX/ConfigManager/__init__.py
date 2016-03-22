@@ -1124,8 +1124,8 @@ class ConfigManager(UserDict, object):
 
     def merge_options(self, options):
         """ Merge options parsed from the command line into configuration """
-        from .Generic import GenericOption
-        from .Multi import MultiOption
+        from plasTeX.ConfigManager.Generic import GenericOption
+        from plasTeX.ConfigManager.Multi import MultiOption
         # Multi options that have been cleared by a command line option.
         # Lists will only be cleared on the first command line option, all
         # consecutive options will append.
@@ -1584,191 +1584,18 @@ class CommandLineManager(ordereddict):
 
 # These must be loaded last because they depend on variables
 # assigned in this file.
-from .Generic import GenericOption, GenericArgument
-from .String import StringOption, StringArgument
-from .Integer import IntegerOption, IntegerArgument
-from .Float import FloatOption, FloatArgument
-from .Multi import MultiOption, MultiArgument
-from .Compound import CompoundOption, CompoundArgument
-from .Boolean import BooleanOption, BooleanArgument
-from .Files import OutputFileOption, InputFileOption
-from .Directories import OutputDirectoryOption, InputDirectoryOption
-from .Files import OutputFileArgument, InputFileArgument
-from .Directories import OutputDirectoryArgument, InputDirectoryArgument
-from .Counted import CountedOption, CountedArgument
+from plasTeX.ConfigManager.Generic import GenericOption, GenericArgument
+from plasTeX.ConfigManager.String import StringOption, StringArgument
+from plasTeX.ConfigManager.Integer import IntegerOption, IntegerArgument
+from plasTeX.ConfigManager.Float import FloatOption, FloatArgument
+from plasTeX.ConfigManager.Multi import MultiOption, MultiArgument
+from plasTeX.ConfigManager.Compound import CompoundOption, CompoundArgument
+from plasTeX.ConfigManager.Boolean import BooleanOption, BooleanArgument
+from plasTeX.ConfigManager.Files import OutputFileOption, InputFileOption
+from plasTeX.ConfigManager.Directories import OutputDirectoryOption, InputDirectoryOption
+from plasTeX.ConfigManager.Files import OutputFileArgument, InputFileArgument
+from plasTeX.ConfigManager.Directories import OutputDirectoryArgument, InputDirectoryArgument
+from plasTeX.ConfigManager.Counted import CountedOption, CountedArgument
 
 
 
-if __name__ == '__main__':
-
-    # Instantiate a new option parser
-    op = ConfigManager()
-    op.set_strict(FALSE)
-
-    # Set option prefixes for short and long options.  If the short
-    # prefix is set to None, all options will act like long options.
-    ConfigManager.short_prefix = '-'
-    ConfigManager.long_prefix = '--'
-
-    debugging = op.add_category('debugging','Debugging')
-
-    # Create a new section
-    logging = op.add_section('logging')
-
-    logging['compare'] = MultiOption(
-       options = '--compare',
-       range = [0,2],
-       delim = ',',
-       environ = 'COMPARE',
-#      mandatory = 1,
-       template = FloatOption,
-    )
-
-    logging['testopts'] = CompoundOption(
-       options = '--testopts',
-       environ = 'TESTOPTS',
-    )
-
-    logging['verbose'] = BooleanOption(
-       options = '--verbose -v !-q !--quiet',
-       environ = 'VERBOSE',
-       default = 0,
-       category = 'debugging',
-    )
-
-    # Explicitly specify an integer option
-    logging['debug'] = CountedOption(
-       '''
-       Set the debugging level
-
-       This option sets the verbosity of debugging messages.
-
-       ''',
-       options = '--debug -d !-u',
-       default = 0,
-       environ = 'DEBUG',
-       category = 'debugging',
-    )
-
-    # Explicitly specify another integer option
-    logging['warning'] = IntegerOption(
-       '''
-       Set the warning level
-
-       This option sets the verbosity of warning messages.
-
-       Valid Values:
-       The warning level must be an integer between 0 and 10.
-
-       ''',
-       options = '--warning -w',
-       values = [0,10],
-       default = 1
-    )
-
-    # Implicitly declare a float option
-    logging['log'] = 1.2
-
-    # Implicitly declare a float option
-    logging['note'] = 2
-
-    files = op.add_section('files')
-
-    files['output-file'] = OutputFileOption(
-       ''' Where the results will go. This is the output file that will contain your output ''',
-       options = '--output-file -o',
-       synopsis = 'OUTPUT-FILENAME',
-    )
-
-    files['input-file'] = InputFileOption(
-       ''' Where the input will come from ''',
-       options = '--input-file -i',
-    )
-
-    files['input-dir'] = InputDirectoryOption(
-       ''' Where the input will come from ''',
-       options = '--input-dir -I',
-    )
-
-    files['output-dir'] = OutputDirectoryOption(
-       ''' Where the output will come from.  This must be a directory or it won\'t work ''',
-       options = '--output-dir -D',
-    )
-
-    # Read in configuration files
-    #op.read('/home/username/.myconfrc')
-    op.read('./testconfig')
-
-    # Call the option parser to parse the command line
-    opts, args = op()
-
-    # Print out current information
-    print()
-    print('-- Parsed Options --')
-    print()
-#   print opts
-#   print args
-
-#   print op['logging']['debug'], op.data['logging'].data['debug'].file
-#   print op['logging']['compare'], op.data['logging'].data['compare'].file
-    for option, value in opts:
-        # Option was recognized
-        if isinstance(option, GenericOption):
-            print('%s.%s: %s' % (option.parent.name, option.name, value))
-        # Unrecognized options
-        else:
-            print('(unknown) %s: %s' % (option, value))
-    print()
-
-    # Print unrecognized options
-    print('-- Unrecognized options --')
-    print()
-    print(op.unrecognized)
-    print()
-
-    # Print remaining unparsed arguments
-    print('-- Remaining Arguments --')
-    print()
-    print(args)
-    print()
-
-    sources = \
-    [('Command-Line Options', COMMANDLINE),
-     ('Config File Options', CONFIGFILE),
-     ('Environment Options', ENVIRONMENT),
-     ('Builtin Options', BUILTIN)]
-
-    for title, bit in sources:
-       print('-- %s --' % title)
-       print()
-       for section in list(op.values()):
-          for option in list(section.values()):
-             if option.source & bit:
-                print('%s.%s: %s' % (section.name, option.name, option.getValue()))
-       print()
-
-    # Print out a usage message
-    print('-- Usage --')
-    print()
-    print(op.usage())
-    print()
-
-    # Print out a usage message for one category
-    print('-- Single Category Usage --')
-    print()
-    print(op.usage(['debugging']))
-    print()
-
-    # Print out an INI representation of the current settings
-    print('-- Current Configuration --')
-    print()
-    print(repr(op))
-
-    print('-- Command-Line Manager --')
-    print()
-    outputfile = StringArgument("Output File", name='foo', values=('add','subtract','multiply','divide'))
-    number = IntegerArgument("Number of times to iterate", name='bar')
-    clm = CommandLineManager(op, outputfile, number)
-    print(clm())
-    for item in clm:
-       print('%s: %s' % (type(item), item))

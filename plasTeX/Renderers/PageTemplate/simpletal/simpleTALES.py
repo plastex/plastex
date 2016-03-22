@@ -1,6 +1,6 @@
 """ simpleTALES Implementation
 
-		Copyright (c) 2005 Colin Stewart (http://www.owlfish.com/)
+		Copyright (c) 2009 Colin Stewart (http://www.owlfish.com/)
 		All rights reserved.
 		
 		Redistribution and use in source and binary forms, with or without
@@ -33,24 +33,17 @@
 		Module Dependencies: logging
 """
 
-import types, sys, re
+import types, sys
 
-try:
-	import logging
-except:
-	import DummyLogger as logging
-	
-import simpleTAL
-from plasTeX.Renderers.PageTemplate import simpletal
+import logging
 
-__version__ = simpletal.__version__
+__version__ = '5.2'
 
 DEFAULTVALUE = "This represents a Default value."
 
 class PathNotFoundException (Exception):
 	pass
 	
-
 class ContextContentException (Exception):
 	""" This is raised when invalid content has been placed into the Context object.
 		For example using non-ascii characters instead of Unicode strings.
@@ -59,13 +52,13 @@ class ContextContentException (Exception):
 	
 PATHNOTFOUNDEXCEPTION = PathNotFoundException()
 
-class ContextVariable:
+class ContextVariable (BaseException):
 	def __init__ (self, value = None):
 		self.ourValue = value
 		
 	def value (self, currentPath=None):
-		if (callable (self.ourValue)):
-			return apply (self.ourValue, ())
+		if (hasattr (self.ourValue, "__call__")):
+			return self.ourValue()
 		return self.ourValue
 		
 	def rawValue (self):
@@ -81,6 +74,12 @@ class RepeatVariable (ContextVariable):
 		self.sequence = sequence	
 		self.position = 0	
 		self.map = None
+
+	def __getattr__(self, name): # to be used from python eval
+ 		if (self.map is None):
+ 			self.createMap()
+
+ 		return self.map[name]
 		
 	def value (self, currentPath=None):
 		if (self.map is None):
@@ -192,8 +191,8 @@ class IteratorRepeatVariable (RepeatVariable):
 		if (self.iterStatus == 0):
 			self.iterStatus = 1
 			try:
-				self.curValue = self.sequence.next()
-			except StopIteration, e:
+				self.curValue = next(self.sequence)
+			except StopIteration as e:
 				self.iterStatus = 2
 				raise IndexError ("Repeat Finished")
 		return self.curValue
@@ -202,8 +201,8 @@ class IteratorRepeatVariable (RepeatVariable):
 		# Need this for the repeat variable functions.
 		self.position += 1
 		try:
-			self.curValue = self.sequence.next()
-		except StopIteration, e:
+			self.curValue = next(self.sequence)
+		except StopIteration as e:
 			self.iterStatus = 2
 			raise IndexError ("Repeat Finished")
 			
@@ -216,7 +215,7 @@ class IteratorRepeatVariable (RepeatVariable):
 		self.map ['start'] = self.getStart
 		self.map ['end'] = self.getEnd
 		# TODO: first and last need to be implemented.
-		self.map ['length'] = sys.maxint
+		self.map ['length'] = sys.maxsize
 		self.map ['letter'] = self.getLowerLetter
 		self.map ['Letter'] = self.getUpperLetter
 		self.map ['roman'] = self.getLowerRoman
@@ -235,7 +234,7 @@ class PathFunctionVariable (ContextVariable):
 	def value (self, currentPath=None):
 		if (currentPath is not None):
 			index, paths = currentPath
-			result = ContextVariable (apply (self.func, ('/'.join (paths[index:]),)))
+			result = ContextVariable (self.func ('/'.join (paths[index:])))
 			# Fast track the result
 			raise result
 			
@@ -256,22 +255,12 @@ class CachedFuncResult (ContextVariable):
 class PythonPathFunctions:
 	def __init__ (self, context):
 		self.context = context
-                self.pathHandler = {}
-                self.pathHandler['path'] = self.path
-                self.pathHandler['string'] = self.string
-                self.pathHandler['exists'] = self.exists
-                self.pathHandler['nocall'] = self.nocall
-                self.pathHandler['test'] = self.test
-                self.pathHandler['stripped'] = self.stripped
 		
 	def path (self, expr):
 		return self.context.evaluatePath (expr)
 			
 	def string (self, expr):
 		return self.context.evaluateString (expr)
-
-        def stripped (self, expr):
-                return re.sub(r'</?\w+[^>]*>', r'', context.evaluateString (expr))
 	
 	def exists (self, expr):
 		return self.context.evaluateExists (expr)
@@ -312,14 +301,6 @@ class Context:
 		self.true = 1
 		self.false = 0
 		self.pythonPathFuncs = PythonPathFunctions (self)
-                self.prefixHandlers = {}
-                self.prefixHandlers['path'] = self.evaluatePath
-                self.prefixHandlers['exists'] = self.evaluateExists
-                self.prefixHandlers['nocall'] = self.evaluateNoCall
-                self.prefixHandlers['not'] = self.evaluateNot
-                self.prefixHandlers['string'] = self.evaluateString
-                self.prefixHandlers['python'] = self.evaluatePython
-                self.prefixHandlers['stripped'] = self.evaluateStripped
 		
 	def addRepeat (self, name, var, initialValue):
 		# Pop the current repeat map onto the stack
@@ -367,37 +348,44 @@ class Context:
 		# Supports path, exists, nocall, not, and string
 		expr = expr.strip ()
 		try:
-                        for key, function in self.prefixHandlers.items():
-                                if expr.startswith (key+':'):
-                                        return function (expr[len(key)+1:].lstrip ())
+			if expr.startswith ('path:'):
+				return self.evaluatePath (expr[5:].lstrip ())
+			elif expr.startswith ('exists:'):
+				return self.evaluateExists (expr[7:].lstrip())
+			elif expr.startswith ('nocall:'):
+				return self.evaluateNoCall (expr[7:].lstrip())
+			elif expr.startswith ('not:'):
+				return self.evaluateNot (expr[4:].lstrip())
+			elif expr.startswith ('string:'):
+				return self.evaluateString (expr[7:].lstrip())
+			elif expr.startswith ('python:'):
+				return self.evaluatePython (expr[7:].lstrip())
 			else:
 				# Not specified - so it's a path
 				return self.evaluatePath (expr)
-		except PathNotFoundException, e:
+		except PathNotFoundException as e:
 			if (suppressException):
 				return None
 			raise e
-
-        def evaluateStripped(self, expr):
-                if '${' not in expr:
-                        expr = '${%s}' % expr
-                return re.sub(r'</?\w+[^>]*>', r'', self.evaluateString (expr))
 		
 	def evaluatePython (self, expr):
 		if (not self.allowPythonPath):
-			self.log.warn ("Parameter allowPythonPath is false.  NOT Evaluating python expression %s" % expr)
+			self.log.warning ("Parameter allowPythonPath is false.  NOT Evaluating python expression %s" % expr)
 			return self.false
 		#self.log.debug ("Evaluating python expression %s" % expr)
 		
 		globals={}
-		for name, value in self.globals.items():
+		for name, value in list(self.globals.items()):
 			if (isinstance (value, ContextVariable)): value = value.rawValue()
 			globals [name] = value
-                for key, value in self.pythonPathFuncs.pathHandler.items():
-                        globals [key] = value
+		globals ['path'] = self.pythonPathFuncs.path
+		globals ['string'] = self.pythonPathFuncs.string
+		globals ['exists'] = self.pythonPathFuncs.exists
+		globals ['nocall'] = self.pythonPathFuncs.nocall
+		globals ['test'] = self.pythonPathFuncs.test
 			
 		locals={}
-		for name, value in self.locals.items():
+		for name, value in list(self.locals.items()):
 			if (isinstance (value, ContextVariable)): value = value.rawValue()
 			locals [name] = value
 			
@@ -406,9 +394,9 @@ class Context:
 			if (isinstance (result, ContextVariable)):
 				return result.value()
 			return result
-		except Exception, e:
+		except Exception as e:
 			# An exception occured evaluating the template, return the exception as text
-			self.log.warn ("Exception occurred evaluating python path, exception: " + str (e))
+			self.log.warning ("Exception occurred evaluating python path, exception: " + str (e))
 			return "Exception: %s" % str (e)
 
 	def evaluatePath (self, expr):
@@ -419,7 +407,7 @@ class Context:
 				# Evaluate this path
 				try:
 					return self.evaluate (path.strip ())
-				except PathNotFoundException, e:
+				except PathNotFoundException as e:
 					# Path didn't exist, try the next one
 					pass
 			# No paths evaluated - raise exception.
@@ -437,7 +425,7 @@ class Context:
 		try:
 			result = self.traversePath (allPaths[0], canCall = 0)
 			return self.true
-		except PathNotFoundException, e:
+		except PathNotFoundException as e:
 			# Look at the rest of the paths.
 			pass
 			
@@ -448,7 +436,7 @@ class Context:
 				# If this is part of a "exists: path1 | exists: path2" path then we need to look at the actual result.
 				if (pathResult):
 					return self.true
-			except PathNotFoundException, e:
+			except PathNotFoundException as e:
 				pass
 		# If we get this far then there are *no* paths that exist.
 		return self.false
@@ -459,7 +447,7 @@ class Context:
 		# The first path is for us
 		try:
 			return self.traversePath (allPaths[0], canCall = 0)
-		except PathNotFoundException, e:
+		except PathNotFoundException as e:
 			# Try the rest of the paths.
 			pass
 			
@@ -467,7 +455,7 @@ class Context:
 			# Evaluate this path
 			try:
 				return self.evaluate (path.strip ())
-			except PathNotFoundException, e:
+			except PathNotFoundException as e:
 				pass
 		# No path evaluated - raise error
 		raise PATHNOTFOUNDEXCEPTION
@@ -478,7 +466,7 @@ class Context:
 		# Evaluate what I was passed
 		try:
 			pathResult = self.evaluate (expr)
-		except PathNotFoundException, e:
+		except PathNotFoundException as e:
 			# In SimpleTAL the result of "not: no/such/path" should be TRUE not FALSE.
 			return self.true
 			
@@ -505,7 +493,7 @@ class Context:
 		#self.log.debug ("Evaluating String %s" % expr)
 		result = ""
 		skipCount = 0
-		for position in xrange (0,len (expr)):
+		for position in range (0,len (expr)):
 			if (skipCount > 0):
 				skipCount -= 1
 			else:
@@ -523,16 +511,16 @@ class Context:
 								# Evaluate the path - missing paths raise exceptions as normal.
 								try:
 									pathResult = self.evaluate (path)
-								except PathNotFoundException, e:
+								except PathNotFoundException as e:
 									# This part of the path didn't evaluate to anything - leave blank
-									pathResult = u''
+									pathResult = ''
 								if (pathResult is not None):
-									if (isinstance (pathResult, types.UnicodeType)):
+									if (isinstance (pathResult, str)):
 										result += pathResult
 									else:
 										# THIS IS NOT A BUG!
 										# Use Unicode in Context if you aren't using Ascii!
-										result += unicode (pathResult)
+										result += str (pathResult)
 								skipCount = endPos - position 
 						else:
 							# It's a variable
@@ -543,20 +531,20 @@ class Context:
 							# Evaluate the variable - missing paths raise exceptions as normal.
 							try:
 								pathResult = self.traversePath (path)
-							except PathNotFoundException, e:
+							except PathNotFoundException as e:
 								# This part of the path didn't evaluate to anything - leave blank
-								pathResult = u''
+								pathResult = ''
 							if (pathResult is not None):
-								if (isinstance (pathResult, types.UnicodeType)):
+								if (isinstance (pathResult, str)):
 										result += pathResult
 								else:
 									# THIS IS NOT A BUG!
 									# Use Unicode in Context if you aren't using Ascii!
-									result += unicode (pathResult)
+									result += str (pathResult)
 							skipCount = endPos - position - 1
-					except IndexError, e:
+					except IndexError as e:
 						# Trailing $ sign - just suppress it
-						self.log.warn ("Trailing $ detected")
+						self.log.warning ("Trailing $ detected")
 						pass
 				else:
 					result += expr[position]
@@ -577,19 +565,19 @@ class Context:
 		path = pathList[0]
 		if path.startswith ('?'):
 			path = path[1:]
-			if self.locals.has_key(path):
+			if path in self.locals:
 				path = self.locals[path]
 				if (isinstance (path, ContextVariable)): path = path.value()
-				elif (callable (path)):path = apply (path, ())
+				elif (hasattr (path, "__call__")):path = path()
 			
-			elif self.globals.has_key(path):
+			elif path in self.globals:
 				path = self.globals[path]
 				if (isinstance (path, ContextVariable)): path = path.value()
-				elif (callable (path)):path = apply (path, ())
+				elif (hasattr (path, "__call__")):path = path()
 				#self.log.debug ("Dereferenced to %s" % path)
-		if self.locals.has_key(path):
+		if path in self.locals:
 			val = self.locals[path]
-		elif self.globals.has_key(path):
+		elif path in self.globals:
 			val = self.globals[path]  
 		else:
 			# If we can't find it then raise an exception
@@ -599,24 +587,22 @@ class Context:
 			#self.log.debug ("Looking for path element %s" % path)
 			if path.startswith ('?'):
 				path = path[1:]
-				if self.locals.has_key(path):
+				if path in self.locals:
 					path = self.locals[path]
 					if (isinstance (path, ContextVariable)): path = path.value()
-					elif (callable (path)):path = apply (path, ())
-				elif self.globals.has_key(path):
+					elif (hasattr (path, "__call__")):path = path()
+				elif path in self.globals:
 					path = self.globals[path]
 					if (isinstance (path, ContextVariable)): path = path.value()
-					elif (callable (path)):path = apply (path, ())
+					elif (hasattr (path, "__call__")):path = path()
 				#self.log.debug ("Dereferenced to %s" % path)
 			try:
 				if (isinstance (val, ContextVariable)): temp = val.value((index,pathList))
-				elif (callable (val)):temp = apply (val, ())
+				elif (hasattr (val, "__call__")):temp = val()
 				else: temp = val
-			except ContextVariable, e:
+			except ContextVariable as e:
 				# Fast path for those functions that return values
 				return e.value()
-                        except TypeError:
-                                temp = val
 				
 			if (hasattr (temp, path)):
 				val = getattr (temp, path)
@@ -634,9 +620,9 @@ class Context:
 		if (canCall):
 			try:
 				if (isinstance (val, ContextVariable)): result = val.value((index,pathList))
-				elif (callable (val)):result = apply (val, ())
+				elif (hasattr (val, "__call__")):result = val()
 				else: result = val
-			except ContextVariable, e:
+			except ContextVariable as e:
 				# Fast path for those functions that return values
 				return e.value()
 		else:
@@ -658,7 +644,7 @@ class Context:
 		vars['attrs'] = None
 		
 		# Add all of these to the global context
-		for name in vars.keys():
+		for name in list(vars.keys()):
 			self.addGlobal (name,vars[name])
 			
 		# Add also under CONTEXTS

@@ -77,11 +77,11 @@ class Renderable(object):
     Base class for all renderable nodes
 
     This class is mixed into nodes of the document object prior to
-    rendering.  The actual rendering method is __unicode__.
+    rendering.  The actual rendering method is __str__.
 
     """
 
-    def __unicode__(self):
+    def __str__(self):
         """
         Invoke the rendering process on all of the child nodes.
 
@@ -207,7 +207,7 @@ class Renderable(object):
 
                 continue
 
-            # Append the resultant unicode object to the output
+            # Append the resultant object to the output
             s.append(val)
 
 #       if self.filename:
@@ -522,8 +522,8 @@ class Renderer(dict):
         Optional Arguments:
         postProcess -- a function that will be called on the content of
             each file.  It is called with the document object and a
-            unicode object with the content of each file.
-            It must return a unicode object.
+            string object with the content of each file.
+            It must return a string object.
 
         """
         if self.processFileContent is Renderer.processFileContent:
@@ -583,8 +583,8 @@ class StaticNode(object):
     all of the navigation links, table of contents, etc.
 
     This is simply a proxy object that returns the attributes of
-    the given object.  The exceptions are __unicode__ and __str__
-    which simply return the rendered string that was passed in.
+    the given object.  The exceptions is __str__
+    which simply returns the rendered string that was passed in.
     This allows you to use two templates: one that renders the content
     and another that is wrapped around any node that generates a
     file.  Without this, you can easily run into infinite recursion
@@ -598,16 +598,15 @@ class StaticNode(object):
         Arguments:
         obj -- the object that contains navigation and table of
             contents information
-        content -- the rendered object in a unicode string
+        content -- the rendered object in a  string
 
         """
         self._node_data = (obj, content)
     def __getattribute__(self, name):
-        if name in ['_node_data','__unicode__','__str__']:
+        if name in ['_node_data','__str__']:
             return object.__getattribute__(self, name)
         return getattr(self._node_data[0], name)
-    def __unicode__(self):
-        return self._node_data[1]
+    
     def __str__(self):
         return str(self)
 

@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 import os
-from .Generic import *
+from plasTeX.ConfigManager.Generic import *
 from plasTeX.ConfigManager import TooManyValues
-from .String import StringOption
+from plasTeX.ConfigManager.String import StringOption
 from collections import UserList
 import collections
 

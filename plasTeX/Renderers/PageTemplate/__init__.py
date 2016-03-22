@@ -10,10 +10,10 @@ support for your own templating engines.
 """
 
 import sys, os, re, plasTeX, shutil, string
+from io import StringIO
 from plasTeX.Renderers import Renderer as BaseRenderer
 from plasTeX.Renderers.PageTemplate.simpletal import simpleTAL, simpleTALES
 from plasTeX.Renderers.PageTemplate.simpletal.simpleTALES import Context as TALContext
-from plasTeX.Renderers.PageTemplate.simpletal.simpleTALUtils import FastStringOutput as StringIO
 
 log = plasTeX.Logging.getLogger()
 

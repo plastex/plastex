@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 import re
-from .Generic import GenericArgument
-from .String import StringOption
+from plasTeX.ConfigManager.Generic import GenericArgument
+from plasTeX.ConfigManager.String import StringOption
 from plasTeX.ConfigManager import GetoptError
 import collections
 

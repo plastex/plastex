@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import new
 from plasTeX.Base import Command, verb
 
 class url(Command):

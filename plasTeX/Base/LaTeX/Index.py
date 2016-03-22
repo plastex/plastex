@@ -9,10 +9,10 @@ import string, os
 from plasTeX.Tokenizer import Token, EscapeSequence
 from plasTeX import Command, Environment, IgnoreCommand, encoding
 from plasTeX.Logging import getLogger
-from .Sectioning import SectionUtils
+from plasTeX.Base.LaTeX.Sectioning import SectionUtils
 
 try:
-    from .pyuca import Collator
+    from plasTeX.Base.LaTeX.pyuca import Collator
     collator = Collator(os.path.join(os.path.dirname(__file__), 'allkeys.txt')).sort_key
 except ImportError:
     collator = lambda x: x.lower()
@@ -239,7 +239,7 @@ class IndexDestination(object):
             return None
         return getattr(self._cr_node, name)
     
-    def __unicode__(self):
+    def __str__(self):
         return str(self._cr_node)
 
 class theindex(IndexUtils, Environment, SectionUtils):

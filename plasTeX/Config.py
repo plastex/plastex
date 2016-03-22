@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import os
-from .ConfigManager import *
+from plasTeX.ConfigManager import *
 
 c = config = ConfigManager()
 

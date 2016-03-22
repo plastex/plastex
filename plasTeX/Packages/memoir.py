@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from .book import *
+from plasTeX.Packages.book import *
 
 class titleref(Command):
     args = 'label:idref'

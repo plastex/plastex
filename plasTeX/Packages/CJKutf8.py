@@ -1,3 +1,3 @@
 #!/usr/bin/env python
 
-from .CJK import *
+from plasTeX.Packages.CJK import *

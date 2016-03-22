@@ -10,7 +10,6 @@ TO-DO
 
 """
 
-import new
 from plasTeX import Command, Environment
 from plasTeX.Base.LaTeX.Floats import Float
 

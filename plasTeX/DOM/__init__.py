@@ -506,7 +506,7 @@ def _previousSibling(self):
 
     NOTE: This is fairly inefficient.  The reason that it has
     to be done this way is because Text nodes are a subclass of
-    `unicode` which is an immutable object.  This means that
+    `str` which is an immutable object.  This means that
     we can't have two references to the same Text object (i.e.
     `previousSibling` and `nextSibling` can't be variables).
 
@@ -527,7 +527,7 @@ def _nextSibling(self):
 
     NOTE: This is fairly inefficient.  The reason that it has
     to be done this way is because Text nodes are a subclass of
-    `unicode` which is an immutable object.  This means that
+    `str` which is an immutable object.  This means that
     we can't have two references to the same Text object (i.e.
     `previousSibling` and `nextSibling` can't be variables).
 
@@ -1085,13 +1085,13 @@ class Node(object):
     def textContent(self):
         """ Get the text content of the current node """
         output = []
-        if getattr(self, 'unicode', None) is not None:
+        if getattr(self, 'str', None) is not None:
             output.append(self.str)
         else:
             for item in self:
                 if item.nodeType == Node.TEXT_NODE:
                     output.append(item)
-                elif getattr(item, 'unicode', None) is not None:
+                elif getattr(item, 'str', None) is not None:
                     output.append(item.str)
                 else:
                     output.append(item.textContent)
@@ -1609,7 +1609,7 @@ class CharacterData(str, Node):
     http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html#ID-FF21A306
 
     This class doesn't follow the entire API. Because it is also
-    a subclass of unicode it is immutable making methods like insertData,
+    a subclass of str it is immutable making methods like insertData,
     deleteData, etc. impossible.
 
     """
@@ -1692,9 +1692,6 @@ class CharacterData(str, Node):
         return str.__getitem__(self, i)
 
     def __str__(self):
-        return self
-
-    def __unicode__(self):
         return self
 
 class Text(CharacterData):

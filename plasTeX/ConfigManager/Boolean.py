@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from .Generic import *
+from plasTeX.ConfigManager.Generic import *
 from plasTeX.ConfigManager import InvalidOptionError
 
 class BooleanParser(GenericParser): pass

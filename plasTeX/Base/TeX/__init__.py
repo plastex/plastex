@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from .Fonts import *
-from .Parameters import *
-from .Primitives import *
-from .Registers import *
-from .Text import *
+from plasTeX.Base.TeX.Fonts import *
+from plasTeX.Base.TeX.Parameters import *
+from plasTeX.Base.TeX.Primitives import *
+from plasTeX.Base.TeX.Registers import *
+from plasTeX.Base.TeX.Text import *

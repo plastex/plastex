@@ -5,7 +5,7 @@ import plasTeX
 from plasTeX import ismacro, macroName
 from plasTeX.DOM import Node
 from plasTeX.Logging import getLogger
-from .Tokenizer import Tokenizer, Token, DEFAULT_CATEGORIES, VERBATIM_CATEGORIES
+from plasTeX.Tokenizer import Tokenizer, Token, DEFAULT_CATEGORIES, VERBATIM_CATEGORIES
 
 # Only export the Context singleton
 __all__ = ['Context']
@@ -350,7 +350,7 @@ class Context(object):
                     continue
                 for name in ini.options(section):
                     value = ini.get(section,name)
-                    m = re.match(r'^unicode\(\s*(?:(\'|\")(?P<string>.+)(?:\1)|(?P<number>\d+))\s*\)$',value)
+                    m = re.match(r'^str\(\s*(?:(\'|\")(?P<string>.+)(?:\1)|(?P<number>\d+))\s*\)$',value)
                     if m:
                         data = m.groupdict()
                         if data['number'] is not None:
@@ -358,7 +358,7 @@ class Context(object):
                         else:
                             value = str(data['string'])
                         macros[name] = type(name, (baseclass,),
-                                                    {'unicode': value})
+                                                    {'str': value})
                         continue
                     macros[name] = type(name, (baseclass,),
                                                 {'args': value})
@@ -1075,7 +1075,7 @@ class Context(object):
         # Generate a new chardef class
         macrolog.debug('creating chardef (8-bit) %s', name)
         newclass = type(name, (plasTeX.Command,),
-                                {'unicode':chr(num)})
+                                {'str':chr(num)})
         self.addGlobal(name, newclass)
 
     def mathchardef(self, name, num):
@@ -1091,5 +1091,5 @@ class Context(object):
         # Generate a new chardef class
         macrolog.debug('creating mathchardef (16-bit) %s', name)
         newclass = type(name, (plasTeX.Command,),
-                                {'unicode':chr(num)})
+                                {'str':chr(num)})
         self.addGlobal(name, newclass)

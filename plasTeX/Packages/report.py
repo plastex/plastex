@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from .book import *
+from plasTeX.Packages.book import *
 
 def ProcessOptions(options, document):
-    from . import book
+    from plasTeX.Packages import book
     book.ProcessOptions(options, document)
     document.context['theequation'].format = '${equation}'

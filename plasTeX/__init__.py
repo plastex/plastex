@@ -3,8 +3,8 @@
 __version__ = '9.3'
 
 import string, re
-from .DOM import Element, Text, Node, DocumentFragment, Document
-from .Tokenizer import Token, BeginGroup, EndGroup, Other
+from plasTeX.DOM import Element, Text, Node, DocumentFragment, Document
+from plasTeX.Tokenizer import Token, BeginGroup, EndGroup, Other
 from plasTeX import Logging, encoding
 
 log = Logging.getLogger()
@@ -341,9 +341,6 @@ class Macro(Element):
         # Just pop the context if this is a \end token
         if self.macroMode == Macro.MODE_END:
             self.ownerDocument.context.pop(self)
-            # If a unicode value is set, just return that
-#           if self.unicode is not None:
-#               return tex.textTokens(self.unicode)
             return
 
         # If this is a \begin token or the element needs to be
@@ -352,9 +349,6 @@ class Macro(Element):
         elif self.macroMode == Macro.MODE_BEGIN:
             self.ownerDocument.context.push(self)
             self.parse(tex)
-            # If a unicode value is set, just return that
-#           if self.unicode is not None:
-#               return tex.textTokens(self.unicode)
             self.setLinkType()
             return
 
@@ -365,11 +359,6 @@ class Macro(Element):
         self.ownerDocument.context.push(self)
         self.parse(tex)
         self.ownerDocument.context.pop(self)
-
-        # If a unicode value is set, just return that
-#       if self.unicode is not None:
-#           return tex.textTokens(self.unicode)
-
         self.setLinkType()
 
     def setLinkType(self, key=None):
@@ -789,8 +778,6 @@ class TeXFragment(DocumentFragment):
 class TeXDocument(Document):
     """ TeX Document node """
     documentFragmentClass = TeXFragment
-
-    # Character sequences that should be replaced by unicode
     charsubs = [
         ('``', chr(8220)),
         ("''", chr(8221)),
@@ -814,13 +801,13 @@ class TeXDocument(Document):
         #super(TeXDocument, self).__init__(*args, **kwargs)
 
         if 'context' not in kwargs:
-            from . import Context
+            from plasTeX import Context
             self.context = Context.Context(load=True)
         else:
             self.context = kwargs['context']
 
         if 'config' not in kwargs:
-            from . import Config
+            from plasTeX import Config
             self.config = Config.config
         else:
             self.config = kwargs['config']
@@ -860,15 +847,13 @@ class Environment(Macro):
     def invoke(self, tex):
         if self.macroMode == Macro.MODE_END:
             self.ownerDocument.context.pop(self)
-            # If a unicode value is set, just return that
             if self.str is not None:
                 return tex.textTokens(self.str)
             return
 
         self.ownerDocument.context.push(self)
         self.parse(tex)
-
-        # If a unicode value is set, just return that
+        
         if self.str is not None:
             return tex.textTokens(self.str)
 

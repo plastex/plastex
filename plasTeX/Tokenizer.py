@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import string
-from .DOM import Node, Text
+from plasTeX.DOM import Node, Text
 from plasTeX import encoding
 from io import StringIO
 

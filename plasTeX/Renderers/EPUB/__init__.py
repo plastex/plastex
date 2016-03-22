@@ -8,10 +8,10 @@ from plasTeX.Renderers.PageTemplate.simpletal import simpleTAL, simpleTALES
 import codecs
 import datetime
 import os
-import sgmllib
 import zipfile
 #
-from . import templates
+from plasTeX.Renderers.EPUB import templates
+from html.parser import HTMLParser
 
 NCX_DOCTYPE = '''<!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN"
         "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">'''
@@ -22,13 +22,13 @@ def split_name(name):
     stem = os.path.splitext(raw_name)[0]#raw_name[:raw_name.rfind('.')]            
     return {'stem':os.path.basename(stem), 'fullname':raw_name}
 
-class NameParser(sgmllib.SGMLParser):
+class NameParser(HTMLParser):
     ''' We don't have access to lxml necessarily, so we roll our own parser
         using the SGMLParser as the parent class. This is only used to get the
         image and css filenames inside the xhtml content.
         '''
     def __init__(self, fname, encoding='utf-8'):
-        sgmllib.SGMLParser.__init__(self)
+        HTMLParser.__init__(self)
         if os.path.isfile(fname):
             f = codecs.open(fname, 'rb', encoding=encoding)
             self.contents = f.read()
@@ -278,12 +278,4 @@ class Epub(object):
         
 Renderer = EpubRenderer
 
-if __name__ == '__main__':
-    'set directory containing epub default template'
-    os.environ['EPUBTEMPLATES'] = os.path.join('/Users',
-                                               os.environ['USER'],
-                                               'EPUBTEMPLATES',)
-    os.environ['XHTMLTEMPLATES'] =  os.environ['EPUBTEMPLATES']
-    book = Epub('sample2e')
-    book.parse()
 

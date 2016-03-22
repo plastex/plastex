@@ -89,16 +89,14 @@ class StreamHandler(_StreamHandler):
         """ Emit a record.  """
         try:
             msg = self.format(record)
-            if not hasattr(types, "UnicodeType"): #if no unicode support...
+            
+            try:
                 self.checkLastWrite()
                 self.stream.write("%s\n" % msg)
-            else:
-                try:
-                    self.checkLastWrite()
-                    self.stream.write("%s\n" % msg)
-                except UnicodeError:
-                    self.checkLastWrite()
-                    self.stream.write("%s\n" % msg.encode("UTF-8"))
+            except (UnicodeDecodeError, UnicodeEncodeError):
+                self.checkLastWrite()
+                self.stream.write("%s\n" % msg.encode("UTF-8"))
+                
             StreamHandler.currentpos = 0
             StreamHandler.lastwrite = StreamHandler
             self.flush()
@@ -125,19 +123,16 @@ class StatusHandler(StreamHandler):
         """ Emit a record.  """
         try:
             msg = self.format(record)
-            if not hasattr(types, "UnicodeType"): #if no unicode support...
+           
+            try:
                 msg = str(msg)
                 self.checkPos(len(msg))
                 self.stream.write(msg)
-            else:
-                try:
-                    msg = str(msg)
-                    self.checkPos(len(msg))
-                    self.stream.write(msg)
-                except UnicodeError:
-                    msg = msg.encode("UTF-8")
-                    self.checkPos(len(msg))
-                    self.stream.write(msg)
+            except (UnicodeDecodeError, UnicodeEncodeError):
+                msg = msg.encode("UTF-8")
+                self.checkPos(len(msg))
+                self.stream.write(msg)
+                
             StreamHandler.lastwrite = StatusHandler
             self.flush()
         except:

@@ -13,18 +13,18 @@ __version__ = '1.0'
 
 def main(argv):
     """ Main program routine """
-    print >>sys.stderr, 'plasTeX version %s' % __version__
+    print('plasTeX version %s' % __version__)
 
     # Parse the command line options
     try:
         opts, args = config.getopt(argv[1:])
-    except Exception, msg:
+    except Exception as msg:
         log.error(msg)
-        print >>sys.stderr, config.usage()
+        print(config.usage())
         sys.exit(1)
 
     if not args:
-        print >>sys.stderr, config.usage()
+        print(config.usage())
         sys.exit(1)
 
     file = args.pop(0)
@@ -73,7 +73,7 @@ def main(argv):
     # Load renderer
     try:
         exec('from plasTeX.Renderers.%s import Renderer' % rname)
-    except ImportError, msg:
+    except ImportError as msg:
         log.error('Could not import renderer "%s".  Make sure that it is installed correctly, and can be imported by Python.' % rname)
         sys.exit(1)
 

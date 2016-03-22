@@ -8,7 +8,7 @@ C.11.3 Bibliography and Citation (p208)
 import plasTeX, codecs
 from plasTeX.Base.LaTeX.Sectioning import chapter, section
 from plasTeX import Command, Environment
-from .Lists import List
+from plasTeX.Base.LaTeX.Lists import List
 
 log = plasTeX.Logging.getLogger()
 

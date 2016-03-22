@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import new
 from plasTeX import Command
 from plasTeX.Tokenizer import Token, Other
 

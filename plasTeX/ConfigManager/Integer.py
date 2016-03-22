@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from .Generic import GenericOption, GenericParser, GenericArgument
+from plasTeX.ConfigManager.Generic import GenericOption, GenericParser, GenericArgument
 from plasTeX.ConfigManager import InvalidOptionError
 
 class IntegerParser(GenericParser): pass

@@ -32,7 +32,7 @@ class Accent(Command):
         for item in self:
             if item.nodeType == Node.TEXT_NODE:
                 output.append(item)
-            elif getattr(item, 'unicode', None) is not None:
+            elif getattr(item, 'str', None) is not None:
                 output.append(item.str)
             else:
                 output.append(item.textContent)

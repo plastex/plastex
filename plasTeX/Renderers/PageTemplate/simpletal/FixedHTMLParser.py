@@ -1,6 +1,6 @@
 """ Fixed up HTMLParser
 
-		Copyright (c) 2005 Colin Stewart (http://www.owlfish.com/)
+		Copyright (c) 2009 Colin Stewart (http://www.owlfish.com/)
 		All rights reserved.
 		
 		Redistribution and use in source and binary forms, with or without
@@ -34,11 +34,10 @@
 		Module Dependencies: logging, simpleTALES, simpleTALTemplates
 """
 
-from plasTeX.Renderers.PageTemplate import simpletal
-import HTMLParser
+import html.parser
 
 
-class HTMLParser (HTMLParser.HTMLParser):
+class HTMLParser (html.parser.HTMLParser):
 	def unescape(self, s):
 		# Just return the data - we don't partially unescaped data!
 		return s

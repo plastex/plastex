@@ -6,7 +6,7 @@ C.2 The Structure of the Document (p170)
 """
 
 from plasTeX import Command, Environment
-from .Sectioning import SectionUtils
+from plasTeX.Base.LaTeX.Sectioning import SectionUtils
 
 class document(Environment, SectionUtils):
     level = Environment.DOCUMENT_LEVEL
