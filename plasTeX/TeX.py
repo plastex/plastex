@@ -60,7 +60,7 @@ class TeX(object):
     """
     documentClass = TeXDocument
 
-    def __init__(self, ownerDocument=None, file=None):
+    def __init__(self, ownerDocument=None, myfile=None):
         if ownerDocument is None:
             ownerDocument = self.documentClass()
         self.ownerDocument = ownerDocument
@@ -110,10 +110,10 @@ class TeX(object):
         self.currentInput = (0,0)
 
         self.jobname = None
-        if file is not None:
+        if myfile is not None:
 
             # Filename
-            if isinstance(file, str):
+            if isinstance(myfile, str):
                 '''
                 if config has no files structure
                 or encoding is not specified
@@ -128,15 +128,15 @@ class TeX(object):
                 if encoding in ['utf8', 'utf-8', 'utf_8']:
                     encoding = 'utf_8_sig'
 
-                fname = self.kpsewhich(file)
-                fd = open(fname, encoding=encoding)
-                self.input(fd)
-                self.jobname = os.path.basename(os.path.splitext(file)[0])
+                fname = self.kpsewhich(myfile)
+                with open(fname, encoding=encoding) as fd:
+                    self.input(fd.read())
+                self.jobname = os.path.basename(os.path.splitext(myfile)[0])
 
             # File object
             else:
-                self.input(file)
-                self.jobname = os.path.basename(os.path.splitext(file.name)[0])
+                self.input(myfile)
+                self.jobname = os.path.basename(os.path.splitext(myfile.name)[0])
 
     def input(self, source):
         """
@@ -171,12 +171,12 @@ class TeX(object):
         if self.inputs:
             self.currentInput = self.inputs[-1]
 
-    def loadPackage(self, file, options={}):
+    def loadPackage(self, myfile, options={}):
         """
         Load a LaTeX package
 
         Required Arguments:
-        file -- name of the file to load
+        myfile -- name of the file to load
 
         Keyword Arguments:
         options -- options passed to the macro which is loading the package
@@ -185,7 +185,7 @@ class TeX(object):
         config = self.ownerDocument.config
 
         try:
-            path = self.kpsewhich(file)
+            path = self.kpsewhich(myfile)
         except OSError as msg:
             log.warning(msg)
             return False
@@ -201,7 +201,6 @@ class TeX(object):
                 # the output document.
                 flag = plasTeX.Command()
                 self.pushToken(flag)
-                encoding = config['files']['input-encoding']
                 self.input(f)
                 self.ownerDocument.context.packages[file] = options or {}
                 for tok in self:
@@ -210,9 +209,9 @@ class TeX(object):
 
         except (OSError, IOError, TypeError) as msg:
             if msg:
-                msg = ' ( %s )' % msg
+                msg = ' ( %s )' % str(msg)
             # Failed to load LaTeX style file
-            log.warning('Error opening package "%s"%s', file, msg)
+            log.warning('Error opening package "%s"%s', myfile, msg)
             status.info(' ) ')
             return False
 
@@ -344,9 +343,10 @@ class TeX(object):
 #                       log.info('expanding %s %s', token.macroName, ''.join([x.source for x in tokens]))
                         pushTokens(tokens)
                     continue
-                except Exception as msg:
-                    if str(msg).strip():
-                        msg = ' (%s)' % str(msg).strip()
+                except Exception as message:
+                    msg = str(message)
+                    if msg.strip():
+                        msg = ' (%s)' % msg.strip()
                     log.error('Error while expanding "%s"%s%s',
                               token.macroName, self.lineInfo, msg)
                     raise
@@ -432,9 +432,10 @@ class TeX(object):
                     item.parentNode = output
                     item.digest(tokens)
                 output.append(item)
-        except Exception as msg:
-            if str(msg).strip():
-               msg = ' (%s)' % str(msg).strip()
+        except Exception as message:
+            msg = str(message)
+            if msg.strip():
+               msg = ' (%s)' % msg.strip()
             log.error('An error occurred while building the document object%s%s', self.lineInfo, msg)
             raise
 
@@ -448,7 +449,7 @@ class TeX(object):
         text -- string containing text to be tokenized
 
         """
-        return [Other(x) for x in str(text)]
+        return [Other(x) for x in text]
 
     def pushToken(self, token):
         """
@@ -878,16 +879,16 @@ class TeX(object):
             source = [t]
             # A [ ... ], ( ... ), etc. grouping was found
             if t.catcode != Token.CC_ESCAPE and \
-               (t == begin or str(t) == str(begin)):
+               (t == begin or t == 'begin'):
                 level = 1
                 for t in tokens:
                     source.append(t)
                     if t.catcode != Token.CC_ESCAPE and \
-                       (t == begin or str(t) == str(begin)):
+                       (t == begin or t == 'begin'):
                         toks.append(t)
                         level += 1
                     elif t.catcode != Token.CC_ESCAPE and \
-                         (t == end or str(t) == str(end)):
+                         (t == end or t == 'end'):
                         level -= 1
                         if level == 0:
                             break
@@ -967,7 +968,7 @@ class TeX(object):
             pass
 
         # Could not find specified type
-        elif dtype not in argtypes:
+        elif dtype not in list(argtypes.keys()):
             log.warning('Could not find datatype "%s"' % dtype)
             pass
 
@@ -1340,6 +1341,15 @@ class TeX(object):
         else:
             TEXINPUTS = os.environ.get("TEXINPUTS",'')
             os.environ["TEXINPUTS"] = "%s%s%s%s" % (srcDir, os.path.pathsep, TEXINPUTS, os.path.pathsep)
+
+        fullname = ''
+        paths = os.environ["TEXINPUTS"].split(os.path.pathsep)
+        for path in [x for x in paths if x]:
+            if name in os.listdir(path):
+                fullname = os.path.join(path,name)
+                break
+        if fullname:
+            return fullname
 
         try:
             program = self.ownerDocument.config['general']['kpsewhich']

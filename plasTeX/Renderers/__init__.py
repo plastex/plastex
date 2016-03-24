@@ -306,7 +306,7 @@ class Renderable(object):
 
             # Populate vars of filename generator
             # and call the generator to get the filename.
-            ns = r.newFilename.vars
+            ns = r.newFilename.variables
             if hasattr(self, 'id') and getattr(self, '@hasgenid', None) is None:
                 ns['id'] = self.id
             if hasattr(self, 'title'):

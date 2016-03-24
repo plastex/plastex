@@ -52,13 +52,13 @@ class ContextItem(dict):
         if dict.has_key(self, key):
             return True
         if self.parent is not None:
-            return key in self.parent
+            return key in list(self.parent.keys())
 
     __contains__ = has_key
 
     def keys(self):
         keys = {}
-        for key in dict.keys(self):
+        for key in list(dict.keys(self)):
             keys[key] = 0
         if self.parent is not None:
             for key in list(self.parent.keys()):
@@ -96,8 +96,8 @@ class LanguageParser(object):
         for fname in files:
             if not os.path.isfile(fname):
                 continue
-            self.parser = expat.ParserCreate(encoding)
 
+            self.parser = expat.ParserCreate(encoding)
             self.parser.StartElementHandler = self.startElement
             self.parser.EndElementHandler = self.endElement
             self.parser.CharacterDataHandler = self.charData
@@ -112,7 +112,7 @@ class LanguageParser(object):
         for key, value in list(self.data.items()):
             if '-' in key:
                 major, minor = key.split('-',1)
-                if major in self.data:
+                if major in list(self.data.keys()):
                     majordict = self.data[major]
                     for mkey, mvalue in list(majordict.items()):
                         if mkey not in value:
@@ -233,7 +233,7 @@ class Context(object):
         if os.path.exists(filename):
             try:
                 d = pickle.load(open(filename,'rb'))
-                if rtype not in d:
+                if rtype not in list(d.keys()):
                     d[rtype] = {}
             except:
                 os.remove(filename)
@@ -307,7 +307,7 @@ class Context(object):
 
             LanguageParser(self.languages).parse(reversed(files))
 
-        if lang in self.languages:
+        if lang in list(self.languages.keys()):
             self.currentLanguage = lang
             self.newcommand('languagename', definition=lang)
             self.terms = self.languages[lang]
@@ -360,7 +360,7 @@ class Context(object):
                         if data['number'] is not None:
                             value = chr(int(data['number']))
                         else:
-                            value = str(data['string'])
+                            value = data['string']
                         macros[name] = type(name, (baseclass,),
                                                     {'str': value})
                         continue
@@ -391,7 +391,7 @@ class Context(object):
         module = os.path.splitext(file)[0]
         # pu.db
         # See if it has already been loaded
-        if module in self.packages:
+        if module in list(self.packages.keys()):
             return True
 
         packagesini = os.path.join(os.path.dirname(plasTeX.Packages.__file__),
@@ -459,7 +459,7 @@ class Context(object):
         #print label, ''.join(self.currentlabel.ref[:])
 
         # Resolve any outstanding references to this object
-        if label in self.refs and label in self.labels:
+        if label in list(self.refs.keys()) and label in (self.labels.keys()):
             for obj in self.refs[label]:
                 for key, value in list(obj.idref.items()):
                     if value.id != label:
@@ -485,12 +485,12 @@ class Context(object):
             return
 
         # Resolve ref if label already exists
-        if label in self.labels:
+        if label in list(self.labels.keys()):
             obj.idref[name] = self.labels[label]
             return
 
         # If the label doesn't exist, store away the object for later
-        if label not in self.refs:
+        if label not in list(self.refs.keys()):
             self.refs[label] = []
         self.refs[label].append(obj)
 
@@ -515,7 +515,7 @@ class Context(object):
         # Didn't find it, so generate a new class
         if self.warnOnUnrecognized and not self.isMathMode:
             log.warning('unrecognized command/environment: %s', key)
-        self[key] = newclass = type(str(key), (plasTeX.UnrecognizedMacro,), {})
+        self[key] = newclass = type(key, (plasTeX.UnrecognizedMacro,), {})
         return newclass
 
     def push(self, context=None):
@@ -789,9 +789,8 @@ class Context(object):
         initial -- initial value for the counter
 
         """
-        name = str(name)
         # Counter already exists
-        if name in self.counters:
+        if name in list(self.counters.keys()):
             macrolog.debug('counter %s already defined', name)
             return
         self.counters[name] = plasTeX.Counter(self, name, resetby, initial)
@@ -824,7 +823,6 @@ class Context(object):
         initial -- value to initialize to
 
         """
-        name = str(name)
         # Generate a new count class
         macrolog.debug('creating count %s', name)
         newclass = type(name, (plasTeX.CountCommand,),
@@ -842,7 +840,6 @@ class Context(object):
         initial -- value to initialize to
 
         """
-        name = str(name)
         # Generate a new dimen class
         macrolog.debug('creating dimen %s', name)
         newclass = type(name, (plasTeX.DimenCommand,),
@@ -860,7 +857,6 @@ class Context(object):
         initial -- value to initialize to
 
         """
-        name = str(name)
         # Generate a new glue class
         macrolog.debug('creating dimen %s', name)
         newclass = type(name, (plasTeX.GlueCommand,),
@@ -878,7 +874,6 @@ class Context(object):
         initial -- value to initialize to
 
         """
-        name = str(name)
         # Generate a new muglue class
         macrolog.debug('creating muskip %s', name)
         newclass = type(name, (plasTeX.MuGlueCommand,),
@@ -899,9 +894,9 @@ class Context(object):
         initial -- initial value of the 'if' command
 
         """
-        name = str(name)
+
         # \if already exists
-        if name in self:
+        if name in list(self.keys()):
             macrolog.debug('if %s already defined', name)
             return
 
@@ -936,8 +931,6 @@ class Context(object):
             c.newcommand('foo', 2, r'{\\bf #1#2}', opt='myprefix')
 
         """
-        # name = str(name)
-        #pu.db
         # Macro already exists
         if name in list(self.keys()):
             if not issubclass(self[name], (plasTeX.NewCommand, plasTeX.Definition)):
@@ -979,9 +972,8 @@ class Context(object):
             c.newenvironment('mylist', 0, (r'\\begin{itemize}', r'\\end{itemize}'))
 
         """
-        name = str(name)
         # Macro already exists
-        if name in self:
+        if name in list(self.keys()):
             if not issubclass(self[name], (plasTeX.NewCommand,
                                            plasTeX.Definition)):
                 return
@@ -1033,7 +1025,6 @@ class Context(object):
             c.newdef('put', '(#1,#2)#3', '\\dostuff{#1}{#2}{#3}')
 
         """
-        name = str(name)
         # Macro already exists
 #       if self.has_key(name):
 #           if not issubclass(self[name], (plasTeX.NewCommand,
@@ -1076,7 +1067,6 @@ class Context(object):
         num -- character number to use
 
         """
-        name = str(name)
         # Generate a new chardef class
         macrolog.debug('creating chardef (8-bit) %s', name)
         newclass = type(name, (plasTeX.Command,),
@@ -1092,7 +1082,6 @@ class Context(object):
         num -- character number to use
 
         """
-        name = str(name)
         # Generate a new chardef class
         macrolog.debug('creating mathchardef (16-bit) %s', name)
         newclass = type(name, (plasTeX.Command,),

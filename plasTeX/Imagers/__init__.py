@@ -6,7 +6,7 @@ except ImportError: from md5 import new as md5
 from plasTeX.Logging import getLogger
 from io import StringIO
 from plasTeX.Filenames import Filenames
-from plasTeX.dictutils import ordereddict
+from collections import OrderedDict
 import subprocess
 import shlex
 
@@ -29,13 +29,13 @@ def autoCrop(im, bgcolor=None, margin=0):
     im -- image object
 
     Optional Argument:
-    bgcolor -- value or tuple containing the color to use for the 
+    bgcolor -- value or tuple containing the color to use for the
         background color when cropping
     margin -- leave this many pixels around the content.  If there
         aren't that many pixels to leave, leave as many as possible.
 
     Returns: cropped image object and tuple containing the number
-        of pixels removed from each side (left, top, right, bottom) 
+        of pixels removed from each side (left, top, right, bottom)
 
     """
     if im.mode != "RGB":
@@ -93,35 +93,35 @@ class Dimension(float):
     """
     Dimension object used for width, height, and depth of images
 
-    This object is simply a float value.  The value of the float 
-    is in pixels.  All other units can be gotten using their 
+    This object is simply a float value.  The value of the float
+    is in pixels.  All other units can be gotten using their
     corresponding property.
 
     """
     fontSize = 15
     @property
-    def ex(self): 
+    def ex(self):
         return '%sex' % self.format(self / (self.fontSize * 0.6))
     @property
-    def em(self): 
+    def em(self):
         return '%sem' % self.format(self / self.fontSize)
     @property
-    def pt(self): 
+    def pt(self):
         return '%spt' % self.format(self)
     @property
-    def px(self): 
+    def px(self):
         return '%spx' % self.format(self)
     @property
-    def mm(self): 
+    def mm(self):
         return '%smm' % self.format(self.cm * 10.0)
     @property
-    def inch(self): 
+    def inch(self):
         return '%sin' % self.format(self.pt / 72.0)
     @property
-    def cm(self): 
+    def cm(self):
         return '%scm' % self.format(self.inch * 2.54)
     @property
-    def pc(self): 
+    def pc(self):
         return '%spc' % self.format(self.pt / 12.0)
 
     def __getattribute__(self, name):
@@ -139,10 +139,10 @@ class Dimension(float):
 
     def __repr__(self):
         return self.format(self)
-        
+
 
 class DimensionPlaceholder(str):
-    """ 
+    """
     Placeholder for dimensions
 
     Dimensions for an image aren't generally known until the end of
@@ -160,7 +160,7 @@ class DimensionPlaceholder(str):
         return str.__getattribute__(self, name)
     def __setattribute__(self, name, value):
         if name in ['in','ex','em','pt','px','mm','cm','pc']:
-            return 
+            return
         return str.__setattribute__(self, name, value)
 
 class Image(object):
@@ -175,7 +175,7 @@ class Image(object):
         self.alt = alt
         self.depth = depth
         self.depthRatio = 0
-        self.longdesc = longdesc 
+        self.longdesc = longdesc
         self.config = config
         self._cropped = False
         self.bitmap = self
@@ -255,14 +255,14 @@ class Image(object):
                     self.depth = depth - 1
                 else:
                     self.depth = depth
-                
+
             self._cropped = True
             return
 
         padbaseline = self.config['baseline-padding']
 
         try:
-            im, self.depth = self._stripBaseline(PILImage.open(self.path), 
+            im, self.depth = self._stripBaseline(PILImage.open(self.path),
                                              padbaseline)
             self.width, self.height = im.size
         except IOError as msg:
@@ -303,7 +303,7 @@ class Image(object):
         must be the background color of the image.  There should be a
         square registration mark which has the bottom edge at the baseline
         of the image (see \\plasTeXregister in LaTeX code at the top
-        of this file).  This registration mark should be the leftmost 
+        of this file).  This registration mark should be the leftmost
         content of the image.  If the registration mark is at the top
         of the image, the baseline is ignored.
 
@@ -313,7 +313,7 @@ class Image(object):
         Keyword Arguments:
         padbaseline -- amount to pad the bottom of all cropped images.
             This allows you to use one margin-bottom for all images;
-            however, you need to make sure that this padding is large 
+            however, you need to make sure that this padding is large
             enough to handle the largest descender in the document.
 
         Returns:
@@ -329,7 +329,7 @@ class Image(object):
         im, box, background = self._autoCrop(im)
 
         width, height = im.size
-        
+
         # Determine if registration mark is at top or left
         top = False
         # Found mark at top
@@ -337,7 +337,7 @@ class Image(object):
             top = True
             i = 1
             # Parse past the registration mark
-            # We're fudging the vertical position by 1px to catch 
+            # We're fudging the vertical position by 1px to catch
             # things sitting right under the baseline.
             while i < width and im.getpixel((i,1)) != background:
                 i += 1
@@ -395,15 +395,15 @@ class Image(object):
             bbox = list(bbox)
             bbox[0] = rwidth
 
-        # Crop out register mark, and autoCrop result    
+        # Crop out register mark, and autoCrop result
         im, cropped, background = self._autoCrop(im.crop(bbox), background)
 
-        # If the content was entirely above the baseline, 
+        # If the content was entirely above the baseline,
         # we need to keep that whitespace
         depth += cropped[3]
         depthlog.debug('Depth of image %s is %s', self.filename, depth)
 
-        # Pad all images with the given amount.  This allows you to 
+        # Pad all images with the given amount.  This allows you to
         # set one margin-bottom for all images.
         if padbaseline:
             width, height = im.size
@@ -412,7 +412,7 @@ class Image(object):
             im = newim
 
         return im, depth
-    
+
 
 class Imager(object):
     """ Generic Imager """
@@ -445,10 +445,10 @@ class Imager(object):
         # The key is the LaTeX source and the value is the image instance.
         self._cache = {}
         usednames = {}
-        self._filecache = os.path.abspath(os.path.join('.cache', 
+        self._filecache = os.path.abspath(os.path.join('.cache',
                                           self.__class__.__name__+'.images'))
         if self.config['images']['cache'] and os.path.isfile(self._filecache):
-            try: 
+            try:
                 self._cache = pickle.load(open(self._filecache, 'r'))
                 for key, value in list(self._cache.items()):
                     if not os.path.isfile(value.filename):
@@ -459,14 +459,14 @@ class Imager(object):
                 os.remove(self._filecache)
 
         # List of images in the order that they appear in the LaTeX file
-        self.images = ordereddict()
+        self.images = OrderedDict()
 
         # Images that are simply copied from the source directory
-        self.staticimages = ordereddict()
+        self.staticimages = OrderedDict()
 
         # Filename generator
-        self.newFilename = Filenames(self.config['images'].get('filenames', raw=True), 
-                           vars={'jobname':document.userdata.get('jobname','')},
+        self.newFilename = Filenames(self.config['images'].get('filenames', raw=True),
+                           variables={'jobname':document.userdata.get('jobname','')},
                            extension=self.fileExtension, invalid=usednames)
 
         # Start the document with a preamble
@@ -485,7 +485,7 @@ class Imager(object):
         Required Arguments:
         config -- the images section of the configuration object
 
-        Returns: a list of two-element tuples contain option value pairs 
+        Returns: a list of two-element tuples contain option value pairs
 
         Example::
             output = []
@@ -544,7 +544,7 @@ class Imager(object):
     @property
     def enabled(self):
         if self.config['images']['enabled'] and \
-           (self.command or (type(self) is not Imager and type(self) is not VectorImager)): 
+           (self.command or (type(self) is not Imager and type(self) is not VectorImager)):
             return True
         return False
 
@@ -561,7 +561,7 @@ class Imager(object):
 
         # Bail out if there are no images
         if not self.images:
-            return 
+            return
 
         if not self.enabled:
             return
@@ -624,7 +624,7 @@ class Imager(object):
             line = p.stdout.readline()
             done = p.poll()
             if line:
-                imagelog.info(str(line.strip()))        
+                imagelog.info(str(line.strip()))
             elif done is not None:
                 break
 
@@ -641,8 +641,8 @@ class Imager(object):
         return output
 
     def executeConverter(self, output):
-        """ 
-        Execute the actual image converter 
+        """
+        Execute the actual image converter
 
         Arguments:
         output -- file object pointing to the rendered LaTeX output
@@ -673,7 +673,7 @@ class Imager(object):
             line = p.stdout.readline()
             done = p.poll()
             if line:
-                imagelog.info(str(line.strip()))        
+                imagelog.info(str(line.strip()))
             elif done is not None:
                 break
         return done, None
@@ -705,7 +705,7 @@ class Imager(object):
 
         # Get a list of all of the image files
         if images is None:
-            images = [f for f in os.listdir('.') 
+            images = [f for f in os.listdir('.')
                             if re.match(r'^img\d+\.\w+$', f)]
         if len(images) != len(self.images):
             log.warning('The number of images generated (%d) and the number of images requested (%d) is not the same.' % (len(images), len(self.images)))
@@ -713,7 +713,7 @@ class Imager(object):
         # Sort by creation date
         #images.sort(lambda a,b: cmp(os.stat(a)[9], os.stat(b)[9]))
 
-        images.sort(lambda a,b: cmp(int(re.search(r'(\d+)\.\w+$',a).group(1)), 
+        images.sort(lambda a,b: cmp(int(re.search(r'(\d+)\.\w+$',a).group(1)),
                                     int(re.search(r'(\d+)\.\w+$',b).group(1))))
 
         os.chdir(cwd)
@@ -721,7 +721,7 @@ class Imager(object):
         if PILImage is None:
             log.warning('PIL (Python Imaging Library) is not installed.  ' +
                         'Images will not be cropped.')
-            
+
         # Move images to their final location
         for src, dest in zip(images, list(self.images.values())):
             # Move the image
@@ -734,14 +734,14 @@ class Imager(object):
                 shutil.copy(os.path.join(tempdir,src), dest.path)
 
             # Crop the image
-            try: 
+            try:
                 dest.crop()
                 status.dot()
             except Exception as msg:
                 import traceback
                 traceback.print_exc()
                 log.warning('failed to crop %s (%s)', dest.path, msg)
-        
+
         # Remove temporary directory
         shutil.rmtree(tempdir, True)
 
@@ -758,19 +758,19 @@ class Imager(object):
         self.source.write('%s\n\\begin{plasTeXimage}{%s}\n%s\n\\end{plasTeXimage}\n' % (context, filename, code))
 
     def newImage(self, text, context='', filename=None):
-        """ 
-        Invoke a new image 
+        """
+        Invoke a new image
 
         Required Arguments:
         text -- the LaTeX source to be rendered in an image
-        
+
         Keyword Arguments:
         context -- LaTeX source to be executed before the image
             is created.  This generally consists of setting counters,
             lengths, etc. that will be used by the code that
             generates the image.
         filename -- filename to force the image to.  This filename
-            should not include the file extension. 
+            should not include the file extension.
 
         """
         # Convert ligatures back to original string
@@ -782,7 +782,7 @@ class Imager(object):
         # See if this image has been cached
         if key in self._cache:
             return self._cache[key]
-            
+
         # Generate a filename
         if not filename:
             filename = self.newFilename()
@@ -803,7 +803,7 @@ class Imager(object):
                     value = DimensionPlaceholder(tmpl.substitute(vars))
                     value.imageUnits = self.imageUnits
                     setattr(img, name, value)
-    
+
         self.images[filename] = self._cache[key] = img
         return img
 
@@ -812,7 +812,7 @@ class Imager(object):
         Get an image from the given node whatever way possible
 
         This method attempts to find an existing image using the
-        `imageoverride' attribute.  If it finds it, the image is 
+        `imageoverride' attribute.  If it finds it, the image is
         converted to the appropriate output format and copied to the
         images directory.  If no image is available, or there was
         a problem in getting the image, an image is generated.
@@ -840,7 +840,7 @@ class Imager(object):
             if directory and not os.path.isdir(directory):
                 os.makedirs(directory)
 
-            # If PIL isn't available or no conversion is necessary, 
+            # If PIL isn't available or no conversion is necessary,
             # just copy the image to the new location
             if newext == oldext or oldext in self.imageTypes:
                 path = os.path.splitext(path)[0] + os.path.splitext(name)[-1]
@@ -861,7 +861,7 @@ class Imager(object):
                         img.save(path)
                     else:
                         shutil.copyfile(name, path)
-                    
+
             # If PIL is available, convert the image to the appropriate type
             else:
                 img = PILImage.open(name)
@@ -907,7 +907,7 @@ class WorkingFile():
             del kwargs['tempdir']
             self.args = args
             self.kwargs = kwargs
-            
+
     def __enter__(self):
         self.file_obj = open(*self.args, **self.kwargs)
         return self.file_obj
@@ -916,4 +916,3 @@ class WorkingFile():
         if self.tempdir and os.path.isdir(self.tempdir):
             shutil.rmtree(self.tempdir, True)
         self.file_obj.close()
-

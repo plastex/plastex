@@ -33,7 +33,7 @@ def main(argv):
     document = plasTeX.TeXDocument(config=config)
 
     # Instantiate the TeX processor and parse the document
-    tex = TeX(document, file=file)
+    tex = TeX(document, myfile=file)
 
     # Send log message to file "jobname.log" instead of console
     if config['files']['log']:

@@ -16,8 +16,7 @@ followed by a bunch of imaginary command line options and arguments.
 """
 
 import sys, string, re, urllib.request, copy, types, os
-from plasTeX.dictutils import ordereddict
-from collections import UserList, UserDict
+from collections import UserList, UserDict, OrderedDict
 from textwrap import wrap
 
 __all__ = ['ConfigManager','BooleanOption','IntegerOption','CompoundOption',
@@ -1506,11 +1505,11 @@ class ConfigManager(UserDict, object):
         return s
 
 
-class CommandLineManager(ordereddict):
+class CommandLineManager(OrderedDict):
    """ Command-Line Argument Manager """
 
    def __init__(self, data={}):
-      ordereddict.__init__(self, data)
+      OrderedDict.__init__(self, data)
       self._associations = {}
 
    def usage(self):
@@ -1526,7 +1525,7 @@ class CommandLineManager(ordereddict):
       """ Return boolean indicating if config requires an argument """
       if not self: return 0
       for key in self:
-         item = ordereddict.__getitem__(self, key)
+         item = OrderedDict.__getitem__(self, key)
          if isinstance(item, GenericArgument):
              if item.mandatory:
                  return 1
@@ -1540,7 +1539,7 @@ class CommandLineManager(ordereddict):
       if not self: return self
 
       for key in self:
-         item = ordereddict.__getitem__(self, key)
+         item = OrderedDict.__getitem__(self, key)
          association = self._associations.get(key, None)
          if isinstance(item, ConfigManager):
             if association:
@@ -1569,12 +1568,12 @@ class CommandLineManager(ordereddict):
              'subclasses of GenericArgument'
       if hasattr(item, 'name') and item.name is None:
          item.name = key
-      ordereddict.__setitem__(self, key, item)
+      OrderedDict.__setitem__(self, key, item)
 
    def __getitem__(self, key):
       if type(key) == slice:
          return self.__getslice__(key.start, key.stop)
-      item = ordereddict.__getitem__(self, key)
+      item = OrderedDict.__getitem__(self, key)
       if isinstance(item, ConfigManager):
          return item
       else:
@@ -1596,6 +1595,3 @@ from plasTeX.ConfigManager.Directories import OutputDirectoryOption, InputDirect
 from plasTeX.ConfigManager.Files import OutputFileArgument, InputFileArgument
 from plasTeX.ConfigManager.Directories import OutputDirectoryArgument, InputDirectoryArgument
 from plasTeX.ConfigManager.Counted import CountedOption, CountedArgument
-
-
-

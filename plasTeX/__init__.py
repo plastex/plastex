@@ -245,7 +245,7 @@ class Macro(Element):
                 return getattr(self, '@tocEntry')
             except AttributeError:
                 try:
-                    if 'toc' in self.attributes:
+                    if 'toc' in list(self.attributes.keys()):
                         toc = self.attributes['toc']
                         if toc is None:
                             toc = self.title
@@ -423,7 +423,7 @@ class Macro(Element):
         s = '%s%s%s' % (escape, name, argSource)
 
         # If self.childNodes is not empty, print out the contents
-        if self.attributes and 'self' in self.attributes:
+        if self.attributes and 'self' in list(self.attributes.keys()):
             pass
         else:
             if self.hasChildNodes():
@@ -628,7 +628,7 @@ class Macro(Element):
                 if parts:
                     # We already have a type, so check for subtypes
                     # for list items
-                    if 'type' in argdict:
+                    if 'type' in list(argdict.keys()):
                         argdict['subtype'] = parts.pop(0)
                     else:
                         # Split type and possible delimiter
@@ -800,13 +800,13 @@ class TeXDocument(Document):
     def __init__(self, *args, **kwargs):
         #super(TeXDocument, self).__init__(*args, **kwargs)
 
-        if 'context' not in kwargs:
+        if 'context' not in list(kwargs.keys()):
             from plasTeX import Context
             self.context = Context.Context(load=True)
         else:
             self.context = kwargs['context']
 
-        if 'config' not in kwargs:
+        if 'config' not in list(kwargs.keys()):
             from plasTeX import Config
             self.config = Config.config
         else:

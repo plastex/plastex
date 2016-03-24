@@ -74,18 +74,14 @@ class Token(Text):
     def __hash__(self):
         return super(Token,self).__hash__()
 
-    def __str__(self):
-        return self.encode('utf-8').decode('utf-8')
-    __unicode__ = __str__
-
     def __cmp__(self, other):
         # Token comparison -- character and code must match
         if isinstance(other, Token):
             if self.catcode == other.catcode:
-                return cmp(str(self), str(other))
+                return cmp(self, other)
             return cmp(self.catcode, other.catcode)
         # Not comparing to token, just do a string match
-        return cmp(str(self), str(other))
+        return cmp(self, other)
 
     @property
     def source(self):
@@ -233,17 +229,16 @@ class Tokenizer(object):
             self.filename = source.name
         self.seek = source.seek
         self.read = source.read
-#       self.readline = source.readline
         self.tell = source.tell
         self.lineNumber = 1
 
 # There seems to be a problem with readline in Python 2.4 !!!
     def readline(self):
         read = self.read
-        buffer = self._charBuffer
+        mybuffer = self._charBuffer
         while 1:
-            if buffer:
-                char = buffer.pop(0)
+            if mybuffer:
+                char = mybuffer.pop(0)
             else:
                 char = read(1)
             if not char or ord(char) == 10:
@@ -263,7 +258,7 @@ class Tokenizer(object):
 
         """
         # Create locals before going into the generator loop
-        buffer = self._charBuffer
+        mybuffer = self._charBuffer
         classes = self.tokenClasses
         read = self.read
 
@@ -273,8 +268,8 @@ class Tokenizer(object):
         CC_INVALID = Token.CC_INVALID
 
         def _read1():
-            if buffer:
-                return buffer.pop(0)
+            if mybuffer:
+                return mybuffer.pop(0)
             return read(1)
 
         while True:
@@ -283,9 +278,6 @@ class Tokenizer(object):
             if not token:
                 break
 
-            # ord(token) == 10 is the same as saying token == '\n'
-            # but it is much faster.
-            # if ord(token) == 10:
             if token == '\n':
                 self.lineNumber += 1
 
@@ -360,7 +352,7 @@ class Tokenizer(object):
         global Space, EscapeSequence
         Space = Space
         EscapeSequence = EscapeSequence
-        buffer = self._tokBuffer
+        mybuffer = self._tokBuffer
         charIter = self.iterchars()
         context = self.context
         pushChar = self.pushChar
@@ -380,9 +372,9 @@ class Tokenizer(object):
 
         while 1:
 
-            # Purge buffer first
-            while buffer:
-                yield buffer.pop(0)
+            # Purge mybuffer first
+            while mybuffer:
+                yield mybuffer.pop(0)
 
             # Get the next character
             token = next(charIter)

@@ -89,14 +89,14 @@ class StreamHandler(_StreamHandler):
         """ Emit a record.  """
         try:
             msg = self.format(record)
-            
+
             try:
                 self.checkLastWrite()
                 self.stream.write("%s\n" % msg)
             except (UnicodeDecodeError, UnicodeEncodeError):
                 self.checkLastWrite()
                 self.stream.write("%s\n" % msg.encode("UTF-8"))
-                
+
             StreamHandler.currentpos = 0
             StreamHandler.lastwrite = StreamHandler
             self.flush()
@@ -123,16 +123,15 @@ class StatusHandler(StreamHandler):
         """ Emit a record.  """
         try:
             msg = self.format(record)
-           
+
             try:
-                msg = str(msg)
                 self.checkPos(len(msg))
                 self.stream.write(msg)
             except (UnicodeDecodeError, UnicodeEncodeError):
                 msg = msg.encode("UTF-8")
                 self.checkPos(len(msg))
                 self.stream.write(msg)
-                
+
             StreamHandler.lastwrite = StatusHandler
             self.flush()
         except:
