@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os, sys, codecs, string, glob
+import os, sys, string, glob
 import plasTeX
 from plasTeX.TeX import TeX
 from plasTeX.Config import config
@@ -84,7 +84,8 @@ def main(argv):
     # Write XML dump
     if config['general']['xml']:
         outfile = '%s.xml' % jobname
-        codecs.open(outfile,'w',encoding='utf-8').write(document.toXML())
+        with open(outfile,'w',encoding='utf-8') as f:
+            f.write(document.toXML())
 
     # Apply renderer
     Renderer().render(document)

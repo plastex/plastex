@@ -175,7 +175,7 @@ class Renderable(object):
             # the encoding is, but we'll make a guess.
             if type(val) is not str:
                 log.warning('The renderer for %s returned a non-unicode string.  Using the default input encoding.' % type(child).__name__)
-                val = str(val, child.config['files']['input-encoding'])
+                val = str(val)
 
             # If the content should go to a file, write it and go
             # to the next child.
@@ -196,12 +196,12 @@ class Renderable(object):
                     # the encoding is, but we'll make a guess.
                     if type(val) is not str:
                         log.warning('The renderer for %s returned a non-unicode string.  Using the default input encoding.' % type(child).__name__)
-                        val = str(val, child.config['files']['input-encoding'])
+                        val = str(val)
 
                 # Write the file content
-                codecs.open(filename, 'w',
-                            child.config['files']['output-encoding'],
-                            errors=r.encodingErrors).write(val)
+                enc = child.config['files']['output-encoding']
+                with open(filename, 'w', encoding=enc) as f:
+                    f.write(val)
 
                 status.info(' ] ')
 
@@ -215,8 +215,9 @@ class Renderable(object):
 
         return r.outputType(''.join(s))
 
-    def __str__(self):
-        return str(self)
+    # def __str__(self):
+    #     return ''
+
 
     @property
     def image(self):
@@ -412,23 +413,25 @@ class Renderer(dict):
 
         # Instantiate appropriate imager
         names = [x for x in config['images']['imager'].split() if x]
-        for name in names:
-            if name == 'none':
-                break
-            try:
-                exec('from plasTeX.Imagers.%s import Imager' % name)
-            except ImportError as msg:
-                log.warning("Could not load imager '%s' because '%s'" % (name, msg))
-                continue
+        names = ['none']
+        # for name in names:
+        #     if name == 'none':
+        #         break
+        #
+        #     try:
+        #         exec('from plasTeX.Imagers.%s import Imager' % name)
+        #     except ImportError as msg:
+        #         log.warning("Could not load imager '%s' because '%s'" % (name, msg))
+        #         continue
+        #
+        #     self.imager = Imager(document, self.imageTypes)
+        #
+        #     # Make sure that this imager works on this machine
+        #     if self.imager.verify():
+        #         log.info('Using the imager "%s".' % name)
+        #         break
 
-            self.imager = Imager(document, self.imageTypes)
-
-            # Make sure that this imager works on this machine
-            if self.imager.verify():
-                log.info('Using the imager "%s".' % name)
-                break
-
-            self.imager = None
+        self.imager = None
 
         # Still no imager? Just use the default.
         if self.imager is None:
@@ -533,7 +536,7 @@ class Renderer(dict):
 
         for f in files:
             try:
-                s = codecs.open(str(f), 'r', encoding,
+                s = codecs.open(f, 'r', encoding,
                                 errors=self.encodingErrors).read()
             except IOError as msg:
                 log.error(msg)
@@ -606,9 +609,9 @@ class StaticNode(object):
         if name in ['_node_data','__str__']:
             return object.__getattribute__(self, name)
         return getattr(self._node_data[0], name)
-    
+
     def __str__(self):
-        return str(self)
+        return self._node_data[1]
 
 
 class URL(str):

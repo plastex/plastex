@@ -5,7 +5,6 @@ from plasTeX import Command, Environment, TheCounter
 
 def ProcessOptions(options, document):
     context = document.context
-
     # Lists
     context.newcounter('enumi')
     context.newcounter('enumii', resetby='enumi')
@@ -13,17 +12,17 @@ def ProcessOptions(options, document):
     context.newcounter('enumiv', resetby='enumiii')
 
     # Sections
-    context.newcounter('part', resetby='volume', 
+    context.newcounter('part', resetby='volume',
                        format='$part')
-    context.newcounter('chapter', resetby='part', 
+    context.newcounter('chapter', resetby='part',
                        format='$chapter')
-    context.newcounter('section', resetby='chapter', 
+    context.newcounter('section', resetby='chapter',
                        format='${thechapter}.${section}')
-    context.newcounter('subsection', resetby='section', 
+    context.newcounter('subsection', resetby='section',
                        format='${thesection}.${subsection}')
-    context.newcounter('subsubsection', resetby='subsection', 
+    context.newcounter('subsubsection', resetby='subsection',
                        format='${thesubsection}.${subsubsection}')
-    context.newcounter('paragraph', resetby='subsubsection', 
+    context.newcounter('paragraph', resetby='subsubsection',
                        format='${thesubsubsection}.${paragraph}')
     context.newcounter('subparagraph', resetby='paragraph',
                        format='${theparagraph}.${subparagraph}')
@@ -38,7 +37,7 @@ def ProcessOptions(options, document):
     context.newcounter('page')
 
     # Floats
-    context.newcounter('figure', resetby='chapter', 
+    context.newcounter('figure', resetby='chapter',
                        format='${thechapter}.${figure}')
     context.newcounter('table', resetby='chapter',
                        format='${thechapter}.${table}')
@@ -46,9 +45,8 @@ def ProcessOptions(options, document):
     context.newcounter('bottomnumber')
     context.newcounter('totalnumber')
     context.newcounter('dbltopnumber')
-
     context.loadLanguage('american', document)
-
+    
     language = False
     languages = list(document.context.languages.keys())
     for key, value in list(options.items()):
@@ -59,7 +57,7 @@ def ProcessOptions(options, document):
             language = True
             context.loadLanguage(key, document)
 
-class frontmatter(Command): 
+class frontmatter(Command):
     pass
 
 class mainmatter(Command):
@@ -75,4 +73,4 @@ class appendix(Command):
 
     def invoke(self, tex):
         self.ownerDocument.context.counters['chapter'].setcounter(0)
-        self.ownerDocument.context['thechapter'] = type(self).thechapter 
+        self.ownerDocument.context['thechapter'] = type(self).thechapter

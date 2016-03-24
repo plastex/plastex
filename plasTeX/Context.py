@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os, configparser, re, time, codecs
+import os, configparser, re, time
 import plasTeX
 from plasTeX import ismacro, macroName
 from plasTeX.DOM import Node
@@ -93,14 +93,16 @@ class LanguageParser(object):
         from xml.parsers import expat
         if isinstance(files, str):
             files = [files]
-        for file in files:
-            if not os.path.isfile(file):
+        for fname in files:
+            if not os.path.isfile(fname):
                 continue
-            self.parser = expat.ParserCreate('UTF-8')
+            self.parser = expat.ParserCreate(encoding)
+
             self.parser.StartElementHandler = self.startElement
             self.parser.EndElementHandler = self.endElement
             self.parser.CharacterDataHandler = self.charData
-            self.parser.Parse(codecs.open(file, 'r', encoding).read().encode('UTF-8'))
+            with open(fname, encoding=encoding) as f:
+                self.parser.Parse(f.read())
         self.mergeLanguages()
         return self.data
 
@@ -298,9 +300,11 @@ class Context(object):
         lang -- the name of the language file to load
 
         """
+
         if not self.languages:
             files = document.config['document']['lang-terms'].split(os.pathsep)
             files.append(os.path.join(os.path.dirname(__file__), 'i18n.xml'))
+
             LanguageParser(self.languages).parse(reversed(files))
 
         if lang in self.languages:
@@ -326,8 +330,8 @@ class Context(object):
             elif day.endswith('3'):
                 suffix = 'rd'
             day = str(int(day))
-            return str(time.strftime(fmt.replace('%f', day+suffix).replace('%e', day)), 'utf8')
-        return str(time.strftime(fmt), 'utf8')
+            return time.strftime(fmt.replace('%f', day+suffix).replace('%e', day))
+        return time.strftime(fmt)
 
     def loadINIPackage(self, inifile):
         """
@@ -385,7 +389,7 @@ class Context(object):
 
         """
         module = os.path.splitext(file)[0]
-
+        # pu.db
         # See if it has already been loaded
         if module in self.packages:
             return True
@@ -399,6 +403,7 @@ class Context(object):
             status.info(' ( %s ' % m.__file__)
             if hasattr(m, 'ProcessOptions'):
                 m.ProcessOptions(options or {}, tex.ownerDocument)
+
             self.importMacros(vars(m))
             moduleini = os.path.splitext(m.__file__)[0]+'.ini'
             self.loadINIPackage([packagesini, moduleini])
@@ -407,11 +412,11 @@ class Context(object):
             return True
 
         except ImportError as msg:
+            log.warning('No Python version of %s was found' % file)
             # No Python module
             if 'No module' in str(msg):
                 pass
                 # Failed to load Python package
-#               log.warning('No Python version of %s was found' % file)
             # Error while importing
             else:
                 raise
@@ -931,11 +936,11 @@ class Context(object):
             c.newcommand('foo', 2, r'{\\bf #1#2}', opt='myprefix')
 
         """
-        name = str(name)
+        # name = str(name)
+        #pu.db
         # Macro already exists
-        if name in self:
-            if not issubclass(self[name], (plasTeX.NewCommand,
-                                           plasTeX.Definition)):
+        if name in list(self.keys()):
+            if not issubclass(self[name], (plasTeX.NewCommand, plasTeX.Definition)):
                 if not issubclass(self[name], plasTeX.TheCounter):
                     return
             macrolog.debug('redefining command "%s"', name)

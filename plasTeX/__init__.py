@@ -176,7 +176,7 @@ class Macro(Element):
         """
         remap = {'url':'urloverride'}
         for key, value in list(attrs.items()):
-            setattr(self, remap.get(key, key), value)
+            setattr(self, str(remap.get(key, key)), value)
 
     @property
     def config(self):
@@ -853,7 +853,7 @@ class Environment(Macro):
 
         self.ownerDocument.context.push(self)
         self.parse(tex)
-        
+
         if self.str is not None:
             return tex.textTokens(self.str)
 

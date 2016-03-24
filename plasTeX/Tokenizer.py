@@ -3,7 +3,7 @@
 import string
 from plasTeX.DOM import Node, Text
 from plasTeX import encoding
-from io import StringIO
+from io import BytesIO, StringIO, TextIOWrapper
 
 # Default TeX categories
 DEFAULT_CATEGORIES = [
@@ -58,6 +58,25 @@ class Token(Text):
 
     def __repr__(self):
         return self.source
+
+    def __eq__(self, other):
+        if isinstance(other, Token):
+            return (self is other
+            or (self.catcode == other.catcode and super(Token,self).__eq__(other)))
+        return super(Token,self).__eq__(str(other))
+
+    def __ne__(self, other):
+        try:
+            return self.catcode != other.catcode or super(Token,self).__ne__(other)
+        except AttributeError:
+            return NotImplemented
+
+    def __hash__(self):
+        return super(Token,self).__hash__()
+
+    def __str__(self):
+        return self.encode('utf-8').decode('utf-8')
+    __unicode__ = __str__
 
     def __cmp__(self, other):
         # Token comparison -- character and code must match
@@ -203,6 +222,9 @@ class Tokenizer(object):
         if isinstance(source, str):
             source = StringIO(source)
             self.filename = '<string>'
+        elif isinstance(source, bytes):
+            source = TextIOWrapper(BytesIO(source), encoding='utf-8')
+            self.filename = '<string>'
         elif isinstance(source, (tuple,list)):
             self.pushTokens(source)
             source = StringIO('')
@@ -244,24 +266,27 @@ class Tokenizer(object):
         buffer = self._charBuffer
         classes = self.tokenClasses
         read = self.read
-        seek = self.seek
+
         whichCode = self.context.whichCode
         CC_SUPER = Token.CC_SUPER
         CC_IGNORED = Token.CC_IGNORED
         CC_INVALID = Token.CC_INVALID
 
-        while 1:
+        def _read1():
             if buffer:
-                token = buffer.pop(0)
-            else:
-                token = read(1)
+                return buffer.pop(0)
+            return read(1)
+
+        while True:
+            token = _read1()
 
             if not token:
                 break
 
             # ord(token) == 10 is the same as saying token == '\n'
             # but it is much faster.
-            if ord(token) == 10:
+            # if ord(token) == 10:
+            if token == '\n':
                 self.lineNumber += 1
 
             code = whichCode(token)
@@ -269,17 +294,18 @@ class Tokenizer(object):
             if code == CC_SUPER:
 
                 # Handle characters like ^^M, ^^@, etc.
-                char = read(1)
+                next_char = _read1()
 
-                if char == token:
-                    char = read(1)
-                    num = ord(char)
-                    if num >= 64: token = chr(num-64)
-                    else: token = chr(num+64)
-                    code = whichCode(token)
-
+                if next_char != token:
+                    self.pushChar(next_char)
                 else:
-                    seek(-1,1)
+                    next_char = _read1()
+                    num = ord(next_char)
+                    if num >= 64:
+                        token = chr(num-64)
+                    else:
+                        token = chr(num+64)
+                    code = whichCode(token)
 
             # Just go to the next character if you see one of these...
             if code == CC_IGNORED or code == CC_INVALID:
@@ -336,7 +362,6 @@ class Tokenizer(object):
         EscapeSequence = EscapeSequence
         buffer = self._tokBuffer
         charIter = self.iterchars()
-        next = charIter.__next__
         context = self.context
         pushChar = self.pushChar
         STATE_N = self.STATE_N
@@ -360,7 +385,7 @@ class Tokenizer(object):
                 yield buffer.pop(0)
 
             # Get the next character
-            token = next()
+            token = next(charIter)
 
             if token.nodeType == ELEMENT_NODE:
                 raise ValueError('Expanded tokens should never make it here')

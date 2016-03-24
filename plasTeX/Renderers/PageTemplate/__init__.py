@@ -19,7 +19,7 @@ log = plasTeX.Logging.getLogger()
 
 # Support for Python string templates
 def stringtemplate(s, encoding='utf8'):
-    template = string.Template(str(s, encoding))
+    template = string.Template(s)
     def renderstring(obj):
         tvars = {'here':obj, 'self':obj, 'container':obj.parentNode,
                  'config':obj.ownerDocument.config, 'template':template,
@@ -34,7 +34,7 @@ def pythontemplate(s, encoding='utf8'):
         tvars = {'here':obj, 'self':obj, 'container':obj.parentNode,
                  'config':obj.ownerDocument.config, 'template':template,
                  'templates':obj.renderer, 'context':obj.ownerDocument.context}
-        return str(template, encoding) % tvars
+        return template % tvars
     return renderpython
 
 # Support for ZPT HTML and XML templates
@@ -51,7 +51,7 @@ def htmltemplate(s, encoding='utf8'):
         context.addGlobal('templates', obj.renderer)
         output = StringIO()
         template.expand(context, output, encoding)
-        return str(output.getvalue(), encoding)
+        return output.getvalue()
     return renderhtml
 
 def xmltemplate(s, encoding='utf8'):
@@ -67,24 +67,24 @@ def xmltemplate(s, encoding='utf8'):
         context.addGlobal('templates', obj.renderer)
         output = StringIO()
         template.expand(context, output, encoding, docType=None, suppressXMLDeclaration=1)
-        return str(output.getvalue(), encoding)
+        return output.getvalue()
     return renderxml
 
 # Support for Cheetah templates
-try: 
+try:
 
     from Cheetah.Template import Template as CheetahTemplate
     from Cheetah.Filters import Filter as CheetahFilter
     class CheetahUnicode(CheetahFilter):
         def filter(self, val, encoding='utf-8', **kw):
-            return str(val).encode(encoding)
+            return str(val)
     def cheetahtemplate(s, encoding='utf8'):
         def rendercheetah(obj, s=s):
             tvars = {'here':obj, 'container':obj.parentNode,
                      'config':obj.ownerDocument.config,
                      'context':obj.ownerDocument.context,
                      'templates':obj.renderer}
-            return CheetahTemplate(source=s, searchList=[tvars], 
+            return CheetahTemplate(source=s, searchList=[tvars],
                                    filter=CheetahUnicode).respond()
         return rendercheetah
 
@@ -92,11 +92,11 @@ except ImportError:
 
     def cheetahtemplate(s, encoding='utf8'):
         def rendercheetah(obj):
-            return str(s, encoding)
+            return str(s)
         return rendercheetah
 
 # Support for Kid templates
-try: 
+try:
 
     from kid import Template as KidTemplate
 
@@ -104,23 +104,22 @@ try:
         # Add namespace py: in
         s = '<div xmlns:py="http://purl.org/kid/ns#" py:strip="True">%s</div>' % s
         def renderkid(obj, s=s):
-            tvars = {'here':obj, 'container':obj.parentNode, 
+            tvars = {'here':obj, 'container':obj.parentNode,
                      'config':obj.ownerDocument.config,
                      'context':obj.ownerDocument.context,
                      'templates':obj.renderer}
-            return str(KidTemplate(source=s, 
-                   **tvars).serialize(encoding=encoding, fragment=1), encoding)
+            return str(KidTemplate(source=s, **tvars).serialize(fragment=1))
         return renderkid
 
 except ImportError:
 
     def kidtemplate(s, encoding='utf8'):
         def renderkid(obj):
-            return str(s, encoding)
+            return str(s)
         return renderkid
 
 # Support for Genshi templates
-try: 
+try:
 
     from genshi.template import MarkupTemplate as GenshiTemplate
     from genshi.template import TextTemplate as GenshiTextTemplate
@@ -138,8 +137,7 @@ try:
                      'config':obj.ownerDocument.config, 'template':template,
                      'context':obj.ownerDocument.context,
                      'templates':obj.renderer}
-            return str(template.generate(**tvars).render(method='xml', 
-                           encoding=encoding), encoding)
+            return str(template.generate(**tvars).render(method='xml'))
         return rendergenshixml
 
     def genshihtmltemplate(s, encoding='utf8'):
@@ -151,8 +149,7 @@ try:
                      'config':obj.ownerDocument.config, 'template':template,
                      'context':obj.ownerDocument.context,
                      'templates':obj.renderer}
-            return str(template.generate(**tvars).render(method='html', 
-                           encoding=encoding), encoding)
+            return str(template.generate(**tvars).render(method='html'))
         return rendergenshihtml
 
     def genshitexttemplate(s, encoding='utf8'):
@@ -162,31 +159,30 @@ try:
                      'config':obj.ownerDocument.config, 'template':template,
                      'context':obj.ownerDocument.context,
                      'templates':obj.renderer}
-            return str(template.generate(**tvars).render(method='text', 
-                           encoding=encoding), encoding)
+            return str(template.generate(**tvars).render(method='text'))
         return rendergenshitext
 
 except ImportError:
 
     def genshixmltemplate(s, encoding='utf8'):
         def rendergenshixml(obj):
-            return str(s, encoding)
+            return str(s)
         return rendergenshixml
 
     def genshihtmltemplate(s, encoding='utf8'):
         def rendergenshihtml(obj):
-            return str(s, encoding)
+            return str(s)
         return rendergenshihtml
 
     def genshitexttemplate(s, encoding='utf8'):
         def rendergenshitext(obj):
-            return str(s, encoding)
+            return str(s)
         return rendergenshitext
 
 
 def copytree(src, dest, symlink=None):
-    """ 
-    This is the same as shutil.copytree, but doesn't error out if the 
+    """
+    This is the same as shutil.copytree, but doesn't error out if the
     directories already exist.
 
     """
@@ -202,10 +198,10 @@ def copytree(src, dest, symlink=None):
                 os.symlink(os.readlink(srcpath), destpath)
             elif not os.path.isdir(destpath):
                 os.makedirs(destpath)
-                try: 
+                try:
                     shutil.copymode(srcpath, destpath)
                 except: pass
-                try: 
+                try:
                     shutil.copystat(srcpath, destpath)
                 except: pass
         for f in files:
@@ -273,8 +269,8 @@ class PageTemplate(BaseRenderer):
         self.engines[key] = TemplateEngine(ext, function)
 
     def textDefault(self, node):
-        """ 
-        Default renderer for text nodes 
+        """
+        Default renderer for text nodes
 
         This method makes sure that special characters are converted to
         entities.
@@ -293,7 +289,7 @@ class PageTemplate(BaseRenderer):
         """ Load and compile page templates """
         themename = document.config['general']['theme']
 
-        # Load templates from renderer directory and parent 
+        # Load templates from renderer directory and parent
         # renderer directories
         sup = list(type(self).__mro__)
         sup.reverse()
@@ -346,19 +342,19 @@ class PageTemplate(BaseRenderer):
         BaseRenderer.render(self, document)
 
     def importDirectory(self, templatedir):
-        """ 
-        Compile all ZPT files in the given directory 
+        """
+        Compile all ZPT files in the given directory
 
         Templates can exist in two different forms.  First, a template
-        can be a file unto itself.  If an XML template is desired, 
+        can be a file unto itself.  If an XML template is desired,
         the file should have an extension of .xml, .xhtml, or .xhtm.
-        If an HTML template is desired, the files should have an 
-        extension of .zpt, .html, or .htm.  You can also configure 
+        If an HTML template is desired, the files should have an
+        extension of .zpt, .html, or .htm.  You can also configure
         your own page templates with their own extensions.
 
         If you have many small templates, or a template that corresponds
         to more than one macro, you can use a multiple ZPT file.  A
-        multiple ZPT file contains directives within it to delimit 
+        multiple ZPT file contains directives within it to delimit
         individual page templates as well as specify which macros they
         correspond to and what type of template they are (i.e. XML or
         HTML).
@@ -369,20 +365,20 @@ class PageTemplate(BaseRenderer):
         """
         # Create a list for resolving aliases
         self.aliases = {}
-        
+
         enames = {}
         for key, value in list(self.engines.items()):
             for i in value.ext:
                 enames[i+'s'] = key[0]
-                
+
         singleenames = {}
         for key, value in list(self.engines.items()):
             for i in value.ext:
                 singleenames[i] = key[0]
-                
+
         if templatedir and os.path.isdir(templatedir):
             files = os.listdir(templatedir)
-            
+
             # Compile multi-pt files first
             for f in files:
                 ext = os.path.splitext(f)[-1]
@@ -409,21 +405,21 @@ class PageTemplate(BaseRenderer):
                 for value in list(self.engines.values()):
                     if ext in value.ext:
                         options['engine'] = singleenames[ext.lower()]
-                        self.parseTemplates(f, options)                
+                        self.parseTemplates(f, options)
                         del options['engine']
                         break
 
         if self.aliases:
-           log.warning('The following aliases were unresolved: %s' 
-                       % ', '.join(list(self.aliases.keys()))) 
+           log.warning('The following aliases were unresolved: %s'
+                       % ', '.join(list(self.aliases.keys())))
 
     def setTemplate(self, template, options):
-        """ 
-        Compile template and set it in the renderer 
+        """
+        Compile template and set it in the renderer
 
         Required Arguments:
         template -- the content of the template to be compiled
-        options -- dictionary containing the name (or names) and type 
+        options -- dictionary containing the name (or names) and type
             of the template
 
         """
@@ -436,7 +432,7 @@ class PageTemplate(BaseRenderer):
         except KeyError:
             raise ValueError('No name given for template')
 
-        # If an alias was specified, link the names to the 
+        # If an alias was specified, link the names to the
         # already specified template.
         if 'alias' in options:
             alias = options['alias'].strip()
@@ -461,9 +457,9 @@ class PageTemplate(BaseRenderer):
             ttype = ttype.lower()
         engine = options.get('engine','zpt').lower()
 
-        templateeng = self.engines.get((engine, ttype), 
+        templateeng = self.engines.get((engine, ttype),
                             self.engines.get((engine, None)))
-     
+
         try:
             template = templateeng.compile(template)
         except Exception as msg:
@@ -503,7 +499,7 @@ class PageTemplate(BaseRenderer):
                             print('ERROR: %s at line %s in file %s' % (msg, i, filename))
                         options = defaults.copy()
                         template = []
-    
+
                     # Done purging previous template, start a new one
                     name, value = line.split(':', 1)
                     name = name.strip()
@@ -513,7 +509,7 @@ class PageTemplate(BaseRenderer):
                         for line in f:
                             value += line.rstrip()
                             break
-    
+
                     value = re.sub(r'\s+', r' ', value.strip())
                     if name.startswith('default-'):
                         name = name.split('-')[-1]
@@ -523,7 +519,7 @@ class PageTemplate(BaseRenderer):
                     else:
                         options[name] = value
                     continue
-                
+
                 if template or (not(template) and line.strip()):
                     template.append(line)
                 elif not(template) and 'name' in options:
@@ -531,7 +527,7 @@ class PageTemplate(BaseRenderer):
 
         else:
             template = open(filename, 'r').readlines()
-    
+
         # Purge any awaiting templates
         if template:
             try:
@@ -544,8 +540,8 @@ class PageTemplate(BaseRenderer):
 
     def processFileContent(self, document, s):
         # Add width, height, and depth to images
-        s = re.sub(r'&amp;(\S+)-(width|height|depth);(?:&amp;([a-z]+);)?', 
-                   self.setImageData, s) 
+        s = re.sub(r'&amp;(\S+)-(width|height|depth);(?:&amp;([a-z]+);)?',
+                   self.setImageData, s)
 
         # Convert characters >127 to entities
         if document.config['files']['escape-high-chars']:
@@ -556,7 +552,7 @@ class PageTemplate(BaseRenderer):
             s = ''.join(s)
 
         return BaseRenderer.processFileContent(self, document, s)
-             
+
     def setImageData(self, m):
         """
         Substitute in width, height, and depth parameters in image tags
@@ -564,7 +560,7 @@ class PageTemplate(BaseRenderer):
         The width, height, and depth parameters aren't known until after
         all of the output has been generated.  We have to post-process
         the files to insert this information.  This method replaces
-        the &filename-width;, &filename-height;, and &filename-depth; 
+        the &filename-width;, &filename-height;, and &filename-depth;
         placeholders with their appropriate values.
 
         Required Arguments:
@@ -590,4 +586,3 @@ class PageTemplate(BaseRenderer):
 
 # Set Renderer variable so that plastex will know how to load it
 Renderer = PageTemplate
-

@@ -16,7 +16,7 @@ Example:
 
 """
 from io import IOBase
-import string, os, traceback, sys, plasTeX, codecs, subprocess, types
+import string, os, traceback, sys, plasTeX, subprocess, types
 from plasTeX.Tokenizer import Tokenizer, Token, EscapeSequence, Other
 from plasTeX import TeXDocument
 from plasTeX.Base.TeX.Primitives import MathShift
@@ -127,9 +127,9 @@ class TeX(object):
 
                 if encoding in ['utf8', 'utf-8', 'utf_8']:
                     encoding = 'utf_8_sig'
-        
+
                 fname = self.kpsewhich(file)
-                fd = open('sample2e.tex', encoding=encoding)
+                fd = open(fname, encoding=encoding)
                 self.input(fd)
                 self.jobname = os.path.basename(os.path.splitext(file)[0])
 
@@ -154,8 +154,8 @@ class TeX(object):
                 self.jobname = os.path.basename(os.path.splitext(source)[0])
             elif isinstance(source, IOBase):
                 self.jobname = os.path.basename(os.path.splitext(source.name)[0])
-        
-        
+
+
         t = Tokenizer(source, self.ownerDocument.context)
         self.inputs.append((t, iter(t)))
         self.currentInput = self.inputs[-1]
@@ -195,18 +195,18 @@ class TeX(object):
 
         try:
             encoding = config['files']['input-encoding']
-            f = codecs.open(path, 'r', encoding, 'replace')
-            # Put in a flag so that we can parse past our own
-            # package tokens and throw them away, we don't want them in
-            # the output document.
-            flag = plasTeX.Command()
-            self.pushToken(flag)
-            encoding = config['files']['input-encoding']
-            self.input(f)
-            self.ownerDocument.context.packages[file] = options or {}
-            for tok in self:
-                if tok is flag:
-                    break
+            with open(path, 'r', encoding=encoding) as f:
+                # Put in a flag so that we can parse past our own
+                # package tokens and throw them away, we don't want them in
+                # the output document.
+                flag = plasTeX.Command()
+                self.pushToken(flag)
+                encoding = config['files']['input-encoding']
+                self.input(f)
+                self.ownerDocument.context.packages[file] = options or {}
+                for tok in self:
+                    if tok is flag:
+                        break
 
         except (OSError, IOError, TypeError) as msg:
             if msg:

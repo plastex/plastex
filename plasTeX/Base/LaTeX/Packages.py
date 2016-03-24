@@ -4,8 +4,8 @@
 C.5 Classes, Packages, and Page Styles (p176)
 
 """
-
-import codecs, sys, os
+import pudb
+import sys, os
 from plasTeX import Command, Environment, DimenCommand, Token
 from plasTeX.Logging import getLogger
 
@@ -23,7 +23,7 @@ class PackageLoader(Command):
         try:
             self.ownerDocument.context.loadPackage(tex, file+self.extension, options)
         except Exception as msg:
-            log.error('Could not load package "%s": %s' % (file, msg)) 
+            log.error('Could not load package "%s": %s' % (file, msg))
 
 #
 # C.5.1 Document Class
@@ -192,7 +192,7 @@ class titlepage(Environment):
 #
 # Extras...
 #
-class ProvidesPackage(Command): 
+class ProvidesPackage(Command):
     args = 'name [ message ]'
 
 class ProvidesClass(Command):
@@ -218,7 +218,7 @@ class InputIfFileExists(Command):
     args = 'file:str true:nox false:nox'
     def invoke(self, tex):
         a = self.parse(tex)
-        try: 
+        try:
             tex.input(tex.kpsewhich(a['file']))
             tex.pushTokens(a['true'])
         except (IOError, OSError):
@@ -229,7 +229,7 @@ class IfFileExists(Command):
     args = 'file:str true:nox false:nox'
     def invoke(self, tex):
         a = self.parse(tex)
-        try: 
+        try:
             tex.kpsewhich(a['file'])
             tex.pushTokens(a['true'])
         except (IOError, OSError):
