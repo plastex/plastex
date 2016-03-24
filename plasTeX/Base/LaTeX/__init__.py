@@ -39,7 +39,7 @@ class ifundefined_(Command):
     args = 'name:str true:nox false:nox'
     def invoke(self, tex):
         a = self.parse(tex)
-        if a['name'] in self.ownerDocument.context:
+        if a['name'] in list(self.ownerDocument.context.keys()):
             tex.pushTokens(a['false'])
         else:
             tex.pushTokens(a['true'])

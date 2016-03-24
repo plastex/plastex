@@ -134,7 +134,7 @@ class Array(Environment):
             # Find out if the border should start and stop, or just
             # span the whole table.
             a = self.attributes
-            if a and 'span' in a:
+            if a and 'span' in list(a.keys()):
                 try: start, end = a['span']
                 except TypeError: start = end = a['span']
             else:
@@ -282,7 +282,7 @@ class Array(Environment):
             # Check for multicols
             hasmulticol = False
             for item in self:
-                if item.attributes and 'colspan' in item.attributes:
+                if item.attributes and 'colspan' in list(item.attributes.keys()):
                     self.attributes['colspan'] = item.attributes['colspan']
                 if hasattr(item, 'colspec') and not isinstance(item, Array):
                     self.colspec = item.colspec
@@ -401,7 +401,7 @@ class Array(Environment):
 # be inserted before and after columns are known
 #
 #!!!
-        if 'colspec' in self.attributes:
+        if 'colspec' in list(self.attributes.keys()):
             self.colspec = Array.compileColspec(tex, self.attributes['colspec'])
 
         self.ownerDocument.context.push() # Beginning of cell

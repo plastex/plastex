@@ -21,7 +21,7 @@ class cachedproperty(object):
     def __get__(self, obj, type=None):
         if obj is None:
             return self
-        try: 
+        try:
             return getattr(obj, '@%s' % self._func.__name__)
         except AttributeError:
             result = self._func(obj)
@@ -33,10 +33,10 @@ class TableOfContents(object):
     """
     Table of Contents object
 
-    The table of contents object is a proxy object that limits the 
+    The table of contents object is a proxy object that limits the
     depth of a table of contents entry.  Each time the `tableofcontents'
-    attribute is accessed on the given node, the depth level is 
-    increased.  Once the depth limit has been reached, no more 
+    attribute is accessed on the given node, the depth level is
+    increased.  Once the depth limit has been reached, no more
     table of contents entries are returned.
 
     """
@@ -59,7 +59,7 @@ class TableOfContents(object):
         """
         Proxy all attributes to the real object except `tableofcontents'
 
-        Each nested call to the tableofcontents should limit the 
+        Each nested call to the tableofcontents should limit the
         depth of the items displayed.
 
         """
@@ -70,7 +70,7 @@ class TableOfContents(object):
         # Limit the number of ToC levels
         if name in ['tableofcontents','fulltableofcontents']:
             if self._toc_level < self._toc_limit:
-                return [type(self)(x._toc_node, self._toc_limit, 
+                return [type(self)(x._toc_node, self._toc_limit,
                         self._toc_level+1) for x in self._toc_node.fulltableofcontents]
             else:
                 return []
@@ -82,7 +82,7 @@ class SectionUtils(object):
     """ General utilities for getting information about sections """
 
     tocdepth = None
-    
+
     @cachedproperty
     def footnotes(self):
         output = []
@@ -95,7 +95,7 @@ class SectionUtils(object):
         for i, f in enumerate(output):
             f.mark.attributes['num'] = i+1
         return output
-        
+
     @cachedproperty
     def subsections(self):
         """ Retrieve a list of all immediate subsections of this section """
@@ -129,7 +129,7 @@ class SectionUtils(object):
             return [TableOfContents(x, tocdepth) for x in self.subsections]
 
         # Only include sections that create files in the ToC
-        return [TableOfContents(x, tocdepth) for x in self.subsections 
+        return [TableOfContents(x, tocdepth) for x in self.subsections
                                              if x.filename]
 
     @cachedproperty
@@ -140,7 +140,7 @@ class SectionUtils(object):
             return [TableOfContents(x, 1000) for x in self.subsections]
 
         # Only include sections that create files in the ToC
-        return [TableOfContents(x, 1000) for x in self.subsections 
+        return [TableOfContents(x, 1000) for x in self.subsections
                                              if x.filename]
 
     @cachedproperty
@@ -165,7 +165,7 @@ class SectionUtils(object):
     def links(self):
         """
         Return a dictionary containing a lot of navigation information
- 
+
         See http://fantasai.tripod.com/qref/Appendix/LinkTypes/ltdef.html
 
         """
@@ -189,7 +189,7 @@ class SectionUtils(object):
         for item in sections:
             if item is self:
                 breaknext = True
-                continue     
+                continue
             if breaknext:
                 next = item
                 break
@@ -221,7 +221,7 @@ class SectionUtils(object):
         nav['child'] = self.subsections
         nav['sibling'] = self.siblings
 
-        # These aren't actually part of the spec, but I added 
+        # These aren't actually part of the spec, but I added
         # them for consistency.
         nav['document'] = document
         nav['part'] = part
@@ -263,18 +263,18 @@ class SectionUtils(object):
 
         # Get user-defined links
         links = {}
-        if 'links' in self.config:
+        if 'links' in list(self.config.keys()):
             for key in list(self.config['links'].keys()):
                 if '-' not in key:
                     continue
                 newkey, type = key.strip().split('-',1)
-                if newkey not in links:
+                if newkey not in list(links.keys()):
                     links[newkey] = {}
                 links[newkey][type] = self.config['links'][key]
 
         # Set links in nav object
         for key, value in list(links.items()):
-            if key not in nav or nav[key] is None:
+            if key not in list(nav.keys()) or nav[key] is None:
                 nav[key] = value
 
         return nav
@@ -364,4 +364,3 @@ class addtocontents(Command):
 #
 # C.4.4 Style Parameters
 #
-

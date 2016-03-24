@@ -127,10 +127,9 @@ class verb(Command):
     @property
     def source(self):
         return '\\%s%s%s%s%s' % (self.nodeName, sourceArguments(self),
-                                 self.delimiter, sourceChildren(self), 
+                                 self.delimiter, sourceChildren(self),
                                  self.delimiter)
 
     def normalize(self, charsubs=[]):
         """ Normalize, but don't allow character substitutions """
         return Command.normalize(self)
-

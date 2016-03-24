@@ -4,7 +4,6 @@
 C.5 Classes, Packages, and Page Styles (p176)
 
 """
-import pudb
 import sys, os
 from plasTeX import Command, Environment, DimenCommand, Token
 from plasTeX.Logging import getLogger
@@ -36,7 +35,7 @@ class documentclass(PackageLoader):
         a = self.parse(tex)
         self.load(tex, a['name'], a['options'])
         packages = self.ownerDocument.context.packages
-        if a['name'] in packages:
+        if a['name'] in list(packages.keys()):
             packages['documentclass'] = packages[a['name']]
 
 class documentstyle(documentclass):
@@ -158,7 +157,7 @@ class title(Command):
     args = '[ toc ] self'
     def invoke(self, tex):
         Command.invoke(self, tex)
-        if 'title' not in self.ownerDocument.userdata:
+        if 'title' not in list(self.ownerDocument.userdata.keys()):
             self.ownerDocument.userdata['title'] = self
 
 class author(Command):

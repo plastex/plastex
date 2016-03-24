@@ -5,7 +5,7 @@ C.11.3 Bibliography and Citation (p208)
 
 """
 
-import plasTeX, codecs
+import plasTeX
 from plasTeX.Base.LaTeX.Sectioning import chapter, section
 from plasTeX import Command, Environment
 from plasTeX.Base.LaTeX.Lists import List
@@ -25,18 +25,20 @@ class bibliography(chapter):
     def loadBibliographyFile(self, tex):
         # Load bibtex file
         try:
-            file = tex.kpsewhich(tex.jobname+'.bbl')
-            tex.input(codecs.open(file, 'r', self.ownerDocument.config['files']['input-encoding']))
+            filename = tex.kpsewhich(tex.jobname+'.bbl')
+            encoding = self.ownerDocument.config['files']['input-encoding']
+            with open(filename, encoding=encoding) as f:
+                tex.input(f.read())
         except OSError as msg:
             log.warning(msg)
 
 class bibliographystyle(Command):
     args = 'style'
-    
+
 class thebibliography(List):
     args = 'widelabel'
     linkType = 'bibliography'
-  
+
     class bibitem(List.item):
         args = '[ label ] key:str'
 
@@ -48,12 +50,12 @@ class thebibliography(List):
             bibitems = doc.userdata.getPath('bibliography/bibitems', {})
             bibitems[a['key']] = self
             doc.userdata.setPath('bibliography/bibitems', bibitems)
-            self.ref = str(len([x for x in list(bibitems.values()) 
+            self.ref = str(len([x for x in list(bibitems.values())
                                   if not x.attributes['label']]))
             key = a['key']
             label = a.get('label')
             bibcites = doc.userdata.getPath('bibliography/bibcites', {})
-            if key not in bibcites:
+            if key not in list(bibcites.keys()):
                 if label is None:
                     label = doc.createDocumentFragment()
                     label.extend(self.ref)
@@ -150,6 +152,6 @@ class bibdata(Command):
 
 class newblock(Command):
     pass
-    
+
 class bibliographyref(Command):
     pass

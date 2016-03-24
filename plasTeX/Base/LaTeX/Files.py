@@ -7,7 +7,6 @@ C.11.6 Terminal Input and Output
 
 """
 
-import codecs
 from plasTeX import Command, Environment
 from plasTeX.Logging import getLogger
 
@@ -21,12 +20,13 @@ class input(Command):
     args = 'name:str'
     def invoke(self, tex):
         a = self.parse(tex)
-        try: 
+        try:
             path = tex.kpsewhich(attrs['name'])
 
             status.info(' ( %s.tex ' % path)
             encoding = self.config['files']['input-encoding']
-            tex.input(codecs.open(path, 'r', encoding, 'replace'))
+            with open(path, encoding=encoding) as f:
+                tex.input(f.read())
             status.info(' ) ')
 
         except (OSError, IOError):
@@ -59,4 +59,3 @@ class typein(Command):
     args = '[ command:str ] message'
     def invoke(self, tex):
         log.info(self.parse(tex)['message'])
-        
