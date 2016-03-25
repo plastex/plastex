@@ -22,8 +22,7 @@ class input(Command):
         a = self.parse(tex)
         try:
             path = tex.kpsewhich(attrs['name'])
-
-            status.info(' ( %s.tex ' % path)
+            status.info(' (%s.tex ' % path)
             encoding = self.config['files']['input-encoding']
             with open(path, encoding=encoding) as f:
                 tex.input(f.read())

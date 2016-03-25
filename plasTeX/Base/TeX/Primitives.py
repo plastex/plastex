@@ -410,7 +410,6 @@ class input(Command):
         a = self.parse(tex)
         try:
             path = tex.kpsewhich(a['name'])
-
             status.info(' ( %s ' % path)
             encoding = self.config['files']['input-encoding']
             with open(path, encoding=encoding) as f:

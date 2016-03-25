@@ -24,7 +24,7 @@ def stringtemplate(s, encoding='utf8'):
         tvars = {'here':obj, 'self':obj, 'container':obj.parentNode,
                  'config':obj.ownerDocument.config, 'template':template,
                  'templates':obj.renderer, 'context':obj.ownerDocument.context}
-        return str(template.substitute(tvars))
+        return template.substitute(tvars)
     return renderstring
 
 # Support for Python string interpolations

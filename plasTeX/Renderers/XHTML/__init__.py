@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys, os, re, codecs, plasTeX
+import re
 from plasTeX.Renderers.PageTemplate import Renderer as _Renderer
 
 class XHTML(_Renderer):
@@ -29,5 +29,5 @@ class XHTML(_Renderer):
 
         return s
 
-    
+
 Renderer = XHTML

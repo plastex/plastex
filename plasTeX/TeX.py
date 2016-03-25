@@ -111,9 +111,9 @@ class TeX(object):
 
         self.jobname = None
         if myfile is not None:
-
             # Filename
-            if isinstance(myfile, str):
+            if isinstance(myfile, (str, bytes)):
+                myfile = str(myfile)
                 '''
                 if config has no files structure
                 or encoding is not specified
@@ -154,7 +154,6 @@ class TeX(object):
                 self.jobname = os.path.basename(os.path.splitext(source)[0])
             elif isinstance(source, IOBase):
                 self.jobname = os.path.basename(os.path.splitext(source.name)[0])
-
 
         t = Tokenizer(source, self.ownerDocument.context)
         self.inputs.append((t, iter(t)))
@@ -1359,7 +1358,7 @@ class TeX(object):
                 kwargs['shell'] = True
 
             output = subprocess.Popen([program, name], **kwargs).communicate()[0].strip()
-            output = str(output)
+            output = output.decode('utf-8')
             if output:
                 return output
 
