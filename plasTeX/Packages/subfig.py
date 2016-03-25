@@ -22,11 +22,11 @@ class newsubfloat(Command):
     def invoke(self, tex):
         Command.invoke(self, tex)
         c = self.ownerDocument.context
-        name = str(self.attributes['name'])
+        name = self.attributes['name']
         options = self.attributes['options'] or {}
 
         # Create new subfloat class
-        newclass = type(name, (subfloat,), 
+        newclass = type(name, (subfloat,),
                                 {'options':options,'counter':name})
         c.addGlobal(name, newclass)
 

@@ -21,18 +21,18 @@ class pdftoppm(plasTeX.Imagers.Imager):
 
         """
         cmd = self.command.split()[0]
-        proc = subprocess.Popen('%s --help' % cmd, 
-                                shell=True, 
+        proc = subprocess.Popen('%s --help' % cmd,
+                                shell=True,
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT)
-        return 'pdftoppm' in str(proc.communicate())
+        return 'pdftoppm' in proc.communicate()
 
     def executeConverter(self, output):
-        """ 
+        """
         We need to override this because plasTeX always puts the input
         file at the end of the command-line.  We also need to return the
         list of images.
-        
+
         """
         open('images.out', 'wb').write(output.read())
         options = ''
@@ -44,5 +44,5 @@ class pdftoppm(plasTeX.Imagers.Imager):
                 options += '%s %s ' % (opt, value)
         rc = os.system('%s %s%s img' % (self.command, options, 'images.out'))
         return rc, [f for f in os.listdir('.') if re.match(r'^img-\d+\.\w+$', f)]
-    
+
 Imager = pdftoppm

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os, time, tempfile, shutil, re, string, pickle, codecs
+import os, time, tempfile, shutil, re, string, pickle
 try: from hashlib import md5
 except ImportError: from md5 import new as md5
 from plasTeX.Logging import getLogger
@@ -601,13 +601,11 @@ class Imager(object):
         os.chdir(tempdir)
 
         filename = 'images.tex'
-
         # Write LaTeX source file
-        if self.config['images']['save-file']:
-            self.source.seek(0)
-            codecs.open(os.path.join(cwd,filename), 'w', self.config['files']['input-encoding']).write(self.source.read())
+        encoding = self.config['files']['input-encoding']
         self.source.seek(0)
-        codecs.open(filename, 'w', self.config['files']['input-encoding']).write(self.source.read())
+        with open(filename, 'w', encoding=encoding) as f:
+            f.write(self.source.read())
 
         # Run LaTeX
         os.environ['SHELL'] = '/bin/sh'
@@ -780,7 +778,7 @@ class Imager(object):
         key = text
 
         # See if this image has been cached
-        if key in self._cache:
+        if key in list(self._cache.keys()):
             return self._cache[key]
 
         # Generate a filename
@@ -828,7 +826,7 @@ class Imager(object):
         if name is None:
             return self.newImage(node.source)
 
-        if name in self.staticimages:
+        if name in list(self.staticimages.keys()):
             return self.staticimages[name]
 
         # Copy or convert the image as needed
@@ -902,7 +900,7 @@ class WorkingFile():
     """
 
     def __init__(self, *args, **kwargs):
-        if 'tempdir' in kwargs:
+        if 'tempdir' in list(kwargs.keys()):
             self.tempdir = kwargs['tempdir']
             del kwargs['tempdir']
             self.args = args

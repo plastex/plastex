@@ -730,7 +730,7 @@ class Node(object):
 
         # Render content
         if self.hasChildNodes():
-            if not(self.attributes and 'self' in self.attributes):
+            if not(self.attributes and 'self' in list(self.attributes.keys())):
                 for value in self.childNodes:
                     if hasattr(value, 'toXML'):
                         value = value.toXML()
@@ -1238,7 +1238,7 @@ def _getElementsByTagName(self, tagname):
         tagname = [tagname]
 
     # Look in attributes dictionary for document fragments as well
-    if self.attributes:
+    if self.attributes and list(self.attributes.keys()):
         for item in list(self.attributes.values()):
             if getattr(item, 'tagName', None) in tagname:
                  output.append(item)
@@ -1541,7 +1541,7 @@ class Element(Node):
         boolean indicating whether or not the attribute exists
 
         """
-        return name in self.attributes
+        return name in list(self.attributes.keys())
 
     def hasAttributeNS(self, namespaceURI, localName):
         """
@@ -1852,7 +1852,7 @@ class DOMConfiguration(dict):
         value -- value of parameter
 
         """
-        if name in self:
+        if name in list(self.keys()):
             raise NotFoundErr
         self[name] = value
 

@@ -346,7 +346,7 @@ class Macro(Element):
         # If this is a \begin token or the element needs to be
         # closed automatically (i.e. \section, \item, etc.), just
         # push the new context and return the instance.
-        elif self.macroMode == Macro.MODE_BEGIN:
+        if self.macroMode == Macro.MODE_BEGIN:
             self.ownerDocument.context.push(self)
             self.parse(tex)
             self.setLinkType()

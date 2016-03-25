@@ -25,13 +25,13 @@ class CJKchar(Command):
         if not enc:
             log.warning('Unknown encoding: %s' % a['encoding'])
             raise AttributeError('str')
-        return str(chr(a['char1'])+chr(a['char2']), enc)
+        return str(chr(a['char1'])+chr(a['char2'])).encode(enc)
 
 class Str(Command):
     args = 'char1:int char2:int'
     @property
     def str(self):
-        return str(chr(a['char1'])+chr(a['char2']), 'utf_8')
+        return chr(a['char1'])+chr(a['char2']) 
 
 class CJKcaption(Command):
     args = 'caption:str'

@@ -879,16 +879,16 @@ class TeX(object):
             source = [t]
             # A [ ... ], ( ... ), etc. grouping was found
             if t.catcode != Token.CC_ESCAPE and \
-               (t == begin or t == 'begin'):
+               (t == begin or str(t) == begin):
                 level = 1
                 for t in tokens:
                     source.append(t)
                     if t.catcode != Token.CC_ESCAPE and \
-                       (t == begin or t == 'begin'):
+                       (t == begin or str(t) == begin):
                         toks.append(t)
                         level += 1
                     elif t.catcode != Token.CC_ESCAPE and \
-                         (t == end or t == 'end'):
+                         (t == end or str(t) == end):
                         level -= 1
                         if level == 0:
                             break
@@ -1359,7 +1359,7 @@ class TeX(object):
                 kwargs['shell'] = True
 
             output = subprocess.Popen([program, name], **kwargs).communicate()[0].strip()
-            output = output.decode('utf-8')
+            output = str(output)
             if output:
                 return output
 

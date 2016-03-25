@@ -15,8 +15,8 @@ class urldef(Command):
 
     def invoke(self, tex):
         Command.invoke(self, tex)
-        name = str(self.attributes['name'])
-        type = str(self.attributes['type'])
+        name = self.attributes['name']
+        type = self.attributes['type']
         c = self.ownerDocument.context
         obj = c[type]()
         obj.parentNode = self.parentNode

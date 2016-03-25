@@ -246,7 +246,7 @@ class ConfigSection(UserDict, object):
         typemap = {str:StringOption, int:IntegerOption,
                    float:FloatOption, list:MultiOption, tuple:MultiOption}
 
-        if option in self.data:
+        if option in list(self.data.keys()):
            if self.data[option].source <= source:
               self.data[option].source = source
               self.data[option].setValue(value)
@@ -263,7 +263,7 @@ class ConfigSection(UserDict, object):
                     # Handle booleans this way until support for
                     # true booleans shows up in Python.
                     if type(value) == str and \
-                       str(value).lower().strip() in ['on','off','true','false','yes','no']:
+                       value.lower().strip() in ['on','off','true','false','yes','no']:
                        opttype = BooleanOption
                     self.data[option] = opttype(name=option, source=source)
                     self.data[option].setParent(self)
@@ -385,14 +385,14 @@ class ConfigSection(UserDict, object):
         vars -- dictionary containing additional default values
 
         """
-        if option in vars:
+        if option in list(vars.keys()):
             return vars[option].getValue()
 
-        if option in self:
+        if option in list(self.keys()):
             return self.data[option].getValue()
 
         defaults = self.defaults()
-        if option in defaults:
+        if option in list(defaults.keys()):
             return defaults.data[option].getValue()
 
         raise NoOptionError(option, self.name)
@@ -619,7 +619,7 @@ class ConfigManager(UserDict, object):
         instance -- a ConfigSection instance with the given name is returned
 
         """
-        if section in self: return self[section]
+        if section in list(self.keys()): return self[section]
         self[section] = ConfigSection(section)
         return self[section]
 
@@ -629,7 +629,7 @@ class ConfigManager(UserDict, object):
 
     def options(self, section):
         """ Return a list of option names for the given section name """
-        if section in self:
+        if section in list(self.keys()):
             return list(self[section].keys())
         else:
             raise NoSectionError(section)
@@ -717,9 +717,9 @@ class ConfigManager(UserDict, object):
         return an option by that name in the 'default' section.
 
         """
-        if key in self.data:
+        if key in list(self.data.keys()):
            return self.data[key]
-        if key in self.data[DEFAULTSECT]:
+        if key in list(self.data[DEFAULTSECT].keys()):
            return self.data[DEFAULTSECT][key]
         raise NoSectionError(key)
 
@@ -743,10 +743,10 @@ class ConfigManager(UserDict, object):
         """ Check for the existence of a given option in a given section """
         if not section:
             section=DEFAULTSECT
-        elif section not in self:
+        elif section not in list(self.keys()):
             return 0
         else:
-            return option in self[section]
+            return option in list(self[section].keys())
 
     def write(self, fp):
         """ Write an INI-format representation of the configuration state """
@@ -801,7 +801,7 @@ class ConfigManager(UserDict, object):
 
     def remove_section(self, section):
         """ Remove the given section """
-        if section in self:
+        if section in list(self.keys()):
             del self[section]
             return 1
         else:
@@ -845,7 +845,7 @@ class ConfigManager(UserDict, object):
                 mo = self.SECTCRE.match(line)
                 if mo:
                     sectname = mo.group('header')
-                    if sectname in self:
+                    if sectname in list(self.keys()):
                         cursect = self[sectname]
                     else:
                         cursect = ConfigSection(sectname)
@@ -950,11 +950,11 @@ class ConfigManager(UserDict, object):
         """
         other = other.copy()
         for key, value in list(other.items()):
-            if key not in self:
+            if key not in list(self.keys()):
                 self[key] = value
         try:
            for key, values in list(other._categories.items()):
-               if key not in self._categories:
+               if key not in list(self._categories.keys()):
                    self._categories[key] = value
         except AttributeError: pass
         return self
@@ -1064,7 +1064,7 @@ class ConfigManager(UserDict, object):
         Make sure that all mandatory options have been set
 
         """
-        for section in self.values():
+        for section in list(self.values()):
            for option in list(section.values()):
               if not option.mandatory: continue
               if option.getValue() in [None,[]]:
@@ -1462,7 +1462,7 @@ class ConfigManager(UserDict, object):
                if default is not None:
                    summary += ' [%s]' % default
 
-            if catname not in categorized:
+            if catname not in list(categorized.keys()):
                categorized[catname] = []
             categorized[catname].append((name,summary,option))
 
@@ -1476,7 +1476,7 @@ class ConfigManager(UserDict, object):
         # Build the output string
         s = ''
         if categories:
-           categories = [self.get_category(x) for x in categories]
+           categories = [self.get_category(x) for x in list(categories.keys())]
         else:
            categories = list(categorized.keys())
            categories.sort()
@@ -1524,7 +1524,7 @@ class CommandLineManager(OrderedDict):
    def requiresArgument(self):
       """ Return boolean indicating if config requires an argument """
       if not self: return 0
-      for key in self:
+      for key in list(self.keys()):
          item = OrderedDict.__getitem__(self, key)
          if isinstance(item, GenericArgument):
              if item.mandatory:
@@ -1538,7 +1538,7 @@ class CommandLineManager(OrderedDict):
 
       if not self: return self
 
-      for key in self:
+      for key in list(self.keys()):
          item = OrderedDict.__getitem__(self, key)
          association = self._associations.get(key, None)
          if isinstance(item, ConfigManager):

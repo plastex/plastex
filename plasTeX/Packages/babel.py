@@ -30,21 +30,21 @@ class otherlanguage(Environment):
         res = Environment.invoke(self, tex)
         doc = self.ownerDocument
         if self.macroMode != self.MODE_END:
-            self.ownerDocument.userdata.setPath('babel/previouslanguage', 
+            self.ownerDocument.userdata.setPath('babel/previouslanguage',
                                               doc.context.currentLanguage)
             doc.context.loadLanguage(self.attributes['lang'], self.ownerDocument)
         else:
             lang = doc.userdata.getPath('babel/previouslanguage')
-            doc.context.loadLanguage(lang, self.ownerDocument)            
+            doc.context.loadLanguage(lang, self.ownerDocument)
         return res
 
 class foreignlanguage(Command):
     args = 'lang:str self'
-    
+
     def postArgument(self, arg, value, tex):
         if arg.name == 'lang':
             doc = self.ownerDocument
-            doc.userdata.setPath('babel/previouslanguage', 
+            doc.userdata.setPath('babel/previouslanguage',
                                doc.context.currentLanguage)
             doc.context.loadLanguage(value, doc)
         else:
@@ -54,7 +54,7 @@ class foreignlanguage(Command):
         res = Command.invoke(self, tex)
         doc = self.ownerDocument
         lang = doc.userdata.getPath('babel/previouslanguage')
-        doc.context.loadLanguage(lang, doc)            
+        doc.context.loadLanguage(lang, doc)
         return res
 
 class OtherLanguageStar(Environment):
@@ -63,9 +63,10 @@ class OtherLanguageStar(Environment):
 
 class iflanguage(Command):
     args = 'lang:str yes:nox no:nox'
-    
+
     def invoke(self, tex):
         res = Command.invoke(self, tex)
         if self.ownerDocument.context.currentLanguage == self.attributes['lang']:
             return self.attributes['yes']
         return self.attributes['no']
+        

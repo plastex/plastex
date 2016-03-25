@@ -18,7 +18,7 @@ import urllib.parse
 def addBaseURL(self, urlarg):
     try:
         baseurl = self.ownerDocument.userdata['packages']['hyperref']['baseurl']
-        return urllib.parse.urljoin(baseurl, self.attributes[urlarg])            
+        return urllib.parse.urljoin(baseurl, self.attributes[urlarg])
     except KeyError: pass
     return self.attributes[urlarg]
 
@@ -53,9 +53,9 @@ class hyperbaseurl(Command):
     def invoke(self, tex):
         res = Command.invoke(self, tex)
         data = self.ownerDocument.userdata
-        if 'packages' not in data:
+        if 'packages' not in list(data.keys()):
             data['packages'] = {}
-        if 'hyperref' not in data['packages']:
+        if 'hyperref' not in list(data['packages'].keys()):
             data['packages']['hyperref'] = {}
         self.ownerDocument.userdata['packages']['hyperref']['baseurl'] = self.attributes['base']
         return res
@@ -195,8 +195,8 @@ class DefaultHeightofText(Command):
     args = 'size:dimen'
 
 class DefaultWidthofText(Command):
-    args = 'size:dimen'    
-    
+    args = 'size:dimen'
+
 class pdfbookmark(Command):
     args = '[level:number] text name'
 
