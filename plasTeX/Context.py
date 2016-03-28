@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
-import os, configparser, re, time
-import plasTeX
 from plasTeX import ismacro, macroName
 from plasTeX.DOM import Node
 from plasTeX.Logging import getLogger
 from plasTeX.Tokenizer import Tokenizer, Token, DEFAULT_CATEGORIES, VERBATIM_CATEGORIES
+import os
+import configparser
+import re
+import time
+import plasTeX
 
 # Only export the Context singleton
 __all__ = ['Context']
@@ -111,7 +114,7 @@ class LanguageParser(object):
         # the minor language section
         for key, value in list(self.data.items()):
             if '-' in key:
-                major, minor = key.split('-',1)
+                major, minor = key.split('-', 1)
                 if major in list(self.data.keys()):
                     majordict = self.data[major]
                     for mkey, mvalue in list(majordict.items()):
@@ -232,7 +235,7 @@ class Context(object):
         import pickle
         if os.path.exists(filename):
             try:
-                d = pickle.load(open(filename,'rb'))
+                d = pickle.load(open(filename, 'rb'))
                 if rtype not in list(d.keys()):
                     d[rtype] = {}
             except:
@@ -244,7 +247,7 @@ class Context(object):
         for key, value in list(self.persistentLabels.items()):
             data[key] = value.persist()
         try:
-            pickle.dump(d, open(filename,'wb'))
+            pickle.dump(d, open(filename, 'wb'))
         except Exception as msg:
             log.warning('Could not save auxiliary information. (%s)' % msg)
 
@@ -265,13 +268,13 @@ class Context(object):
         if not os.path.exists(filename):
             return
         try:
-            d = pickle.load(open(filename,'rb'))
+            d = pickle.load(open(filename, 'rb'))
             try: data = d[rtype]
             except KeyError: return
             wou = self.warnOnUnrecognized
             self.warnOnUnrecognized = False
             for key, value in list(data.items()):
-                n = self[value.get('macroName','Macro')]()
+                n = self[value.get('macroName', 'Macro')]()
                 n.restore(value)
                 self.labels[key] = n
             self.warnOnUnrecognized = wou
@@ -281,7 +284,7 @@ class Context(object):
     @property
     def isMathMode(self):
         """ Are we in math mode or not? """
-        for i in range(len(self.contexts)-1, -1, -1):
+        for i in range(len(self.contexts) - 1, -1, -1):
             obj = self.contexts[i].obj
             if obj is not None and obj.mathMode is not None:
                 return obj.mathMode
@@ -330,7 +333,7 @@ class Context(object):
             elif day.endswith('3'):
                 suffix = 'rd'
             day = str(int(day))
-            return time.strftime(fmt.replace('%f', day+suffix).replace('%e', day))
+            return time.strftime(fmt.replace('%f', day + suffix).replace('%e', day))
         return time.strftime(fmt)
 
     def loadINIPackage(self, inifile):
@@ -342,7 +345,7 @@ class Context(object):
 
         """
         ini = configparser.RawConfigParser()
-        if not isinstance(inifile, (list,tuple)):
+        if not isinstance(inifile, (list, tuple)):
             inifile = [inifile]
         for f in inifile:
             ini.read(f)
@@ -353,8 +356,8 @@ class Context(object):
                     log.warning('Could not find macro %s' % section)
                     continue
                 for name in ini.options(section):
-                    value = ini.get(section,name)
-                    m = re.match(r'^str\(\s*(?:(\'|\")(?P<string>.+)(?:\1)|(?P<number>\d+))\s*\)$',value)
+                    value = ini.get(section, name)
+                    m = re.match(r'^str\(\s*(?:(\'|\")(?P<string>.+)(?:\1)|(?P<number>\d+))\s*\)$', value)
                     if m:
                         data = m.groupdict()
                         if data['number'] is not None:
@@ -395,7 +398,7 @@ class Context(object):
             return True
 
         packagesini = os.path.join(os.path.dirname(plasTeX.Packages.__file__),
-                                   os.path.basename(module)+'.ini')
+                                   os.path.basename(module) + '.ini')
 
         try:
             # Try to import a Python package by that name
@@ -405,7 +408,7 @@ class Context(object):
                 m.ProcessOptions(options or {}, tex.ownerDocument)
 
             self.importMacros(vars(m))
-            moduleini = os.path.splitext(m.__file__)[0]+'.ini'
+            moduleini = os.path.splitext(m.__file__)[0] + '.ini'
             self.loadINIPackage([packagesini, moduleini])
             self.packages[module] = options
             status.info(' ) ')
@@ -424,7 +427,7 @@ class Context(object):
         result = tex.loadPackage(file, options)
         try:
             moduleini = os.path.join(os.path.dirname(tex.kpsewhich(file)),
-                                     os.path.basename(module)+'.ini')
+                                     os.path.basename(module) + '.ini')
             self.loadINIPackage([packagesini, moduleini])
         except OSError: pass
         return result
@@ -456,7 +459,7 @@ class Context(object):
             self.persistentLabels[label] = self.labels[label] = node
             node.id = label
 
-        #print label, ''.join(self.currentlabel.ref[:])
+        # print label, ''.join(self.currentlabel.ref[:])
 
         # Resolve any outstanding references to this object
         if label in list(self.refs.keys()) and label in (self.labels.keys()):
@@ -758,7 +761,7 @@ class Context(object):
 
         """
         c = self.contexts[-1].categories = self.categories = self.categories[:]
-        for i in range(0,16):
+        for i in range(0, 16):
             c[i] = c[i].replace(char, '')
         # Don't insert if it's code 12.
         if code != 12:
@@ -797,9 +800,9 @@ class Context(object):
 
         if format is None:
             format = '${%s}' % name
-        newclass = type('the'+name, (plasTeX.TheCounter,),
+        newclass = type('the' + name, (plasTeX.TheCounter,),
                                {'format': format})
-        self.addGlobal('the'+name, newclass)
+        self.addGlobal('the' + name, newclass)
 
     def newwrite(self, name, file):
         """
@@ -906,12 +909,12 @@ class Context(object):
         self.addGlobal(name, ifclass)
 
         # Create \iftrue macro
-        truename = name[2:]+'true'
+        truename = name[2:] + 'true'
         newclass = type(truename, (plasTeX.IfTrue,), {'ifclass':ifclass})
         self.addGlobal(truename, newclass)
 
         # Create \iffalse macro
-        falsename = name[2:]+'false'
+        falsename = name[2:] + 'false'
         newclass = type(falsename, (plasTeX.IfFalse,), {'ifclass':ifclass})
         self.addGlobal(falsename, newclass)
 
@@ -950,7 +953,7 @@ class Context(object):
 
         macrolog.debug('creating newcommand %s', name)
         newclass = type(name, (plasTeX.NewCommand,),
-                       {'nargs':nargs,'opt':opt,'definition':definition})
+                       {'nargs':nargs, 'opt':opt, 'definition':definition})
 
         self.addGlobal(name, newclass)
 
@@ -984,7 +987,7 @@ class Context(object):
         assert isinstance(nargs, int), 'nargs must be an integer'
 
         if definition is not None:
-            assert isinstance(definition, (tuple,list)), \
+            assert isinstance(definition, (tuple, list)), \
                 'definition must be a list or tuple'
             assert len(definition) == 2, 'definition must have 2 elements'
 
@@ -1000,12 +1003,12 @@ class Context(object):
 
         # Begin portion
         newclass = type(name, (plasTeX.NewCommand,),
-                       {'nargs':nargs,'opt':opt,'definition':definition[0]})
+                       {'nargs':nargs, 'opt':opt, 'definition':definition[0]})
         self.addGlobal(name, newclass)
 
         # End portion
-        newclass = type('end'+name, (plasTeX.NewCommand,),
-                       {'nargs':0,'opt':None,'definition':definition[1]})
+        newclass = type('end' + name, (plasTeX.NewCommand,),
+                       {'nargs':0, 'opt':None, 'definition':definition[1]})
         self.addGlobal('end' + name, newclass)
 
     def newdef(self, name, args=None, definition=None, local=True):
@@ -1037,7 +1040,7 @@ class Context(object):
 
         macrolog.debug('creating def %s', name)
         newclass = type(name, (plasTeX.Definition,),
-                       {'args':args,'definition':definition})
+                       {'args':args, 'definition':definition})
 
         if local:
             self.addLocal(name, newclass)

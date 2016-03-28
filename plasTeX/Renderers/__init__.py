@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import codecs, os, shutil, string
+import os, shutil, string
 from plasTeX.Filenames import Filenames
 from plasTeX.DOM import Node
 from plasTeX.Logging import getLogger
@@ -533,11 +533,12 @@ class Renderer(dict):
             return
 
         encoding = document.config['files']['output-encoding']
-
+        errs = self.encodingErrors
         for f in files:
             try:
-                s = codecs.open(f, 'r', encoding,
-                                errors=self.encodingErrors).read()
+                with open(f, 'r', encoding=encoding, errors=errs) as fd:
+                    s = fd.read()
+
             except IOError as msg:
                 log.error(msg)
                 continue
@@ -547,7 +548,8 @@ class Renderer(dict):
             if isinstance(postProcess, collections.Callable):
                 s = postProcess(document, s)
 
-            codecs.open(f, 'w', encoding).write(''.join(s))
+            with open(f, 'w', encoding=encoding) as fd:
+                fd.write(''.join(s))
 
     def find(self, keys, default=None):
         """

@@ -2,10 +2,11 @@
 
 __version__ = '9.3'
 
-import string, re
+from plasTeX import Logging, encoding
 from plasTeX.DOM import Element, Text, Node, DocumentFragment, Document
 from plasTeX.Tokenizer import Token, BeginGroup, EndGroup, Other
-from plasTeX import Logging, encoding
+import string
+import re
 
 log = Logging.getLogger()
 status = Logging.getLogger('status')
@@ -81,10 +82,12 @@ class Argument(object):
     def __repr__(self):
         return '%s: %s' % (self.name, self.options)
 
-    def __cmp__(self, other):
-        c = cmp(self.name, other.name)
-        if c: return c
-        return cmp(self.options, other.options)
+    def __eq__(self, other):
+        try:
+            return self.name == other.name and self.options == other.options
+        except AttributeError:
+            return NotImplemented
+
 
 
 class CSSStyles(dict):
@@ -100,7 +103,7 @@ class CSSStyles(dict):
         """
         if not self:
             return None
-        return '; '.join(['%s:%s' % (x[0],x[1]) for x in list(self.items())])
+        return '; '.join(['%s:%s' % (x[0], x[1]) for x in list(self.items())])
 
 
 class Macro(Element):
@@ -112,8 +115,8 @@ class Macro(Element):
     MODE_BEGIN = 1
     MODE_END = 2
 
-    macroName = None        # TeX macro name (instead of class name)
-    macroMode = MODE_NONE   # begin, end, or none
+    macroName = None  # TeX macro name (instead of class name)
+    macroMode = MODE_NONE  # begin, end, or none
     mathMode = None
 
     # Node variables
@@ -129,7 +132,7 @@ class Macro(Element):
 
     # Attributes that should be persisted between runs for nodes
     # that can be referenced.  This allows for cross-document links.
-    refAttributes = ['macroName','ref','title','captionName','id','url']
+    refAttributes = ['macroName', 'ref', 'title', 'captionName', 'id', 'url']
 
     # Source of the TeX macro arguments
     argSource = ''
@@ -532,7 +535,7 @@ class Macro(Element):
                 self.ownerDocument.context.counters[self.counter].stepcounter()
             except KeyError:
                 log.warning('Could not find counter "%s"', self.counter)
-                self.ownerDocument.context.newcounter(self.counter,initial=1)
+                self.ownerDocument.context.newcounter(self.counter, initial=1)
 
     def refstepcounter(self, tex):
         """
@@ -561,8 +564,8 @@ class Macro(Element):
             try: secnumdepth = self.config['document']['sec-num-depth']
             except: secnumdepth = 10
             if secnumdepth >= self.level or self.level > self.ENDSECTIONS_LEVEL:
-                self.ref = self.ownerDocument.createElement('the'+self.counter).expand(tex)
-                self.captionName = self.ownerDocument.createElement(self.counter+'name').expand(tex)
+                self.ref = self.ownerDocument.createElement('the' + self.counter).expand(tex)
+                self.captionName = self.ownerDocument.createElement(self.counter + 'name').expand(tex)
 
     @property
     def arguments(self):
@@ -589,7 +592,7 @@ class Macro(Element):
                      re.split(r'(\w+(?::\w+(?:\(\S\))?(?::\w+)?)?|\W|\s+)',
                               tself.args) if x is not None and x.strip()])
 
-        groupings = {'[':'[]','(':'()','<':'<>','{':'{}'}
+        groupings = {'[':'[]', '(':'()', '<':'<>', '{':'{}'}
 
         macroargs = []
         argdict = {}
@@ -636,7 +639,7 @@ class Macro(Element):
                         if parts:
                             argdict['subtype'] = parts.pop(0)
                 # Arguments that are instance variables are always expanded
-                if argdict.get('type') in ['cs','nox']:
+                if argdict.get('type') in ['cs', 'nox']:
                     argdict['expanded'] = False
                 else:
                     argdict['expanded'] = True
@@ -761,7 +764,7 @@ class Macro(Element):
             self.insert(i, item)
 
         # Filter out any empty paragraphs
-        for i in range(len(self)-1, -1, -1):
+        for i in range(len(self) - 1, -1, -1):
             item = self[i]
             if item.level == Node.PAR_LEVEL:
                 if len(item) == 0:
@@ -783,9 +786,9 @@ class TeXDocument(Document):
         ("''", chr(8221)),
         ('"`', chr(8222)),
         ('"\'', chr(8220)),
-        ('`',  chr(8216)),
-        ("'",  chr(8217)),
-        ('---',chr(8212)),
+        ('`', chr(8216)),
+        ("'", chr(8217)),
+        ('---', chr(8212)),
         ('--', chr(8211)),
 #       ('fj', unichr(58290)),
 #       ('ff', unichr(64256)),
@@ -798,7 +801,7 @@ class TeXDocument(Document):
     ]
 
     def __init__(self, *args, **kwargs):
-        #super(TeXDocument, self).__init__(*args, **kwargs)
+        # super(TeXDocument, self).__init__(*args, **kwargs)
 
         if 'context' not in list(kwargs.keys()):
             from plasTeX import Context
@@ -915,14 +918,14 @@ class UnrecognizedMacro(Macro):
     class is generated as a placeholder for the missing macro.
 
     """
-    def __cmp__(self, other):
+    def __eq__(self, other):
         if not hasattr(other, 'nodeName'):
-            return 0
-        if other.nodeName in ['undefined','@undefined']:
-            return 0
+            return True
+        if other.nodeName in ['undefined', '@undefined']:
+            return True
         if isinstance(other, UnrecognizedMacro):
-            return 0
-        return super(UnrecognizedMacro, self).__cmp__(other)
+            return True
+        return super(UnrecognizedMacro, self).__eq__(other)
 
 class NewIf(Macro):
     """ Base class for all generated \\newifs """
@@ -998,7 +1001,7 @@ class NewCommand(Macro):
 
     def invoke(self, tex):
         if self.macroMode == Macro.MODE_END:
-            res = self.ownerDocument.createElement('end'+self.tagName).invoke(tex)
+            res = self.ownerDocument.createElement('end' + self.tagName).invoke(tex)
             if res is None:
                 return [res, EndGroup(' ')]
             return res + [EndGroup(' ')]
@@ -1117,7 +1120,7 @@ class count(number): pass
 class dimen(float):
     """ Class used for dimen values """
 
-    units = ['pt','pc','in','bp','cm','mm','dd','cc','sp','ex','em']
+    units = ['pt', 'pc', 'in', 'bp', 'cm', 'mm', 'dd', 'cc', 'sp', 'ex', 'em']
 
     def __new__(cls, v):
         if isinstance(v, Macro):
@@ -1175,11 +1178,11 @@ class dimen(float):
         if self < 0:
             sign = -1
         if abs(self) >= 6e9:
-            return str(sign * (abs(self)-6e9)) + 'filll'
+            return str(sign * (abs(self) - 6e9)) + 'filll'
         if abs(self) >= 4e9:
-            return str(sign * (abs(self)-4e9)) + 'fill'
+            return str(sign * (abs(self) - 4e9)) + 'fill'
         if abs(self) >= 2e9:
-            return str(sign * (abs(self)-2e9)) + 'fil'
+            return str(sign * (abs(self) - 2e9)) + 'fil'
         return '%spt' % self.pt
 
     @property
@@ -1243,11 +1246,11 @@ class dimen(float):
         if self < 0:
             sign = -1
         if abs(self) >= 6e9:
-            return sign * (abs(self)-6e9)
+            return sign * (abs(self) - 6e9)
         if abs(self) >= 4e9:
-            return sign * (abs(self)-4e9)
+            return sign * (abs(self) - 4e9)
         if abs(self) >= 2e9:
-            return sign * (abs(self)-2e9)
+            return sign * (abs(self) - 2e9)
         raise ValueError('This is not a fil(ll) dimension')
     fil = filll = fill
 
@@ -1267,7 +1270,7 @@ class glue(dimen):
         return dimen.__new__(cls, g)
 
     def __init__(self, g, plus=None, minus=None):
-        #super(glue, self).__init__(g)
+        # super(glue, self).__init__(g)
         self.stretch = self.shrink = None
         if plus is not None:
             self.stretch = dimen(plus)
@@ -1486,7 +1489,7 @@ class Counter(object):
 
     @property
     def Alph(self):
-        return encoding.stringletters()[self.value-1].upper()
+        return encoding.stringletters()[self.value - 1].upper()
 
     @property
     def alph(self):

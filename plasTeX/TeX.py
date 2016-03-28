@@ -878,16 +878,16 @@ class TeX(object):
             source = [t]
             # A [ ... ], ( ... ), etc. grouping was found
             if t.catcode != Token.CC_ESCAPE and \
-               (t == begin or str(t) == begin):
+               (t == begin or str(t) == str(begin)):
                 level = 1
                 for t in tokens:
                     source.append(t)
                     if t.catcode != Token.CC_ESCAPE and \
-                       (t == begin or str(t) == begin):
+                       (t == begin or str(t) == str(begin)):
                         toks.append(t)
                         level += 1
                     elif t.catcode != Token.CC_ESCAPE and \
-                         (t == end or str(t) == end):
+                         (t == end or str(t) == str(end)):
                         level -= 1
                         if level == 0:
                             break
@@ -997,6 +997,7 @@ class TeX(object):
         self.cast()
 
         """
+
         return [x for x in tokens if x.catcode == Token.CC_ESCAPE].pop(0)
 
     def castString(self, tokens, type=str, **kwargs):
