@@ -18,7 +18,7 @@ from plasTeX.Renderers.PageTemplate.simpletal.simpleTALES import Context as TALC
 log = plasTeX.Logging.getLogger()
 
 # Support for Python string templates
-def stringtemplate(s, encoding='utf8'):
+def stringtemplate(s):
     template = string.Template(s)
     def renderstring(obj):
         tvars = {'here':obj, 'self':obj, 'container':obj.parentNode,
@@ -28,7 +28,7 @@ def stringtemplate(s, encoding='utf8'):
     return renderstring
 
 # Support for Python string interpolations
-def pythontemplate(s, encoding='utf8'):
+def pythontemplate(s):
     template = s
     def renderpython(obj):
         tvars = {'here':obj, 'self':obj, 'container':obj.parentNode,
@@ -38,7 +38,7 @@ def pythontemplate(s, encoding='utf8'):
     return renderpython
 
 # Support for ZPT HTML and XML templates
-def htmltemplate(s, encoding='utf8'):
+def htmltemplate(s):
     template = simpleTAL.compileHTMLTemplate(s)
     def renderhtml(obj):
         context = TALContext(allowPythonPath=1)
@@ -50,11 +50,11 @@ def htmltemplate(s, encoding='utf8'):
         context.addGlobal('template', template)
         context.addGlobal('templates', obj.renderer)
         output = StringIO()
-        template.expand(context, output, encoding)
+        template.expand(context, output)
         return output.getvalue()
     return renderhtml
 
-def xmltemplate(s, encoding='utf8'):
+def xmltemplate(s):
     template = simpleTAL.compileXMLTemplate(s)
     def renderxml(obj):
         context = TALContext(allowPythonPath=1)
@@ -66,7 +66,7 @@ def xmltemplate(s, encoding='utf8'):
         context.addGlobal('template', template)
         context.addGlobal('templates', obj.renderer)
         output = StringIO()
-        template.expand(context, output, encoding, docType=None, suppressXMLDeclaration=1)
+        template.expand(context, output, docType=None, suppressXMLDeclaration=1)
         return output.getvalue()
     return renderxml
 
@@ -76,9 +76,9 @@ try:
     from Cheetah.Template import Template as CheetahTemplate
     from Cheetah.Filters import Filter as CheetahFilter
     class CheetahUnicode(CheetahFilter):
-        def filter(self, val, encoding='utf-8', **kw):
+        def filter(self, val, **kw):
             return str(val)
-    def cheetahtemplate(s, encoding='utf8'):
+    def cheetahtemplate(s):
         def rendercheetah(obj, s=s):
             tvars = {'here':obj, 'container':obj.parentNode,
                      'config':obj.ownerDocument.config,
@@ -88,9 +88,9 @@ try:
                                    filter=CheetahUnicode).respond()
         return rendercheetah
 
-except ImportError:
-
-    def cheetahtemplate(s, encoding='utf8'):
+except (ImportError, AttributeError):
+    print('Could not import CHEETAH')
+    def cheetahtemplate(s):
         def rendercheetah(obj):
             return str(s)
         return rendercheetah
@@ -100,7 +100,7 @@ try:
 
     from kid import Template as KidTemplate
 
-    def kidtemplate(s, encoding='utf8'):
+    def kidtemplate(s):
         # Add namespace py: in
         s = '<div xmlns:py="http://purl.org/kid/ns#" py:strip="True">%s</div>' % s
         def renderkid(obj, s=s):
@@ -113,7 +113,7 @@ try:
 
 except ImportError:
 
-    def kidtemplate(s, encoding='utf8'):
+    def kidtemplate(s):
         def renderkid(obj):
             return str(s)
         return renderkid
@@ -128,7 +128,7 @@ try:
     def markup(obj):
         return Markup(str(obj))
 
-    def genshixmltemplate(s, encoding='utf8'):
+    def genshixmltemplate(s):
         # Add namespace py: in
         s = '<div xmlns:py="http://genshi.edgewall.org/" py:strip="True">%s</div>' % s
         template = GenshiTemplate(s)
@@ -140,7 +140,7 @@ try:
             return str(template.generate(**tvars).render(method='xml'))
         return rendergenshixml
 
-    def genshihtmltemplate(s, encoding='utf8'):
+    def genshihtmltemplate(s):
         # Add namespace py: in
         s = '<div xmlns:py="http://genshi.edgewall.org/" py:strip="True">%s</div>' % s
         template = GenshiTemplate(s)
@@ -152,7 +152,7 @@ try:
             return str(template.generate(**tvars).render(method='html'))
         return rendergenshihtml
 
-    def genshitexttemplate(s, encoding='utf8'):
+    def genshitexttemplate(s):
         template = GenshiTextTemplate(s)
         def rendergenshitext(obj):
             tvars = {'here':obj, 'container':obj.parentNode, 'markup':markup,
@@ -164,17 +164,17 @@ try:
 
 except ImportError:
 
-    def genshixmltemplate(s, encoding='utf8'):
+    def genshixmltemplate(s):
         def rendergenshixml(obj):
             return str(s)
         return rendergenshixml
 
-    def genshihtmltemplate(s, encoding='utf8'):
+    def genshihtmltemplate(s):
         def rendergenshihtml(obj):
             return str(s)
         return rendergenshihtml
 
-    def genshitexttemplate(s, encoding='utf8'):
+    def genshitexttemplate(s):
         def rendergenshitext(obj):
             return str(s)
         return rendergenshitext
@@ -230,7 +230,6 @@ class PageTemplate(BaseRenderer):
 
     outputType = str
     fileExtension = '.xml'
-    encodingErrors = 'xmlcharrefreplace'
 
     def __init__(self, *args, **kwargs):
         BaseRenderer.__init__(self, *args, **kwargs)

@@ -74,14 +74,18 @@ class Token(Text):
     def __hash__(self):
         return super(Token,self).__hash__()
 
-    def __cmp__(self, other):
-        # Token comparison -- character and code must match
+    def __lt__(self, other):
         if isinstance(other, Token):
             if self.catcode == other.catcode:
-                return cmp(self, other)
-            return cmp(self.catcode, other.catcode)
-        # Not comparing to token, just do a string match
-        return cmp(self, other)
+                return str(self) < str(other)
+            else:
+                return self.catcode <  other.catcode
+        else:
+            return str(self) <  str(other)
+
+    def __str__(self):
+        return self.encode('utf-8').decode('utf-8')
+
 
     @property
     def source(self):
@@ -229,6 +233,7 @@ class Tokenizer(object):
             self.filename = source.name
         self.seek = source.seek
         self.read = source.read
+        self.readline = source.readline
         self.tell = source.tell
         self.lineNumber = 1
 

@@ -568,7 +568,7 @@ class GenericOption(object):
    def __le__(self, other): return self.compare(other) <= 0
    def __ge__(self, other): return self.compare(other) >= 0
    def __eq__(self, other): return self.compare(other) == 0
-   def __cmp__(self, other): return self.compare(other)
+   
 
    def compare(self, other):
       """ Compare option to another using the specified sort order """

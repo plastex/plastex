@@ -26,8 +26,8 @@ class ContextItem(dict):
 
     """
 
-    def __init__(self, data={}):
-        dict.__init__(self, data)
+    def __init__(self, data=None):
+        dict.__init__(self, data or {})
         self.categories = None
         self.obj = None
         self.parent = None
@@ -52,7 +52,7 @@ class ContextItem(dict):
         except KeyError: return default
 
     def has_key(self, key):
-        if dict.has_key(self, key):
+        if dict.__contains__(self, key):
             return True
         if self.parent is not None:
             return key in list(self.parent.keys())
@@ -87,8 +87,8 @@ class Counters(dict):
 class LanguageParser(object):
     """ Parser for language commands """
 
-    def __init__(self, output={}):
-        self.data = output
+    def __init__(self, output=None):
+        self.data = output if output is not None else {}
         self.language = None
         self.term = None
 
@@ -556,6 +556,10 @@ class Context(object):
         self.mapMethods()
 
     append = push
+
+    def __contains__(self, key):
+        return key in self.top
+
 
     def mapMethods(self):
         # Getter methods use the most local context

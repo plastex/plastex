@@ -16,13 +16,13 @@ try:
     collator = Collator(os.path.join(os.path.dirname(__file__), 'allkeys.txt')).sort_key
 except ImportError:
     collator = lambda x: x.lower()
-    
+
 class hyperpage(IgnoreCommand):
     args = 'page:nox'
 
 class hyperindexformat(IgnoreCommand):
     args = 'fmt:nox page:nox'
-    
+
 class IndexUtils(object):
     """ Helper functions for generating indexes """
 
@@ -32,9 +32,9 @@ class IndexUtils(object):
     class Index(Command):
         """
         Utility class used to surface the index entries to the renderer
-    
+
         """
-    
+
         def __init__(self, *args, **kwargs):
             Command.__init__(self, *args, **kwargs)
             self.pages = []
@@ -48,10 +48,10 @@ class IndexUtils(object):
             for item in self:
                 total += item.totallen
             return total
-    
+
         def __repr__(self):
-            return '%s%s --> %s' % (''.join([x.source for x in self.key]), 
-                                    ', '.join([str(x) for x in self.pages]), 
+            return '%s%s --> %s' % (''.join([x.source for x in self.key]),
+                                    ', '.join([str(x) for x in self.pages]),
                                     Command.__repr__(self))
 
     class IndexGroup(list):
@@ -73,7 +73,7 @@ class IndexUtils(object):
         batches = []
         current = ''
         for item in self:
-            try: 
+            try:
                 label = title = item.sortkey[0].upper()
                 if title in encoding.stringletters():
                     pass
@@ -81,7 +81,7 @@ class IndexUtils(object):
                      title = '_ (Underscore)'
                 else:
                      label = title = 'Symbols'
-            except IndexError: 
+            except IndexError:
                 label = title = 'Symbols'
             if current != title:
                 newgroup = self.IndexGroup()
@@ -129,7 +129,7 @@ class IndexUtils(object):
             if len(output) >= cols:
                 output[-1].append(item)
             elif current > coltotal:
-                output.append([item]) 
+                output.append([item])
                 current = num
             elif current == coltotal:
                 output[-1].append(item)
@@ -143,7 +143,7 @@ class IndexUtils(object):
             item.reverse()
 
         # Get rid of empty columns
-        output = [x for x in output if x]  
+        output = [x for x in output if x]
 
         # Pad to the correct number of columns
         for i in range(cols-len(output)):
@@ -168,10 +168,10 @@ class IndexUtils(object):
         entries = sorted(self.ownerDocument.userdata.get('index', []))
         prev = IndexEntry([], None)
         for item in entries:
-            # See how many levels we need to add/subtract between this one 
+            # See how many levels we need to add/subtract between this one
             # and the previous
             common = 0
-            for prevkey, itemkey in zip(list(zip(prev.sortkey, prev.key)), 
+            for prevkey, itemkey in zip(list(zip(prev.sortkey, prev.key)),
                                         list(zip(item.sortkey, item.key))):
                 if prevkey == itemkey:
                     common += 1
@@ -238,7 +238,7 @@ class IndexDestination(object):
         if self._cr_type and name in ['url']:
             return None
         return getattr(self._cr_node, name)
-    
+
     def __str__(self):
         return str(self._cr_node)
 
@@ -317,7 +317,7 @@ class index(Command):
 
         # Expand the key tokens
         for i, item in enumerate(key):
-            key[i] = tex.expandTokens(item) 
+            key[i] = tex.expandTokens(item)
 
         # Get the format element
         type = IndexEntry.TYPE_NORMAL
@@ -331,7 +331,7 @@ class index(Command):
                 macro = ''.join(macro)
                 format.insert(0, EscapeSequence(macro))
                 if macro == 'see':
-                    type = IndexEntry.TYPE_SEE 
+                    type = IndexEntry.TYPE_SEE
                 elif macro == 'seealso':
                     type = IndexEntry.TYPE_SEEALSO
             format.append(EscapeSequence('index-page-number'))
@@ -361,11 +361,11 @@ class IndexEntry(object):
         """
         Required Arguments:
         key -- a list of keys for the index entry
-        node -- the node of the document that the index entry is 
+        node -- the node of the document that the index entry is
             associated with
         sortkey -- a list of sort keys, one per key, to be used for
             sorting instead of the key values
-        format -- formatting that should be used to format the 
+        format -- formatting that should be used to format the
             destination of the index entry
         type -- the type of entry that this is: TYPE_NORMAL, TYPE_SEE,
             or TYPE_SEEALSO
@@ -397,24 +397,25 @@ class IndexEntry(object):
     def normal(self):
         return not(self.see) and not(self.seealso)
 
-    def __cmp__(self, other):
-        result = cmp(list(zip([collator(x) for x in self.sortkey if isinstance(x, str)], 
-                         [collator(x.textContent) for x in self.key], 
-                         self.key)), 
-                     list(zip([collator(x) for x in other.sortkey if isinstance(x, str)], 
-                         [collator(x.textContent) for x in other.key], 
+    def __lt__(self, other):
+        result = (list(zip([collator(x) for x in self.sortkey if isinstance(x, str)],
+                         [collator(x.textContent) for x in self.key],
+                         self.key))
+                         <
+                     list(zip([collator(x) for x in other.sortkey if isinstance(x, str)],
+                         [collator(x.textContent) for x in other.key],
                          other.key)))
-        if result == 0 and len(self.key) != len(other.key):
-            return cmp(len(self.key), len(other.key))
+        if not result and len(self.key) != len(other.key):
+            return (len(self.key) < len(other.key))
         return result
 
     def __repr__(self):
         if self.format is None:
-            return ' '.join(['@'.join(self.sortkey), 
+            return ' '.join(['@'.join(self.sortkey),
                              '!'.join([x.source for x in self.key])])
         else:
-            return ' '.join(['@'.join(self.sortkey), 
-                             '!'.join([x.source for x in self.key]), 
+            return ' '.join(['@'.join(self.sortkey),
+                             '!'.join([x.source for x in self.key]),
                              ' '.join([x.source for x in self.format])])
 
     def __str__(self):

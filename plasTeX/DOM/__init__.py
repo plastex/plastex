@@ -1139,17 +1139,17 @@ class Node(object):
         """ Is this node equivalent to `other`? """
         return other == self
 
-    def __cmp__(self, other):
+    def __lt__(self, other):
         try:
-            res = cmp(self.nodeName, other.nodeName)
+            res = self.nodeName < other.nodeName
             if res: return res
-            res = cmp(self.attributes, other.attributes)
+            res = self.attributes < other.attributes
             if res: return res
             if self.hasChildNodes() and other.hasChildNodes():
-                return cmp(self.childNodes, other.childNodes)
+                return self.childNodes < other.childNodes
         except AttributeError:
             pass
-        return cmp(self.nodeName, other)
+        return self.nodeName < other
 
     def getFeature(self, feature, version):
         """ Get the requested feature """
@@ -1279,7 +1279,7 @@ def _getElementById(self, elementId):
 
     """
     # Look in attributes dictionary for document fragments as well
-    if hasattr(self, 'attributes'):
+    if getattr(self, 'attributes', None):
         for item in list(self.attributes.values()):
             if id(item) == elementId:
                  return item

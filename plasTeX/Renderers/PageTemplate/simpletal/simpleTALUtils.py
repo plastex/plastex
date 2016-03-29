@@ -2,7 +2,7 @@
 
 		Copyright (c) 2009 Colin Stewart (http://www.owlfish.com/)
 		All rights reserved.
-		
+
 		Redistribution and use in source and binary forms, with or without
 		modification, are permitted provided that the following conditions
 		are met:
@@ -13,7 +13,7 @@
 		   documentation and/or other materials provided with the distribution.
 		3. The name of the author may not be used to endorse or promote products
 		   derived from this software without specific prior written permission.
-		
+
 		THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
 		IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
 		OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -24,13 +24,13 @@
 		THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 		(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 		THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-		
+
 		If you make any bug fixes or feature enhancements please let me know!
-		
-		This module is holds utilities that make using SimpleTAL easier. 
+
+		This module is holds utilities that make using SimpleTAL easier.
 		Initially this is just the HTMLStructureCleaner class, used to clean
 		up HTML that can then be used as 'structure' content.
-		
+
 		Module Dependencies: None
 """
 
@@ -42,7 +42,7 @@ ESCAPED_TEXT_REGEX=re.compile (r"\&\S+?;")
 
 class TemplateCache:
 	""" A TemplateCache is a multi-thread safe object that caches compiled templates.
-		This cache only works with file based templates, the ctime of the file is 
+		This cache only works with file based templates, the ctime of the file is
 		checked on each hit, if the file has changed the template is re-compiled.
 	"""
 	def __init__ (self):
@@ -50,12 +50,12 @@ class TemplateCache:
 		self.cacheLock = threading.Lock()
 		self.hits = 0
 		self.misses = 0
-		
+
 	def getTemplate (self, name, inputEncoding='utf-8'):
 		""" Name should be the path of a template file.  If the path ends in 'xml' it is treated
 			as an XML Template, otherwise it's treated as an HTML Template.  If the template file
 			has changed since the last cache it will be re-compiled.
-			
+
 			inputEncoding is only used for HTML templates, and should be the encoding that the template
 			is stored in.
 		"""
@@ -68,9 +68,9 @@ class TemplateCache:
 				return template
 		# Cache miss, let's cache this template
 		return self._cacheTemplate_ (name, inputEncoding)
-		
+
 	def getXMLTemplate (self, name):
-		""" Name should be the path of an XML template file.  
+		""" Name should be the path of an XML template file.
 		"""
 		if (name in self.templateCache):
 			template, oldctime = self.templateCache [name]
@@ -81,7 +81,7 @@ class TemplateCache:
 				return template
 		# Cache miss, let's cache this template
 		return self._cacheTemplate_ (name, None, xmlTemplate=1)
-		
+
 	def _cacheTemplate_ (self, name, inputEncoding, xmlTemplate=0):
 		self.cacheLock.acquire ()
 		try:
@@ -103,12 +103,12 @@ class TemplateCache:
 		except Exception as e:
 			self.cacheLock.release()
 			raise e
-			
+
 		self.cacheLock.release()
 		return template
 
 def tagAsText (tag,atts):
-	result = "<" + tag 
+	result = "<" + tag
 	for name,value in atts:
 		if (ESCAPED_TEXT_REGEX.search (value) is not None):
 			# We already have some escaped characters in here, so assume it's all valid
@@ -136,20 +136,20 @@ class MacroExpansionInterpreter (simpleTAL.TemplateInterpreter):
 		self.commandHandler [simpleTAL.METAL_USE_MACRO] = self.cmdUseMacro
 		self.commandHandler [simpleTAL.METAL_DEFINE_SLOT] = self.cmdDefineSlot
 		self.commandHandler [simpleTAL.TAL_NOOP] = self.cmdNoOp
-		
+
 		self.inMacro = None
 		self.macroArg = None
 	# Original cmdOutput
 	# Original cmdEndTagEndScope
-		
+
 	def popProgram (self):
 		self.inMacro = self.macroStateStack.pop()
 		simpleTAL.TemplateInterpreter.popProgram (self)
-		
+
 	def pushProgram (self):
 		self.macroStateStack.append (self.inMacro)
 		simpleTAL.TemplateInterpreter.pushProgram (self)
-		
+
 	def cmdOutputStartTag (self, command, args):
 		newAtts = []
 		for att, value in list(self.originalAttributes.items()):
@@ -162,14 +162,14 @@ class MacroExpansionInterpreter (simpleTAL.TemplateInterpreter):
 		self.macroArg = None
 		self.currentAttributes = newAtts
 		simpleTAL.TemplateInterpreter.cmdOutputStartTag (self, command, args)
-		
+
 	def cmdUseMacro (self, command, args):
 		simpleTAL.TemplateInterpreter.cmdUseMacro (self, command, args)
 		if (self.tagContent is not None):
 			# We have a macro, add the args to the in-macro list
 			self.inMacro = 1
 			self.macroArg = args[0]
-			
+
 	def cmdEndTagEndScope (self, command, args):
 		# Args: tagName, omitFlag
 		if (self.tagContent is not None):
@@ -200,24 +200,23 @@ class MacroExpansionInterpreter (simpleTAL.TemplateInterpreter):
 					self.file.write (cgi.escape (str (resultVal, 'ascii')))
 				else:
 					self.file.write (cgi.escape (str (str (resultVal), 'ascii')))
-					
+
 		if (self.outputTag and not args[1]):
 			self.file.write ('</' + args[0] + '>')
-		
+
 		if (self.movePCBack is not None):
 			self.programCounter = self.movePCBack
 			return
-			
+
 		if (self.localVarsDefined):
 			self.context.popLocals()
-			
-		self.movePCForward,self.movePCBack,self.outputTag,self.originalAttributes,self.currentAttributes,self.repeatVariable,self.tagContent,self.localVarsDefined = self.scopeStack.pop()			
+
+		self.movePCForward,self.movePCBack,self.outputTag,self.originalAttributes,self.currentAttributes,self.repeatVariable,self.tagContent,self.localVarsDefined = self.scopeStack.pop()
 		self.programCounter += 1
-			
+
 def ExpandMacros (context, template, outputEncoding="utf-8"):
 	out = io.StringIO()
 	interp = MacroExpansionInterpreter()
 	interp.initialise (context, out)
 	template.expand (context, out, outputEncoding=outputEncoding, interpreter=interp)
 	return out.getvalue()
-
