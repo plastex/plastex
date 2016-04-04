@@ -71,29 +71,29 @@ def xmltemplate(s):
     return renderxml
 
 # Support for Cheetah templates
-try:
-
-    from Cheetah.Template import Template as CheetahTemplate
-    from Cheetah.Filters import Filter as CheetahFilter
-    class CheetahUnicode(CheetahFilter):
-        def filter(self, val, **kw):
-            return str(val)
-    def cheetahtemplate(s):
-        def rendercheetah(obj, s=s):
-            tvars = {'here':obj, 'container':obj.parentNode,
-                     'config':obj.ownerDocument.config,
-                     'context':obj.ownerDocument.context,
-                     'templates':obj.renderer}
-            return CheetahTemplate(source=s, searchList=[tvars],
-                                   filter=CheetahUnicode).respond()
-        return rendercheetah
-
-except (ImportError, AttributeError):
-    print('Could not import CHEETAH')
-    def cheetahtemplate(s):
-        def rendercheetah(obj):
-            return str(s)
-        return rendercheetah
+#try:
+#
+#    from Cheetah.Template import Template as CheetahTemplate
+#    from Cheetah.Filters import Filter as CheetahFilter
+#    class CheetahUnicode(CheetahFilter):
+#        def filter(self, val, **kw):
+#            return str(val)
+#    def cheetahtemplate(s):
+#        def rendercheetah(obj, s=s):
+#            tvars = {'here':obj, 'container':obj.parentNode,
+#                     'config':obj.ownerDocument.config,
+#                     'context':obj.ownerDocument.context,
+#                     'templates':obj.renderer}
+#            return CheetahTemplate(source=s, searchList=[tvars],
+#                                   filter=CheetahUnicode).respond()
+#        return rendercheetah
+#
+#except (ImportError, AttributeError):
+#    print('Could not import CHEETAH')
+#    def cheetahtemplate(s):
+#        def rendercheetah(obj):
+#            return str(s)
+#        return rendercheetah
 
 # Support for Kid templates
 try:
@@ -245,7 +245,7 @@ class PageTemplate(BaseRenderer):
         self.registerEngine('python', None, '.pyt', pythontemplate)
         self.registerEngine('string', None, '.st', stringtemplate)
         self.registerEngine('kid', None, '.kid', kidtemplate)
-        self.registerEngine('cheetah', None, '.che', cheetahtemplate)
+#        self.registerEngine('cheetah', None, '.che', cheetahtemplate)
         self.registerEngine('genshi', None, '.gen', genshihtmltemplate)
         self.registerEngine('genshi', 'xml', '.genx', genshixmltemplate)
         self.registerEngine('genshi', 'text', '.gent', genshitexttemplate)
@@ -278,6 +278,7 @@ class PageTemplate(BaseRenderer):
         node -- the Text node to process
 
         """
+        
         if not(getattr(node, 'isMarkup', None)):
             node = node.replace('&', '&amp;')
             node = node.replace('<', '&lt;')

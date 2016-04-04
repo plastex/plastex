@@ -35,7 +35,7 @@
 """
 
 import io, os, stat, threading, sys, codecs, cgi, re, types, logging
-from plasTeX.Renderers.PageTemplate.simpletal import __version__, simpleTAL
+from . import __version__, simpleTAL
 
 # This is used to check for already escaped attributes.
 ESCAPED_TEXT_REGEX=re.compile (r"\&\S+?;")

@@ -37,7 +37,10 @@ import types, sys
 
 import logging
 
-__version__ = '5.2'
+from .. import simpletal
+
+
+__version__ = simpletal.__version__
 
 DEFAULTVALUE = "This represents a Default value."
 
@@ -71,7 +74,7 @@ class RepeatVariable (ContextVariable):
 	""" To be written"""
 	def __init__ (self, sequence):
 		ContextVariable.__init__ (self, 1)
-		self.sequence = list(sequence)
+		self.sequence = sequence
 		self.position = 0
 		self.map = None
 
@@ -90,7 +93,7 @@ class RepeatVariable (ContextVariable):
 		return self.value()
 
 	def getCurrentValue (self):
-		return self.sequence[self.position]
+		return self.sequence [self.position]
 
 	def increment (self):
 		self.position += 1

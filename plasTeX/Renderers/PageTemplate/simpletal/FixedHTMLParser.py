@@ -2,7 +2,7 @@
 
 		Copyright (c) 2009 Colin Stewart (http://www.owlfish.com/)
 		All rights reserved.
-		
+
 		Redistribution and use in source and binary forms, with or without
 		modification, are permitted provided that the following conditions
 		are met:
@@ -13,7 +13,7 @@
 		   documentation and/or other materials provided with the distribution.
 		3. The name of the author may not be used to endorse or promote products
 		   derived from this software without specific prior written permission.
-		
+
 		THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
 		IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
 		OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -24,16 +24,17 @@
 		THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 		(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 		THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-		
+
 		If you make any bug fixes or feature enhancements please let me know!
-		
-		
+
+
 		The classes in this module implement the TAL language, expanding
 		both XML and HTML templates.
-		
+
 		Module Dependencies: logging, simpleTALES, simpleTALTemplates
 """
 
+from .. import simpletal
 import html.parser
 
 
@@ -41,4 +42,3 @@ class HTMLParser (html.parser.HTMLParser):
 	def unescape(self, s):
 		# Just return the data - we don't partially unescaped data!
 		return s
-		

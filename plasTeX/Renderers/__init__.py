@@ -199,6 +199,7 @@ class Renderable(object):
                         val = str(val)
 
                 # Write the file content
+
                 enc = child.config['files']['output-encoding']
                 with open(filename, 'w', encoding=enc) as f:
                     f.write(val)
@@ -484,8 +485,12 @@ class Renderer(dict):
 
         # Invoke the rendering process
         if type(self).renderMethod:
+            print('METHOD')
+            print(type(self).renderMethod)
             getattr(document, type(self).renderMethod)()
         else:
+            print('METHOD: WHAT??')
+            print(type(self))
             str(document)
 
         # Finish rendering images

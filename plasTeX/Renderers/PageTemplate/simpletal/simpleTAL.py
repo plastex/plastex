@@ -37,10 +37,11 @@
 import logging
 
 import xml.sax, xml.sax.saxutils,html, io, re, types, codecs
+from .. import simpletal
 import copy, sys
-from plasTeX.Renderers.PageTemplate.simpletal import FixedHTMLParser, sgmlentitynames
+from . import FixedHTMLParser, sgmlentitynames
 
-__version__ = '5.2'
+__version__ = simpletal.__version__
 
 try:
     # Is PyXML's LexicalHandler available?
@@ -64,7 +65,7 @@ if sys.version_info[0] > 3 or (sys.version_info[0] == 3 and sys.version_info[1] 
 else:
 	HTML_ENTITIES_PRE_EXPANDED = False
 
-from plasTeX.Renderers.PageTemplate.simpletal import simpleTALES
+from . import simpleTALES
 
 # Name-space URIs
 METAL_NAME_URI="http://xml.zope.org/namespaces/metal"
@@ -453,15 +454,9 @@ class TemplateInterpreter:
 						self.file.write (str (resultVal))
 			else:
 				if (isinstance (resultVal, str)):
-					self.file.write (html.escape (resultVal, quote=False))
-				elif (isinstance (resultVal, bytes)):
-					# THIS IS NOT A BUG!
-					# Use Unicode in the Context object if you are not using Ascii
-					self.file.write (html.escape (str (resultVal, 'ascii'), quote=False))
+					self.file.write(html.escape(resultVal, quote=False))
 				else:
-					# THIS IS NOT A BUG!
-					# Use Unicode in the Context object if you are not using Ascii
-					self.file.write (html.escape (str (resultVal), quote=False))
+					self.file.write(str(resultVal))
 
 		if (self.outputTag and not args[1]):
 			# Do NOT output end tag if a singleton with no content
