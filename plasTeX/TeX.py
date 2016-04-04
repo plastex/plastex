@@ -763,7 +763,6 @@ class TeX(object):
         if toks is None:
             ParameterCommand.enable()
             return default, ''
-        # pu.db
         res = self.cast(toks, type, subtype, delim, parentNode, name)
 
         # Normalize any document fragments
@@ -923,7 +922,6 @@ class TeX(object):
         self.pushTokens(tokens)
 
         # Call the appropriate parsing method for this type
-        # pu.db
         result = method()
 
         # Get rid of the \relax token inserted above

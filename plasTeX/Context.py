@@ -392,7 +392,6 @@ class Context(object):
 
         """
         module = os.path.splitext(file)[0]
-        # pu.db
         # See if it has already been loaded
         if module in list(self.packages.keys()):
             return True

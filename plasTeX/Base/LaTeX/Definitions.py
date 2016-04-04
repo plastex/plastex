@@ -28,10 +28,10 @@ class newcommand(Command):
         deflog.debug('command %s %s %s', *args)
         self.ownerDocument.context.newcommand(*args, **kwargs)
 
-class renewcommand(newcommand): 
+class renewcommand(newcommand):
     pass
 
-class providecommand(newcommand): 
+class providecommand(newcommand):
     pass
 
 class DeclareRobustCommand(newcommand):

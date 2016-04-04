@@ -896,13 +896,15 @@ class Node(object):
         `newChild`
 
         """
-        if isinstance(newChild, str):
+        
+        if type(newChild) == str:
             newChild = self.ownerDocument.createTextNode(newChild)
         if newChild.nodeType == Node.DOCUMENT_FRAGMENT_NODE:
             for item in newChild:
                 self.append(item, setParent=setParent)
         else:
             self.childNodes.append(newChild)
+
         if setParent:
             if self.nodeType == self.DOCUMENT_FRAGMENT_NODE:
                 newChild.parentNode = self.parentNode
