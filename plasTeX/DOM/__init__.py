@@ -896,7 +896,7 @@ class Node(object):
         `newChild`
 
         """
-        
+
         if type(newChild) == str:
             newChild = self.ownerDocument.createTextNode(newChild)
         if newChild.nodeType == Node.DOCUMENT_FRAGMENT_NODE:
@@ -927,7 +927,7 @@ class Node(object):
         `newChild`
 
         """
-        if isinstance(newChild, str):
+        if type(newChild) == str:
             newChild = self.ownerDocument.createTextNode(newChild)
         if newChild.nodeType == Node.DOCUMENT_FRAGMENT_NODE:
             for item in newChild:
@@ -952,7 +952,7 @@ class Node(object):
         node -- the object to put at that index
 
         """
-        if isinstance(node, str):
+        if type(node) == str:
             node = self.ownerDocument.createTextNode(node)
         # If a DocumentFragment is being inserted, but it isn't replacing
         # a slice, we need to put each child in manually.

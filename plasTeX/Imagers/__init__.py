@@ -419,7 +419,7 @@ class Imager(object):
 
     # The command to run on the LaTeX output file to generate images.
     # This should be overridden by the subclass.
-    command = ''
+    command = '' # dvipng -o img%d.png -D 120 -Q 4'
 
     # The compiler command used to compile the LaTeX document
     compiler = 'latex'
@@ -558,7 +558,6 @@ class Imager(object):
                  d = md5(open(value.path,'r').read()).digest()
                  if value.checksum != d:
                      log.warning('The image data for "%s" on the disk has changed.  You may want to clear the image cache.' % value.filename)
-
         # Bail out if there are no images
         if not self.images:
             return
@@ -577,11 +576,11 @@ class Imager(object):
 
         for value in list(self._cache.values()):
             if value.checksum is None and os.path.isfile(value.path):
-                 value.checksum = md5(open(value.path,'r').read()).digest()
+                 value.checksum = md5(open(value.path,'rb').read()).digest()
 
         if not os.path.isdir(os.path.dirname(self._filecache)):
             os.makedirs(os.path.dirname(self._filecache))
-        pickle.dump(self._cache, open(self._filecache,'w'))
+        pickle.dump(self._cache, open(self._filecache,'wb'))
 
     def compileLatex(self, source):
         """
@@ -595,7 +594,6 @@ class Imager(object):
 
         """
         cwd = os.getcwd()
-
         # Make a temporary directory to work in
         tempdir = tempfile.mkdtemp()
         os.chdir(tempdir)
@@ -629,8 +627,7 @@ class Imager(object):
         output = None
         for ext in ['.dvi','.pdf','.ps']:
             if os.path.isfile('images'+ext):
-                with WorkingFile('images'+ext, 'rb', tempdir=tempdir) as f:
-                    output = f.read()
+                output = open('images'+ext, 'rb')
                 break
 
         # Change back to original working directory
@@ -886,29 +883,3 @@ class VectorImager(Imager):
         Imager.writePreamble(self, document)
 #       self.source.write('\\usepackage{type1ec}\n')
         self.source.write('\\def\\plasTeXregister{}\n')
-
-
-class WorkingFile():
-    """
-    File used for processing in a temporary directory
-
-    When the file is closed or the object is deleted, the temporary
-    directory associated with the file is deleted as well.
-
-    """
-
-    def __init__(self, *args, **kwargs):
-        if 'tempdir' in list(kwargs.keys()):
-            self.tempdir = kwargs['tempdir']
-            del kwargs['tempdir']
-            self.args = args
-            self.kwargs = kwargs
-
-    def __enter__(self):
-        self.file_obj = open(*self.args, **self.kwargs)
-        return self.file_obj
-
-    def __exit__(self):
-        if self.tempdir and os.path.isdir(self.tempdir):
-            shutil.rmtree(self.tempdir, True)
-        self.file_obj.close()

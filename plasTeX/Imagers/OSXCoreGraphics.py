@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-import plasTeX.Imagers
+from plasTeX.Imagers import Imager as _Imager
 
-class CoreGraphics(plasTeX.Imagers.Imager):
+class CoreGraphics(_Imager):
     """ Imager that uses OS X's CoreGraphics library """
     command = 'cgpdfpng --magnification=6 --scaledown=4 --output=img%d.png'
     compiler = 'pdflatex'

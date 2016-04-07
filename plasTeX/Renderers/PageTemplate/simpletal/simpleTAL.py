@@ -451,11 +451,17 @@ class TemplateInterpreter:
 					else:
 						# THIS IS NOT A BUG!
 						# Use Unicode in the Context object if you are not using Ascii
+						print('got a result: %r' % type(resultVal))
 						self.file.write (str (resultVal))
 			else:
 				if (isinstance (resultVal, str)):
 					self.file.write(html.escape(resultVal, quote=False))
 				else:
+
+					# try:
+					# 	print('got a result: %r (%s)' % (type(resultVal), resultVal))
+					# except TypeError as e:
+					# 	print(str(e))
 					self.file.write(str(resultVal))
 
 		if (self.outputTag and not args[1]):
@@ -1118,7 +1124,7 @@ class TemplateCompiler:
 			if (attProps[0] == "structure"):
 				structureFlag = 1
 				express = " ".join (attProps[1:])
-			elif (attProps[1] == "text"):
+			elif (attProps[0] == "text"):
 				structureFlag = 0
 				express = " ".join (attProps[1:])
 			else:

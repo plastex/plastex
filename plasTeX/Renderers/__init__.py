@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os, shutil, string
+import os, shutil, string, importlib
 from plasTeX.Filenames import Filenames
 from plasTeX.DOM import Node
 from plasTeX.Logging import getLogger
@@ -170,7 +170,7 @@ class Renderable(object):
             # current object (i.e. `child`) as its argument.
             func = r.find(names, r.default)
             val = func(child)
-
+            
             # If a plain string is returned, we have no idea what
             # the encoding is, but we'll make a guess.
             if type(val) is not str:
@@ -278,7 +278,8 @@ class Renderable(object):
         r = Node.renderer
 
         try: return r.files[self]
-        except KeyError: pass
+        except (KeyError, TypeError): pass
+
 
         filename = None
 
@@ -414,25 +415,31 @@ class Renderer(dict):
 
         # Instantiate appropriate imager
         names = [x for x in config['images']['imager'].split() if x]
-        names = ['none']
-        # for name in names:
-        #     if name == 'none':
-        #         break
-        #
-        #     try:
-        #         exec('from plasTeX.Imagers.%s import Imager' % name)
-        #     except ImportError as msg:
-        #         log.warning("Could not load imager '%s' because '%s'" % (name, msg))
-        #         continue
-        #
-        #     self.imager = Imager(document, self.imageTypes)
-        #
-        #     # Make sure that this imager works on this machine
-        #     if self.imager.verify():
-        #         log.info('Using the imager "%s".' % name)
-        #         break
+        for name in names:
+            if name == 'none':
+                break
+            elif name == 'dvipng':
+                from plasTeX.Imagers.dvipng import Imager
+            elif name == 'dvi2bitmap':
+                from plasTeX.Imagers.dvi2bitmap  import Imager
+            elif name == 'pdftoppm':
+                from plasTeX.Imagers.pdftoppm  import Imager
+            elif name == 'gspdfpng':
+                from plasTeX.Imagers.gspdfpng  import Imager
+            elif name == 'gsdvipng':
+                from plasTeX.Imagers.gsdvipng  import Imager
+            elif name == 'OSXCoreGraphics':
+                from plasTeX.Imagers.OSXCoreGraphics  import Imager
+            else:
+                log.warning("Could not load imager '%s' because '%s'" % (name, msg))
+                continue
 
-        self.imager = None
+            self.imager = Imager(document, self.imageTypes)
+
+            # Make sure that this imager works on this machine
+            if self.imager.verify():
+                log.info('Using the imager "%s".' % name)
+                break
 
         # Still no imager? Just use the default.
         if self.imager is None:
@@ -485,12 +492,8 @@ class Renderer(dict):
 
         # Invoke the rendering process
         if type(self).renderMethod:
-            print('METHOD')
-            print(type(self).renderMethod)
             getattr(document, type(self).renderMethod)()
         else:
-            print('METHOD: WHAT??')
-            print(type(self))
             str(document)
 
         # Finish rendering images

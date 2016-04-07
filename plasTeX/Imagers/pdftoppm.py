@@ -4,9 +4,9 @@ import os
 import re
 import subprocess
 
-import plasTeX.Imagers
+from plasTeX.Imagers import Imager as _Imager
 
-class pdftoppm(plasTeX.Imagers.Imager):
+class pdftoppm(_Imager):
     """ Imager that uses libpoppler's pdftoppm to convert pdf to png """
     command = 'pdftoppm -png -r 150'
     compiler = 'pdflatex'

@@ -1341,15 +1341,6 @@ class TeX(object):
             TEXINPUTS = os.environ.get("TEXINPUTS",'')
             os.environ["TEXINPUTS"] = "%s%s%s%s" % (srcDir, os.path.pathsep, TEXINPUTS, os.path.pathsep)
 
-        fullname = ''
-        paths = os.environ["TEXINPUTS"].split(os.path.pathsep)
-        for path in [x for x in paths if x]:
-            if name in os.listdir(path):
-                fullname = os.path.join(path,name)
-                break
-        if fullname:
-            return fullname
-
         try:
             program = self.ownerDocument.config['general']['kpsewhich']
 
@@ -1363,7 +1354,14 @@ class TeX(object):
                 return output
 
         except:
-            pass
+            fullname = ''
+            paths = os.environ["TEXINPUTS"].split(os.path.pathsep)
+            for path in [x for x in paths if x]:
+                if name in os.listdir(path):
+                    fullname = os.path.join(path,name)
+                    break
+            if fullname:
+                return fullname
 
         # Undo any mods to $TEXINPUTS.
         if TEXINPUTS:

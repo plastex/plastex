@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-import plasTeX.Imagers
+from plasTeX.Imagers import Imager as _Imager
 
-class DVI2Bitmap(plasTeX.Imagers.Imager):
+class DVI2Bitmap(_Imager):
     """ Imager that uses dvi2bitmap """
 
     command = 'dvi2bitmap --magnification=6 --scaledown=6 ' + \
@@ -17,7 +17,7 @@ class DVI2Bitmap(plasTeX.Imagers.Imager):
     def formatConfigOptions(self, config):
         options = []
         if config['resolution']:
-            options.append(('--resolution=%s' % config['resolution'], '')) 
+            options.append(('--resolution=%s' % config['resolution'], ''))
         return options
 
 Imager = DVI2Bitmap
