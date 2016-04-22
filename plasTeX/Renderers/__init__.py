@@ -170,7 +170,7 @@ class Renderable(object):
             # current object (i.e. `child`) as its argument.
             func = r.find(names, r.default)
             val = func(child)
-            
+
             # If a plain string is returned, we have no idea what
             # the encoding is, but we'll make a guess.
             if type(val) is not str:
@@ -552,11 +552,10 @@ class Renderer(dict):
                 continue
 
             s = self.processFileContent(document, s)
-
             if isinstance(postProcess, collections.Callable):
                 s = postProcess(document, s)
 
-            with open(f, 'w', encoding=encoding) as fd:
+            with open(f, 'wt', encoding=encoding) as fd:
                 fd.write(''.join(s))
 
     def find(self, keys, default=None):

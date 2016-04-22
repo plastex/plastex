@@ -64,5 +64,5 @@ setup(name="plasTeX",
          'plasTeX.Renderers.S5.Themes.default': templates,
          'plasTeX.Renderers.S5.Themes.default.ui.default': templates+styles+images,
       },
-      scripts=['plasTeX/plastex','plasTeX/Imagers/cgpdfpng'],
+      scripts=['plasTeX/plastex'],
 )

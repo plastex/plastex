@@ -469,7 +469,7 @@ class expandafter(Command):
     def invoke(self, tex):
         nexttok = None
         for tok in tex.itertokens():
-            nexttok = tok
+            nextok = tok
             break
         for tok in tex:
             aftertok = tok

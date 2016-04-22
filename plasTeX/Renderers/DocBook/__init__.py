@@ -17,7 +17,7 @@ def drop_tag(elem):
     """
     parent = elem.getparent()
     previous = elem.getprevious()
-    if elem.text and isinstance(elem.tag, str):
+    if elem.text and type(elem.tag) == str:
         if previous is None:
             parent.text = (parent.text or '') + elem.text
         else:
@@ -35,9 +35,9 @@ def drop_tag(elem):
 
 def clean_para(tree, name):
     for elem in tree.findall('.//d:%s' % name, namespaces=xns):
-        e = elem.findall('d:para', namespaces=xns)
-        if e:
-            drop_tag(e[0])
+        for e in elem.findall('d:para', namespaces=xns):
+            if e is not None:
+                drop_tag(e)
 
     return tree
 
@@ -103,7 +103,7 @@ class DocBook(_Renderer):
             tree = etree.fromstring(s)
             for name in ['itemizedlist', 'table', 'term', 'para']:
                 tree = clean_para(tree, name)
-            s = etree.tostring(tree)
+            s = etree.tostring(tree, encoding='unicode')
         else:
             s = re.sub(r'</partintro>\s*<partintro>','', s, flags=re.I)
             s = re.sub(r'<para>\s*(<articleinfo>)', r'\1', s, flags=re.I)
