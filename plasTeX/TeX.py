@@ -1349,11 +1349,18 @@ class TeX(object):
                 return output
 
         except:
-            pass
+            for item in os.environ.get('TEXINPUTS').split(os.path.pathsep):
+                if os.path.isfile(os.path.join(item, name)):
+                    return os.path.join(item, name)
+                if os.path.isfile(os.path.join(item, name) + '.tex'):
+                    return os.path.join(item, name) + '.tex'
+                if os.path.isfile(os.path.join(item, name) + '.sty'):
+                    return os.path.join(item, name) + '.sty'
 
-        # Undo any mods to $TEXINPUTS.
-        if TEXINPUTS:
-            os.environ["TEXINPUTS"] = TEXINPUTS
+        finally:
+            # Undo any mods to $TEXINPUTS.
+            if TEXINPUTS:
+                os.environ["TEXINPUTS"] = TEXINPUTS
 
         raise OSError, 'Could not find any file named: %s' % name
 
