@@ -1,0 +1,17 @@
+name: math
+<span class="math">{{ obj }}</span>
+
+name: ensuremath eqnarray eqnarray* align align* gather gather* flalign flalign* \
+      multline multline* alignat alignat* split DeclareMathOperator
+<span>{{ obj }}</span>
+
+name: displaymath equation* 
+<div class="displaymath" id="{{ obj.id }}">
+  {{ obj }}
+</div>
+
+name: equation
+<div class="equation" id="{{ obj.id }}">
+  <span class="equation_label">{{ obj.ref }}</span>
+  {{ obj }}
+</div>
