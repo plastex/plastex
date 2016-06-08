@@ -488,7 +488,7 @@ class PageTemplate(BaseRenderer):
         num_templates = 0
         template = []
         options = options.copy()
-        defaults = {}
+        defaults = options.copy()
         name = None
         if not options or 'name' not in options:
             f = open(filename, 'r')
