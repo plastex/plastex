@@ -1,6 +1,8 @@
 #!/usr/bin/env python
-
-from distutils.core import setup
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
 
 templates = ['*.html','*.htm','*.xml','*.zpt','*.zpts']
 images = ['*.gif','*.png','*.jpg','*.jpeg','*.js','*.htc']
