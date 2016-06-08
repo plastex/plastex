@@ -17,6 +17,28 @@ from plasTeX.Renderers.PageTemplate.simpletal.simpleTALUtils import FastStringOu
 
 log = plasTeX.Logging.getLogger()
 
+# Support for Jinja2 templates
+try: 
+
+    from jinja2 import Template as Jinja2Template
+    def jinja2template(s, encoding='utf8'):
+        def renderjinja2(obj, s=s):
+            tvars = {'here':obj, 
+                     'obj':obj,
+                     'container':obj.parentNode,
+                     'config':obj.ownerDocument.config,
+                     'context':obj.ownerDocument.context,
+                     'templates':obj.renderer}
+            return Jinja2Template(s).render(tvars) 
+        return renderjinja2
+
+except ImportError:
+
+    def jinja2template(s, encoding='utf8'):
+        def renderjinja2(obj):
+            return unicode(s, encoding)
+        return renderjinja2
+
 # Support for Python string templates
 def stringtemplate(s, encoding='utf8'):
     template = string.Template(unicode(s, encoding))
@@ -254,6 +276,7 @@ class PageTemplate(BaseRenderer):
         self.registerEngine('genshi', None, '.gen', genshihtmltemplate)
         self.registerEngine('genshi', 'xml', '.genx', genshixmltemplate)
         self.registerEngine('genshi', 'text', '.gent', genshitexttemplate)
+        self.registerEngine('jinja2', None, '.jinja2', jinja2template)
 
     def registerEngine(self, name, type, ext, function):
         """
