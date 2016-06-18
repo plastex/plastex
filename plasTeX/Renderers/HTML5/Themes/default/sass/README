@@ -1,0 +1,7 @@
+edit le postactivate de l'env python pour que les gems s'installent
+dedans
+
+sudo apt-get install ruby ruby-dev rubygems-integration
+gem install bootstrap-sass
+gem install compass
+compass create sass -r bootstrap-sass --using bootstrap

@@ -54,3 +54,9 @@ docs/_build/
 target/
 *.project
 *.pydevproject
+
+# Vim temp files
+.*.sw*
+
+# Sass
+.sass-cache
