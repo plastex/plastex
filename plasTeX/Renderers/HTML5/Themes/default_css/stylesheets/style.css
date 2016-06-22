@@ -1,0 +1,588 @@
+/* line 1, ../sass/_reset.scss */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: middle;
+}
+
+/* HTML5 display-role reset for older browsers */
+/* line 22, ../sass/_reset.scss */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+/* line 26, ../sass/_reset.scss */
+body {
+  line-height: 1;
+  overflow-x: hidden;
+  background: #f4f4f4;
+}
+
+/* line 31, ../sass/_reset.scss */
+ol, ul {
+  list-style: none;
+}
+
+/* line 34, ../sass/_reset.scss */
+blockquote, q {
+  quotes: none;
+}
+
+/* line 37, ../sass/_reset.scss */
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+
+/* line 42, ../sass/_reset.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* line 47, ../sass/_reset.scss */
+.clear:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0;
+}
+
+/* line 55, ../sass/_reset.scss */
+.clear {
+  display: inline-block;
+}
+
+/* start commented backslash hack \*/
+/* line 57, ../sass/_reset.scss */
+* html .clear {
+  height: 1%;
+}
+
+/* line 58, ../sass/_reset.scss */
+.clear {
+  display: block;
+}
+
+/* close commented backslash hack */
+/****************************************
+BASIC ELEMENTS
+*****************************************/
+/* line 64, ../sass/_reset.scss */
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* line 71, ../sass/_reset.scss */
+hr {
+  clear: both;
+  border: none;
+  outline: none;
+}
+
+/* line 77, ../sass/_reset.scss */
+em {
+  font-style: italic;
+}
+
+/* line 81, ../sass/_reset.scss */
+a {
+  text-decoration: underline;
+}
+
+/* line 84, ../sass/_reset.scss */
+ul {
+  list-style: disc;
+}
+
+/* line 87, ../sass/_reset.scss */
+ol {
+  list-style: decimal;
+}
+
+/* line 90, ../sass/_reset.scss */
+ul, ol {
+  font-size: 14px;
+  padding: 0 0 0 33px;
+}
+/* line 94, ../sass/_reset.scss */
+ul li, ol li {
+  margin: 0;
+}
+
+/* line 106, ../sass/_reset.scss */
+blockquote {
+  padding: 0 15px 0 40px;
+}
+
+/* line 111, ../sass/_reset.scss */
+table {
+  margin: 20px 0;
+  width: 100%;
+  font-size: 13px;
+  background: white;
+}
+/* line 118, ../sass/_reset.scss */
+table th {
+  font-weight: bold;
+  font-size: 16px;
+}
+/* line 125, ../sass/_reset.scss */
+table tr td {
+  padding: 7px;
+}
+
+/* line 132, ../sass/_reset.scss */
+::selection {
+  background: #000;
+  color: white;
+}
+
+/* line 136, ../sass/_reset.scss */
+::-moz-selection {
+  background: #000;
+  color: white;
+}
+
+/* line 2, ../sass/_typography.scss */
+h1 {
+  color: black;
+  font-size: 3em;
+  margin: 0;
+}
+
+/* line 8, ../sass/_typography.scss */
+h2 {
+  font-size: 2em;
+  color: black;
+  margin: 0;
+}
+
+/* line 14, ../sass/_typography.scss */
+h3 {
+  font-size: 16px;
+  margin: 0.67em 0;
+}
+
+/* line 19, ../sass/_typography.scss */
+h4 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+/* line 24, ../sass/_typography.scss */
+p {
+  font-family: sans-serif;
+  font-size: 1em;
+  line-height: 22px;
+  margin: 0.8em 0;
+}
+
+/**
+ * Address styling not present in IE 8/9, Safari 5, and Chrome.
+ */
+/* line 36, ../sass/_typography.scss */
+abbr[title] {
+  border-bottom: 1px dotted;
+}
+
+/**
+ * Address style set to `bolder` in Firefox 4+, Safari 5, and Chrome.
+ */
+/* line 44, ../sass/_typography.scss */
+b,
+strong {
+  font-weight: bold;
+}
+
+/**
+ * Address styling not present in Safari 5 and Chrome.
+ */
+/* line 53, ../sass/_typography.scss */
+dfn {
+  font-style: italic;
+}
+
+/**
+ * Address differences between Firefox and other browsers.
+ */
+/* line 61, ../sass/_typography.scss */
+hr {
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  height: 0;
+}
+
+/**
+ * Address styling not present in IE 8/9.
+ */
+/* line 71, ../sass/_typography.scss */
+mark {
+  background: #ff0;
+  color: #000;
+}
+
+/**
+ * Correct font family set oddly in Safari 5 and Chrome.
+ */
+/* line 80, ../sass/_typography.scss */
+code,
+kbd,
+pre,
+samp {
+  font-family: monospace, serif;
+  font-size: 1em;
+}
+
+/**
+ * Improve readability of pre-formatted text in all browsers.
+ */
+/* line 92, ../sass/_typography.scss */
+pre {
+  white-space: pre-wrap;
+}
+
+/**
+ * Set consistent quote types.
+ */
+/* line 100, ../sass/_typography.scss */
+q {
+  quotes: "\201C" "\201D" "\2018" "\2019";
+}
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+/* line 108, ../sass/_typography.scss */
+small {
+  font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+/* line 116, ../sass/_typography.scss */
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+/* line 124, ../sass/_typography.scss */
+sup {
+  top: -0.5em;
+}
+
+/* line 128, ../sass/_typography.scss */
+sub {
+  bottom: -0.25em;
+}
+
+/*********************
+VARIABLES
+**********************/
+/*Controls Menu top & bottom padding*/
+/*Contols Menu left & right padding*/
+/*Control Menu Color Scheme*/
+/*********************
+NAVIGATION STYLES
+**********************/
+/* line 16, ../sass/_nav.scss */
+nav.toc {
+  background: linear-gradient(to bottom, #353535 0%, #232323 100%);
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.35);
+}
+@media (min-width: 715px) {
+  /* line 16, ../sass/_nav.scss */
+  nav.toc {
+    width: 6.77966%;
+    float: left;
+    margin-right: -100%;
+    margin-left: 0;
+    clear: none;
+    margin: 65px 0 0 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.5s ease;
+    background: #191919;
+  }
+}
+
+/* line 30, ../sass/_nav.scss */
+nav.toc ul {
+  margin: 0 auto;
+  list-style: none;
+}
+@media (min-width: 715px) {
+  /* line 30, ../sass/_nav.scss */
+  nav.toc ul {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.7);
+    z-index: 15;
+  }
+}
+/* line 42, ../sass/_nav.scss */
+nav.toc ul li {
+  float: left;
+  position: relative;
+  z-index: 1;
+  /******************
+  SUBNAV
+  ******************/
+}
+@media (min-width: 715px) {
+  /* line 42, ../sass/_nav.scss */
+  nav.toc ul li {
+    float: none;
+    position: relative;
+    margin: 0;
+  }
+}
+/* line 53, ../sass/_nav.scss */
+nav.toc ul li a {
+  display: block;
+  padding: 20px 25px;
+  text-align: center;
+  color: white;
+  text-decoration: none;
+  border-right: 1px solid #1c1c1c;
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.8);
+  transition: all 0.1s ease;
+}
+/* line 63, ../sass/_nav.scss */
+nav.toc ul li a:hover {
+  background: #1c1c1c;
+  color: #00aedb;
+  transition: all 0.2s ease;
+}
+@media (min-width: 715px) {
+  /* line 53, ../sass/_nav.scss */
+  nav.toc ul li a {
+    display: table;
+    margin: 0;
+    padding: 15px 2px;
+    color: white;
+    border-top: 1px solid rgba(0, 0, 0, 0.15);
+    box-shadow: inset 0px 1px 3px rgba(255, 255, 255, 0.03);
+    text-shadow: none;
+    width: 100%;
+  }
+}
+/* line 81, ../sass/_nav.scss */
+nav.toc ul li:hover ul {
+  opacity: 1;
+  max-height: 1000px;
+  transition: all 0.3s ease;
+}
+@media (min-width: 715px) {
+  /* line 81, ../sass/_nav.scss */
+  nav.toc ul li:hover ul {
+    max-height: 0;
+  }
+}
+/* line 95, ../sass/_nav.scss */
+nav.toc ul li ul {
+  background: #1c1c1c;
+  list-style: none;
+  padding: 0;
+  position: absolute;
+  width: 200px;
+  max-height: 0;
+  z-index: 0;
+  opacity: 0;
+  overflow: hidden;
+  font-size: .9em;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+@media (min-width: 715px) {
+  /* line 95, ../sass/_nav.scss */
+  nav.toc ul li ul {
+    max-height: 0;
+    opacity: 1;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0px 2px 2px rgba(0, 0, 0, 0.5);
+    transition: all 2s ease;
+  }
+}
+/* line 119, ../sass/_nav.scss */
+nav.toc ul li ul li {
+  float: none;
+  margin: 0;
+}
+@media (min-width: 715px) {
+  /* line 119, ../sass/_nav.scss */
+  nav.toc ul li ul li {
+    margin: 0;
+  }
+}
+/* line 127, ../sass/_nav.scss */
+nav.toc ul li ul li a {
+  display: block;
+  text-align: left;
+  padding: 13.33333px 16.66667px;
+  margin: 0;
+  border-right: none;
+  border-top: 1px solid #161616;
+  box-shadow: inset 0px 1px 3px rgba(255, 255, 255, 0.03);
+  text-transform: none;
+  text-shadow: none;
+  transition: all 0.2s ease;
+}
+/* line 139, ../sass/_nav.scss */
+nav.toc ul li ul li a:hover {
+  color: #00aedb;
+  background: #424242;
+  transition: all 0.5s ease;
+}
+@media (min-width: 715px) {
+  /* line 127, ../sass/_nav.scss */
+  nav.toc ul li ul li a {
+    color: white;
+    padding-left: 20px;
+    background: none;
+  }
+}
+
+/***************************
+MOBILE NAV STYLES
+***************************/
+/* line 160, ../sass/_nav.scss */
+.toc {
+  display: none;
+  margin: 0;
+  padding: 20px 15px;
+  background: linear-gradient(to bottom, #353535 0%, #262626 100%);
+  position: absolute;
+  color: white;
+  text-decoration: none;
+  top: 15px;
+  right: 15px;
+  line-height: 0;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.35);
+}
+@media (min-width: 715px) {
+  /* line 160, ../sass/_nav.scss */
+  .toc {
+    display: table;
+  }
+}
+
+/* line 178, ../sass/_nav.scss */
+.active {
+  max-height: 9000px !important;
+  transition: all 1s ease;
+}
+
+@media (min-width: 715px) {
+  /* line 184, ../sass/_nav.scss */
+  .arrow {
+    display: block;
+    background: url(../images/arrow.png) no-repeat;
+    float: right;
+    height: 30px;
+    width: 30px;
+    position: absolute;
+    right: 25px;
+    top: 10px;
+    transition: all 0.3s ease;
+  }
+  /* line 195, ../sass/_nav.scss */
+  .arrow:hover {
+    cursor: pointer;
+  }
+
+  /* line 200, ../sass/_nav.scss */
+  .rotate {
+    transition: all 0.3s ease;
+    -webkit-transform: rotate(-180deg);
+    -moz-transform: rotate(-180deg);
+    -o-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+  }
+}
+/****************************************
+STRUCTURES
+*****************************************/
+/* line 9, ../sass/style.scss */
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* line 19, ../sass/style.scss */
+body {
+  overflow-x: hidden;
+}
+
+/* line 23, ../sass/style.scss */
+nav.prev_up_next {
+  width: 233.33333%;
+  float: left;
+  margin-right: -100%;
+  margin-left: 0;
+  clear: none;
+}
+
+/* line 26, ../sass/style.scss */
+ul.breadcrumbs {
+  width: 233.33333%;
+  float: left;
+  margin-right: -100%;
+  margin-left: 0;
+  clear: none;
+  list-style: none;
+}
+
+/* line 31, ../sass/style.scss */
+ul.breadcrumbs li {
+  display: block;
+  float: left;
+}
+
+/* line 36, ../sass/style.scss */
+div.content section#footnotes {
+  width: 233.33333%;
+  float: left;
+  margin-right: -100%;
+  margin-left: 0;
+  clear: none;
+}
+@media (min-width: 715px) {
+  /* line 36, ../sass/style.scss */
+  div.content section#footnotes {
+    width: 78.94737%;
+    float: right;
+    margin-left: 0;
+    margin-right: 0;
+    clear: none;
+  }
+}

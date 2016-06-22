@@ -1,0 +1,42 @@
+@import "singularitygs";
+@import "reset.scss";
+@import "typography.scss";
+@import "nav.scss";
+ 
+/****************************************
+STRUCTURES
+*****************************************/
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;    
+  box-sizing: border-box;         
+}
+
+@include add-grid(1);
+@include add-grid(1 5 at $toc-break);
+@include add-gutter(1/3);
+
+body {
+  overflow-x:hidden;
+}
+
+nav.prev_up_next {
+  @include grid-span(2, 1);
+}
+ul.breadcrumbs {
+  @include grid-span(2, 1);
+  list-style:none;
+}
+
+ul.breadcrumbs li {
+  display: block;
+  float: left;
+}
+
+div.content section#footnotes {
+  @include grid-span(2,1);
+  @include breakpoint($toc-break) {
+    @include grid-span(1, 2);
+  }
+}
+

@@ -38,7 +38,7 @@ MathJax.Hub.Config({
 {% if links.up %}
 <link rel="up" href="{{ links.up.url }}" title="{{ links.up.title.textContent }}" />
 {% endif %}
-<link rel="stylesheet" href="styles/styles.css" />
+<link rel="stylesheet" href="styles/style.css" />
 </head>
 <body>
 
@@ -128,7 +128,6 @@ MathJax.Hub.Config({
 </section>
 {% endif %}
 
-{{ self.navbar() }}
-
+<script src="js/nav.min.js"> </script>
 </body>
 </html>
