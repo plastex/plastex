@@ -1,4 +1,9 @@
 {%- set links = obj.links -%}
+{%- set toc = obj.ownerDocument[-2].tableofcontents -%}
+{% macro tocEntry(section) -%}
+<span class="toc_ref">{{ section.ref.textContent }}</span>
+<span class="toc_entry">{{ section.tocEntry.textContent }}</span>
+{%- endmacro %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,72 +38,52 @@ MathJax.Hub.Config({
 {% if links.up %}
 <link rel="up" href="{{ links.up.url }}" title="{{ links.up.title.textContent }}" />
 {% endif %}
-<link rel="stylesheet" href="styles/styles.css" />
+<link rel="stylesheet" href="styles/style.css" />
 </head>
 <body>
 
 {% block navbar %}
-<nav>
+<nav class="prev_up_next">
+<ul>
   {% if links.prev %}
-  <a href="{{ links.prev.url }}" title="{{ links.prev.title }}">
-    <img src="icons/previous.gif" width="32" height="32" />
-  </a>
+  <li><a href="{{ links.prev.url }}" title="{{ links.prev.title }}">Prev</a></li>
   {% endif %}
   {% if links.up %}
-  <a href="{{ links.up.url }}" title="{{ links.up.title }}">
-    <img src="icons/up.gif" width="32" height="32" />
-  </a>
+  <li><a href="{{ links.up.url }}" title="{{ links.up.title }}">Up</a></li>
   {% endif %}
   {% if links.next %}
-  <a href="{{ links.next.url }}" title="{{ links.next.title }}">
-    <img src="icons/next.gif" width="32" height="32" />
-  </a>
+  <li><a href="{{ links.next.url }}" title="{{ links.next.title }}">Next</a></li>
   {% endif %}
-  <span class="navtitle"> {{ links.document.title }}</span>
-  {% if links.contents %}
-    <a href="{{ links.contents.url }}" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a>
-  {% endif %}
+  <li><span class="navtitle"> {{ links.document.title }}</span></li>
   {% if links.index %}
-    <a href="{{ links.index.url }}" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a>
+    <li><a href="{{ links.index.url }}" class="index">Index</a></li>
   {% endif %}
+</ul>
 </nav>
 {% endblock %}
 
-{% if obj.level >= -10 %}
-<div class="breadcrumbs">
-{% for crumb in links.breadcrumbs %}
-{% if loop.last %}
-<span class="last_crumb">{{ crumb.title }}</span>
-{% else %}
-<a href="{{ crumb.url }}" class="crumb">{{ crumb.title }}</a> 
-{% endif %}
-{% endfor %}
-</div>
-{% endif %}
 
-<div class="content">{{ obj }}</div>
-
-{% if obj.tableofcontents %}
-<div class="{{ obj.nodeName }}-contents">
-<ul class="toc">
-{% for section in obj.tableofcontents %}
-<li><a href="{{ section.url }}">{{ section.fullTocEntry }}</a>
+{% if toc %}
+<nav class="toc">
+<ul>
+{% for section in toc %}
+<li><a href="{{ section.url }}">{{ tocEntry(section) }}</a>
   {% if section.tableofcontents %}
    <ul class="section_toc">
    {% for subsection in section.tableofcontents %}
-     <li><a href="{{ subsection.url }}">{{ subsection.fullTocEntry}}</a>
+     <li><a href="{{ subsection.url }}">{{ tocEntry(subsection)}}</a>
        {% if subsection.tableofcontents %}
        <ul class="subsection_toc">
        {% for subsubsection in subsection.tableofcontents %}
-         <li><a href="{{ subsubsection.url }}">{{ subsubsection.fullTocEntry }}</a>
+         <li><a href="{{ subsubsection.url }}">{{ tocEntry(subsubsection) }}</a>
            {% if subsubsection.tableofcontents %}
            <ul class="subsubsection_toc">
            {% for paragraph in subsubsection.tableofcontents %}
-             <li><a href="{{ paragraph.url }}">{{ paragraph.fullTocEntry }}</a>
+             <li><a href="{{ paragraph.url }}">{{ tocEntry(paragraph) }}</a>
                {% if paragraph.tableofcontents %}
                <ul class="paragraph_toc">
                {% for subparagraph in paragraph.tableofcontents %}
-                 <li><a href="{{ subparagraph.url }}">{{ subparagraph.fullTocEntry }}</a></li>
+                 <li><a href="{{ subparagraph.url }}">{{ tocEntry(subparagraph) }}</a></li>
                {% endfor %}
                </ul>
                {% endif %}
@@ -117,22 +102,32 @@ MathJax.Hub.Config({
  </li>
  {% endfor %}
 </ul>
-</div>
+</nav>
 {% endif %}
 
+{% if obj.level >= -10 %}
+<ul class="breadcrumbs">
+{% for crumb in links.breadcrumbs %}
+{% if loop.last %}
+<li class="last_crumb">{{ crumb.title }}</li>
+{% else %}
+<li class="crumb"><a href="{{ crumb.url }}" class="crumb">{{ crumb.title }}</a></li>
+{% endif %}
+{% endfor %}
+</ul>
+{% endif %}
+
+<div class="content">{{ obj }}</div>
+
 {% if obj.footnotes %}
-<div id="footnotes">
-<p><span class="footnotes">Footnotes</span></p>
-<ol class="footnotes">
+<section id="footnotes">
+<h1>Footnotes</h1>
+<ol>
 {% for footnote in obj.footnotes %}
   <li id="{{ footnote.id }}">{{ footnote }}</li>
 {% endfor %}
 </ol>
-</div>
+</section>
 {% endif %}
-
-{{ self.navbar() }}
-<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
-
 </body>
 </html>

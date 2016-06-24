@@ -1,0 +1,492 @@
+/* line 1, ../sass/_reset.scss */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: middle;
+}
+
+/* HTML5 display-role reset for older browsers */
+/* line 22, ../sass/_reset.scss */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+/* line 26, ../sass/_reset.scss */
+body {
+  line-height: 1;
+  overflow-x: hidden;
+  background: #f4f4f4;
+}
+
+/* line 31, ../sass/_reset.scss */
+ol, ul {
+  list-style: none;
+}
+
+/* line 34, ../sass/_reset.scss */
+blockquote, q {
+  quotes: none;
+}
+
+/* line 37, ../sass/_reset.scss */
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+
+/* line 42, ../sass/_reset.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* line 47, ../sass/_reset.scss */
+.clear:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0;
+}
+
+/* line 55, ../sass/_reset.scss */
+.clear {
+  display: inline-block;
+}
+
+/* start commented backslash hack \*/
+/* line 57, ../sass/_reset.scss */
+* html .clear {
+  height: 1%;
+}
+
+/* line 58, ../sass/_reset.scss */
+.clear {
+  display: block;
+}
+
+/* close commented backslash hack */
+/****************************************
+BASIC ELEMENTS
+*****************************************/
+/* line 64, ../sass/_reset.scss */
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* line 71, ../sass/_reset.scss */
+hr {
+  clear: both;
+  border: none;
+  outline: none;
+}
+
+/* line 77, ../sass/_reset.scss */
+em {
+  font-style: italic;
+}
+
+/* line 81, ../sass/_reset.scss */
+a {
+  text-decoration: underline;
+}
+
+/* line 84, ../sass/_reset.scss */
+ul {
+  list-style: disc;
+}
+
+/* line 87, ../sass/_reset.scss */
+ol {
+  list-style: decimal;
+}
+
+/* line 90, ../sass/_reset.scss */
+ul, ol {
+  font-size: 14px;
+  padding: 0 0 0 33px;
+}
+/* line 94, ../sass/_reset.scss */
+ul li, ol li {
+  margin: 0;
+}
+
+/* line 106, ../sass/_reset.scss */
+blockquote {
+  padding: 0 15px 0 40px;
+}
+
+/* line 111, ../sass/_reset.scss */
+table {
+  margin: 20px 0;
+  width: 100%;
+  font-size: 13px;
+  background: white;
+}
+/* line 118, ../sass/_reset.scss */
+table th {
+  font-weight: bold;
+  font-size: 16px;
+}
+/* line 125, ../sass/_reset.scss */
+table tr td {
+  padding: 7px;
+}
+
+/* line 132, ../sass/_reset.scss */
+::selection {
+  background: #000;
+  color: white;
+}
+
+/* line 136, ../sass/_reset.scss */
+::-moz-selection {
+  background: #000;
+  color: white;
+}
+
+/* line 3, ../sass/_typography.scss */
+h1 {
+  color: #0f2f48;
+  font-size: 3em;
+  margin: 0;
+}
+
+/* line 9, ../sass/_typography.scss */
+h2 {
+  font-size: 2em;
+  color: #0f2f48;
+  margin: 0;
+}
+
+/* line 15, ../sass/_typography.scss */
+h3 {
+  font-size: 1em;
+  color: #0f2f48;
+  margin: 0.67em 0;
+}
+
+/* line 21, ../sass/_typography.scss */
+h4 {
+  font-size: 1em;
+  color: #0f2f48;
+  margin: 0.67em 0;
+}
+
+/* line 27, ../sass/_typography.scss */
+p {
+  font-size: 1em;
+  margin: 0.8em 0;
+}
+
+/**
+ * Address styling not present in IE 8/9, Safari 5, and Chrome.
+ */
+/* line 37, ../sass/_typography.scss */
+abbr[title] {
+  border-bottom: 1px dotted;
+}
+
+/**
+ * Address style set to `bolder` in Firefox 4+, Safari 5, and Chrome.
+ */
+/* line 45, ../sass/_typography.scss */
+b,
+strong {
+  font-weight: bold;
+}
+
+/**
+ * Address styling not present in Safari 5 and Chrome.
+ */
+/* line 54, ../sass/_typography.scss */
+dfn {
+  font-style: italic;
+}
+
+/**
+ * Address differences between Firefox and other browsers.
+ */
+/* line 62, ../sass/_typography.scss */
+hr {
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  height: 0;
+}
+
+/**
+ * Address styling not present in IE 8/9.
+ */
+/* line 72, ../sass/_typography.scss */
+mark {
+  background: #ff0;
+  color: #000;
+}
+
+/**
+ * Correct font family set oddly in Safari 5 and Chrome.
+ */
+/* line 81, ../sass/_typography.scss */
+code,
+kbd,
+pre,
+samp {
+  font-family: monospace, serif;
+  font-size: 1em;
+}
+
+/**
+ * Improve readability of pre-formatted text in all browsers.
+ */
+/* line 93, ../sass/_typography.scss */
+pre {
+  white-space: pre-wrap;
+}
+
+/**
+ * Set consistent quote types.
+ */
+/* line 101, ../sass/_typography.scss */
+q {
+  quotes: "\201C" "\201D" "\2018" "\2019";
+}
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+/* line 109, ../sass/_typography.scss */
+small {
+  font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+/* line 117, ../sass/_typography.scss */
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+/* line 125, ../sass/_typography.scss */
+sup {
+  top: -0.5em;
+}
+
+/* line 129, ../sass/_typography.scss */
+sub {
+  bottom: -0.25em;
+}
+
+/* line 13, ../sass/style.scss */
+body {
+  background-color: #e8e8e8;
+  color: #0a0a14;
+  margin: 0;
+}
+
+/* line 21, ../sass/style.scss */
+nav.prev_up_next {
+  width: 233.33333%;
+  float: left;
+  margin-right: -100%;
+  margin-left: 0;
+  clear: none;
+  background: linear-gradient(to bottom, #6696bb 0%, #396282 100%);
+  height: 2em;
+}
+/* line 27, ../sass/style.scss */
+nav.prev_up_next ul {
+  list-style: none;
+}
+/* line 30, ../sass/style.scss */
+nav.prev_up_next li {
+  display: inline;
+}
+/* line 33, ../sass/style.scss */
+nav.prev_up_next a {
+  padding: .5em;
+  text-shadow: 1px 2px 0px rgba(0, 0, 0, 0.8);
+  color: white;
+  text-decoration: none;
+}
+
+/* line 41, ../sass/style.scss */
+span.navtitle {
+  padding: .5em;
+  text-shadow: 1px 2px 0px rgba(0, 0, 0, 0.8);
+  color: white;
+  font-size: 2em;
+}
+
+/* line 51, ../sass/style.scss */
+ul.breadcrumbs {
+  display: none;
+  list-style: none;
+  padding: 0;
+  margin: 1em 0;
+}
+@media (min-width: 700px) {
+  /* line 51, ../sass/style.scss */
+  ul.breadcrumbs {
+    display: block;
+    width: 78.94737%;
+    clear: right;
+    float: right;
+    margin-right: 0;
+  }
+}
+
+/* line 62, ../sass/style.scss */
+ul.breadcrumbs li {
+  display: block;
+  float: left;
+}
+
+/* line 67, ../sass/style.scss */
+ul.breadcrumbs a {
+  text-decoration: none;
+  color: #396282;
+}
+
+/* line 73, ../sass/style.scss */
+li.crumb::after {
+  content: " / ";
+}
+
+/* line 79, ../sass/style.scss */
+nav.toc {
+  display: none;
+  background-color: #6696bb;
+}
+@media (min-width: 700px) {
+  /* line 79, ../sass/style.scss */
+  nav.toc {
+    display: block;
+    width: 15.78947%;
+    clear: right;
+    float: left;
+    margin-left: 0;
+    margin-right: 5.26316%;
+  }
+}
+
+/* line 88, ../sass/style.scss */
+.toc ul {
+  list-style: none;
+  padding-left: 0;
+}
+/* line 92, ../sass/style.scss */
+.toc ul a {
+  display: block;
+  padding-top: .5em;
+  padding-bottom: .5em;
+  color: white;
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.8);
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.1s ease;
+}
+/* line 101, ../sass/style.scss */
+.toc ul a:hover {
+  background: #497da5;
+  transition: all 0.2s ease;
+}
+/* line 107, ../sass/style.scss */
+.toc ul li {
+  box-shadow: inset 0px 1px 3px #548ab3;
+}
+
+/* line 112, ../sass/style.scss */
+.section_toc a {
+  padding-left: 1em;
+}
+
+/* line 116, ../sass/style.scss */
+.subsection_toc a {
+  padding-left: 1.5em;
+}
+
+/* line 122, ../sass/style.scss */
+div.content, section#footnotes {
+  width: 233.33333%;
+  clear: right;
+  float: left;
+  margin-left: 0;
+  margin-right: 33.33333%;
+}
+@media (min-width: 700px) {
+  /* line 122, ../sass/style.scss */
+  div.content, section#footnotes {
+    width: 78.94737%;
+    clear: right;
+    float: right;
+    margin-right: 0;
+  }
+}
+
+/* line 129, ../sass/style.scss */
+.content p {
+  margin: 1em 0;
+  clear: both;
+}
+
+/* line 137, ../sass/style.scss */
+div.equation {
+  margin: 1em 1em;
+}
+/* line 140, ../sass/style.scss */
+div.equation span.equation_label {
+  float: left;
+  margin-right: 1em;
+}
+/* line 144, ../sass/style.scss */
+div.equation span.equation_label::before {
+  content: "(";
+}
+/* line 147, ../sass/style.scss */
+div.equation span.equation_label::after {
+  content: ")";
+}
+/* line 150, ../sass/style.scss */
+div.equation div.equation_content {
+  float: left;
+  margin-left: 3em;
+}
+
+/* line 158, ../sass/style.scss */
+section#footnotes {
+  border-top: 1px solid;
+  border-color: gray;
+}
+
+/* line 162, ../sass/style.scss */
+section#footnotes h1 {
+  font-size: 1.5em;
+  color: black;
+  margin: 0;
+  margin-bottom: .5em;
+}

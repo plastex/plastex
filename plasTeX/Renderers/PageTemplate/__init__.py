@@ -508,6 +508,7 @@ class PageTemplate(BaseRenderer):
             in the file
 
         """
+        num_templates = 0
         template = []
         options = options.copy()
         defaults = options.copy()
@@ -521,6 +522,7 @@ class PageTemplate(BaseRenderer):
                     # Purge any awaiting templates
                     if template:
                         try:
+                            num_templates += 1
                             self.setTemplate(''.join(template), options)
                         except ValueError, msg:
                             print 'ERROR: %s at line %s in file %s' % (msg, i, filename)
@@ -541,7 +543,7 @@ class PageTemplate(BaseRenderer):
                     if name.startswith('default-'):
                         name = name.split('-')[-1]
                         defaults[name] = value
-                        if name not in options:
+                        if name not in options or num_templates == 0:
                             options[name] = value
                     else:
                         options[name] = value
