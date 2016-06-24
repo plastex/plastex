@@ -44,33 +44,23 @@ MathJax.Hub.Config({
 
 {% block navbar %}
 <nav class="prev_up_next">
+<ul>
   {% if links.prev %}
-  <a href="{{ links.prev.url }}" title="{{ links.prev.title }}">Prev</a>
+  <li><a href="{{ links.prev.url }}" title="{{ links.prev.title }}">Prev</a></li>
   {% endif %}
   {% if links.up %}
-  <a href="{{ links.up.url }}" title="{{ links.up.title }}">Up</a>
+  <li><a href="{{ links.up.url }}" title="{{ links.up.title }}">Up</a></li>
   {% endif %}
   {% if links.next %}
-  <a href="{{ links.next.url }}" title="{{ links.next.title }}">Next</a>
+  <li><a href="{{ links.next.url }}" title="{{ links.next.title }}">Next</a></li>
   {% endif %}
-  <span class="navtitle"> {{ links.document.title }}</span>
+  <li><span class="navtitle"> {{ links.document.title }}</span></li>
   {% if links.index %}
-    <a href="{{ links.index.url }}" class="index">Index</a>
+    <li><a href="{{ links.index.url }}" class="index">Index</a></li>
   {% endif %}
+</ul>
 </nav>
 {% endblock %}
-
-{% if obj.level >= -10 %}
-<ul class="breadcrumbs">
-{% for crumb in links.breadcrumbs %}
-{% if loop.last %}
-<li class="last_crumb">{{ crumb.title }}</li>
-{% else %}
-<li class="crumb"><a href="{{ crumb.url }}" class="crumb">{{ crumb.title }}</a></li>
-{% endif %}
-{% endfor %}
-</ul>
-{% endif %}
 
 
 {% if toc %}
@@ -115,6 +105,18 @@ MathJax.Hub.Config({
 </nav>
 {% endif %}
 
+{% if obj.level >= -10 %}
+<ul class="breadcrumbs">
+{% for crumb in links.breadcrumbs %}
+{% if loop.last %}
+<li class="last_crumb">{{ crumb.title }}</li>
+{% else %}
+<li class="crumb"><a href="{{ crumb.url }}" class="crumb">{{ crumb.title }}</a></li>
+{% endif %}
+{% endfor %}
+</ul>
+{% endif %}
+
 <div class="content">{{ obj }}</div>
 
 {% if obj.footnotes %}
@@ -127,7 +129,5 @@ MathJax.Hub.Config({
 </ol>
 </section>
 {% endif %}
-
-<script src="js/nav.min.js"> </script>
 </body>
 </html>

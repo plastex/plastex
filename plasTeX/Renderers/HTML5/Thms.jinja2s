@@ -1,0 +1,4 @@
+name: theorem
+<div class="theorem">
+{{ obj }}
+</div>

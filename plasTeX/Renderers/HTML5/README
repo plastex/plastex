@@ -1,0 +1,3 @@
+sudo apt-get install ruby ruby-dev
+éditer dans le virtual env postactivate et predeactivate
+gem install sass compass
