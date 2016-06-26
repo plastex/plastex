@@ -5,6 +5,8 @@ C.8 Definitions, Numbering, and Programming
 
 """
 
+import new
+
 from plasTeX import Command, Environment
 from plasTeX.Logging import getLogger
 
@@ -65,3 +67,15 @@ class renewenvironment(newenvironment):
 
 class newtheorem(Command):
     args = 'name:str [ counter:str ] caption [ within:str ]'
+    def invoke(self, tex):
+        self.parse(tex)
+        a = self.attributes
+        name = a['name']
+        counter = a['counter']
+        caption = a['caption']
+        within = a['within']
+        deflog.debug('newtheorem %s', name)
+
+        newclass = new.classobj(str(name), (Environment,), 
+                               {'caption': caption})
+        self.ownerDocument.context.addGlobal(name, newclass)

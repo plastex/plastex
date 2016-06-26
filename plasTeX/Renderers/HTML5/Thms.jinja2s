@@ -1,4 +1,7 @@
 name: theorem
-<div class="theorem">
-{{ obj }}
+<div class="theorem_wrapper">
+  <span class="theorem_heading">{{ obj.caption }}</span>
+  <div class="theorem_content">
+  {{ obj }}
+  </div>
 </div>

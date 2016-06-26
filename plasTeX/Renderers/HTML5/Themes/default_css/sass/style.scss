@@ -210,6 +210,23 @@ div.equation {
   }
 }
 
+// Theorems
+
+div.theorem_wrapper {
+}
+
+span.theorem_heading {
+	font-weight: bold;
+}
+
+div.theorem_content {
+	margin-left: 1rem;
+	padding-left: 1rem;
+	padding-top: .5rem;
+	border-left: .15rem solid black;
+	border-bottom: .15rem solid black;
+}
+
 // Footnotes
 
 section#footnotes {
