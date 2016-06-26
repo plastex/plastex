@@ -215,7 +215,7 @@ div.equation {
 div.theorem_wrapper {
 }
 
-span.theorem_heading {
+.theorem_heading, .lem_heading {
 	font-weight: bold;
 }
 
@@ -227,6 +227,11 @@ div.theorem_content {
 	border-bottom: .15rem solid black;
 }
 
+div.lem_content {
+	margin-left: 1rem;
+	padding-left: 1rem;
+	padding-top: .5rem;
+}
 // Footnotes
 
 section#footnotes {

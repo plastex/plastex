@@ -76,6 +76,9 @@ class newtheorem(Command):
         within = a['within']
         deflog.debug('newtheorem %s', name)
 
+        # The nodeName key below ensure all theorem type will call the same
+        # rendering method, the type of theorem being retained in the thmName
+        # attribute
         newclass = new.classobj(str(name), (Environment,), 
-                               {'caption': caption})
+                {'caption': caption, 'nodeName': 'thmenv', 'thmName': name})
         self.ownerDocument.context.addGlobal(name, newclass)

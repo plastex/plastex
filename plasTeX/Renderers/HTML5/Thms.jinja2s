@@ -1,7 +1,7 @@
-name: theorem
-<div class="theorem_wrapper">
-  <span class="theorem_heading">{{ obj.caption }}</span>
-  <div class="theorem_content">
+name: thmenv
+<div class="{{ obj.thmName }}_wrapper">
+  <span class="{{ obj.thmName }}_heading">{{ obj.caption }}</span>
+  <div class="{{ obj.thmName }}_content">
   {{ obj }}
   </div>
 </div>
