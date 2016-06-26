@@ -33,8 +33,7 @@
 <body>
 
 <header>
-<button id="toc-toggle" href="#">&#9776;</button>
-<h1 id="doc_title">{{ links.document.title }}</h1>
+<h1 id="doc_title"><button id="toc-toggle" href="#">&#9776;</button>{{ links.document.title }}</h1>
 </header>
 
 {% block navbar %}
@@ -118,7 +117,6 @@
 {% if obj.footnotes %}
 
 <section id="footnotes">
-<h1>Footnotes</h1>
 <ol>
 {% for footnote in obj.footnotes %}
   <li id="{{ footnote.id }}">{{ footnote }}</li>
