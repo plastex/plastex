@@ -69,16 +69,25 @@ class newtheorem(Command):
     args = 'name:str [ counter:str ] caption [ within:str ]'
     def invoke(self, tex):
         self.parse(tex)
-        a = self.attributes
-        name = a['name']
-        counter = a['counter']
-        caption = a['caption']
-        within = a['within']
+        attrs = self.attributes
+        name = attrs['name']
+        counter = attrs['counter']
+        if not counter:
+            if name.startswith('the'):
+                counter = 'cnt' + name
+            else:
+                counter = name
+            self.ownerDocument.context.newcounter(counter,initial=1)
+        elif counter.startswith('the'):
+            counter = 'cnt' + counter
+        caption = attrs['caption']
+        within = attrs['within']
         deflog.debug('newtheorem %s', name)
 
         # The nodeName key below ensure all theorem type will call the same
         # rendering method, the type of theorem being retained in the thmName
         # attribute
         newclass = new.classobj(str(name), (Environment,), 
-                {'caption': caption, 'nodeName': 'thmenv', 'thmName': name})
+                {'caption': caption, 'nodeName': 'thmenv', 'thmName': name,
+                    'counter': counter})
         self.ownerDocument.context.addGlobal(name, newclass)
