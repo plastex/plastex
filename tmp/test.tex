@@ -1,0 +1,37 @@
+\documentclass[a4paper]{article}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lem}[theorem]{Lemma}
+
+\title{Document test with long title}
+
+\begin{document}
+\section{Foundations}
+\subsection{Axiomes}
+
+$a = b$.
+
+\subsection{Postulats}
+\begin{equation}
+\label{eqn:test}
+a+b = ξ
+\end{equation}
+
+See\footnote{This is important} Equation \ref{eqn:test}.
+
+\section{Corollaries}
+
+\begin{lem}
+	\label{lem1}
+	$1 + 1 = 2$.
+\end{lem}
+
+The main result of this section follows from \ref{lem1}.
+
+\begin{theorem}
+This is correct:
+\[
+	e^{i\pi} = -1.
+\]
+\end{theorem}
+\end{document}
