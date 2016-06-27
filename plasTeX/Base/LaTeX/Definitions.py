@@ -72,16 +72,21 @@ class newtheorem(Command):
         attrs = self.attributes
         name = attrs['name']
         counter = attrs['counter']
+        caption = attrs['caption']
+        within = attrs['within']
         if not counter:
+            # Try to avoid newcounter bug when counter name starts with "the"
             if name.startswith('the'):
                 counter = 'cnt' + name
             else:
                 counter = name
-            self.ownerDocument.context.newcounter(counter,initial=1)
+            if within:
+                self.ownerDocument.context.newcounter(counter,initial=1,resetby=within)
+            else:
+                self.ownerDocument.context.newcounter(counter,initial=1)
+        # Try to avoid newcounter bug when counter name starts with "the"
         elif counter.startswith('the'):
             counter = 'cnt' + counter
-        caption = attrs['caption']
-        within = attrs['within']
         deflog.debug('newtheorem %s', name)
 
         # The nodeName key below ensure all theorem type will call the same

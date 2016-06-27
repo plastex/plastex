@@ -1,7 +1,9 @@
 \documentclass[a4paper]{article}
 
-\newtheorem{theorem}{Theorem}
-\newtheorem{lem}[theorem]{Lemma}
+\usepackage{debugplastex}
+
+\newtheorem{thm}{Theorem}
+\newtheorem{lem}[thm]{Lemma}
 
 \title{Document test with long title}
 
@@ -21,6 +23,7 @@ See\footnote{This is important} Equation \ref{eqn:test}.
 
 \section{Corollaries}
 
+%\settrace
 \begin{lem}
 	\label{lem1}
 	$1 + 1 = 2$.
@@ -28,10 +31,10 @@ See\footnote{This is important} Equation \ref{eqn:test}.
 
 The main result of this section follows from \ref{lem1}.
 
-\begin{theorem}
+\begin{thm}
 This is correct:
 \[
 	e^{i\pi} = -1.
 \]
-\end{theorem}
+\end{thm}
 \end{document}
