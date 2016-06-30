@@ -1,9 +1,12 @@
 \documentclass[a4paper]{article}
 
-\usepackage{debugplastex}
+%\usepackage{debugplastex}
+\usepackage{relations}
 
-\newtheorem{theorem}{Theorem}
+\newtheorem{theorem}{Theorem}[section]
 \newtheorem{lem}[theorem]{Lemma}
+
+\renewcommand{\thecnttheorem}{\thesection .\arabic{cnttheorem}}
 
 \title{Document test with long title}
 
@@ -21,17 +24,23 @@ a+b = ξ
 
 See\footnote{This is important} Equation \ref{eqn:test}.
 
+\begin{lem}
+	\label{lem1}
+	Test de lemme.
+\end{lem}
+
 \section{Corollaries}
 
 %\settrace
 \begin{lem}
-	\label{lem1}
+	\label{lem2}
 	$1 + 1 = 2$.
 \end{lem}
 
 The main result of this section follows from \ref{lem1}.
 
-\begin{theorem}
+\begin{theorem}[Formule d'Euler]
+\uses{lem1, lem2}
 This is correct:
 \[
 	e^{i\pi} = -1.

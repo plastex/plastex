@@ -81,9 +81,9 @@ class newtheorem(Command):
             else:
                 counter = name
             if within:
-                self.ownerDocument.context.newcounter(counter,initial=1,resetby=within)
+                self.ownerDocument.context.newcounter(counter,initial=0,resetby=within)
             else:
-                self.ownerDocument.context.newcounter(counter,initial=1)
+                self.ownerDocument.context.newcounter(counter,initial=0)
         # Try to avoid newcounter bug when counter name starts with "the"
         elif counter.startswith('the'):
             counter = 'cnt' + counter
@@ -94,5 +94,5 @@ class newtheorem(Command):
         # attribute
         newclass = new.classobj(str(name), (Environment,), 
                 {'caption': caption, 'nodeName': 'thmenv', 'thmName': name,
-                    'counter': counter})
+                    'counter': counter, 'nargs': 1})
         self.ownerDocument.context.addGlobal(name, newclass)
