@@ -1,4 +1,8 @@
-name: theorem
-<div class="theorem">
-{{ obj }}
+name: thmenv
+<div class="{{ obj.thmName }}_wrapper">
+  <span class="{{ obj.thmName }}_heading">{{ obj.caption
+}}</span> <span class="{{obj.thmName}}_label">{{obj.ref}}</span>
+  <div class="{{ obj.thmName }}_content">
+  {{ obj }}
+  </div>
 </div>

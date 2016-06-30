@@ -1,13 +1,8 @@
 @import "breakpoint";
-@import "singularitygs";
 @import "reset";
 
 @import "typography";
 @import "variables";
-
-@include add-grid(1);
-@include add-grid(1 5 at $toc-break);
-@include add-gutter(1/3);
 
 
 body {
@@ -16,47 +11,83 @@ body {
   margin: 0;
 }
 
-// Navigation
+// Navigation Prev/Up/Next
 
 nav.prev_up_next {
-  @include grid-span(2, 1);
+  position: fixed;
+  bottom:0;
+  right:0;
   background: linear-gradient(to bottom, 
-                              lighten($top-nav-color, 10%) 0%, 
-                              darken($top-nav-color, 10%) 100%);
-  height: 2em;
+                              lighten($prevupnext-nav-color, 10%) 0%, 
+                              darken($prevupnext-nav-color, 10%) 100%);
+  height: 2rem;
   ul {
+	padding: .2em 0;
     list-style:none;
   }
   li {
     display: inline;
   }
   a {
-    padding: .5em;
     text-shadow: 1px 2px 0px rgba(0,0,0,0.8);
+	padding: .3rem;
     color: white;
     text-decoration: none;
   }
 }
 
-span.navtitle {
-    padding: .5em;
-    text-shadow: 1px 2px 0px rgba(0,0,0,0.8);
-    color: white;
-    font-size: 2em;
+// Header
+
+header {
+  z-index: 100;
+  background: $doc-title-background;
+  display: flex;
+  position: fixed;
+  width: 100%;
+  height: $doc-title-height;
+  margin: 0 auto;
+  text-align:center;
+  vertical-align: middle;
+  top:0;
+  left:0;
+  @include breakpoint($toc-break) {
+    width: $toc-width;
   }
+}
+
+button#toc-toggle {
+  font-size: .75*$doc-title-font-size;
+  display: inline;
+  background-color: Transparent;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+
+  @include breakpoint($toc-break) {
+	display: none;
+  }
+}
+
+h1#doc_title {
+  margin: auto;
+  color: $doc-title-color;
+  text-shadow: 1px 2px 0px rgba(0,0,0,0.8);
+  font-size: $doc-title-font-size;
+}
 
 
 // Breadcrumbs
 
 ul.breadcrumbs {
-  display: none;
   @include breakpoint($toc-break) {
-    display: block;
-    @include float-span(1, 2);
+    margin-left: $toc-width;
   };
   list-style:none;
   padding: 0;
-  margin: 1em 0;
+  padding-left: .5rem;
+  margin: 1rem 0;
 }
 
 ul.breadcrumbs li {
@@ -66,7 +97,7 @@ ul.breadcrumbs li {
 
 ul.breadcrumbs a {
   text-decoration: none;
-  color: darken($top-nav-color, 10%)
+  color: darken($prevupnext-nav-color, 10%)
 }
 
 
@@ -77,12 +108,27 @@ li.crumb::after {
 // Table of contents
 
 nav.toc {
-  display: none;
+  margin: 0;
+  padding: 0;
+  width: $toc-width;
+  left: -$toc-width;
+  z-index: 50;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-top: $doc-title-height;
+  top: 0;
+  bottom: 0;
   @include breakpoint($toc-break) {
-    display: block;
-    @include float-span(1,1);
+    left: 0;
   };
+  position: fixed;
+  min-height: 100%;
   background-color: $toc-background-color;
+  transition: left .5s ease;
+}
+
+nav.active {
+  left: 0;
 }
 
 .toc ul {
@@ -91,8 +137,8 @@ nav.toc {
 
   a {
     display: block;
-    padding-top: .5em;
-    padding-bottom: .5em;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
     color: white;
     text-shadow: 2px 2px 2px rgba(0,0,0,0.8);
     text-align: center;
@@ -119,27 +165,38 @@ nav.toc {
 
 // Main content
 
-div.content, section#footnotes {
-  @include float-span(2,1);
-  @include breakpoint($toc-break) {
-    @include float-span(1, 2);
+div.content {
+  position: absolute;
+  left: 0;
+  top: max(1.5*$breadcrumbs-height, 1.5*$doc-title-height);
+  padding-left: 1rem;
+    @include breakpoint($toc-break) {
+  left: $toc-width;
   }
 }
 
 .content p {
-  margin: 1em 0;
+  margin: 1rem 0;
   clear: both;
 }
 
+// Footnotes
+
+section#footnotes {
+  padding-left: 1rem;
+  padding-top: 1rem;
+  clear: both;
+}
 
 // Maths
 
 div.equation {
-  margin: 1em 1em;
+  margin: 1rem 1rem;
+  display: flex;
 
   span.equation_label {
     float: left;
-    margin-right: 1em;
+    margin-right: auto 1rem;
   }
   span.equation_label::before {
       content: "(";
@@ -149,10 +206,32 @@ div.equation {
   };
   div.equation_content {
     float: left;
-    margin-left: 3em;
+    margin-left: 3rem;
   }
 }
 
+// Theorems
+
+div.theorem_wrapper {
+}
+
+.theorem_heading, .lem_heading {
+	font-weight: bold;
+}
+
+div.theorem_content {
+	margin-left: 1rem;
+	padding-left: 1rem;
+	padding-top: .5rem;
+	border-left: .15rem solid black;
+	border-bottom: .15rem solid black;
+}
+
+div.lem_content {
+	margin-left: 1rem;
+	padding-left: 1rem;
+	padding-top: .5rem;
+}
 // Footnotes
 
 section#footnotes {
@@ -160,8 +239,8 @@ section#footnotes {
   border-color: gray;
 }
 section#footnotes h1 {
-    font-size:1.5em;
+    font-size:1.5rem;
     color:black;
     margin:0;
-    margin-bottom: .5em;
+    margin-bottom: .5rem;
 }

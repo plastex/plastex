@@ -5,6 +5,8 @@ C.8 Definitions, Numbering, and Programming
 
 """
 
+import new
+
 from plasTeX import Command, Environment
 from plasTeX.Logging import getLogger
 
@@ -65,3 +67,32 @@ class renewenvironment(newenvironment):
 
 class newtheorem(Command):
     args = 'name:str [ counter:str ] caption [ within:str ]'
+    def invoke(self, tex):
+        self.parse(tex)
+        attrs = self.attributes
+        name = attrs['name']
+        counter = attrs['counter']
+        caption = attrs['caption']
+        within = attrs['within']
+        if not counter:
+            # Try to avoid newcounter bug when counter name starts with "the"
+            if name.startswith('the'):
+                counter = 'cnt' + name
+            else:
+                counter = name
+            if within:
+                self.ownerDocument.context.newcounter(counter,initial=1,resetby=within)
+            else:
+                self.ownerDocument.context.newcounter(counter,initial=1)
+        # Try to avoid newcounter bug when counter name starts with "the"
+        elif counter.startswith('the'):
+            counter = 'cnt' + counter
+        deflog.debug('newtheorem %s', name)
+
+        # The nodeName key below ensure all theorem type will call the same
+        # rendering method, the type of theorem being retained in the thmName
+        # attribute
+        newclass = new.classobj(str(name), (Environment,), 
+                {'caption': caption, 'nodeName': 'thmenv', 'thmName': name,
+                    'counter': counter})
+        self.ownerDocument.context.addGlobal(name, newclass)

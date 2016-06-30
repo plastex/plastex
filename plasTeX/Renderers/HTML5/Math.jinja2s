@@ -3,7 +3,7 @@ name: math
 
 name: ensuremath eqnarray eqnarray* align align* gather gather* flalign flalign* \
       multline multline* alignat alignat* split DeclareMathOperator
-<span>{{ obj }}</span>
+<span>{{ obj.source }}</span>
 
 name: displaymath equation* 
 <div class="displaymath" id="{{ obj.id }}">
@@ -15,7 +15,7 @@ name: equation
 <p>
   <span class="equation_label">{{ obj.ref }}</span>
   <div class="equation_content">
-    {{ obj }}
+    {{ obj.source }}
   </div>
 </p>
 </div>
