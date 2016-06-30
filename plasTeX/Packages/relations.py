@@ -1,10 +1,8 @@
-#!/usr/bin/env python
-
 """
 The relations commands (uses and covers).
 """
 
-from plastex import Command
+from plasTeX import Command
 
 class DepGraph(list):
     pass
