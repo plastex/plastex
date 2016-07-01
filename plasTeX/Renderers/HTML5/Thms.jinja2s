@@ -1,7 +1,19 @@
 name: thmenv
 <div class="{{ obj.thmName }}_wrapper">
-  <span class="{{ obj.thmName }}_heading">{{ obj.caption
-}}</span> <span class="{{obj.thmName}}_label">{{obj.ref}}</span>
+  <div class="{{ obj.thmName }}_heading">
+  <span class="{{ obj.thmName }}_caption">
+  {{ obj.caption }}
+  </span> <span class="{{obj.thmName}}_label">{{obj.ref}}</span>
+  {% if obj.userdata.uses -%}
+  <div class="thm_uses">
+    <ul class="uses">
+      {% for used in obj.userdata.uses -%}
+      <li><a href="#">{{ used.caption }} {{ used.ref }}</a></li>
+      {% endfor -%}
+    </ul>
+  </div>
+  </div>
+  {% endif %}
   <div class="{{ obj.thmName }}_content">
   {{ obj }}
   </div>

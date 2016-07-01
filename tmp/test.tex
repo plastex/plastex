@@ -5,6 +5,7 @@
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lem}[theorem]{Lemma}
+\newtheorem{exo}[theorem]{Exercise}
 
 \renewcommand{\thecnttheorem}{\thesection .\arabic{cnttheorem}}
 
@@ -40,10 +41,18 @@ See\footnote{This is important} Equation \ref{eqn:test}.
 The main result of this section follows from \ref{lem1}.
 
 \begin{theorem}[Formule d'Euler]
+\label{thm1}
 \uses{lem1, lem2}
 This is correct:
 \[
 	e^{i\pi} = -1.
 \]
 \end{theorem}
+
+\section{Exercices}
+
+\begin{exo}
+  \covers{lem1, thm1}
+  Prove that $2 + 2 = 4$.
+\end{exo}
 \end{document}

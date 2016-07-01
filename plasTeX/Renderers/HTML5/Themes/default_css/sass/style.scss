@@ -232,6 +232,29 @@ div.lem_content {
 	padding-left: 1rem;
 	padding-top: .5rem;
 }
+
+div.thm_uses {
+  display: none;
+}
+
+div.theorem_heading:hover div.thm_uses {
+  display: block;
+  font-weight: normal;
+  a {
+    text-decoration: none;
+  };
+  ul {
+    list-style:none;
+  };
+  ul::before {
+    content: "Uses:";
+  }
+  li {
+    padding-left: .5rem;
+  }
+}
+
+
 // Footnotes
 
 section#footnotes {
