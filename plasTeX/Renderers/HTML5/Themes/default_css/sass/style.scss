@@ -235,16 +235,15 @@ div.lem_content {
 
 div.thm_uses {
   display: none;
-}
-
-div.theorem_heading:hover div.thm_uses {
-  display: block;
   font-weight: normal;
   a {
     text-decoration: none;
   };
   ul {
     list-style:none;
+    padding: .2rem;
+    border: 1px solid black;
+    border-radius: 3px;
   };
   ul::before {
     content: "Uses:";
@@ -254,6 +253,16 @@ div.theorem_heading:hover div.thm_uses {
   }
 }
 
+button.uses {
+  font-size: .75*$doc-title-font-size;
+  display: none;
+  background-color: Transparent;
+  border: none;
+}
+
+div.theorem_heading:hover button.uses {
+  display: inline;
+}
 
 // Footnotes
 

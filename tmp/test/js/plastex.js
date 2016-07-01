@@ -4,7 +4,7 @@ $(document).ready(function() {
     });
 
    $("button.uses").click(function() {
-     $(this).siblings("div.thm_uses").slideDown()
+     $(this).siblings("div.thm_uses").slideToggle()
    })
   });
 

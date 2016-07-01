@@ -5,7 +5,8 @@ name: thmenv
   {{ obj.caption }}
   </span> <span class="{{obj.thmName}}_label">{{obj.ref}}</span>
   {% if obj.userdata.uses -%}
-  <div class="thm_uses">
+  <button class="uses">Uses</button>
+  <div class="thm_uses" title="Uses">
     <ul class="uses">
       {% for used in obj.userdata.uses -%}
       <li><a href="#">{{ used.caption }} {{ used.ref }}</a></li>
