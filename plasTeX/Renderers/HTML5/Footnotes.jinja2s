@@ -1,5 +1,5 @@
 name: footnote
-<a class="footnote" href="{{ obj.id }}">
+<a class="footnote" href="#{{ obj.id }}">
   <sup class="footnotemark">{{ obj.mark.attributes.num }}</sup>
 </a>
 

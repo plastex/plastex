@@ -276,3 +276,15 @@ section#footnotes h1 {
     margin:0;
     margin-bottom: .5rem;
 }
+
+a.footnote {
+  text-decoration: none;
+}
+
+a.footnote sup::after {
+  content: "]";
+}
+
+a.footnote sup::before {
+  content: "[";
+}
