@@ -408,7 +408,7 @@ class Context(object):
 
         except ImportError, msg:
             # No Python module
-            if 'No module' in str(msg):
+            if 'No module' in str(msg) and module in str(msg):
                 pass
                 # Failed to load Python package
 #               log.warning('No Python version of %s was found' % file)
