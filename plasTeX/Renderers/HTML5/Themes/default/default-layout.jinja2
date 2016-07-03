@@ -1,5 +1,6 @@
 {%- set links = obj.links -%}
 {%- set toc = obj.ownerDocument[-2].tableofcontents -%}
+{%- set document = obj.ownerDocument -%}
 {% macro tocEntry(section) -%}
 <span class="toc_ref">{{ section.ref.textContent }}</span> <span class="toc_entry">{{ section.tocEntry.textContent }}</span>
 {%- endmacro %}
