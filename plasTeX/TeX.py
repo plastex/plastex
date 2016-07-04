@@ -63,6 +63,11 @@ class TeX(object):
     def __init__(self, ownerDocument=None, myfile=None):
         if ownerDocument is None:
             ownerDocument = self.documentClass()
+            self.toplevel = True
+        elif myfile:
+            self.toplevel = True
+        else:
+            self.toplevel = False
         self.ownerDocument = ownerDocument
 
         # Input source stack
@@ -438,6 +443,9 @@ class TeX(object):
             log.error('An error occurred while building the document object%s%s', self.lineInfo, msg)
             raise
 
+        if self.toplevel:
+            for callback in self.ownerDocument.postParseCallbacks:
+                callback()
         return output
 
     def textTokens(self, text):
