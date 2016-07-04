@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os, sys, codecs, string, glob
+import importlib
 import plasTeX
 from plasTeX.TeX import TeX
 from plasTeX.Config import config
@@ -11,9 +12,23 @@ log = getLogger()
 
 __version__ = '1.0'
 
+def collect_renderer_config(config):
+    plastex_dir = os.path.dirname(os.path.realpath(__file__))
+    renderers_dir = os.path.join(plastex_dir, 'Renderers')
+    renderers = next(os.walk(renderers_dir))[1]
+    for renderer in renderers:
+        try:
+            conf = importlib.import_module('plasTeX.Renderers.'+renderer+'.Config')
+        except ImportError, msg:
+            continue
+
+        config += conf.config
+
 def main(argv):
     """ Main program routine """
     print >>sys.stderr, 'plasTeX version %s' % __version__
+
+    collect_renderer_config(config)
 
     # Parse the command line options
     try:
