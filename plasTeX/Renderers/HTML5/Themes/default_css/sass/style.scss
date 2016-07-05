@@ -14,6 +14,7 @@ body {
 // Navigation Prev/Up/Next
 
 nav.prev_up_next {
+	display: flex;
   position: fixed;
   bottom:0;
   right:0;
@@ -22,7 +23,7 @@ nav.prev_up_next {
                               darken($prevupnext-nav-color, 10%) 100%);
   height: 2rem;
   ul {
-	padding: .2em 0;
+	  padding: .5em ;
     list-style:none;
   }
   li {
@@ -30,7 +31,7 @@ nav.prev_up_next {
   }
   a {
     text-shadow: 1px 2px 0px rgba(0,0,0,0.8);
-	padding: .3rem;
+	  padding: .3rem;
     color: white;
     text-decoration: none;
   }
@@ -242,6 +243,7 @@ div[class$="_thmheading"]:hover button.uses {
 div.thm_uses {
   display: none;
   font-weight: normal;
+	vertical-align: middle;
   a {
     text-decoration: none;
   };
@@ -260,7 +262,7 @@ div.thm_uses {
 }
 
 button.uses {
-  font-size: .75*$doc-title-font-size;
+  font-size: .5*$doc-title-font-size;
   display: none;
   background-color: Transparent;
   border: none;
