@@ -61,49 +61,6 @@
 </ul>
 </nav>
 {% endblock %}
-{{ debug() }}
-{% if obj.tableofcontents %}
-PATRICK<br />
-<nav>
-<ul>
-{% for section in obj.tableofcontents -%}
-<li><a href="{{ section.url }}">{{ tocEntry(section) }}</a>
-  {% if section.tableofcontents -%}
-   <ul class="section_toc">
-   {% for subsection in section.tableofcontents -%}
-     <li><a href="{{ subsection.url }}">{{ tocEntry(subsection)}}</a>
-       {% if subsection.tableofcontents -%}
-       <ul class="subsection_toc">
-       {% for subsubsection in subsection.tableofcontents -%}
-         <li><a href="{{ subsubsection.url }}">{{ tocEntry(subsubsection) }}</a>
-           {% if subsubsection.tableofcontents -%}
-           <ul class="subsubsection_toc">
-           {% for paragraph in subsubsection.tableofcontents -%}
-             <li><a href="{{ paragraph.url }}">{{ tocEntry(paragraph) }}</a>
-               {% if paragraph.tableofcontents -%}
-               <ul class="paragraph_toc">
-               {% for subparagraph in paragraph.tableofcontents -%}
-                 <li><a href="{{ subparagraph.url }}">{{ tocEntry(subparagraph) }}</a></li>
-               {% endfor -%}
-               </ul>
-               {% endif -%}
-             </li>
-           {% endfor -%}
-           </ul>
-           {% endif -%}
-         </li>
-      {% endfor -%}
-      </ul>
-      {% endif -%}
-		</li>
- {% endfor -%}
- </ul>
- {% endif -%}
- </li>
- {% endfor -%}
-</ul>
-</nav>
-{% endif -%}
 
 {% if toc -%}
 <nav class="toc">
@@ -158,6 +115,48 @@ PATRICK<br />
 {% endfor -%}
 </ul>
 {% endif %}
+
+{% if obj.tableofcontents %}
+<nav class=local_toc>
+<ul>
+{% for section in obj.tableofcontents -%}
+<li><a href="{{ section.url }}">{{ tocEntry(section) }}</a>
+  {% if section.tableofcontents -%}
+   <ul class="section_toc">
+   {% for subsection in section.tableofcontents -%}
+     <li><a href="{{ subsection.url }}">{{ tocEntry(subsection)}}</a>
+       {% if subsection.tableofcontents -%}
+       <ul class="subsection_toc">
+       {% for subsubsection in subsection.tableofcontents -%}
+         <li><a href="{{ subsubsection.url }}">{{ tocEntry(subsubsection) }}</a>
+           {% if subsubsection.tableofcontents -%}
+           <ul class="subsubsection_toc">
+           {% for paragraph in subsubsection.tableofcontents -%}
+             <li><a href="{{ paragraph.url }}">{{ tocEntry(paragraph) }}</a>
+               {% if paragraph.tableofcontents -%}
+               <ul class="paragraph_toc">
+               {% for subparagraph in paragraph.tableofcontents -%}
+                 <li><a href="{{ subparagraph.url }}">{{ tocEntry(subparagraph) }}</a></li>
+               {% endfor -%}
+               </ul>
+               {% endif -%}
+             </li>
+           {% endfor -%}
+           </ul>
+           {% endif -%}
+         </li>
+      {% endfor -%}
+      </ul>
+      {% endif -%}
+		</li>
+ {% endfor -%}
+ </ul>
+ {% endif -%}
+ </li>
+ {% endfor -%}
+</ul>
+</nav>
+{% endif -%}
 
 <div class="content">
 {{ obj }}

@@ -113,6 +113,21 @@ li.crumb::after {
 
 // Table of contents
 
+nav.local_toc {
+  margin: 0;
+  padding: 0;
+  width: $toc-width;
+  position: absolute;
+  left: 0;
+  top: 4rem;
+  padding-top: $doc-title-height;
+  @include breakpoint($toc-break) {
+    left: $toc-width;
+  };
+  transition: left .5s ease;
+}
+
+
 nav.toc {
   margin: 0;
   padding: 0;

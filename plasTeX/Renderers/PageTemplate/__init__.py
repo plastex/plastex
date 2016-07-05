@@ -51,6 +51,7 @@ else:
             return tpl.render(tvars) 
 
         return renderjinja2
+
 # Support for Python string templates
 def stringtemplate(s, encoding='utf8'):
     template = string.Template(unicode(s, encoding))
