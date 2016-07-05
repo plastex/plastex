@@ -1,18 +1,19 @@
 {%- set links = obj.links -%}
-{%- set toc = obj.ownerDocument[-2].tableofcontents -%}
-{%- set document = obj.ownerDocument -%}
+{%- set doc = obj.ownerDocument.getElementsByTagName('document')[0] -%}
+{%- set toc = doc.tableofcontents -%}
 {% macro tocEntry(section) -%}
 <span class="toc_ref">{{ section.ref.textContent }}</span> <span class="toc_entry">{{ section.tocEntry.textContent }}</span>
 {%- endmacro %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
+{% if config.html5['mathjax'] %}
 <script type="text/x-mathjax-config">
   MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
 </script>
-<script type="text/javascript"
-  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+<script type="text/javascript" src="{{ config.html5['mathjax-js'] }}">
 </script>
+{% endif %}
 <meta name="generator" content="plasTeX" />
 <meta charset="{{ config.files['output-encoding']}}" />
 {% if obj.level > -10 %}
@@ -30,6 +31,9 @@
 <link rel="up" href="{{ links.up.url }}" title="{{ links.up.title.textContent }}" />
 {% endif %}
 <link rel="stylesheet" href="styles/style.css" />
+{% if config.html5['extra-css'] %}
+<link rel="stylesheet" href="{{ config.html5['extra-css'] }}" />
+{% endif %}
 </head>
 <body>
 
@@ -57,7 +61,6 @@
 </ul>
 </nav>
 {% endblock %}
-
 
 {% if toc -%}
 <nav class="toc">
@@ -115,8 +118,8 @@
 
 <div class="content">
 {{ obj }}
-{% if obj.footnotes %}
 
+{% if obj.footnotes %}
 <section id="footnotes">
 <ol>
 {% for footnote in obj.footnotes %}

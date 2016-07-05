@@ -1,0 +1,4 @@
+[general]
+renderer=HTML5
+copy-theme-extras=no
+xml=True

@@ -88,6 +88,11 @@ ul.breadcrumbs {
   padding: 0;
   padding-left: .5rem;
   margin: 1rem 0;
+  margin-top: $doc-title-height + 1rem;
+  @include breakpoint($toc-break) {
+    margin-left: $toc-width;
+    margin-top: 1rem;
+  };
 }
 
 ul.breadcrumbs li {
@@ -141,7 +146,7 @@ nav.active {
     padding-bottom: .5rem;
     color: white;
     text-shadow: 2px 2px 2px rgba(0,0,0,0.8);
-    text-align: center;
+    text-align: left;
     text-decoration: none;
     transition: all 0.1s ease;
     &:hover {
@@ -153,6 +158,10 @@ nav.active {
   li {
     box-shadow: inset 0px 1px 3px darken($toc-background-color, 5%);
   }
+}
+
+.toc a {
+  padding-left: $toc-padding;
 }
 
 .section_toc a {
@@ -168,10 +177,11 @@ nav.active {
 div.content {
   position: absolute;
   left: 0;
-  top: max(1.5*$breadcrumbs-height, 1.5*$doc-title-height);
+  top: $breadcrumbs-height + 1.5*$doc-title-height;
   padding-left: 1rem;
-    @include breakpoint($toc-break) {
-  left: $toc-width;
+  @include breakpoint($toc-break) {
+    left: $toc-width;
+		top: max(1.5*$breadcrumbs-height, 1.5*$doc-title-height);
   }
 }
 
@@ -212,25 +222,21 @@ div.equation {
 
 // Theorems
 
-div.theorem_wrapper {
-}
-
-.theorem_heading, .lem_heading {
+div[class$="_thmheading"] {
 	font-weight: bold;
 }
 
-div.theorem_content {
+div[class$="_thmcontent"] {
+  font-weight: normal;
 	margin-left: 1rem;
 	padding-left: 1rem;
 	padding-top: .5rem;
-	border-left: .15rem solid black;
-	border-bottom: .15rem solid black;
 }
 
-div.lem_content {
-	margin-left: 1rem;
-	padding-left: 1rem;
-	padding-top: .5rem;
+// Relations
+
+div[class$="_thmheading"]:hover button.uses {
+  display: inline;
 }
 
 div.thm_uses {
@@ -258,10 +264,6 @@ button.uses {
   display: none;
   background-color: Transparent;
   border: none;
-}
-
-div.theorem_heading:hover button.uses {
-  display: inline;
 }
 
 // Footnotes
