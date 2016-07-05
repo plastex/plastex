@@ -15,12 +15,14 @@ class uses(Command):
         Command.digest(self, tokens)
         node = self.parentNode
         doc = self.ownerDocument
-        labels_dict = doc.context.labels
-        used = [labels_dict[label] for label in self.attributes['labels']]
-        node.setUserData('uses', used)
-        depgraph = doc.userdata.get('depgraph', DepGraph())
-        depgraph += [(node, used_node) for used_node in used]
-        doc.setUserData('depgraph', depgraph)
+        def update_used():
+            labels_dict = doc.context.labels
+            used = [labels_dict[label] for label in self.attributes['labels']]
+            node.setUserData('uses', used)
+        doc.post_parse_cb.append(update_used)
+        #depgraph = doc.userdata.get('depgraph', DepGraph())
+        #depgraph += [(node, used_node) for used_node in used]
+        #doc.setUserData('depgraph', depgraph)
 
 class covers(Command):
     """ \covers{labels list} """

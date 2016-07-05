@@ -9,7 +9,7 @@ name: thmenv
   <div class="thm_uses" title="Uses">
     <ul class="uses">
       {% for used in obj.userdata.uses -%}
-      <li><a href="#">{{ used.caption }} {{ used.ref }}</a></li>
+      <li><a href="{{ used.url }}">{{ used.caption }} {{ used.ref }}</a></li>
       {% endfor -%}
     </ul>
   </div>
