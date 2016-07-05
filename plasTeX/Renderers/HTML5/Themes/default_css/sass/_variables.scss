@@ -1,4 +1,4 @@
-$toc-break: 768px;
+$toc-break: 1024px;
 
 $titles-color: rgb(15,47,72);
 
@@ -7,12 +7,15 @@ $main-text-color:  rgb(10, 10, 20);
 
 $prevupnext-nav-color: rgb(73, 125, 165);
 
-$toc-width: 300px;
+$toc-width: 30rem;
 $toc-background-color: lighten($prevupnext-nav-color, 10%);
+$toc-text-color: white;
+$toc-text-shadow: 2px 2px 2px rgba(0,0,0,0.8);
 $toc-padding: .5rem;
+$toc-font-size: 1.2rem;
 
 $doc-title-height: 2.5rem;
-$doc-title-font-size: 1rem;
+$doc-title-font-size: 1.5rem;
 $doc-title-color: white;
 $doc-title-bgcolor: rgb(73, 125, 165);
 $doc-title-background: linear-gradient(to bottom, 
