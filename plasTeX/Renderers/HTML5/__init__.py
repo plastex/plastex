@@ -4,7 +4,7 @@ import sys, os, re, codecs, plasTeX
 from plasTeX.Renderers.PageTemplate import Renderer as _Renderer
 
 class HTML5(_Renderer):
-    """ Renderer for XHTML HTML5 documents, heavily copied from XHTML renderer """
+    """ Renderer for HTML5 documents, heavily copied from XHTML renderer """
 
     fileExtension = '.html'
     imageTypes = ['.png','.jpg','.jpeg','.gif']

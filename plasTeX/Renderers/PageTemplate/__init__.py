@@ -19,9 +19,26 @@ log = plasTeX.Logging.getLogger()
 
 # Support for Jinja2 templates
 try: 
-
-    from jinja2 import Template as Jinja2Template
+    from jinja2 import Environment, contextfunction
+except ImportError:
     def jinja2template(s, encoding='utf8'):
+        def renderjinja2(obj):
+            return unicode(s, encoding)
+        return renderjinja2
+else:
+    try:
+        import ipdb as pdb
+    except ImportError:
+        import pdb
+        
+    @contextfunction
+    def debug(context):
+        pdb.set_trace()
+
+    def jinja2template(s, encoding='utf8'):
+        env = Environment()
+        env.globals['debug'] = debug
+
         def renderjinja2(obj, s=s):
             tvars = {'here':obj, 
                      'obj':obj,
@@ -29,14 +46,10 @@ try:
                      'config':obj.ownerDocument.config,
                      'context':obj.ownerDocument.context,
                      'templates':obj.renderer}
-            return Jinja2Template(s).render(tvars) 
-        return renderjinja2
 
-except ImportError:
+            tpl = env.from_string(s)
+            return tpl.render(tvars) 
 
-    def jinja2template(s, encoding='utf8'):
-        def renderjinja2(obj):
-            return unicode(s, encoding)
         return renderjinja2
 
 # Support for Python string templates

@@ -60,3 +60,11 @@ target/
 
 # Sass
 .sass-cache
+
+# generated stylesheet
+plasTeX/Renderers/HTML5/Themes/default/styles/style.css
+
+# Rendered test
+tmp/test/
+*.paux
+*.aux

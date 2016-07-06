@@ -1,17 +1,19 @@
 {%- set links = obj.links -%}
-{%- set toc = obj.ownerDocument[-2].tableofcontents -%}
+{%- set doc = obj.ownerDocument.getElementsByTagName('document')[0] -%}
+{%- set toc = doc.tableofcontents -%}
 {% macro tocEntry(section) -%}
 <span class="toc_ref">{{ section.ref.textContent }}</span> <span class="toc_entry">{{ section.tocEntry.textContent }}</span>
 {%- endmacro %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
+{% if config.html5['mathjax'] %}
 <script type="text/x-mathjax-config">
   MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
 </script>
-<script type="text/javascript"
-  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+<script type="text/javascript" src="{{ config.html5['mathjax-js'] }}">
 </script>
+{% endif %}
 <meta name="generator" content="plasTeX" />
 <meta charset="{{ config.files['output-encoding']}}" />
 {% if obj.level > -10 %}
@@ -29,6 +31,9 @@
 <link rel="up" href="{{ links.up.url }}" title="{{ links.up.title.textContent }}" />
 {% endif %}
 <link rel="stylesheet" href="styles/style.css" />
+{% if config.html5['extra-css'] %}
+<link rel="stylesheet" href="{{ config.html5['extra-css'] }}" />
+{% endif %}
 </head>
 <body>
 
@@ -57,11 +62,42 @@
 </nav>
 {% endblock %}
 
-
 {% if toc -%}
 <nav class="toc">
+<ul class="sub-toc-0">
+{% for section in toc recursive -%}
+<li>
+  {% if section.tableofcontents -%}
+  <button class="expand-toc">+</button>
+  <a href="{{ section.url }}">{{ tocEntry(section) }}</a>
+  <ul class="sub-toc-{{loop.depth}}">
+     {{ loop(section.tableofcontents) }}
+  </ul>
+  {% else %}
+  <a href="{{ section.url }}">{{ tocEntry(section) }}</a>
+  {% endif -%}
+ </li>
+ {% endfor -%}
+</ul>
+</nav>
+{% endif -%}
+
+{% if obj.level >= -10 %}
+<ul class="breadcrumbs">
+{% for crumb in links.breadcrumbs -%}
+{% if loop.last -%}
+  <li class="last_crumb">{{ crumb.title }}</li>
+{% else -%}
+<li class="crumb"><a href="{{ crumb.url }}" class="crumb">{{ crumb.title }}</a></li>
+{% endif -%}
+{% endfor -%}
+</ul>
+{% endif %}
+
+{% if obj.tableofcontents %}
+<nav class=local_toc>
 <ul>
-{% for section in toc -%}
+{% for section in obj.tableofcontents -%}
 <li><a href="{{ section.url }}">{{ tocEntry(section) }}</a>
   {% if section.tableofcontents -%}
    <ul class="section_toc">
@@ -100,22 +136,10 @@
 </nav>
 {% endif -%}
 
-{% if obj.level >= -10 %}
-<ul class="breadcrumbs">
-{% for crumb in links.breadcrumbs -%}
-{% if loop.last -%}
-  <li class="last_crumb">{{ crumb.title }}</li>
-{% else -%}
-<li class="crumb"><a href="{{ crumb.url }}" class="crumb">{{ crumb.title }}</a></li>
-{% endif -%}
-{% endfor -%}
-</ul>
-{% endif %}
-
 <div class="content">
 {{ obj }}
-{% if obj.footnotes %}
 
+{% if obj.footnotes %}
 <section id="footnotes">
 <ol>
 {% for footnote in obj.footnotes %}
