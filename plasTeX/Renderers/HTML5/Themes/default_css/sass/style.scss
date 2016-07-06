@@ -4,204 +4,18 @@
 @import "typography";
 @import "variables";
 
+@import "toc";
+@import "nav_pun";
+@import "header";
+@import "breadcrumbs";
+@import "footnotes";
+@import "equations";
+@import "theorems";
 
 body {
   background-color: $background-color;
   color: $main-text-color;
   margin: 0;
-}
-
-// Navigation Prev/Up/Next
-
-nav.prev_up_next {
-	display: flex;
-  position: fixed;
-  bottom:0;
-  right:0;
-  background: linear-gradient(to bottom, 
-                              lighten($prevupnext-nav-color, 10%) 0%, 
-                              darken($prevupnext-nav-color, 10%) 100%);
-  height: 2rem;
-  ul {
-	  padding: .5em ;
-    list-style:none;
-  }
-  li {
-    display: inline;
-  }
-  a {
-    text-shadow: 1px 2px 0px rgba(0,0,0,0.8);
-	  padding: .3rem;
-    color: white;
-    text-decoration: none;
-  }
-}
-
-// Header
-
-header {
-  z-index: 100;
-  background: $doc-title-background;
-  display: flex;
-  position: fixed;
-  width: 100%;
-  height: $doc-title-height;
-  margin: 0 auto;
-  text-align:center;
-  vertical-align: middle;
-  top:0;
-  left:0;
-  @include breakpoint($toc-break) {
-    width: $toc-width;
-  }
-}
-
-button#toc-toggle {
-  font-size: .75*$doc-title-font-size;
-  display: inline;
-  background-color: Transparent;
-  border: none;
-  color: white;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-
-  @include breakpoint($toc-break) {
-	display: none;
-  }
-}
-
-h1#doc_title {
-  margin: auto;
-  color: $doc-title-color;
-  text-shadow: 1px 2px 0px rgba(0,0,0,0.8);
-  font-size: $doc-title-font-size;
-}
-
-
-// Breadcrumbs
-
-ul.breadcrumbs {
-  @include breakpoint($toc-break) {
-    margin-left: $toc-width;
-  };
-  list-style:none;
-  padding: 0;
-  padding-left: .5rem;
-  margin: 1rem 0;
-  margin-top: $doc-title-height + 1rem;
-  @include breakpoint($toc-break) {
-    margin-left: $toc-width;
-    margin-top: 1rem;
-  };
-}
-
-ul.breadcrumbs li {
-  display: block;
-  float: left;
-}
-
-ul.breadcrumbs a {
-  text-decoration: none;
-  color: darken($prevupnext-nav-color, 10%)
-}
-
-
-li.crumb::after {
-  content: " / ";
-}
-
-// Table of contents
-
-nav.local_toc {
-  margin: 0;
-  padding: 0;
-  width: $toc-width;
-  position: absolute;
-  left: 0;
-  top: 4rem;
-  padding-top: $doc-title-height;
-  @include breakpoint($toc-break) {
-    left: $toc-width;
-  };
-  transition: left .5s ease;
-}
-
-
-nav.toc {
-  margin: 0;
-  padding: 0;
-  width: $toc-width;
-  left: -$toc-width;
-  z-index: 50;
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding-top: $doc-title-height;
-  top: 0;
-  bottom: 0;
-  @include breakpoint($toc-break) {
-    left: 0;
-  };
-  position: fixed;
-  min-height: 100%;
-  background-color: $toc-background-color;
-  transition: left .5s ease;
-}
-
-nav.active {
-  left: 0;
-}
-
-.toc ul {
-  list-style:none;
-  padding-left: 0;
-
-  a {
-    font-size: $toc-font-size;
-    display: inline-block;
-    padding-top: .5rem;
-    padding-bottom: .5rem;
-    color: $toc-text-color;
-    text-shadow: $toc-text-shadow;
-    text-align: left;
-    text-decoration: none;
-    transition: all 0.1s ease;
-    &:hover {
-      background: darken($toc-background-color, 10%);
-      transition: all 0.2s ease;
-    };
-  };
-
-  li {
-    box-shadow: inset 0px 1px 3px darken($toc-background-color, 5%);
-  }
-}
-
-@for $i from 0 through 4 {
-  .sub-toc-#{$i} a {
-    padding-left: ($i+3)*$toc-padding;
-  }
-}
-
-@for $i from 1 through 4 {
-  ul.sub-toc-#{$i} {
-    display:none;
-  }
-}
-
-button.expand-toc {
-  color: $toc-text-color;
-  background-color: Transparent;
-  border-radius: 2px;
-  border: 1px solid $toc-text-color;
-  padding: 0;
-  margin-left: 1rem;
-  width: 1rem;
-  height: 1rem;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  cursor: pointer;
 }
 
 
@@ -210,118 +24,15 @@ button.expand-toc {
 div.content {
   position: absolute;
   left: 0;
-  top: $breadcrumbs-height + 1.5*$doc-title-height;
+  top: $breadcrumbs-height + $doc-title-height;
   padding-left: 1rem;
   @include breakpoint($toc-break) {
     left: $toc-width;
-		top: max(1.5*$breadcrumbs-height, 1.5*$doc-title-height);
+		top: max($breadcrumbs-height, $doc-title-height);
   }
 }
 
 .content p {
   margin: 1rem 0;
   clear: both;
-}
-
-// Footnotes
-
-section#footnotes {
-  padding-left: 1rem;
-  padding-top: 1rem;
-  clear: both;
-}
-
-// Maths
-
-div.equation {
-  margin: 1rem 1rem;
-  display: flex;
-
-  span.equation_label {
-    float: left;
-    margin-right: auto 1rem;
-  }
-  span.equation_label::before {
-      content: "(";
-  };
-  span.equation_label::after {
-      content: ")";
-  };
-  div.equation_content {
-    float: left;
-    margin-left: 3rem;
-  }
-}
-
-// Theorems
-
-div[class$="_thmheading"] {
-	font-weight: bold;
-}
-
-div[class$="_thmcontent"] {
-  font-weight: normal;
-	margin-left: 1rem;
-	padding-left: 1rem;
-	padding-top: .5rem;
-}
-
-// Relations
-
-
-div.thm_uses {
-  display: none;
-  font-weight: normal;
-	vertical-align: middle;
-  a {
-    text-decoration: none;
-  };
-  ul {
-    list-style:none;
-    padding: .2rem;
-    border: 1px solid black;
-    border-radius: 3px;
-  };
-  ul::before {
-    content: "Uses:";
-  }
-  li {
-    padding-left: .5rem;
-  }
-}
-
-button.uses {
-  font-size: .5*$doc-title-font-size;
-  display: none;
-  background-color: Transparent;
-  border: none;
-}
-
-div[class$="_thmheading"]:hover button.uses {
-  display: inline;
-}
-
-// Footnotes
-
-section#footnotes {
-  border-top: 1px solid;
-  border-color: gray;
-}
-section#footnotes h1 {
-    font-size:1.5rem;
-    color:black;
-    margin:0;
-    margin-bottom: .5rem;
-}
-
-a.footnote {
-  text-decoration: none;
-}
-
-a.footnote sup::after {
-  content: "]";
-}
-
-a.footnote sup::before {
-  content: "[";
 }

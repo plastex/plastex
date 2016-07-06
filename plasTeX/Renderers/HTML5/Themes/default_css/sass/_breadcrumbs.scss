@@ -1,0 +1,33 @@
+// Breadcrumbs
+
+ul.breadcrumbs {
+  @include breakpoint($toc-break) {
+    margin-left: $toc-width;
+  };
+  list-style:none;
+  padding: 0;
+  padding-left: .5rem;
+  margin: 1rem 0;
+  margin-top: $doc-title-height + 1rem;
+  @include breakpoint($toc-break) {
+    margin-left: $toc-width;
+    margin-top: 1rem;
+  };
+}
+
+ul.breadcrumbs li {
+  display: block;
+  float: left;
+}
+
+ul.breadcrumbs a {
+  text-decoration: none;
+  color: darken($prevupnext-nav-color, 10%)
+}
+
+
+li.crumb::after {
+  content: " / ";
+}
+
+

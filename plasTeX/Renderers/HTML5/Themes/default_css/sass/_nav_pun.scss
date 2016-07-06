@@ -1,0 +1,26 @@
+// Navigation Prev/Up/Next
+
+nav.prev_up_next {
+	display: flex;
+  position: fixed;
+  bottom:0;
+  right:0;
+  background: linear-gradient(to bottom, 
+                              lighten($prevupnext-nav-color, 10%) 0%, 
+                              darken($prevupnext-nav-color, 10%) 100%);
+  height: 2rem;
+  ul {
+	  padding: .5em ;
+    list-style:none;
+  }
+  li {
+    display: inline;
+  }
+  a {
+    text-shadow: 1px 2px 0px rgba(0,0,0,0.8);
+	  padding: .3rem;
+    color: white;
+    text-decoration: none;
+  }
+}
+

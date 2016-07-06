@@ -68,9 +68,9 @@
 {% for section in toc recursive -%}
 <li>
   {% if section.tableofcontents -%}
-  <button class="expand-toc">+</button>
   <a href="{{ section.url }}">{{ tocEntry(section) }}</a>
-  <ul class="sub-toc-{{loop.depth}}">
+  <button class="expand-toc">{% if obj.url == section.url %}x{% else %}+{% endif %}</button>
+  <ul class="sub-toc-{{loop.depth}} {% if obj.url == section.url %}active{% endif %}">
      {{ loop(section.tableofcontents) }}
   </ul>
   {% else %}

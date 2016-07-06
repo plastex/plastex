@@ -5,19 +5,21 @@ $.fn.toggleText = function(t1, t2){
 };
 
 $(document).ready(function() {
+    $("ul.active").css("display", "block");
+
     $("#toc-toggle").click(function() {
         $("nav.toc").toggleClass("active")
     });
-
-   $("button.uses").click(
-		   function() {
-			   $(this).siblings("div.thm_uses").slideToggle()
-		   })
 
    $("button.expand-toc").click(
 		   function() {
 			   $(this).toggleText('x', '+');
 			   $(this).siblings("ul").slideToggle('fast')
+		   })
+
+   $("button.uses").click(
+		   function() {
+			   $(this).siblings("div.thm_uses").slideToggle()
 		   })
   });
 

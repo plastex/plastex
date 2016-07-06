@@ -1,0 +1,104 @@
+// Table of contents
+
+nav.local_toc {
+  margin: 0;
+  padding: 0;
+  width: $toc-width;
+  position: absolute;
+  left: 0;
+  top: 4rem;
+  padding-top: $doc-title-height;
+  @include breakpoint($toc-break) {
+    left: $toc-width;
+  };
+  transition: left .5s ease;
+}
+
+
+nav.toc {
+  display:flex;
+  flex-direction: column;
+  margin: 0;
+  margin-top: .2rem;
+  padding: 0;
+  width: $toc-width;
+  left: -$toc-width;
+  z-index: 50;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-top: $doc-title-height;
+  top: 0;
+  bottom: 0;
+  @include breakpoint($toc-break) {
+    left: 0;
+  };
+  position: fixed;
+  min-height: 100%;
+  background-color: $toc-background-color;
+  transition: left .5s ease;
+}
+
+nav.active {
+  left: 0;
+}
+
+.toc ul {
+  list-style:none;
+  padding-left: 0;
+  min-width: 100%;
+
+  a {
+    flex-grow: 1;
+    font-size: $toc-font-size;
+    display: inline-block;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+    padding-right: .5rem;
+    color: $toc-text-color;
+    text-shadow: $toc-text-shadow;
+    text-align: left;
+    text-decoration: none;
+    transition: all 0.1s ease;
+    &:hover {
+      background: darken($toc-background-color, 10%);
+      transition: all 0.2s ease;
+    };
+  };
+
+  li {
+    min-width:100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  }
+}
+
+@for $i from 0 through 4 {
+  .sub-toc-#{$i} a {
+    padding-left: ($i+1)*$toc-padding;
+  }
+}
+
+@for $i from 1 through 4 {
+  ul.sub-toc-#{$i} {
+    display:none;
+  }
+}
+
+button.expand-toc {
+  min-width: 10%;
+  color: $toc-text-color;
+  background-color: Transparent;
+  border-radius: 2px;
+  border: 1px solid $toc-text-color;
+  padding: 0;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+ul.active {
+  background-color: lighten($toc-background-color,10%);
+}
+
+

@@ -1,0 +1,41 @@
+// Header
+
+header {
+  z-index: 100;
+  background: $doc-title-background;
+  display: flex;
+  position: fixed;
+  width: 100%;
+  height: $doc-title-height;
+  margin: 0 auto;
+  text-align:center;
+  vertical-align: middle;
+  top:0;
+  left:0;
+  @include breakpoint($toc-break) {
+    width: $toc-width;
+  }
+}
+
+button#toc-toggle {
+  font-size: .75*$doc-title-font-size;
+  display: inline;
+  background-color: Transparent;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+
+  @include breakpoint($toc-break) {
+	display: none;
+  }
+}
+
+h1#doc_title {
+  margin: auto;
+  color: $doc-title-color;
+  text-shadow: 1px 2px 0px rgba(0,0,0,0.8);
+  font-size: $doc-title-font-size;
+}
+

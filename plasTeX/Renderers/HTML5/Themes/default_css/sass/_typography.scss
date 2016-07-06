@@ -2,31 +2,31 @@
 
 h1 {
     color:$titles-color;
-    font-size:3em;
-    margin:0;
+    font-size:3rem;
+    margin:1rem 0;
 }
  
 h2 {
-    font-size:2em;
+    font-size:2rem;
     color:$titles-color;
     margin:0;
 }
  
 h3 {
-    font-size: 1em;
+    font-size: 1rem;
     color:$titles-color;
-    margin: 0.67em 0;
+    margin: 0.67rem 0;
 }
  
 h4 {
-    font-size: 1em;
+    font-size: 1rem;
     color:$titles-color;
-    margin: 0.67em 0;
+    margin: 0.67rem 0;
 }
  
 p {
-    font-size:1em;
-    margin:0.8em 0;
+    font-size:1rem;
+    margin:0.8rem 0;
 }
  
  
@@ -83,7 +83,7 @@ kbd,
 pre,
 samp {
     font-family: monospace, serif;
-    font-size: 1em;
+    font-size: 1rem;
 }
  
 /**
@@ -123,9 +123,9 @@ sup {
 }
  
 sup {
-    top: -0.5em;
+    top: -0.5rem;
 }
  
 sub {
-    bottom: -0.25em;
+    bottom: -0.25rem;
 }
