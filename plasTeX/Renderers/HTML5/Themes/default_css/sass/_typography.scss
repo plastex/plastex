@@ -2,12 +2,12 @@
 
 h1 {
     color:$titles-color;
-    font-size:3rem;
+    font-size:2rem;
     margin:1rem 0;
 }
  
 h2 {
-    font-size:2rem;
+    font-size:1.5rem;
     color:$titles-color;
     margin:0;
 }
@@ -31,14 +31,6 @@ p {
  
  
 /**
- * Address styling not present in IE 8/9, Safari 5, and Chrome.
- */
- 
-abbr[title] {
-    border-bottom: 1px dotted;
-}
- 
-/**
  * Address style set to `bolder` in Firefox 4+, Safari 5, and Chrome.
  */
  
@@ -55,24 +47,6 @@ dfn {
     font-style: italic;
 }
  
-/**
- * Address differences between Firefox and other browsers.
- */
- 
-hr {
-    -moz-box-sizing: content-box;
-    box-sizing: content-box;
-    height: 0;
-}
- 
-/**
- * Address styling not present in IE 8/9.
- */
- 
-mark {
-    background: #ff0;
-    color: #000;
-}
  
 /**
  * Correct font family set oddly in Safari 5 and Chrome.
