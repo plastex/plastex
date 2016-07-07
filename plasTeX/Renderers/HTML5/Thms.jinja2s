@@ -6,13 +6,19 @@ name: thmenv
     </span>
     <span class="{{obj.thmName}}_thmlabel">{{obj.ref}}</span>
     {% if obj.userdata.uses -%}
-    <button class="uses">Uses</button>
-    <div class="thm_uses" title="Uses">
-      <ul class="uses">
-        {% for used in obj.userdata.uses -%}
-        <li><a href="{{ used.url }}">{{ used.caption }} {{ used.ref }}</a></li>
-        {% endfor -%}
-      </ul>
+    <a href="#{{ obj.id }}-uses" class="uses">Uses</a>
+    <div id="{{ obj.id }}-uses" class="thm-uses-container">
+      <div class="thm-uses-content">
+        <header> 
+          <h1>Uses</h1>
+          <a href="#" class="closebtn">&#10006;</a>
+        </header>
+        <ul class="uses">
+          {% for used in obj.userdata.uses -%}
+          <li><a href="{{ used.url }}">{{ used.caption }} {{ used.ref }}</a></li>
+          {% endfor -%}
+        </ul>
+      </div>
     </div>
     {% endif %}
   </div>
