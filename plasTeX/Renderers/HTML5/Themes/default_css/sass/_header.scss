@@ -1,7 +1,7 @@
 // Header
 
 header {
-  z-index: 100;
+  z-index: $header-z-index;
   background: $doc-title-background;
   display: flex;
   position: fixed;

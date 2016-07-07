@@ -6,6 +6,7 @@ $background-color: rgb(232, 232, 232);
 $main-text-color:  rgb(10, 10, 20);
 
 $prevupnext-nav-color: rgb(73, 125, 165);
+$pun-height: 2rem;
 
 $toc-width: 30rem;
 $toc-background-color: lighten($prevupnext-nav-color, 10%);
@@ -28,5 +29,7 @@ $breadcrumbs-height: $doc-title-height;
 
 
 // z-index
-$modal-z-index: 500;
 $pun-z-index: 200;
+$toc-z-index: 300;
+$header-z-index: 400;
+$modal-z-index: 500;

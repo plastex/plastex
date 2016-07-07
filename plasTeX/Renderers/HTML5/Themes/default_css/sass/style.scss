@@ -26,6 +26,7 @@ div.content {
   left: 0;
   top: $breadcrumbs-height + $doc-title-height;
   padding-left: 1rem;
+	padding-bottom: $pun-height;
   @include breakpoint($toc-break) {
     left: $toc-width;
 		top: max($breadcrumbs-height, $doc-title-height);

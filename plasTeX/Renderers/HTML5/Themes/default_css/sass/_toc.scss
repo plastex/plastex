@@ -1,17 +1,16 @@
 // Table of contents
 
-nav.local_toc {
-  margin: 0;
-  padding: 0;
-  width: $toc-width;
-  position: absolute;
-  left: 0;
-  top: 4rem;
-  padding-top: $doc-title-height;
-  @include breakpoint($toc-break) {
-    left: $toc-width;
+.local_toc ul {
+  list-style:none;
+  padding-left: 1rem;
+
+  a {
+    text-decoration: none;
   };
-  transition: left .5s ease;
+
+	li {
+		padding: .2rem 0;
+	}
 }
 
 
@@ -21,9 +20,9 @@ nav.toc {
   margin: 0;
   margin-top: .2rem;
   padding: 0;
-  width: $toc-width;
-  left: -$toc-width;
-  z-index: 50;
+  width: 100%;
+  left: -100%;
+  z-index: $toc-z-index;
   overflow-x: hidden;
   overflow-y: auto;
   padding-top: $doc-title-height;
@@ -31,6 +30,7 @@ nav.toc {
   bottom: 0;
   @include breakpoint($toc-break) {
     left: 0;
+    width: $toc-width;
   };
   position: fixed;
   min-height: 100%;

@@ -9,7 +9,7 @@ nav.prev_up_next {
   background: linear-gradient(to bottom, 
                               lighten($prevupnext-nav-color, 10%) 0%, 
                               darken($prevupnext-nav-color, 10%) 100%);
-  height: 2rem;
+  height: $pun-height;
   ul {
 	  padding: .5em ;
     list-style:none;
