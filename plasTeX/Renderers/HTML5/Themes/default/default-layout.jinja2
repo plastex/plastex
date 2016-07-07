@@ -32,6 +32,7 @@
 <link rel="up" href="{{ links.up.url }}" title="{{ links.up.title.textContent }}" />
 {% endif %}
 <link rel="stylesheet" href="styles/style.css" />
+<link rel="stylesheet" href="styles/font-awesome.min.css" />
 {% if config.html5['extra-css'] %}
 <link rel="stylesheet" href="{{ config.html5['extra-css'] }}" />
 {% endif %}
@@ -70,7 +71,7 @@
 <li>
   {% if section.tableofcontents -%}
   <a href="{{ section.url }}">{{ tocEntry(section) }}</a>
-  <button class="expand-toc">{% if obj.url == section.url %}x{% else %}+{% endif %}</button>
+  {% if obj.url == section.url %}<span class="expand-toc fa fa-close"></span>{% else %}<span class="expand-toc fa fa-plus"></span>{% endif %}
   <ul class="sub-toc-{{loop.depth}} {% if obj.url == section.url %}active{% endif %}">
      {{ loop(section.tableofcontents) }}
   </ul>

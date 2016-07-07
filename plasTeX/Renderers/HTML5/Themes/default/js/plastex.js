@@ -11,9 +11,9 @@ $(document).ready(function() {
         $("nav.toc").toggleClass("active")
     });
 
-   $("button.expand-toc").click(
+   $("span.expand-toc").click(
 		   function() {
-			   $(this).toggleText('x', '+');
+			   $(this).toggleClass('fa-close').toggleClass('fa-plus');
 			   $(this).siblings("ul").slideToggle('fast')
 		   })
 

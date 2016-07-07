@@ -6,12 +6,12 @@ name: thmenv
     </span>
     <span class="{{obj.thmName}}_thmlabel">{{obj.ref}}</span>
     {% if obj.userdata.uses -%}
-    <a href="#{{ obj.id }}-uses" class="uses">Uses</a>
+    <a href="#{{ obj.id }}-uses" class="uses fa fa-gears"></a>
     <div id="{{ obj.id }}-uses" class="thm-uses-container">
       <div class="thm-uses-content">
         <header> 
           <h1>Uses</h1>
-          <a href="#" class="closebtn">&#10006;</a>
+          <a href="#" class="closebtn fa fa-close"></a>
         </header>
         <ul class="uses">
           {% for used in obj.userdata.uses -%}

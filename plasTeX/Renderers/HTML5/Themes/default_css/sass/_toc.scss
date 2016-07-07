@@ -8,9 +8,9 @@
     text-decoration: none;
   };
 
-	li {
-		padding: .2rem 0;
-	}
+  li {
+  	padding: .2rem 0;
+  }
 }
 
 
@@ -49,6 +49,7 @@ nav.active {
 
   a {
     flex-grow: 1;
+    max-width: 90%;
     font-size: $toc-font-size;
     display: inline-block;
     padding-top: .5rem;
@@ -67,9 +68,10 @@ nav.active {
 
   li {
     min-width:100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+    display: flex;
+    align-items:center;
+    flex-wrap: wrap;
+    justify-content: space-between;
   }
 }
 
@@ -85,16 +87,13 @@ nav.active {
   }
 }
 
-button.expand-toc {
+span.expand-toc {
   min-width: 10%;
   color: $toc-text-color;
   background-color: Transparent;
-  border-radius: 2px;
-  border: 1px solid $toc-text-color;
   padding: 0;
-  text-align: center;
-  text-decoration: none;
   cursor: pointer;
+  text-align:center;
 }
 
 ul.active {
