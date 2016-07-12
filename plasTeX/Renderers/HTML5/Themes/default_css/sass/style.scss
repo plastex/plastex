@@ -30,6 +30,7 @@ div.content {
   @include breakpoint($toc-break) {
     left: $toc-width;
 		top: max($breadcrumbs-height, $doc-title-height);
+		margin: 0 5%;
   }
 }
 
