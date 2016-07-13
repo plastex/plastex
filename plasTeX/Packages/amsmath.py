@@ -5,6 +5,8 @@ from plasTeX.Base.LaTeX.Arrays import Array
 from plasTeX.Base.LaTeX.Math import EqnarrayStar, equation, eqnarray
 #### Imports Added by Tim ####
 from plasTeX.Base.LaTeX.Math import math
+#### Temporary fix for DeclareMathOperator
+from plasTeX.Base.LaTeX import newcommand
 
 class pmatrix(Array):
     pass
@@ -101,5 +103,9 @@ class dddot(math):
     pass
 
 class ddddot(math):
+    pass
+
+#### Temporary fix
+class DeclareMathOperator(newcommand):
     pass
 
