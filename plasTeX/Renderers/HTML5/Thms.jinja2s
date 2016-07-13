@@ -26,3 +26,20 @@ name: thmenv
   {{ obj }}
   </div>
 </div>
+
+name: proof
+<div class="proof_wrapper" id="{{ obj.id }}">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    {% if obj.caption -%}
+    {{ obj.caption }}
+    {% else -%}
+    {{ context.terms['proof'] }}
+    {% endif %}
+    </span>
+    <span class="expand-proof fa fa-plus"></span>
+  </div>
+  <div class="proof_content">
+  {{ obj }}
+  </div>
+</div>

@@ -64,6 +64,24 @@ class renewenvironment(newenvironment):
 #
 # C.8.3 Theorem-like Environments
 #
+class newtheoremStar(Command):
+    macroName = 'newtheorem*'
+    args = 'name:str caption'
+    def invoke(self, tex):
+        print('TOTO\n\n')
+        self.parse(tex)
+        attrs = self.attributes
+        name = attrs['name']
+        caption = attrs['caption']
+        deflog.debug('newtheorem %s', name)
+
+        # The nodeName key below ensure all theorem type will call the same
+        # rendering method, the type of theorem being retained in the thmName
+        # attribute
+        newclass = new.classobj(str(name), (Environment,), 
+                {'caption': caption, 'nodeName': 'thmenv', 'thmName': name,
+                    'nargs': 1})
+        self.ownerDocument.context.addGlobal(name, newclass)
 
 class newtheorem(Command):
     args = 'name:str [ counter:str ] caption [ within:str ]'
@@ -96,3 +114,11 @@ class newtheorem(Command):
                 {'caption': caption, 'nodeName': 'thmenv', 'thmName': name,
                     'counter': counter, 'nargs': 1})
         self.ownerDocument.context.addGlobal(name, newclass)
+
+
+class proof(Environment):
+    args ='[caption]'
+
+    def digest(self, tokens):
+        Environment.digest(self, tokens)
+        self.caption = self.attributes.get('caption', '')
