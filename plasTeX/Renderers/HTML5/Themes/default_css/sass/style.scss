@@ -26,15 +26,20 @@ div.content {
   left: 0;
   top: $breadcrumbs-height + $doc-title-height;
   padding-left: 1rem;
-	padding-bottom: $pun-height;
+  padding-bottom: $pun-height;
   @include breakpoint($toc-break) {
     left: $toc-width;
-		top: max($breadcrumbs-height, $doc-title-height);
-		margin: 0 5%;
+    top: max($breadcrumbs-height, $doc-title-height);
+    margin: 0 5%;
   }
+  line-height: $content-line-height;
 }
 
-.content p {
-  margin: 1rem 0;
+div.content > p {
+  margin: 1.5*$content-line-height 0;
   clear: both;
+}
+
+li > p {
+  margin: .2*$content-line-height 0;
 }
