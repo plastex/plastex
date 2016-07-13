@@ -114,3 +114,72 @@ div[class$="_thmheading"]:hover a.uses {
 }
 
 
+/* Display the modal when targeted */
+div.thm-coveredby-container:target {
+  display: flex;
+}
+
+div.thm-coveredby-container {
+  display: none;
+  position: fixed;
+  z-index: $modal-z-index;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+div.thm-coveredby-content {
+  background-color: white;
+  margin: auto;
+  overflow: auto;
+  font-weight: normal;
+  vertical-align: middle;
+  border: 1px solid darken($toc-background-color, 10%);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 5px;
+  header {
+    display: flex;
+    flex-direction: row;
+    height: 2rem;
+    justify-content: space-between;
+    position: relative;
+    a.closebtn {
+      margin: auto 0;
+      padding-right: .2rem;
+      text-decoration: none;
+      font-size: 120%;
+      font-weight: bold;
+      color: #fff;
+    }
+    h1 {
+      font-size: 120%;
+      color: $toc-text-color;
+      margin: auto 0;
+      padding: .2rem;
+    }
+  };
+  a {
+    text-decoration: none;
+  };
+  ul {
+    list-style:none;
+    padding: 1rem;
+  };
+  li {
+    padding-left: .5rem;
+  }
+}
+
+a.coveredby {
+  color: $main-text-color;
+  text-decoration: none;
+  display: none;
+  background-color: Transparent;
+  border: none;
+}
+
+div[class$="_thmheading"]:hover a.coveredby {
+  display: inline;
+}
+

@@ -31,9 +31,12 @@ class covers(Command):
     def digest(self, tokens):
         Command.digest(self, tokens)
         node = self.parentNode
-        labels_dict = self.ownerDocument.context.labels
-        covered = [labels_dict[label] for label in self.attributes['labels']]
-        node.setUserData('covers', covered)
-        for covered_node in covered:
-            covered_by = covered_node.userdata.get('covered_by', []) + [self]
-            covered_node.setUserData('covered_by', covered_by)
+        doc = self.ownerDocument
+        def update_covered():
+            labels_dict = doc.context.labels
+            covereds = [labels_dict[label] for label in self.attributes['labels']]
+            node.setUserData('covers', covereds)
+            for covered in covereds:
+                covered_by = covered.userdata.get('covered_by', [])
+                covered.setUserData('covered_by', covered_by + [node])
+        doc.post_parse_cb.append(update_covered)

@@ -21,6 +21,22 @@ name: thmenv
       </div>
     </div>
     {% endif %}
+    {% if obj.userdata.covered_by -%}
+    <a href="#{{ obj.id }}-coveredby" class="coveredby fa fa-pencil-square-o"></a>
+    <div id="{{ obj.id }}-coveredby" class="thm-coveredby-container">
+      <div class="thm-coveredby-content">
+        <header> 
+          <h1>Covered by</h1>
+          <a href="#" class="closebtn fa fa-close"></a>
+        </header>
+        <ul class="coveredby">
+          {% for exo in obj.userdata.covered_by -%}
+          <li><a href="{{ exo.url }}">{{ exo.caption }} {{ exo.ref }}</a></li>
+          {% endfor -%}
+        </ul>
+      </div>
+    </div>
+    {% endif %}
   </div>
   <div class="{{ obj.thmName }}_thmcontent">
   {{ obj }}
