@@ -10,7 +10,7 @@ name: thmenv
     <div id="{{ obj.id }}-uses" class="thm-uses-container">
       <div class="thm-uses-content">
         <header> 
-          <h1>Uses</h1>
+          <h1>{{ context.terms['Uses'] | default('Uses')}} </h1>
           <a href="#" class="closebtn fa fa-close"></a>
         </header>
         <ul class="uses">
@@ -26,7 +26,7 @@ name: thmenv
     <div id="{{ obj.id }}-coveredby" class="thm-coveredby-container">
       <div class="thm-coveredby-content">
         <header> 
-          <h1>Covered by</h1>
+          <h1>{{ context.terms['Covered by'] | default('Covered by')}}</h1>
           <a href="#" class="closebtn fa fa-close"></a>
         </header>
         <ul class="coveredby">
