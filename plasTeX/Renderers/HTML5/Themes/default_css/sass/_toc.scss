@@ -73,6 +73,10 @@ nav.active {
     flex-wrap: wrap;
     justify-content: space-between;
   }
+
+  li.active {
+    background-color: lighten($toc-background-color,10%);
+  }
 }
 
 @for $i from 0 through 4 {
@@ -97,7 +101,7 @@ span.expand-toc {
 }
 
 ul.active {
-  background-color: lighten($toc-background-color,10%);
+  display: block;
 }
 
 

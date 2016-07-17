@@ -5,22 +5,14 @@ $.fn.toggleText = function(t1, t2){
 };
 
 $(document).ready(function() {
-    $("ul.active").css("display", "block");
-
     $("#toc-toggle").click(function() {
         $("nav.toc").toggleClass("active")
     });
 
-   $("span.expand-toc").click(
+   $("button.expand-toc").click(
 		   function() {
-			   $(this).toggleClass('fa-close').toggleClass('fa-plus');
+			   $(this).toggleText('x', '+');
 			   $(this).siblings("ul").slideToggle('fast')
-		   })
-
-   $("div.proof_heading").click(
-		   function() {
-			   $(this).children('span.expand-proof').toggleClass('fa-close').toggleClass('fa-plus');
-			   $(this).siblings("div.proof_content").slideToggle()
 		   })
 
    $("button.uses").click(
