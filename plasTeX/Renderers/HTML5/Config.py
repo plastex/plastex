@@ -22,8 +22,16 @@ section['mathjax-js'] = StringOption(
 )
 
 section['mathjax'] = BooleanOption(
-    """ Url of the MathJax lib """,
+    """ Use mathjax """,
     options='--mathjax !--no-mathjax',
     category='html5',
     default=True,
 )
+
+section['font-awesome'] = StringOption(
+    """ Url of the Font Awesome lib """,
+    options='--font-awesome',
+    category='html5',
+    default='',
+)
+
