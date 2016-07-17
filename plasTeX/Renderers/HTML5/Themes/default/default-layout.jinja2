@@ -25,13 +25,13 @@
 {% else %}
 <title>{{ obj.title }}</title>
 {% endif %}
-{% if links.next %}
+{% if links.next.url %}
 <link rel="next" href="{{ links.next.url }}" title="{{ links.next.title.textContent }}" />
 {% endif %}
-{% if links.prev %}
+{% if links.prev.url %}
 <link rel="prev" href="{{ links.prev.url }}" title="{{ links.prev.title.textContent }}" />
 {% endif %}
-{% if links.up %}
+{% if links.up.url %}
 <link rel="up" href="{{ links.up.url }}" title="{{ links.up.title.textContent }}" />
 {% endif %}
 <link rel="stylesheet" href="styles/style.css" />
@@ -50,16 +50,16 @@
 
 {% block navbar %}
 <nav class="prev_up_next">
-  {% if links.prev %}
+  {% if links.prev.url %}
   <a href="{{ links.prev.url }}" title="{{ links.prev.title }}" class="fa fa-caret-left"></a>
   {% endif %}
-  {% if links.up %}
+  {% if links.up.url %}
   <a href="{{ links.up.url }}" title="{{ links.up.title }}" class="fa fa-caret-up"></a>
   {% endif %}
-  {% if links.next %}
+  {% if links.next.url %}
   <a href="{{ links.next.url }}" title="{{ links.next.title }}" class="fa fa-caret-right"></a>
   {% endif %}
-  {% if links.index %}
+  {% if links.index.url %}
   <a href="{{ links.index.url }}" class="index">Index</a>
   {% endif %}
 </nav>
