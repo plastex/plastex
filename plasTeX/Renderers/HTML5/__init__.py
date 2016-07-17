@@ -23,6 +23,8 @@ class HTML5(_Renderer):
         # Add a non-breaking space to empty table cells
         s = re.compile(r'(<(td|th)\b[^>]*>)\s*(</\2>)', re.I).sub(r'\1&nbsp;\3', s)
 
+        for fun in document.userdata.get('processFileContents', []):
+            s = fun(document, s)
         return s
 
 
