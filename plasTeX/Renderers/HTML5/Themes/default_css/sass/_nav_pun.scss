@@ -10,16 +10,11 @@ nav.prev_up_next {
                               lighten($prevupnext-nav-color, 10%) 0%, 
                               darken($prevupnext-nav-color, 10%) 100%);
   height: $pun-height;
-  ul {
-	  padding: .5em ;
-    list-style:none;
-  }
-  li {
-    display: inline;
-  }
   a {
+	font-size: 150%;
     text-shadow: 1px 2px 0px rgba(0,0,0,0.8);
-	  padding: .3rem;
+    margin: auto;
+	padding: .2*$pun-height .4*$pun-height;
     color: white;
     text-decoration: none;
   }

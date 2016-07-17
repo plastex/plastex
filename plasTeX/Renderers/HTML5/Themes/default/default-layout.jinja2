@@ -50,22 +50,18 @@
 
 {% block navbar %}
 <nav class="prev_up_next">
-<ul>
   {% if links.prev %}
-  <li><a href="{{ links.prev.url }}" title="{{ links.prev.title
-}}">&#x25C0;</a></li>
+  <a href="{{ links.prev.url }}" title="{{ links.prev.title }}" class="fa fa-caret-left"></a>
   {% endif %}
   {% if links.up %}
-  <li><a href="{{ links.up.url }}" title="{{ links.up.title }}">&#x25B2;</a></li>
+  <a href="{{ links.up.url }}" title="{{ links.up.title }}" class="fa fa-caret-up"></a>
   {% endif %}
   {% if links.next %}
-  <li><a href="{{ links.next.url }}" title="{{ links.next.title
-}}">&#x25B6;</a></li>
+  <a href="{{ links.next.url }}" title="{{ links.next.title }}" class="fa fa-caret-right"></a>
   {% endif %}
   {% if links.index %}
-  <li><a href="{{ links.index.url }}" class="index">Index</a></li>
+  <a href="{{ links.index.url }}" class="index">Index</a>
   {% endif %}
-</ul>
 </nav>
 {% endblock %}
 
@@ -76,7 +72,7 @@
 <li class="{{ isActive(section) }}">
   {% if section.tableofcontents -%}
   <a href="{{ section.url }}">{{ tocEntry(section) }}</a>
-  {% if obj.url == section.url %}<span class="expand-toc fa fa-close"></span>{% else %}<span class="expand-toc fa fa-plus"></span>{% endif %}
+  {% if isActive(section) %}<span class="expand-toc fa fa-close"></span>{% else %}<span class="expand-toc fa fa-plus"></span>{% endif %}
   <ul class="sub-toc-{{loop.depth}}{{ isActive(section) }}">
      {{ loop(section.tableofcontents) }}
   </ul>

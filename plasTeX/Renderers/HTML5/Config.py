@@ -32,6 +32,6 @@ section['font-awesome'] = StringOption(
     """ Url of the Font Awesome lib """,
     options='--font-awesome',
     category='html5',
-    default='',
+    default='styles/font-awesome.min.css',
 )
 
