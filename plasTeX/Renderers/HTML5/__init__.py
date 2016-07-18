@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import subprocess
 import sys, os, re, codecs, plasTeX
 from plasTeX.Renderers.PageTemplate import Renderer as _Renderer
 
@@ -13,10 +14,6 @@ class HTML5(_Renderer):
     def processFileContent(self, document, s):
         s = _Renderer.processFileContent(self, document, s)
 
-        # Force XHTML syntax on empty tags
-        s = re.compile(r'(<(?:hr|br|img|link|meta)\b.*?)\s*/?\s*(>)',
-                       re.I|re.S).sub(r'\1 /\2', s)
-
         # Remove empty paragraphs
         s = re.compile(r'<p>\s*</p>', re.I).sub(r'', s)
 
@@ -25,6 +22,18 @@ class HTML5(_Renderer):
 
         for fun in document.userdata.get('processFileContents', []):
             s = fun(document, s)
+
+        page2mml = document.config['html5']['page2mml']
+        if page2mml:
+            print('Producing MML')
+            proc = subprocess.Popen(
+                    page2mml, 
+                    stdin=subprocess.PIPE,
+                    stdout=subprocess.PIPE)
+            output, output_err = proc.communicate(s.encode(encoding="utf-8"))
+            if not output_err:
+                s = output.decode(encoding="utf-8")
+
         return s
 
 

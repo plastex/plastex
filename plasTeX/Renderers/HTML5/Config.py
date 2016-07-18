@@ -35,3 +35,9 @@ section['font-awesome'] = StringOption(
     default='styles/font-awesome.min.css',
 )
 
+section['page2mml'] = StringOption(
+    """Program to convert tex to mml in html.""",
+    options='--page2mml',
+    category='html5',
+    default='',
+)
