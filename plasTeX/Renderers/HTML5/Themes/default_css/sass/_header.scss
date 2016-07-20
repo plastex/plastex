@@ -1,41 +1,55 @@
 // Header
 
-header {
-  z-index: $header-z-index;
-  background: $doc-title-background;
-  display: flex;
-  position: fixed;
-  width: 100%;
-  height: $doc-title-height;
-  margin: 0 auto;
-  text-align:center;
-  vertical-align: middle;
-  top:0;
-  left:0;
-  @include breakpoint($toc-break) {
-    width: $toc-width;
-  }
+header
+{
+    position: fixed;
+    z-index: $header-z-index;
+    top: 0;
+    left: 0;
+
+    display: flex;
+
+    width: 100%;
+    height: $doc-title-height;
+    margin: 0 auto;
+
+    text-align: center;
+    vertical-align: middle;
+
+    background: $doc-title-background;
+
+    @include breakpoint($toc-break)
+    {
+        width: $toc-width;
+    }
 }
 
-button#toc-toggle {
-  font-size: .75*$doc-title-font-size;
-  display: inline;
-  background-color: Transparent;
-  border: none;
-  color: white;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
+button#toc-toggle
+{
+    font-size: .75*$doc-title-font-size;
 
-  @include breakpoint($toc-break) {
-	display: none;
-  }
+    display: inline;
+    display: inline-block;
+
+    text-align: center;
+    text-decoration: none;
+
+    color: white;
+    border: none;
+    background-color: Transparent;
+
+    @include breakpoint($toc-break)
+    {
+        display: none;
+    }
 }
 
-h1#doc_title {
-  margin: auto;
-  color: $doc-title-color;
-  text-shadow: 1px 2px 0px rgba(0,0,0,0.8);
-  font-size: $doc-title-font-size;
-}
+h1#doc_title
+{
+    font-size: $doc-title-font-size;
 
+    margin: auto;
+
+    color: $doc-title-color;
+    text-shadow: 1px 2px 0 rgba(0,0,0,.8);
+}

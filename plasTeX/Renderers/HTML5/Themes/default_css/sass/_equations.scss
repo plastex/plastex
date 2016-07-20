@@ -1,22 +1,29 @@
 // Maths
 
-div.equation {
-  margin: 1rem 1rem;
-  display: flex;
+div.equation
+{
+    display: flex;
 
-  span.equation_label {
-    float: left;
-    margin-right: 1rem;
-  }
-  span.equation_label::before {
-      content: "(";
-  };
-  span.equation_label::after {
-      content: ")";
-  };
-  div.equation_content {
-    float: left;
-    margin-left: 3rem;
-  }
+    margin: 1rem 1rem;
+
+    span.equation_label
+    {
+        float: left;
+
+        margin-right: 1rem;
+    }
+    span.equation_label::before
+    {
+        content: '(';
+    };
+    span.equation_label::after
+    {
+        content: ')';
+    };
+    div.equation_content
+    {
+        float: left;
+
+        margin-left: 3rem;
+    }
 }
-

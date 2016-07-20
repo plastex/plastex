@@ -1,45 +1,56 @@
-@import "breakpoint";
-@import "reset";
+@import 'breakpoint';
+@import 'reset';
 
-@import "typography";
-@import "variables";
+@import 'typography';
+@import 'variables';
 
-@import "toc";
-@import "nav_pun";
-@import "header";
-@import "breadcrumbs";
-@import "footnotes";
-@import "equations";
-@import "theorems";
+@import 'toc';
+@import 'nav_pun';
+@import 'header';
+@import 'breadcrumbs';
+@import 'footnotes';
+@import 'equations';
+@import 'theorems';
 
-body {
-  background-color: $background-color;
-  color: $main-text-color;
-  margin: 0;
+body
+{
+    margin: 0;
+
+    color: $main-text-color;
+    background-color: $background-color;
 }
 
 
 // Main content
 
-div.content {
-  position: absolute;
-  left: 0;
-  top: $breadcrumbs-height + $doc-title-height;
-  padding: 1rem;
-  padding-bottom: $pun-height;
-  @include breakpoint($toc-break) {
-    left: $toc-width;
-    top: max($breadcrumbs-height, $doc-title-height);
-    margin: 0 5%;
-  }
-  line-height: $content-line-height;
+div.content
+{
+    line-height: $content-line-height;
+
+    position: absolute;
+    top: $breadcrumbs-height + $doc-title-height;
+    left: 0;
+
+    padding: 1rem;
+    padding-bottom: $pun-height;
+
+    @include breakpoint($toc-break)
+    {
+        top: max($breadcrumbs-height, $doc-title-height);
+        left: $toc-width;
+
+        margin: 0 5%;
+    }
 }
 
-div.content > p {
-  margin: 1.5*$content-line-height 0;
-  clear: both;
+div.content > p
+{
+    clear: both;
+
+    margin: 1.5*$content-line-height 0;
 }
 
-li > p {
-  margin: .2*$content-line-height 0;
+li > p
+{
+    margin: .2*$content-line-height 0;
 }
