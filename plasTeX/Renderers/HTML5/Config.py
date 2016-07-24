@@ -18,7 +18,7 @@ section['mathjax-js'] = StringOption(
     """ Url of the MathJax lib """,
     options='--mathjax-js',
     category='html5',
-    default='http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML',
+    default='http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML',
 )
 
 section['mathjax'] = BooleanOption(
@@ -28,16 +28,9 @@ section['mathjax'] = BooleanOption(
     default=True,
 )
 
-section['font-awesome'] = StringOption(
-    """ Url of the Font Awesome lib """,
-    options='--font-awesome',
-    category='html5',
-    default='styles/font-awesome.min.css',
-)
-
-section['page2mml'] = StringOption(
-    """Program to convert tex to mml in html.""",
-    options='--page2mml',
+section['filters'] = MultiOption(
+    """Comma separated list of commands to invoke on each output page.""",
+    options='--filters',
     category='html5',
     default='',
 )

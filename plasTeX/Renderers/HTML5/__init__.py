@@ -23,11 +23,11 @@ class HTML5(_Renderer):
         for fun in document.userdata.get('processFileContents', []):
             s = fun(document, s)
 
-        page2mml = document.config['html5']['page2mml']
-        if page2mml:
-            print('Producing MML')
+        filters = document.config['html5']['filters']
+        for filter_ in filters:
+            print('Running ' + filter_)
             proc = subprocess.Popen(
-                    page2mml, 
+                    filter_, 
                     stdin=subprocess.PIPE,
                     stdout=subprocess.PIPE)
             output, output_err = proc.communicate(s.encode(encoding="utf-8"))
