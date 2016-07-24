@@ -42,7 +42,7 @@ nav.toc
 
     background-color: $toc-background-color;
 
-    @include breakpoint($toc-break)
+    @media (min-width: $toc-break)
     {
         left: 0;
 
@@ -123,7 +123,7 @@ nav.active
     }
 }
 
-span.expand-toc
+svg.expand-toc
 {
     min-width: 10%;
     padding: 0;

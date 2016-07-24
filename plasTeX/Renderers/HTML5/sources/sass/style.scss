@@ -1,4 +1,3 @@
-@import 'breakpoint';
 @import 'reset';
 
 @import 'typography';
@@ -34,7 +33,7 @@ div.content
     padding: 1rem;
     padding-bottom: $pun-height;
 
-    @include breakpoint($toc-break)
+	@media (min-width: $toc-break)
     {
         top: max($breadcrumbs-height, $doc-title-height);
         left: $toc-width;

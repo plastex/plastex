@@ -12,7 +12,8 @@ header {
   vertical-align: middle;
   top:0;
   left:0;
-  @include breakpoint($toc-break) {
+  @media (min-width: $toc-break)
+  {
     width: $toc-width;
   }
 }
@@ -21,7 +22,8 @@ svg#toc-toggle {
   font-size: .75*$doc-title-font-size;
   margin-right: .5*$doc-title-font-size;
 
-  @include breakpoint($toc-break) {
+  @media (min-width: $toc-break)
+  {
 	display: none;
   }
 }

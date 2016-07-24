@@ -9,11 +9,7 @@ ul.breadcrumbs
 
     list-style: none;
 
-    @include breakpoint($toc-break)
-    {
-        margin-left: $toc-width;
-    };
-    @include breakpoint($toc-break)
+	@media (min-width: $toc-break)
     {
         margin-top: 1rem;
         margin-left: $toc-width;
