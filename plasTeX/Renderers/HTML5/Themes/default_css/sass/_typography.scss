@@ -1,105 +1,130 @@
-@import "variables";
+@import 'variables';
 
-h1 {
-    color:$titles-color;
-    font-size:2rem;
-    margin:1rem 0;
+h1
+{
+    font-size: 2rem;
+
+    margin: 1rem 0;
+
+    color: $titles-color;
 }
- 
-h2 {
-    font-size:1.5rem;
-    color:$titles-color;
-    margin:0;
+
+h2
+{
+    font-size: 1.5rem;
+
+    margin: 0;
+
+    color: $titles-color;
 }
- 
-h3 {
+
+h3
+{
     font-size: 1rem;
-    color:$titles-color;
-    margin: 0.67rem 0;
+
+    margin: .67rem 0;
+
+    color: $titles-color;
 }
- 
-h4 {
+
+h4
+{
     font-size: 1rem;
-    color:$titles-color;
-    margin: 0.67rem 0;
+
+    margin: .67rem 0;
+
+    color: $titles-color;
 }
- 
-p {
-    font-size:1rem;
-    margin:0.8rem 0;
+
+p
+{
+    font-size: 1rem;
+
+    margin: .8rem 0;
 }
- 
- 
+
+
 /**
  * Address style set to `bolder` in Firefox 4+, Safari 5, and Chrome.
  */
- 
+
 b,
-strong {
+strong
+{
     font-weight: bold;
 }
- 
+
 /**
  * Address styling not present in Safari 5 and Chrome.
  */
- 
-dfn {
+
+dfn
+{
     font-style: italic;
 }
- 
- 
+
+
 /**
  * Correct font family set oddly in Safari 5 and Chrome.
  */
- 
+
 code,
 kbd,
 pre,
-samp {
+samp
+{
     font-family: monospace, serif;
     font-size: 1rem;
 }
- 
+
 /**
  * Improve readability of pre-formatted text in all browsers.
  */
- 
-pre {
+
+pre
+{
     white-space: pre-wrap;
 }
- 
+
 /**
  * Set consistent quote types.
  */
- 
-q {
-    quotes: "\201C" "\201D" "\2018" "\2019";
+
+q
+{
+    quotes: '\201C' '\201D' '\2018' '\2019';
 }
- 
+
 /**
  * Address inconsistent and variable font size in all browsers.
  */
- 
-small {
+
+small
+{
     font-size: 80%;
 }
- 
+
 /**
  * Prevent `sub` and `sup` affecting `line-height` in all browsers.
  */
- 
+
 sub,
-sup {
+sup
+{
     font-size: 75%;
     line-height: 0;
+
     position: relative;
+
     vertical-align: baseline;
 }
- 
-sup {
-    top: -0.5rem;
+
+sup
+{
+    top: -.5rem;
 }
- 
-sub {
-    bottom: -0.25rem;
+
+sub
+{
+    bottom: -.25rem;
 }
