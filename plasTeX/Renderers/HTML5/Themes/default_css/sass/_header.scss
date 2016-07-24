@@ -17,15 +17,9 @@ header {
   }
 }
 
-button#toc-toggle {
+svg#toc-toggle {
   font-size: .75*$doc-title-font-size;
-  display: inline;
-  background-color: Transparent;
-  border: none;
-  color: white;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
+  margin-right: .5*$doc-title-font-size;
 
   @include breakpoint($toc-break) {
 	display: none;

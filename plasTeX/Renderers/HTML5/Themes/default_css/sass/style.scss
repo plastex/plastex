@@ -43,3 +43,13 @@ div.content > p {
 li > p {
   margin: .2*$content-line-height 0;
 }
+
+// Icons
+.icon {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    stroke-width: 0;
+    stroke: currentColor;
+    fill: currentColor;
+}

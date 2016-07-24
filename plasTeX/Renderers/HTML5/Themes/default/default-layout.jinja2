@@ -7,6 +7,10 @@
 {% macro isActive(section) -%}
 {% if section in links.breadcrumbs %} active{% endif %}
 {%- endmacro %}
+{% macro icon(icon, id='', class='') -%}
+<svg  {% if id %}id="{{id}}" {% endif -%}class="icon icon-{{ icon }} {{ class }}"><use xlink:href="symbol-defs.svg#icon-{{ icon }}"></use></svg>
+{%- endmacro %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,9 +39,6 @@
 <link rel="up" href="{{ links.up.url }}" title="{{ links.up.title.textContent }}" />
 {% endif %}
 <link rel="stylesheet" href="styles/style.css" />
-{% if config.html5['font-awesome'] %}
-<link rel="stylesheet" href="{{ config.html5['font-awesome'] }}" />
-{% endif -%}
 {% if config.html5['extra-css'] %}
 <link rel="stylesheet" href="{{ config.html5['extra-css'] }}" />
 {% endif %}
@@ -45,19 +46,19 @@
 <body>
 
 <header>
-<h1 id="doc_title"><button id="toc-toggle" href="#">&#9776;</button>{{ links.document.title }}</h1>
+<h1 id="doc_title">{{ icon('list-numbered', id='toc-toggle')}}{{ links.document.title }}</h1>
 </header>
 
 {% block navbar %}
 <nav class="prev_up_next">
   {% if links.prev.url %}
-  <a href="{{ links.prev.url }}" title="{{ links.prev.title }}" class="fa fa-caret-left"></a>
+  <a href="{{ links.prev.url }}" title="{{ links.prev.title }}">{{ icon('arrow-left')}}</a>
   {% endif %}
   {% if links.up.url %}
-  <a href="{{ links.up.url }}" title="{{ links.up.title }}" class="fa fa-caret-up"></a>
+  <a href="{{ links.up.url }}" title="{{ links.up.title }}">{{ icon('arrow-up')}}</a>
   {% endif %}
   {% if links.next.url %}
-  <a href="{{ links.next.url }}" title="{{ links.next.title }}" class="fa fa-caret-right"></a>
+  <a href="{{ links.next.url }}" title="{{ links.next.title }}">{{ icon('arrow-right')}}</a>
   {% endif %}
   {% if links.index.url %}
   <a href="{{ links.index.url }}" class="index">Index</a>
@@ -72,7 +73,7 @@
 <li class="{{ isActive(section) }}">
   {% if section.tableofcontents -%}
   <a href="{{ section.url }}">{{ tocEntry(section) }}</a>
-  {% if isActive(section) %}<span class="expand-toc fa fa-close"></span>{% else %}<span class="expand-toc fa fa-plus"></span>{% endif %}
+  {% if isActive(section) %}{{ icon('cross', class='expand-toc') }}{% else %}{{ icon('plus', class='expand-toc') }}{% endif %}
   <ul class="sub-toc-{{loop.depth}}{{ isActive(section) }}">
      {{ loop(section.tableofcontents) }}
   </ul>
@@ -128,6 +129,7 @@
 
 <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
 <script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" defer src="js/svgxuse.js"></script>
 </div>
 </body>
 </html>

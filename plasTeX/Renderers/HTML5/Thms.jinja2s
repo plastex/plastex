@@ -1,4 +1,7 @@
 name: thmenv
+{% macro icon(icon, id='', class='') -%}
+<svg  {% if id %}id="{{id}}" {% endif -%}class="icon icon-{{ icon }} {{ class }}"><use xlink:href="symbol-defs.svg#icon-{{ icon }}"></use></svg>
+{%- endmacro %}
 <div class="{{ obj.thmName }}_thmwrapper" id="{{ obj.id }}">
   <div class="{{ obj.thmName }}_thmheading">
     <span class="{{ obj.thmName }}_thmcaption">
@@ -6,12 +9,12 @@ name: thmenv
     </span>
     <span class="{{obj.thmName}}_thmlabel">{{obj.ref}}</span>
     {% if obj.userdata.uses -%}
-    <a href="#{{ obj.id }}-uses" class="uses fa fa-gears"></a>
+    <a href="#{{ obj.id }}-uses" class="uses">{{ icon('cogs') }}</a>
     <div id="{{ obj.id }}-uses" class="thm-uses-container">
       <div class="thm-uses-content">
         <header> 
           <h1>{{ context.terms['Uses'] | default('Uses')}} </h1>
-          <a href="#" class="closebtn fa fa-close"></a>
+          <a href="#" class="closebtn">{{ icon('cross') }}</a>
         </header>
         <ul class="uses">
           {% for used in obj.userdata.uses -%}
@@ -22,12 +25,12 @@ name: thmenv
     </div>
     {% endif %}
     {% if obj.userdata.covered_by -%}
-    <a href="#{{ obj.id }}-coveredby" class="coveredby fa fa-pencil-square-o"></a>
+    <a href="#{{ obj.id }}-coveredby" class="coveredby">{{ icon('pencil') }}</a>
     <div id="{{ obj.id }}-coveredby" class="thm-coveredby-container">
       <div class="thm-coveredby-content">
         <header> 
           <h1>{{ context.terms['Covered by'] | default('Covered by')}}</h1>
-          <a href="#" class="closebtn fa fa-close"></a>
+          <a href="#" class="closebtn">{{ icon('cross') }}</a>
         </header>
         <ul class="coveredby">
           {% for exo in obj.userdata.covered_by -%}
@@ -44,6 +47,9 @@ name: thmenv
 </div>
 
 name: proof
+{% macro icon(icon, id='', class='') -%}
+<svg  {% if id %}id="{{id}}" {% endif -%}class="icon icon-{{ icon }} {{ class }}"><use xlink:href="symbol-defs.svg#icon-{{ icon }}"></use></svg>
+{%- endmacro %}
 <div class="proof_wrapper" id="{{ obj.id }}">
   <div class="proof_heading">
     <span class="proof_caption">
@@ -53,7 +59,7 @@ name: proof
     {{ context.terms['proof'] }}
     {% endif %}
     </span>
-    <span class="expand-proof fa fa-plus"></span>
+    {{ icon('plus', class='expand-proof') }}
   </div>
   <div class="proof_content">
   {{ obj }}
