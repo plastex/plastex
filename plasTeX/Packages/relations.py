@@ -40,3 +40,11 @@ class covers(Command):
                 covered_by = covered.userdata.get('covered_by', [])
                 covered.setUserData('covered_by', covered_by + [node])
         doc.post_parse_cb.append(update_covered)
+
+
+def ProcessOptions(options, document):
+    """This is called when the package is loaded."""
+
+    pkg_override = document.userdata.get('pkg_override', [])
+    pkg_override.append('relations')
+    pkg_override = document.userdata['pkg_override'] = pkg_override

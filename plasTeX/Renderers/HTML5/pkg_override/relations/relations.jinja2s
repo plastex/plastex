@@ -1,0 +1,67 @@
+name: thmenv
+{% macro icon(icon, id='', class='') -%}
+<svg  {% if id %}id="{{id}}" {% endif -%}class="icon icon-{{ icon }} {{ class }}"><use xlink:href="symbol-defs.svg#icon-{{ icon }}"></use></svg>
+{%- endmacro %}
+<div class="{{ obj.thmName }}_thmwrapper" id="{{ obj.id }}">
+  <div class="{{ obj.thmName }}_thmheading">
+    <span class="{{ obj.thmName }}_thmcaption">
+    {{ obj.caption }}
+    </span>
+    <span class="{{obj.thmName}}_thmlabel">{{obj.ref}}</span>
+    {% if obj.userdata.uses -%}
+    <a href="#{{ obj.id }}-uses" class="uses">{{ icon('cogs') }}</a>
+    <div id="{{ obj.id }}-uses" class="thm-uses-container">
+      <div class="thm-uses-content">
+        <header> 
+          <h1>{{ context.terms['Uses'] | default('Uses')}} </h1>
+          <a href="#" class="closebtn">{{ icon('cross') }}</a>
+        </header>
+        <ul class="uses">
+          {% for used in obj.userdata.uses -%}
+          <li><a href="{{ used.url }}">{{ used.caption }} {{ used.ref }}</a></li>
+          {% endfor -%}
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+    {% if obj.userdata.covered_by -%}
+    <a href="#{{ obj.id }}-coveredby" class="coveredby">{{ icon('pencil') }}</a>
+    <div id="{{ obj.id }}-coveredby" class="thm-coveredby-container">
+      <div class="thm-coveredby-content">
+        <header> 
+          <h1>{{ context.terms['Covered by'] | default('Covered by')}}</h1>
+          <a href="#" class="closebtn">{{ icon('cross') }}</a>
+        </header>
+        <ul class="coveredby">
+          {% for exo in obj.userdata.covered_by -%}
+          <li><a href="{{ exo.url }}">{{ exo.caption }} {{ exo.ref }}</a></li>
+          {% endfor -%}
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  <div class="{{ obj.thmName }}_thmcontent">
+  {{ obj }}
+  </div>
+</div>
+
+name: proof
+{% macro icon(icon, id='', class='') -%}
+<svg  {% if id %}id="{{id}}" {% endif -%}class="icon icon-{{ icon }} {{ class }}"><use xlink:href="symbol-defs.svg#icon-{{ icon }}"></use></svg>
+{%- endmacro %}
+<div class="proof_wrapper" id="{{ obj.id }}">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    {% if obj.caption -%}
+    {{ obj.caption }}
+    {% else -%}
+    {{ context.terms['proof'] }}
+    {% endif %}
+    </span>
+    {{ icon('plus', class='expand-proof') }}
+  </div>
+  <div class="proof_content">
+  {{ obj }}
+  </div>
+</div>

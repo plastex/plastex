@@ -3,6 +3,7 @@
 import subprocess
 import sys, os, re, codecs, plasTeX
 from plasTeX.Renderers.PageTemplate import Renderer as _Renderer
+from plasTeX.Renderers import Renderer as BaseRenderer
 
 class HTML5(_Renderer):
     """ Renderer for HTML5 documents, heavily copied from XHTML renderer """
@@ -10,6 +11,20 @@ class HTML5(_Renderer):
     fileExtension = '.html'
     imageTypes = ['.png','.jpg','.jpeg','.gif']
     vectorImageTypes = ['.svg']
+
+    def loadTemplates(self, document):
+        """Load templates as in PageTemplate but also look for packages that
+        want to override some templates.""" 
+        
+        _Renderer.loadTemplates(self, document)
+        path = os.path.join(os.path.dirname(__file__), 'pkg_override')
+        for pkg in document.userdata.get('pkg_override', []):
+            self.importDirectory(os.path.join(path, pkg))
+
+    def render(self, document):
+        """ Load templates and render the document """
+        self.loadTemplates(document)
+        BaseRenderer.render(self, document)
 
     def processFileContent(self, document, s):
         s = _Renderer.processFileContent(self, document, s)
