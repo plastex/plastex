@@ -19,7 +19,13 @@ class rar(Command):
 class lar(Command):
     pass
 
+class uar(Command):
+    pass
+
 class drar(Command):
+    pass
+
+class dar(Command):
     pass
 
 class dlar(Command):
