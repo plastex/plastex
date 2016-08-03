@@ -57,12 +57,12 @@ div[class$='proof_content']
 // Relations
 
 /* Display the modal when targeted */
-div.thm-uses-container:target
+div.modal-container:target
 {
     display: flex;
 }
 
-div.thm-uses-container
+div.modal-container
 {
     position: fixed;
     z-index: $modal-z-index;
@@ -75,7 +75,7 @@ div.thm-uses-container
     height: 100%;
 }
 
-div.thm-uses-content
+div.modal-content
 {
     font-weight: normal;
 
@@ -137,7 +137,7 @@ div.thm-uses-content
     }
 }
 
-a.uses
+a.icon
 {
     display: none;
 
@@ -148,105 +148,41 @@ a.uses
     background-color: Transparent;
 }
 
-div[class$='_thmheading']:hover a.uses
+div[class$='_thmheading']:hover a.icon
 {
     display: inline;
 }
 
 
-/* Display the modal when targeted */
-div.thm-coveredby-container:target
-{
+ul.quizz {
+  display: flex;
+  flex-direction: column;
+  list-style: circle !important;
+  
+  li {
     display: flex;
-}
+    padding: .5rem;
+    flex-direction: row;
+    min-width: 100%;
+    min-height: 3rem;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: space-between;
+  }
 
-div.thm-coveredby-container
-{
-    position: fixed;
-    z-index: $modal-z-index;
-    top: 0;
-    left: 0;
+  li.active-right {
+    background-color: green;
+  }
 
+  li.active-wrong {
+    background-color: red;
+  }
+
+  svg.icon {
     display: none;
+    padding-right: .5rem;
+    width: 2rem;
+    height: 2rem;
+  }
 
-    width: 100%;
-    height: 100%;
-}
-
-div.thm-coveredby-content
-{
-    font-weight: normal;
-
-    overflow: auto;
-
-    margin: auto;
-
-    vertical-align: middle;
-
-    border: 1px solid darken($toc-background-color, 10%);
-    border-radius: 5px;
-    background-color: white;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19);
-    header
-    {
-        position: relative;
-
-        display: flex;
-        flex-direction: row;
-
-        height: 2rem;
-
-        justify-content: space-between;
-        a.closebtn
-        {
-            font-size: 120%;
-            font-weight: bold;
-
-            margin: auto 0;
-            padding-right: .2rem;
-
-            text-decoration: none;
-
-            color: #fff;
-        }
-        h1
-        {
-            font-size: 120%;
-
-            margin: auto 0;
-            padding: .2rem;
-
-            color: $toc-text-color;
-        }
-    };
-    a
-    {
-        text-decoration: none;
-    };
-    ul
-    {
-        padding: 1rem;
-
-        list-style: none;
-    };
-    li
-    {
-        padding-left: .5rem;
-    }
-}
-
-a.coveredby
-{
-    display: none;
-
-    text-decoration: none;
-
-    color: $main-text-color;
-    border: none;
-    background-color: Transparent;
-}
-
-div[class$='_thmheading']:hover a.coveredby
-{
-    display: inline;
 }

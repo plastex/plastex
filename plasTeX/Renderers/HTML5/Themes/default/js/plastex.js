@@ -41,5 +41,27 @@ $(document).ready(function() {
                $(this).children('span.expand-proof').toggleClass('fa-close').toggleClass('fa-plus');
                $(this).siblings("div.proof_content").slideToggle()
            })
+
+    $("li.quizz-right").click(
+           function() {
+               $(this).toggleClass('active-right')
+               $(this).children("svg").toggle()
+               $(this).siblings().each(function() {
+                 $(this).removeClass('active-right');
+                 $(this).removeClass('active-wrong');
+                 $(this).children("svg").hide()
+               });
+           })
+
+    $("li.quizz-wrong").click(
+           function() {
+               $(this).toggleClass('active-wrong')
+               $(this).children("svg").toggle()
+               $(this).siblings().each(function() {
+                 $(this).removeClass('active-right');
+                 $(this).removeClass('active-wrong');
+                 $(this).children("svg").hide()
+               });
+           })
   });
 

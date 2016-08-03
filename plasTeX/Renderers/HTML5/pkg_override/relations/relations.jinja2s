@@ -9,9 +9,9 @@ name: thmenv
     </span>
     <span class="{{obj.thmName}}_thmlabel">{{obj.ref}}</span>
     {% if obj.userdata.uses -%}
-    <a href="#{{ obj.id }}-uses" class="uses">{{ icon('cogs') }}</a>
-    <div id="{{ obj.id }}-uses" class="thm-uses-container">
-      <div class="thm-uses-content">
+    <a href="#{{ obj.id }}-uses" class="icon">{{ icon('cogs') }}</a>
+    <div id="{{ obj.id }}-uses" class="modal-container">
+      <div class="modal-content">
         <header> 
           <h1>{{ context.terms['Uses'] | default('Uses')}} </h1>
           <a href="#" class="closebtn">{{ icon('cross') }}</a>
@@ -24,15 +24,44 @@ name: thmenv
       </div>
     </div>
     {% endif %}
+    {% if obj.userdata.quizzes -%}
+    <a href="#{{ obj.id }}-quizz" class="icon">{{ icon('question') }}</a>
+    <div id="{{ obj.id }}-quizz" class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>{{ context.terms['Quizz'] | default('Quizz')}}</h1>
+          <a href="#" class="closebtn">{{ icon('cross') }}</a>
+        </header>
+        <ul class="quizzes">
+          {% for quizz in obj.userdata.quizzes -%}
+          <li>
+            <p class="quizz-question">
+            {{ quizz.userdata['question'] }}
+            </p>
+            <ul class="quizz">
+            {% for item in quizz if item.nodeName in ['wrong', 'right'] %}
+              <li class="quizz-{{ item.nodeName }}">
+                {{ item }}
+                {% if item.nodeName == 'right' %}{{ icon('smile') }}{% else %}{{ icon('sad') }}{% endif %}
+              </li>
+            {% endfor %}
+            </ul>
+          </li>
+          {% endfor -%}
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+
     {% if obj.userdata.covered_by -%}
-    <a href="#{{ obj.id }}-coveredby" class="coveredby">{{ icon('pencil') }}</a>
-    <div id="{{ obj.id }}-coveredby" class="thm-coveredby-container">
-      <div class="thm-coveredby-content">
+    <a href="#{{ obj.id }}-coveredby" class="icon">{{ icon('pencil') }}</a>
+    <div id="{{ obj.id }}-coveredby" class="modal-container">
+      <div class="modal-content">
         <header> 
           <h1>{{ context.terms['Covered by'] | default('Covered by')}}</h1>
           <a href="#" class="closebtn">{{ icon('cross') }}</a>
         </header>
-        <ul class="coveredby">
+        <ul>
           {% for exo in obj.userdata.covered_by -%}
           <li><a href="{{ exo.url }}">{{ exo.caption }} {{ exo.ref }}</a></li>
           {% endfor -%}
@@ -65,3 +94,5 @@ name: proof
   {{ obj }}
   </div>
 </div>
+
+name: covers uses right wrong
