@@ -63,5 +63,14 @@ $(document).ready(function() {
                  $(this).children("svg").hide()
                });
            })
+
+    $("button.modal").click(
+        function() {
+          $(this).next("div.modal-container").css('display', 'flex');
+        })
+    $("button.closebtn").click(
+        function() {
+          $(this).parent().parent().parent().hide();
+        })
   });
 

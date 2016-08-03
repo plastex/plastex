@@ -2,6 +2,17 @@ name: thmenv
 {% macro icon(icon, id='', class='') -%}
 <svg  {% if id %}id="{{id}}" {% endif -%}class="icon icon-{{ icon }} {{ class }}"><use xlink:href="symbol-defs.svg#icon-{{ icon }}"></use></svg>
 {%- endmacro %}
+{% macro modal(title) -%}
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>{{ title }}</h1>
+          <button class="closebtn">{{ icon('cross') }}</button>
+        </header>
+        {{ caller() }}
+      </div>
+    </div>
+{%- endmacro %}
 <div class="{{ obj.thmName }}_thmwrapper" id="{{ obj.id }}">
   <div class="{{ obj.thmName }}_thmheading">
     <span class="{{ obj.thmName }}_thmcaption">
@@ -9,29 +20,18 @@ name: thmenv
     </span>
     <span class="{{obj.thmName}}_thmlabel">{{obj.ref}}</span>
     {% if obj.userdata.uses -%}
-    <a href="#{{ obj.id }}-uses" class="icon">{{ icon('cogs') }}</a>
-    <div id="{{ obj.id }}-uses" class="modal-container">
-      <div class="modal-content">
-        <header> 
-          <h1>{{ context.terms['Uses'] | default('Uses')}} </h1>
-          <a href="#" class="closebtn">{{ icon('cross') }}</a>
-        </header>
+    <button class="modal">{{ icon('cogs') }}</button>
+    {% call modal(context.terms.get('Uses', 'Uses')) %}
         <ul class="uses">
           {% for used in obj.userdata.uses -%}
           <li><a href="{{ used.url }}">{{ used.caption }} {{ used.ref }}</a></li>
           {% endfor -%}
         </ul>
-      </div>
-    </div>
+    {% endcall %}
     {% endif %}
     {% if obj.userdata.quizzes -%}
-    <a href="#{{ obj.id }}-quizz" class="icon">{{ icon('question') }}</a>
-    <div id="{{ obj.id }}-quizz" class="modal-container">
-      <div class="modal-content">
-        <header>
-          <h1>{{ context.terms['Quizz'] | default('Quizz')}}</h1>
-          <a href="#" class="closebtn">{{ icon('cross') }}</a>
-        </header>
+    <button class="modal">{{ icon('question') }}</button>
+    {% call modal(context.terms.get('Quizz', 'Quizz')) %}
         <ul class="quizzes">
           {% for quizz in obj.userdata.quizzes -%}
           <li>
@@ -49,25 +49,18 @@ name: thmenv
           </li>
           {% endfor -%}
         </ul>
-      </div>
-    </div>
+       {% endcall %}
     {% endif %}
 
     {% if obj.userdata.covered_by -%}
-    <a href="#{{ obj.id }}-coveredby" class="icon">{{ icon('pencil') }}</a>
-    <div id="{{ obj.id }}-coveredby" class="modal-container">
-      <div class="modal-content">
-        <header> 
-          <h1>{{ context.terms['Covered by'] | default('Covered by')}}</h1>
-          <a href="#" class="closebtn">{{ icon('cross') }}</a>
-        </header>
+    <button class="modal">{{ icon('pencil') }}</button>
+    {% call modal(context.terms.get('Covered by', 'Covered by')) %}
         <ul>
           {% for exo in obj.userdata.covered_by -%}
           <li><a href="{{ exo.url }}">{{ exo.caption }} {{ exo.ref }}</a></li>
           {% endfor -%}
         </ul>
-      </div>
-    </div>
+    {% endcall %}
     {% endif %}
   </div>
   <div class="{{ obj.thmName }}_thmcontent">
@@ -95,4 +88,4 @@ name: proof
   </div>
 </div>
 
-name: covers uses right wrong
+name: covers uses right wrong quizz question

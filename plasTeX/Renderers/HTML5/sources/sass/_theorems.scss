@@ -56,10 +56,14 @@ div[class$='proof_content']
 
 // Relations
 
-/* Display the modal when targeted */
-div.modal-container:target
-{
-    display: flex;
+ button.modal {
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    display: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
 }
 
 div.modal-container
@@ -97,19 +101,24 @@ div.modal-content
         flex-direction: row;
 
         height: 2rem;
+        min-width: 100%;
 
         justify-content: space-between;
-        a.closebtn
+        button.closebtn
         {
             font-size: 120%;
             font-weight: bold;
 
+            background: Transparent;
+            border: none;
+
             margin: auto 0;
-            padding-right: .2rem;
+            padding-right: .3rem;
 
             text-decoration: none;
 
             color: #fff;
+            cursor: pointer;
         }
         h1
         {
@@ -148,9 +157,9 @@ a.icon
     background-color: Transparent;
 }
 
-div[class$='_thmheading']:hover a.icon
+div[class$='_thmheading']:hover button.modal
 {
-    display: inline;
+    display: inline-block;
 }
 
 
