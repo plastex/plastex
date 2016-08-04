@@ -19,5 +19,4 @@ General
 Configuration
 -------------
 - Merging of config files and command-line options
-- Renderer specific config files
 - Theme specific config files
