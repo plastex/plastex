@@ -48,3 +48,6 @@ comment: &#8201;
 
 name: underbar
 <span class="underbar" tal:content="self">underbar</span>
+
+name: textsuperscript
+<sup tal:content="self">superscripted text</sup>
