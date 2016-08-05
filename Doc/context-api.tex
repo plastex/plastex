@@ -117,7 +117,8 @@ the macros specified by the \TeX\ and \LaTeX\ systems.
 
 \begin{methoddesc}[Context]{loadLanguage}{language, document}
 loads a language package to configure names such as \macro{figurename},
-\macro{tablename}, etc.
+\macro{tablename}, etc. See Section~\ref{sec:context-language} for more
+information.
 
 \var{language} is a string containing the name of the language file to load.
 
@@ -278,4 +279,25 @@ codes are the same codes used by \TeX\ and are defined in the
 \class{Token} class.  
 \end{methoddesc}
 
+\subsection{Context language}\label{sec:context-language}
 
+Contexts objects hold language information for the currently running
+document. The current language is stored in
+\var{Context.currentLanguage}. It can be changed from the \TeX\ source
+using the babel package which invokes the \var{Context.loadLanguage}
+method. New terms can be added in a user defined language file using the
+lang-terms options (see Section~\ref{sec:config-document}). Languages
+files are xml files. The following example should be self-explanatory.
+
+\begin{verbatim}
+<languages>
+  <terms lang="fr" babel="french">
+    <term name="proof">Démonstration</term>
+  </terms>
+</languages>
+\end{verbatim}
+
+This allows to add new terms which are then available to renderers in
+the dictionary \var{Context.terms}. It also allows to override default
+translations. For instance the above language file overwrites the
+default translation of ``proof'' as ``Preuve'' in French.
