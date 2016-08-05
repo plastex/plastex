@@ -71,7 +71,7 @@ mixed into the \class{Node} class in the \method{render} method.
 It is unmixed at the end of the \method{render} method.  The details
 of the \class{Renderable} class are discussed in section \ref{sec:renderable}.
 
-\section{Simple Renderer Example}
+\section{Simple Renderer Example}\label{sec:simple-renderer-ex}
 
 It is possible to write a renderer with just a couple of methods:
 \method{default} and \method{textDefault}.
@@ -236,6 +236,54 @@ that accepts a node as an argument can be used.  The
 Zope Page Template (ZPT) renderer included with \plasTeX\ is an example 
 of how to write a renderer that uses a templating language to render
 the nodes (see section \ref{sec:zpt}).
+
+\subsection{Using a renderer from the plastex script}
+
+In the preceding sections, the simple renderer example was called from
+a custom python script. In order to use it through the
+main plastex script (described in Chapter~\ref{sec:command-line}), it
+needs to be located in some directory
+\verb+plasTeX/Renderers/SimpleRenderer+, where \verb+plasTeX+ is the
+directory containing the plastex script. This directory must contain a
+\verb+__init__.py+ file defining the \var{Renderer} class (with this
+name). This directory can also contain a \verb+Themes+ directory in
+order to use the theme option described in
+Section~\ref{sec:general-options}. Each subdirectory in the
+\verb+Themes+ directory is considered as a theme.
+
+Each renderer can define its own configuration options which are loaded
+by the plastex script. This is done in a file named \verb+Config.py+
+in the renderer directory. This file must define a variable named
+\var{config} which is a ConfigManager instance, as described in
+Section~\ref{sec:configuration-api}. Inspiration can be drawn from the
+file defining the global configuration which is
+\verb+plasTeX/Config.py+.
+
+For instance, one could add a file
+\verb+plasTeX/Renderers/SimpleRenderer/Config.py+ containing:
+
+\begin{verbatim}
+from plasTeX.ConfigManager import *
+
+config = ConfigManager()
+
+section = config.add_section('simplerenderer')
+
+config.add_category('simplerenderer', 'Simple renderer Options')
+
+section['my-option'] = StringOption(
+    """ My option """,
+    options='--my-option',
+    category='simplerenderer',
+    default='',
+)
+\end{verbatim}
+
+Options values are attached to the document currently rendered. For
+instance, in the \var{default} method implemented in
+Section~\ref{sec:simple-renderer-ex}, which takes a node argument, one
+could access the value of the option defined above as
+\verb+node.ownerDocument.config['simplerenderer']['my-option']+.
 
 
 \section{Renderable Objects\label{sec:renderable}}
