@@ -38,7 +38,9 @@
 {% if links.up.url %}
 <link rel="up" href="{{ links.up.url }}" title="{{ links.up.title.textContent }}" />
 {% endif %}
-<link rel="stylesheet" href="styles/style.css" />
+{% if config.html5['theme-css'] %}
+<link rel="stylesheet" href="styles/theme-style.css" />
+{% endif %}
 {% if config.html5['extra-css'] %}
 <link rel="stylesheet" href="{{ config.html5['extra-css'] }}" />
 {% endif %}

@@ -14,6 +14,13 @@ section['extra-css'] = StringOption(
     default='',
 )
 
+section['theme-css'] = BooleanOption(
+    """ Use theme css file""",
+    options='--theme-css',
+    category='html5',
+    default=True,
+)
+
 section['mathjax-js'] = StringOption(
     """ Url of the MathJax lib """,
     options='--mathjax-js',
