@@ -39,10 +39,10 @@ name: thmenv
             {{ quizz.userdata['question'] }}
             </p>
             <ul class="quizz">
-            {% for item in quizz if item.nodeName in ['wrong', 'right'] %}
+            {% for item in quizz if item.nodeName in ['qwrong', 'qright'] %}
               <li class="quizz-{{ item.nodeName }}">
                 {{ item }}
-                {% if item.nodeName == 'right' %}{{ icon('smile') }}{% else %}{{ icon('sad') }}{% endif %}
+                {% if item.nodeName == 'qright' %}{{ icon('smile') }}{% else %}{{ icon('sad') }}{% endif %}
               </li>
             {% endfor %}
             </ul>
@@ -88,4 +88,4 @@ name: proof
   </div>
 </div>
 
-name: covers uses right wrong quizz question
+name: covers uses qright qwrong quizz question

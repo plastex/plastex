@@ -7,10 +7,10 @@ from plasTeX import Command, Environment
 
 
 class quizz(List):
-    class wrong(List.item):
+    class qwrong(List.item):
         pass
 
-    class right(List.item):
+    class qright(List.item):
         pass
 
     class question(Command):
