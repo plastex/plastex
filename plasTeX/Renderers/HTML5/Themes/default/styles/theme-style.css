@@ -1,0 +1,750 @@
+/* line 82, sass/_reset.scss */
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  font: inherit;
+  font-size: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0; }
+
+/* HTML5 display-role reset for older browsers */
+/* line 103, sass/_reset.scss */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block; }
+
+/* line 107, sass/_reset.scss */
+body {
+  line-height: 1;
+  overflow-x: hidden;
+  background: #f4f4f4; }
+
+/* line 116, sass/_reset.scss */
+ol,
+ul {
+  list-style: none; }
+
+/* line 121, sass/_reset.scss */
+blockquote,
+q {
+  quotes: none; }
+
+/* line 128, sass/_reset.scss */
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: '';
+  content: none; }
+
+/* line 133, sass/_reset.scss */
+table {
+  border-spacing: 0;
+  border-collapse: collapse; }
+
+/* line 139, sass/_reset.scss */
+.clear:after {
+  font-size: 0;
+  display: block;
+  visibility: hidden;
+  clear: both;
+  height: 0;
+  content: ' '; }
+
+/* line 151, sass/_reset.scss */
+.clear {
+  display: inline-block; }
+
+/* start commented backslash hack \*/
+/* line 156, sass/_reset.scss */
+* html .clear {
+  height: 1%; }
+
+/* line 160, sass/_reset.scss */
+.clear {
+  display: block; }
+
+/* close commented backslash hack */
+/****************************************
+BASIC ELEMENTS
+*****************************************/
+/* line 169, sass/_reset.scss */
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+
+/* line 176, sass/_reset.scss */
+hr {
+  clear: both;
+  border: none;
+  outline: none; }
+
+/* line 184, sass/_reset.scss */
+em {
+  font-style: italic; }
+
+/* line 189, sass/_reset.scss */
+a {
+  text-decoration: underline; }
+
+/* line 193, sass/_reset.scss */
+ul {
+  list-style: disc; }
+
+/* line 197, sass/_reset.scss */
+ol {
+  list-style: decimal; }
+
+/* line 202, sass/_reset.scss */
+ul,
+ol {
+  font-size: 14px;
+  padding: 0 0 0 33px; }
+  /* line 208, sass/_reset.scss */
+  ul li,
+  ol li {
+    margin: 0; }
+
+/* line 214, sass/_reset.scss */
+blockquote {
+  padding: 0 15px 0 40px; }
+
+/* line 219, sass/_reset.scss */
+table {
+  font-size: 13px;
+  width: 100%;
+  margin: 20px 0;
+  background: white; }
+  /* line 229, sass/_reset.scss */
+  table th {
+    font-size: 16px;
+    font-weight: bold; }
+  /* line 237, sass/_reset.scss */
+  table tr td {
+    padding: 7px; }
+
+/* line 244, sass/_reset.scss */
+::selection {
+  color: white;
+  background: #000; }
+
+/* line 249, sass/_reset.scss */
+::-moz-selection {
+  color: white;
+  background: #000; }
+
+/* line 4, sass/_typography.scss */
+h1 {
+  font-size: 2rem;
+  margin: 1rem 0;
+  color: #0f2f48; }
+
+/* line 13, sass/_typography.scss */
+h2 {
+  font-size: 1.5rem;
+  margin: 0;
+  color: #0f2f48; }
+
+/* line 22, sass/_typography.scss */
+h3 {
+  font-size: 1rem;
+  margin: .67rem 0;
+  color: #0f2f48; }
+
+/* line 31, sass/_typography.scss */
+h4 {
+  font-size: 1rem;
+  margin: .67rem 0;
+  color: #0f2f48; }
+
+/* line 40, sass/_typography.scss */
+p {
+  font-size: 1rem;
+  margin: .8rem 0; }
+
+/**
+ * Address style set to `bolder` in Firefox 4+, Safari 5, and Chrome.
+ */
+/* line 53, sass/_typography.scss */
+b,
+strong {
+  font-weight: bold; }
+
+/**
+ * Address styling not present in Safari 5 and Chrome.
+ */
+/* line 62, sass/_typography.scss */
+dfn {
+  font-style: italic; }
+
+/**
+ * Correct font family set oddly in Safari 5 and Chrome.
+ */
+/* line 75, sass/_typography.scss */
+code,
+kbd,
+pre,
+samp {
+  font-family: monospace, serif;
+  font-size: 1rem; }
+
+/**
+ * Improve readability of pre-formatted text in all browsers.
+ */
+/* line 85, sass/_typography.scss */
+pre {
+  white-space: pre-wrap; }
+
+/**
+ * Set consistent quote types.
+ */
+/* line 94, sass/_typography.scss */
+q {
+  quotes: '\201C' '\201D' '\2018' '\2019'; }
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+/* line 103, sass/_typography.scss */
+small {
+  font-size: 80%; }
+
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+/* line 113, sass/_typography.scss */
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline; }
+
+/* line 123, sass/_typography.scss */
+sup {
+  top: -.5rem; }
+
+/* line 128, sass/_typography.scss */
+sub {
+  bottom: -.25rem; }
+
+/* line 4, sass/_toc.scss */
+.local_toc ul {
+  padding-left: 1rem;
+  list-style: none; }
+  /* line 10, sass/_toc.scss */
+  .local_toc ul a {
+    text-decoration: none; }
+  /* line 15, sass/_toc.scss */
+  .local_toc ul li {
+    padding: .2rem 0; }
+
+/* line 22, sass/_toc.scss */
+nav.toc {
+  position: fixed;
+  z-index: 300;
+  top: 0;
+  bottom: 0;
+  left: -100%;
+  display: flex;
+  overflow-x: hidden;
+  overflow-y: auto;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  margin-top: .2rem;
+  padding: 0;
+  padding-top: 2.5rem;
+  transition: left .5s ease;
+  background-color: #6696bb; }
+  @media (min-width: 1024px) {
+    /* line 22, sass/_toc.scss */
+    nav.toc {
+      left: 0;
+      width: 30rem; } }
+
+/* line 54, sass/_toc.scss */
+nav.active {
+  left: 0; }
+
+/* line 59, sass/_toc.scss */
+.toc ul {
+  min-width: 100%;
+  padding-left: 0;
+  list-style: none; }
+  /* line 66, sass/_toc.scss */
+  .toc ul a {
+    font-size: 1.2rem;
+    display: inline-block;
+    max-width: 90%;
+    padding-top: .5rem;
+    padding-right: .5rem;
+    padding-bottom: .5rem;
+    transition: all .1s ease;
+    text-align: left;
+    text-decoration: none;
+    color: white;
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.8);
+    flex-grow: 1; }
+    /* line 85, sass/_toc.scss */
+    .toc ul a:hover {
+      transition: all .2s ease;
+      background: #497da5; }
+  /* line 94, sass/_toc.scss */
+  .toc ul li {
+    display: flex;
+    min-width: 100%;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between; }
+  /* line 105, sass/_toc.scss */
+  .toc ul li.active {
+    background-color: #89aecb; }
+
+/* line 113, sass/_toc.scss */
+.sub-toc-0 a {
+  padding-left: 0.8rem; }
+
+/* line 113, sass/_toc.scss */
+.sub-toc-1 a {
+  padding-left: 1.6rem; }
+
+/* line 113, sass/_toc.scss */
+.sub-toc-2 a {
+  padding-left: 2.4rem; }
+
+/* line 113, sass/_toc.scss */
+.sub-toc-3 a {
+  padding-left: 3.2rem; }
+
+/* line 113, sass/_toc.scss */
+.sub-toc-4 a {
+  padding-left: 4rem; }
+
+/* line 121, sass/_toc.scss */
+ul.sub-toc-1 {
+  display: none; }
+
+/* line 121, sass/_toc.scss */
+ul.sub-toc-2 {
+  display: none; }
+
+/* line 121, sass/_toc.scss */
+ul.sub-toc-3 {
+  display: none; }
+
+/* line 121, sass/_toc.scss */
+ul.sub-toc-4 {
+  display: none; }
+
+/* line 127, sass/_toc.scss */
+svg.expand-toc {
+  min-width: 10%;
+  padding: 0;
+  cursor: pointer;
+  text-align: center;
+  color: white;
+  background-color: Transparent; }
+
+/* line 139, sass/_toc.scss */
+ul.active {
+  display: block; }
+
+/* line 4, sass/_nav_pun.scss */
+nav.prev_up_next {
+  position: fixed;
+  z-index: 200;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  height: 2.5rem;
+  background: linear-gradient(to bottom, #6696bb 0%, #396282 100%); }
+  /* line 18, sass/_nav_pun.scss */
+  nav.prev_up_next a {
+    font-size: 150%;
+    margin: auto;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    color: white;
+    text-shadow: 1px 2px 0 rgba(0, 0, 0, 0.8); }
+
+/* line 3, sass/_header.scss */
+header {
+  z-index: 400;
+  background: linear-gradient(to bottom, #6696bb 0%, #396282 100%);
+  display: flex;
+  position: fixed;
+  width: 100%;
+  height: 2.5rem;
+  margin: 0 auto;
+  text-align: center;
+  vertical-align: middle;
+  top: 0;
+  left: 0; }
+  @media (min-width: 1024px) {
+    /* line 3, sass/_header.scss */
+    header {
+      width: 30rem; } }
+
+/* line 21, sass/_header.scss */
+svg#toc-toggle {
+  font-size: 1.125rem;
+  margin-right: 0.75rem; }
+  @media (min-width: 1024px) {
+    /* line 21, sass/_header.scss */
+    svg#toc-toggle {
+      display: none; } }
+
+/* line 31, sass/_header.scss */
+h1#doc_title {
+  margin: auto;
+  color: white;
+  text-shadow: 1px 2px 0px rgba(0, 0, 0, 0.8);
+  font-size: 1.5rem; }
+
+/* line 4, sass/_breadcrumbs.scss */
+ul.breadcrumbs {
+  margin: 1rem 0;
+  margin-top: 3.5rem;
+  padding: 0;
+  padding-left: .5rem;
+  list-style: none; }
+  @media (min-width: 1024px) {
+    /* line 4, sass/_breadcrumbs.scss */
+    ul.breadcrumbs {
+      margin-top: 1rem;
+      margin-left: 30rem; } }
+
+/* line 20, sass/_breadcrumbs.scss */
+ul.breadcrumbs li {
+  display: block;
+  float: left; }
+
+/* line 26, sass/_breadcrumbs.scss */
+ul.breadcrumbs a {
+  text-decoration: none;
+  color: #396282; }
+
+/* line 34, sass/_breadcrumbs.scss */
+li.crumb::after {
+  content: ' / '; }
+
+/* line 4, sass/_footnotes.scss */
+section#footnotes {
+  clear: both;
+  padding-top: 1rem;
+  padding-left: 1rem;
+  border-color: gray;
+  border-top: 1px solid; }
+
+/* line 14, sass/_footnotes.scss */
+section#footnotes h1 {
+  font-size: 1.5rem;
+  margin: 0;
+  margin-bottom: .5rem;
+  color: black; }
+
+/* line 24, sass/_footnotes.scss */
+a.footnote {
+  text-decoration: none; }
+
+/* line 29, sass/_footnotes.scss */
+a.footnote sup::after {
+  content: ']'; }
+
+/* line 34, sass/_footnotes.scss */
+a.footnote sup::before {
+  content: '['; }
+
+/* line 4, sass/_equations.scss */
+div.equation {
+  display: flex;
+  margin: 1rem 1rem; }
+  /* line 10, sass/_equations.scss */
+  div.equation span.equation_label {
+    float: left;
+    margin-right: 1rem; }
+  /* line 16, sass/_equations.scss */
+  div.equation span.equation_label::before {
+    content: '('; }
+  /* line 20, sass/_equations.scss */
+  div.equation span.equation_label::after {
+    content: ')'; }
+  /* line 24, sass/_equations.scss */
+  div.equation div.equation_content {
+    float: left;
+    margin-left: 3rem; }
+
+@keyframes highlight {
+  /* line 6, sass/_theorems.scss */
+  0% {
+    background-color: #c2c2c2; }
+
+  /* line 10, sass/_theorems.scss */
+  100% {
+    background-color: none; } }
+
+/* line 16, sass/_theorems.scss */
+div[class$='_thmwrapper']:target {
+  animation: highlight 1s ease; }
+
+/* line 21, sass/_theorems.scss */
+div[class$='_thmheading'] {
+  font-weight: bold;
+  line-height: 120%; }
+
+/* line 27, sass/_theorems.scss */
+div[class$='_thmcontent'] {
+  font-weight: normal;
+  margin-left: 1rem;
+  padding-top: 0.14rem;
+  padding-left: 1rem; }
+
+/* line 38, sass/_theorems.scss */
+div[class$='proof_heading'] {
+  font-weight: bold;
+  line-height: 120%;
+  cursor: pointer; }
+
+/* line 46, sass/_theorems.scss */
+div[class$='proof_content'] {
+  font-weight: normal;
+  display: none;
+  margin-left: 1rem;
+  padding-top: .5rem;
+  padding-left: 1rem; }
+
+/* line 59, sass/_theorems.scss */
+button.modal {
+  border: none;
+  text-align: center;
+  text-decoration: none;
+  display: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0; }
+
+/* line 70, sass/_theorems.scss */
+div.modal-container {
+  position: fixed;
+  z-index: 500;
+  top: 0;
+  left: 0;
+  display: none;
+  width: 100%;
+  height: 100%; }
+
+/* line 83, sass/_theorems.scss */
+div.modal-content {
+  font-weight: normal;
+  overflow: auto;
+  margin: auto;
+  vertical-align: middle;
+  border: 1px solid #497da5;
+  border-radius: 5px;
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); }
+  /* line 97, sass/_theorems.scss */
+  div.modal-content header {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    height: 2rem;
+    min-width: 100%;
+    justify-content: space-between; }
+    /* line 108, sass/_theorems.scss */
+    div.modal-content header button.closebtn {
+      font-size: 120%;
+      font-weight: bold;
+      background: Transparent;
+      border: none;
+      margin: auto 0;
+      padding-right: .3rem;
+      text-decoration: none;
+      color: #fff;
+      cursor: pointer; }
+    /* line 124, sass/_theorems.scss */
+    div.modal-content header h1 {
+      font-size: 120%;
+      margin: auto 0;
+      padding: .2rem;
+      color: white; }
+  /* line 134, sass/_theorems.scss */
+  div.modal-content a {
+    text-decoration: none; }
+  /* line 138, sass/_theorems.scss */
+  div.modal-content ul {
+    padding: 1rem;
+    list-style: none; }
+  /* line 144, sass/_theorems.scss */
+  div.modal-content li {
+    padding-left: .5rem; }
+
+/* line 150, sass/_theorems.scss */
+a.icon {
+  display: none;
+  text-decoration: none;
+  color: #0a0a14;
+  border: none;
+  background-color: Transparent; }
+
+/* line 161, sass/_theorems.scss */
+div[class$='_thmheading']:hover button.modal {
+  display: inline-block; }
+
+/* line 166, sass/_theorems.scss */
+ul.quizz {
+  display: flex;
+  flex-direction: column;
+  list-style: circle !important; }
+  /* line 171, sass/_theorems.scss */
+  ul.quizz li {
+    display: flex;
+    padding: .5rem;
+    flex-direction: row;
+    min-width: 100%;
+    min-height: 3rem;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: space-between; }
+  /* line 182, sass/_theorems.scss */
+  ul.quizz li.active-right {
+    background-color: green; }
+  /* line 186, sass/_theorems.scss */
+  ul.quizz li.active-wrong {
+    background-color: red; }
+  /* line 190, sass/_theorems.scss */
+  ul.quizz svg.icon {
+    display: none;
+    padding-right: .5rem;
+    width: 2rem;
+    height: 2rem; }
+
+/* line 15, sass/theme-style.scss */
+body {
+  margin: 0;
+  color: #0a0a14;
+  background-color: #e8e8e8; }
+
+/* line 26, sass/theme-style.scss */
+div.content {
+  line-height: 1.4rem;
+  position: absolute;
+  top: 5rem;
+  left: 0;
+  padding: 1rem;
+  padding-bottom: 2.5rem; }
+  @media (min-width: 1024px) {
+    /* line 26, sass/theme-style.scss */
+    div.content {
+      top: 2.5rem;
+      left: 30rem;
+      margin: 0 5%; } }
+
+/* line 46, sass/theme-style.scss */
+div.content > p {
+  clear: both;
+  margin: 2.1rem 0; }
+
+/* line 53, sass/theme-style.scss */
+li > p {
+  margin: 0.28rem 0; }
+
+/* line 58, sass/theme-style.scss */
+.icon {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor; }
