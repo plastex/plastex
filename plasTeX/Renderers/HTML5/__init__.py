@@ -51,5 +51,22 @@ class HTML5(_Renderer):
 
         return s
 
+    def cleanup(self, document, files, postProcess=None):
+        """
+        Cleanup method called at the end of rendering.
+        Uses the base renderer cleanup but calls packages callbacks before and
+        after.
+        """
+
+        precleanup_cbs = document.userData.get('precleanup_cbs', [])
+        for precleanup_cb in precleanup_cbs:
+            precleanup_cb()
+
+        _Renderer.cleanup(self, document, files, postProcess)
+
+        postcleanup_cbs = document.userData.get('postcleanup_cbs', [])
+        for postcleanup_cb in postcleanup_cbs:
+            postcleanup_cb()
+
 
 Renderer = HTML5
