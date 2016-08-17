@@ -45,31 +45,11 @@
 <link rel="stylesheet" href="{{ config.html5['extra-css'] }}" />
 {% endif %}
 </head>
+
 <body>
-
-<header>
-<h1 id="doc_title">{{ icon('list-numbered', id='toc-toggle')}}{{ links.document.title }}</h1>
-</header>
-
-{% block navbar %}
-<nav class="prev_up_next">
-  {% if links.prev.url %}
-  <a href="{{ links.prev.url }}" title="{{ links.prev.title }}">{{ icon('arrow-left')}}</a>
-  {% endif %}
-  {% if links.up.url %}
-  <a href="{{ links.up.url }}" title="{{ links.up.title }}">{{ icon('arrow-up')}}</a>
-  {% endif %}
-  {% if links.next.url %}
-  <a href="{{ links.next.url }}" title="{{ links.next.title }}">{{ icon('arrow-right')}}</a>
-  {% endif %}
-  {% if links.index.url %}
-  <a href="{{ links.index.url }}" class="index">Index</a>
-  {% endif %}
-</nav>
-{% endblock %}
-
 {% if toc -%}
 <nav class="toc">
+{{ icon('cross', class='close-toc') }}
 <ul class="sub-toc-0">
 {% for section in toc recursive -%}
 <li class="{{ isActive(section) }}">
@@ -87,6 +67,11 @@
 </ul>
 </nav>
 {% endif -%}
+
+<div class="wrapper">
+<header>
+{{ icon('list-numbered', id='toc-toggle')}}<h1 id="doc_title">{{ links.document.title }}</h1>
+</header>
 
 {% if obj.level >= -10 %}
 <ul class="breadcrumbs">
@@ -128,6 +113,22 @@
 </ol>
 </section>
 {% endif %}
+</div>
+
+<nav class="prev_up_next">
+  {% if links.prev.url %}
+  <a href="{{ links.prev.url }}" title="{{ links.prev.title | striptags }}">{{ icon('arrow-left')}}</a>
+  {% endif %}
+  {% if links.up.url %}
+  <a href="{{ links.up.url }}" title="{{ links.up.title | striptags }}">{{ icon('arrow-up')}}</a>
+  {% endif %}
+  {% if links.next.url %}
+  <a href="{{ links.next.url }}" title="{{ links.next.title | striptags }}">{{ icon('arrow-right')}}</a>
+  {% endif %}
+  {% if links.index.url %}
+  <a href="{{ links.index.url }}" class="index">Index</a>
+  {% endif %}
+</nav>
 
 <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
 <script type="text/javascript" src="js/plastex.js"></script>

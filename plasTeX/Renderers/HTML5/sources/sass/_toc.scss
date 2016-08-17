@@ -24,19 +24,16 @@ nav.toc
     z-index: $toc-z-index;
     top: 0;
     bottom: 0;
-    left: -100%;
 
     display: flex;
     overflow-x: hidden;
     overflow-y: auto;
     flex-direction: column;
 
-    width: 100%;
+    width: 0;
     min-height: 100%;
     margin: 0;
-    margin-top: .2rem;
     padding: 0;
-    padding-top: $doc-title-height;
 
     transition: left .5s ease;
 
@@ -44,15 +41,13 @@ nav.toc
 
     @media (min-width: $toc-break)
     {
-        left: 0;
-
         width: $toc-width;
     };
 }
 
 nav.active
 {
-    left: 0;
+    width: 100%;
 }
 
 .toc ul
@@ -134,6 +129,25 @@ svg.expand-toc
     color: $toc-text-color;
     background-color: Transparent;
 }
+svg.close-toc
+{
+    min-width: 1.3rem;
+    min-height: 1.3rem;
+    margin: .5rem;
+    margin-left: auto;
+
+    cursor: pointer;
+    text-align: center;
+
+    color: $toc-text-color;
+    background-color: Transparent;
+    display: none;
+}
+
+nav.active svg.close-toc {
+  display: inline-block;
+}
+
 
 ul.active
 {

@@ -21,27 +21,29 @@ body
 
     color: $main-text-color;
     background-color: $background-color;
+    display: flex;
+    flex-direction: row;
 }
 
 
 // Main content
 
+div.wrapper {
+	@media (min-width: $toc-break)
+  {
+    margin-left: $toc-width;
+  }
+}
+
 div.content
 {
     line-height: $content-line-height;
-
-    position: absolute;
-    top: $breadcrumbs-height + $doc-title-height;
-    left: 0;
 
     padding: 1rem;
     padding-bottom: $pun-height;
 
 	@media (min-width: $toc-break)
     {
-        top: max($breadcrumbs-height, $doc-title-height);
-        left: $toc-width;
-
         margin: 0 5%;
     }
 }

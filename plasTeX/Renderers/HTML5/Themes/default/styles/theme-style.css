@@ -229,28 +229,29 @@ h1, h2, h3, h4, h5, h6 {
 /* line 8, sass/_typography.scss */
 h1 {
   font-size: 2rem;
+  line-height: 2rem;
   margin: 1rem 0;
   color: #0f2f48; }
 
-/* line 17, sass/_typography.scss */
+/* line 18, sass/_typography.scss */
 h2 {
   font-size: 1.5rem;
   margin: 0;
   color: #0f2f48; }
 
-/* line 26, sass/_typography.scss */
+/* line 27, sass/_typography.scss */
 h3 {
   font-size: 1rem;
   margin: .67rem 0;
   color: #0f2f48; }
 
-/* line 35, sass/_typography.scss */
+/* line 36, sass/_typography.scss */
 h4 {
   font-size: 1rem;
   margin: .67rem 0;
   color: #0f2f48; }
 
-/* line 44, sass/_typography.scss */
+/* line 45, sass/_typography.scss */
 p {
   font-size: 1rem;
   margin: .8rem 0; }
@@ -258,7 +259,7 @@ p {
 /**
  * Address style set to `bolder` in Firefox 4+, Safari 5, and Chrome.
  */
-/* line 56, sass/_typography.scss */
+/* line 57, sass/_typography.scss */
 b,
 strong {
   font-weight: bold; }
@@ -266,14 +267,14 @@ strong {
 /**
  * Address styling not present in Safari 5 and Chrome.
  */
-/* line 66, sass/_typography.scss */
+/* line 67, sass/_typography.scss */
 dfn {
   font-style: italic; }
 
 /**
  * Correct font family set oddly in Safari 5 and Chrome.
  */
-/* line 76, sass/_typography.scss */
+/* line 77, sass/_typography.scss */
 code,
 kbd,
 pre,
@@ -284,28 +285,28 @@ samp {
 /**
  * Improve readability of pre-formatted text in all browsers.
  */
-/* line 89, sass/_typography.scss */
+/* line 90, sass/_typography.scss */
 pre {
   white-space: pre-wrap; }
 
 /**
  * Set consistent quote types.
  */
-/* line 98, sass/_typography.scss */
+/* line 99, sass/_typography.scss */
 q {
   quotes: '\201C' '\201D' '\2018' '\2019'; }
 
 /**
  * Address inconsistent and variable font size in all browsers.
  */
-/* line 107, sass/_typography.scss */
+/* line 108, sass/_typography.scss */
 small {
   font-size: 80%; }
 
 /**
  * Prevent `sub` and `sup` affecting `line-height` in all browsers.
  */
-/* line 116, sass/_typography.scss */
+/* line 117, sass/_typography.scss */
 sub,
 sup {
   font-size: 75%;
@@ -313,134 +314,134 @@ sup {
   position: relative;
   vertical-align: baseline; }
 
-/* line 127, sass/_typography.scss */
+/* line 128, sass/_typography.scss */
 sup {
   top: -.5rem; }
 
-/* line 132, sass/_typography.scss */
+/* line 133, sass/_typography.scss */
 sub {
   bottom: -.25rem; }
 
 /* Font Selection */
-/* line 138, sass/_typography.scss */
+/* line 139, sass/_typography.scss */
 .mdseries, .textmf {
   font-weight: normal; }
 
-/* line 139, sass/_typography.scss */
+/* line 140, sass/_typography.scss */
 .bfseries, .textbf {
   font-weight: bold; }
 
-/* line 140, sass/_typography.scss */
+/* line 141, sass/_typography.scss */
 .rmfamily, .textrm {
   font-family: serif; }
 
-/* line 141, sass/_typography.scss */
+/* line 142, sass/_typography.scss */
 .sffamily, .textsf {
   font-family: sans-serif; }
 
-/* line 142, sass/_typography.scss */
+/* line 143, sass/_typography.scss */
 .ttfamily, .texttt {
   font-family: monospace; }
 
-/* line 143, sass/_typography.scss */
+/* line 144, sass/_typography.scss */
 .upshape, .textup {
   text-transform: uppercase; }
 
-/* line 144, sass/_typography.scss */
+/* line 145, sass/_typography.scss */
 .itshape, .textit {
   font-style: italic; }
 
-/* line 145, sass/_typography.scss */
+/* line 146, sass/_typography.scss */
 .slshape, .textsl {
   font-style: oblique; }
 
-/* line 146, sass/_typography.scss */
+/* line 147, sass/_typography.scss */
 .scshape, .textsc {
   font-variant: small-caps; }
 
-/* line 148, sass/_typography.scss */
+/* line 149, sass/_typography.scss */
 small.tiny {
   font-size: x-small; }
 
-/* line 149, sass/_typography.scss */
+/* line 150, sass/_typography.scss */
 small.scriptsize {
   font-size: smaller; }
 
-/* line 150, sass/_typography.scss */
+/* line 151, sass/_typography.scss */
 small.footnotesize {
   font-size: small; }
 
-/* line 151, sass/_typography.scss */
+/* line 152, sass/_typography.scss */
 small.small {
   font-size: small; }
 
-/* line 152, sass/_typography.scss */
+/* line 153, sass/_typography.scss */
 .normalsize {
   font-size: normal; }
 
-/* line 153, sass/_typography.scss */
+/* line 154, sass/_typography.scss */
 big.large {
   font-size: large; }
 
-/* line 154, sass/_typography.scss */
+/* line 155, sass/_typography.scss */
 big.xlarge {
   font-size: x-large; }
 
-/* line 155, sass/_typography.scss */
+/* line 156, sass/_typography.scss */
 big.xxlarge {
   font-size: x-large; }
 
-/* line 156, sass/_typography.scss */
+/* line 157, sass/_typography.scss */
 big.huge {
   font-size: xx-large; }
 
-/* line 157, sass/_typography.scss */
+/* line 158, sass/_typography.scss */
 big.xhuge {
   font-size: xx-large; }
 
 /* Fonts */
-/* line 160, sass/_typography.scss */
+/* line 161, sass/_typography.scss */
 .rm {
   font-family: serif;
   font-style: normal;
   font-weight: normal; }
 
-/* line 165, sass/_typography.scss */
+/* line 166, sass/_typography.scss */
 .cal {
   font-family: serif;
   font-style: italic;
   font-weight: normal; }
 
-/* line 170, sass/_typography.scss */
+/* line 171, sass/_typography.scss */
 .it {
   font-family: serif;
   font-style: italic;
   font-weight: normal; }
 
-/* line 175, sass/_typography.scss */
+/* line 176, sass/_typography.scss */
 .sl {
   font-family: serif;
   font-style: oblique;
   font-weight: normal; }
 
-/* line 180, sass/_typography.scss */
+/* line 181, sass/_typography.scss */
 .bf {
   font-family: serif;
   font-style: normal;
   font-weight: bold; }
 
-/* line 185, sass/_typography.scss */
+/* line 186, sass/_typography.scss */
 .tt {
   font-family: monospace;
   font-style: normal;
   font-weight: normal; }
 
-/* line 191, sass/_typography.scss */
+/* line 192, sass/_typography.scss */
 .underbar {
   text-decoration: underline; }
 
 /* Boxes */
-/* line 194, sass/_typography.scss */
+/* line 195, sass/_typography.scss */
 .fbox, .framebox {
   border: 1px black solid;
   padding-top: 1px;
@@ -449,41 +450,41 @@ big.xhuge {
   padding-right: 3px; }
 
 /* Quotations and Verse */
-/* line 205, sass/_typography.scss */
+/* line 206, sass/_typography.scss */
 .quotation p, .quote p, .verse p {
   margin-top: 0px;
   margin-bottom: 0.5em; }
 
-/* line 210, sass/_typography.scss */
+/* line 211, sass/_typography.scss */
 hr {
   color: black; }
 
-/* line 212, sass/_typography.scss */
+/* line 213, sass/_typography.scss */
 dd {
   margin-left: 3rem; }
 
-/* line 215, sass/_typography.scss */
+/* line 216, sass/_typography.scss */
 dd p {
   padding: 0;
   margin: 0; }
 
 /* Alignment */
-/* line 221, sass/_typography.scss */
+/* line 222, sass/_typography.scss */
 div.centered {
   display: flex;
   justify-content: center; }
 
-/* line 225, sass/_typography.scss */
+/* line 226, sass/_typography.scss */
 div.flushleft, div.raggedright {
   display: flex;
   justify-content: flex-start; }
 
-/* line 229, sass/_typography.scss */
+/* line 230, sass/_typography.scss */
 div.flushright, div.raggedleft {
   display: flex;
   justify-content: flex-end; }
 
-/* line 233, sass/_typography.scss */
+/* line 234, sass/_typography.scss */
 div.raggedbottom {
   display: flex;
   flex-direction: column;
@@ -541,35 +542,31 @@ nav.toc {
   z-index: 300;
   top: 0;
   bottom: 0;
-  left: -100%;
   display: flex;
   overflow-x: hidden;
   overflow-y: auto;
   flex-direction: column;
-  width: 100%;
+  width: 0;
   min-height: 100%;
   margin: 0;
-  margin-top: .2rem;
   padding: 0;
-  padding-top: 2.5rem;
   transition: left .5s ease;
   background-color: #6696bb; }
   @media (min-width: 1024px) {
     /* line 21, sass/_toc.scss */
     nav.toc {
-      left: 0;
       width: 30rem; } }
 
-/* line 53, sass/_toc.scss */
+/* line 48, sass/_toc.scss */
 nav.active {
-  left: 0; }
+  width: 100%; }
 
-/* line 58, sass/_toc.scss */
+/* line 53, sass/_toc.scss */
 .toc ul {
   min-width: 100%;
   padding-left: 0;
   list-style: none; }
-  /* line 65, sass/_toc.scss */
+  /* line 60, sass/_toc.scss */
   .toc ul a {
     font-size: 1.2rem;
     display: inline-block;
@@ -583,58 +580,58 @@ nav.active {
     color: white;
     text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.8);
     flex-grow: 1; }
-    /* line 84, sass/_toc.scss */
+    /* line 79, sass/_toc.scss */
     .toc ul a:hover {
       transition: all .2s ease;
       background: #497da5; }
-  /* line 93, sass/_toc.scss */
+  /* line 88, sass/_toc.scss */
   .toc ul li {
     display: flex;
     min-width: 100%;
     align-items: center;
     flex-wrap: wrap;
     justify-content: space-between; }
-  /* line 104, sass/_toc.scss */
+  /* line 99, sass/_toc.scss */
   .toc ul li.active {
     background-color: #89aecb; }
 
-/* line 112, sass/_toc.scss */
+/* line 107, sass/_toc.scss */
 .sub-toc-0 a {
   padding-left: 0.8rem; }
 
-/* line 112, sass/_toc.scss */
+/* line 107, sass/_toc.scss */
 .sub-toc-1 a {
   padding-left: 1.6rem; }
 
-/* line 112, sass/_toc.scss */
+/* line 107, sass/_toc.scss */
 .sub-toc-2 a {
   padding-left: 2.4rem; }
 
-/* line 112, sass/_toc.scss */
+/* line 107, sass/_toc.scss */
 .sub-toc-3 a {
   padding-left: 3.2rem; }
 
-/* line 112, sass/_toc.scss */
+/* line 107, sass/_toc.scss */
 .sub-toc-4 a {
   padding-left: 4rem; }
 
-/* line 120, sass/_toc.scss */
+/* line 115, sass/_toc.scss */
 ul.sub-toc-1 {
   display: none; }
 
-/* line 120, sass/_toc.scss */
+/* line 115, sass/_toc.scss */
 ul.sub-toc-2 {
   display: none; }
 
-/* line 120, sass/_toc.scss */
+/* line 115, sass/_toc.scss */
 ul.sub-toc-3 {
   display: none; }
 
-/* line 120, sass/_toc.scss */
+/* line 115, sass/_toc.scss */
 ul.sub-toc-4 {
   display: none; }
 
-/* line 126, sass/_toc.scss */
+/* line 121, sass/_toc.scss */
 svg.expand-toc {
   min-width: 10%;
   padding: 0;
@@ -643,7 +640,23 @@ svg.expand-toc {
   color: white;
   background-color: Transparent; }
 
-/* line 138, sass/_toc.scss */
+/* line 132, sass/_toc.scss */
+svg.close-toc {
+  min-width: 1.3rem;
+  min-height: 1.3rem;
+  margin: .5rem;
+  margin-left: auto;
+  cursor: pointer;
+  text-align: center;
+  color: white;
+  background-color: Transparent;
+  display: none; }
+
+/* line 147, sass/_toc.scss */
+nav.active svg.close-toc {
+  display: inline-block; }
+
+/* line 152, sass/_toc.scss */
 ul.active {
   display: block; }
 
@@ -669,61 +682,53 @@ nav.prev_up_next {
 header {
   z-index: 400;
   background: linear-gradient(to bottom, #6696bb 0%, #396282 100%);
+  color: white;
+  text-shadow: 1px 2px 0px rgba(0, 0, 0, 0.8);
   display: flex;
-  position: fixed;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  height: 2.5rem;
+  padding: .5rem;
   margin: 0 auto;
   text-align: center;
   vertical-align: middle;
   top: 0;
   left: 0; }
-  @media (min-width: 1024px) {
-    /* line 3, sass/_header.scss */
-    header {
-      width: 30rem; } }
 
-/* line 21, sass/_header.scss */
+/* line 20, sass/_header.scss */
 svg#toc-toggle {
   font-size: 1.125rem;
-  margin-right: 0.75rem; }
+  margin-right: auto;
+  margin-left: 0.75rem; }
   @media (min-width: 1024px) {
-    /* line 21, sass/_header.scss */
+    /* line 20, sass/_header.scss */
     svg#toc-toggle {
       display: none; } }
 
 /* line 31, sass/_header.scss */
 h1#doc_title {
-  margin: auto;
   color: white;
-  text-shadow: 1px 2px 0px rgba(0, 0, 0, 0.8);
-  font-size: 1.5rem; }
+  font-size: 1.5rem;
+  margin: 0; }
 
 /* line 3, sass/_breadcrumbs.scss */
 ul.breadcrumbs {
-  margin: 1rem 0;
-  margin-top: 3.5rem;
+  margin: 1rem 0 0 0;
   padding: 0;
   padding-left: .5rem;
   list-style: none;
   font-size: small; }
-  @media (min-width: 1024px) {
-    /* line 3, sass/_breadcrumbs.scss */
-    ul.breadcrumbs {
-      margin-top: 1rem;
-      margin-left: 30rem; } }
 
-/* line 20, sass/_breadcrumbs.scss */
+/* line 13, sass/_breadcrumbs.scss */
 ul.breadcrumbs li {
-  display: block;
-  float: left; }
+  display: inline; }
 
-/* line 26, sass/_breadcrumbs.scss */
+/* line 18, sass/_breadcrumbs.scss */
 ul.breadcrumbs a {
   text-decoration: none;
   color: #396282; }
 
-/* line 34, sass/_breadcrumbs.scss */
+/* line 26, sass/_breadcrumbs.scss */
 li.crumb::after {
   content: ' / '; }
 
@@ -946,33 +951,35 @@ ul.quizz {
 body {
   margin: 0;
   color: #0a0a14;
-  background-color: #e8e8e8; }
+  background-color: #e8e8e8;
+  display: flex;
+  flex-direction: row; }
 
-/* line 29, sass/theme-style.scss */
+@media (min-width: 1024px) {
+  /* line 31, sass/theme-style.scss */
+  div.wrapper {
+    margin-left: 30rem; } }
+
+/* line 38, sass/theme-style.scss */
 div.content {
   line-height: 1.4rem;
-  position: absolute;
-  top: 5rem;
-  left: 0;
   padding: 1rem;
   padding-bottom: 2.5rem; }
   @media (min-width: 1024px) {
-    /* line 29, sass/theme-style.scss */
+    /* line 38, sass/theme-style.scss */
     div.content {
-      top: 2.5rem;
-      left: 30rem;
       margin: 0 5%; } }
 
-/* line 49, sass/theme-style.scss */
+/* line 51, sass/theme-style.scss */
 div.content > p {
   clear: both;
   margin: 2.1rem 0; }
 
-/* line 56, sass/theme-style.scss */
+/* line 58, sass/theme-style.scss */
 li > p {
   margin: 0.28rem 0; }
 
-/* line 62, sass/theme-style.scss */
+/* line 64, sass/theme-style.scss */
 .icon {
   display: inline-block;
   width: 1rem;
