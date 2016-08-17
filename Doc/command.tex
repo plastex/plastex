@@ -1,5 +1,6 @@
 
 \chapter{\protect\program{plastex} --- The Command-Line Interface}
+\label{sec:command-line}
 
 While \plasTeX\ makes it possible to parse \LaTeX\ directly from Python
 code, most people will simply use the supplied command-line interface, 
@@ -42,7 +43,7 @@ in your own Python-based macros and renderers.
 The following options are currently available
 on the \program{plastex} command.  They are categorized for convenience. 
 
-\subsection{General Options}
+\subsection{General Options}\label{sec:general-options}
 
 \begin{configuration}{Configuration files}
 \options{\longprogramopt{config=\optval{config-file}} or
@@ -96,6 +97,13 @@ specifies a base URL to prepend to the path of all links.
 \options{\longprogramopt{index-columns=\optval{integer}}}
 \config{document}{index-columns}
 specifies the number of columns to group the index into.
+\end{configuration}
+
+\begin{configuration}{Language terms}
+\options{\longprogramopt{lang-terms=\optval{string}}}
+\config{document}{lang-terms}
+Specifies a list of files that contain language terms, delimited by the
+OS path separator (such as : for POSIX and ; for Windows).
 \end{configuration}
 
 \begin{configuration}{Section number depth}
