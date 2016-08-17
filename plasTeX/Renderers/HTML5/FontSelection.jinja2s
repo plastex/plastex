@@ -11,7 +11,7 @@ name: sffamily textsf
 <span class="sffamily">{{ obj }}</span>
 
 name: ttfamily texttt
-<span class="ttfamily">{{ obj }}</tt>
+<span class="ttfamily">{{ obj }}</span>
 
 name: upshape textup
 <span class="upshape">{{ obj }}</span>

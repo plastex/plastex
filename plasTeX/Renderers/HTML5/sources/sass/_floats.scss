@@ -1,0 +1,7 @@
+span.caption_title, span.caption_ref {
+  font-weight: bold;
+}
+
+span.caption_ref::after {
+  content: ":";
+}

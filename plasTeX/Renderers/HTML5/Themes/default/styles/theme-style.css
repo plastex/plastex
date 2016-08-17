@@ -223,30 +223,34 @@ table {
   background: #000; }
 
 /* line 3, sass/_typography.scss */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Lucida Grande", Arial, Helvetica, sans-serif; }
+
+/* line 8, sass/_typography.scss */
 h1 {
   font-size: 2rem;
   margin: 1rem 0;
   color: #0f2f48; }
 
-/* line 12, sass/_typography.scss */
+/* line 17, sass/_typography.scss */
 h2 {
   font-size: 1.5rem;
   margin: 0;
   color: #0f2f48; }
 
-/* line 21, sass/_typography.scss */
+/* line 26, sass/_typography.scss */
 h3 {
   font-size: 1rem;
   margin: .67rem 0;
   color: #0f2f48; }
 
-/* line 30, sass/_typography.scss */
+/* line 35, sass/_typography.scss */
 h4 {
   font-size: 1rem;
   margin: .67rem 0;
   color: #0f2f48; }
 
-/* line 39, sass/_typography.scss */
+/* line 44, sass/_typography.scss */
 p {
   font-size: 1rem;
   margin: .8rem 0; }
@@ -254,7 +258,7 @@ p {
 /**
  * Address style set to `bolder` in Firefox 4+, Safari 5, and Chrome.
  */
-/* line 51, sass/_typography.scss */
+/* line 56, sass/_typography.scss */
 b,
 strong {
   font-weight: bold; }
@@ -262,14 +266,14 @@ strong {
 /**
  * Address styling not present in Safari 5 and Chrome.
  */
-/* line 61, sass/_typography.scss */
+/* line 66, sass/_typography.scss */
 dfn {
   font-style: italic; }
 
 /**
  * Correct font family set oddly in Safari 5 and Chrome.
  */
-/* line 71, sass/_typography.scss */
+/* line 76, sass/_typography.scss */
 code,
 kbd,
 pre,
@@ -280,28 +284,28 @@ samp {
 /**
  * Improve readability of pre-formatted text in all browsers.
  */
-/* line 84, sass/_typography.scss */
+/* line 89, sass/_typography.scss */
 pre {
   white-space: pre-wrap; }
 
 /**
  * Set consistent quote types.
  */
-/* line 93, sass/_typography.scss */
+/* line 98, sass/_typography.scss */
 q {
   quotes: '\201C' '\201D' '\2018' '\2019'; }
 
 /**
  * Address inconsistent and variable font size in all browsers.
  */
-/* line 102, sass/_typography.scss */
+/* line 107, sass/_typography.scss */
 small {
   font-size: 80%; }
 
 /**
  * Prevent `sub` and `sup` affecting `line-height` in all browsers.
  */
-/* line 111, sass/_typography.scss */
+/* line 116, sass/_typography.scss */
 sub,
 sup {
   font-size: 75%;
@@ -309,13 +313,216 @@ sup {
   position: relative;
   vertical-align: baseline; }
 
-/* line 122, sass/_typography.scss */
+/* line 127, sass/_typography.scss */
 sup {
   top: -.5rem; }
 
-/* line 127, sass/_typography.scss */
+/* line 132, sass/_typography.scss */
 sub {
   bottom: -.25rem; }
+
+/* Font Selection */
+/* line 138, sass/_typography.scss */
+.mdseries, .textmf {
+  font-weight: normal; }
+
+/* line 139, sass/_typography.scss */
+.bfseries, .textbf {
+  font-weight: bold; }
+
+/* line 140, sass/_typography.scss */
+.rmfamily, .textrm {
+  font-family: serif; }
+
+/* line 141, sass/_typography.scss */
+.sffamily, .textsf {
+  font-family: sans-serif; }
+
+/* line 142, sass/_typography.scss */
+.ttfamily, .texttt {
+  font-family: monospace; }
+
+/* line 143, sass/_typography.scss */
+.upshape, .textup {
+  text-transform: uppercase; }
+
+/* line 144, sass/_typography.scss */
+.itshape, .textit {
+  font-style: italic; }
+
+/* line 145, sass/_typography.scss */
+.slshape, .textsl {
+  font-style: oblique; }
+
+/* line 146, sass/_typography.scss */
+.scshape, .textsc {
+  font-variant: small-caps; }
+
+/* line 148, sass/_typography.scss */
+small.tiny {
+  font-size: x-small; }
+
+/* line 149, sass/_typography.scss */
+small.scriptsize {
+  font-size: smaller; }
+
+/* line 150, sass/_typography.scss */
+small.footnotesize {
+  font-size: small; }
+
+/* line 151, sass/_typography.scss */
+small.small {
+  font-size: small; }
+
+/* line 152, sass/_typography.scss */
+.normalsize {
+  font-size: normal; }
+
+/* line 153, sass/_typography.scss */
+big.large {
+  font-size: large; }
+
+/* line 154, sass/_typography.scss */
+big.xlarge {
+  font-size: x-large; }
+
+/* line 155, sass/_typography.scss */
+big.xxlarge {
+  font-size: x-large; }
+
+/* line 156, sass/_typography.scss */
+big.huge {
+  font-size: xx-large; }
+
+/* line 157, sass/_typography.scss */
+big.xhuge {
+  font-size: xx-large; }
+
+/* Fonts */
+/* line 160, sass/_typography.scss */
+.rm {
+  font-family: serif;
+  font-style: normal;
+  font-weight: normal; }
+
+/* line 165, sass/_typography.scss */
+.cal {
+  font-family: serif;
+  font-style: italic;
+  font-weight: normal; }
+
+/* line 170, sass/_typography.scss */
+.it {
+  font-family: serif;
+  font-style: italic;
+  font-weight: normal; }
+
+/* line 175, sass/_typography.scss */
+.sl {
+  font-family: serif;
+  font-style: oblique;
+  font-weight: normal; }
+
+/* line 180, sass/_typography.scss */
+.bf {
+  font-family: serif;
+  font-style: normal;
+  font-weight: bold; }
+
+/* line 185, sass/_typography.scss */
+.tt {
+  font-family: monospace;
+  font-style: normal;
+  font-weight: normal; }
+
+/* line 191, sass/_typography.scss */
+.underbar {
+  text-decoration: underline; }
+
+/* Boxes */
+/* line 194, sass/_typography.scss */
+.fbox, .framebox {
+  border: 1px black solid;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 3px;
+  padding-right: 3px; }
+
+/* Quotations and Verse */
+/* line 205, sass/_typography.scss */
+.quotation p, .quote p, .verse p {
+  margin-top: 0px;
+  margin-bottom: 0.5em; }
+
+/* line 210, sass/_typography.scss */
+hr {
+  color: black; }
+
+/* line 212, sass/_typography.scss */
+dd {
+  margin-left: 3rem; }
+
+/* line 215, sass/_typography.scss */
+dd p {
+  padding: 0;
+  margin: 0; }
+
+/* Alignment */
+/* line 221, sass/_typography.scss */
+div.centered {
+  display: flex;
+  justify-content: center; }
+
+/* line 225, sass/_typography.scss */
+div.flushleft, div.raggedright {
+  display: flex;
+  justify-content: flex-start; }
+
+/* line 229, sass/_typography.scss */
+div.flushright, div.raggedleft {
+  display: flex;
+  justify-content: flex-end; }
+
+/* line 233, sass/_typography.scss */
+div.raggedbottom {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; }
+
+/* line 1, sass/_tables.scss */
+.tabular {
+  border-collapse: collapse;
+  color: #0a0a14;
+  background-color: #e8e8e8;
+  width: auto; }
+
+/* line 7, sass/_tables.scss */
+.tabular td, .tabular th {
+  vertical-align: baseline;
+  text-align: left;
+  padding-top: 0.3em;
+  padding-bottom: 0.3em;
+  padding-left: 0.6em;
+  padding-right: 0.6em;
+  empty-cells: show; }
+
+/* line 17, sass/_tables.scss */
+td p:first-child, th p:first-child {
+  margin-top: 0px;
+  margin-bottom: 0px; }
+
+/* line 22, sass/_tables.scss */
+td p, th p {
+  margin-top: 1em;
+  margin-bottom: 0px; }
+
+/* line 1, sass/_floats.scss */
+span.caption_title, span.caption_ref {
+  font-weight: bold; }
+
+/* line 5, sass/_floats.scss */
+span.caption_ref::after {
+  content: ":"; }
 
 /* line 3, sass/_toc.scss */
 .local_toc ul {
@@ -498,24 +705,25 @@ ul.breadcrumbs {
   margin-top: 3.5rem;
   padding: 0;
   padding-left: .5rem;
-  list-style: none; }
+  list-style: none;
+  font-size: small; }
   @media (min-width: 1024px) {
     /* line 3, sass/_breadcrumbs.scss */
     ul.breadcrumbs {
       margin-top: 1rem;
       margin-left: 30rem; } }
 
-/* line 19, sass/_breadcrumbs.scss */
+/* line 20, sass/_breadcrumbs.scss */
 ul.breadcrumbs li {
   display: block;
   float: left; }
 
-/* line 25, sass/_breadcrumbs.scss */
+/* line 26, sass/_breadcrumbs.scss */
 ul.breadcrumbs a {
   text-decoration: none;
   color: #396282; }
 
-/* line 33, sass/_breadcrumbs.scss */
+/* line 34, sass/_breadcrumbs.scss */
 li.crumb::after {
   content: ' / '; }
 
@@ -564,6 +772,34 @@ div.equation {
   div.equation div.equation_content {
     float: left;
     margin-left: 3rem; }
+
+/* line 2, sass/_index.scss */
+.theindex li {
+  list-style-type: none; }
+
+/* line 6, sass/_index.scss */
+.changebar {
+  border-right: 2px solid red;
+  padding-right: 1em; }
+
+/* line 11, sass/_index.scss */
+.deletebar {
+  color: red;
+  font-size: 150%;
+  padding-left: 0.5ex;
+  padding-right: 0.5ex; }
+
+/* line 1, sass/_verbatim.scss */
+code.verb {
+  font-family: monospace;
+  font-style: normal;
+  font-weight: normal; }
+
+/* line 7, sass/_verbatim.scss */
+pre.verbatim {
+  margin: 1rem 2rem;
+  background-color: #dbdbdb;
+  padding: .5rem; }
 
 @keyframes highlight {
   0% {
@@ -706,13 +942,13 @@ ul.quizz {
     width: 2rem;
     height: 2rem; }
 
-/* line 14, sass/theme-style.scss */
+/* line 18, sass/theme-style.scss */
 body {
   margin: 0;
   color: #0a0a14;
   background-color: #e8e8e8; }
 
-/* line 25, sass/theme-style.scss */
+/* line 29, sass/theme-style.scss */
 div.content {
   line-height: 1.4rem;
   position: absolute;
@@ -721,22 +957,22 @@ div.content {
   padding: 1rem;
   padding-bottom: 2.5rem; }
   @media (min-width: 1024px) {
-    /* line 25, sass/theme-style.scss */
+    /* line 29, sass/theme-style.scss */
     div.content {
       top: 2.5rem;
       left: 30rem;
       margin: 0 5%; } }
 
-/* line 45, sass/theme-style.scss */
+/* line 49, sass/theme-style.scss */
 div.content > p {
   clear: both;
   margin: 2.1rem 0; }
 
-/* line 52, sass/theme-style.scss */
+/* line 56, sass/theme-style.scss */
 li > p {
   margin: 0.28rem 0; }
 
-/* line 58, sass/theme-style.scss */
+/* line 62, sass/theme-style.scss */
 .icon {
   display: inline-block;
   width: 1rem;

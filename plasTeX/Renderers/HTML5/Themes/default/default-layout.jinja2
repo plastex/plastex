@@ -2,7 +2,7 @@
 {%- set doc = obj.ownerDocument.getElementsByTagName('document')[0] -%}
 {%- set toc = doc.tableofcontents -%}
 {% macro tocEntry(section) -%}
-<span class="toc_ref">{{ section.ref.textContent }}</span> <span class="toc_entry">{{ section.tocEntry.textContent }}</span>
+<span class="toc_ref">{{ section.ref.textContent }}</span> <span class="toc_entry">{{ section.tocEntry }}</span>
 {%- endmacro %}
 {% macro isActive(section) -%}
 {% if section in links.breadcrumbs %} active{% endif %}

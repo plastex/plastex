@@ -3,12 +3,16 @@
 @import 'typography';
 @import 'variables';
 
+@import 'tables';
+@import 'floats';
 @import 'toc';
 @import 'nav_pun';
 @import 'header';
 @import 'breadcrumbs';
 @import 'footnotes';
 @import 'equations';
+@import 'index';
+@import 'verbatim';
 @import 'theorems';
 
 body

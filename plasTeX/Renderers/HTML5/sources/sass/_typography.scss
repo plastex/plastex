@@ -1,5 +1,10 @@
 @import 'variables';
 
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Lucida Grande", Arial, Helvetica, sans-serif;
+}
+
+
 h1
 {
     font-size: 2rem;
@@ -128,3 +133,107 @@ sub
 {
     bottom: -.25rem;
 }
+
+/* Font Selection */
+.mdseries, .textmf {font-weight: normal}
+.bfseries, .textbf {font-weight: bold}
+.rmfamily, .textrm {font-family: serif}
+.sffamily, .textsf {font-family: sans-serif}
+.ttfamily, .texttt {font-family: monospace}
+.upshape, .textup  {text-transform: uppercase}
+.itshape, .textit  {font-style: italic}
+.slshape, .textsl  {font-style: oblique}
+.scshape, .textsc  {font-variant: small-caps}
+
+small.tiny         {font-size: x-small}
+small.scriptsize   {font-size: smaller}
+small.footnotesize {font-size: small}
+small.small        {font-size: small}
+.normalsize        {font-size: normal}
+big.large          {font-size: large}
+big.xlarge         {font-size: x-large}
+big.xxlarge        {font-size: x-large}
+big.huge           {font-size: xx-large}
+big.xhuge          {font-size: xx-large}
+
+/* Fonts */
+.rm {
+    font-family: serif;
+    font-style: normal;
+    font-weight: normal;
+}
+.cal {
+    font-family: serif;
+    font-style: italic;
+    font-weight: normal;
+}
+.it {
+    font-family: serif;
+    font-style: italic;
+    font-weight: normal;
+}
+.sl {
+    font-family: serif;
+    font-style: oblique;
+    font-weight: normal;
+}
+.bf {
+    font-family: serif;
+    font-style: normal;
+    font-weight: bold;
+}
+.tt {
+    font-family: monospace;
+    font-style: normal;
+    font-weight: normal;
+}
+
+.underbar {text-decoration: underline}
+
+/* Boxes */
+.fbox, .framebox {
+    border: 1px black solid;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+/* Quotations and Verse */
+.quotation, .quote, .verse {
+}
+.quotation p, .quote p, .verse p {
+    margin-top: 0px;
+    margin-bottom: 0.5em;
+}
+
+hr {color: black}
+
+dd {
+  margin-left: 3rem;
+}
+dd p {
+  padding: 0;
+  margin: 0;
+}
+
+/* Alignment */
+div.centered {
+  display: flex;
+  justify-content: center;
+}
+div.flushleft, div.raggedright {
+  display: flex;
+  justify-content: flex-start;
+}
+div.flushright, div.raggedleft {
+  display: flex;
+  justify-content: flex-end;
+}
+div.raggedbottom {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+
