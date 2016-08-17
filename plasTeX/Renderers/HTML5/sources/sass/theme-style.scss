@@ -1,19 +1,20 @@
-@import 'reset';
-
-@import 'typography';
 @import 'variables';
 
-@import 'tables';
-@import 'floats';
-@import 'toc';
-@import 'nav_pun';
-@import 'header';
+@import 'reset';
+@import 'typography';
+
 @import 'breadcrumbs';
-@import 'footnotes';
 @import 'equations';
+@import 'floats';
+@import 'footnotes';
+@import 'header';
 @import 'index';
-@import 'verbatim';
+@import 'lists';
+@import 'nav_pun';
+@import 'tables';
 @import 'theorems';
+@import 'toc';
+@import 'verbatim';
 
 body
 {
