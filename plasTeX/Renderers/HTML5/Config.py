@@ -21,6 +21,13 @@ section['theme-css'] = BooleanOption(
     default=True,
 )
 
+section['localtoc-level'] = IntegerOption(
+    """ Create local toc from this level """,
+    options='--localtoc-level',
+    category='html5',
+    default=-10,
+)
+
 section['mathjax-js'] = StringOption(
     """ Url of the MathJax lib """,
     options='--mathjax-js',
