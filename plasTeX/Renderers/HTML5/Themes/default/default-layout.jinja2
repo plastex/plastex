@@ -47,7 +47,7 @@
 </head>
 
 <body>
-{% if toc -%}
+{% if toc and config.html5['display-toc'] -%}
 <nav class="toc">
 {{ icon('cross', class='close-toc') }}
 <ul class="sub-toc-0">
@@ -68,12 +68,12 @@
 </nav>
 {% endif -%}
 
-<div class="wrapper">
+<div class="wrapper{% if config.html5['display-toc'] %} with-toc {% endif %}">
 <header>
-{{ icon('list-numbered', id='toc-toggle')}}<h1 id="doc_title">{{ links.document.title }}</h1>
+{% if config.html5['display-toc'] %}{{ icon('list-numbered', id='toc-toggle')}}{% endif %}<h1 id="doc_title">{{ links.document.title }}</h1>
 </header>
 
-{% if obj.level >= -10 %}
+{% if obj.level >= config.html5['breadcrumbs-level'] %}
 <ul class="breadcrumbs">
 {% for crumb in links.breadcrumbs -%}
 {% if loop.last -%}

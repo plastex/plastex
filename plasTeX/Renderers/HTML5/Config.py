@@ -16,17 +16,32 @@ section['extra-css'] = StringOption(
 
 section['theme-css'] = BooleanOption(
     """ Use theme css file""",
-    options='--theme-css',
+    options='--theme-css !--no-theme-css',
+    category='html5',
+    default=True,
+)
+
+section['display-toc'] = BooleanOption(
+    """ Display table of contents on each page """,
+    options='--display-toc !--no-display-toc',
     category='html5',
     default=True,
 )
 
 section['localtoc-level'] = IntegerOption(
-    """ Create local toc from this level """,
+    """ Create local toc above this level """,
     options='--localtoc-level',
     category='html5',
     default=-10,
 )
+
+section['breadcrumbs-level'] = IntegerOption(
+    """ Create breadcrumbs from this level """,
+    options='--breadcrumbs-level',
+    category='html5',
+    default=-10,
+)
+
 
 section['mathjax-js'] = StringOption(
     """ Url of the MathJax lib """,

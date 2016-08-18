@@ -30,6 +30,9 @@ body
 // Main content
 
 div.wrapper {
+  width: 100%;
+}
+div.with-toc{
 	@media (min-width: $toc-break)
   {
     margin-left: $toc-width;

@@ -829,12 +829,13 @@ ul.quizz {
   list-style: none; }
   /* line 9, sass/_toc.scss */
   .local_toc ul a {
-    text-decoration: none; }
-  /* line 14, sass/_toc.scss */
+    text-decoration: none;
+    color: #0a0a14; }
+  /* line 15, sass/_toc.scss */
   .local_toc ul li {
     padding: .2rem 0; }
 
-/* line 21, sass/_toc.scss */
+/* line 22, sass/_toc.scss */
 nav.toc {
   position: fixed;
   z-index: 300;
@@ -851,20 +852,20 @@ nav.toc {
   transition: left .5s ease;
   background-color: #6696bb; }
   @media (min-width: 1024px) {
-    /* line 21, sass/_toc.scss */
+    /* line 22, sass/_toc.scss */
     nav.toc {
       width: 30rem; } }
 
-/* line 48, sass/_toc.scss */
+/* line 49, sass/_toc.scss */
 nav.active {
   width: 100%; }
 
-/* line 53, sass/_toc.scss */
+/* line 54, sass/_toc.scss */
 .toc ul {
   min-width: 100%;
   padding-left: 0;
   list-style: none; }
-  /* line 60, sass/_toc.scss */
+  /* line 61, sass/_toc.scss */
   .toc ul a {
     font-size: 1.2rem;
     display: inline-block;
@@ -878,58 +879,58 @@ nav.active {
     color: white;
     text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.8);
     flex-grow: 1; }
-    /* line 79, sass/_toc.scss */
+    /* line 80, sass/_toc.scss */
     .toc ul a:hover {
       transition: all .2s ease;
       background: #497da5; }
-  /* line 88, sass/_toc.scss */
+  /* line 89, sass/_toc.scss */
   .toc ul li {
     display: flex;
     min-width: 100%;
     align-items: center;
     flex-wrap: wrap;
     justify-content: space-between; }
-  /* line 99, sass/_toc.scss */
+  /* line 100, sass/_toc.scss */
   .toc ul li.active {
     background-color: #89aecb; }
 
-/* line 107, sass/_toc.scss */
+/* line 108, sass/_toc.scss */
 .sub-toc-0 a {
   padding-left: 0.8rem; }
 
-/* line 107, sass/_toc.scss */
+/* line 108, sass/_toc.scss */
 .sub-toc-1 a {
   padding-left: 1.6rem; }
 
-/* line 107, sass/_toc.scss */
+/* line 108, sass/_toc.scss */
 .sub-toc-2 a {
   padding-left: 2.4rem; }
 
-/* line 107, sass/_toc.scss */
+/* line 108, sass/_toc.scss */
 .sub-toc-3 a {
   padding-left: 3.2rem; }
 
-/* line 107, sass/_toc.scss */
+/* line 108, sass/_toc.scss */
 .sub-toc-4 a {
   padding-left: 4rem; }
 
-/* line 115, sass/_toc.scss */
+/* line 116, sass/_toc.scss */
 ul.sub-toc-1 {
   display: none; }
 
-/* line 115, sass/_toc.scss */
+/* line 116, sass/_toc.scss */
 ul.sub-toc-2 {
   display: none; }
 
-/* line 115, sass/_toc.scss */
+/* line 116, sass/_toc.scss */
 ul.sub-toc-3 {
   display: none; }
 
-/* line 115, sass/_toc.scss */
+/* line 116, sass/_toc.scss */
 ul.sub-toc-4 {
   display: none; }
 
-/* line 121, sass/_toc.scss */
+/* line 122, sass/_toc.scss */
 svg.expand-toc {
   min-width: 10%;
   padding: 0;
@@ -938,7 +939,7 @@ svg.expand-toc {
   color: white;
   background-color: Transparent; }
 
-/* line 132, sass/_toc.scss */
+/* line 133, sass/_toc.scss */
 svg.close-toc {
   min-width: 1.3rem;
   min-height: 1.3rem;
@@ -950,11 +951,11 @@ svg.close-toc {
   background-color: Transparent;
   display: none; }
 
-/* line 147, sass/_toc.scss */
+/* line 148, sass/_toc.scss */
 nav.active svg.close-toc {
   display: inline-block; }
 
-/* line 152, sass/_toc.scss */
+/* line 153, sass/_toc.scss */
 ul.active {
   display: block; }
 
@@ -978,31 +979,35 @@ body {
   display: flex;
   flex-direction: row; }
 
+/* line 32, sass/theme-style.scss */
+div.wrapper {
+  width: 100%; }
+
 @media (min-width: 1024px) {
-  /* line 32, sass/theme-style.scss */
-  div.wrapper {
+  /* line 35, sass/theme-style.scss */
+  div.with-toc {
     margin-left: 30rem; } }
 
-/* line 39, sass/theme-style.scss */
+/* line 42, sass/theme-style.scss */
 div.content {
   line-height: 1.4rem;
   padding: 1rem;
   padding-bottom: 2.5rem; }
   @media (min-width: 1024px) {
-    /* line 39, sass/theme-style.scss */
+    /* line 42, sass/theme-style.scss */
     div.content {
       margin: 0 5%; } }
 
-/* line 52, sass/theme-style.scss */
+/* line 55, sass/theme-style.scss */
 div.content > p {
   clear: both;
   margin: 2.1rem 0; }
 
-/* line 59, sass/theme-style.scss */
+/* line 62, sass/theme-style.scss */
 li > p {
   margin: 0.28rem 0; }
 
-/* line 65, sass/theme-style.scss */
+/* line 68, sass/theme-style.scss */
 .icon {
   display: inline-block;
   width: 1rem;
