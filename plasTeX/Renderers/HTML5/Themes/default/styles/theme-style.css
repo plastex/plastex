@@ -256,10 +256,19 @@ p {
   font-size: 1rem;
   margin: .8rem 0; }
 
+/* Title Page */
+/* line 54, sass/_typography.scss */
+.titlepage {
+  text-align: center; }
+
+/* line 55, sass/_typography.scss */
+.titlepage h1 {
+  font-weight: normal; }
+
 /**
  * Address style set to `bolder` in Firefox 4+, Safari 5, and Chrome.
  */
-/* line 57, sass/_typography.scss */
+/* line 62, sass/_typography.scss */
 b,
 strong {
   font-weight: bold; }
@@ -267,14 +276,14 @@ strong {
 /**
  * Address styling not present in Safari 5 and Chrome.
  */
-/* line 67, sass/_typography.scss */
+/* line 72, sass/_typography.scss */
 dfn {
   font-style: italic; }
 
 /**
  * Correct font family set oddly in Safari 5 and Chrome.
  */
-/* line 77, sass/_typography.scss */
+/* line 82, sass/_typography.scss */
 code,
 kbd,
 pre,
@@ -285,28 +294,28 @@ samp {
 /**
  * Improve readability of pre-formatted text in all browsers.
  */
-/* line 90, sass/_typography.scss */
+/* line 95, sass/_typography.scss */
 pre {
   white-space: pre-wrap; }
 
 /**
  * Set consistent quote types.
  */
-/* line 99, sass/_typography.scss */
+/* line 104, sass/_typography.scss */
 q {
   quotes: '\201C' '\201D' '\2018' '\2019'; }
 
 /**
  * Address inconsistent and variable font size in all browsers.
  */
-/* line 108, sass/_typography.scss */
+/* line 113, sass/_typography.scss */
 small {
   font-size: 80%; }
 
 /**
  * Prevent `sub` and `sup` affecting `line-height` in all browsers.
  */
-/* line 117, sass/_typography.scss */
+/* line 122, sass/_typography.scss */
 sub,
 sup {
   font-size: 75%;
@@ -314,134 +323,134 @@ sup {
   position: relative;
   vertical-align: baseline; }
 
-/* line 128, sass/_typography.scss */
+/* line 133, sass/_typography.scss */
 sup {
   top: -.5rem; }
 
-/* line 133, sass/_typography.scss */
+/* line 138, sass/_typography.scss */
 sub {
   bottom: -.25rem; }
 
 /* Font Selection */
-/* line 139, sass/_typography.scss */
+/* line 144, sass/_typography.scss */
 .mdseries, .textmf {
   font-weight: normal; }
 
-/* line 140, sass/_typography.scss */
+/* line 145, sass/_typography.scss */
 .bfseries, .textbf {
   font-weight: bold; }
 
-/* line 141, sass/_typography.scss */
+/* line 146, sass/_typography.scss */
 .rmfamily, .textrm {
   font-family: serif; }
 
-/* line 142, sass/_typography.scss */
+/* line 147, sass/_typography.scss */
 .sffamily, .textsf {
   font-family: sans-serif; }
 
-/* line 143, sass/_typography.scss */
+/* line 148, sass/_typography.scss */
 .ttfamily, .texttt {
   font-family: monospace; }
 
-/* line 144, sass/_typography.scss */
+/* line 149, sass/_typography.scss */
 .upshape, .textup {
   text-transform: uppercase; }
 
-/* line 145, sass/_typography.scss */
+/* line 150, sass/_typography.scss */
 .itshape, .textit {
   font-style: italic; }
 
-/* line 146, sass/_typography.scss */
+/* line 151, sass/_typography.scss */
 .slshape, .textsl {
   font-style: oblique; }
 
-/* line 147, sass/_typography.scss */
+/* line 152, sass/_typography.scss */
 .scshape, .textsc {
   font-variant: small-caps; }
 
-/* line 149, sass/_typography.scss */
+/* line 154, sass/_typography.scss */
 small.tiny {
   font-size: x-small; }
 
-/* line 150, sass/_typography.scss */
+/* line 155, sass/_typography.scss */
 small.scriptsize {
   font-size: smaller; }
 
-/* line 151, sass/_typography.scss */
+/* line 156, sass/_typography.scss */
 small.footnotesize {
   font-size: small; }
 
-/* line 152, sass/_typography.scss */
+/* line 157, sass/_typography.scss */
 small.small {
   font-size: small; }
 
-/* line 153, sass/_typography.scss */
+/* line 158, sass/_typography.scss */
 .normalsize {
   font-size: normal; }
 
-/* line 154, sass/_typography.scss */
+/* line 159, sass/_typography.scss */
 big.large {
   font-size: large; }
 
-/* line 155, sass/_typography.scss */
+/* line 160, sass/_typography.scss */
 big.xlarge {
   font-size: x-large; }
 
-/* line 156, sass/_typography.scss */
+/* line 161, sass/_typography.scss */
 big.xxlarge {
   font-size: x-large; }
 
-/* line 157, sass/_typography.scss */
+/* line 162, sass/_typography.scss */
 big.huge {
   font-size: xx-large; }
 
-/* line 158, sass/_typography.scss */
+/* line 163, sass/_typography.scss */
 big.xhuge {
   font-size: xx-large; }
 
 /* Fonts */
-/* line 161, sass/_typography.scss */
+/* line 166, sass/_typography.scss */
 .rm {
   font-family: serif;
   font-style: normal;
   font-weight: normal; }
 
-/* line 166, sass/_typography.scss */
+/* line 171, sass/_typography.scss */
 .cal {
   font-family: serif;
   font-style: italic;
   font-weight: normal; }
 
-/* line 171, sass/_typography.scss */
+/* line 176, sass/_typography.scss */
 .it {
   font-family: serif;
   font-style: italic;
   font-weight: normal; }
 
-/* line 176, sass/_typography.scss */
+/* line 181, sass/_typography.scss */
 .sl {
   font-family: serif;
   font-style: oblique;
   font-weight: normal; }
 
-/* line 181, sass/_typography.scss */
+/* line 186, sass/_typography.scss */
 .bf {
   font-family: serif;
   font-style: normal;
   font-weight: bold; }
 
-/* line 186, sass/_typography.scss */
+/* line 191, sass/_typography.scss */
 .tt {
   font-family: monospace;
   font-style: normal;
   font-weight: normal; }
 
-/* line 192, sass/_typography.scss */
+/* line 197, sass/_typography.scss */
 .underbar {
   text-decoration: underline; }
 
 /* Boxes */
-/* line 195, sass/_typography.scss */
+/* line 200, sass/_typography.scss */
 .fbox, .framebox {
   border: 1px black solid;
   padding-top: 1px;
@@ -450,41 +459,41 @@ big.xhuge {
   padding-right: 3px; }
 
 /* Quotations and Verse */
-/* line 206, sass/_typography.scss */
+/* line 211, sass/_typography.scss */
 .quotation p, .quote p, .verse p {
   margin-top: 0px;
   margin-bottom: 0.5em; }
 
-/* line 211, sass/_typography.scss */
+/* line 216, sass/_typography.scss */
 hr {
   color: black; }
 
-/* line 213, sass/_typography.scss */
+/* line 218, sass/_typography.scss */
 dd {
   margin-left: 3rem; }
 
-/* line 216, sass/_typography.scss */
+/* line 221, sass/_typography.scss */
 dd p {
   padding: 0;
   margin: 0 0 1rem 0; }
 
 /* Alignment */
-/* line 222, sass/_typography.scss */
+/* line 227, sass/_typography.scss */
 div.centered {
   display: flex;
   justify-content: center; }
 
-/* line 226, sass/_typography.scss */
+/* line 231, sass/_typography.scss */
 div.flushleft, div.raggedright {
   display: flex;
   justify-content: flex-start; }
 
-/* line 230, sass/_typography.scss */
+/* line 235, sass/_typography.scss */
 div.flushright, div.raggedleft {
   display: flex;
   justify-content: flex-end; }
 
-/* line 234, sass/_typography.scss */
+/* line 239, sass/_typography.scss */
 div.raggedbottom {
   display: flex;
   flex-direction: column;
