@@ -95,9 +95,10 @@ nav.active
         align-items: center;
         flex-wrap: wrap;
         justify-content: space-between;
+        background-color: $toc-background-color;
     }
 
-    li.active
+    li.current
     {
         background-color: lighten($toc-background-color,10%);
     }

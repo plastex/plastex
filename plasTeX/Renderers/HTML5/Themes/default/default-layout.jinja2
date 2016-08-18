@@ -7,6 +7,9 @@
 {% macro isActive(section) -%}
 {% if section in links.breadcrumbs %} active{% endif %}
 {%- endmacro %}
+{% macro isCurrent(section) -%}
+{% if section.url == obj.url %} current{% endif %}
+{%- endmacro %}
 {% macro icon(icon, id='', class='') -%}
 <svg  {% if id %}id="{{id}}" {% endif -%}class="icon icon-{{ icon }} {{ class }}"><use xlink:href="symbol-defs.svg#icon-{{ icon }}"></use></svg>
 {%- endmacro %}
@@ -52,7 +55,7 @@
 {{ icon('cross', class='close-toc') }}
 <ul class="sub-toc-0">
 {% for section in toc recursive -%}
-<li class="{{ isActive(section) }}">
+<li class="{{ isActive(section) }}{{ isCurrent(section) }}">
   {% if section.tableofcontents -%}
   <a href="{{ section.url }}">{{ tocEntry(section) }}</a>
   {% if isActive(section) %}{{ icon('cross', class='expand-toc') }}{% else %}{{ icon('plus', class='expand-toc') }}{% endif %}

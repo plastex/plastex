@@ -889,48 +889,49 @@ nav.active {
     min-width: 100%;
     align-items: center;
     flex-wrap: wrap;
-    justify-content: space-between; }
-  /* line 100, sass/_toc.scss */
-  .toc ul li.active {
+    justify-content: space-between;
+    background-color: #6696bb; }
+  /* line 101, sass/_toc.scss */
+  .toc ul li.current {
     background-color: #89aecb; }
 
-/* line 108, sass/_toc.scss */
+/* line 109, sass/_toc.scss */
 .sub-toc-0 a {
   padding-left: 0.8rem; }
 
-/* line 108, sass/_toc.scss */
+/* line 109, sass/_toc.scss */
 .sub-toc-1 a {
   padding-left: 1.6rem; }
 
-/* line 108, sass/_toc.scss */
+/* line 109, sass/_toc.scss */
 .sub-toc-2 a {
   padding-left: 2.4rem; }
 
-/* line 108, sass/_toc.scss */
+/* line 109, sass/_toc.scss */
 .sub-toc-3 a {
   padding-left: 3.2rem; }
 
-/* line 108, sass/_toc.scss */
+/* line 109, sass/_toc.scss */
 .sub-toc-4 a {
   padding-left: 4rem; }
 
-/* line 116, sass/_toc.scss */
+/* line 117, sass/_toc.scss */
 ul.sub-toc-1 {
   display: none; }
 
-/* line 116, sass/_toc.scss */
+/* line 117, sass/_toc.scss */
 ul.sub-toc-2 {
   display: none; }
 
-/* line 116, sass/_toc.scss */
+/* line 117, sass/_toc.scss */
 ul.sub-toc-3 {
   display: none; }
 
-/* line 116, sass/_toc.scss */
+/* line 117, sass/_toc.scss */
 ul.sub-toc-4 {
   display: none; }
 
-/* line 122, sass/_toc.scss */
+/* line 123, sass/_toc.scss */
 svg.expand-toc {
   min-width: 10%;
   padding: 0;
@@ -939,7 +940,7 @@ svg.expand-toc {
   color: white;
   background-color: Transparent; }
 
-/* line 133, sass/_toc.scss */
+/* line 134, sass/_toc.scss */
 svg.close-toc {
   min-width: 1.3rem;
   min-height: 1.3rem;
@@ -951,11 +952,11 @@ svg.close-toc {
   background-color: Transparent;
   display: none; }
 
-/* line 148, sass/_toc.scss */
+/* line 149, sass/_toc.scss */
 nav.active svg.close-toc {
   display: inline-block; }
 
-/* line 153, sass/_toc.scss */
+/* line 154, sass/_toc.scss */
 ul.active {
   display: block; }
 
