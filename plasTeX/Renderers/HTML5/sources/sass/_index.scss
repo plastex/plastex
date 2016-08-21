@@ -3,14 +3,39 @@
     list-style-type: none
 }
 
-.changebar {
-    border-right: 2px solid red;
-    padding-right: 1em;
+// Index groups list
+nav.index-groups {
+  margin-bottom: 1rem;
 }
 
-.deletebar {
-    color: red;
-    font-size: 150%;
-    padding-left: 0.5ex;
-    padding-right: 0.5ex;
+a[class^=index-group] {
+  text-decoration: none;
+}
+
+a.index-group::after {
+  content: " |";
+}
+
+
+// Index per group
+
+section.theindex {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  h2 {
+    min-width: 100%;
+    margin: 1rem 0 .5rem 0;
+  }
+}
+
+
+
+ul.index-column {
+  min-width: 100%;
+  @media (min-width: $toc-break)
+  {
+    min-width: auto;
+  }
 }

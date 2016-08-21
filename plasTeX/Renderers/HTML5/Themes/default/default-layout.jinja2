@@ -108,13 +108,13 @@
 </nav>
 {% endif -%}
 {% if obj.footnotes %}
-<section id="footnotes">
+<footer id="footnotes">
 <ol>
 {% for footnote in obj.footnotes %}
   <li id="{{ footnote.id }}">{{ footnote }}</li>
 {% endfor %}
 </ol>
-</section>
+</footer>
 {% endif %}
 </div>
 

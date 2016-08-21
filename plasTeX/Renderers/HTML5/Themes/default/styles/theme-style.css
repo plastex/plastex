@@ -548,7 +548,7 @@ span.caption_ref::after {
   content: ":"; }
 
 /* line 3, sass/_footnotes.scss */
-section#footnotes {
+footer#footnotes {
   clear: both;
   padding-top: 1rem;
   padding-left: 1rem;
@@ -556,7 +556,7 @@ section#footnotes {
   border-top: 1px solid; }
 
 /* line 13, sass/_footnotes.scss */
-section#footnotes h1 {
+footer#footnotes h1 {
   font-size: 1.5rem;
   margin: 0;
   margin-bottom: .5rem;
@@ -611,12 +611,43 @@ h1#doc_title {
 .theindex li {
   list-style-type: none; }
 
-/* line 6, sass/_index.scss */
+/* line 7, sass/_index.scss */
+nav.index-groups {
+  margin-bottom: 1rem; }
+
+/* line 11, sass/_index.scss */
+a[class^=index-group] {
+  text-decoration: none; }
+
+/* line 15, sass/_index.scss */
+a.index-group::after {
+  content: " |"; }
+
+/* line 22, sass/_index.scss */
+section.theindex {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-top: 1rem; }
+  /* line 27, sass/_index.scss */
+  section.theindex h2 {
+    min-width: 100%;
+    margin: 1rem 0 .5rem 0; }
+
+/* line 35, sass/_index.scss */
+ul.index-column {
+  min-width: 100%; }
+  @media (min-width: 1024px) {
+    /* line 35, sass/_index.scss */
+    ul.index-column {
+      min-width: auto; } }
+
+/* line 43, sass/_index.scss */
 .changebar {
   border-right: 2px solid red;
   padding-right: 1em; }
 
-/* line 11, sass/_index.scss */
+/* line 48, sass/_index.scss */
 .deletebar {
   color: red;
   font-size: 150%;
