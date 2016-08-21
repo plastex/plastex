@@ -1,7 +1,7 @@
 name: ifthenelse
-<span tal:replace="self/attributes/else"></span>
+{{ obj.attributes.else }}
 
 name: newboolean provideboolean setboolean
 
 name: whiledo
-<span tal:replace="self/attributes/operations"></span>
+{{ obj.attributes.operations }}
