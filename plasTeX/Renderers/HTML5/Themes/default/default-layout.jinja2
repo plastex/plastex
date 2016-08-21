@@ -3,17 +3,16 @@
 {%- set toc = doc.tableofcontents -%}
 {% macro tocEntry(section) -%}
 <span class="toc_ref">{{ section.ref.textContent }}</span> <span class="toc_entry">{{ section.tocEntry }}</span>
-{%- endmacro %}
+{%- endmacro -%}
 {% macro isActive(section) -%}
 {% if section in links.breadcrumbs %} active{% endif %}
-{%- endmacro %}
+{%- endmacro -%}
 {% macro isCurrent(section) -%}
 {% if section.url == obj.url %} current{% endif %}
-{%- endmacro %}
+{%- endmacro -%}
 {% macro icon(icon, id='', class='') -%}
 <svg  {% if id %}id="{{id}}" {% endif -%}class="icon icon-{{ icon }} {{ class }}"><use xlink:href="symbol-defs.svg#icon-{{ icon }}"></use></svg>
-{%- endmacro %}
-
+{%- endmacro -%}
 <!DOCTYPE html>
 <html lang="en">
 <head>

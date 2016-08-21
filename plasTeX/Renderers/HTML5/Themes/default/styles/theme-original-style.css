@@ -225,8 +225,8 @@ table {
 /* line 1, sass/_layout.scss */
 body {
   margin: 0;
-  color: #0a0a14;
-  background-color: #e8e8e8;
+  color: black;
+  background-color: white;
   display: flex;
   flex-direction: row; }
 
@@ -278,25 +278,25 @@ h1 {
   font-size: 2rem;
   line-height: 2rem;
   margin: 1rem 0;
-  color: #0f2f48; }
+  color: black; }
 
 /* line 40, sass/_typography.scss */
 h2 {
   font-size: 1.5rem;
   margin: 0;
-  color: #0f2f48; }
+  color: black; }
 
 /* line 49, sass/_typography.scss */
 h3 {
   font-size: 1rem;
   margin: .67rem 0;
-  color: #0f2f48; }
+  color: black; }
 
 /* line 58, sass/_typography.scss */
 h4 {
   font-size: 1rem;
   margin: .67rem 0;
-  color: #0f2f48; }
+  color: black; }
 
 /* line 67, sass/_typography.scss */
 p {
@@ -561,7 +561,7 @@ ul.breadcrumbs li {
 /* line 18, sass/_breadcrumbs.scss */
 ul.breadcrumbs a {
   text-decoration: none;
-  color: #396282; }
+  color: #4d7326; }
 
 /* line 26, sass/_breadcrumbs.scss */
 li.crumb::after {
@@ -624,8 +624,8 @@ a.footnote sup::before {
 /* line 3, sass/_header.scss */
 header {
   z-index: 400;
-  background: linear-gradient(to bottom, #6696bb 0%, #396282 100%);
-  color: white;
+  background: linear-gradient(to bottom, #80bf40 0%, #4d7326 100%);
+  color: #ffffcc;
   text-shadow: 1px 2px 0px rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
@@ -650,7 +650,7 @@ svg#toc-toggle {
 
 /* line 31, sass/_header.scss */
 h1#doc_title {
-  color: white;
+  color: #ffffcc;
   font-size: 1.5rem;
   margin: 0; }
 
@@ -711,7 +711,7 @@ nav.prev_up_next {
   bottom: 0;
   display: flex;
   height: 2.5rem;
-  background: linear-gradient(to bottom, #6696bb 0%, #396282 100%); }
+  background: linear-gradient(to bottom, #80bf40 0%, #4d7326 100%); }
   /* line 17, sass/_nav_pun.scss */
   nav.prev_up_next a {
     font-size: 150%;
@@ -724,8 +724,8 @@ nav.prev_up_next {
 /* line 1, sass/_tables.scss */
 .tabular {
   border-collapse: collapse;
-  color: #0a0a14;
-  background-color: #e8e8e8;
+  color: black;
+  background-color: white;
   width: auto; }
 
 /* line 7, sass/_tables.scss */
@@ -750,7 +750,7 @@ td p, th p {
 
 @keyframes highlight {
   0% {
-    background-color: #c2c2c2; }
+    background-color: #d9d9d9; }
   100% {
     background-color: none; } }
 /* line 15, sass/_theorems.scss */
@@ -809,7 +809,7 @@ div.modal-content {
   overflow: auto;
   margin: auto;
   vertical-align: middle;
-  border: 1px solid #497da5;
+  border: 1px solid #669933;
   border-radius: 5px;
   background-color: white;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); }
@@ -853,7 +853,7 @@ div.modal-content {
 a.icon {
   display: none;
   text-decoration: none;
-  color: #0a0a14;
+  color: black;
   border: none;
   background-color: Transparent; }
 
@@ -896,7 +896,7 @@ ul.quizz {
   /* line 9, sass/_toc.scss */
   .local_toc ul a {
     text-decoration: none;
-    color: #0a0a14; }
+    color: black; }
   /* line 15, sass/_toc.scss */
   .local_toc ul li {
     padding: .2rem 0; }
@@ -916,7 +916,7 @@ nav.toc {
   margin: 0;
   padding: 0;
   transition: left .5s ease;
-  background-color: #6696bb; }
+  background-color: #80bf40; }
   @media (min-width: 1024px) {
     /* line 22, sass/_toc.scss */
     nav.toc {
@@ -948,7 +948,7 @@ nav.active {
     /* line 80, sass/_toc.scss */
     .toc ul a:hover {
       transition: all .2s ease;
-      background: #497da5; }
+      background: #669933; }
   /* line 89, sass/_toc.scss */
   .toc ul li {
     display: flex;
@@ -956,10 +956,10 @@ nav.active {
     align-items: center;
     flex-wrap: wrap;
     justify-content: space-between;
-    background-color: #6696bb; }
+    background-color: #80bf40; }
   /* line 101, sass/_toc.scss */
   .toc ul li.current {
-    background-color: #89aecb; }
+    background-color: #99cc66; }
 
 /* line 109, sass/_toc.scss */
 .sub-toc-0 a {
@@ -1035,7 +1035,7 @@ code.verb {
 /* line 7, sass/_verbatim.scss */
 pre.verbatim {
   margin: 1rem 2rem;
-  background-color: #dbdbdb;
+  background-color: #f2f2f2;
   padding: .5rem; }
 
-/*# sourceMappingURL=theme-style.css.map */
+/*# sourceMappingURL=theme-original-style.css.map */
