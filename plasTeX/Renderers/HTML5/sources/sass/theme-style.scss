@@ -1,6 +1,7 @@
 @import 'variables';
 
 @import 'reset';
+@import 'layout';
 @import 'typography';
 
 @import 'breadcrumbs';
@@ -15,61 +16,3 @@
 @import 'theorems';
 @import 'toc';
 @import 'verbatim';
-
-body
-{
-    margin: 0;
-
-    color: $main-text-color;
-    background-color: $background-color;
-    display: flex;
-    flex-direction: row;
-}
-
-
-// Main content
-
-div.wrapper {
-  width: 100%;
-}
-div.with-toc{
-	@media (min-width: $toc-break)
-  {
-    margin-left: $toc-width;
-  }
-}
-
-div.content
-{
-    line-height: $content-line-height;
-
-    padding: 1rem;
-    padding-bottom: $pun-height;
-
-	@media (min-width: $toc-break)
-    {
-        margin: 0 5%;
-    }
-}
-
-div.content > p
-{
-    clear: both;
-
-    margin: 1.5*$content-line-height 0;
-}
-
-li > p
-{
-    margin: .2*$content-line-height 0;
-}
-
-// Icons
-.icon {
-    display: inline-block;
-    width: 1rem;
-    height: 1rem;
-    stroke-width: 0;
-    stroke: currentColor;
-    fill: currentColor;
-}

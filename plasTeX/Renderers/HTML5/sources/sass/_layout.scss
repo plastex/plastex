@@ -1,0 +1,34 @@
+body
+{
+    margin: 0;
+
+    color: $main-text-color;
+    background-color: $background-color;
+    display: flex;
+    flex-direction: row;
+}
+
+
+// Main content
+
+div.wrapper {
+  width: 100%;
+}
+div.with-toc{
+	@media (min-width: $toc-break)
+  {
+    margin-left: $toc-width;
+  }
+}
+
+div.content
+{
+    padding: 1rem;
+    padding-bottom: $pun-height;
+
+	@media (min-width: $toc-break)
+    {
+        margin: 0 5%;
+    }
+}
+
