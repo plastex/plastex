@@ -5,7 +5,7 @@ name: url
 <a href="{{ obj.attributes.url or obj }}">{{ obj.attributes.url or obj }}</a>
 
 name: nolinkurl
-<span>{{ obj.attributes.url }}</span>
+{{ obj.attributes.url }}
 
 name: hyperbaseurl
 

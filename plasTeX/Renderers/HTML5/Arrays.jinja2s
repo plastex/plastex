@@ -22,6 +22,6 @@ name: tabular array tabular* tabularx
 </table>
 
 name: multicolumn
-<span class="multicolumn">{{ obj }}</span>
+{{ obj }}
 
 name: cline toprule bottomrule midrule cmidrule morecmidrules addlinespace specialrule

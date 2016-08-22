@@ -23,29 +23,17 @@ name: minilof sectlof partlof
 name: minilot sectlot partlot minitoc secttoc parttoc
 
 name: -minitoc -secttoc -parttoc
-<p><b tal:content="self/title">Contents</b></p>
-<div tal:condition="self/tableofcontents" class="minitoc">
+<p><b>{{ obj.title }}</b></p>
+<div tal:condition="obj.tableofcontents" class="minitoc">
 <ul>
-<li tal:repeat="section self/tableofcontents"><a href="." tal:attributes="href section/url" tal:content="section/fullTocEntry">Aliquam est. Aliquam fringilla pede</a>
-   <ul tal:condition="section/tableofcontents">
-   <li tal:repeat="subsection section/tableofcontents"><a href="." tal:attributes="href subsection/url" tal:content="subsection/fullTocEntry"></a>
-       <ul tal:condition="subsection/tableofcontents">
-       <li tal:repeat="subsubsection subsection/tableofcontents"><a href="." tal:attributes="href subsubsection/url" tal:content="subsubsection/fullTocEntry"></a>
-           <ul tal:condition="subsubsection/tableofcontents">
-           <li tal:repeat="paragraph subsubsection/tableofcontents"><a href="." tal:attributes="href paragraph/url" tal:content="paragraph/fullTocEntry"></a>
-               <ul tal:condition="paragraph/tableofcontents">
-               <li tal:repeat="subparagraph paragraph/tableofcontents"><a href="." tal:attributes="href subparagraph/url" tal:content="subparagraph/fullTocEntry"></a></li>
-               </ul>
-           </li>
-           </ul>
-       </li>
-       </ul>
-   </li>
+{% for section in obj.tableofcontents recursive %}
+<li><a href="{{ section.url }}" >{{ section.fullTocEntry }}</a>
+   {% if section.tableofcontents %}
+   <ul>
+   {% loop(section.tableofcontents) %}
    </ul>
+   {% endif %}
 </li>
-<li tal:replace="nothing"><a href=".">Maecenas id purus</a></li>
-<li tal:replace="nothing"><a href=".">Duis et eros</a></li>
-<li tal:replace="nothing"><a href=".">Duis est</a></li>
+{% endfor %}
 </ul>
 </div>
-

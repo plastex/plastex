@@ -1,2 +1,2 @@
 name: foreignlanguage otherlanguage
-<span class="language">{{ obj }}</span>
+{{ obj }}

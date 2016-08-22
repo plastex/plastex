@@ -38,4 +38,4 @@ name: index
 <a name="{{ obj.id }}" id="{{ obj.id}}"></a>
 
 name: see seealso
-<i>{{ obj.captionName }}</i> <span>{{ obj }}</span>
+<i>{{ obj.captionName }}</i>{{ obj }}

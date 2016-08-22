@@ -11,7 +11,7 @@ name: bibliographystyle
 name: bibliography
 <div class="bibliography">
 <h1>{{ obj.title }}</h1>
-<div>{{ obj }}</div>
+{{ obj }}
 </div>
 
 name: cite
@@ -20,7 +20,7 @@ name: cite
   {% if item.idref.bibitem.url %}
   <a href="{{ item.idref.bibitem.url }}">{{ item }}</a>
   {% else %}
-  <span>{{ item }}</span>
+  {{ item }}
 {% endfor -%}
 </span>
 
