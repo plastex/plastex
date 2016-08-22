@@ -1,0 +1,20 @@
+Dans Lists.zpts il y a des tables à virer
+
+Faire le tour de tous les zpts restant
+
+vérifier de façon systématique que toutes les classes des templates sont
+prises en compte par les CSS
+
+investiguer les dt et dd vides produits par les listes
+
+produire un jeu de couleurs plus proches de l'original
+
+investiguer ce que fait changebar dont le style s'est retrouvé dans
+_index.scss
+
+sur file:///home/pmassot/soft/plastex/Doc/plastex/sec-zpttutorial.html
+mathjax interfère à cause d'un $bidule $truc
+Vérifier si la doc de plasTeX contient des maths entre $
+
+Ajouter des options de configuration Mathjax, en particulier pour les
+délimiteurs de maths
