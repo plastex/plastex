@@ -97,11 +97,16 @@ div.modal-content
     {
         position: relative;
 
+				background: $doc-title-background;
+				color: $doc-title-color;
+				text-shadow: 1px 2px 0px rgba(0,0,0,0.8);
         display: flex;
         flex-direction: row;
 
-        height: 2rem;
+        min-height: 1rem;
         min-width: 100%;
+				text-align:center;
+				vertical-align: middle;
 
         justify-content: space-between;
         button.closebtn

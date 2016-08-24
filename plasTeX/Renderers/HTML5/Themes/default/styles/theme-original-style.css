@@ -622,7 +622,7 @@ a.footnote sup::before {
   content: '['; }
 
 /* line 3, sass/_header.scss */
-header {
+.wrapper header {
   z-index: 400;
   background: linear-gradient(to bottom, #80bf40 0%, #4d7326 100%);
   color: #ffffcc;
@@ -816,12 +816,17 @@ div.modal-content {
   /* line 96, sass/_theorems.scss */
   div.modal-content header {
     position: relative;
+    background: linear-gradient(to bottom, #80bf40 0%, #4d7326 100%);
+    color: #ffffcc;
+    text-shadow: 1px 2px 0px rgba(0, 0, 0, 0.8);
     display: flex;
     flex-direction: row;
-    height: 2rem;
+    min-height: 1rem;
     min-width: 100%;
+    text-align: center;
+    vertical-align: middle;
     justify-content: space-between; }
-    /* line 107, sass/_theorems.scss */
+    /* line 112, sass/_theorems.scss */
     div.modal-content header button.closebtn {
       font-size: 120%;
       font-weight: bold;
@@ -832,24 +837,24 @@ div.modal-content {
       text-decoration: none;
       color: #fff;
       cursor: pointer; }
-    /* line 123, sass/_theorems.scss */
+    /* line 128, sass/_theorems.scss */
     div.modal-content header h1 {
       font-size: 120%;
       margin: auto 0;
       padding: .2rem;
       color: white; }
-  /* line 133, sass/_theorems.scss */
+  /* line 138, sass/_theorems.scss */
   div.modal-content a {
     text-decoration: none; }
-  /* line 137, sass/_theorems.scss */
+  /* line 142, sass/_theorems.scss */
   div.modal-content ul {
     padding: 1rem;
     list-style: none; }
-  /* line 143, sass/_theorems.scss */
+  /* line 148, sass/_theorems.scss */
   div.modal-content li {
     padding-left: .5rem; }
 
-/* line 149, sass/_theorems.scss */
+/* line 154, sass/_theorems.scss */
 a.icon {
   display: none;
   text-decoration: none;
@@ -857,16 +862,16 @@ a.icon {
   border: none;
   background-color: Transparent; }
 
-/* line 160, sass/_theorems.scss */
+/* line 165, sass/_theorems.scss */
 div[class$='_thmheading']:hover button.modal {
   display: inline-block; }
 
-/* line 166, sass/_theorems.scss */
+/* line 171, sass/_theorems.scss */
 ul.quizz {
   display: flex;
   flex-direction: column;
   list-style: circle !important; }
-  /* line 171, sass/_theorems.scss */
+  /* line 176, sass/_theorems.scss */
   ul.quizz li {
     display: flex;
     padding: .5rem;
@@ -876,13 +881,13 @@ ul.quizz {
     flex-grow: 1;
     align-items: center;
     justify-content: space-between; }
-  /* line 182, sass/_theorems.scss */
+  /* line 187, sass/_theorems.scss */
   ul.quizz li.active-qright {
     background-color: green; }
-  /* line 186, sass/_theorems.scss */
+  /* line 191, sass/_theorems.scss */
   ul.quizz li.active-qwrong {
     background-color: red; }
-  /* line 190, sass/_theorems.scss */
+  /* line 195, sass/_theorems.scss */
   ul.quizz svg.icon {
     display: none;
     padding-right: .5rem;

@@ -46,24 +46,24 @@ $(document).ready(function() {
                $(this).siblings("div.proof_content").slideToggle()
            })
 
-    $("li.quizz-right").click(
+    $("li.quizz-qright").click(
            function() {
-               $(this).toggleClass('active-right')
+               $(this).toggleClass('active-qright')
                $(this).children("svg").toggle()
                $(this).siblings().each(function() {
-                 $(this).removeClass('active-right');
-                 $(this).removeClass('active-wrong');
+                 $(this).removeClass('active-qright');
+                 $(this).removeClass('active-qwrong');
                  $(this).children("svg").hide()
                });
            })
 
-    $("li.quizz-wrong").click(
+    $("li.quizz-qwrong").click(
            function() {
-               $(this).toggleClass('active-wrong')
+               $(this).toggleClass('active-qwrong')
                $(this).children("svg").toggle()
                $(this).siblings().each(function() {
-                 $(this).removeClass('active-right');
-                 $(this).removeClass('active-wrong');
+                 $(this).removeClass('active-qright');
+                 $(this).removeClass('active-qwrong');
                  $(this).children("svg").hide()
                });
            })
