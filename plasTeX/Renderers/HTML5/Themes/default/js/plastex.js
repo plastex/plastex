@@ -42,7 +42,13 @@ $(document).ready(function() {
     
     $("div.proof_heading").click(
            function() {
-               $(this).children('span.expand-proof').toggleClass('fa-close').toggleClass('fa-plus');
+               var expand_icon = $(this).children('svg.expand-proof');
+							 if (expand_icon.attr('class') == 'icon icon-cross expand-proof') {
+												 expand_icon.replaceWith(icon('plus', 'expand-proof'));
+							 } else {
+												 expand_icon.replaceWith(icon('cross', 'expand-proof'));
+							 };
+							 
                $(this).siblings("div.proof_content").slideToggle()
            })
 
