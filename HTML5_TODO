@@ -24,3 +24,6 @@ Investiguer ce que plasTeX fait de \dddots et des matrices de amsmath
 
 Faire un grand fichier de test à partir de tous les fichiers de
 templates
+
+Dans relations.py, faire un peu de programmation defensive (labels
+inexistant -> Traceback, pas zoli)
