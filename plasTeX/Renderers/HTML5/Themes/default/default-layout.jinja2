@@ -1,6 +1,6 @@
 {%- set links = obj.links -%}
 {%- set doc = obj.ownerDocument.getElementsByTagName('document')[0] -%}
-{%- set toc = doc.tableofcontents -%}
+{%- set toc = doc.tableofcontents if config.html5['display-toc'] else None -%}
 {% macro tocEntry(section) -%}
 <span class="toc_ref">{{ section.ref.textContent }}</span> <span class="toc_entry">{{ section.tocEntry }}</span>
 {%- endmacro -%}
@@ -49,7 +49,7 @@
 </head>
 
 <body>
-{% if toc and config.html5['display-toc'] -%}
+{% if toc -%}
 <nav class="toc">
 {{ icon('cross', class='close-toc') }}
 <ul class="sub-toc-0">
@@ -70,10 +70,12 @@
 </nav>
 {% endif -%}
 
-<div class="wrapper{% if config.html5['display-toc'] %} with-toc {% endif %}">
+<div class="wrapper{% if toc %} with-toc{% endif %}">
+{% if links.document.title or toc %}
 <header>
-{% if config.html5['display-toc'] %}{{ icon('list-numbered', id='toc-toggle')}}{% endif %}<h1 id="doc_title">{{ links.document.title }}</h1>
+{% if toc %}{{ icon('list-numbered', id='toc-toggle')}}{% endif %}<h1 id="doc_title">{{ links.document.title }}</h1>
 </header>
+{% endif %}
 
 {% if obj.level >= config.html5['breadcrumbs-level'] %}
 <ul class="breadcrumbs">
