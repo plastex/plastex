@@ -35,12 +35,8 @@ else:
     def debug(context):
         pdb.set_trace()
 
-    def stripmath(strg):
-        return strg.replace('$','').replace('\(','').replace('\)','').strip()
-
     def jinja2template(s, encoding='utf8'):
         env = Environment()
-        env.filters['stripmath'] = stripmath
         env.globals['debug'] = debug
 
         def renderjinja2(obj, s=s):
