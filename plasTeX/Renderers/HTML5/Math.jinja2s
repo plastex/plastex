@@ -1,5 +1,5 @@
 name: math
-<span class="math">{{ obj.source }}</span>
+{{ obj.source }}
 
 name: ensuremath eqnarray eqnarray* align align* gather gather* flalign flalign* \
       multline multline* alignat alignat* split DeclareMathOperator
