@@ -7,14 +7,20 @@ prises en compte par les CSS
 
 investiguer les dt et dd vides produits par les listes
 
-produire un jeu de couleurs plus proches de l'original
+produire un jeu de couleurs plus proches de l'original (en cours)
 
 investiguer ce que fait changebar dont le style s'est retrouvé dans
-_index.scss
+_changebar.scss
 
 sur file:///home/pmassot/soft/plastex/Doc/plastex/sec-zpttutorial.html
 mathjax interfère à cause d'un $bidule $truc
 Vérifier si la doc de plasTeX contient des maths entre $
 
 Ajouter des options de configuration Mathjax, en particulier pour les
-délimiteurs de maths
+délimiteurs de maths (cf. problème avec $bidule $truc dans la doc
+plasTeX)
+
+Investiguer ce que plasTeX fait de \dddots et des matrices de amsmath
+
+Faire un grand fichier de test à partir de tous les fichiers de
+templates
