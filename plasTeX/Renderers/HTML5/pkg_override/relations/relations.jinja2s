@@ -19,8 +19,12 @@ name: thmenv
     {{ obj.caption }}
     </span>
     <span class="{{obj.thmName}}_thmlabel">{{obj.ref}}</span>
+    <div class="thm_icons">
+    {% if obj.userdata.proved_by -%}
+    <a class="icon proof" href="{{ obj.userdata.proved_by.url }}">{{ icon('cogs') }}</a>
+    {% endif %}
     {% if obj.userdata.uses -%}
-    <button class="modal">{{ icon('cogs') }}</button>
+    <button class="modal">{{ icon('mindmap') }}</button>
     {% call modal(context.terms.get('Uses', 'Uses')) %}
         <ul class="uses">
           {% for used in obj.userdata.uses -%}
@@ -63,6 +67,7 @@ name: thmenv
     {% endcall %}
     {% endif %}
   </div>
+  </div>
   <div class="{{ obj.thmName }}_thmcontent">
   {{ obj }}
   </div>
@@ -88,4 +93,4 @@ name: proof
   </div>
 </div>
 
-name: covers uses qright qwrong quizz question
+name: covers uses qright qwrong quizz question proves

@@ -16,6 +16,7 @@ li > p
 // Icons
 .icon {
     display: inline-block;
+		user-select: none;
     width: 1rem;
     height: 1rem;
     stroke-width: 0;
@@ -41,7 +42,7 @@ h2
 {
     font-size: 1.5rem;
 
-    margin: 0;
+    margin: .8rem 0;
 
     color: $titles-color;
 }
@@ -68,7 +69,7 @@ p
 {
     font-size: 1rem;
 
-    margin: .8rem 0;
+    margin: .5rem 0;
 }
 
 

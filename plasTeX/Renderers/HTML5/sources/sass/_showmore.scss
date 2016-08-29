@@ -1,10 +1,12 @@
-// Navigation Prev/Up/Next
+p.hidden {
+	display: none;
+}
 
-nav.prev_up_next
+div.showmore
 {
     position: fixed;
     z-index: $pun-z-index;
-    right: 0;
+    left: 0;
     bottom: 0;
 
     display: flex;
@@ -14,19 +16,7 @@ nav.prev_up_next
     background: linear-gradient(to bottom,
     lighten($prevupnext-nav-color, 10%) 0%,
     darken($prevupnext-nav-color, 10%) 100%);
-    a
-    {
-        font-size: 150%;
-
-        margin: auto;
-        padding: .2*$pun-height .4*$pun-height;
-
-        text-decoration: none;
-
-        color: white;
-        text-shadow: 1px 2px 0 rgba(0,0,0,.8);
-    }
-    svg#toc-toggle
+    svg
     {
         font-size: 150%;
 
@@ -38,4 +28,11 @@ nav.prev_up_next
         color: white;
         text-shadow: 1px 2px 0 rgba(0,0,0,.8);
     }
+	}
+
+div.showmore-toc {
+    @media (min-width: $toc-break)
+    {
+				left: $toc-width;
+    };
 }

@@ -263,59 +263,60 @@ li > p {
 /* line 17, sass/_typography.scss */
 .icon {
   display: inline-block;
+  user-select: none;
   width: 1rem;
   height: 1rem;
   stroke-width: 0;
   stroke: currentColor;
   fill: currentColor; }
 
-/* line 25, sass/_typography.scss */
+/* line 26, sass/_typography.scss */
 h1, h2, h3, h4, h5, h6 {
   font-family: "Lucida Grande", Arial, Helvetica, sans-serif; }
 
-/* line 30, sass/_typography.scss */
+/* line 31, sass/_typography.scss */
 h1 {
   font-size: 2rem;
   line-height: 2rem;
   margin: 1rem 0;
   color: #0f2f48; }
 
-/* line 40, sass/_typography.scss */
+/* line 41, sass/_typography.scss */
 h2 {
   font-size: 1.5rem;
-  margin: 0;
+  margin: .8rem 0;
   color: #0f2f48; }
 
-/* line 49, sass/_typography.scss */
+/* line 50, sass/_typography.scss */
 h3 {
   font-size: 1rem;
   margin: .67rem 0;
   color: #0f2f48; }
 
-/* line 58, sass/_typography.scss */
+/* line 59, sass/_typography.scss */
 h4 {
   font-size: 1rem;
   margin: .67rem 0;
   color: #0f2f48; }
 
-/* line 67, sass/_typography.scss */
+/* line 68, sass/_typography.scss */
 p {
   font-size: 1rem;
-  margin: .8rem 0; }
+  margin: .5rem 0; }
 
 /* Title Page */
-/* line 76, sass/_typography.scss */
+/* line 77, sass/_typography.scss */
 .titlepage {
   text-align: center; }
 
-/* line 77, sass/_typography.scss */
+/* line 78, sass/_typography.scss */
 .titlepage h1 {
   font-weight: normal; }
 
 /**
  * Address style set to `bolder` in Firefox 4+, Safari 5, and Chrome.
  */
-/* line 84, sass/_typography.scss */
+/* line 85, sass/_typography.scss */
 b,
 strong {
   font-weight: bold; }
@@ -323,14 +324,14 @@ strong {
 /**
  * Address styling not present in Safari 5 and Chrome.
  */
-/* line 94, sass/_typography.scss */
+/* line 95, sass/_typography.scss */
 dfn {
   font-style: italic; }
 
 /**
  * Correct font family set oddly in Safari 5 and Chrome.
  */
-/* line 104, sass/_typography.scss */
+/* line 105, sass/_typography.scss */
 code,
 kbd,
 pre,
@@ -341,28 +342,28 @@ samp {
 /**
  * Improve readability of pre-formatted text in all browsers.
  */
-/* line 117, sass/_typography.scss */
+/* line 118, sass/_typography.scss */
 pre {
   white-space: pre-wrap; }
 
 /**
  * Set consistent quote types.
  */
-/* line 126, sass/_typography.scss */
+/* line 127, sass/_typography.scss */
 q {
   quotes: '\201C' '\201D' '\2018' '\2019'; }
 
 /**
  * Address inconsistent and variable font size in all browsers.
  */
-/* line 135, sass/_typography.scss */
+/* line 136, sass/_typography.scss */
 small {
   font-size: 80%; }
 
 /**
  * Prevent `sub` and `sup` affecting `line-height` in all browsers.
  */
-/* line 144, sass/_typography.scss */
+/* line 145, sass/_typography.scss */
 sub,
 sup {
   font-size: 75%;
@@ -370,134 +371,134 @@ sup {
   position: relative;
   vertical-align: baseline; }
 
-/* line 155, sass/_typography.scss */
+/* line 156, sass/_typography.scss */
 sup {
   top: -.5rem; }
 
-/* line 160, sass/_typography.scss */
+/* line 161, sass/_typography.scss */
 sub {
   bottom: -.25rem; }
 
 /* Font Selection */
-/* line 166, sass/_typography.scss */
+/* line 167, sass/_typography.scss */
 .mdseries, .textmf {
   font-weight: normal; }
 
-/* line 167, sass/_typography.scss */
+/* line 168, sass/_typography.scss */
 .bfseries, .textbf {
   font-weight: bold; }
 
-/* line 168, sass/_typography.scss */
+/* line 169, sass/_typography.scss */
 .rmfamily, .textrm {
   font-family: serif; }
 
-/* line 169, sass/_typography.scss */
+/* line 170, sass/_typography.scss */
 .sffamily, .textsf {
   font-family: sans-serif; }
 
-/* line 170, sass/_typography.scss */
+/* line 171, sass/_typography.scss */
 .ttfamily, .texttt {
   font-family: monospace; }
 
-/* line 171, sass/_typography.scss */
+/* line 172, sass/_typography.scss */
 .upshape, .textup {
   text-transform: uppercase; }
 
-/* line 172, sass/_typography.scss */
+/* line 173, sass/_typography.scss */
 .itshape, .textit {
   font-style: italic; }
 
-/* line 173, sass/_typography.scss */
+/* line 174, sass/_typography.scss */
 .slshape, .textsl {
   font-style: oblique; }
 
-/* line 174, sass/_typography.scss */
+/* line 175, sass/_typography.scss */
 .scshape, .textsc {
   font-variant: small-caps; }
 
-/* line 176, sass/_typography.scss */
+/* line 177, sass/_typography.scss */
 small.tiny {
   font-size: x-small; }
 
-/* line 177, sass/_typography.scss */
+/* line 178, sass/_typography.scss */
 small.scriptsize {
   font-size: smaller; }
 
-/* line 178, sass/_typography.scss */
+/* line 179, sass/_typography.scss */
 small.footnotesize {
   font-size: small; }
 
-/* line 179, sass/_typography.scss */
+/* line 180, sass/_typography.scss */
 small.small {
   font-size: small; }
 
-/* line 180, sass/_typography.scss */
+/* line 181, sass/_typography.scss */
 .normalsize {
   font-size: normal; }
 
-/* line 181, sass/_typography.scss */
+/* line 182, sass/_typography.scss */
 big.large {
   font-size: large; }
 
-/* line 182, sass/_typography.scss */
+/* line 183, sass/_typography.scss */
 big.xlarge {
   font-size: x-large; }
 
-/* line 183, sass/_typography.scss */
+/* line 184, sass/_typography.scss */
 big.xxlarge {
   font-size: x-large; }
 
-/* line 184, sass/_typography.scss */
+/* line 185, sass/_typography.scss */
 big.huge {
   font-size: xx-large; }
 
-/* line 185, sass/_typography.scss */
+/* line 186, sass/_typography.scss */
 big.xhuge {
   font-size: xx-large; }
 
 /* Fonts */
-/* line 188, sass/_typography.scss */
+/* line 189, sass/_typography.scss */
 .rm {
   font-family: serif;
   font-style: normal;
   font-weight: normal; }
 
-/* line 193, sass/_typography.scss */
+/* line 194, sass/_typography.scss */
 .cal {
   font-family: serif;
   font-style: italic;
   font-weight: normal; }
 
-/* line 198, sass/_typography.scss */
+/* line 199, sass/_typography.scss */
 .it {
   font-family: serif;
   font-style: italic;
   font-weight: normal; }
 
-/* line 203, sass/_typography.scss */
+/* line 204, sass/_typography.scss */
 .sl {
   font-family: serif;
   font-style: oblique;
   font-weight: normal; }
 
-/* line 208, sass/_typography.scss */
+/* line 209, sass/_typography.scss */
 .bf {
   font-family: serif;
   font-style: normal;
   font-weight: bold; }
 
-/* line 213, sass/_typography.scss */
+/* line 214, sass/_typography.scss */
 .tt {
   font-family: monospace;
   font-style: normal;
   font-weight: normal; }
 
-/* line 219, sass/_typography.scss */
+/* line 220, sass/_typography.scss */
 .underbar {
   text-decoration: underline; }
 
 /* Boxes */
-/* line 222, sass/_typography.scss */
+/* line 223, sass/_typography.scss */
 .fbox, .framebox {
   border: 1px black solid;
   padding-top: 1px;
@@ -506,41 +507,41 @@ big.xhuge {
   padding-right: 3px; }
 
 /* Quotations and Verse */
-/* line 233, sass/_typography.scss */
+/* line 234, sass/_typography.scss */
 .quotation p, .quote p, .verse p {
   margin-top: 0px;
   margin-bottom: 0.5em; }
 
-/* line 238, sass/_typography.scss */
+/* line 239, sass/_typography.scss */
 hr {
   color: black; }
 
-/* line 240, sass/_typography.scss */
+/* line 241, sass/_typography.scss */
 dd {
   margin-left: 3rem; }
 
-/* line 243, sass/_typography.scss */
+/* line 244, sass/_typography.scss */
 dd p {
   padding: 0;
   margin: 0 0 1rem 0; }
 
 /* Alignment */
-/* line 249, sass/_typography.scss */
+/* line 250, sass/_typography.scss */
 div.centered {
   display: flex;
   justify-content: center; }
 
-/* line 253, sass/_typography.scss */
+/* line 254, sass/_typography.scss */
 div.flushleft, div.raggedright {
   display: flex;
   justify-content: flex-start; }
 
-/* line 257, sass/_typography.scss */
+/* line 258, sass/_typography.scss */
 div.flushright, div.raggedleft {
   display: flex;
   justify-content: flex-end; }
 
-/* line 261, sass/_typography.scss */
+/* line 262, sass/_typography.scss */
 div.raggedbottom {
   display: flex;
   flex-direction: column;
@@ -709,6 +710,10 @@ table.list {
 table.list td {
   padding-right: 5px; }
 
+/* line 1, sass/_maths.scss */
+div.displaymath {
+  overflow: auto; }
+
 /* line 3, sass/_nav_pun.scss */
 nav.prev_up_next {
   position: fixed;
@@ -723,6 +728,14 @@ nav.prev_up_next {
     font-size: 150%;
     margin: auto;
     padding: 0.5rem 1rem;
+    text-decoration: none;
+    color: white;
+    text-shadow: 1px 2px 0 rgba(0, 0, 0, 0.8); }
+  /* line 29, sass/_nav_pun.scss */
+  nav.prev_up_next svg#toc-toggle {
+    font-size: 150%;
+    margin: auto;
+    min-width: 2rem;
     text-decoration: none;
     color: white;
     text-shadow: 1px 2px 0 rgba(0, 0, 0, 0.8); }
@@ -758,48 +771,59 @@ td p, th p {
   0% {
     background-color: #c2c2c2; }
   100% {
-    background-color: none; } }
+    background-color: #e8e8e8; } }
 /* line 15, sass/_theorems.scss */
+div[class$='_thmwrapper'] {
+  margin-top: 1rem; }
+
+/* line 20, sass/_theorems.scss */
 div[class$='_thmwrapper']:target {
   animation: highlight 1s ease; }
 
-/* line 20, sass/_theorems.scss */
+/* line 25, sass/_theorems.scss */
 div[class$='_thmheading'] {
   font-weight: bold;
-  line-height: 120%; }
+  line-height: 150%; }
 
-/* line 26, sass/_theorems.scss */
+/* line 31, sass/_theorems.scss */
 div[class$='_thmcontent'] {
   font-weight: normal;
   margin-left: 1rem;
   padding-top: 0.14rem;
   padding-left: 1rem; }
 
-/* line 37, sass/_theorems.scss */
+/* line 42, sass/_theorems.scss */
 div[class$='proof_heading'] {
   font-weight: bold;
   line-height: 120%;
   cursor: pointer; }
 
-/* line 45, sass/_theorems.scss */
-div[class$='proof_content'] {
+/* line 50, sass/_theorems.scss */
+div.proof_content {
   font-weight: normal;
   display: none;
   margin-left: 1rem;
   padding-top: .5rem;
   padding-left: 1rem; }
 
-/* line 59, sass/_theorems.scss */
+/* line 61, sass/_theorems.scss */
+div.hilite {
+  animation: highlight 1s ease; }
+
+/* line 67, sass/_theorems.scss */
+span.qed {
+  float: right; }
+
+/* line 73, sass/_theorems.scss */
 button.modal {
   border: none;
   text-align: center;
   text-decoration: none;
-  display: none;
   background: transparent;
   cursor: pointer;
   padding: 0; }
 
-/* line 69, sass/_theorems.scss */
+/* line 82, sass/_theorems.scss */
 div.modal-container {
   position: fixed;
   z-index: 500;
@@ -809,7 +833,7 @@ div.modal-container {
   width: 100%;
   height: 100%; }
 
-/* line 82, sass/_theorems.scss */
+/* line 95, sass/_theorems.scss */
 div.modal-content {
   font-weight: normal;
   overflow: auto;
@@ -819,7 +843,7 @@ div.modal-content {
   border-radius: 5px;
   background-color: white;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); }
-  /* line 96, sass/_theorems.scss */
+  /* line 109, sass/_theorems.scss */
   div.modal-content header {
     position: relative;
     background: linear-gradient(to bottom, #6696bb 0%, #396282 100%);
@@ -833,7 +857,7 @@ div.modal-content {
     vertical-align: middle;
     padding: 0 .5rem;
     justify-content: space-between; }
-    /* line 114, sass/_theorems.scss */
+    /* line 127, sass/_theorems.scss */
     div.modal-content header button.closebtn {
       font-size: 120%;
       font-weight: bold;
@@ -844,41 +868,44 @@ div.modal-content {
       text-decoration: none;
       color: #fff;
       cursor: pointer; }
-    /* line 130, sass/_theorems.scss */
+    /* line 143, sass/_theorems.scss */
     div.modal-content header h1 {
       font-size: 120%;
       margin: auto 0;
       padding: .2rem;
       color: white; }
-  /* line 140, sass/_theorems.scss */
+  /* line 153, sass/_theorems.scss */
   div.modal-content a {
     text-decoration: none; }
-  /* line 144, sass/_theorems.scss */
+  /* line 157, sass/_theorems.scss */
   div.modal-content ul {
     padding: 1rem;
     list-style: none; }
-  /* line 150, sass/_theorems.scss */
+  /* line 163, sass/_theorems.scss */
   div.modal-content li {
     padding-left: .5rem; }
 
-/* line 156, sass/_theorems.scss */
+/* line 169, sass/_theorems.scss */
 a.icon {
-  display: none;
   text-decoration: none;
   color: #0a0a14;
   border: none;
   background-color: Transparent; }
 
-/* line 167, sass/_theorems.scss */
-div[class$='_thmheading']:hover button.modal {
+/* line 178, sass/_theorems.scss */
+div[class$='_thmheading']:hover div.thm_icons {
   display: inline-block; }
 
-/* line 173, sass/_theorems.scss */
+/* line 183, sass/_theorems.scss */
+div.thm_icons {
+  display: none; }
+
+/* line 189, sass/_theorems.scss */
 ul.quizz {
   display: flex;
   flex-direction: column;
   list-style: circle !important; }
-  /* line 178, sass/_theorems.scss */
+  /* line 194, sass/_theorems.scss */
   ul.quizz li {
     display: flex;
     padding: .5rem;
@@ -888,13 +915,13 @@ ul.quizz {
     flex-grow: 1;
     align-items: center;
     justify-content: space-between; }
-  /* line 189, sass/_theorems.scss */
+  /* line 205, sass/_theorems.scss */
   ul.quizz li.active-qright {
     background-color: green; }
-  /* line 193, sass/_theorems.scss */
+  /* line 209, sass/_theorems.scss */
   ul.quizz li.active-qwrong {
     background-color: red; }
-  /* line 197, sass/_theorems.scss */
+  /* line 213, sass/_theorems.scss */
   ul.quizz svg.icon {
     display: none;
     padding-right: .5rem;
@@ -1049,5 +1076,32 @@ pre.verbatim {
   margin: 1rem 2rem;
   background-color: #dbdbdb;
   padding: .5rem; }
+
+/* line 1, sass/_showmore.scss */
+p.hidden {
+  display: none; }
+
+/* line 5, sass/_showmore.scss */
+div.showmore {
+  position: fixed;
+  z-index: 200;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  height: 2.5rem;
+  background: linear-gradient(to bottom, #6696bb 0%, #396282 100%); }
+  /* line 19, sass/_showmore.scss */
+  div.showmore svg {
+    font-size: 150%;
+    margin: auto;
+    min-width: 2rem;
+    text-decoration: none;
+    color: white;
+    text-shadow: 1px 2px 0 rgba(0, 0, 0, 0.8); }
+
+@media (min-width: 1024px) {
+  /* line 33, sass/_showmore.scss */
+  div.showmore-toc {
+    left: 30rem; } }
 
 /*# sourceMappingURL=theme-style.css.map */
