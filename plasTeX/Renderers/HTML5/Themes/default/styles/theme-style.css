@@ -689,6 +689,12 @@ ul.index-column {
     ul.index-column {
       min-width: auto; } }
 
+/* line 43, sass/_index.scss */
+nav.prev_up_next a.index {
+  font-size: small;
+  padding-left: .5rem;
+  padding-right: .5rem; }
+
 /* line 1, sass/_lists.scss */
 dl.description dt {
   font-weight: bold; }
