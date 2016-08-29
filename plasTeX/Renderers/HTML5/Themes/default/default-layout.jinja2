@@ -25,7 +25,7 @@
 {% endif %}
 <meta name="generator" content="plasTeX" />
 <meta charset="{{ config.files['output-encoding']}}" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 {% if obj.level > config.html5['localtoc-level'] %}
 <title>{{ links.document.title }}: {{ obj.title }}</title>
 {% else %}
@@ -73,7 +73,7 @@
 <div class="wrapper{% if toc %} with-toc{% endif %}">
 {% if links.document.title or toc %}
 <header>
-{% if toc %}{{ icon('list-numbered', id='toc-toggle')}}{% endif %}<h1 id="doc_title">{{ links.document.title }}</h1>
+<h1 id="doc_title">{{ links.document.title }}</h1>
 </header>
 {% endif %}
 
@@ -119,6 +119,12 @@
 {% endif %}
 </div>
 
+<div class="showmore{% if toc %} showmore-toc{% endif %}">
+  {{ icon('eye-minus', id='showmore-minus')}}
+  {{ icon('eye-plus', id='showmore-plus')}}
+</div>
+
+
 <nav class="prev_up_next">
   {% if links.prev.url %}
   <a href="{{ links.prev.url }}" title="{{ links.prev.title | striptags }}">{{ icon('arrow-left')}}</a>
@@ -132,6 +138,7 @@
   {% if links.index.url %}
   <a href="{{ links.index.url }}" class="index">Index</a>
   {% endif %}
+{% if toc %}{{ icon('list-numbered', id='toc-toggle')}}{% endif %}
 </nav>
 
 <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>

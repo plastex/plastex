@@ -8,8 +8,13 @@
     }
     100%
     {
-        background-color: none;
+        background-color: $background-color;
     }
+}
+
+div[class$='_thmwrapper']
+{
+    margin-top: 1rem;
 }
 
 div[class$='_thmwrapper']:target
@@ -20,7 +25,7 @@ div[class$='_thmwrapper']:target
 div[class$='_thmheading']
 {
     font-weight: bold;
-    line-height: 120%;
+    line-height: 150%;
 }
 
 div[class$='_thmcontent']
@@ -42,7 +47,7 @@ div[class$='proof_heading']
     cursor: pointer;
 }
 
-div[class$='proof_content']
+div.proof_content
 {
     font-weight: normal;
 
@@ -53,6 +58,15 @@ div[class$='proof_content']
     padding-left: 1rem;
 }
 
+div.hilite
+{
+    animation: highlight 1s ease;
+}
+
+
+span.qed {
+	float: right;
+}
 
 // Relations
 
@@ -60,7 +74,6 @@ div[class$='proof_content']
     border: none;
     text-align: center;
     text-decoration: none;
-    display: none;
     background: transparent;
     cursor: pointer;
     padding: 0;
@@ -155,8 +168,6 @@ div.modal-content
 
 a.icon
 {
-    display: none;
-
     text-decoration: none;
 
     color: $main-text-color;
@@ -164,9 +175,14 @@ a.icon
     background-color: Transparent;
 }
 
-div[class$='_thmheading']:hover button.modal
+div[class$='_thmheading']:hover div.thm_icons
 {
     display: inline-block;
+}
+
+div.thm_icons
+{
+    display: none;
 }
 
 

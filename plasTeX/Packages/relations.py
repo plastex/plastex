@@ -45,6 +45,21 @@ class covers(Command):
                 covered.setUserData('covered_by', covered_by + [node])
         doc.post_parse_cb.append(update_covered)
 
+class proves(Command):
+    """ \proves{label} """
+    args = 'label:str'
+
+    def digest(self, tokens):
+        Command.digest(self, tokens)
+        node = self.parentNode
+        doc = self.ownerDocument
+        def update_proved():
+            labels_dict = doc.context.labels
+            proved = labels_dict[self.attributes['label']]
+            node.setUserData('proves', proved)
+            proved.userdata['proved_by'] = node
+        doc.post_parse_cb.append(update_proved)
+
 
 class ThmReport(object):
     """"""
