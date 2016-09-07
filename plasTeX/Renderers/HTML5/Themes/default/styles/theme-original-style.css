@@ -1077,31 +1077,17 @@ pre.verbatim {
   background-color: #f2f2f2;
   padding: .5rem; }
 
-/* line 1, sass/_showmore.scss */
+/* line 1, sass/showmore.scss */
 p.hidden {
   display: none; }
 
-/* line 5, sass/_showmore.scss */
-div.showmore {
-  position: fixed;
-  z-index: 200;
-  left: 0;
-  bottom: 0;
-  display: flex;
-  height: 2.5rem;
-  background: linear-gradient(to bottom, #80bf40 0%, #4d7326 100%); }
-  /* line 19, sass/_showmore.scss */
-  div.showmore svg {
-    font-size: 150%;
-    margin: auto;
-    min-width: 2rem;
-    text-decoration: none;
-    color: white;
-    text-shadow: 1px 2px 0 rgba(0, 0, 0, 0.8); }
-
-@media (min-width: 1024px) {
-  /* line 33, sass/_showmore.scss */
-  div.showmore-toc {
-    left: 30rem; } }
+/* line 5, sass/showmore.scss */
+svg.showmore {
+  font-size: 150%;
+  margin: auto;
+  min-width: 2rem;
+  text-decoration: none;
+  color: white;
+  text-shadow: 1px 2px 0 rgba(0, 0, 0, 0.8); }
 
 /*# sourceMappingURL=theme-original-style.css.map */

@@ -56,6 +56,7 @@ $(document).ready(function() {
 				function() {
 					var ref= $(this).attr('href').split('#')[1];
 					var proof = $('#'+ref)
+					proof.show()
 					proof.children('.proof_content').each(
 							function() { 
 								var proof_content = $(this)
@@ -100,63 +101,6 @@ $(document).ready(function() {
           $(this).parent().parent().parent().hide();
         })
 
-		var showmore_level = 1;
-
-		showmore_update = function() {
-			switch(showmore_level) {
-				case 0:
-				 $("svg#showmore-minus").hide();
-				 $("svg#showmore-plus").show();
-				 $("div.content > p").each(
-						 function(){
-							 $(this).hide();
-						 });
-				 $("div.proof_wrapper").each(
-						 function(){
-							 $(this).hide();
-						 });
-				 break;
-				case 1:
-				 $("svg#showmore-minus").show();
-				 $("svg#showmore-plus").show();
-				 $("div.content > p").each(
-						 function(){
-							 $(this).show();
-						 });
-				 $("div.proof_content").each(
-						 function(){
-							 $(this).hide();
-						 });
-				 break;
-				case 2:
-				 $("svg#showmore-minus").show();
-				 $("svg#showmore-plus").hide();
-				 $("div.content > p").each(
-						 function(){
-							 $(this).show();
-						 });
-				 $("div.proof_content").each(
-						 function(){
-							 $(this).show();
-						 });
-			}
-		};
-
-		$("svg#showmore-minus").click(
-				function() {
-					if (showmore_level > 0) {
-						showmore_level -= 1;
-						showmore_update();
-					}
-				})
-
-		$("svg#showmore-plus").click(
-				function() {
-					if (showmore_level < 2) {
-						showmore_level += 1;
-						showmore_update();
-					}
-				})
 
 		$("div.proof_content p:last-child").append('<span class="qed">□</span>')
   });
