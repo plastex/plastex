@@ -27,3 +27,9 @@ class quizz(List):
         quizzes = node.userdata.get('quizzes', [])
         quizzes.append(self)
         node.userdata['quizzes'] = quizzes
+
+
+def ProcessOptions(options, document):
+    """This is called when the package is loaded."""
+
+    document.userdata.setdefault('extra-js', []).append('quizz.js')
