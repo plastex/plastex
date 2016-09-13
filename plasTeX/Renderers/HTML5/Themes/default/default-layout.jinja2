@@ -95,7 +95,7 @@
 
 <div class="content">
 {{ obj }}
-{% if obj.tableofcontents %}
+{% if obj.tableofcontents and obj.level <= config.html5['localtoc-level']%}
 <nav class=local_toc>
 <ul>
 {% for section in obj.tableofcontents recursive -%}

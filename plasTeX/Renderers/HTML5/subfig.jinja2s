@@ -1,0 +1,13 @@
+name: subfloat subfig
+<figure class="subfloat" id="{{ obj.id }}">
+{{ obj }}
+<figcaption>
+<span class="subref">{{ obj.subref }}</span>
+<span class="subcaption">{{ obj.title }}</span>
+</figcaption>
+</figure>
+
+name: subref subref*
+<a href="{{ obj.idref.label.url }}">{{ obj.idref.label.subref }}</a>
+
+name: newsubfloat DeclareCaptionListOfFormat listsubcaptions captionsetup clearcaptionsetup ContinuedFloat

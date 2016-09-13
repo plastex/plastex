@@ -32,3 +32,29 @@ div.content
     }
 }
 
+/* Alignment */
+div.centered {
+  display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: flex-end;
+  justify-content: space-around;
+	min-width: 100%;
+	margin: 0 auto;
+}
+
+div.flushleft, div.raggedright {
+  display: flex;
+  justify-content: flex-start;
+}
+div.flushright, div.raggedleft {
+  display: flex;
+  justify-content: flex-end;
+}
+div.raggedbottom {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+

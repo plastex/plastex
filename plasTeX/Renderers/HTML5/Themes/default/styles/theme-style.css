@@ -248,6 +248,33 @@ div.content {
     div.content {
       margin: 0 5%; } }
 
+/* Alignment */
+/* line 36, sass/_layout.scss */
+div.centered {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-around;
+  min-width: 100%;
+  margin: 0 auto; }
+
+/* line 46, sass/_layout.scss */
+div.flushleft, div.raggedright {
+  display: flex;
+  justify-content: flex-start; }
+
+/* line 50, sass/_layout.scss */
+div.flushright, div.raggedleft {
+  display: flex;
+  justify-content: flex-end; }
+
+/* line 54, sass/_layout.scss */
+div.raggedbottom {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; }
+
 /* line 1, sass/_typography.scss */
 div.content {
   line-height: 1.4rem; }
@@ -525,28 +552,6 @@ dd p {
   padding: 0;
   margin: 0 0 1rem 0; }
 
-/* Alignment */
-/* line 250, sass/_typography.scss */
-div.centered {
-  display: flex;
-  justify-content: center; }
-
-/* line 254, sass/_typography.scss */
-div.flushleft, div.raggedright {
-  display: flex;
-  justify-content: flex-start; }
-
-/* line 258, sass/_typography.scss */
-div.flushright, div.raggedleft {
-  display: flex;
-  justify-content: flex-end; }
-
-/* line 262, sass/_typography.scss */
-div.raggedbottom {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end; }
-
 /* line 3, sass/_breadcrumbs.scss */
 ul.breadcrumbs {
   margin: 1rem 0 0 0;
@@ -588,12 +593,32 @@ div.equation {
     margin-left: 3rem; }
 
 /* line 1, sass/_floats.scss */
-span.caption_title, span.caption_ref {
+figure {
+  display: flex;
+  flex-direction: column;
+  vertical-align: bottom;
+  text-align: center; }
+
+/* line 8, sass/_floats.scss */
+figure img {
+  display: block;
+  margin: 0 auto; }
+
+/* line 13, sass/_floats.scss */
+figcaption {
+  display: block; }
+
+/* line 17, sass/_floats.scss */
+span.caption_title, span.caption_ref, span.subcaption {
   font-weight: bold; }
 
-/* line 5, sass/_floats.scss */
+/* line 21, sass/_floats.scss */
 span.caption_ref::after {
   content: ":"; }
+
+/* line 25, sass/_floats.scss */
+span.subref::after {
+  content: ")"; }
 
 /* line 3, sass/_footnotes.scss */
 footer#footnotes {

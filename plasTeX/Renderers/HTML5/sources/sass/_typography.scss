@@ -246,23 +246,3 @@ dd p {
   margin: 0 0 1rem 0;
 }
 
-/* Alignment */
-div.centered {
-  display: flex;
-  justify-content: center;
-}
-div.flushleft, div.raggedright {
-  display: flex;
-  justify-content: flex-start;
-}
-div.flushright, div.raggedleft {
-  display: flex;
-  justify-content: flex-end;
-}
-div.raggedbottom {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-
-

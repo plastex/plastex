@@ -1,7 +1,7 @@
 name: figure figure*
-<div class="figure" id="{{ obj.title.id}}">
+<figure {% if obj.title %}id="{{ obj.title.id }}"{% endif %}>
   {{ obj }}
-</div>
+</figure>
 
 name: table table*
 <div class="table"  id="{{ obj.title.id}}">
@@ -12,8 +12,8 @@ name: marginpar
 <p class="marginpar">{{ obj.attributes.right }}</p>
 
 name: caption
-<div class="caption">
+<figcaption>
   <span class="caption_title">{{ obj.title }}</span> 
   <span class="caption_ref">{{ obj.ref }}</span> 
   <span class="caption_text">{{ obj }}</span> 
-</div>
+</figcaption>
