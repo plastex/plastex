@@ -1,5 +1,6 @@
 import os
 from plasTeX.ConfigManager import *
+from plasTeX.DOM import Node
 
 config = ConfigManager()
 
@@ -32,7 +33,7 @@ section['localtoc-level'] = IntegerOption(
     """ Create local toc above this level """,
     options='--localtoc-level',
     category='html5',
-    default=-10,
+    default=Node.DOCUMENT_LEVEL-1,
 )
 
 section['breadcrumbs-level'] = IntegerOption(
