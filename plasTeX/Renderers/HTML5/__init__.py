@@ -9,7 +9,7 @@ class HTML5(_Renderer):
     """ Renderer for HTML5 documents, heavily copied from XHTML renderer """
 
     fileExtension = '.html'
-    imageTypes = ['.png','.jpg','.jpeg','.gif']
+    imageTypes = ['.svg', '.png','.jpg','.jpeg','.gif']
     vectorImageTypes = ['.svg']
 
     def loadTemplates(self, document):

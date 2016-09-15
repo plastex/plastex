@@ -850,10 +850,11 @@ class Imager(object):
                     height = DimensionPlaceholder(tmpl.substitute({'filename':path, 'attr':'height'}))
                     height.imageUnits = width.imageUnits = self.imageUnits
                 else:
-                    img = PILImage.open(name)
-                    width, height = img.size
                     scale = self.config['images']['scale-factor']
+                    width = height = None
                     if scale != 1:
+                        img = PILImage.open(name)
+                        width, height = img.size
                         width = int(width * scale)
                         height = int(height * scale)
                         img.resize((width,height))
