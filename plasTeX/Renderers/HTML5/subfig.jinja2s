@@ -1,10 +1,12 @@
 name: subfloat subfig
 <figure class="subfloat" id="{{ obj.id }}">
 {{ obj }}
+{% if obj.title -%}
 <figcaption>
 <span class="subref">{{ obj.subref }}</span>
 <span class="subcaption">{{ obj.title }}</span>
 </figcaption>
+{% endif -%}
 </figure>
 
 name: subref subref*
