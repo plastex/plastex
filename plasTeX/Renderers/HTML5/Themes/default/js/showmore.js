@@ -5,6 +5,7 @@ $(document).ready(function() {
 		switch(showmore_level) {
 			case 0:
 			 $("svg#showmore-minus").hide();
+			 $("figure").hide();
 			 $("svg#showmore-plus").show();
 			 $("div.content > p").each(
 					 function(){
@@ -18,6 +19,7 @@ $(document).ready(function() {
 			 break;
 			case 1:
 			 $("svg#showmore-minus").show();
+			 $("figure").show();
 			 $("svg#showmore-plus").show();
 			 $("div.content > p").each(
 					 function(){
