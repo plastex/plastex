@@ -45,7 +45,7 @@ class MathEnvironmentPre(MathEnvironment):
     """
     @property
     def source(self):
-        return "\\begin{{{0}}}{1}\\end{{{0}}}".format(
+        return u"\\begin{{{0}}}{1}\\end{{{0}}}".format(
                 self.tagName,
                 sourceChildren(self))
 
@@ -55,7 +55,7 @@ class math(MathEnvironment):
     @property
     def source(self):
         if self.hasChildNodes():
-            return '$%s$' % sourceChildren(self)
+            return u'$%s$' % sourceChildren(self)
         return '$'
 
 class displaymath(MathEnvironment):
