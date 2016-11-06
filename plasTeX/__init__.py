@@ -800,7 +800,7 @@ class TeXDocument(Document):
         ('`',  unichr(8216)),
         ("'",  unichr(8217)),
         ('---',unichr(8212)),
-        ('--', unichr(8211)),
+#        ('--', unichr(8211)),
 #       ('fj', unichr(58290)),
 #       ('ff', unichr(64256)),
 #       ('fi', unichr(64257)),
