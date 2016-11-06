@@ -1,3 +1,6 @@
+Trouver une meilleure façon que les -- de tikz ne soient pas salopés que
+le hack de d0eef6c165
+
 Dans Lists.zpts il y a des tables à virer
 
 Faire le tour de tous les zpts restant
