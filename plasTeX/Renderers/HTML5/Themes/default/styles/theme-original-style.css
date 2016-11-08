@@ -953,6 +953,16 @@ ul.quizz {
     width: 2rem;
     height: 2rem; }
 
+/* line 1, sass/_tikz.scss */
+.tikzcd {
+  display: block;
+  margin: .5rem auto; }
+
+/* line 6, sass/_tikz.scss */
+.tikzpicture {
+  display: block;
+  margin: .5rem auto; }
+
 /* line 3, sass/_toc.scss */
 .local_toc ul {
   padding-left: 1rem;
