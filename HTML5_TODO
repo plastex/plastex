@@ -31,5 +31,4 @@ templates
 Dans relations.py, faire un peu de programmation defensive (labels
 inexistant -> Traceback, pas zoli)
 
-Investiguer DeclareMathOperator. Pour l'instant je crois que cette
-commande ne fait rien.
+Finir DeclareMathOperator dans Packages/amsmath.py
