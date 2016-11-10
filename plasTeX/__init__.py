@@ -800,7 +800,7 @@ class TeXDocument(Document):
         ('`',  unichr(8216)),
         ("'",  unichr(8217)),
         ('---',unichr(8212)),
-#        ('--', unichr(8211)),
+        ('--', unichr(8211)),
 #       ('fj', unichr(58290)),
 #       ('ff', unichr(64256)),
 #       ('fi', unichr(64257)),
@@ -912,6 +912,28 @@ class Environment(Macro):
 #       print 'DONE', type(self)
         if dopars:
             self.paragraphs()
+
+
+class NoCharSubEnvironment(Environment):
+    """
+    A subclass of Environment which prevents character substitution inside
+    itself.
+    """
+    def __init__(self, *args, **kwargs):
+        # Will hold the owner document charsubs to restore it at the end
+        self.charsubs = []
+        super(NoCharSubEnvironment, self).__init__(*args, **kwargs)
+
+    def invoke(self, tex):
+        # The goal is to prevent any character substitution while handling a
+        # this environment.
+        doc = self.ownerDocument
+        if self.macroMode == Macro.MODE_BEGIN:
+            self.charsubs = doc.charsubs
+            doc.charsubs = []
+        elif self.macroMode == Macro.MODE_END:
+            doc.charsubs = self.charsubs
+        super(NoCharSubEnvironment, self).invoke(tex)
 
 class IgnoreCommand(Command):
     """

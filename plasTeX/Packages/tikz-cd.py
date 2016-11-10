@@ -3,14 +3,15 @@ import tempfile
 from jinja2 import Template
 from bs4 import BeautifulSoup
 
-from plasTeX import Environment, Command
+from plasTeX import NoCharSubEnvironment, Command
 
 from plasTeX.Packages import tikz
 
-class tikzcd(Environment):
+class tikzcd(NoCharSubEnvironment):
     """
     A tikz-cd diagram whose content will be converted in the processFileContent callback.
     """
+
 
 class ar(Command):
     pass

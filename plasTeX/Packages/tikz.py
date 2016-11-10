@@ -10,14 +10,13 @@ import tempfile
 from jinja2 import Template
 from bs4 import BeautifulSoup
 
-from plasTeX import Environment, Command
+from plasTeX import NoCharSubEnvironment
 
-class tikzpicture(Environment):
+class tikzpicture(NoCharSubEnvironment):
     """
     A tikz picture whose content will be converted in the processFileContent callback.
     """
-    class draw(Command):
-        pass
+
 
 def tikzConvert(document, content, envname, placeholder):
     tmp_dir = document.userdata[envname]['tmp_dir']
