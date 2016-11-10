@@ -17,9 +17,7 @@ class tikzpicture(Environment):
     A tikz picture whose content will be converted in the processFileContent callback.
     """
     class draw(Command):
-        def normalize(self, charsubs=[]):
-            """ Normalize, but don't allow character substitutions """
-            return Environment.normalize(self, [])
+        pass
 
 def tikzConvert(document, content, envname, placeholder):
     tmp_dir = document.userdata[envname]['tmp_dir']
