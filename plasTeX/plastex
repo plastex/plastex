@@ -13,7 +13,7 @@ log = getLogger()
 __version__ = '1.0'
 
 def collect_renderer_config(config):
-    plastex_dir = os.path.dirname(os.path.realpath(__file__))
+    plastex_dir = os.path.dirname(os.path.realpath(plasTeX.__file__))
     renderers_dir = os.path.join(plastex_dir, 'Renderers')
     renderers = next(os.walk(renderers_dir))[1]
     for renderer in renderers:
