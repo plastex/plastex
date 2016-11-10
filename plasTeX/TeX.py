@@ -1349,7 +1349,7 @@ class TeX(object):
                 return output
 
         except:
-            for item in os.environ.get('TEXINPUTS').split(os.path.pathsep):
+            for item in os.environ.get('TEXINPUTS', '').split(os.path.pathsep):
                 if os.path.isfile(os.path.join(item, name)):
                     return os.path.join(item, name)
                 if os.path.isfile(os.path.join(item, name) + '.tex'):
