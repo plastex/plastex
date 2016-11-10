@@ -51,3 +51,6 @@ name: underbar
 
 name: textsuperscript
 <sup tal:content="self">superscripted text</sup>
+
+name: textsubscript
+<sub tal:content="self">subscripted text</sub>
