@@ -10,12 +10,17 @@ import tempfile
 from jinja2 import Template
 from bs4 import BeautifulSoup
 
-from plasTeX import NoCharSubEnvironment
+from plasTeX import Environment, NoCharSubEnvironment
 
 class tikzpicture(NoCharSubEnvironment):
     """
     A tikz picture whose content will be converted in the processFileContent callback.
     """
+    class matrix(Environment):
+        """
+        Avoids conflict with amsmath matrix thanks to the context stack
+        mechanism.
+        """
 
 
 def tikzConvert(document, content, envname, placeholder):
