@@ -30,7 +30,7 @@ $(document).ready(function() {
             })
 
 
-    $("div.proof_content p:last-child").append('<span class="qed">□</span>')
+    $("div.proof_content p:last").append('<span class="qed">□</span>')
 
     $("div.proof_heading").click(
            function() {
