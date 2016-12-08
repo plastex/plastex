@@ -826,6 +826,9 @@ class TeXDocument(Document):
         else:
             self.config = kwargs['config']
 
+        # post parsing callbacks list
+        self.post_parse_cb = []
+
     def createElement(self, name):
         elem = self.context[name]()
         elem.parentNode = None
@@ -909,6 +912,28 @@ class Environment(Macro):
 #       print 'DONE', type(self)
         if dopars:
             self.paragraphs()
+
+
+class NoCharSubEnvironment(Environment):
+    """
+    A subclass of Environment which prevents character substitution inside
+    itself.
+    """
+    def __init__(self, *args, **kwargs):
+        # Will hold the owner document charsubs to restore it at the end
+        self.charsubs = []
+        super(NoCharSubEnvironment, self).__init__(*args, **kwargs)
+
+    def invoke(self, tex):
+        # The goal is to prevent any character substitution while handling a
+        # this environment.
+        doc = self.ownerDocument
+        if self.macroMode == Macro.MODE_BEGIN:
+            self.charsubs = doc.charsubs
+            doc.charsubs = []
+        elif self.macroMode == Macro.MODE_END:
+            doc.charsubs = self.charsubs
+        super(NoCharSubEnvironment, self).invoke(tex)
 
 class IgnoreCommand(Command):
     """

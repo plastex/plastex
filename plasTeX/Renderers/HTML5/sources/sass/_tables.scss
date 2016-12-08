@@ -1,0 +1,26 @@
+.tabular { 
+    border-collapse: collapse;
+    color: $main-text-color;
+    background-color: $background-color;
+    width: auto;
+}
+.tabular td, .tabular th {
+    vertical-align: baseline;
+    text-align: left;
+    padding-top: 0.3em;
+    padding-bottom: 0.3em;
+    padding-left: 0.6em;
+    padding-right: 0.6em;
+    empty-cells: show;
+}
+
+td p:first-child, th p:first-child {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+td p, th p {
+    margin-top: 1em;
+    margin-bottom: 0px;
+}
+

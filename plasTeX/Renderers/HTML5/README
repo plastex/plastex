@@ -1,0 +1,9 @@
+Pour les libs mathjax en node.js
+pip install nodeenv
+nodeenv -p --prebuilt
+
+Pour sass et compass
+sudo apt-get install ruby ruby-dev
+éditer dans le virtual env postactivate et predeactivate
+gem install compass
+gem install breakpoint

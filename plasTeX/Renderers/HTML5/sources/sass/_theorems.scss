@@ -1,0 +1,220 @@
+// Theorems
+
+@keyframes highlight
+{
+    0%
+    {
+        background-color: darken($background-color, 15%);
+    }
+    100%
+    {
+        background-color: $background-color;
+    }
+}
+
+div[class$='_thmwrapper']
+{
+    margin-top: 1rem;
+}
+
+div[class$='_thmwrapper']:target
+{
+    animation: highlight 1s ease;
+}
+
+div[class$='_thmheading']
+{
+    font-weight: bold;
+    line-height: 150%;
+}
+
+div[class$='_thmcontent']
+{
+    font-weight: normal;
+
+    margin-left: 1rem;
+    padding-top: .1*$content-line-height;
+    padding-left: 1rem;
+}
+
+// Proofs
+
+div[class$='proof_heading']
+{
+    font-weight: bold;
+    line-height: 120%;
+
+    cursor: pointer;
+}
+
+div.proof_content
+{
+    font-weight: normal;
+
+    display: none;
+
+    margin-left: 1rem;
+    padding-top: .5rem;
+    padding-left: 1rem;
+}
+
+div.hilite
+{
+    animation: highlight 1s ease;
+}
+
+
+span.qed {
+	float: right;
+}
+
+// Relations
+
+ button.modal {
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+}
+
+div.modal-container
+{
+    position: fixed;
+    z-index: $modal-z-index;
+    top: 0;
+    left: 0;
+
+    display: none;
+
+    width: 100%;
+    height: 100%;
+}
+
+div.modal-content
+{
+    font-weight: normal;
+
+    overflow: auto;
+
+    margin: auto;
+
+    vertical-align: middle;
+
+    border: 1px solid darken($toc-background-color, 10%);
+    border-radius: 5px;
+    background-color: white;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19);
+    header
+    {
+        position: relative;
+
+				background: $doc-title-background;
+				color: $doc-title-color;
+				text-shadow: 1px 2px 0px rgba(0,0,0,0.8);
+        display: flex;
+        flex-direction: row;
+
+        min-height: 1rem;
+        min-width: 100%;
+				text-align:center;
+				vertical-align: middle;
+
+				padding: 0 .5rem;
+
+        justify-content: space-between;
+        button.closebtn
+        {
+            font-size: 120%;
+            font-weight: bold;
+
+            background: Transparent;
+            border: none;
+
+            margin: auto 0;
+            padding-right: .3rem;
+
+            text-decoration: none;
+
+            color: #fff;
+            cursor: pointer;
+        }
+        h1
+        {
+            font-size: 120%;
+
+            margin: auto 0;
+            padding: .2rem;
+
+            color: $toc-text-color;
+        }
+    };
+    a
+    {
+        text-decoration: none;
+    };
+    ul
+    {
+        padding: 1rem;
+
+        list-style: none;
+    };
+    li
+    {
+        padding-left: .5rem;
+    }
+}
+
+a.icon
+{
+    text-decoration: none;
+
+    color: $main-text-color;
+    border: none;
+    background-color: Transparent;
+}
+
+div[class$='_thmheading']:hover div.thm_icons
+{
+    display: inline-block;
+}
+
+div.thm_icons
+{
+    display: none;
+}
+
+
+ul.quizz {
+  display: flex;
+  flex-direction: column;
+  list-style: circle !important;
+  
+  li {
+    display: flex;
+    padding: .5rem;
+    flex-direction: row;
+    min-width: 100%;
+    min-height: 3rem;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  li.active-qright {
+    background-color: green;
+  }
+
+  li.active-qwrong {
+    background-color: red;
+  }
+
+  svg.icon {
+    display: none;
+    padding-right: .5rem;
+    width: 2rem;
+    height: 2rem;
+  }
+
+}

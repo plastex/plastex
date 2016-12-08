@@ -54,3 +54,18 @@ docs/_build/
 target/
 *.project
 *.pydevproject
+
+# Vim temp files
+.*.sw*
+
+# Sass
+.sass-cache
+*.css.map
+
+# generated stylesheet
+plasTeX/Renderers/HTML5/Themes/default/styles/*.css
+
+# Rendered test
+tmp/test/
+*.paux
+*.aux

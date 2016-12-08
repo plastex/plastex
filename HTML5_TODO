@@ -1,0 +1,38 @@
+Trouver une meilleure façon que les -- de tikz ne soient pas salopés que
+le hack de d0eef6c165
+
+Dans Lists.zpts il y a des tables à virer
+
+Faire le tour de tous les zpts restant
+
+vérifier de façon systématique que toutes les classes des templates sont
+prises en compte par les CSS
+
+investiguer les dt et dd vides produits par les listes
+
+produire un jeu de couleurs plus proches de l'original (en cours)
+
+investiguer ce que fait changebar dont le style s'est retrouvé dans
+_changebar.scss
+
+sur file:///home/pmassot/soft/plastex/Doc/plastex/sec-zpttutorial.html
+mathjax interfère à cause d'un $bidule $truc
+Vérifier si la doc de plasTeX contient des maths entre $
+
+Ajouter des options de configuration Mathjax, en particulier pour les
+délimiteurs de maths (cf. problème avec $bidule $truc dans la doc
+plasTeX)
+
+Investiguer ce que plasTeX fait de \dddots et des matrices de amsmath
+
+Faire un grand fichier de test à partir de tous les fichiers de
+templates
+
+Dans relations.py, faire un peu de programmation defensive (labels
+inexistant -> Traceback, pas zoli)
+
+Finir DeclareMathOperator dans Packages/amsmath.py
+
+Bug index dans mat553
+
+Overflow images tikz
