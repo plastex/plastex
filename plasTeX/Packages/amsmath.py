@@ -6,6 +6,11 @@ from plasTeX.Base.LaTeX.Math import EqnarrayStar, equation, eqnarray
 #### Imports Added by Tim ####
 from plasTeX.Base.LaTeX.Math import math
 
+from plasTeX import Tokenizer
+from plasTeX.Logging import getLogger
+
+deflog = getLogger('parse.definitions')
+
 class pmatrix(Array):
     pass
 
@@ -103,3 +108,16 @@ class dddot(math):
 class ddddot(math):
     pass
 
+class DeclareMathOperator(Command):
+    args = '* name:cs definition:nox'
+    def invoke(self, tex):
+        self.parse(tex)
+        a = self.attributes
+        if a.get('*modifier*'):
+            macro = '\operatorname*'
+        else:
+            macro = '\operatorname'
+        definition = [Tokenizer.Token(macro), Tokenizer.Token('{')] + a['definition']+[Tokenizer.Token('}')]
+        args = (a['name'], 0, definition)
+        deflog.debug('math operator %s %s', *args)
+        self.ownerDocument.context.newcommand(*args)
