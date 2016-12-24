@@ -753,6 +753,12 @@ escape characters like <, >, and \&.  In order to get HTML/XML markup from
 the variables you must wrap them in the code shown in the example above.
 Hopefully, this limitation will be removed in the future.
 
+When using Jinja2 templates, the default configuration trims white spaces
+before and after template tags (see trim_blocks and lstrip_blocks in Jinja2's
+documentation).
+Also, when developing Jinja2 templates, inserting \verb+{{ debug() }}+
+will launch a python debugger session to allow inspection of the
+\var{context} variable during rendering.
 
 \subsubsection{Template Overrides\label{sec:tmploverrides}}
 
