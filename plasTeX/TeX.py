@@ -440,7 +440,7 @@ class TeX(object):
             raise
 
         if self.toplevel:
-            for callback in self.ownerDocument.post_parse_cb:
+            for callback in self.ownerDocument.postParseCallbacks:
                 callback()
         return output
 

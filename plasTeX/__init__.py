@@ -827,7 +827,7 @@ class TeXDocument(Document):
             self.config = kwargs['config']
 
         # post parsing callbacks list
-        self.post_parse_cb = []
+        self.postParseCallbacks = []
 
     def createElement(self, name):
         elem = self.context[name]()
