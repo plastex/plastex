@@ -510,7 +510,12 @@ class Context(object):
         # Didn't find it, so generate a new class
         if self.warnOnUnrecognized and not self.isMathMode:
             log.warning('unrecognized command/environment: %s', key)
-        self[key] = newclass = new.classobj(str(key), (plasTeX.UnrecognizedMacro,), {})
+        try:
+            self[key] = newclass = new.classobj(str(key), (plasTeX.UnrecognizedMacro,), {})
+        except UnicodeEncodeError:
+            import uuid
+            name = 'def_' + str(uuid.uuid4()).replace('-', '')
+            self[key] = newclass = new.classobj(name, (plasTeX.UnrecognizedMacro,), {'macroName':key})
         return newclass
 
     def push(self, context=None):
@@ -1035,7 +1040,7 @@ class Context(object):
             name = str(name)
         except UnicodeEncodeError:
             import uuid
-            name = 'def_' + uuid.uuid4().replace('-', '')
+            name = 'def_' + str(uuid.uuid4()).replace('-', '')
         # Macro already exists
 #       if self.has_key(name):
 #           if not issubclass(self[name], (plasTeX.NewCommand, 
