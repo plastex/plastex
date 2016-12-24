@@ -5,6 +5,8 @@ C.8 Definitions, Numbering, and Programming
 
 """
 
+import new
+
 from plasTeX import Command, Environment
 from plasTeX.Logging import getLogger
 
@@ -28,10 +30,10 @@ class newcommand(Command):
         deflog.debug('command %s %s %s', *args)
         self.ownerDocument.context.newcommand(*args, **kwargs)
 
-class renewcommand(newcommand): 
+class renewcommand(newcommand):
     pass
 
-class providecommand(newcommand): 
+class providecommand(newcommand):
     pass
 
 class DeclareRobustCommand(newcommand):
@@ -64,4 +66,39 @@ class renewenvironment(newenvironment):
 #
 
 class newtheorem(Command):
-    args = 'name:str [ counter:str ] caption [ within:str ]'
+    args = '* name:str [ counter:str ] caption [ within:str ]'
+    def invoke(self, tex):
+        self.parse(tex)
+        attrs = self.attributes
+        name = attrs['name']
+        counter = attrs['counter']
+        caption = attrs['caption']
+        within = attrs['within']
+        if not counter and not attrs['*modifier*']:
+            counter = name
+            if within:
+                self.ownerDocument.context.newcounter(counter,initial=0,resetby=within, format='${the%s}.${%s}' % (within, name))
+            else:
+                self.ownerDocument.context.newcounter(counter,initial=0)
+        deflog.debug('newtheorem %s', name)
+
+        # The nodeName key below ensure all theorem type will call the same
+        # rendering method, the type of theorem being retained in the thmName
+        # attribute
+        if attrs['*modifier*']:
+            newclass = new.classobj(str(name), (Environment,),
+                    {'caption': caption, 'nodeName': 'thmenv', 'thmName': name,
+                        'args': '[title:str]'})
+        else:
+            newclass = new.classobj(str(name), (Environment,),
+                    {'caption': caption, 'nodeName': 'thmenv', 'thmName': name,
+                        'counter': counter, 'args': '[title:str]'})
+        self.ownerDocument.context.addGlobal(name, newclass)
+
+
+class proof(Environment):
+    args ='[caption]'
+
+    def digest(self, tokens):
+        Environment.digest(self, tokens)
+        self.caption = self.attributes.get('caption', '')
