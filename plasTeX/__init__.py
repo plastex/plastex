@@ -826,6 +826,9 @@ class TeXDocument(Document):
         else:
             self.config = kwargs['config']
 
+        # post parsing callbacks list
+        self.postParseCallbacks = []
+
     def createElement(self, name):
         elem = self.context[name]()
         elem.parentNode = None
