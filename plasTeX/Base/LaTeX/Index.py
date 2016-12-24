@@ -11,11 +11,21 @@ from plasTeX import Command, Environment, IgnoreCommand, encoding
 from plasTeX.Logging import getLogger
 from Sectioning import SectionUtils
 
+log = getLogger()
+
 try:
     from pyuca import Collator
     collator = Collator(os.path.join(os.path.dirname(__file__), 'allkeys.txt')).sort_key
 except ImportError:
     collator = lambda x: x.lower()
+
+try:
+    from unidecode import unidecode
+except ImportError:
+    log.warning('Cannot find unidecode lib. Expect issues with index sorting')
+    def unidecode(s):
+        return s
+
     
 class hyperpage(IgnoreCommand):
     args = 'page:nox'
@@ -74,7 +84,7 @@ class IndexUtils(object):
         current = ''
         for item in self:
             try: 
-                label = title = item.sortkey[0].upper()
+                label = title = unidecode(item.sortkey[0]).upper()
                 if title in encoding.stringletters():
                     pass
                 elif title == '_':
