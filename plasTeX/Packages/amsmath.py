@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-from plasTeX import Command, Environment
+from plasTeX import Command
 from plasTeX.Base.LaTeX.Arrays import Array
 from plasTeX.Base.LaTeX.Math import EqnarrayStar, equation, eqnarray
 #### Imports Added by Tim ####
-from plasTeX.Base.LaTeX.Math import math
+from plasTeX.Base.LaTeX.Math import math, MathEnvironmentPre
 
 from plasTeX import Tokenizer
 from plasTeX.Logging import getLogger
@@ -99,7 +99,7 @@ class Bmatrix(Array):
     pass
 
 #### Inline Math
-class smallmatrix(math):
+class smallmatrix(MathEnvironmentPre):
     pass
 
 class dddot(math):

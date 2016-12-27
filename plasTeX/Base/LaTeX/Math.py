@@ -39,13 +39,23 @@ class ThinSpace_(Command):
 class MathEnvironment(Environment):
     mathMode = True
 
+class MathEnvironmentPre(MathEnvironment):
+    """
+    A math environment whose source property keeps the begin and end markup.
+    """
+    @property
+    def source(self):
+        return u"\\begin{{{0}}}{1}\\end{{{0}}}".format(
+                self.tagName,
+                sourceChildren(self))
+
 # Need \newcommand\({\begin{math}} and \newcommand\){\end{math}}
 
 class math(MathEnvironment):
     @property
     def source(self):
         if self.hasChildNodes():
-            return '$%s$' % sourceChildren(self)
+            return u'$%s$' % sourceChildren(self)
         return '$'
 
 class displaymath(MathEnvironment):
