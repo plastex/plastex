@@ -81,6 +81,9 @@ for commands and \class{Environment} for environments.  For the most
 part, these two classes behave in the same way.  They both are 
 responsible for parsing their arguments, organizing their child nodes,
 incrementing counters, etc. much like their \LaTeX\ counterparts.
+There is also a variant of the \class{Environment} class called 
+\class{NoCharSubEnvironment} which temporarily turns off character
+substitutions described in Section~\ref{sec:texdocument-objects}.
 The Python macro class feature set is based on common \LaTeX\ 
 conventions.  So if the \LaTeX\ macro you are implementing in Python
 uses standard \LaTeX\ conventions, you job will be very easy.  If you
