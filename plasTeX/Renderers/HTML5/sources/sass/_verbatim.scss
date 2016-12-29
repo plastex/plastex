@@ -1,0 +1,11 @@
+code.verb {
+    font-family: monospace;
+    font-style: normal;
+    font-weight: normal;
+}
+
+pre.verbatim {
+  margin: 1rem 2rem;
+  background-color: darken($background-color, 5%);
+  padding: .5rem;
+}

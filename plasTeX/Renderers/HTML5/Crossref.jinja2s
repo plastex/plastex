@@ -1,0 +1,7 @@
+name: ref
+<a href="{{here.idref.label.url}}">{{here.idref.label.ref}}</a>
+
+name: pageref
+<a href="{{ obj.idref.label.url }}">*</a>
+
+name: label

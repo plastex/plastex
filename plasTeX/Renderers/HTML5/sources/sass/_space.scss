@@ -1,0 +1,22 @@
+hspace, vspace {
+	margin: 0;
+	padding: 0;
+}
+
+div.bigskip {
+	margin: 0;
+	padding: 0;
+	margin-bottom: 4*$smallskipamount;
+}
+
+div.medskip {
+	margin: 0;
+	padding: 0;
+	margin-bottom: 2*$smallskipamount;
+}
+
+div.bigskip {
+	margin: 0;
+	padding: 0;
+	margin-bottom: $smallskipamount;
+}

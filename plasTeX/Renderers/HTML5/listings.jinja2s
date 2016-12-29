@@ -1,0 +1,20 @@
+name:lstset
+
+name:lstinputlisting lstlisting
+{% if obj.attributes.arguments.caption %}
+<div class="caption" id="{{ obj.attributes.arguments.label }}">
+  <b>{{ obj.captionName } {{ obj.ref }}</b>: 
+  {{ obj.attributes.arguments.caption }}
+</div>
+{% if obj.xhtml_listing  %}
+{{ obj.xhtml_listing  }}
+{% else %}
+<pre>{{ obj.plain_listing }}</pre>
+{% endif %}
+
+name: lstinline
+{% if obj.xhtml_listing  %}
+{{ obj.xhtml_listing  }}
+{% else %}
+<pre>{{ obj.plain_listing }}</pre>
+{% endif %}

@@ -1,0 +1,36 @@
+// Footnotes
+
+footer#footnotes
+{
+    clear: both;
+
+    padding-top: 1rem;
+    padding-left: 1rem;
+
+    border-color: gray;
+    border-top: 1px solid;
+}
+footer#footnotes h1
+{
+    font-size: 1.5rem;
+
+    margin: 0;
+    margin-bottom: .5rem;
+
+    color: black;
+}
+
+a.footnote
+{
+    text-decoration: none;
+}
+
+a.footnote sup::after
+{
+    content: ']';
+}
+
+a.footnote sup::before
+{
+    content: '[';
+}

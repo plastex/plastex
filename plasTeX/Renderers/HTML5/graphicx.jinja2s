@@ -1,0 +1,8 @@
+name: includegraphics rotatebox scalebox reflectbox resizebox
+{% if obj.style %}
+<img src="{{ obj.image.url}}" alt="{{ obj.source }}" style="{{ obj.style.inline}}" />
+{% else %}
+<img src="{{ obj.image.url}}" alt="{{ obj.source }}" style="width: {{ obj.image.width.px }}; height: {{ obj.image.height.px }}" />
+{% endif %}
+
+name: DeclareGraphicsExtensions graphicspath
