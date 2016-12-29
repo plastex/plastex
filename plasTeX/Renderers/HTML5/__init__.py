@@ -134,12 +134,11 @@ class HTML5(_Renderer):
     def cleanup(self, document, files, postProcess=None):
         """
         Cleanup method called at the end of rendering.
-        Uses the base renderer cleanup but calls packages callbacks before and
-        after. Callbacks should be listed in
-        document.userdata['preCleanupCallbacks']
-        or document.userdata['postCleanupCallbacks']. Each call back should accept the
-        current document as its only argument. Pre-cleanup call back must return
-        the list of path of files they created (relative to the output directory).
+        Uses the base renderer cleanup but calls packages callbacks before.
+        Callbacks should be listed in document.userdata['preCleanupCallbacks'].
+        Each callback should accept the current document as its only argument
+        and return the list of path of files they created (relative to the
+        output directory).
         """
 
         preCleanupCallbacks = document.userdata.get('preCleanupCallbacks', [])
