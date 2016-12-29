@@ -1,0 +1,157 @@
+// Table of contents
+
+.local_toc ul
+{
+    padding-left: 1rem;
+
+    list-style: none;
+
+    a
+    {
+        text-decoration: none;
+        color: $main-text-color;
+    };
+
+    li
+    {
+        padding: .2rem 0;
+    }
+}
+
+
+nav.toc
+{
+    position: fixed;
+    z-index: $toc-z-index;
+    top: 0;
+    bottom: 0;
+
+    display: flex;
+    overflow-x: hidden;
+    overflow-y: auto;
+    flex-direction: column;
+
+    width: 0;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+
+    transition: left .5s ease;
+
+    background-color: $toc-background-color;
+
+    @media (min-width: $toc-break)
+    {
+        width: $toc-width;
+    };
+}
+
+nav.active
+{
+    width: 100%;
+}
+
+.toc ul
+{
+    min-width: 100%;
+    padding-left: 0;
+
+    list-style: none;
+
+    a
+    {
+        font-size: $toc-font-size;
+
+        display: inline-block;
+
+        max-width: 90%;
+        padding-top: .5rem;
+        padding-right: .5rem;
+        padding-bottom: .5rem;
+
+        transition: all .1s ease;
+        text-align: left;
+        text-decoration: none;
+
+        color: $toc-text-color;
+        text-shadow: $toc-text-shadow;
+
+        flex-grow: 1;
+        &:hover
+        {
+            transition: all .2s ease;
+
+            background: darken($toc-background-color, 10%);
+        };
+    };
+
+
+    li
+    {
+        display: flex;
+
+        min-width: 100%;
+
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        background-color: $toc-background-color;
+    }
+
+    li.current
+    {
+        background-color: lighten($toc-background-color,10%);
+    }
+}
+
+@for $i from 0 through 4
+{
+    .sub-toc-#{$i} a
+    {
+        padding-left: ($i+1)*$toc-padding;
+    }
+}
+
+@for $i from 1 through 4
+{
+    ul.sub-toc-#{$i}
+    {
+        display: none;
+    }
+}
+
+svg.expand-toc
+{
+    min-width: 10%;
+    padding: 0;
+
+    cursor: pointer;
+    text-align: center;
+
+    color: $toc-text-color;
+    background-color: Transparent;
+}
+svg.close-toc
+{
+    min-width: 1.3rem;
+    min-height: 1.3rem;
+    margin: .5rem;
+    margin-left: auto;
+
+    cursor: pointer;
+    text-align: center;
+
+    color: $toc-text-color;
+    background-color: Transparent;
+    display: none;
+}
+
+nav.active svg.close-toc {
+  display: inline-block;
+}
+
+
+ul.active
+{
+    display: block;
+}
