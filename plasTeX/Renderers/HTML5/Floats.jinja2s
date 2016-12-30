@@ -4,7 +4,7 @@ name: figure figure*
 </figure>
 
 name: table table*
-<div class="table"  id="{{ obj.title.id}}">
+<div class="table"  id="{% if obj.title %}{{ obj.title.id}}{% else %}{{ obj.id }}{% endif %}">
   {{ obj }}
 </div>
 
