@@ -555,7 +555,7 @@ class Renderer(dict):
             if isinstance(postProcess, collections.Callable):
                 s = postProcess(document, s)
 
-            with open(f, 'wt', encoding=encoding) as fd:
+            with open(f, 'w', encoding=encoding) as fd:
                 fd.write(''.join(s))
 
     def find(self, keys, default=None):
