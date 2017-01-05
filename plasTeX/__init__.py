@@ -379,7 +379,7 @@ class Macro(Element):
             userdata = self.ownerDocument.userdata
             if 'links' not in userdata:
                 userdata['links'] = {}
-            if type(key) == str:
+            if isinstance(key, str):
                 userdata['links'][key] = self
             else:
                 for k in key:
@@ -1125,7 +1125,7 @@ class dimen(float):
     def __new__(cls, v):
         if isinstance(v, Macro):
             return v.__dimen__()
-        elif type(v) == str and v[-1] in encoding.stringletters():
+        elif isinstance(v, str) and v[-1] in encoding.stringletters():
             # Get rid of glue components
             v = list(v.split('plus').pop(0).split('minus').pop(0).strip())
             units = []

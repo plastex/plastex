@@ -112,7 +112,8 @@ class TeX(object):
         self.jobname = None
         if myfile is not None:
             # Filename
-            if type(myfile) == str:
+            if isinstance(myfile, (str, bytes)):
+                myfile = str(myfile)
                 '''
                 if config has no files structure
                 or encoding is not specified
@@ -517,7 +518,7 @@ class TeX(object):
         except TypeError: return tokens
 
         for t in tokens:
-            if type(t) == str:
+            if isinstance(t, str):
                 continue
             # Element nodes can't be part of normalized text
             if t.nodeType == Macro.ELEMENT_NODE:

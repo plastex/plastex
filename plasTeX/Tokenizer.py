@@ -219,10 +219,10 @@ class Tokenizer(object):
         self.state = Tokenizer.STATE_N
         self._charBuffer = []
         self._tokBuffer = []
-        if type(source) == str:
+        if isinstance(source, str):
             source = StringIO(source)
             self.filename = '<string>'
-        elif type(source) == bytes:
+        elif isinstance(source, bytes):
             source = TextIOWrapper(BytesIO(source), encoding='utf-8')
             self.filename = '<string>'
         elif isinstance(source, (tuple,list)):

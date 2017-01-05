@@ -677,7 +677,7 @@ class Context(object):
             instance before being added.
 
         """
-        if type(value) == str:
+        if isinstance(value, str):
             newvalue = plasTeX.Command()
             newvalue.str = value
             value = newvalue
@@ -701,7 +701,7 @@ class Context(object):
             instance before being added.
 
         """
-        if type(value) == str:
+        if isinstance(value, str):
             newvalue = plasTeX.Command()
             newvalue.str = value
             value = newvalue
@@ -948,10 +948,10 @@ class Context(object):
             nargs = 0
         assert isinstance(nargs, int), 'nargs must be an integer'
 
-        if type(definition) == str:
+        if isinstance(definition, str):
             definition = [x for x in Tokenizer(definition, self)]
 
-        if type(opt) == str:
+        if isinstance(opt, str):
             opt = [x for x in Tokenizer(opt, self)]
 
         macrolog.debug('creating newcommand %s', name)
@@ -994,12 +994,12 @@ class Context(object):
                 'definition must be a list or tuple'
             assert len(definition) == 2, 'definition must have 2 elements'
 
-            if type(definition[0]) == str:
+            if isinstance(definition[0], str):
                 definition[0] = [x for x in Tokenizer(definition[0], self)]
-            if type(definition[1]) == str:
+            if isinstance(definition[1], str):
                 definition[1] = [x for x in Tokenizer(definition[1], self)]
 
-        if type(opt) == str:
+        if isinstance(opt, str):
             opt = [x for x in Tokenizer(opt, self)]
 
         macrolog.debug('creating newenvironment %s', name)
@@ -1038,7 +1038,7 @@ class Context(object):
 #               return
 #           macrolog.debug('redefining definition "%s"', name)
 
-        if type(definition) == str:
+        if isinstance(definition, str):
             definition = [x for x in Tokenizer(definition, self)]
 
         macrolog.debug('creating def %s', name)
