@@ -544,14 +544,14 @@ def _nextSibling(self):
 
 def xmlstr(obj):
     """ Escape special characters to create a legal xml string """
-    if type(obj) == str:
+    if isinstance(obj, str):
         return obj.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;')
     elif isinstance(obj, list):
         return str([xmlstr(x) for x in obj])
     elif isinstance(obj, dict):
         return str(dict([(xmlstr(x),xmlstr(y)) for x,y in list(obj.items())]))
     else:
-        return str(obj)
+        return xmlstr(str(obj))
 
 class Node(object):
     """
