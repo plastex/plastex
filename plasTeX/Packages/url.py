@@ -26,8 +26,6 @@ class urldef(Command):
 
 class urlstyle(Command):
     args = 'style:str'
-    def invoke(self, tex):
-        res = Command.invoke(self, tex)
 
 class DeclareUrlCommand(Command):
     args = 'name:cs style'
