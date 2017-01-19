@@ -19,7 +19,7 @@ NCX_DOCTYPE = '''<!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN"
 def split_name(name):
     'utility needed for id attributes to use the stem as the value'
     raw_name = str(name)
-    stem = os.path.splitext(raw_name)[0]#raw_name[:raw_name.rfind('.')]            
+    stem = os.path.splitext(raw_name)[0]#raw_name[:raw_name.rfind('.')]
     return {'stem':os.path.basename(stem), 'fullname':raw_name}
 
 class NameParser(HTMLParser):
@@ -30,7 +30,7 @@ class NameParser(HTMLParser):
     def __init__(self, fname, encoding='utf-8'):
         HTMLParser.__init__(self)
         if os.path.isfile(fname):
-            f = codecs.open(fname, 'rb', encoding=encoding)
+            f = codecs.open(fname, 'r', encoding=encoding)
             self.contents = f.read()
             f.close()
         else:
@@ -38,7 +38,7 @@ class NameParser(HTMLParser):
 
         self.cssnames = list()
         self.imagenames = list()
-   
+
     def start_img(self, attributes):
         tmp = dict(attributes)
         self.imagenames.append(tmp.get('src'))
@@ -51,7 +51,7 @@ class NameParser(HTMLParser):
     def parse(self):
         self.feed(self.contents)
         self.close()
-       
+
     def get_cssnames(self):
         return self.cssnames
 
@@ -59,7 +59,7 @@ class NameParser(HTMLParser):
         return self.imagenames
 
 class Epub_Package(object):
-    ''' This is the class that does the work. initialize with a properties 
+    ''' This is the class that does the work. initialize with a properties
         dictionary, add some defaults as needed, then:
         (1) get the names of the html files comprising the book (ordered list)
         (2) get the names of the images and css files needed in the book
@@ -81,18 +81,18 @@ class Epub_Package(object):
         self.get_htmlnames()
         'parse html filenames to get img and css filenames'
         self.get_image_css_names()
-        
+
     def pack(self):
         ''' Follow the Epub spec:
                 Make the mimetype file (standard, nothing special)
                 Make the container file (ditto)
-                Make the titlepage, uses the title and toc data 
+                Make the titlepage, uses the title and toc data
                     created from the EpubRenderer.
-                Make the opf file, uses the htmlnames, imagenames, cssnames from 
+                Make the opf file, uses the htmlnames, imagenames, cssnames from
                     the initialization
                 Make the ncx file, just like opf, except adding reading order
                     attributes (using template counters)
-                Finally, zip everything together as the spec describes and 
+                Finally, zip everything together as the spec describes and
                     create the *.epub file
             '''
         self.make_mimetype()
@@ -103,7 +103,7 @@ class Epub_Package(object):
         #
         self.zip_ebook()
 #        self.cleanup()
-        
+
     def get_htmlnames(self):
         htmlnames = list()
         htmlnames.append(split_name(self.data.get('url')))#top-level file
@@ -113,7 +113,7 @@ class Epub_Package(object):
                 htmlnames.append(split_name(subsubsection.get('url')))
                 for subsubsubsection in subsubsection.get('subs', list()):
                     htmlnames.append(split_name(subsubsubsection.get('url')))
-        self.data['htmlnames'] = htmlnames 
+        self.data['htmlnames'] = htmlnames
 
     def get_image_css_names(self):
         cssnames = list()
@@ -132,14 +132,14 @@ class Epub_Package(object):
 
         for imagename in set(imagenames):
             self.data['imagenames'].append(split_name(imagename))
-            
+
     def make_mimetype(self):
-        fd = open(os.path.join(self.root_dir, 'mimetype'), 'wb')
+        fd = open(os.path.join(self.root_dir, 'mimetype'), 'w')
         fd.write(templates.mimetype)
         fd.close()
 
     def make_container(self):
-        fd = open(os.path.join(self.root_dir, 'container.xml'), 'wb')
+        fd = open(os.path.join(self.root_dir, 'container.xml'), 'w')
         fd.write(templates.container)
         fd.close()
 
@@ -148,17 +148,17 @@ class Epub_Package(object):
         context.addGlobal('data', self.data)
         compiled = simpleTAL.compileXMLTemplate(templates.titlepage)
 
-        fd0 = open(os.path.join(self.root_dir, 'titlepage.html'), 'wb')
+        fd0 = open(os.path.join(self.root_dir, 'titlepage.html'), 'w')
         compiled.expand(context, fd0, outputEncoding=self.encoding,suppressXMLDeclaration=True)
         fd0.close()
-        
+
     def make_opf(self):
         context = simpleTALES.Context()
         context.addGlobal('data', self.data)
         context.addGlobal('date', datetime.date.isoformat(datetime.date.today()))
         compiled = simpleTAL.compileXMLTemplate(templates.opf)
 
-        fd = open(os.path.join(self.root_dir, 'content.opf'), 'wb')
+        fd = open(os.path.join(self.root_dir, 'content.opf'), 'w')
         compiled.expand(context, fd, outputEncoding=self.encoding)
         fd.close()
 
@@ -167,7 +167,7 @@ class Epub_Package(object):
         context.addGlobal('data', self.data)
         compiled = simpleTAL.compileXMLTemplate(templates.ncx)
 
-        fd = open(os.path.join(self.root_dir, 'toc.ncx'), 'wb')
+        fd = open(os.path.join(self.root_dir, 'toc.ncx'), 'w')
         compiled.expand(context, fd, outputEncoding=self.encoding, docType=NCX_DOCTYPE)
         fd.close()
 
@@ -186,7 +186,7 @@ class Epub_Package(object):
                 if os.path.isfile(os.path.join(self.root_dir, fname)):
                     z.write(os.path.join(self.root_dir, fname), arcname='OEBPS/%s' % fname)
         z.close()
-        
+
     def cleanup(self):
         'Comment this method for debugging'
         for fname in ['mimetype',
@@ -224,18 +224,18 @@ class EpubRenderer(XHTMLRenderer):
         properties['name'] = document.userdata.get('jobname','index')
 
         package = Epub_Package(properties)
-        package.pack()                  
-        
+        package.pack()
+
     def cleanup(self, document, files, postProcess=None):
         res = XHTMLRenderer.cleanup(self, document, files, postProcess=postProcess)
         self.database = dict()
         self.doEpubFiles(document)
         return res
-    
+
     def makeTOCData(self, document):
         ''' get the toc data from the document, return a list of dictionaries.
             each dictionary has a title, url and a list of subsections. Each
-            subsection is a similar dictionary. nested down as far as the 
+            subsection is a similar dictionary. nested down as far as the
             actual table of contents in the doc.
             We want a nice toc for the ebook, and that's why we package multiple
             html files up instead of creating one monolithic html file.
@@ -275,7 +275,5 @@ class Epub(object):
         renderer = EpubRenderer()
         renderer.chapterName = self.name
         renderer.render(self.doc)
-        
+
 Renderer = EpubRenderer
-
-

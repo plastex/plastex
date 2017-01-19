@@ -85,7 +85,7 @@ class TemplateCache:
 	def _cacheTemplate_ (self, name, inputEncoding, xmlTemplate=0):
 		self.cacheLock.acquire ()
 		try:
-			tempFile = open (name, 'rb')
+			tempFile = open (name, 'r')
 			if (xmlTemplate):
 				# We know it is XML
 				template = simpleTAL.compileXMLTemplate (tempFile)
