@@ -615,12 +615,13 @@ class Imager(object):
         p = subprocess.Popen(shlex.split(cmd),
                      stdout=subprocess.PIPE,
                      stderr=subprocess.STDOUT,
+                     universal_newlines=True
                      )
         while True:
             line = p.stdout.readline()
             done = p.poll()
             if line:
-                imagelog.info(str(line.strip()))
+                imagelog.info(line.strip())
             elif done is not None:
                 break
 
@@ -662,6 +663,7 @@ class Imager(object):
         p = subprocess.Popen(shlex.split(cmd),
                              stdout=subprocess.PIPE,
                              stderr=subprocess.STDOUT,
+                             universal_newlines=True
                            )
         done = None
         while True:

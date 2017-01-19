@@ -33,7 +33,7 @@ class Process(object):
         if 'stderr' not in kwargs:
             kwargs['stderr'] = subprocess.STDOUT
         self.process = subprocess.Popen(args, **kwargs)
-        self.log = self.process.stdout.read()
+        self.log = self.process.stdout.read().decode('utf8')
         self.returncode = self.process.returncode
         self.process.stdout.close()
         self.process.stdin.close()
@@ -46,7 +46,7 @@ class Benched(TestCase):
     def runTest(self):
         if not self.filename:
             return
-            
+
         src = self.filename
         root = os.path.dirname(os.path.dirname(src))
 
@@ -61,7 +61,7 @@ class Benched(TestCase):
                 command = line[2:].strip()
                 p = Process(cwd=outdir, *command.split())
                 if p.returncode:
-                    raise OSError, 'Preprocessing command exited abnormally with return code %s: %s' % (command, p.log) 
+                    raise OSError, 'Preprocessing command exited abnormally with return code %s: %s' % (command, p.log)
             elif line.startswith('%#'):
                 filename = line[2:].strip()
                 shutil.copyfile(os.path.join(root,'extras',filename),
@@ -76,7 +76,7 @@ class Benched(TestCase):
         # Run plastex
         outfile = os.path.join(outdir, os.path.splitext(os.path.basename(src))[0]+'.html')
         plastex = which('plastex') or 'plastex'
-        python = sys.executable 
+        python = sys.executable
         p = Process(python, plastex,'--split-level=0','--no-theme-extras',
                     '--dir=%s' % outdir,'--theme=minimal',
                     '--filename=%s' % os.path.basename(outfile), os.path.basename(src),
@@ -113,7 +113,7 @@ class Benched(TestCase):
 
         # Clean up
         shutil.rmtree(outdir, ignore_errors=True)
-                
+
 def testSuite():
     """ Locate all .tex files and create a test suite from them """
     suite = unittest.TestSuite()
@@ -132,4 +132,3 @@ def test():
 
 if __name__ == '__main__':
     test()
-

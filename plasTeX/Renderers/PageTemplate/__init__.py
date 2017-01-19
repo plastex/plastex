@@ -550,7 +550,7 @@ class PageTemplate(BaseRenderer):
                 if ord(item) > 127:
                     s[i] = '&#%.3d;' % ord(item)
             s = ''.join(s)
-
+        
         return BaseRenderer.processFileContent(self, document, s)
 
     def setImageData(self, m):

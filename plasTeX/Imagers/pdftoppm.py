@@ -24,7 +24,8 @@ class pdftoppm(_Imager):
         proc = subprocess.Popen('%s --help' % cmd,
                                 shell=True,
                                 stdout=subprocess.PIPE,
-                                stderr=subprocess.STDOUT)
+                                stderr=subprocess.STDOUT,
+                                universal_newlines=True)
         return 'pdftoppm' in proc.communicate()
 
     def executeConverter(self, output):
