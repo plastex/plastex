@@ -787,6 +787,7 @@ class TeXFragment(DocumentFragment):
     def source(self):
         return sourceChildren(self)
 
+
 class TeXDocument(Document):
     """ TeX Document node """
     documentFragmentClass = TeXFragment
@@ -828,6 +829,9 @@ class TeXDocument(Document):
 
         # post parsing callbacks list
         self.postParseCallbacks = []
+
+        self.packageResources = []
+        self.rendererdata = dict()
 
     def createElement(self, name):
         elem = self.context[name]()
