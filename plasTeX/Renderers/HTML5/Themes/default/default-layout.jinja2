@@ -1,7 +1,7 @@
 {% set links = obj.links %}
 {% set doc = obj.ownerDocument.getElementsByTagName('document')[0] %}
 {% set toc = doc.tableofcontents if config.html5['display-toc'] else None %}
-{% set userdata = obj.ownerDocument.userdata %}
+{% set rendererdata = obj.ownerDocument.rendererdata['html5'] %}
 {% macro tocEntry(section) %}
 <span class="toc_ref">{{ section.ref.textContent }}</span> <span class="toc_entry">{{ section.tocEntry }}</span>{% endmacro %}
 {% macro isActive(section) %}
@@ -46,7 +46,7 @@
 {% if links.up.url %}
 <link rel="up" href="{{ links.up.url }}" title="{{ links.up.title.textContent }}" />
 {% endif %}
-{% for css in userdata.get('css', []) %}
+{% for css in rendererdata.get('css', []) %}
 <link rel="stylesheet" href="styles/{{ css }}" />
 {% endfor %}
 </head>
@@ -122,7 +122,7 @@
 </div>
 
 <nav class="prev_up_next">
-{% for nav in userdata.get('extra-nav', []) %}
+{% for nav in rendererdata.get('extra-nav', []) %}
   {{ icon(nav['icon'], id=nav['id'], class=nav['class']) }}
 {% endfor %}
   {% if links.prev.url %}
@@ -140,7 +140,7 @@
 {% if toc %}{{ icon('list-numbered', id='toc-toggle')}}{% endif %}
 </nav>
 
-{% for js in userdata.get('js', []) %}
+{% for js in rendererdata.get('js', []) %}
 <script type="text/javascript" src="js/{{ js }}"></script>
 {% endfor %}
 </div>
