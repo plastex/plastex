@@ -1065,7 +1065,7 @@ class ConfigManager(UserDict, object):
 
         """
         for section in list(self.values()):
-           for option in list(section.values()):
+           for option in list(section.data.values()):
               if not option.mandatory: continue
               if option.getValue() in [None,[]]:
                  names = ', '.join(option.getPossibleOptions())
