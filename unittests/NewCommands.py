@@ -194,7 +194,7 @@ class NewCommands(TestCase):
         s = TeX()
         s.input(r'\chardef\foo=65\relax\foo')
         output = [x for x in s]
-        assert output[-1].unicode == 'A', output
+        assert output[-1].str == 'A', output
 
 
 class Python(TestCase):
