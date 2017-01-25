@@ -439,6 +439,7 @@ class NamedNodeMap(dict):
             self[key] = value
 
 
+
 def _compareDocumentPosition(self, other):
     """
     Compare the position of the current node to `other`
@@ -1140,6 +1141,17 @@ class Node(object):
     def isEqualNode(self, other):
         """ Is this node equivalent to `other`? """
         return other == self
+
+    def __eq__(self, other):
+        try:
+            return (self.nodeName == other.nodeName and
+                    self.attributes == other.attributes and
+                    self.childNodes == other.childNodes)
+        except:
+            return False
+
+    def __hash__(self):
+        return id(self)
 
     def __lt__(self, other):
         try:
