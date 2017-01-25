@@ -1064,8 +1064,8 @@ class ConfigManager(UserDict, object):
         Make sure that all mandatory options have been set
 
         """
-        for section in list(self.values()):
-           for option in list(section.data.values()):
+        for section in self.values():
+           for option in section.data.values():
               if not option.mandatory: continue
               if option.getValue() in [None,[]]:
                  names = ', '.join(option.getPossibleOptions())
