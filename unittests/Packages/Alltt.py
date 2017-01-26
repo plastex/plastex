@@ -3,7 +3,16 @@
 import unittest, re, os, tempfile, shutil
 from plasTeX.TeX import TeX
 from unittest import TestCase
-from BeautifulSoup import BeautifulSoup as Soup
+
+# Will try to use obsolete, but good enough for us, BeautifulSoup 3 if
+# BeautifulSoup 4 is not available. Need to cope with slight API difference
+try:
+    from bs4  import BeautifulSoup
+    def Soup(source):
+        return BeautifulSoup(source, 'html.parser')
+except ImportError:
+    from BeautifulSoup import BeautifulSoup as Soup
+
 
 class Alltt(TestCase):
 
@@ -24,12 +33,12 @@ class Alltt(TestCase):
 
     def runPreformat(self, content):
         """
-        This method compiles and renders a document fragment and 
+        This method compiles and renders a document fragment and
         returns the result
 
         Arguments:
         content - string containing the document fragment
-      
+
         Returns: content of output file
 
         """

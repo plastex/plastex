@@ -87,7 +87,7 @@ def main(argv):
 
     # Load renderer
     try:
-        exec('from plasTeX.Renderers.%s import Renderer' % rname)
+        exec('from plasTeX.Renderers.%s import Renderer' % rname, globals())
     except ImportError, msg:
         log.error('Could not import renderer "%s".  Make sure that it is installed correctly, and can be imported by Python.' % rname)
         sys.exit(1)
