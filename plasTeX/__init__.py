@@ -822,6 +822,16 @@ class TeXDocument(Document):
         self.packageResources = []
         self.rendererdata = dict()
 
+    def addPackageResource(self, resource):
+        """
+        Adds a pacakge resource or a list of package resources to 
+        self.packageResources.
+        """
+        if isinstance(resource, list):
+            self.packageResources.extend(resource)
+        else:
+            self.packageResources.append(resource)
+
     def createElement(self, name):
         elem = self.context[name]()
         elem.parentNode = None
