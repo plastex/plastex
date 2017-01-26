@@ -19,12 +19,12 @@ class Longtables(unittest.TestCase):
         """
         tex = TeX()
         tex.disableLogging()
-        tex.input(ur'''\document{article}\begin{document}%s\end{document}''' % content)
+        tex.input(r'\document{article}\begin{document}%s\end{document}' % content)
         return tex.parse()
 
     def testString(self):
         # Bad character encoding
-        locale.setlocale(locale.LC_ALL, "en_GB.iso8859-1")
+        locale.setlocale(locale.LC_ALL, "C")
         out = self.runDocument(u"é")
 
 if __name__ == '__main__':

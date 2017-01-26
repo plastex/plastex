@@ -107,7 +107,7 @@ class ArgumentParsing(TestCase):
         s = TeX()
         s.input('{one=1, two={\par}, three={$(x,y)$}, four=4}')
         arg = s.readArgument(type='dict')
-        keys = arg.keys()
+        keys = list(arg.keys())
         keys.sort()
         expectkeys = ['four','one','three','two']
         assert keys == expectkeys, '"%s" != "%s"' % (keys, expectkeys)
@@ -382,7 +382,7 @@ class ArgumentParsing(TestCase):
 
         s.input('{one=1, two={\mycount} , three={3}}')
         arg = s.readArgument(type='dict', expanded=True)
-        keys = arg.keys()
+        keys = list(arg.keys())
         keys.sort()
         assert keys == ['one', 'three', 'two']
 

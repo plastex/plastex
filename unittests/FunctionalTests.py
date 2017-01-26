@@ -61,7 +61,7 @@ class Benched(TestCase):
                 command = line[2:].strip()
                 p = Process(cwd=outdir, *command.split())
                 if p.returncode:
-                    raise OSError, 'Preprocessing command exited abnormally with return code %s: %s' % (command, p.log)
+                    raise OSError('Preprocessing command exited abnormally with return code %s: %s' % (command, p.log))
             elif line.startswith('%#'):
                 filename = line[2:].strip()
                 shutil.copyfile(os.path.join(root,'extras',filename),
@@ -83,7 +83,7 @@ class Benched(TestCase):
                     cwd=outdir)
         if p.returncode:
             shutil.rmtree(outdir, ignore_errors=True)
-            raise OSError, 'plastex failed with code %s: %s' % (p.returncode, p.log)
+            raise OSError('plastex failed with code %s: %s' % (p.returncode, p.log))
 
         # Read output file
         output = open(outfile)
@@ -99,7 +99,7 @@ class Benched(TestCase):
             newfile = os.path.join(root,'new',os.path.basename(outfile))
             open(newfile,'w').write(output.read())
             shutil.rmtree(outdir, ignore_errors=True)
-            raise OSError, 'No benchmark file: %s' % benchfile
+            raise OSError('No benchmark file: %s' % benchfile)
 
         # Compare files
         diff = ''.join(list(difflib.unified_diff(bench, output))).strip()

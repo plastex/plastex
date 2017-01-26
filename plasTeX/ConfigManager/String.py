@@ -27,6 +27,7 @@ class StringOption(StringParser, GenericOption, UserString):
                       source=DEFAULTS['source']):
       UserString.__init__(self, '')
       GenericOption.initialize(self, locals())
+      self.data = self.data or ''
 
    def cast(self, arg):
       if arg is None: return
