@@ -66,24 +66,13 @@ class HTML5(_Renderer):
             rendererdata['js'] = []
 
         for resrc in document.packageResources:
-            if 'html5' not in resrc.renderers:
-                continue
-            # Next line may load templates for instance
-            resrc.alterRenderer(self)
-            if resrc.key:
-                if isinstance(resrc.data, list):
-                    data = resrc.data
-                else:
-                    data = [resrc.data]
-                rendererdata.setdefault(resrc.key, []).extend(data)
-            if resrc.copy:
-                source = os.path.join(rendererDir, resrc.package, resrc.data)
-                if os.path.isfile(source):
-                    shutil.copy(
-                            source,
-                            os.path.join(buildDir, resrc.outdir))
-                else:
-                    log.error('Package resource file not found :'+source)
+            # Next line may load templates or change
+            # document.rendererdata['html5'] or copy some files to buildDir
+            resrc.alter(
+                    renderer=self,
+                    rendererName='html5',
+                    document=document,
+                    target=buildDir)
 
         # Last loaded files (hence overriding everything else) come from user
         # configuration
