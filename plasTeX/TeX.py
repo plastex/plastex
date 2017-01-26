@@ -201,7 +201,7 @@ class TeX(object):
                 flag = plasTeX.Command()
                 self.pushToken(flag)
                 self.input(f)
-                self.ownerDocument.context.packages[file] = options or {}
+                self.ownerDocument.context.packages[myfile] = options or {}
                 for tok in self:
                     if tok is flag:
                         break
