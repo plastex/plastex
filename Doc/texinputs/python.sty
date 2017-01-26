@@ -7,6 +7,7 @@
              [1998/01/11 LaTeX package (Python markup)]
 
 \RequirePackage{longtable}
+\RequirePackage{ifpdf}
 
 % Uncomment these two lines to ignore the paper size and make the page 
 % size more like a typical published manual.
@@ -31,7 +32,6 @@
 \newif\ifpy@doing@page@targets
 \py@doing@page@targetsfalse
 
-\newif\ifpdf\pdffalse
 \ifx\pdfoutput\undefined\else\ifcase\pdfoutput
 \else
   \pdftrue
@@ -844,7 +844,7 @@
 % Also for consistency: spell Python "Python", not "python"!
 
 % code is the most difficult one...
-%\newcommand{\code}[1]{\textrm{\@vobeyspaces\@noligs\def\{{\char`\{}\def\}{\char`\}}\def\~{\char`\~}\def\^{\char`\^}\def\e{\char`\\}\def\${\char`\$}\def\#{\char`\#}\def\&{\char`\&}\def\%{\char`\%}%
+\newcommand{\code}[1]{\textrm{\@vobeyspaces\@noligs\def\{{\char`\{}\def\}{\char`\}}\def\~{\char`\~}\def\^{\char`\^}\def\e{\char`\\}\def\${\char`\$}\def\#{\char`\#}\def\&{\char`\&}\def\%{\char`\%}%
 \texttt{#1}}}
 
 \newcommand{\bfcode}[1]{\code{\bfseries#1}} % bold-faced code font
