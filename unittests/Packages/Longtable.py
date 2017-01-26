@@ -156,24 +156,15 @@ class Longtables(TestCase):
         for caption in captions:
             doc = self.runDocument(r'''\begin{longtable}{lll} %s 1 & 2 & 3 \end{longtable}''' % caption)
 
-            # Make sure that we only have one caption
+            # Make sure the caption has been captured by longtable
             caption = doc.getElementsByTagName('caption')
-            assert len(caption) == 1, 'Too many captions'
-            caption = caption[0]
+            assert not caption, 'Too many captions'
 
             # Make sure that the caption node matches the caption on the table
             table = doc.getElementsByTagName('longtable')[0]
+            caption = table.title
             assert caption is not None, 'Caption is empty'
-            assert table.caption is not None, 'Table caption is empty'
-            assert table.caption is caption, 'Caption does not match table caption'
-
-            # Make sure that the caption is the sibling of the caption
-            assert table.previousSibling is caption, 'Previous sibling is not the caption'
-            assert caption.nextSibling is table, 'Next sibling is not the table'
-
-            # Make sure that we got the right caption
-            text = caption.textContent.strip()
-            assert text == 'Caption Text', 'Caption text should be "Caption Text", but is "%s"' % text
+            assert table.title.textContent.strip() == u'Caption Text', 'Caption does not match table caption'
 
     def testKill(self):
         doc = self.runDocument(r'''\begin{longtable}{lll} 1 & 2 & 3 \\ longtext & & \kill\end{longtable}''')
