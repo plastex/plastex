@@ -19,7 +19,7 @@ class Longtables(TestCase):
         """
         tex = TeX()
         tex.disableLogging()
-        tex.input(r'''\document{article}\usepackage{longtable}\begin{document}%s\end{document}''' % content)
+        tex.input(r'''\documentclass{article}\usepackage{longtable}\begin{document}%s\end{document}''' % content)
         return tex.parse()
 
     def runTable(self, content):
