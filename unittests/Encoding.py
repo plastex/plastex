@@ -19,7 +19,7 @@ class Longtables(unittest.TestCase):
         """
         tex = TeX()
         tex.disableLogging()
-        tex.input(ur'''\document{article}\begin{document}%s\end{document}''' % content)
+        tex.input(r'\document{article}\begin{document}%s\end{document}' % content)
         return tex.parse()
 
     def testString(self):
