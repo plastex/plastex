@@ -71,7 +71,7 @@ mixed into the \class{Node} class in the \method{render} method.
 It is unmixed at the end of the \method{render} method.  The details
 of the \class{Renderable} class are discussed in section \ref{sec:renderable}.
 
-\section{Simple Renderer Example}
+\section{Simple Renderer Example}\label{sec:simple-renderer-ex}
 
 It is possible to write a renderer with just a couple of methods:
 \method{default} and \method{textDefault}.
@@ -236,6 +236,54 @@ that accepts a node as an argument can be used.  The
 Zope Page Template (ZPT) renderer included with \plasTeX\ is an example 
 of how to write a renderer that uses a templating language to render
 the nodes (see section \ref{sec:zpt}).
+
+\subsection{Using a Renderer from the plastex Script}
+
+In the preceding sections, the simple renderer example was called from
+a custom python script. In order to use it through the
+main plastex script (described in Chapter~\ref{sec:command-line}), it
+needs to be located in some directory
+\verb+plasTeX/Renderers/SimpleRenderer+, where \verb+plasTeX+ is the
+directory containing the plastex script. This directory must contain a
+\verb+__init__.py+ file defining the \var{Renderer} class (with this
+name). This directory can also contain a \verb+Themes+ directory in
+order to use the theme option described in
+Section~\ref{sec:general-options}. Each subdirectory in the
+\verb+Themes+ directory is considered as a theme.
+
+Each renderer can define its own configuration options which are loaded
+by the plastex script. This is done in a file named \verb+Config.py+
+in the renderer directory. This file must define a variable named
+\var{config} which is a ConfigManager instance, as described in
+Section~\ref{sec:configuration-api}. Inspiration can be drawn from the
+file defining the global configuration which is
+\verb+plasTeX/Config.py+.
+
+For instance, one could add a file
+\verb+plasTeX/Renderers/SimpleRenderer/Config.py+ containing:
+
+\begin{verbatim}
+from plasTeX.ConfigManager import *
+
+config = ConfigManager()
+
+section = config.add_section('simplerenderer')
+
+config.add_category('simplerenderer', 'Simple Renderer Options')
+
+section['my-option'] = StringOption(
+    """ My option """,
+    options='--my-option',
+    category='simplerenderer',
+    default='',
+)
+\end{verbatim}
+
+Options values are attached to the document currently rendered. For
+instance, in the \var{default} method implemented in
+Section~\ref{sec:simple-renderer-ex}, which takes a node argument, one
+could access the value of the option defined above as
+\verb+node.ownerDocument.config['simplerenderer']['my-option']+.
 
 
 \section{Renderable Objects\label{sec:renderable}}
@@ -485,7 +533,8 @@ raise an \exception{AttributeError} exception.
 
 The Page Template (PT) renderer is a renderer for \plasTeX\ document
 objects that supports various page template engines such as 
-\href{http://www.zope.org/Documentation/Books/ZopeBook/2_6Edition/ZPT.stx}{Zope Page Templates (ZPT)}, 
+\href{http://www.zope.org/Documentation/Books/ZopeBook/2_6Edition/ZPT.stx}{Zope
+Page Templates (ZPT)}, \href{http://jinja.pocoo.org/}{Jinja2 templates},
 \href{http://www.cheetahtemplate.org/}{Cheetah templates}, 
 \href{http://kid-templating.org/}{Kid templates}, 
 \href{http://genshi.edgewall.org/}{Genshi templates}, 
@@ -551,6 +600,7 @@ names in the document object.
 The extensions used for all templating engines are shown in the table below.
 \begin{tableiii}{l|l|l}{}{Engine}{Extension}{Output Type}
 \lineiii{ZPT}{.html, .htm, .zpt}{HTML}
+\lineiii{Jinja2}{.jinja2}{Any}
 \lineiii{}{.xhtml, .xhtm, .xml}{XML/XHTML}
 \lineiii{Python string formatting}{.pyt}{Any}
 \lineiii{Python string templates}{.st}{Any}
@@ -573,7 +623,8 @@ textit.html
 Since there are a lot of templates that are merely one line, it would be
 inconvenient to have to create a new file for each template.  In cases
 like this, you can use the \file{.zpts} extension for collections of
-ZPT templates, or more generally \file{.pts} for collections of various 
+ZPT templates, or the \file{.jinja2s} extension for collections of
+Jinja2 templates, or more generally \file{.pts} for collections of various 
 template types.  Files with this
 extension have multiple templates in them.  Each template is separated
 from the next by the template metadata which includes things like the 
@@ -583,8 +634,8 @@ metadata names are currently supported.
 \begin{tableii}{l|p{4in}}{}{Name}{Purpose}
 \lineii{engine}{the name of the templating engine to use.  At the time of
     this writing, the value could be zpt, tal (same as zpt), 
-    html (ZPT HTML template), xml (ZPT XML template), python
-    (Python formatted string), string (Python string template),
+    html (ZPT HTML template), xml (ZPT XML template), jinja2, 
+    python (Python formatted string), string (Python string template),
     kid, cheetah, or genshi.}
 \lineii{name}{the name or names of the template that is to follow. 
     This name is used as the key in the renderer, and also 
@@ -650,26 +701,33 @@ template.  By default, templates in a zpts file use the HTML compiler
 in SimpleTAL.  You can specify that a template is an XML template by using
 the type directive.
 
-Here is an example of using various types of templates in a single file.
+Here is an example of using various templates engines in a single file.
 \begin{verbatim}
+name: equation
+engine: jinja2
+<div class="equation" id="{{ obj.id }}">
+  <span class="equation_label">{{ obj.ref }}</span>
+  {{ obj }}
+</div>
+
 name: textbf
-type: python
+engine: python
 <b>%(self)s</b>
 
 name: textit
-type: string
+engine: string
 <i>${self}</i>
 
 name: textsc
-type: cheetah
+engine: cheetah
 <span class="textsc">${here}</span>
 
 name: textrm
-type: kid
+engine: kid
 <span class="textrm" py:content="XML(unicode(here))">normal text</span>
 
 name: textup
-type: genshi
+engine: genshi
 <span class="textup" py:content="markup(here)">upcase text</span>
 \end{verbatim}
 
@@ -677,14 +735,15 @@ There are several variables inserted into the template namespace.  Here is
 a list of the variables and the templates that support them.
 
 \begin{center}
-\begin{tabular}{|l|l|l|l|}\hline
-\textbf{Object} & \textbf{ZPT/Python Formats/String Template} & 
+\begin{tabular}{|l|l|l|l|l|}\hline
+\textbf{Object} & \textbf{ZPT/Python Formats/String Template} &
+\textbf{Jinja2} &
     \textbf{Cheetah} & \textbf{Kid/Genshi}\\\hline
-document node & \var{self} or \var{here} & \var{here} & \var{here} \\
-parent node & \var{container} & \var{container} & \var{container} \\
-document config & \var{config} & \var{config} & \var{config} \\
-template instance & \var{template} &  & \\
-renderer instance & \var{templates} & \var{templates} & \var{templates} \\\hline
+document node & \var{self} or \var{here} & \var{obj} or \var{here} &  \var{here} & \var{here} \\
+parent node & \var{container} & \var{container} & \var{container} & \var{container} \\
+document config & \var{config} & \var{config} & \var{config} & \var{config} \\
+template instance & \var{template} &  & & \\
+renderer instance & \var{templates} & \var{templates} & \var{templates} & \var{templates} \\\hline
 \end{tabular}
 \end{center}
 
@@ -694,6 +753,12 @@ escape characters like <, >, and \&.  In order to get HTML/XML markup from
 the variables you must wrap them in the code shown in the example above.
 Hopefully, this limitation will be removed in the future.
 
+When using Jinja2 templates, the default configuration trims white spaces
+before and after template tags (see trim_blocks and lstrip_blocks in Jinja2's
+documentation).
+Also, when developing Jinja2 templates, inserting \verb+{{ debug() }}+
+will launch a python debugger session to allow inspection of the
+\var{context} variable during rendering.
 
 \subsubsection{Template Overrides\label{sec:tmploverrides}}
 
