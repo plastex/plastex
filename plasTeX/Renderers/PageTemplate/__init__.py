@@ -17,6 +17,41 @@ from plasTeX.Renderers.PageTemplate.simpletal.simpleTALES import Context as TALC
 
 log = plasTeX.Logging.getLogger()
 
+# Support for Jinja2 templates
+try: 
+    from jinja2 import Environment, contextfunction
+except ImportError:
+    def jinja2template(s, encoding='utf8'):
+        def renderjinja2(obj):
+            return s
+        return renderjinja2
+else:
+    try:
+        import ipdb as pdb
+    except ImportError:
+        import pdb
+        
+    @contextfunction
+    def debug(context):
+        pdb.set_trace()
+
+    def jinja2template(s, encoding='utf8'):
+        env = Environment(trim_blocks=True, lstrip_blocks=True)
+        env.globals['debug'] = debug
+
+        def renderjinja2(obj, s=s):
+            tvars = {'here':obj, 
+                     'obj':obj,
+                     'container':obj.parentNode,
+                     'config':obj.ownerDocument.config,
+                     'context':obj.ownerDocument.context,
+                     'templates':obj.renderer}
+
+            tpl = env.from_string(s)
+            return tpl.render(tvars) 
+
+        return renderjinja2
+
 # Support for Python string templates
 def stringtemplate(s):
     template = string.Template(s)
@@ -89,7 +124,7 @@ try:
        return rendercheetah
 
 except (ImportError, AttributeError):
-   print('Could not import CHEETAH')
+
    def cheetahtemplate(s):
        def rendercheetah(obj):
            return str(s)
@@ -249,6 +284,7 @@ class PageTemplate(BaseRenderer):
         self.registerEngine('genshi', None, '.gen', genshihtmltemplate)
         self.registerEngine('genshi', 'xml', '.genx', genshixmltemplate)
         self.registerEngine('genshi', 'text', '.gent', genshitexttemplate)
+        self.registerEngine('jinja2', None, '.jinja2', jinja2template)
 
     def registerEngine(self, name, type, ext, function):
         """
@@ -318,7 +354,7 @@ class PageTemplate(BaseRenderer):
                 self.importDirectory(theme)
 
                 extensions = []
-                for e in list(self.engines.values()):
+                for e in self.engines.values():
                     extensions += e.ext + [x+'s' for x in e.ext]
 
                 if document.config['general']['copy-theme-extras']:
@@ -367,12 +403,12 @@ class PageTemplate(BaseRenderer):
         self.aliases = {}
 
         enames = {}
-        for key, value in list(self.engines.items()):
+        for key, value in self.engines.items():
             for i in value.ext:
                 enames[i+'s'] = key[0]
 
         singleenames = {}
-        for key, value in list(self.engines.items()):
+        for key, value in self.engines.items():
             for i in value.ext:
                 singleenames[i] = key[0]
 
@@ -402,7 +438,7 @@ class PageTemplate(BaseRenderer):
 
                 options = {'name':basename}
 
-                for value in list(self.engines.values()):
+                for value in self.engines.values():
                     if ext in value.ext:
                         options['engine'] = singleenames[ext.lower()]
                         self.parseTemplates(f, options)
@@ -442,7 +478,7 @@ class PageTemplate(BaseRenderer):
                 log.warning('Both an alias and a template were specified for: %s' % ', '.join(names))
 
         # Resolve remaining aliases
-        for key, value in list(self.aliases.items()):
+        for key, value in self.aliases.items():
             if value in self:
                 self[key] = self[value]
             self.aliases.pop(key)
