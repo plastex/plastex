@@ -478,7 +478,7 @@ class PageTemplate(BaseRenderer):
                 log.warning('Both an alias and a template were specified for: %s' % ', '.join(names))
 
         # Resolve remaining aliases
-        for key, value in self.aliases.items():
+        for key, value in list(self.aliases.items()):
             if value in self:
                 self[key] = self[value]
             self.aliases.pop(key)
@@ -624,3 +624,4 @@ class PageTemplate(BaseRenderer):
 
 # Set Renderer variable so that plastex will know how to load it
 Renderer = PageTemplate
+
