@@ -1511,7 +1511,7 @@ class TheCounter(Command):
             name = m.group(1)
 
             # If there is a reference to another \\thecounter, invoke it
-            if name.startswith('the'):
+            if name.startswith('the') and name != re.sub(r'^the', '', self.__class__.__name__):
                 return ''.join(tex.expandTokens(self.ownerDocument.createElement(name).invoke(tex)))
 
             # Get formatted value of the requested counter
