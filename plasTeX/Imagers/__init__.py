@@ -846,16 +846,20 @@ class Imager(object):
                     height = DimensionPlaceholder(tmpl.substitute({'filename':path, 'attr':'height'}))
                     height.imageUnits = width.imageUnits = self.imageUnits
                 else:
-                    img = PILImage.open(name)
-                    width, height = img.size
-                    scale = self.config['images']['scale-factor']
-                    if scale != 1:
-                        width = int(width * scale)
-                        height = int(height * scale)
-                        img.resize((width,height))
-                        img.save(path)
-                    else:
+                    if os.path.splitext(name)[1].lower() == '.svg':
                         shutil.copyfile(name, path)
+                        width = height = None
+                    else:
+                        img = PILImage.open(name)
+                        width, height = img.size
+                        scale = self.config['images']['scale-factor']
+                        if scale != 1:
+                            width = int(width * scale)
+                            height = int(height * scale)
+                            img.resize((width,height))
+                            img.save(path)
+                        else:
+                            shutil.copyfile(name, path)
 
             # If PIL is available, convert the image to the appropriate type
             else:
