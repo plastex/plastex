@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-from plasTeX.Tokenizer import Token, EscapeSequence
+import datetime
+from plasTeX.Tokenizer import Token, EscapeSequence, Other
 from plasTeX import Command, Environment, CountCommand
 from plasTeX import IgnoreCommand, sourceChildren
 from plasTeX.Logging import getLogger
@@ -514,3 +515,16 @@ class protected_write(write):
 
 class hfil(Command):
     pass
+
+class the(Command):
+    args = 'arg:cs'
+    def invoke(self, tex):
+        result = Command.invoke(self, tex) 
+        name = self.attributes['arg']
+        if name == 'year':
+            return [Other(datetime.datetime.now().strftime('%Y'))]
+        elif name == 'month':
+            return [Other(datetime.datetime.now().strftime('%-m'))]
+        elif name == 'day':
+            return [Other(datetime.datetime.now().strftime('%-d'))]
+        return [Other('???')]
