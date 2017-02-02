@@ -22,6 +22,7 @@ class PackageResource(object):
         self.package = package
         self.data = data
         self.key = key or self.key
+        self.workingdir = ''
 
     def alter(self, renderer=None, rendererName='', document=None, target=''):
         doIt = False
@@ -30,6 +31,7 @@ class PackageResource(object):
                 doIt = True
                 break
         if doIt:
+            self.workingdir = document.userdata.get('working-dir')
             self.alterRenderer(renderer)
             self.alterDocument(document=document, rendererName=rendererName)
             self.copyFile(renderer=renderer, target=target)
@@ -49,13 +51,19 @@ class PackageResource(object):
     def copyFile(self, renderer=None, target=None):
         if self.copy and renderer and target:
             rendererdir = rendererDir(renderer)
-            source = os.path.join(rendererdir, self.package, self.data)
-            if os.path.isfile(source):
+            source = os.path.join(self.workingdir, self.package, self.data)
+            try:
                 shutil.copy(
                         source,
                         os.path.join(target, self.outdir))
-            else:
-                log.error('Package resource file not found :'+source)
+            except IOError:
+                source = os.path.join(rendererdir, self.package, self.data)
+                try:
+                    shutil.copy(
+                            source,
+                            os.path.join(target, self.outdir))
+                except IOError:
+                    log.error('Package resource file not found :'+source)
 
 
 class PackageCss(PackageResource):
@@ -71,5 +79,12 @@ class PackageJs(PackageResource):
 class PackageTemplateDir(PackageResource):
     def alterRenderer(self, renderer):
         rendererdir = rendererDir(renderer)
-        renderer.importDirectory(
-                os.path.join(rendererdir, self.package, self.data or ''))
+        subdir = os.path.join(self.package, self.data or '')
+        userpath = os.path.join(self.workingdir, subdir)
+        rendererpath = os.path.join(rendererdir, subdir)
+        if os.path.isdir(userpath):
+            renderer.importDirectory(userpath)
+        elif os.path.isdir(rendererpath):
+            renderer.importDirectory(rendererpath)
+        else:
+            log.error('Package template directory not found :' + subdir)
