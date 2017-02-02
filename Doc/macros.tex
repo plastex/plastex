@@ -604,8 +604,8 @@ specified in the \environment{TEXINPUTS} environment variable.
 \plasTeX\ read the file and expand the macros therein just as \LaTeX\
 would do.
 
-Python packages are located using Python's search path.  This includes 
-all directories listed in \var{sys.path} as well as those listed in
+Python packages are located using Python's search paths, listed in
+\var{sys.path}. This includes the current directory as well as those listed in
 the \environment{PYTHONPATH} environment variable. After a package is
 loaded, it is checked to see if there is a function called
 \function{ProcessOptions} in its namespace.  If there is, that function
