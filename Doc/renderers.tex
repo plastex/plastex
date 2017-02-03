@@ -1308,43 +1308,57 @@ mathematics renderer.
 
 \subsection{Interactions with packages}\label{sec:html5-pkg}
 
-This section is useful for packages writers.  The HTML5 Renderer allows
-packages to interact with the rendering process in several ways. 
+This section is useful for packages authors. The HTML5 Renderer allows
+packages to interact with the rendering process in several ways through
+packages resources. Each such resources is wrapped in an object whose
+class inherits from \class{PackageResource} located in the module
+\module{plasTeX.PackageResource}. Those objects are typically attach to
+the document during package loading using the document
+\method{addPackageResource} method inside the \function{ProcessOptions}
+function.
 
 \subsubsection*{Extra input files}
 
-Inside the main renderer directory
-\file{plasTeX/Renderers/HTML5/} there are directories 
-\file{pkgTemplates}, \file{pkgCss} and \file{pkgJs} where any package
-can add a subdirectory. These must be registered in the package
-\function{ProcessOptions} function by adding the subdirectory name in
-\var{document.userdata['pkgTemplates']},
-\var{document.userdata['pkgCss']} or \var{document.userdata['pkgJs']}.
-Directories inside \file{pkgTemplates} contain templates which will
-override regular renderer templates. 
-Directories inside \file{pkgCss} contain CSS files which will
-be loaded (at least when using the default layout), in alphabetical
-order, after the theme CSS files, but before user defined extra CSS
-files.
-Directories inside \file{pkgJs} contain Javascript files which will
-be loaded (at least when using the default layout), in alphabetical
-order, after the theme Javascript files, but before user defined extra
-Javascript files.
-For instance, if a package \file{mypackage.py} wants to use all three
-possibilities, it must create, inside \file{plasTeX/Renderers/HTML5/}
-subdirectories \file{pkgTemplates/mypackage},
-\file{pkgCss/mypackage}, \file{pkgJs/mypackage} and contain a
-\function{ProcessOptions} function including the following:
+Inside the main renderer directory \file{plasTeX/Renderers/HTML5/}
+packages authors can add directories containing extra input files. 
+Users that create their own python packages for plasTeX can also put
+these files in a subdirectory of the working directory (from which
+plasTeX is invoked). The following example shows how a package can
+register templates overriding regular renderer templates, as well as
+extra CSS and javascript files. The following function should be part of a python package, say \file{mypkg.py}.
+
 \begin{verbatim}
 def ProcessOptions(options, document):
-    document.userdata.setdefault('pkgTemplates', []).append('mypackage')
-    document.userdata.setdefault('pkgCss', []).append('mypackage')
-    document.userdata.setdefault('pkgJs', []).append('mypackage')
+    css = PackageCss(
+        renderers='html5',
+        data='test.css',
+        package='mypkg')
+    js = PackageJs(
+        renderers='html5',
+        data='test.js',
+        package='mypkg')
+    tpl = PackageTemplateDir(
+        renderers='html5',
+        package='mypkg')
+
+    document.addPackageResource([css, js, tpl])
 \end{verbatim}
-In the example above, notice how \method{setdefault} is used to ensure
-creation of dictionary keys if needed (this happens to the first loaded
-package which wants to use these features) but without overwriting
-what could have been registered by earlier packages.
+
+When rendering any document containing \verb+\usepackage{mypkg}+,
+the HTML5 renderer will
+\begin{itemize}
+\item 
+    copy \file{plasTeX/Renderers/HTML5/mypkg/test.css}
+    to the \file{styles} subdirectory of the output directory
+    and call it from the default html layout
+\item 
+    copy \file{plasTeX/Renderers/HTML5/mypkg/test.js}
+    to the \file{js} subdirectory of the output directory
+    and call it from the default html layout
+\item
+    load any template contained in \file{plasTeX/Renderers/HTML5/mypkg/}, overiding the renderer default templates if needed.
+\end{itemize}
+
 
 \subsubsection*{Extra output files and filters}
 
@@ -1353,11 +1367,7 @@ define filters that are applied to any output file.
 
 In order to create new output files, any package can register a callback
 function taking a document as input a returning a list of created file
-names by adding it to the current document
-\var{userdata['preCleanupCallbacks']} list. Initially this key does not
-exist in \var{userdata} hence each package that uses this possibility
-must use the \method{setdefault} method, as explained in the previous
-section. As an example, let us write a package which adds some document
+names. As an example, let us write a package which adds some document
 statistics to an extra output file \file{stats.html} (we will not try to
 produce valid html below, only illustrate our point). The package module
 only needs to contain the following.
@@ -1368,23 +1378,25 @@ def ProcessOptions(options, document):
     def makeStats(document):
         nbChap = len(document.getElementsByTagName('chapter'))
         nbSec = len(document.getElementsByTagName('section'))
-        with open('stats.html', 'w') as file:
-            file.write("%d chapters and %d sections" % (nbChap, nbSec))
+        with open('stats.html', 'w') as outfile:
+            outfile.write("%d chapters and %d sections" % (nbChap, nbSec))
         return ['stats.html']
-    document.userdata.setdefault('preCleanupCallbacks', []).append(makeStats)
+    cb = PackageResource(
+        renderers='html5',
+        key='preCleanupCallbacks',
+        data=makeStats)
+    document.addPackageResource(cb)
 \end{verbatim}
 
-As suggested by the key name, those pre-cleanup callbacks are called before the
-renderer \method{cleanup} method. Packages can also register filters to
-be applied during the cleanup process. Those filters are functions that
-take a document and a string to filter and return the filtered string
-(using the document object to provide context if needed). They will be
-called on the content of each rendered file, after all files have been
-rendered. Packages can register such filter in
-\var{document.userdata['processFileContents']}. Again this key does not
-exist if no package wants to use it, so it should be used using
-\method{setdefault} as in the above example. This method can be used to
-call an external renderer to handle some complex environment (e.g. a
+As suggested by the key name, those pre-cleanup callbacks are called before
+the renderer \method{cleanup} method. Packages can also register filters to be
+applied during the cleanup process. Those filters are functions that take a
+document and a string to filter and return the filtered string (using the
+document object to provide context if needed). They will be called on the
+content of each rendered file, after all files have been rendered.
+Registration is analogous to pre-cleanup callbacks but replacing the key
+\verb+preCleanupCallbacks+ by \verb+processFileContents+. This method can be
+used to call an external renderer to handle some complex environment (e.g. a
 TikZ picture).
 
 
