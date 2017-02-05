@@ -31,7 +31,7 @@ class PackageResource(object):
                 doIt = True
                 break
         if doIt:
-            self.workingdir = document.userdata.get('working-dir')
+            self.workingdir = document.userdata.get('working-dir', '')
             self.alterRenderer(renderer)
             self.alterDocument(document=document, rendererName=rendererName)
             self.copyFile(renderer=renderer, target=target)
