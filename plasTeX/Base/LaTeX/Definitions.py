@@ -5,8 +5,6 @@ C.8 Definitions, Numbering, and Programming
 
 """
 
-import new
-
 from plasTeX import Command, Environment
 from plasTeX.Logging import getLogger
 
@@ -86,11 +84,11 @@ class newtheorem(Command):
         # rendering method, the type of theorem being retained in the thmName
         # attribute
         if attrs['*modifier*']:
-            newclass = new.classobj(str(name), (Environment,),
+            newclass = type(str(name), (Environment,),
                     {'caption': caption, 'nodeName': 'thmenv', 'thmName': name,
                         'args': '[title:str]'})
         else:
-            newclass = new.classobj(str(name), (Environment,),
+            newclass = type(str(name), (Environment,),
                     {'caption': caption, 'nodeName': 'thmenv', 'thmName': name,
                         'counter': counter, 'args': '[title:str]'})
         self.ownerDocument.context.addGlobal(name, newclass)

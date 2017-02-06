@@ -121,7 +121,6 @@ Example document:
 """
 
 import plasTeX
-import new
 
 
 class swapnumbers(plasTeX.Command):
@@ -234,7 +233,7 @@ class newtheorem(plasTeX.Command):
                 'forcePars': True,
                 'thestyle': style
             }
-        th = new.classobj(name, (theoremCommand,), data)
+        th = type(name, (theoremCommand,), data)
         self.ownerDocument.context.addGlobal(name, th)
 
 
