@@ -107,7 +107,7 @@ def test_copy_missing_file(monkeypatch, doc):
         renderer=object(),
         target='buildir')
 
-    mock_logger.assert_called_once()
+    assert mock_logger.call_count == 1
 
 def test_rendererDir():
     base = os.path.split(os.path.split(__file__)[0])[0]
@@ -164,4 +164,4 @@ def test_package_template_dir_missing(monkeypatch, doc):
         target='buildir')
 
 
-    mock_logger.assert_called_once()
+    assert mock_logger.call_count == 1
