@@ -1,0 +1,37 @@
+name: thmenv
+<div class="{{ obj.thmName }}_thmwrapper" id="{{ obj.id }}">
+  <div class="{{ obj.thmName }}_thmheading">
+    <span class="{{ obj.thmName }}_thmcaption">
+    {{ obj.caption }}
+    </span>
+	{% if obj.ref %}
+    <span class="{{obj.thmName}}_thmlabel">{{obj.ref}}</span>
+    {% endif %}
+    {% if obj.title %}
+    <span class="{{obj.thmName}}_thmtitle">{{ obj.title }}</span>
+    {% endif %}
+  </div>
+  <div class="{{ obj.thmName }}_thmcontent">
+  {{ obj }}
+  </div>
+</div>
+
+name: proof
+{% macro icon(icon, id='', class='') %}
+<svg  {% if id %}id="{{id}}" {% endif %}class="icon icon-{{ icon }} {{ class }}"><use xlink:href="symbol-defs.svg#icon-{{ icon }}"></use></svg>
+{% endmacro %}
+<div class="proof_wrapper" id="{{ obj.id }}">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    {% if obj.caption %}
+    {{ obj.caption }}
+    {% else %}
+    {{ context.terms['proof'] }}
+    {% endif %}
+    </span>
+    {{ icon('plus', class='expand-proof') }}
+  </div>
+  <div class="proof_content">
+  {{ obj }}
+  </div>
+</div>

@@ -1,0 +1,60 @@
+body
+{
+    margin: 0;
+
+    color: $main-text-color;
+    background-color: $background-color;
+    display: flex;
+    flex-direction: row;
+}
+
+
+// Main content
+
+div.wrapper {
+  width: 100%;
+}
+div.with-toc{
+	@media (min-width: $toc-break)
+  {
+    margin-left: $toc-width;
+  }
+}
+
+div.content
+{
+    padding: 1rem;
+    padding-bottom: $pun-height;
+
+	@media (min-width: $toc-break)
+    {
+        margin: 0 5%;
+    }
+}
+
+/* Alignment */
+div.centered {
+  display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: flex-end;
+  justify-content: space-around;
+	min-width: 100%;
+	margin: 0 auto;
+}
+
+div.flushleft, div.raggedright {
+  display: flex;
+  justify-content: flex-start;
+}
+div.flushright, div.raggedleft {
+  display: flex;
+  justify-content: flex-end;
+}
+div.raggedbottom {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+

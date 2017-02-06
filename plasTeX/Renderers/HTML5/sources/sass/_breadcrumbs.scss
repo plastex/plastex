@@ -1,0 +1,29 @@
+// Breadcrumbs
+
+ul.breadcrumbs
+{
+    margin: 1rem 0 0 0;
+    padding: 0;
+    padding-left: .5rem;
+
+    list-style: none;
+    font-size: small;
+}
+
+ul.breadcrumbs li
+{
+    display: inline;
+}
+
+ul.breadcrumbs a
+{
+    text-decoration: none;
+
+    color: darken($prevupnext-nav-color, 10%);
+}
+
+
+li.crumb::after
+{
+    content: ' / ';
+}

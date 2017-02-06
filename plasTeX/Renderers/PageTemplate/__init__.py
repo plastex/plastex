@@ -273,6 +273,7 @@ class PageTemplate(BaseRenderer):
 
     def __init__(self, *args, **kwargs):
         BaseRenderer.__init__(self, *args, **kwargs)
+        self.loadedTheme = None
         self.engines = {}
         htmlexts = ['.html','.htm','.xhtml','.xhtm','.zpt','.pt']
         self.registerEngine('pt', None, htmlexts, htmltemplate)
@@ -356,6 +357,7 @@ class PageTemplate(BaseRenderer):
             if os.path.isdir(theme):
                 log.info('Importing templates from %s' % theme)
                 self.importDirectory(theme)
+                self.loadedTheme = theme
 
                 extensions = []
                 for e in self.engines.values():
