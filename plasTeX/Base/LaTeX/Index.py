@@ -11,6 +11,8 @@ from plasTeX import Command, Environment, IgnoreCommand, encoding
 from plasTeX.Logging import getLogger
 from plasTeX.Base.LaTeX.Sectioning import SectionUtils
 
+log = getLogger()
+
 try:
     from plasTeX.Base.LaTeX.pyuca import Collator
     collator = Collator(os.path.join(os.path.dirname(__file__), 'allkeys.txt')).sort_key
