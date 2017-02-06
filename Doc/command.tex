@@ -1,5 +1,6 @@
 
 \chapter{\protect\program{plastex} --- The Command-Line Interface}
+\label{sec:command-line}
 
 While \plasTeX\ makes it possible to parse \LaTeX\ directly from Python
 code, most people will simply use the supplied command-line interface, 
@@ -38,18 +39,30 @@ what the filenames look like, rendering parameters, etc.  While
 \program{plastex} is the interface where the options are specified, for
 the most part these options are simply passed to the parser and renderers
 for their use.  It is even possible to create your own options for use
-in your own Python-based macros and renderers.
+in your own Python-based macros and renderers (see in particular
+Section~\ref{subsec:renderer-from-script}).
 The following options are currently available
-on the \program{plastex} command.  They are categorized for convenience. 
+on the \program{plastex} command. They are categorized for convenience. 
 
-\subsection{General Options}
+\subsection{General Options}\label{sec:general-options}
 
 \begin{configuration}{Configuration files}
 \options{\longprogramopt{config=\optval{config-file}} or
          \programopt{-c \optval{config-file}}}
 \config{general}{config}
 specifies a configuration file to load.  This should be the first option
-specified on the command-line.
+specified on the command-line. Below is a sample configuration file:
+\begin{verbatim}
+[general]
+renderer=HTML5
+copy-theme-extras=yes
+
+[document]
+lang-terms=lang.xml
+
+[files]
+split-level=1
+\end{verbatim}
 \end{configuration}
 
 \begin{configuration}{Kpsewhich}
@@ -96,6 +109,13 @@ specifies a base URL to prepend to the path of all links.
 \options{\longprogramopt{index-columns=\optval{integer}}}
 \config{document}{index-columns}
 specifies the number of columns to group the index into.
+\end{configuration}
+
+\begin{configuration}{Language terms}
+\options{\longprogramopt{lang-terms=\optval{string}}}
+\config{document}{lang-terms}
+Specifies a list of files that contain language terms, delimited by the
+OS path separator (such as : for POSIX and ; for Windows).
 \end{configuration}
 
 \begin{configuration}{Section number depth}
@@ -399,9 +419,10 @@ the document, parts, chapters, sections, and subsections.
 \subsection{Image Options\label{sec:config-images}}
 
 Images are created by renderers when the output type in incapable of 
-rendering the content in any other way.  This method is commonly used
-to display equations in HTML output.  The following options control
-how images are generated.
+rendering the content in any other way. This method was commonly used
+to display equations in XHTML output. Nowadays, MathJax arguably
+provides a better method, see Section~\ref{sec:config-html5} below.
+The following options control how images are generated.
 
 \begin{configuration}{Base URL}
 \options{\longprogramopt{image-base-url=\optval{url}}}
@@ -471,3 +492,125 @@ using the regular imager.  This bitmap is used to determine the
 depth information about the vector image and can also be used as
 a backup if the vector image is not supported by the viewer.}
 \end{configuration}
+
+\subsection{HTML5 Renderer Options\label{sec:config-html5}}
+
+Each renderer can define its own configuration options. This section
+describes options from the HTML5 renderer. These options have no effect
+if another renderer is used. Also these options may have no effect if
+the default theme is not used.
+
+The first three options give control on navigation helpers (tables of
+contents and breadcrumbs links). Together with the extra-css option,
+which allows to set css rules overriding the default ones, they allow
+radical changes to the output style without modifying any template or
+python code. See Section~\ref{sec:html5} for more information on the
+HTML5 renderer and how to customize its output.
+
+\begin{configuration}{Display table of contents on each page}
+\options{\longprogramopt{display-toc} or \longprogramopt{no-display-toc}}
+\config{html5}{display-toc}
+\default{true}
+specifies whether to display the table of contents on each page.
+\end{configuration}
+
+
+\begin{configuration}{Local table of contents level}
+\options{\longprogramopt{localtoc-level=\optval{level}}}
+\config{html5}{localtoc-level}
+\default{Node.DOCUMENT_LEVEL-1}
+specifies from which level one creates local table of contents. The
+default value implies local table of contents are never created.
+\end{configuration}
+
+
+\begin{configuration}{Create breadcrumbs from this level}
+\options{\longprogramopt{breadcrumbs-level=\optval{level}}}
+\config{html5}{breadcrumbs-level}
+\default{-10}
+specifies from which level one creates breadcrumbs navigation links.
+\end{configuration}
+
+\begin{configuration}{Use theme CSS}
+\options{\longprogramopt{use-theme-css} or \longprogramopt{no-theme-css}}
+\config{html5}{use-theme-css}
+\default{True}
+specifies whether to use CSS files from the theme. 
+\end{configuration}
+
+\begin{configuration}{Theme CSS file}
+\options{\longprogramopt{theme-css=\optval{theme}}}
+\config{html5}{theme-css}
+\default{green}
+specifies when CSS theme to use. Possible values are currently blue or
+green.
+\end{configuration}
+
+\begin{configuration}{Extra CSS file}
+\options{\longprogramopt{extra-css=\optval{filename1, ...}}}
+\config{html5}{extra-css}
+\default{''}
+specifies a comma separated list of css files to use in addition the
+theme css. These files are copied to the output directory by the
+renderer and loaded by the main layout template in the list order after
+the theme css files (if any) and the packages css files (if any).
+\end{configuration}
+
+\begin{configuration}{Use theme javascript}
+\options{\longprogramopt{use-theme-js} or \longprogramopt{no-theme-js}}
+\config{html5}{use-theme-js}
+\default{True}
+specifies whether to use javascript files from the theme. The default
+theme javascript is used to hide or show part of the table of contents
+and proofs.
+\end{configuration}
+
+\begin{configuration}{Extra javascript}
+\options{\longprogramopt{extra-js=\optval{filename1, ...}}}
+\config{html5}{extra-css}
+\default{''}
+specifies a comma separated list of javascript files to use (in addition
+to those coming from the theme is the use-theme-js option is set to true). 
+These files are copied to the output directory by the
+renderer and loaded by the main layout template in the list order after
+the theme javascript files (if any) and the packages javascript files (if any).
+\end{configuration}
+
+\begin{configuration}{Use MathJax}
+\options{\longprogramopt{use-mathjax} or \longprogramopt{no-mathjax}}
+\config{html5}{use-mathjax}
+\default{True}
+specifies whether to use MathJax for mathematics rendering. Setting this
+to False only makes sense if the document contains no mathematics or if
+some filter is expected to handle mathematics (see
+\longprogramopt{filters} option below).
+\end{configuration}
+
+\begin{configuration}{MathJax library url}
+\options{\longprogramopt{mathjax-url=\optval{url}}}
+\config{html5}{mathjax-url}
+\default{http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML}
+specifies where to find the MathJax javascript lib (including the config
+information as in the default value).
+\end{configuration}
+
+\begin{configuration}{Use single dollars as math delimiter for MathJax}
+	\options{\longprogramopt{dollars} or \longprogramopt{no-dollars}}
+\config{html5}{mathjax-dollars}
+\default{False}
+specifies whether single dollars are used as math delimiters instead of
+\verb+\(+ and \verb+\)+. This information is used by MathJax.
+\end{configuration}
+
+
+\begin{configuration}{Filters applied on output}
+\options{\longprogramopt{filters=\optval{filter1, \ldots}}}
+\config{html5}{filters}
+\default{''}
+specifies a comma separated list of commands to invoke on each output
+page. Each command should expect one file to convert on stdin and output
+the converted file on stdout.
+\end{configuration}
+
+
+

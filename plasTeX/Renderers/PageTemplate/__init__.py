@@ -17,6 +17,41 @@ from plasTeX.Renderers.PageTemplate.simpletal.simpleTALES import Context as TALC
 
 log = plasTeX.Logging.getLogger()
 
+# Support for Jinja2 templates
+try: 
+    from jinja2 import Environment, contextfunction
+except ImportError:
+    def jinja2template(s, encoding='utf8'):
+        def renderjinja2(obj):
+            return s
+        return renderjinja2
+else:
+    try:
+        import ipdb as pdb
+    except ImportError:
+        import pdb
+        
+    @contextfunction
+    def debug(context):
+        pdb.set_trace()
+
+    def jinja2template(s, encoding='utf8'):
+        env = Environment(trim_blocks=True, lstrip_blocks=True)
+        env.globals['debug'] = debug
+
+        def renderjinja2(obj, s=s):
+            tvars = {'here':obj, 
+                     'obj':obj,
+                     'container':obj.parentNode,
+                     'config':obj.ownerDocument.config,
+                     'context':obj.ownerDocument.context,
+                     'templates':obj.renderer}
+
+            tpl = env.from_string(s)
+            return tpl.render(tvars) 
+
+        return renderjinja2
+
 # Support for Python string templates
 def stringtemplate(s):
     template = string.Template(s)
@@ -89,7 +124,7 @@ try:
        return rendercheetah
 
 except (ImportError, AttributeError):
-   print('Could not import CHEETAH')
+
    def cheetahtemplate(s):
        def rendercheetah(obj):
            return str(s)
@@ -233,6 +268,7 @@ class PageTemplate(BaseRenderer):
 
     def __init__(self, *args, **kwargs):
         BaseRenderer.__init__(self, *args, **kwargs)
+        self.loadedTheme = None
         self.engines = {}
         htmlexts = ['.html','.htm','.xhtml','.xhtm','.zpt','.pt']
         self.registerEngine('pt', None, htmlexts, htmltemplate)
@@ -249,6 +285,7 @@ class PageTemplate(BaseRenderer):
         self.registerEngine('genshi', None, '.gen', genshihtmltemplate)
         self.registerEngine('genshi', 'xml', '.genx', genshixmltemplate)
         self.registerEngine('genshi', 'text', '.gent', genshitexttemplate)
+        self.registerEngine('jinja2', None, '.jinja2', jinja2template)
 
     def registerEngine(self, name, type, ext, function):
         """
@@ -316,9 +353,10 @@ class PageTemplate(BaseRenderer):
             if os.path.isdir(theme):
                 log.info('Importing templates from %s' % theme)
                 self.importDirectory(theme)
+                self.loadedTheme = theme
 
                 extensions = []
-                for e in list(self.engines.values()):
+                for e in self.engines.values():
                     extensions += e.ext + [x+'s' for x in e.ext]
 
                 if document.config['general']['copy-theme-extras']:
@@ -367,12 +405,12 @@ class PageTemplate(BaseRenderer):
         self.aliases = {}
 
         enames = {}
-        for key, value in list(self.engines.items()):
+        for key, value in self.engines.items():
             for i in value.ext:
                 enames[i+'s'] = key[0]
 
         singleenames = {}
-        for key, value in list(self.engines.items()):
+        for key, value in self.engines.items():
             for i in value.ext:
                 singleenames[i] = key[0]
 
@@ -402,7 +440,7 @@ class PageTemplate(BaseRenderer):
 
                 options = {'name':basename}
 
-                for value in list(self.engines.values()):
+                for value in self.engines.values():
                     if ext in value.ext:
                         options['engine'] = singleenames[ext.lower()]
                         self.parseTemplates(f, options)
@@ -480,9 +518,10 @@ class PageTemplate(BaseRenderer):
             in the file
 
         """
+        num_templates = 0
         template = []
         options = options.copy()
-        defaults = {}
+        defaults = options.copy()
         name = None
         if not options or 'name' not in options:
             f = open(filename, 'r')
@@ -493,6 +532,7 @@ class PageTemplate(BaseRenderer):
                     # Purge any awaiting templates
                     if template:
                         try:
+                            num_templates += 1
                             self.setTemplate(''.join(template), options)
                         except ValueError as msg:
                             print('ERROR: %s at line %s in file %s' % (msg, i, filename))
@@ -513,7 +553,7 @@ class PageTemplate(BaseRenderer):
                     if name.startswith('default-'):
                         name = name.split('-')[-1]
                         defaults[name] = value
-                        if name not in options:
+                        if name not in options or num_templates == 0:
                             options[name] = value
                     else:
                         options[name] = value
@@ -586,3 +626,4 @@ class PageTemplate(BaseRenderer):
 
 # Set Renderer variable so that plastex will know how to load it
 Renderer = PageTemplate
+

@@ -71,7 +71,7 @@ mixed into the \class{Node} class in the \method{render} method.
 It is unmixed at the end of the \method{render} method.  The details
 of the \class{Renderable} class are discussed in section \ref{sec:renderable}.
 
-\section{Simple Renderer Example}
+\section{Simple Renderer Example}\label{sec:simple-renderer-ex}
 
 It is possible to write a renderer with just a couple of methods:
 \method{default} and \method{textDefault}.
@@ -233,9 +233,58 @@ Next paragraph.
 
 Of course, you aren't limited to using just Python methods.  Any function
 that accepts a node as an argument can be used.  The 
-Zope Page Template (ZPT) renderer included with \plasTeX\ is an example 
+Page Template renderer included with \plasTeX\ is an example 
 of how to write a renderer that uses a templating language to render
 the nodes (see section \ref{sec:zpt}).
+
+\subsection{Using a Renderer from the plastex Script}
+\label{subsec:renderer-from-script}
+
+In the preceding sections, the simple renderer example was called from
+a custom python script. In order to use it through the
+main plastex script (described in Chapter~\ref{sec:command-line}), it
+needs to be located in some directory
+\verb+plasTeX/Renderers/SimpleRenderer+, where \verb+plasTeX+ is the
+directory containing the plastex script. This directory must contain a
+\verb+__init__.py+ file defining the \var{Renderer} class (with this
+name). This directory can also contain a \verb+Themes+ directory in
+order to use the theme option described in
+Section~\ref{sec:general-options}. Each subdirectory in the
+\verb+Themes+ directory is considered as a theme.
+
+Each renderer can define its own configuration options which are loaded
+by the plastex script. This is done in a file named \verb+Config.py+
+in the renderer directory. This file must define a variable named
+\var{config} which is a ConfigManager instance, as described in
+Section~\ref{sec:configuration-api}. Inspiration can be drawn from the
+file defining the global configuration which is
+\verb+plasTeX/Config.py+.
+
+For instance, one could add a file
+\verb+plasTeX/Renderers/SimpleRenderer/Config.py+ containing:
+
+\begin{verbatim}
+from plasTeX.ConfigManager import *
+
+config = ConfigManager()
+
+section = config.add_section('simplerenderer')
+
+config.add_category('simplerenderer', 'Simple Renderer Options')
+
+section['my-option'] = StringOption(
+    """ My option """,
+    options='--my-option',
+    category='simplerenderer',
+    default='',
+)
+\end{verbatim}
+
+Options values are attached to the document currently rendered. For
+instance, in the \var{default} method implemented in
+Section~\ref{sec:simple-renderer-ex}, which takes a node argument, one
+could access the value of the option defined above as
+\verb+node.ownerDocument.config['simplerenderer']['my-option']+.
 
 
 \section{Renderable Objects\label{sec:renderable}}
@@ -485,7 +534,8 @@ raise an \exception{AttributeError} exception.
 
 The Page Template (PT) renderer is a renderer for \plasTeX\ document
 objects that supports various page template engines such as 
-\href{http://www.zope.org/Documentation/Books/ZopeBook/2_6Edition/ZPT.stx}{Zope Page Templates (ZPT)}, 
+\href{http://www.zope.org/Documentation/Books/ZopeBook/2_6Edition/ZPT.stx}{Zope
+Page Templates (ZPT)}, \href{http://jinja.pocoo.org/}{Jinja2 templates},
 \href{http://www.cheetahtemplate.org/}{Cheetah templates}, 
 \href{http://kid-templating.org/}{Kid templates}, 
 \href{http://genshi.edgewall.org/}{Genshi templates}, 
@@ -493,10 +543,10 @@ objects that supports various page template engines such as
 as well as plain old \href{http://docs.python.org/lib/typesseq-strings.html}{Python string formatting}.  It is also possible to add support for other 
 template engines.  Note that all template engines except ZPT, Python formats, 
 and Python string templates must be installed in your Python installation. 
-They are not included.
+They are not included. In particular the Jinja2 template engine must be
+installed in order to use the HTML5 renderer.
 
-ZPT is the most supported page template language at the moment.  This is the
-template engine that is used for all of the \plasTeX\ delivered templates
+The ZPT engine is used for all of the \plasTeX\ delivered templates
 in the XHTML renderer; however, the other templates work in a very similar way.
 The actual ZPT implementation used is SimpleTAL 
 (\url{http://www.owlfish.com/software/simpleTAL/}).  This implementation
@@ -551,6 +601,7 @@ names in the document object.
 The extensions used for all templating engines are shown in the table below.
 \begin{tableiii}{l|l|l}{}{Engine}{Extension}{Output Type}
 \lineiii{ZPT}{.html, .htm, .zpt}{HTML}
+\lineiii{Jinja2}{.jinja2}{Any}
 \lineiii{}{.xhtml, .xhtm, .xml}{XML/XHTML}
 \lineiii{Python string formatting}{.pyt}{Any}
 \lineiii{Python string templates}{.st}{Any}
@@ -573,7 +624,8 @@ textit.html
 Since there are a lot of templates that are merely one line, it would be
 inconvenient to have to create a new file for each template.  In cases
 like this, you can use the \file{.zpts} extension for collections of
-ZPT templates, or more generally \file{.pts} for collections of various 
+ZPT templates, or the \file{.jinja2s} extension for collections of
+Jinja2 templates, or more generally \file{.pts} for collections of various 
 template types.  Files with this
 extension have multiple templates in them.  Each template is separated
 from the next by the template metadata which includes things like the 
@@ -583,8 +635,8 @@ metadata names are currently supported.
 \begin{tableii}{l|p{4in}}{}{Name}{Purpose}
 \lineii{engine}{the name of the templating engine to use.  At the time of
     this writing, the value could be zpt, tal (same as zpt), 
-    html (ZPT HTML template), xml (ZPT XML template), python
-    (Python formatted string), string (Python string template),
+    html (ZPT HTML template), xml (ZPT XML template), jinja2, 
+    python (Python formatted string), string (Python string template),
     kid, cheetah, or genshi.}
 \lineii{name}{the name or names of the template that is to follow. 
     This name is used as the key in the renderer, and also 
@@ -650,26 +702,33 @@ template.  By default, templates in a zpts file use the HTML compiler
 in SimpleTAL.  You can specify that a template is an XML template by using
 the type directive.
 
-Here is an example of using various types of templates in a single file.
+Here is an example of using various templates engines in a single file.
 \begin{verbatim}
+name: equation
+engine: jinja2
+<div class="equation" id="{{ obj.id }}">
+  <span class="equation_label">{{ obj.ref }}</span>
+  {{ obj }}
+</div>
+
 name: textbf
-type: python
+engine: python
 <b>%(self)s</b>
 
 name: textit
-type: string
+engine: string
 <i>${self}</i>
 
 name: textsc
-type: cheetah
+engine: cheetah
 <span class="textsc">${here}</span>
 
 name: textrm
-type: kid
+engine: kid
 <span class="textrm" py:content="XML(unicode(here))">normal text</span>
 
 name: textup
-type: genshi
+engine: genshi
 <span class="textup" py:content="markup(here)">upcase text</span>
 \end{verbatim}
 
@@ -677,14 +736,15 @@ There are several variables inserted into the template namespace.  Here is
 a list of the variables and the templates that support them.
 
 \begin{center}
-\begin{tabular}{|l|l|l|l|}\hline
-\textbf{Object} & \textbf{ZPT/Python Formats/String Template} & 
+\begin{tabular}{|l|l|l|l|l|}\hline
+\textbf{Object} & \textbf{ZPT/Python Formats/String Template} &
+\textbf{Jinja2} &
     \textbf{Cheetah} & \textbf{Kid/Genshi}\\\hline
-document node & \var{self} or \var{here} & \var{here} & \var{here} \\
-parent node & \var{container} & \var{container} & \var{container} \\
-document config & \var{config} & \var{config} & \var{config} \\
-template instance & \var{template} &  & \\
-renderer instance & \var{templates} & \var{templates} & \var{templates} \\\hline
+document node & \var{self} or \var{here} & \var{obj} or \var{here} &  \var{here} & \var{here} \\
+parent node & \var{container} & \var{container} & \var{container} & \var{container} \\
+document config & \var{config} & \var{config} & \var{config} & \var{config} \\
+template instance & \var{template} &  & & \\
+renderer instance & \var{templates} & \var{templates} & \var{templates} & \var{templates} \\\hline
 \end{tabular}
 \end{center}
 
@@ -694,6 +754,12 @@ escape characters like <, >, and \&.  In order to get HTML/XML markup from
 the variables you must wrap them in the code shown in the example above.
 Hopefully, this limitation will be removed in the future.
 
+When using Jinja2 templates, the default configuration trims white spaces
+before and after template tags (see trim_blocks and lstrip_blocks in Jinja2's
+documentation).
+Also, when developing Jinja2 templates, inserting \verb+{{ debug() }}+
+will launch a python debugger session to allow inspection of the
+\var{context} variable during rendering.
 
 \subsubsection{Template Overrides\label{sec:tmploverrides}}
 
@@ -1142,16 +1208,16 @@ output.
 
 \section{XHTML Renderer}
 
-The XHTML renderer is a subclass of the ZPT renderer (section \ref{sec:zpt}).
-Since the ZPT renderer can render any variant of XML or HTML, the 
-XHTML renderer has very little to do in the Python code.  Almost all
-of the additionaly processing in the XHTML renderer has to do with
-generated images.  Since HTML cannot render \LaTeX's vector graphics
-or equations natively, they are converted to images.  In order for 
-inline equations to line up correctly with the text around them, CSS
+The XHTML renderer is a subclass of the Page Template Renderer (section
+\ref{sec:zpt}).  Since the Page Template Renderer can render any variant
+of XML or HTML, the XHTML renderer has very little to do in the Python
+code.  Almost all of the additional processing in the XHTML renderer has
+to do with generated images.  Since HTML cannot render \LaTeX's vector
+graphics or equations natively, they are converted to images.  In order
+for inline equations to line up correctly with the text around them, CSS
 attributes are used to adjust the vertical alignment.  Since the images
-aren't generated until after all of the document has been rendered,
-this CSS information is added in post-processing (i.e. the \method{cleanup} 
+aren't generated until after all of the document has been rendered, this
+CSS information is added in post-processing (i.e. the \method{cleanup}
 method).
 
 In addition to the processing of images, all characters with a ordinal
@@ -1173,13 +1239,165 @@ based macros; section \ref{sec:macros}) must be created.
 \subsection{Themes}
 
 The theming support in the XHTML renderer is the same as that of the
-ZPT renderer.  Any template directory can have a subdirectory called
+Page Template Renderer.  Any template directory can have a subdirectory called
 \file{Themes} which contains theme directories with sets of templates
 in them.  The names of the directories in the \file{Themes} directory
 corresponds to the name of the theme.  There are currently two themes
 included with \plasTeX: default and plain.  The default theme is a
 minor variation of the one used in the Python 1.6 documentation.  The
 plain theme is a theme with no extra navigation bars. 
+
+\section{HTML5 Renderer}\label{sec:html5}
+
+The HTML5 Renderer is a subclass of the Page Template Renderer (Section
+\ref{sec:zpt}). Therefore most of the work is done in its collection of
+templates, all written using the Jinja2 template engine. In particular
+Jinja2 must be installed on your system to use this renderer.
+
+In addition, this renderer allows packages to override certain templates,
+add css or javascript files, and push output files through various
+filters, see Section~\ref{sec:html5-pkg}.
+
+Options described in Section~\ref{sec:config-html5} provide easy ways to
+customize output. In particular the \longprogramopt{extra-css} option
+allows to override CSS styles. Since the generated HTML contains no
+inline style (except for some size specification for images and tables),
+these CSS overrides allow to completely change the output style.
+
+For large scale CSS changes, one can create a new
+CSS theme, either from scratch or by customizing an existing theme.
+Existing themes are generated using the CSS extension language SASS (see
+\url{http://sass-lang.com/}). Their sources are located in
+\file{plasTeX/Renderers/HTML5/sources/sass/}. One way to use customize
+them is to do the following (assuming SASS is available on your system).
+Copy the above directory somewhere else, say in \file{mysass}, copy
+\file{theme-blue.scss} to \file{theme-custom.scss} and replace ``blue''
+in the first line by ``custom'', copy \file{_variables_blue.scss} to
+\file{_variables_custom.scss}, modify a number of values in this file
+and compile using
+\begin{verbatim}
+sass --update --sourcemap=none mysass:build
+\end{verbatim}
+This will create \file{build/theme-custom.css} which can be copied to
+your project and used by plasTeX using
+\begin{verbatim}
+plastex ---no-theme-css --extra-css=theme-custom.css mytexfile.tex
+\end{verbatim}
+Of course one can also change other \file{scss} files for larger
+changes. Note that distributed theme css also went through autoprefixer
+(\url{https://autoprefixer.github.io/}) to ensure cross browser
+compatibility and cssnano (\url{http://cssnano.co/}) to reduce their
+size (all those steps are performed by
+\file{plasTeX/Renderers/HTML5/sources/build-css.sh}). If CSS
+modifications are not enough, one can override templates as discussed in
+Section~\ref{sec:tmploverrides}.
+
+The normal way to handle mathematics in this renderer is to use MathJax
+(see \url{https://www.mathjax.org}) to render mathematics on client side. 
+This is controlled by the \longprogramopt{use-mathjax} option which is
+set to true by default. Option \longprogramopt{mathjax-url} indicates
+where to find the MathJax library. By default it uses a CDN which
+ensures using the latest version but prevents offline use.
+Instead of client-side rendering, one can use filters to handle
+mathematics on the author side. For instance one can use mathjax-node
+(\url{https://github.com/mathjax/MathJax-node}) or KaTeX
+(\url{https://khan.github.io/KaTeX/}). In this case, one can disable
+inclusion of MathJax using option \longprogramopt{no-mathjax} and
+use option \longprogramopt{filters} to call the author-side
+mathematics renderer.
+
+\subsection{Interactions with packages}\label{sec:html5-pkg}
+
+This section is useful for packages authors. The HTML5 Renderer allows
+packages to interact with the rendering process in several ways through
+packages resources. Each such resource is wrapped in an object whose
+class inherits from \class{PackageResource} located in the module
+\module{plasTeX.PackageResource}. Those objects are typically attach to
+the document during package loading using the document
+\method{addPackageResource} method inside the \function{ProcessOptions}
+function.
+
+\subsubsection*{Extra input files}
+
+Inside the main renderer directory \file{plasTeX/Renderers/HTML5/}
+package authors can add directories containing extra input files. 
+Users that create their own python packages for plasTeX can also put
+these files in a subdirectory of the working directory (from which
+plasTeX is invoked). The following example shows how a package can
+register templates overriding regular renderer templates, as well as
+extra CSS and javascript files. The following function should be part of a python package, say \file{mypkg.py}.
+
+\begin{verbatim}
+def ProcessOptions(options, document):
+    css = PackageCss(
+        renderers='html5',
+        data='test.css',
+        package='mypkg')
+    js = PackageJs(
+        renderers='html5',
+        data='test.js',
+        package='mypkg')
+    tpl = PackageTemplateDir(
+        renderers='html5',
+        package='mypkg')
+
+    document.addPackageResource([css, js, tpl])
+\end{verbatim}
+
+When rendering any document containing \verb+\usepackage{mypkg}+,
+the HTML5 renderer will
+\begin{itemize}
+\item 
+    copy \file{plasTeX/Renderers/HTML5/mypkg/test.css}
+    to the \file{styles} subdirectory of the output directory
+    and call it from the default html layout
+\item 
+    copy \file{plasTeX/Renderers/HTML5/mypkg/test.js}
+    to the \file{js} subdirectory of the output directory
+    and call it from the default html layout
+\item
+    load any template contained in \file{plasTeX/Renderers/HTML5/mypkg/}, overiding the renderer default templates if needed.
+\end{itemize}
+
+
+\subsubsection*{Extra output files and filters}
+
+The HTML5 Renderer allows packages to produce extra output files and
+define filters that are applied to any output file. 
+
+In order to create new output files, any package can register a callback
+function taking a document as input a returning a list of created file
+names. As an example, let us write a package which adds some document
+statistics to an extra output file \file{stats.html} (we will not try to
+produce valid html below, only illustrate our point). The package module
+only needs to contain the following.
+\begin{verbatim}
+import os
+
+def ProcessOptions(options, document):
+    def makeStats(document):
+        nbChap = len(document.getElementsByTagName('chapter'))
+        nbSec = len(document.getElementsByTagName('section'))
+        with open('stats.html', 'w') as outfile:
+            outfile.write("%d chapters and %d sections" % (nbChap, nbSec))
+        return ['stats.html']
+    cb = PackageResource(
+        renderers='html5',
+        key='preCleanupCallbacks',
+        data=makeStats)
+    document.addPackageResource(cb)
+\end{verbatim}
+
+As suggested by the key name, those pre-cleanup callbacks are called before
+the renderer \method{cleanup} method. Packages can also register filters to be
+applied during the cleanup process. Those filters are functions that take a
+document and a string to filter and return the filtered string (using the
+document object to provide context if needed). They will be called on the
+content of each rendered file, after all files have been rendered.
+Registration is analogous to pre-cleanup callbacks but replacing the key
+\verb+preCleanupCallbacks+ by \verb+processFileContents+. This method can be
+used to call an external renderer to handle some complex environment (e.g. a
+TikZ picture).
 
 
 \section{tBook Renderer}

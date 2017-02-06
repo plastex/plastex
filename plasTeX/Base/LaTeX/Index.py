@@ -11,12 +11,22 @@ from plasTeX import Command, Environment, IgnoreCommand, encoding
 from plasTeX.Logging import getLogger
 from plasTeX.Base.LaTeX.Sectioning import SectionUtils
 
+log = getLogger()
+
 try:
     from plasTeX.Base.LaTeX.pyuca import Collator
     collator = Collator(os.path.join(os.path.dirname(__file__), 'allkeys.txt')).sort_key
 except ImportError:
     collator = lambda x: x.lower()
 
+try:
+    from unidecode import unidecode
+except ImportError:
+    log.warning('Cannot find unidecode lib. Expect issues with index sorting')
+    def unidecode(s):
+        return s
+
+    
 class hyperpage(IgnoreCommand):
     args = 'page:nox'
 
@@ -73,8 +83,8 @@ class IndexUtils(object):
         batches = []
         current = ''
         for item in self:
-            try:
-                label = title = item.sortkey[0].upper()
+            try: 
+                label = title = unidecode(item.sortkey[0]).upper()
                 if title in encoding.stringletters():
                     pass
                 elif title == '_':
@@ -171,8 +181,8 @@ class IndexUtils(object):
             # See how many levels we need to add/subtract between this one
             # and the previous
             common = 0
-            for prevkey, itemkey in zip(list(zip(prev.sortkey, prev.key)),
-                                        list(zip(item.sortkey, item.key))):
+            for prevkey, itemkey in zip(zip(prev.sortkey, prev.key),
+                                        zip(item.sortkey, item.key)):
                 if prevkey == itemkey:
                     common += 1
                     continue

@@ -1,0 +1,41 @@
+// Navigation Prev/Up/Next
+
+nav.prev_up_next
+{
+    position: fixed;
+    z-index: $pun-z-index;
+    right: 0;
+    bottom: 0;
+
+    display: flex;
+
+    height: $pun-height;
+
+    background: linear-gradient(to bottom,
+    lighten($prevupnext-nav-color, 10%) 0%,
+    darken($prevupnext-nav-color, 10%) 100%);
+    a
+    {
+        font-size: 150%;
+
+        margin: auto;
+        padding: .2*$pun-height .4*$pun-height;
+
+        text-decoration: none;
+
+        color: white;
+        text-shadow: 1px 2px 0 rgba(0,0,0,.8);
+    }
+    svg#toc-toggle
+    {
+        font-size: 150%;
+
+        margin: auto;
+				min-width: 2rem;
+
+        text-decoration: none;
+
+        color: white;
+        text-shadow: 1px 2px 0 rgba(0,0,0,.8);
+    }
+}

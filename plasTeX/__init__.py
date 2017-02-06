@@ -778,6 +778,7 @@ class TeXFragment(DocumentFragment):
     def source(self):
         return sourceChildren(self)
 
+
 class TeXDocument(Document):
     """ TeX Document node """
     documentFragmentClass = TeXFragment
@@ -814,6 +815,22 @@ class TeXDocument(Document):
             self.config = Config.config
         else:
             self.config = kwargs['config']
+
+        # post parsing callbacks list
+        self.postParseCallbacks = []
+
+        self.packageResources = []
+        self.rendererdata = dict()
+
+    def addPackageResource(self, resource):
+        """
+        Adds a pacakge resource or a list of package resources to 
+        self.packageResources.
+        """
+        if isinstance(resource, list):
+            self.packageResources.extend(resource)
+        else:
+            self.packageResources.append(resource)
 
     def createElement(self, name):
         elem = self.context[name]()
@@ -896,6 +913,28 @@ class Environment(Macro):
 #       print 'DONE', type(self)
         if dopars:
             self.paragraphs()
+
+
+class NoCharSubEnvironment(Environment):
+    """
+    A subclass of Environment which prevents character substitution inside
+    itself.
+    """
+    def __init__(self, *args, **kwargs):
+        # Will hold the owner document charsubs to restore it at the end
+        self.charsubs = []
+        super(NoCharSubEnvironment, self).__init__(*args, **kwargs)
+
+    def invoke(self, tex):
+        # The goal is to prevent any character substitution while handling a
+        # this environment.
+        doc = self.ownerDocument
+        if self.macroMode == Macro.MODE_BEGIN:
+            self.charsubs = doc.charsubs
+            doc.charsubs = []
+        elif self.macroMode == Macro.MODE_END:
+            doc.charsubs = self.charsubs
+        super(NoCharSubEnvironment, self).invoke(tex)
 
 class IgnoreCommand(Command):
     """
@@ -1511,7 +1550,7 @@ class TheCounter(Command):
             name = m.group(1)
 
             # If there is a reference to another \\thecounter, invoke it
-            if name.startswith('the'):
+            if name.startswith('the') and name != re.sub(r'^the', '', self.__class__.__name__):
                 return ''.join(tex.expandTokens(self.ownerDocument.createElement(name).invoke(tex)))
 
             # Get formatted value of the requested counter

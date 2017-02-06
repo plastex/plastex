@@ -1,0 +1,47 @@
+
+.theindex li {
+    list-style-type: none
+}
+
+// Index groups list
+nav.index-groups {
+  margin-bottom: 1rem;
+}
+
+a[class^=index-group] {
+  text-decoration: none;
+}
+
+a.index-group::after {
+  content: " |";
+}
+
+
+// Index per group
+
+section.theindex {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  h2 {
+    min-width: 100%;
+    margin: 1rem 0 .5rem 0;
+  }
+}
+
+
+
+ul.index-column {
+  min-width: 100%;
+  @media (min-width: $toc-break)
+  {
+    min-width: auto;
+  }
+}
+
+nav.prev_up_next a.index {
+	font-size: small;
+	padding-left: .5rem;
+	padding-right: .5rem;
+}

@@ -703,11 +703,24 @@ class Node(object):
         if not self.parentNode:
             extra += ' xmlns:plastex="http://plastex.sf.net/"'
 
+        beginning = False
+        if getattr(self, 'macroMode', -2) == getattr(self, 'MODE_BEGIN', -1):
+            beginning = True
+
+        ending = ''
+        if getattr(self, 'macroMode', -2) == getattr(self, 'MODE_END', -1):
+            ending = '/'
+
         # Bail out early if the element is empty
         if not(self.attributes) and not(self.hasChildNodes()):
+            if ending:
+                return '</%s%s>' % (name, modifier)
+            if beginning:
+                return '<%s%s%s%s%s%s%s>' % (name, modifier, style, source, ref, label, extra)
+
             return '<%s%s%s%s%s%s%s/>' % (name, modifier, style, source, ref, label, extra)
 
-        s = ['<%s%s%s%s%s%s%s>\n' % (name, modifier, style, source, ref, label, extra)]
+        s = ['<%s%s%s%s%s%s%s%s>\n' % (ending, name, modifier, style, source, ref, label, extra)]
 
         # Render attributes
         if self.attributes:
