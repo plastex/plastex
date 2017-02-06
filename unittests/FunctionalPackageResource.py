@@ -10,11 +10,11 @@ def test_package_resource(tmpdir):
 	doc = TeXDocument(config=config+html5_config)
 	tex = TeX(doc)
 	tex.input("""
-		\documentclass{article}
-		\usepackage{examplePackage}
+		\\documentclass{article}
+		\\usepackage{examplePackage}
 		\\begin{document}
-		\emph{Hello}
-		\end{document}""")
+		\\emph{Hello}
+		\\end{document}""")
 	
 	doc = tex.parse()
 	doc.userdata['working-dir'] = os.path.dirname(__file__)
