@@ -1511,7 +1511,7 @@ class ConfigManager(UserDict, object):
 class CommandLineManager(OrderedDict):
    """ Command-Line Argument Manager """
 
-   def __init__(self, data=None}):
+   def __init__(self, data=None):
       OrderedDict.__init__(self, data or {})
       self._associations = {}
 

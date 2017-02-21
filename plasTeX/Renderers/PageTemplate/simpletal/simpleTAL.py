@@ -843,7 +843,7 @@ class TemplateCompiler:
 					'singletonTag'    - A boolean to indicate that this is a singleton flag
 		"""
 		# Add the tag to the tagStack (list of tuples (tag, properties, useMacroLocation))
-                tagProperties = tagProperties or {}
+		tagProperties = tagProperties or {}
 		self.log.debug ("Adding tag %s to stack" % tag[0])
 		command = tagProperties.get ('command',None)
 		originalAtts = tagProperties.get ('originalAtts', None)
