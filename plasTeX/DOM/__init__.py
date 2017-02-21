@@ -989,8 +989,9 @@ class Node(object):
 
     __iadd__ = extend
 
-    def appendText(self, text, charsubs=[], setParent=True):
+    def appendText(self, text, charsubs=None, setParent=True):
         """ Append a list of text nodes as one node """
+        charsubs = charsubs or []
         if not text:
             return
         value = ''.join(text)
@@ -1057,7 +1058,7 @@ class Node(object):
                     node.append(x)
         return node
 
-    def normalize(self, charsubs=[]):
+    def normalize(self, charsubs=None):
         """
         Combine consecutive text nodes and remove comments
 
@@ -1068,6 +1069,7 @@ class Node(object):
             source to.
 
         """
+        charsubs = charsubs or []
         if self.hasAttributes():
             for value in list(self.attributes.values()):
                 if isinstance(value, Node):
@@ -1692,7 +1694,7 @@ class CharacterData(str, Node):
     removeChild = _notImplemented
     appendChild = _notImplemented
 
-    def normalize(self, charsubs=[]):
+    def normalize(self, charsubs=None):
         pass
 
     @property
@@ -1844,8 +1846,8 @@ class DOMConfiguration(dict):
     http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html#DOMConfiguration
     """
 
-    def __init__(self, data={}):
-        dict.__init__(self, data)
+    def __init__(self, data=None):
+        dict.__init__(self, data or {})
         self['canonical-form'] = False
         self['cdata-sections'] = True
         self['check-character-normalization'] = False

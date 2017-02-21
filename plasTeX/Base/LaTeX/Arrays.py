@@ -19,7 +19,8 @@ class ColumnType(Macro):
         self.style.update(self.columnAttributes)
 
     @classmethod
-    def new(cls, name, attributes, args='', before=[], after=[], between=[]):
+    def new(cls, name, attributes, args='', 
+            before=None, after=None, between=None):
         """
         Generate a new column type definition
 
@@ -35,7 +36,9 @@ class ColumnType(Macro):
         """
         newclass = type(name, (cls,),
             {'columnAttributes':attributes, 'args':args,
-             'before':before, 'after':after, 'between':between})
+             'before': before or [], 
+             'after': after or [], 
+             'between': between or []})
         cls.columnTypes[name] = newclass
 
     def __repr__(self):

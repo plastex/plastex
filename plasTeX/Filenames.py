@@ -4,7 +4,8 @@ import re, string, os.path
 
 class Filenames(object):
 
-    def __init__(self, spec, charsub=[], variables={}, extension='', invalid={}):
+    def __init__(self, spec, charsub=None, variables=None, extension='',
+            invalid=None):
         """
         Generate filenames based on the `spec' and using the given variables
 
@@ -74,10 +75,10 @@ class Filenames(object):
 
         """
         self.files = self.parseFilenames(spec)
-        self.charsub = charsub
-        self.variables = variables
+        self.charsub = charsub or []
+        self.variables = variables or {}
         self.extension = extension
-        self.invalid = invalid
+        self.invalid = invalid or {}
         self.newFilename = self._newFilename()
 
     def parseFilenames(self, spec):

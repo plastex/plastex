@@ -371,7 +371,7 @@ class Context(object):
                                                 {'args': value})
             self.importMacros(macros)
 
-    def loadPackage(self, tex, file, options={}):
+    def loadPackage(self, tex, file, options=None):
         """
         Load a Python or LaTeX package
 
@@ -391,6 +391,7 @@ class Context(object):
         boolean indicating whether or not the package loaded successfully
 
         """
+        options = options or {}
         module = os.path.splitext(file)[0]
         # See if it has already been loaded
         if module in list(self.packages.keys()):
@@ -404,7 +405,7 @@ class Context(object):
             m = __import__(module, globals(), locals())
             status.info(' ( %s ' % m.__file__)
             if hasattr(m, 'ProcessOptions'):
-                m.ProcessOptions(options or {}, tex.ownerDocument)
+                m.ProcessOptions(options, tex.ownerDocument)
 
             self.importMacros(vars(m))
             moduleini = os.path.splitext(m.__file__)[0] + '.ini'

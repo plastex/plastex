@@ -39,7 +39,7 @@ class MultiOption(MultiParser, GenericOption, UserList):
 
    def __init__(self, docstring=DEFAULTS['docstring'],
                       options=DEFAULTS['options'],
-                      default=[],
+                      default=None,
                       optional=DEFAULTS['optional'],
                       values=DEFAULTS['values'],
                       category=DEFAULTS['category'],
@@ -48,7 +48,7 @@ class MultiOption(MultiParser, GenericOption, UserList):
                       environ=DEFAULTS['environ'],
                       registry=DEFAULTS['registry'],
                       delim=',',
-                      range=[1,'*'],
+                      range=None,
                       mandatory=None,
                       name=DEFAULTS['name'],
                       source=DEFAULTS['source'],
@@ -64,7 +64,8 @@ class MultiOption(MultiParser, GenericOption, UserList):
 
       """
       self.delim = delim
-      self.range = range
+      default = default = []
+      self.range = range or [1, '*']
       assert not issubclass(template, MultiOption), \
              'MultiOptions can not have a MultiOption as a template'
       assert issubclass(template, GenericOption), \
@@ -190,7 +191,7 @@ class MultiArgument(GenericArgument, MultiOption):
 
    def __init__(self, docstring=DEFAULTS['docstring'],
                       options=DEFAULTS['options'],
-                      default=[],
+                      default=None,
                       optional=DEFAULTS['optional'],
                       values=DEFAULTS['values'],
                       category=DEFAULTS['category'],
@@ -199,14 +200,15 @@ class MultiArgument(GenericArgument, MultiOption):
                       environ=DEFAULTS['environ'],
                       registry=DEFAULTS['registry'],
                       delim=' ',
-                      range=[1,'*'],
+                      range=None,
                       mandatory=None,
                       name=DEFAULTS['name'],
                       source=DEFAULTS['source'],
                       template=StringOption):
       """ Initialize a multi argument """
       self.delim = delim
-      self.range = range
+      default = default or []
+      self.range = range or [1, '*']
       assert not issubclass(template, MultiArgument), \
              'MultiArguments can not have a MultiArguments as a template'
       assert not issubclass(template, MultiOption), \

@@ -351,8 +351,8 @@ class Renderer(dict):
     imageUnits = '&${units};'
     encodingErrors = 'replace'
 
-    def __init__(self, data={}):
-        dict.__init__(self, data)
+    def __init__(self, data=None):
+        dict.__init__(self, data or {})
 
         # Names of generated files
         self.files = {}

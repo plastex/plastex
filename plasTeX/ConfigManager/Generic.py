@@ -50,10 +50,10 @@ class GenericParser:
 
       return 0
 
-   def getArgument(self, args, range=[1,1], delim=',', forcedarg=False):
+   def getArgument(self, args, range=None, delim=',', forcedarg=False):
       """ Parse argument """
 
-      range = self.validateRange(range[:])
+      range = self.validateRange(range or [1, 1])
 
       # If we have an optional default, make sure that the range reflects that
       if range[0] < 2 and self.optional not in [None, [], ()]:
@@ -149,9 +149,9 @@ class GenericParser:
 
       return new_args, args
 
-   def _getSpaceDelimitedArguments(self, args, range=[1,'*']):
+   def _getSpaceDelimitedArguments(self, args, range=None):
       """ Slurp up any following arguments that don't begin with '-' """
-      minimum, maximum = self.validateRange(range)
+      minimum, maximum = self.validateRange(range or [1, '*'])
       arg_len = len(args)
       new_args = []
       while ConfigManager.has_following_argument(args):

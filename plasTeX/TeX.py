@@ -175,7 +175,7 @@ class TeX(object):
         if self.inputs:
             self.currentInput = self.inputs[-1]
 
-    def loadPackage(self, myfile, options={}):
+    def loadPackage(self, myfile, options=None):
         """
         Load a LaTeX package
 
@@ -186,6 +186,7 @@ class TeX(object):
         options -- options passed to the macro which is loading the package
 
         """
+        options = options or {}
         config = self.ownerDocument.config
 
         try:
