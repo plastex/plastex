@@ -1,0 +1,7 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usetikzlibrary{decorations}
+
+\begin{documentclass}
+{{ tikzpicture }}
+\end{documentclass}
