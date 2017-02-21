@@ -194,7 +194,7 @@ class MissingSectionHeaderError(ParsingError):
 class ConfigSection(UserDict, object):
     """ Section of a configuration object """
 
-    def __init__(self, name, data={}):
+    def __init__(self, name, data=None):
         """
         Initialize the section
 
@@ -203,7 +203,7 @@ class ConfigSection(UserDict, object):
         data -- dictionary containing the initial set of options
 
         """
-        UserDict.__init__(self, data)
+        UserDict.__init__(self, data or {})
         self.name = name
         self.parent = None
 
@@ -296,7 +296,7 @@ class ConfigSection(UserDict, object):
             raise ValueError, 'Not a boolean: %s' % v
         return val
 
-    def get(self, option, raw=0, vars={}):
+    def get(self, option, raw=0, vars=None):
         """
         Get an option value for a given section.
 
@@ -319,6 +319,7 @@ class ConfigSection(UserDict, object):
         value of the option
 
         """
+        vars = vars or {}
         value = self.getraw(option, vars)
 
         # Raw was specified
@@ -377,7 +378,7 @@ class ConfigSection(UserDict, object):
             raise InterpolationDepthError(option, self.name, rawval)
         return value
 
-    def getraw(self, option, vars={}):
+    def getraw(self, option, vars=None):
         """
         Return raw value of option
 
@@ -388,6 +389,7 @@ class ConfigSection(UserDict, object):
         vars -- dictionary containing additional default values
 
         """
+        vars = vars or {}
         if vars.has_key(option):
             return vars[option].getValue()
 
@@ -473,7 +475,7 @@ class ConfigManager(UserDict, object):
     short_prefix = '-'
     long_prefix = '--'
 
-    def __init__(self, defaults={}):
+    def __init__(self, defaults=None):
         """
         Initialize ConfigManager
 
@@ -483,7 +485,7 @@ class ConfigManager(UserDict, object):
 
         """
         UserDict.__init__(self)
-        self[DEFAULTSECT] = ConfigSection(DEFAULTSECT, defaults)
+        self[DEFAULTSECT] = ConfigSection(DEFAULTSECT, defaults or {})
         self.strict = 1     # Raise exception for unknown options
         self._categories = {}  # Dictionary of option categories
         self.unrecognized = []
@@ -687,9 +689,9 @@ class ConfigManager(UserDict, object):
         self.__read(fp, filename)
         return self
 
-    def get(self, section, option, raw=0, vars={}):
+    def get(self, section, option, raw=0, vars=None):
         """ Get an option value for a given section """
-        return self[section].get(option, raw, vars)
+        return self[section].get(option, raw, vars or {})
 
     def set(self, section, option, value, source=BUILTIN):
         """ Set an option value """
@@ -1436,9 +1438,9 @@ class ConfigManager(UserDict, object):
               return options
         return ''
 
-    def usage(self, categories=[]):
+    def usage(self, categories=None):
         """ Print descriptions of all command line options """
-        categories = categories[:]
+        categories = categories or []
         options = []
         for section in self.values():
             for option in section.data.values():
@@ -1511,8 +1513,8 @@ class ConfigManager(UserDict, object):
 class CommandLineManager(ordereddict):
    """ Command-Line Argument Manager """
 
-   def __init__(self, data={}):
-      ordereddict.__init__(self, data)
+   def __init__(self, data=None):
+      ordereddict.__init__(self, data or {})
       self._associations = {}
 
    def usage(self):

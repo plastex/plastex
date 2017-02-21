@@ -172,7 +172,7 @@ class TeX(object):
         if self.inputs:
             self.currentInput = self.inputs[-1]
 
-    def loadPackage(self, file, options={}):
+    def loadPackage(self, file, options=None):
         """
         Load a LaTeX package
 
