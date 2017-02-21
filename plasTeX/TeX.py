@@ -186,7 +186,7 @@ class TeX(object):
         options -- options passed to the macro which is loading the package
 
         """
-        options = options or None
+        options = options or {}
         config = self.ownerDocument.config
 
         try:

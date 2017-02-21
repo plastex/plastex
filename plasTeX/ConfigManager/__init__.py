@@ -316,7 +316,7 @@ class ConfigSection(UserDict, object):
         value of the option
 
         """
-        vars = vars or None
+        vars = vars or {}
         value = self.getraw(option, vars)
 
         # Raw was specified
@@ -690,7 +690,7 @@ class ConfigManager(UserDict, object):
 
     def get(self, section, option, raw=0, vars=None):
         """ Get an option value for a given section """
-        return self[section].get(option, raw, vars or None)
+        return self[section].get(option, raw, vars or {})
 
     def set(self, section, option, value, source=BUILTIN):
         """ Set an option value """
