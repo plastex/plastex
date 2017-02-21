@@ -832,7 +832,7 @@ class TemplateCompiler:
 		else:
 			self.commandList.append (command)
 
-	def addTag (self, tag, tagProperties={}):
+	def addTag (self, tag, tagProperties=None):
 		""" Used to add a tag to the stack.  Various properties can be passed in the dictionary
 		    as being information required by the tag.
 		    Currently supported properties are:
@@ -843,6 +843,7 @@ class TemplateCompiler:
 					'singletonTag'    - A boolean to indicate that this is a singleton flag
 		"""
 		# Add the tag to the tagStack (list of tuples (tag, properties, useMacroLocation))
+                tagProperties = tagProperties or {}
 		self.log.debug ("Adding tag %s to stack" % tag[0])
 		command = tagProperties.get ('command',None)
 		originalAtts = tagProperties.get ('originalAtts', None)

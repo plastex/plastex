@@ -235,7 +235,7 @@ class ManPageRenderer(BaseRenderer):
     # Lists
 
     def do_itemize(self, node):
-        output =['','.Bl -bullet -offset 3n -compact']
+        output = ['', '.Bl -bullet -offset 3n -compact']
         for item in node:
             output.append('.It')
             output.append(str(item).strip())
