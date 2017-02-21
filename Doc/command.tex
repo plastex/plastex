@@ -645,5 +645,36 @@ page. Each command should expect one file to convert on stdin and output
 the converted file on stdout.
 \end{configuration}
 
+\begin{configuration}{TikZ compiler}
+\options{\longprogramopt{tikz-compiler=\optval{compiler}}}
+\config{html5}{tikz-compiler}
+\default{'pdflatex'}
+specifies which program to use for compiling tikz pictures before
+conversion to svg and inclusion in the html file. See
+Section~\ref{sec:tikz}.
+\end{configuration}
 
+\begin{configuration}{TikZ converter}
+\options{\longprogramopt{tikz-converter=\optval{converter}}}
+\config{html5}{tikz-converter}
+\default{'pdf2svg'}
+specifies which program to use for converting tikz pictures pdf files
+to svg before inclusion in the html file. See
+Section~\ref{sec:tikz}.
+\end{configuration}
 
+\begin{configuration}{TikZ template}
+\options{\longprogramopt{tikz-template=\optval{template_file}}}
+\config{html5}{tikz-template}
+\default{''}
+specifies a file containing a tex template for tikz pictures
+compilation. See Section~\ref{sec:tikz}.
+\end{configuration}
+
+\begin{configuration}{TikZ-CD template}
+\options{\longprogramopt{tikz-cd-template=\optval{template_file}}}
+\config{html5}{tikz-cd-template}
+\default{''}
+specifies a file containing a tex template for tikz-cd diagrams
+compilation. See Section~\ref{sec:tikz}.
+\end{configuration}

@@ -1306,6 +1306,85 @@ inclusion of MathJax using option \longprogramopt{no-mathjax} and
 use option \longprogramopt{filters} to call the author-side
 mathematics renderer.
 
+\subsection{Specific packages}
+
+There a some packages that are currently supported only by the HTML5
+renderer because they use the package resources mechanism described in
+the next section or need the output format to handle svg files.
+
+\subsubsection{TikZ and TikZ-CD}\label{sec:tikz}
+
+TikZ is a general purpose drawing package for LaTeX relying on a low
+level language called PGF. The HTML5 renderer tries to handle
+\environment{tikzpicture} environments by calling regular
+\program{pdflatex} to get a pdf file, then converting to svg using
+\program{pdf2svg} and including in the final html file. This should work
+without any tweak in the simplest cases where the TeX source contains
+only \verb+\usepackage{tikz}+ with no option, tikz library etc\ldots and the
+tikzpicture environment itself uses no user defined macro. 
+
+For more complicated cases, there are three configuration options that
+can be set either on the command line or in a configuration file. Option
+\longprogramopt{tikz-compiler} indicates which \LaTeX compiler to use,
+default is \program{pdflatex}. Option
+\longprogramopt{tikz-converter} indicates which pdf to svg converter
+to use, default is \program{pdf2svg}. Option
+\longprogramopt{tikz-template} can be used to indicate which file
+should be used as a template receiving the \environment{tikzpicture}
+code. By default this option is set to an empty string, in which case
+the template becomes
+\begin{verbatim}
+\documentclass{standalone}
+\usepackage{tikz}
+\begin{document}
+  {{ tikzpicture }}
+\end{document}
+\end{verbatim}
+In a more realistic setup one can use \longprogramopt{tikz-template}
+\file{mytemplate.tex} and put inside \file{mytemplate.tex} something
+like:
+\begin{verbatim}
+\documentclass{standalone}
+\usepackage{tikz}
+\usetikzlibrary{arrows,decorations.pathmorphing}
+
+\newcommand{\mymacro}{I love TikZ}
+\begin{document}
+  {{ tikzpicture }}
+\end{document}
+\end{verbatim}
+
+In the resulting html file, the \environment{tikzpicture} will appear as
+something like 
+\begin{verbatim}
+<div class="tikzpicture">
+  <object class="tikzpicture" data="images/a0000000001.svg" type="image/svg+xml">
+    TikZ picture
+    Source code
+  </object>
+</div>
+\end{verbatim}
+where ``Tikz picture'' can be replaced by something else if it appears
+in a custom lang file (see Section~\ref{sec:config-document}) and
+``Source code'' will be replaced by the actual source of the
+picture. This text will appear only in browsers that cannot display the
+resulting svg picture or when using assistive technology such as screen
+readers.
+
+The package tikz-cd is a specialized set of TikZ macros for easy commutative
+diagrams creation (if you do not know what is a commutative diagram then
+you do not need tikz-cd). This package is supported in a similar way
+except that the template configuration option is
+\longprogramopt{tikz-cd-template} and the default template is:
+\begin{verbatim}
+\documentclass{standalone}
+\usepackage{tikz-cd}
+\begin{document}
+  {{ tikzpicture }}
+\end{document}
+\end{verbatim}
+and the source code is introduced by ``Commutative diagram''.
+
 \subsection{Interactions with packages}\label{sec:html5-pkg}
 
 This section is useful for packages authors. The HTML5 Renderer allows
