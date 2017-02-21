@@ -42,7 +42,8 @@ def ProcessOptions(options, document):
     colors['middlegray'] = latex2htmlcolor('0.7')
     colors['lightgray'] = latex2htmlcolor('0.9')
 
-def latex2htmlcolor(arg, model='rgb', named={}):
+def latex2htmlcolor(arg, model='rgb', named=None):
+    named = named or {}
     if model == 'named':
         return named.get(arg, '')
     if ',' in arg:

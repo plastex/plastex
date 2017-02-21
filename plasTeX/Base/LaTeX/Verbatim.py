@@ -76,7 +76,7 @@ class verbatim(Environment):
 
         return tokens
 
-    def normalize(self, charsubs=[]):
+    def normalize(self, charsubs=None):
         """ Normalize, but don't allow character substitutions """
         return Environment.normalize(self)
 
@@ -130,7 +130,7 @@ class verb(Command):
                                  self.delimiter, sourceChildren(self), 
                                  self.delimiter)
 
-    def normalize(self, charsubs=[]):
+    def normalize(self, charsubs=None):
         """ Normalize, but don't allow character substitutions """
         return Command.normalize(self)
 

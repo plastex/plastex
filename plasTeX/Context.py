@@ -23,8 +23,8 @@ class ContextItem(dict):
 
     """
 
-    def __init__(self, data={}):
-        dict.__init__(self, data)
+    def __init__(self, data=None):
+        dict.__init__(self, data or {})
         self.categories = None
         self.obj = None
         self.parent = None
@@ -84,8 +84,8 @@ class Counters(dict):
 class LanguageParser(object):
     """ Parser for language commands """
 
-    def __init__(self, output={}):
-        self.data = output
+    def __init__(self, output=None):
+        self.data = output or {}
         self.language = None
         self.term = None
 
@@ -364,7 +364,7 @@ class Context(object):
                                                 {'args': value})
             self.importMacros(macros)
 
-    def loadPackage(self, tex, file, options={}):
+    def loadPackage(self, tex, file, options=None):
         """
         Load a Python or LaTeX package
 
@@ -384,6 +384,7 @@ class Context(object):
         boolean indicating whether or not the package loaded successfully
 
         """
+        options = options or {}
         module = os.path.splitext(file)[0]
 
         # See if it has already been loaded
@@ -398,7 +399,7 @@ class Context(object):
             m = __import__(module, globals(), locals())
             status.info(' ( %s ' % m.__file__)
             if hasattr(m, 'ProcessOptions'):
-                m.ProcessOptions(options or {}, tex.ownerDocument)
+                m.ProcessOptions(options, tex.ownerDocument)
             self.importMacros(vars(m))
             moduleini = os.path.splitext(m.__file__)[0]+'.ini'
             self.loadINIPackage([packagesini, moduleini])
