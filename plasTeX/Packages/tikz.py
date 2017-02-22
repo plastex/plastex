@@ -6,6 +6,8 @@ Needs Beautiful Soup, Jinja2, and pdf2svg or similar
 """
 
 import os
+import string
+import subprocess
 import shutil
 import tempfile
 from plasTeX import Environment, NoCharSubEnvironment, Macro
@@ -56,7 +58,12 @@ class tikzpicture(NoCharSubEnvironment):
 def tikzConvert(document, content, envname, placeholder):
     tmp_dir = document.userdata[envname]['tmp_dir']
     working_dir = document.userdata['working-dir']
-    target_dir = os.path.join(working_dir, document.config['files']['directory'], 'images')
+    outdir = document.config['files']['directory']
+    outdir = string.Template(outdir).substitute(
+            {'jobname': document.userdata.get('jobname', '')})
+    target_dir = os.path.join(working_dir, outdir, 'images')
+    if not os.path.isdir(target_dir):
+        os.makedirs(target_dir)
     template = document.userdata[envname]['template']
     compiler = document.userdata[envname]['compiler']
     pdf2svg = document.userdata[envname]['pdf2svg']
@@ -74,11 +81,11 @@ def tikzConvert(document, content, envname, placeholder):
         pdfpath = basepath + '.pdf'
         svgpath =  basepath + '.svg'
 
-        context = {'tikzpicture': env.text.strip() }
+        context = { 'tikzpicture': env.text.strip() }
         template.stream(**context).dump(texpath, encoding)
 
-        os.system(compiler + ' ' + texpath)
-        os.system(pdf2svg + ' ' + pdfpath + ' ' + svgpath)
+        subprocess.call([compiler, texpath])
+        subprocess.call([pdf2svg, pdfpath, svgpath])
         destination = os.path.join(target_dir, object_id+'.svg')
         if os.path.isfile(destination):
             os.remove(destination)
