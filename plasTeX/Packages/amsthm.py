@@ -7,21 +7,21 @@ plasTeX.Package.amsthm.py: Partial support for `amsthm.sty` LaTeX Package.
 This python package provides support for
 
 
-* Command: `\newtheorem`
-* Command: `\newtheoremstyle`
-* Command: `\theoremstyle`
+* Command: `\\newtheorem`
+* Command: `\\newtheoremstyle`
+* Command: `\\theoremstyle`
 * Environment: `proof`
 
 Keep in mind that when you define and use a new theorem-like environment:
 
-    \newtheorem{theorem}{Theorem}
-    \begin{theorem}[Euclid's] This is a Theorem. \end{theorem}
+    \\newtheorem{theorem}{Theorem}
+    \\begin{theorem}[Euclid's] This is a Theorem. \end{theorem}
 
 this package translates the above construction to simplified LaTeX code (as opposed to a `theorem` environment that can be styled throught the renderer.)
 
 I chose this instead of relying on the renderer because the user can specify everything, from the names to the header fonts, to the colors, to the body font, etc. I don't think the rendering mechanism can cope with environments of user defined names and user defined styles.
 
-It supports the starred version (without numbers) of `\newtheorem`
+It supports the starred version (without numbers) of `\\newtheorem`
 
 This package keeps a list of user defined styles in the `userdata` space under `packages/amsthm/styles`. This userdata is prepopulated with (a simplified version of) the  default styles in amsthm.sty: plain, remark, and definition.
 
@@ -29,13 +29,13 @@ It also keeps a list of theorem-like environments under `packages/amsthm/theorem
 
 Detailed support:
 
-1. `\newtheorem * {name}[shared counter]{Header}[reset by]` is supported. It creates an environment `\begin{name}[optional note] .. \end{name}`, which translates on invocation into simpler LaTeX.
+1. `\\newtheorem * {name}[shared counter]{Header}[reset by]` is supported. It creates an environment `\\begin{name}[optional note] .. \end{name}`, which translates on invocation into simpler LaTeX.
 
-2. `\newtheoremstyle {name} {above space} {below space} {main body font} {indent amount} {header font} {punctuation hafter head} {space between head and body} {header spec}` is partially supported---it currently ignores everything but main body font and header font. The header spec is hardcoded and equivalent to `\thmname{#1}\thmnumber{ #2}\thmnote{ (3)}`. Read the `amsthm` manual for more information on defining theorem styles. There's a list of defined styles in `userdata` space, in `packages/amsthm/styles`.
+2. `\\newtheoremstyle {name} {above space} {below space} {main body font} {indent amount} {header font} {punctuation hafter head} {space between head and body} {header spec}` is partially supported---it currently ignores everything but main body font and header font. The header spec is hardcoded and equivalent to `\\thmname{#1}\\thmnumber{ #2}\\thmnote{ (3)}`. Read the `amsthm` manual for more information on defining theorem styles. There's a list of defined styles in `userdata` space, in `packages/amsthm/styles`.
 
-3. `\theoremstyle{name}` Set the current theorem style to `name`. Not checked for errors.
+3. `\\theoremstyle{name}` Set the current theorem style to `name`. Not checked for errors.
 
-4 `\begin{proof} .. \end{proof}` Translated into simpler LaTeX.
+4 `\\begin{proof} .. \end{proof}` Translated into simpler LaTeX.
 
 5. `\swapnumbers`  Ignored & Unsupported.
 
@@ -46,8 +46,8 @@ TODO & NOT FULLY WORKING:
 
 2. For some reason, I can't get
 
-        \newtheorem{theorem}{Theorem}
-        \begin{theorem} Statement \end{theorem}
+        \\newtheorem{theorem}{Theorem}
+        \\begin{theorem} Statement \end{theorem}
 
     to wrap the Statement in a span. Currently it gives you something like:
 
@@ -63,56 +63,56 @@ TODO & NOT FULLY WORKING:
 Example document:
 
     \documentclass{article}
-    \usepackage{amsthm}
-    \usepackage{color}
+    \\usepackage{amsthm}
+    \\usepackage{color}
 
-    \newtheoremstyle{redPlain}  {\bigskipamount}
-                                {\bigskipamount}
+    \\newtheoremstyle{redPlain}  {\\bigskipamount}
+                                {\\bigskipamount}
                                 {\itshape}
                                 {}
-                                {\color[cmyk]{0,1.00,0.65,0.34}\bfseries}
+                                {\color[cmyk]{0,1.00,0.65,0.34}\\bfseries}
                                 {:}
                                 {1em}
-                                {\thmname{#1}\thmnumber{ #2}\thmnote{ (#3)}}
-    \theoremstyle{redPlain}
-    \newtheorem*{starred}{Starred}
-    \newtheorem{normal}{Normal}
-    \newtheorem{normalshared}[normal]{Normal And Shared}
-    \theoremstyle{plain}
-    \newtheorem{within}{Within}[section]
-    \newtheorem{withinshared}[within]{Within And Shared}
-    \begin{document}
+                                {\\thmname{#1}\\thmnumber{ #2}\\thmnote{ (#3)}}
+    \\theoremstyle{redPlain}
+    \\newtheorem*{starred}{Starred}
+    \\newtheorem{normal}{Normal}
+    \\newtheorem{normalshared}[normal]{Normal And Shared}
+    \\theoremstyle{plain}
+    \\newtheorem{within}{Within}[section]
+    \\newtheorem{withinshared}[within]{Within And Shared}
+    \\begin{document}
 
     \section{A section}
-    \begin{starred}[Note]
+    \\begin{starred}[Note]
         An starred theorem
     \end{starred}
-    \begin{normal}
+    \\begin{normal}
         A normal theorem
     \end{normal}
-    \begin{normalshared}[Note]
+    \\begin{normalshared}[Note]
         A normal theorem, with shared counter.
     \end{normalshared}
-    \begin{within}
+    \\begin{within}
         A theorem numbered within sections
     \end{within}
-    \begin{withinshared}[Note]
+    \\begin{withinshared}[Note]
         A theorem with counter shared with a theorem numbered within sections
     \end{withinshared}
     \section{Another section}
-    \begin{starred}
+    \\begin{starred}
         An starred theorem
     \end{starred}
-    \begin{normal}
+    \\begin{normal}
         A normal theorem
     \end{normal}
-    \begin{normalshared}
+    \\begin{normalshared}
         A normal theorem, with shared counter.
     \end{normalshared}
-    \begin{within}
+    \\begin{within}
         A theorem numbered within sections
     \end{within}
-    \begin{withinshared}\label{T:1}
+    \\begin{withinshared}\label{T:1}
         A theorem with counter shared with a theorem numbered within sections
     \end{withinshared}
     \end{document}
