@@ -1,4 +1,5 @@
 import os
+import inspect
 from pytest import mark, fixture
 
 try:
@@ -110,9 +111,7 @@ def test_copy_missing_file(monkeypatch, doc):
     assert mock_logger.call_count == 1
 
 def test_rendererDir():
-    base = os.path.split(os.path.split(__file__)[0])[0]
-    path = os.path.join(base, 'plasTeX', 'Renderers', 'PageTemplate')
-    assert rendererDir(Renderer()) == path
+    assert rendererDir(Renderer()) == os.path.split(inspect.getfile(Renderer))[0]
 
 def test_package_template_dir_user_dir(monkeypatch, doc):
     renderer = Mock()
