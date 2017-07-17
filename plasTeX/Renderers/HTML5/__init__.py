@@ -29,7 +29,6 @@ class HTML5(_Renderer):
         config = document.config
 
         rendererDir = os.path.dirname(__file__)
-        themeDir = os.path.join(rendererDir, 'Theme', self.loadedTheme)
 
         srcDir = document.userdata['working-dir']
         buildDir = os.getcwd()
@@ -61,7 +60,7 @@ class HTML5(_Renderer):
         if (config['html5']['use-theme-js'] and 
                 config['general']['copy-theme-extras']):
             rendererdata['js'] = sorted(
-                    os.listdir(os.path.join(themeDir, 'js')))
+                    os.listdir(os.path.join(self.loadedTheme, 'js')))
         else:
             rendererdata['js'] = []
 
