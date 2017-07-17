@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-import .gspdfpng, os, sys
+import os, sys
+import plasTeX.Imagers.gspdfpng as gspdfpng
 
 gs = 'gs'
 if sys.platform.startswith('win'):
