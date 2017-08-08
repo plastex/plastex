@@ -4,9 +4,10 @@ try:
 except ImportError:
     from distutils.core import setup
 
-templates = ['*.html','*.htm','*.xml','*.zpt','*.zpts']
-images = ['*.gif','*.png','*.jpg','*.jpeg','*.js','*.htc']
+templates = ['*.html','*.htm','*.xml','*.zpt','*.zpts','*.jinja2','*.jinja2s']
+images = ['*.gif','*.png','*.jpg','*.jpeg','*.js','*.htc','*.svg']
 styles = ['*.css']
+javascript = ['*.js']
 
 setup(name="plasTeX",
       description="LaTeX document processing framework",
@@ -33,6 +34,11 @@ setup(name="plasTeX",
          'plasTeX.Renderers.XHTML.Themes.python.icons',
          'plasTeX.Renderers.XHTML.Themes.plain',
          'plasTeX.Renderers.XHTML.Themes.minimal',
+         'plasTeX.Renderers.HTML5',
+         'plasTeX.Renderers.HTML5.Themes',
+         'plasTeX.Renderers.HTML5.Themes.default',
+         'plasTeX.Renderers.HTML5.Themes.default.styles',
+         'plasTeX.Renderers.HTML5.Themes.default.js',
          'plasTeX.Renderers.DocBook',
          'plasTeX.Renderers.DocBook.Themes.default',
          'plasTeX.Renderers.DocBook.Themes.book',
@@ -49,7 +55,7 @@ setup(name="plasTeX",
          'plasTeX.Renderers.S5.Themes.default.ui.default',
       ],
       package_data = {
-         'plasTeX': ['*.xml'],
+         'plasTeX': ['*.xml', 'plasTeXrc'],
          'plasTeX.Base.LaTeX': ['*.xml','*.txt'],
          'plasTeX.Renderers.DocBook': templates,
          'plasTeX.Renderers.DocBook.Themes.default': templates,
@@ -62,6 +68,10 @@ setup(name="plasTeX",
          'plasTeX.Renderers.XHTML.Themes.python': templates+styles,
          'plasTeX.Renderers.XHTML.Themes.python.icons': images,
          'plasTeX.Renderers.XHTML.Themes.plain': templates,
+         'plasTeX.Renderers.HTML5': templates,
+         'plasTeX.Renderers.HTML5.Themes.default': templates+images,
+         'plasTeX.Renderers.HTML5.Themes.default.styles': styles,
+         'plasTeX.Renderers.HTML5.Themes.default.js': javascript,
          'plasTeX.Renderers.S5': templates,
          'plasTeX.Renderers.S5.Themes.default': templates,
          'plasTeX.Renderers.S5.Themes.default.ui.default': templates+styles+images,
