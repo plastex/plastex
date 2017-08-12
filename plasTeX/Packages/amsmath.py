@@ -121,3 +121,21 @@ class DeclareMathOperator(Command):
         args = (a['name'], 0, definition)
         deflog.debug('math operator %s %s', *args)
         self.ownerDocument.context.newcommand(*args)
+
+
+class numberwithin(Command):
+    args = 'target:str control:str'
+
+    def invoke(self, tex):
+        self.parse(tex)
+        control = self.attributes['control']
+        target = self.attributes['target']
+        ctx = self.ownerDocument.context
+
+        # Resetting
+        target_cnt = ctx.counters[target]
+        target_cnt.resetby = control
+
+        # Formatting
+        ctx['the'+target].format = '{}.${{{}}}'.format(
+                ctx['the'+control].format, target)
