@@ -6,4 +6,8 @@ python:
 install:
   - pip install -r requirements.txt
 
-script: pytest
+script: 
+  - pytest --cov-report= --cov=plasTeX 
+
+after_success:
+  - coveralls
