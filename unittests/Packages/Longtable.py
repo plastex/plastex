@@ -13,6 +13,7 @@ try:
 except ImportError:
     from BeautifulSoup import BeautifulSoup as Soup
 
+@unittest.skip("skip class for now as it uses the binary")
 class Longtables(TestCase):
 
     def runDocument(self, content):
