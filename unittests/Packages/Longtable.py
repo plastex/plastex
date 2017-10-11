@@ -155,7 +155,6 @@ class Longtables(TestCase):
             numcols = len(out.findAll('tr')[1].findAll('td'))
             assert numcols == 3, 'Wrong number of columns (expecting 3, but got %s) - %s - %s' % (numcols, header, out)
 
-    @unittest.skip("skipping for now")
     def testCaptionNodes(self):
         captions = [
             r'\caption{Caption Text}\\',
@@ -177,7 +176,6 @@ class Longtables(TestCase):
             assert caption is not None, 'Caption is empty'
             assert table.title.textContent.strip() == u'Caption Text', 'Caption does not match table caption'
 
-    @unittest.skip("skipping for now")
     def testKill(self):
         doc = self.runDocument(r'''\begin{longtable}{lll} 1 & 2 & 3 \\ longtext & & \kill\end{longtable}''')
 

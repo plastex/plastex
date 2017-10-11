@@ -37,3 +37,4 @@ view of what it is capable of.
 ## Status
 [![Build Status](https://travis-ci.org/niklasp/plastex.svg?branch=python3)](https://travis-ci.org/niklasp/plastex)
 [![Coverage Status](https://coveralls.io/repos/github/niklasp/plastex/badge.svg?branch=python3)](https://coveralls.io/github/niklasp/plastex?branch=python3)
+
