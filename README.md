@@ -1,6 +1,6 @@
+# plastex
 
 Read more at the github page for the plasTeX project:  http://tiarno.github.io/plastex/
-
 
 Installation of this package is done just like any other Python package.
 See the INSTALL file for details.
@@ -29,3 +29,7 @@ import commands):
 plasTeX is really much more than just a LaTeX-to-other-format converter 
 though.  See the documentation at http://tiarno.github.io/plastex/ for a complete
 view of what it is capable of.
+
+## Status
+[![Build Status](https://travis-ci.org/niklasp/plastex.svg?branch=python3)](https://travis-ci.org/niklasp/plastex)
+[![Coverage Status](https://coveralls.io/repos/github/niklasp/plastex/badge.svg?branch=python3)](https://coveralls.io/github/niklasp/plastex?branch=python3)
