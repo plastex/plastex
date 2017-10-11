@@ -13,7 +13,7 @@ try:
 except ImportError:
     from BeautifulSoup import BeautifulSoup as Soup
 
-
+@unittest.skip("skip class for now as it uses the binary")
 class Longtables(TestCase):
 
     def runDocument(self, content):
@@ -61,6 +61,7 @@ class Longtables(TestCase):
 
         return Soup(output).find('table', 'tabular')
 
+    
     def testSimple(self):
         # Table with no bells or whistles
         out = self.runTable(r'''\begin{longtable}{lll} 1 & 2 & 3 \\ a & b & c \\\end{longtable}''')

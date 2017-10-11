@@ -1,0 +1,13 @@
+beautifulsoup4==4.6.0
+bs4==0.0.1
+certifi==2017.7.27.1
+chardet==3.0.4
+coverage==4.4.1
+coveralls==1.2.0
+docopt==0.6.2
+idna==2.6
+py==1.4.34
+pytest==3.2.3
+pytest-cov==2.5.1
+requests==2.18.4
+urllib3==1.22
