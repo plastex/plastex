@@ -1,4 +1,4 @@
-import os, unittest
+import os
 
 from plasTeX.TeX import TeX
 from plasTeX.TeX import TeXDocument
@@ -7,7 +7,6 @@ from plasTeX.Config import config
 from plasTeX.Renderers.HTML5.Config import config as html5_config
 
 
-@unittest.skip("skipping for now")
 def test_package_resource(tmpdir):
 	doc = TeXDocument(config=config+html5_config)
 	tex = TeX(doc)

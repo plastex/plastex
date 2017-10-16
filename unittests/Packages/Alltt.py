@@ -61,7 +61,6 @@ class Alltt(TestCase):
 
         return Soup(output).findAll('pre')[-1]
 
-    @unittest.skip("skipping for now")
     def testSimple(self):
         text = '''\\begin{alltt}\n   line 1\n   line 2\n   line 3\n\\end{alltt}'''
         lines = ['', '   line 1', '   line 2', '   line 3', '']
@@ -78,7 +77,6 @@ class Alltt(TestCase):
         plines = out.string.split('\n')
         assert lines == plines, 'Content doesn\'t match - %s - %s' % (lines, plines)
 
-    @unittest.skip("skipping for now")
     def testCommands(self):
         text = '''\\begin{alltt}\n   line 1\n   \\textbf{line} 2\n   \\textit{line 3}\n\\end{alltt}'''
         lines = ['', '   line 1', '   line 2', '   line 3', '']
