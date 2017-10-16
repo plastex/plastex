@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
-import unittest, re, os 
-from plasTeX.TeX import TeX
-from unittest import TestCase
+import os 
+from plasTeX.TeX import TeX, TeXDocument
+from plasTeX.Config import config
+from plasTeX.Renderers.XHTML import Renderer
 
 # Will try to use obsolete, but good enough for us, BeautifulSoup 3 if
 # BeautifulSoup 4 is not available. Need to cope with slight API difference
@@ -24,31 +25,34 @@ def runDocument(content):
     Returns: TeX document
 
     """
-    tex = TeX()
+    
+    doc = TeXDocument(config=config)
+    tex = TeX(doc)
     tex.disableLogging()
-    tex.input(r'''\document{article}\usepackage{alltt}\begin{document}%s\end{document}''' % content)
-    return tex.parse()
+    tex.input(r'''\documentclass{article}\usepackage{alltt}\begin{document}%s\end{document}''' % content)
+    doc = tex.parse()
+    doc.userdata['working-dir'] = os.path.dirname(__file__)
+    return doc
 
-def runPreformat(content, tmpdir):
+
+def runPreformat(doc, tmpdir):
     """
-    This method compiles and renders a document fragment and
-    returns the result
+    This method renders a document in XHTML into tmpdir and
+    returns the last pre tag
 
     Arguments:
-    content - string containing the document fragment
+    doc - the plasTeX document to render
+    tmpdir - the output directory name
 
-    Returns: content of output file
+    Returns: last pre tag in output
 
     """
     # Create document file
-    document = r'\documentclass{article}\usepackage{alltt}\begin{document}%s\end{document}' % content
-    srcfile = tmpdir.join('longtable.tex')
-    srcfile.write(document)
 
     # Run plastex on the document
-    log = os.popen(
-            'plastex -d %s %s 2>&1' % (str(tmpdir), str(srcfile))).read()
-    assert '[ index.html ]' in log, 'No file was generated - %s' % log
+    os.chdir(str(tmpdir))
+    Renderer().render(doc)
+    assert tmpdir.join('index.html').isfile()
 
     # Get output file
     output = tmpdir.join('index.html').read()
@@ -60,13 +64,14 @@ def test_simple(tmpdir):
     lines = ['', '   line 1', '   line 2', '   line 3', '']
 
     # Test text content of node
-    out = runDocument(text).getElementsByTagName('alltt')[0]
+    doc = runDocument(text)
+    out = doc.getElementsByTagName('alltt')[0]
 
     plines = out.textContent.split('\n')
     assert lines == plines, 'Content doesn\'t match - %s - %s' % (lines, plines)
 
     # Test text content of rendering
-    out = runPreformat(text, tmpdir)
+    out = runPreformat(doc, tmpdir)
 
     plines = out.string.split('\n')
     assert lines == plines, 'Content doesn\'t match - %s - %s' % (lines, plines)
@@ -76,7 +81,8 @@ def test_commands(tmpdir):
     lines = ['', '   line 1', '   line 2', '   line 3', '']
 
     # Test text content of node
-    out = runDocument(text).getElementsByTagName('alltt')[0]
+    doc = runDocument(text)
+    out = doc.getElementsByTagName('alltt')[0]
 
     plines = out.textContent.split('\n')
     assert lines == plines, 'Content doesn\'t match - %s - %s' % (lines, plines)
@@ -88,7 +94,7 @@ def test_commands(tmpdir):
     assert it.textContent == 'line 3', 'Italic text should be "line 3", but it is "%s"' % it.textContent
 
     # Test rendering
-    out = runPreformat(text, tmpdir)
+    out = runPreformat(doc, tmpdir)
 
     assert out.b.string == 'line', 'Bold text should be "line", but it is "%s"' % out.b.string
 
