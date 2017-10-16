@@ -6,6 +6,7 @@ python:
 
 install:
   - pip install -r requirements.txt
+  - pip install .
 
 script: 
   - pytest -v --cov-report= --cov=plasTeX 
