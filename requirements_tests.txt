@@ -1,0 +1,9 @@
+py==1.4.34
+pytest==3.2.3
+pytest-cov==2.5.1
+tox==2.9.1
+beautifulsoup4==4.6.0
+bs4==0.0.1
+coverage==4.4.1
+coveralls==1.2.0
+
