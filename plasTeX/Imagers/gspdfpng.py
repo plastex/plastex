@@ -2,6 +2,7 @@
 
 from plasTeX.Logging import getLogger
 from plasTeX.Imagers import Imager as _Imager
+import plasTeX
 import glob, sys
 
 status = getLogger('status')
