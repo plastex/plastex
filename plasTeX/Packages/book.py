@@ -13,7 +13,7 @@ def ProcessOptions(options, document):
     # Sections
     context.newcounter('part', resetby='volume',
                        format='$part')
-    context.newcounter('chapter', resetby='part',
+    context.newcounter('chapter', resetby='volume',
                        format='$chapter')
     context.newcounter('section', resetby='chapter',
                        format='${thechapter}.${section}')
