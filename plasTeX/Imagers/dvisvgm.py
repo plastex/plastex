@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 import os, re, glob
-from plasTeX.Imagers import Imager as _Imager
+from plasTeX.Imagers import VectorImager as _Imager
 
-class DVISVGM(_Imager.VectorImager):
+class DVISVGM(_Imager):
     """ Imager that uses dvisvgm """
     fileExtension = '.svg'
     verification = 'dvisvgm --help'
@@ -11,7 +11,7 @@ class DVISVGM(_Imager.VectorImager):
 
     def executeConverter(self, output):
         rc = 0
-        open('images.dvi', 'w').write(output.read())
+        open('images.dvi', 'wb').write(output.read())
         page = 1
         while 1:
             filename = 'img%d.svg' % page
@@ -20,8 +20,10 @@ class DVISVGM(_Imager.VectorImager):
                 break
 
             # dvisvgm always puts "-<page-number>" on each file.  Get rid of it.
-            try: os.rename(glob.glob(filename+'-*')[0], filename)
-            except IndexError: break
+#            try:
+#                os.rename(glob.glob(filename+'-*')[0], filename)
+#            except IndexError:
+#                break
 
             if not open(filename).read().strip():
                 os.remove(filename)

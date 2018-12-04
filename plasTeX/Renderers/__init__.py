@@ -431,7 +431,7 @@ class Renderer(dict):
             elif name == 'OSXCoreGraphics':
                 from plasTeX.Imagers.OSXCoreGraphics  import Imager
             else:
-                log.warning("Could not load imager '%s' because '%s'" % (name, msg))
+                log.warning("Invalid imager '%s'")
                 continue
 
             self.imager = Imager(document, self.imageTypes)
@@ -460,13 +460,13 @@ class Renderer(dict):
         for name in names:
             if name == 'none':
                 break
-            try:
-                exec('from plasTeX.Imagers.%s import Imager' % name)
-            except ImportError as msg:
-                log.warning("Could not load imager '%s' because '%s'" % (name, msg))
+            elif name == 'dvisvgm':
+                from plasTeX.Imagers.dvisvgm import Imager as VectorImager
+            else:
+                log.warning("Invalid imager '%s'")
                 continue
 
-            self.vectorImager = Imager(document, self.vectorImageTypes)
+            self.vectorImager = VectorImager(document, self.vectorImageTypes)
 
             # Make sure that this imager works on this machine
             if self.vectorImager.verify():

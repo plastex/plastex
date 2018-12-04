@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import plasTeX.Imagers
 from plasTeX.Imagers import Imager as _Imager
 
 class DVI2Bitmap(_Imager):
