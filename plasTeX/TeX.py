@@ -17,7 +17,7 @@ Example:
 """
 from io import IOBase
 import string, os, traceback, sys, plasTeX, subprocess, types
-from plasTeX.Tokenizer import Tokenizer, Token, EscapeSequence, Other
+from plasTeX.Tokenizer import Tokenizer, Token, EscapeSequence, Other, EndInput
 from plasTeX import TeXDocument
 from plasTeX.Base.TeX.Primitives import MathShift
 from plasTeX import ParameterCommand, Macro
@@ -270,7 +270,7 @@ class TeX(object):
                     t.parentNode = None
                     yield t
 
-            except StopIteration:
+            except (EndInput, StopIteration):
                 endInput()
 
             # This really shouldn't happen, but just in case...
@@ -319,7 +319,10 @@ class TeX(object):
 
         while 1:
             # Get the next token
-            token = next()
+            try:
+                token = next()
+            except StopIteration:
+                return
 
             # Token is null, ignore it
             if token is None:
