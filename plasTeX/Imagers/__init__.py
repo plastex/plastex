@@ -837,8 +837,8 @@ class Imager(object):
 
         # Copy or convert the image as needed
         path = self.newFilename()
-        newext = os.path.splitext(path)[-1]
-        oldext = os.path.splitext(name)[-1]
+        newext = os.path.splitext(path)[-1].lower()
+        oldext = os.path.splitext(name)[-1].lower()
         try:
             directory = os.path.dirname(path)
             if directory and not os.path.isdir(directory):
