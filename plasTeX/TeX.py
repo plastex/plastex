@@ -1352,6 +1352,8 @@ class TeX(object):
 
         try:
             program = self.ownerDocument.config['general']['kpsewhich']
+            if name[0]=='.':
+                name = os.path.join(srcDir, name)
 
             kwargs = {'stdout':subprocess.PIPE}
             if sys.platform.lower().startswith('win'):
