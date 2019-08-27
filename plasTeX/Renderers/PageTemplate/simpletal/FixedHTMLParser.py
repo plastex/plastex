@@ -34,7 +34,6 @@
 		Module Dependencies: logging, simpleTALES, simpleTALTemplates
 """
 
-from .. import simpletal
 import html.parser
 
 

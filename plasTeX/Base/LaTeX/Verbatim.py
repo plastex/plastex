@@ -5,9 +5,10 @@ C.6.4 Verbatim
 
 """
 
-from plasTeX import Macro, Environment, Command, sourceArguments, sourceChildren
-from plasTeX.Base.TeX.Text import bgroup, egroup
+from plasTeX import Environment, Command, sourceArguments, sourceChildren
+from plasTeX.Base.TeX.Text import bgroup
 from plasTeX.Tokenizer import Other
+
 
 class verbatim(Environment):
     blockType = True

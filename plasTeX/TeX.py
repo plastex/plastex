@@ -16,7 +16,7 @@ Example:
 
 """
 from io import IOBase
-import string, os, traceback, sys, plasTeX, subprocess, types
+import string, os, sys, plasTeX, subprocess
 from plasTeX.Tokenizer import Tokenizer, Token, EscapeSequence, Other
 from plasTeX import TeXDocument
 from plasTeX.Base.TeX.Primitives import MathShift

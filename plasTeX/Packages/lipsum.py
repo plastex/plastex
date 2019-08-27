@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import pickle
+
 from plasTeX import Base
 lipsumdefault = [1,7]
 class setlipsumdefault(Base.Command):

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-import os, glob
-from plasTeX import Command, Environment, TheCounter
+from plasTeX import Command, TheCounter
 
 def ProcessOptions(options, document):
     context = document.context

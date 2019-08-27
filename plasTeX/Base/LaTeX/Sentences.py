@@ -5,9 +5,8 @@ C.3.1 Making Sentences (p170)
 
 """
 
-import time
 from plasTeX import Command, Environment
-from plasTeX.Logging import getLogger
+
 
 #
 # Quotes

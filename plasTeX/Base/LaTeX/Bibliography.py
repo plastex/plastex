@@ -6,9 +6,10 @@ C.11.3 Bibliography and Citation (p208)
 """
 
 import plasTeX
-from plasTeX.Base.LaTeX.Sectioning import chapter, section
-from plasTeX import Command, Environment
+from plasTeX.Base.LaTeX.Sectioning import chapter
+from plasTeX import Command
 from plasTeX.Base.LaTeX.Lists import List
+
 
 log = plasTeX.Logging.getLogger()
 

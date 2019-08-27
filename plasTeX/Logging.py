@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import textwrap, types
+import textwrap
 from logging import CRITICAL, DEBUG, INFO, Logger, StreamHandler, Formatter
 from logging import addLevelName, setLoggerClass, FileHandler, Filter
 from plasTeX.Config import config as _config

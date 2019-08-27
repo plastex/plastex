@@ -5,9 +5,8 @@ C.9 Figures and Other Floating Bodies (p196)
 
 """
 
-from plasTeX import Command, Environment, subclasses
+from plasTeX import Command, Environment
 from plasTeX import GlueCommand, DimenCommand
-from plasTeX.Logging import getLogger
 from plasTeX.Base.LaTeX.Arrays import Array
 
 

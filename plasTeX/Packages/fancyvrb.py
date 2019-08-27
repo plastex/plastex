@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from plasTeX import Command, Environment
 from plasTeX.Base.LaTeX.Verbatim import verbatim
 
 class Verbatim(verbatim):

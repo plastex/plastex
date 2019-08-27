@@ -1,6 +1,6 @@
-import os
 from plasTeX.ConfigManager import *
 from plasTeX.DOM import Node
+
 
 config = ConfigManager()
 

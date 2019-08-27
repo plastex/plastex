@@ -12,8 +12,7 @@ TODO:
 """
 
 import plasTeX, re, string
-from plasTeX import Base, Node, Text
-from plasTeX.Base.LaTeX.Sectioning import chapter, section
+from plasTeX import Base, Text
 
 log = plasTeX.Logging.getLogger()
 

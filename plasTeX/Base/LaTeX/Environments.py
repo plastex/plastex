@@ -5,8 +5,9 @@ C.1.2 Environments (p167)
 
 """
 
-from plasTeX import Command, Environment
+from plasTeX import Command
 from plasTeX.Logging import getLogger
+
 
 envlog = getLogger('parse.environments')
 

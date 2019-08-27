@@ -33,7 +33,7 @@
 		Module Dependencies: logging
 """
 
-import types, sys
+import sys
 
 import logging
 

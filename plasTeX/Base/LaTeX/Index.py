@@ -5,11 +5,12 @@ C.11.5 Index and Glossary (p211)
 
 """
 
-import string, os
+import os
 from plasTeX.Tokenizer import Token, EscapeSequence
 from plasTeX import Command, Environment, IgnoreCommand, encoding
 from plasTeX.Logging import getLogger
 from plasTeX.Base.LaTeX.Sectioning import SectionUtils
+
 
 log = getLogger()
 

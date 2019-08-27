@@ -34,7 +34,6 @@ after
 
 """
 
-from plasTeX import Command, Environment
 from plasTeX.DOM import Text
 from plasTeX.Base.LaTeX.Verbatim import verbatim
 from plasTeX.Base.LaTeX.Verbatim import verb
