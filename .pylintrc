@@ -23,7 +23,6 @@ disable=
     consider-merging-isinstance,
     consider-using-dict-comprehension,
     consider-using-enumerate,
-    consider-using-in,
     cyclic-import,
     dangerous-default-value,
     deprecated-method,
