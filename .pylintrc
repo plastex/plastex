@@ -84,7 +84,6 @@ disable=
     undefined-variable,
     ungrouped-imports,
     unidiomatic-typecheck,
-    unnecessary-semicolon,
     unused-argument,
     unused-variable,
     unsubscriptable-object,
