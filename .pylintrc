@@ -52,7 +52,6 @@ disable=
     no-value-for-parameter,
     non-parent-init-called,
     not-an-iterable,
-    pointless-string-statement,
     possibly-unused-variable,
     protected-access,
     redefined-argument-from-local,
