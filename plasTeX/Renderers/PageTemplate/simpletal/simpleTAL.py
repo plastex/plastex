@@ -826,7 +826,7 @@ class TemplateCompiler:
 		return template
 
 	def addCommand (self, command):
-		if (command[0] == TAL_OUTPUT and (len (self.commandList) > 0) and self.commandList[-1][0] == TAL_OUTPUT):
+		if command[0] == TAL_OUTPUT and self.commandList and self.commandList[-1][0] == TAL_OUTPUT:
 			# We can combine output commands
 			self.commandList[-1] = (TAL_OUTPUT, self.commandList[-1][1] + command[1])
 		else:
@@ -870,7 +870,7 @@ class TemplateCompiler:
 				end tags, this flag allows the template compiler to specify that these
 				should not be output.
 		"""
-		while (len (self.tagStack) > 0):
+		while self.tagStack:
 			oldTag, tagProperties, useMacroLocation = self.tagStack.pop()
 			endTagSymbol = tagProperties.get ('endTagSymbol', None)
 			popCommandList = tagProperties.get ('popFunctionList', [])
@@ -955,7 +955,7 @@ class TemplateCompiler:
 				prefix = att[6:]
 				if (value == METAL_NAME_URI):
 					# It's a METAL namespace declaration
-					if (len (prefix) > 0):
+					if prefix:
 						self.metal_namespace_prefix_stack.append (self.metal_namespace_prefix)
 						self.setMETALPrefix (prefix)
 						# We want this function called when the scope ends
@@ -966,7 +966,7 @@ class TemplateCompiler:
 						raise TemplateParseException (self.tagAsText (self.currentStartTag), msg)
 				elif (value == TAL_NAME_URI):
 					# TAL this time
-					if (len (prefix) > 0):
+					if prefix:
 						self.tal_namespace_prefix_stack.append (self.tal_namespace_prefix)
 						self.setTALPrefix (prefix)
 						# We want this function called when the scope ends
@@ -1086,7 +1086,7 @@ class TemplateCompiler:
 		# Compile a condition command, resulting argument is:
 		# path, endTagSymbol
 		# Sanity check
-		if (len (argument) == 0):
+		if not argument:
 			# No argument passed
 			msg = "No argument passed!  condition commands must be of the form: 'path'"
 			self.log.error (msg)
@@ -1113,7 +1113,7 @@ class TemplateCompiler:
 		# (replaceFlag, structureFlag, expression, endTagSymbol)
 
 		# Sanity check
-		if (len (argument) == 0):
+		if not argument:
 			# No argument passed
 			msg = "No argument passed!  content/replace commands must be of the form: 'path'"
 			self.log.error (msg)
@@ -1121,7 +1121,7 @@ class TemplateCompiler:
 
 		structureFlag = 0
 		attProps = argument.split (' ')
-		if (len(attProps) > 1):
+		if attProps:
 			if (attProps[0] == "structure"):
 				structureFlag = 1
 				express = " ".join (attProps[1:])
@@ -1165,7 +1165,7 @@ class TemplateCompiler:
 		# Compile a condition command, resulting argument is:
 		# path
 		# If no argument is given then set the path to default
-		if (len (argument) == 0):
+		if not argument:
 			expression = "default"
 		else:
 			expression = argument
@@ -1174,7 +1174,7 @@ class TemplateCompiler:
 	# METAL compilation commands go here
 	def compileMetalUseMacro (self, argument):
 		# Sanity check
-		if (len (argument) == 0):
+		if not argument:
 			# No argument passed
 			msg = "No argument passed!  use-macro commands must be of the form: 'use-macro: path'"
 			self.log.error (msg)
@@ -1184,7 +1184,7 @@ class TemplateCompiler:
 		return cmnd
 
 	def compileMetalDefineMacro (self, argument):
-		if (len (argument) == 0):
+		if not argument:
 			# No argument passed
 			msg = "No argument passed!  define-macro commands must be of the form: 'define-macro: name'"
 			self.log.error (msg)
@@ -1206,7 +1206,7 @@ class TemplateCompiler:
 		return None
 
 	def compileMetalFillSlot (self, argument):
-		if (len (argument) == 0):
+		if not argument:
 			# No argument passed
 			msg = "No argument passed!  fill-slot commands must be of the form: 'fill-slot: name'"
 			self.log.error (msg)
@@ -1257,7 +1257,7 @@ class TemplateCompiler:
 		return None
 
 	def compileMetalDefineSlot (self, argument):
-		if (len (argument) == 0):
+		if not argument:
 			# No argument passed
 			msg = "No argument passed!  define-slot commands must be of the form: 'name'"
 			self.log.error (msg)

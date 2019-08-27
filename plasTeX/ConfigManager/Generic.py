@@ -139,7 +139,7 @@ class GenericParser:
          raise TooManyValues("Expecting at most %s values for '%s'." % (range[1], name))
 
       # Collapse argument list to a value if possible
-      if len(new_args) < 1:
+      if not new_args:
          if self.optional is not None:
             new_args = self.optional
          else:
