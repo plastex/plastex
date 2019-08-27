@@ -77,9 +77,9 @@ class Epub_Package(object):
             'htmlnames':list(),
             'imagenames':list(),
             })
-        'parse toc data to get html filenames'
+        # parse toc data to get html filenames
         self.get_htmlnames()
-        'parse html filenames to get img and css filenames'
+        # parse html filenames to get img and css filenames
         self.get_image_css_names()
 
     def pack(self):
