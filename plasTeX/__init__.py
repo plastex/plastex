@@ -767,7 +767,7 @@ class Macro(Element):
         for i in range(len(self) - 1, -1, -1):
             item = self[i]
             if item.level == Node.PAR_LEVEL:
-                if len(item) == 0:
+                if not item:
                     self.pop(i)
                 elif len(item) == 1 and item[0].isElementContentWhitespace:
                     self.pop(i)

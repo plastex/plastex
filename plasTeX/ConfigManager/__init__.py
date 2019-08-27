@@ -1554,7 +1554,7 @@ class CommandLineManager(OrderedDict):
          else:
             raise ValueError("Unrecognized argument type.")
 
-      if len(args):
+      if args:
          raise TooManyValues('Too many command-line arguments: %s' % ' '.join(args))
 
       return self

@@ -23,7 +23,7 @@ def drop_tag(elem):
         else:
             previous.tail = (previous.tail or '') + elem.text
     if elem.tail:
-        if len(elem):
+        if elem:
             last = elem[-1]
             last.tail = (last.tail or '') + elem.tail
         elif previous is None:

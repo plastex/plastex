@@ -459,7 +459,7 @@ class Array(Environment):
                                 del cell.colspecEnd
 
         # Determine the number of rows by counting cells
-        if len(self):
+        if self:
             cols = []
             for row in self:
                 numcols = 0
