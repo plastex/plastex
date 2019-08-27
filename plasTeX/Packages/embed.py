@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""
+r"""
 embed package
 
 To use the embed package, include the following code in your latex document.

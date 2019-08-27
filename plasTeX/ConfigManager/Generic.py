@@ -206,7 +206,7 @@ class GenericOption(object):
                       mandatory=None,
                       name=DEFAULTS['name'],
                       source=DEFAULTS['source']):
-      """
+      r"""
       Declare a command line option
 
       Instances of subclasses of CommandLineOption must be placed in
