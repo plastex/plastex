@@ -58,7 +58,7 @@ class EntityParser(object):
             self.inseq = False
             return
 
-        if self.inseq == False:
+        if not self.inseq:
             return
 
         # Just a macro
