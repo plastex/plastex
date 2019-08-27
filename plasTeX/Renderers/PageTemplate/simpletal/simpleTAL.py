@@ -693,7 +693,7 @@ class HTMLTemplate (Template):
 		""" This method will write to the outputFile the expanded version of this template.
 			The context passed in is used to resolve all expressions with the template.
 		"""
-		if (isinstance (outputFile, io.TextIOBase) or isinstance (outputFile, codecs.StreamWriter)):
+		if isinstance(outputFile, (io.TextIOBase, codecs.StreamWriter)):
 			self.log.debug ("Text based output file detected")
 		else:
 			self.log.debug ("Bytes based output file detected - wrapping in codec for %s", outputEncoding)
@@ -722,7 +722,7 @@ class XMLTemplate (Template):
 			the expanded version of this template.  The context passed in is used to resolve
 			all expressions with the template.
 		"""
-		if (isinstance (outputFile, io.TextIOBase) or isinstance (outputFile, codecs.StreamWriter)):
+		if isinstance(outputFile, (io.TextIOBase, codecs.StreamWriter)):
 			self.log.debug ("Text based output file detected")
 		else:
 			self.log.debug ("Bytes based output file detected - wrapping in codec for %s", outputEncoding)
