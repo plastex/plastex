@@ -84,7 +84,6 @@ def autoCrop(im, bgcolor=None, margin=0):
             bbox = tuple([max(0,x) for x in bbox])
         return im.crop(bbox), tuple([abs(x-y) for x,y in zip(origbbox,bbox)]), bgcolor
     return PILImage.new("RGB", (1,1), bgcolor), (0,0,0,0), bgcolor
-    return None, None, bgcolor # no contents
 
 class Box(object):
     pass

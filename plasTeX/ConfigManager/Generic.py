@@ -561,8 +561,8 @@ class GenericOption(object):
 
       """
       return {}
-      return {'name': self.name, 'default': self.default,
-              'option': self.actual, 'synopsis': self.synopsis}
+      #return {'name': self.name, 'default': self.default,
+              #'option': self.actual, 'synopsis': self.synopsis}
 
    def __lt__(self, other): return self.compare(other) < 0
    def __gt__(self, other): return self.compare(other) > 0
