@@ -470,9 +470,9 @@ class Macro(Element):
                 self.attributes[arg.name] = output
                 self.postArgument(arg, output, tex)
         except:
-            raise
             log.error('Error while parsing argument "%s" of "%s"' %
                        (arg.name, self.nodeName))
+            raise
 
         self.postParse(tex)
 
