@@ -306,7 +306,7 @@ class Tokenizer(object):
                     code = whichCode(token)
 
             # Just go to the next character if you see one of these...
-            if code == CC_IGNORED or code == CC_INVALID:
+            if code in (CC_IGNORED, CC_INVALID):
                 continue
 
             yield classes[code](token)
@@ -394,7 +394,7 @@ class Tokenizer(object):
             code = token.catcode
 
             # Short circuit letters and other since they are so common
-            if code == CC_LETTER or code == CC_OTHER:
+            if code in (CC_LETTER, CC_OTHER):
                 self.state = STATE_M
 
             # Whitespace
