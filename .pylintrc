@@ -61,7 +61,6 @@ disable=
     reimported,
     simplifiable-if-statement,
     unexpected-keyword-arg,
-    unreachable,
     self-cls-assignment,
     singleton-comparison,
     super-init-not-called,
