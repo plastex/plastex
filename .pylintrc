@@ -58,7 +58,6 @@ disable=
     redefined-builtin,
     redefine-in-handler,
     redefined-outer-name,
-    reimported,
     simplifiable-if-statement,
     unexpected-keyword-arg,
     self-cls-assignment,
