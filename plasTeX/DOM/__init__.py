@@ -1785,11 +1785,11 @@ class UserDataHandler(object):
     """
 
     # OperationType
-    NODE_CLONED = 1;
-    NODE_IMPORTED = 2;
-    NODE_DELETED = 3;
-    NODE_RENAMED = 4;
-    NODE_ADOPTED = 5;
+    NODE_CLONED = 1
+    NODE_IMPORTED = 2
+    NODE_DELETED = 3
+    NODE_RENAMED = 4
+    NODE_ADOPTED = 5
 
     def handle(self, operation, key, data, src, dst):
         raise NotImplementedError
