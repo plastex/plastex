@@ -61,7 +61,6 @@ disable=
     simplifiable-if-statement,
     unexpected-keyword-arg,
     self-cls-assignment,
-    singleton-comparison,
     super-init-not-called,
     superfluous-parens,
     too-few-public-methods,
