@@ -4,7 +4,7 @@ import re
 from plasTeX.ConfigManager.Generic import GenericArgument
 from plasTeX.ConfigManager.String import StringOption
 from plasTeX.ConfigManager import GetoptError
-import collections
+import collections.abc
 
 
 class UnknownCompoundGroup(GetoptError):
@@ -88,7 +88,7 @@ class CompoundOption(CompoundParser, StringOption):
           return len(self.data)
 
    def __iadd__(self, other):
-      if isinstance(self.callback, collections.Callable):
+      if isinstance(self.callback, collections.abc.Callable):
          other = self.callback(self.cast(other))
 
       if self.data is None:

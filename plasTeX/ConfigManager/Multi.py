@@ -5,7 +5,7 @@ from plasTeX.ConfigManager.Generic import *
 from plasTeX.ConfigManager import TooManyValues
 from plasTeX.ConfigManager.String import StringOption
 from collections import UserList
-import collections
+import collections.abc
 
 
 class MultiParser(GenericParser):
@@ -130,7 +130,7 @@ class MultiOption(MultiParser, GenericOption, UserList):
 
    def __iadd__(self, other):
       """ Append a value to the list """
-      if isinstance(self.callback, collections.Callable):
+      if isinstance(self.callback, collections.abc.Callable):
          other = self.callback(self.cast(other))
       self.data += self.validate(other)
       range = self.validateRange(self.range)
@@ -181,7 +181,7 @@ class MultiOption(MultiParser, GenericOption, UserList):
       if value is None or ((type(value) in [list,tuple]) and not(value)):
          self.clearValue()
       else:
-         if isinstance(self.callback, collections.Callable):
+         if isinstance(self.callback, collections.abc.Callable):
             value = self.callback(self.cast(value))
          self.data = self.validate(value)
 
