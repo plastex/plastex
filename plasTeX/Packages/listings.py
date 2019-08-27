@@ -92,7 +92,7 @@ def _format(self, file):
             # Remove single-line "listings" comments. Only
             # comments started by "/*@" and ended by "@*/" are
             # supported.
-            line = re.sub('/\*@[^@]*@\*/', '', line)
+            line = re.sub(r'/\*@[^@]*@\*/', '', line)
 
             # Add the just-read line to the listing.
             if hasattr(file, 'read'):

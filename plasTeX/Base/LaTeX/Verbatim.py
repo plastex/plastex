@@ -14,7 +14,7 @@ class verbatim(Environment):
     captionable = True
 
     def invoke(self, tex):
-        """ Parse until we reach `\end{verbatim}' or `\endverbatim' """
+        r""" Parse until we reach `\end{verbatim}' or `\endverbatim' """
         if self.macroMode == Environment.MODE_END:
             return
 

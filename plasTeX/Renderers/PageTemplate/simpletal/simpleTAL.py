@@ -109,8 +109,8 @@ METAL_FILL_SLOT=16
 METAL_DEFINE_MACRO=17
 
 METAL_NAME_REGEX = re.compile ("[a-zA-Z_][a-zA-Z0-9_]*")
-SINGLETON_XML_REGEX = re.compile ('^<[^\s/>]+(?:\s*[^=>]+="[^">]+")*\s*/>')
-SINGLETON_BYTES_XML_REGEX = re.compile (b'^<[^\s/>]+(?:\s*[^=>]+="[^">]+")*\s*/>')
+SINGLETON_XML_REGEX = re.compile (br'^<[^\s/>]+(?:\s*[^=>]+="[^">]+")*\s*/>')
+SINGLETON_BYTES_XML_REGEX = re.compile (br'^<[^\s/>]+(?:\s*[^=>]+="[^">]+")*\s*/>')
 ENTITY_REF_REGEX = re.compile (r'(?:&[a-zA-Z][\-\.a-zA-Z0-9]*[^\-\.a-zA-Z0-9])|(?:&#[xX]?[a-eA-E0-9]*[^0-9a-eA-E])')
 
 # The list of elements in HTML that can not have end tags - done as a dictionary for fast
