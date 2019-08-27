@@ -403,7 +403,6 @@ class csname(Command):
 
 class endcsname(Command):
     """ \\endcsname """
-    pass
 
 class input(Command):
     """ \\input """
