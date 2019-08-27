@@ -2,7 +2,7 @@
 
 from collections import UserString
 from plasTeX.ConfigManager.Generic import GenericOption, DEFAULTS, GenericParser, GenericArgument
-import collections
+import collections.abc
 
 
 class StringParser(GenericParser): pass
@@ -34,7 +34,7 @@ class StringOption(StringParser, GenericOption, UserString):
       return str(arg)
 
    def __iadd__(self, other):
-      if isinstance(self.callback, collections.Callable):
+      if isinstance(self.callback, collections.abc.Callable):
          other = self.callback(self.cast(other))
 
       if other is None:

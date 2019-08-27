@@ -4,7 +4,7 @@ import re, os, copy
 from plasTeX.ConfigManager import BUILTIN, CODE, ENVIRON, ENVIRONMENT
 from plasTeX.ConfigManager import CODE, REGISTRY, COMMANDLINE, InvalidOptionError
 from plasTeX.ConfigManager import ConfigManager, TooManyValues, TooFewValues
-import collections
+import collections.abc
 
 DEFAULTS = \
 {
@@ -605,7 +605,7 @@ class GenericOption(object):
       if value is None:
          self.clearValue()
       else:
-         if isinstance(self.callback, collections.Callable):
+         if isinstance(self.callback, collections.abc.Callable):
             value = self.callback(self.cast(value))
          self.data = self.validate(value)
 
@@ -731,7 +731,7 @@ class GenericOption(object):
                                      msg='Given value is not a valid value')
 
       # Use the user defined validation function
-      elif isinstance(self.values, collections.Callable):
+      elif isinstance(self.values, collections.abc.Callable):
          if self.values(value):
             return value
 
