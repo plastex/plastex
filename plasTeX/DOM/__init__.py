@@ -1097,7 +1097,7 @@ class Node(object):
 
     def hasAttributes(self):
         """ Are there any attributes set? """
-        return not(not(self.attributes))
+        return bool(self.attributes)
 
     @property
     def textContent(self):

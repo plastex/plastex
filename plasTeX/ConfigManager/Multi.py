@@ -162,12 +162,12 @@ class MultiOption(MultiParser, GenericOption, UserList):
    def acceptsArgument(self):
       """ Return a boolean indicating if the option accepts an argument """
       range = self.validateRange(self.range)
-      return not(not(range[1]))
+      return bool(range[1])
 
    def requiresArgument(self):
       """ Return a boolean indicating if the option requires an argument """
       range = self.validateRange(self.range)
-      return not(not(range[0]))
+      return bool(range[0])
 
    def setValue(self, value):
       """
