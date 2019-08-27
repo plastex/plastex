@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from plasTeX import ismacro, macroName
-from plasTeX.DOM import Node
 from plasTeX.Logging import getLogger
 from plasTeX.Tokenizer import Tokenizer, Token, DEFAULT_CATEGORIES, VERBATIM_CATEGORIES
 import os

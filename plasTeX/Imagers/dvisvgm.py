@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os, re, glob
+import os
 from plasTeX.Imagers import VectorImager as _Imager
 
 class DVISVGM(_Imager):

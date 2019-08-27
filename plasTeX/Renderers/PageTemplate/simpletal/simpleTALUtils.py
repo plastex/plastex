@@ -34,7 +34,7 @@
 		Module Dependencies: None
 """
 
-import io, os, stat, threading, sys, codecs, cgi, re, types, logging
+import io, os, stat, threading, codecs, cgi, re
 from . import __version__, simpleTAL
 
 # This is used to check for already escaped attributes.

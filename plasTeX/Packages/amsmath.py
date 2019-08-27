@@ -2,7 +2,7 @@
 
 from plasTeX import Command
 from plasTeX.Base.LaTeX.Arrays import Array
-from plasTeX.Base.LaTeX.Math import EqnarrayStar, equation, eqnarray
+from plasTeX.Base.LaTeX.Math import EqnarrayStar, eqnarray
 #### Imports Added by Tim ####
 from plasTeX.Base.LaTeX.Math import math, MathEnvironmentPre
 

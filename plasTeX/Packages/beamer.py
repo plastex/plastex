@@ -10,7 +10,6 @@ from plasTeX.Base import tableofcontents, thebibliography, appendix
 from plasTeX.Base import abstract, verse, quotation, quote, footnote
 from plasTeX.Packages.color import color
 from plasTeX.Packages.graphicx import includegraphics
-from plasTeX.Packages.alltt import alltt as semiverbatim
 from plasTeX.Packages.hyperref import hypertarget, hyperlink
 from plasTeX.Packages.article import *
 

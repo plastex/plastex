@@ -5,8 +5,8 @@ C.8.4 Numbering (p194)
 
 """
 
-from plasTeX import Command, Environment
-from plasTeX.Logging import getLogger
+from plasTeX import Command
+
 
 class newcounter(Command):
     args = 'name:str [ within ]'

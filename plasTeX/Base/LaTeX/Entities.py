@@ -5,9 +5,10 @@ This package is dynamically generated.  It loads data from the ent.xml file.
 
 """
 
-import re, os, Accents, Characters
+import re, Accents, Characters
 from xml.parsers import expat
 from plasTeX import Command
+
 
 g = globals()
 

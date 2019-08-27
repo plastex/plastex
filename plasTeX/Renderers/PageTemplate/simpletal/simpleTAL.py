@@ -36,10 +36,11 @@
 
 import logging
 
-import xml.sax, xml.sax.saxutils,html, io, re, types, codecs
+import xml.sax, html, io, re, codecs
 from .. import simpletal
 import copy, sys
 from . import FixedHTMLParser, sgmlentitynames
+
 
 __version__ = simpletal.__version__
 

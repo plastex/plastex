@@ -5,9 +5,9 @@ C.3.4 Accents and Special Symbols (p173)
 
 """
 
-from plasTeX import Command, Environment
-from plasTeX.Logging import getLogger
+from plasTeX import Command
 from plasTeX.DOM import Node, Text
+
 
 #
 # Table 3.1: Accents

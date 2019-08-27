@@ -2,9 +2,10 @@
 
 import datetime
 from plasTeX.Tokenizer import Token, EscapeSequence, Other
-from plasTeX import Command, Environment, CountCommand
-from plasTeX import IgnoreCommand, sourceChildren
+from plasTeX import Command, CountCommand
+from plasTeX import sourceChildren
 from plasTeX.Logging import getLogger
+
 
 log = getLogger()
 status = getLogger('status')

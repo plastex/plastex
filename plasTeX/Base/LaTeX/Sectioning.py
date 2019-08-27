@@ -5,8 +5,9 @@ C.4 Sectioning and Table of Contents (p174)
 
 """
 
-from plasTeX import Command, Environment, TeXFragment
+from plasTeX import Command
 from plasTeX.Logging import getLogger
+
 
 log = getLogger()
 

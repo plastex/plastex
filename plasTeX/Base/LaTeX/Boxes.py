@@ -8,7 +8,7 @@ C.13.3 Boxes (p217)
 from plasTeX.Base.TeX.Primitives import BoxCommand
 from plasTeX import Command, Environment
 from plasTeX import DimenCommand, GlueCommand
-from plasTeX.Logging import getLogger
+
 
 class TextBoxCommand(Command):
 

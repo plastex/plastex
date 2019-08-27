@@ -5,8 +5,7 @@ C.13.1 Length (p215)
 
 """
 
-from plasTeX import Command, Environment, DimenCommand
-from plasTeX.Logging import getLogger
+from plasTeX import Command, DimenCommand
 
 
 class fill(DimenCommand):

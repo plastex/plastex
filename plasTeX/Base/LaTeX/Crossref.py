@@ -5,7 +5,7 @@ C.11.2 Cross-References (p209)
 
 """
 
-from plasTeX import Command, Environment
+from plasTeX import Command
 
 
 class label(Command):

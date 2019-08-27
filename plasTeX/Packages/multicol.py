@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from plasTeX import Command, Environment
+from plasTeX import Environment
 
 class multicols(Environment):
     args = 'num:int [ text:nox ] [ width:dimen ]'

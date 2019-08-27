@@ -8,7 +8,7 @@ C.7 Mathematical Formulas (p187)
 from plasTeX.Base.LaTeX.Arrays import Array
 from plasTeX import Command, Environment, sourceChildren
 from plasTeX import DimenCommand, GlueCommand
-from plasTeX.Logging import getLogger
+
 
 #
 # C.7.1

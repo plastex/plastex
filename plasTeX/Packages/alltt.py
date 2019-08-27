@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from plasTeX.Tokenizer import Token
-from plasTeX import Command, Environment
+from plasTeX import Environment
 
 
 class alltt(Environment):

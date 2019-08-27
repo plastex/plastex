@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from plasTeX import Command, Environment
+from plasTeX import Command
 
 class LenToUnit(Command):
     args = 'length:nox'

@@ -5,8 +5,8 @@ C.13.2 Space (p216)
 
 """
 
-from plasTeX import Command, Environment, DimenCommand
-from plasTeX.Logging import getLogger
+from plasTeX import Command, DimenCommand
+
 
 class hspace(Command):
     args = '* len:dimen'
