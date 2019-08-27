@@ -2,7 +2,7 @@
 
 import re, os, copy
 from plasTeX.ConfigManager import BUILTIN, CODE, ENVIRONMENT
-from plasTeX.ConfigManager import CODE, COMMANDLINE, InvalidOptionError
+from plasTeX.ConfigManager import COMMANDLINE, InvalidOptionError
 from plasTeX.ConfigManager import ConfigManager, TooManyValues, TooFewValues
 import collections.abc
 

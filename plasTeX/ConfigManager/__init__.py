@@ -1126,8 +1126,6 @@ class ConfigManager(UserDict, object):
 
     def merge_options(self, options):
         """ Merge options parsed from the command line into configuration """
-        from plasTeX.ConfigManager.Generic import GenericOption
-        from plasTeX.ConfigManager.Multi import MultiOption
         # Multi options that have been cleared by a command line option.
         # Lists will only be cleared on the first command line option, all
         # consecutive options will append.
