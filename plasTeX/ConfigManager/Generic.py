@@ -703,8 +703,7 @@ class GenericOption(object):
                       (', '.join(map(str, self.values))))
 
       # Check to see if the value is equal to the only valid value
-      elif isinstance(self.values, str) or isinstance(self.values, int) \
-           or isinstance(self.values, float):
+      elif isinstance(self.values, (str, int, float)):
          if value == self.values:
             return value
 

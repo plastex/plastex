@@ -1565,8 +1565,7 @@ class CommandLineManager(OrderedDict):
          value = list(value)
          item = value.pop(0)
          self._associations[key] = value
-      assert isinstance(item, ConfigManager) or \
-             isinstance(item, GenericArgument), \
+      assert isinstance(item, (ConfigManager, GenericArgument)), \
              'Command-line parameters must be ConfigManagers or ' + \
              'subclasses of GenericArgument'
       if hasattr(item, 'name') and item.name is None:
