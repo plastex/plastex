@@ -20,7 +20,6 @@ disable=
     broad-except,
     chained-comparison,
     comparison-with-itself,
-    consider-merging-isinstance,
     consider-using-dict-comprehension,
     consider-using-enumerate,
     cyclic-import,
