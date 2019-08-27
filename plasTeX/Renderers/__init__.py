@@ -137,7 +137,7 @@ class Renderable(object):
             if child.filename:
                 # Force footnotes to be cached
                 if hasattr(child, 'footnotes'):
-                    child.footnotes
+                    _ = child.footnotes
 
                 status.info(' [ %s ', child.filename)
 
@@ -377,7 +377,7 @@ class Renderer(dict):
 
         """
         # Using the side-effect of the filename property
-        node.filename
+        _ = node.filename
         for child in node.childNodes:
             self.cacheFilenames(child)
 
