@@ -232,7 +232,7 @@ class ifdim(IfCommand):
 class ifodd(IfCommand):
     """ Test for odd integer """
     def invoke(self, tex):
-        tex.processIfContent(not(not(tex.readNumber(optspace=False) % 2)))
+        tex.processIfContent(bool(tex.readNumber(optspace=False) % 2))
         return []
 
 class ifeven(IfCommand):

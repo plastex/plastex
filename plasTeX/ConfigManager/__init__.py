@@ -583,7 +583,7 @@ class ConfigManager(UserDict, object):
         """ Return the dictionary of categories """
         return self._categories
 
-    def set_strict(self, bool=1):
+    def set_strict(self, strict=True):
         """
         Parse the command line strictly
 
@@ -596,10 +596,10 @@ class ConfigManager(UserDict, object):
         option is.
 
         Keyword Arguments:
-        bool -- flag indicating whether parsing should be strict or not
+        strict -- flag indicating whether parsing should be strict or not
 
         """
-        self.strict = not(not(bool))
+        self.strict = bool(strict)
 
     def defaults(self):
         """ Return a dictionary of defaults """
