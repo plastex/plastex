@@ -30,8 +30,6 @@ DEFAULT_CATEGORIES = [
 VERBATIM_CATEGORIES = [''] * 16
 VERBATIM_CATEGORIES[11] = encoding.stringletters()
 
-class EndInput(Exception):
-    pass
 
 class Token(Text):
     """ Base class for all TeX tokens """
@@ -388,7 +386,7 @@ class Tokenizer(object):
             try:
                 token = next(charIter)
             except StopIteration:
-                raise EndInput
+                return
 
             if token.nodeType == ELEMENT_NODE:
                 raise ValueError('Expanded tokens should never make it here')
