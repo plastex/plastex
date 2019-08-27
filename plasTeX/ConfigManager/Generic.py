@@ -574,11 +574,8 @@ class GenericOption(object):
    def compare(self, other):
       """ Compare option to another using the specified sort order """
       for attr in self.sort_order:
-          sattr = getattr(self, attr)
-          oattr = getattr(other, attr)
-
-          if sattr == None: sattr = ''
-          if oattr == None: oattr = ''
+          sattr = getattr(self, attr, '')
+          oattr = getattr(other, attr, '')
 
           if type(sattr) is str and type(oattr) is str:
               sattr = re.sub(r'\W', '', sattr)

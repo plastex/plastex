@@ -320,7 +320,7 @@ class ConfigSection(UserDict, object):
         value = self.getraw(option, vars)
 
         # Raw was specified
-        if raw or value == None: return value
+        if raw or not value: return value
 
         # If we have a list, see if any strings need interpolation.
         if type(value) in [list, tuple]:
@@ -420,7 +420,7 @@ class ConfigSection(UserDict, object):
 
                # Bypass unset options
                if isinstance(option, MultiOption) and raw == []: continue
-               if raw == None: continue
+               if not raw: continue
 
                # Print description or summary of the option as well
                comment = ''
@@ -1398,8 +1398,10 @@ class ConfigManager(UserDict, object):
            err('Configuration File: [%s] %s=\n' % (sectkey, optkey))
 
            current = opt.names()['current']
-           if current != None: err('Current Value: %s\n\n' % current)
-           else: err('\n')
+           if not current:
+               err('Current Value: %s\n\n' % current)
+           else:
+               err('\n')
 
            err('%s\n\n' % opt.description)
            if display: err('\n')
@@ -1532,7 +1534,7 @@ class CommandLineManager(OrderedDict):
                  return 1
 
    def getopt(self, args=None):
-      if args == None:
+      if not args:
          args = sys.argv[1:]
       else:
          args = args[:]
