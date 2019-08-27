@@ -432,7 +432,6 @@ class Array(Environment):
         table immediately after the digest method.
 
         """
-        pass
 
     def linkCells(self):
         """

@@ -51,7 +51,6 @@ class ContextContentException (Exception):
 	""" This is raised when invalid content has been placed into the Context object.
 		For example using non-ascii characters instead of Unicode strings.
 	"""
-	pass
 
 PATHNOTFOUNDEXCEPTION = PathNotFoundException()
 
@@ -548,7 +547,6 @@ class Context:
 					except IndexError as e:
 						# Trailing $ sign - just suppress it
 						self.log.warning ("Trailing $ detected")
-						pass
 				else:
 					result += expr[position]
 		return result
