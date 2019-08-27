@@ -91,7 +91,6 @@ disable=
     unnecessary-pass,
     unnecessary-semicolon,
     unused-argument,
-    unused-import,
     unused-variable,
     unsubscriptable-object,
     unsupported-assignment-operation,
