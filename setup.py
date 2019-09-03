@@ -19,7 +19,7 @@ setup(name="plasTeX",
       version="2.0",
       author="Kevin D. Smith",
       author_email="Kevin.Smith@sas.com",
-      url="https://github.com/tiarno/plastex",
+      url="https://github.com/plastex/plastex",
       classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
