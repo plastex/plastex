@@ -35,20 +35,10 @@ though.  See the documentation at http://plastex.github.io/plastex/ for a comple
 view of what it is capable of.
 
 ## Testing
-To run the tests locally, make sure you have all the requirements installed, then run tox:
-```bash
-# install venv and requirements (optional, recommended)
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-pip install -r requirements_tests.txt
-
-# run the tests
-tox
-```
-This will run tests locally using python 3.3 to 3.6.
+To run the tests locally, run tox.
+This will run tests locally using python 3.5 to 3.7.
 
 ## Status
-[![Build Status](https://travis-ci.org/niklasp/plastex.svg?branch=python3)](https://travis-ci.org/niklasp/plastex)
-[![Coverage Status](https://coveralls.io/repos/github/niklasp/plastex/badge.svg?branch=python3)](https://coveralls.io/github/niklasp/plastex?branch=python3)
+[![Build Status](https://travis-ci.org/plastex/plastex.svg?branch=python3)](https://travis-ci.org/plastex/plastex)
+[![Coverage Status](https://coveralls.io/repos/github/plastex/plastex/badge.svg?branch=python3)](https://coveralls.io/github/plastex/plastex?branch=python3)
 
