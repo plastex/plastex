@@ -2,7 +2,6 @@ figure {
 	display: flex;
 	flex-direction: column;
 	vertical-align: bottom;
-	text-align: center;
 	overflow: auto;
 }
 
@@ -13,6 +12,7 @@ figure img {
 
 figcaption {
 	display: block;
+	text-align: center;
 }
 
 span.caption_title, span.caption_ref, span.subcaption {
