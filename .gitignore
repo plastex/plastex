@@ -59,3 +59,16 @@ target/
 
 # pyenv version file
 .python-version
+
+# Doc build files
+Doc/modplastex.idx
+Doc/plastex.aux
+Doc/plastex.idx
+Doc/plastex.ilg
+Doc/plastex.ind
+Doc/plastex.out
+Doc/plastex.paux
+Doc/plastex.pdf
+Doc/plastex.toc
+Doc/plastex/
+Doc/plastex6.syn
