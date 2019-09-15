@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
-sass --sourcemap=none --update sass:build
+
+# This script uses sass, and postcss with cssnano and autoprefixer
+# Those can be installed using npm with
+# sudo npm install -g sass postcss-cli autoprefixer cssnano-cli
+sass --no-source-map --update sass:build
 cd build
 postcss --use autoprefixer -o theme-blue-pre.css  theme-blue.css
 postcss --use autoprefixer -o theme-green-pre.css  theme-green.css
