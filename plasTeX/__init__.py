@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-__version__ = '9.3'
+__version__ = '2.0'
 
 from plasTeX import Logging, encoding
 from plasTeX.DOM import Element, Text, Node, DocumentFragment, Document

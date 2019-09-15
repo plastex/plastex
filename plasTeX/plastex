@@ -10,7 +10,7 @@ from plasTeX.Logging import getLogger
 
 log = getLogger()
 
-__version__ = '1.0'
+__version__ = '2.0'
 
 def collect_renderer_config(config):
     plastex_dir = os.path.dirname(os.path.realpath(plasTeX.__file__))
