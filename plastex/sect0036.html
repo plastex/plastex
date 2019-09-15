@@ -1,102 +1,916 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [ ['\\(','\\)']]}});
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+</script>
 <meta name="generator" content="plasTeX" />
-<meta content="text/html; charset=utf-8" http-equiv="content-type" />
-<title>plasTeX — A Python Framework for Processing LaTeX Documents: Environment Objects</title>
-
-<link href="sect0037.html" title="TeXFragment Objects" rel="next" />
-<link href="sect0035.html" title="Command Objects" rel="prev" />
-<link href="module-plasTeX-DOM.html" title="plasTeX.DOM — The plasDocument Object Model (DOM)" rel="up" />
-<link rel="stylesheet" href="styles/styles.css" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>plasTeX 2.0 — A Python Framework for Processing LaTeX Documents: Context Objects</title>
+<link rel="next" href="sec-context-language.html" title="Context language" />
+<link rel="prev" href="module-plasTeX-Context.html" title="plasTeX.Context — The  Context" />
+<link rel="up" href="module-plasTeX-Context.html" title="plasTeX.Context — The  Context" />
+<link rel="stylesheet" href="styles/theme-green.css" />
 </head>
+
 <body>
+<nav class="toc">
+<svg  class="icon icon-cross close-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 
-<div class="navigation">
-<table cellspacing="2" cellpadding="0" width="100%">
-<tr>
-<td><a href="sect0035.html" title="Command Objects"><img alt="Previous: Command Objects" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref">1</span> <span class="toc_entry">Introduction</span></a>
+ </li>
+<li class="">
+  <a href="sec-command-line.html"><span class="toc_ref">2</span> <span class="toc_entry"><b class="bf">plastex</b> — The Command-Line Interface</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0002.html"><span class="toc_ref">2.1</span> <span class="toc_entry">Command-Line and Configuration Options</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-general-options.html"><span class="toc_ref">2.1.1</span> <span class="toc_entry">General Options</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-document.html"><span class="toc_ref">2.1.2</span> <span class="toc_entry">Document Properties</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html"><span class="toc_ref">2.1.3</span> <span class="toc_entry">Counters</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-links.html"><span class="toc_ref">2.1.4</span> <span class="toc_entry">Document Links</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-files.html"><span class="toc_ref">2.1.5</span> <span class="toc_entry">Input and Output Files</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-images.html"><span class="toc_ref">2.1.6</span> <span class="toc_entry">Image Options</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-html5.html"><span class="toc_ref">2.1.7</span> <span class="toc_entry">HTML5 Renderer Options</span></a>
+ </li>
 
-<td><a href="module-plasTeX-DOM.html" title="plasTeX.DOM — The plasTeX Document Object Model (DOM)"><img alt="Up: plasTeX.DOM — The plasTeX Document Object Model (DOM)" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
 
-<td><a href="sect0037.html" title="TeXFragment Objects"><img alt="Next: TeXFragment Objects" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-document.html"><span class="toc_ref">3</span> <span class="toc_entry">The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-sections.html"><span class="toc_ref">3.1</span> <span class="toc_entry">Sections</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-links.html"><span class="toc_ref">3.1.1</span> <span class="toc_entry">Navigation and Links</span></a>
+ </li>
+<li class="">
+  <a href="sec-tableofcontents.html"><span class="toc_ref">3.1.2</span> <span class="toc_entry">Table of Contents</span></a>
+ </li>
 
-<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
-<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-paragraphs.html"><span class="toc_ref">3.2</span> <span class="toc_entry">Paragraphs</span></a>
+ </li>
+<li class="">
+  <a href="sec-complexdoc.html"><span class="toc_ref">3.3</span> <span class="toc_entry">Complex Structures</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-lists.html"><span class="toc_ref">3.3.1</span> <span class="toc_entry">Lists</span></a>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref">3.3.2</span> <span class="toc_entry">Bibliography</span></a>
+ </li>
+<li class="">
+  <a href="sec-arrays.html"><span class="toc_ref">3.3.3</span> <span class="toc_entry">Arrays and Tabular Environments</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html"><span class="toc_ref">3.3.4</span> <span class="toc_entry">Indexes</span></a>
+ </li>
 
-<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
 
-<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
-</tr>
-</table>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-macros.html"><span class="toc_ref">4</span> <span class="toc_entry">Understanding Macros and Packages</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0006.html"><span class="toc_ref">4.1</span> <span class="toc_entry">Defining Macros in L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html"><span class="toc_ref">4.2</span> <span class="toc_entry">Defining Macros in Python</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-macroclasses.html"><span class="toc_ref">4.2.1</span> <span class="toc_entry">Python Classes</span></a>
+ </li>
+<li class="">
+  <a href="sec-inimacros.html"><span class="toc_ref">4.2.2</span> <span class="toc_entry">INI Files</span></a>
+ </li>
+<li class="">
+  <a href="sec-contextmacros.html"><span class="toc_ref">4.2.3</span> <span class="toc_entry">The Document Context</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-packages.html"><span class="toc_ref">4.3</span> <span class="toc_entry">Packages</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0008.html"><span class="toc_ref">5</span> <span class="toc_entry">Renderers</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-simple-renderer-ex.html"><span class="toc_ref">5.1</span> <span class="toc_entry">Simple Renderer Example</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0009.html"><span class="toc_ref">5.1.1</span> <span class="toc_entry">Extending the Simple Renderer</span></a>
+ </li>
+<li class="">
+  <a href="subsec-renderer-from-script.html"><span class="toc_ref">5.1.2</span> <span class="toc_entry">Using a Renderer from the plastex Script</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-renderable.html"><span class="toc_ref">5.2</span> <span class="toc_entry">Renderable Objects</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0010.html"><span class="toc_ref">5.2.1</span> <span class="toc_entry">Determining the Correct Rendering Method</span></a>
+ </li>
+<li class="">
+  <a href="sect0011.html"><span class="toc_ref">5.2.2</span> <span class="toc_entry">Generating Files</span></a>
+ </li>
+<li class="">
+  <a href="sect0012.html"><span class="toc_ref">5.2.3</span> <span class="toc_entry">Generating Images</span></a>
+ </li>
+<li class="">
+  <a href="sect0013.html"><span class="toc_ref">5.2.4</span> <span class="toc_entry">Generating Vector Images</span></a>
+ </li>
+<li class="">
+  <a href="sect0014.html"><span class="toc_ref">5.2.5</span> <span class="toc_entry">Static Images</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-zpt.html"><span class="toc_ref">5.3</span> <span class="toc_entry">Page Template Renderer</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0015.html"><span class="toc_ref">5.3.1</span> <span class="toc_entry">Defining and Using Templates</span></a>
+ </li>
+<li class="">
+  <a href="sect0016.html"><span class="toc_ref">5.3.2</span> <span class="toc_entry">Defining and Using Themes</span></a>
+ </li>
+<li class="">
+  <a href="sec-zpttutorial.html"><span class="toc_ref">5.3.3</span> <span class="toc_entry">Zope Page Template Tutorial</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0017.html"><span class="toc_ref">5.4</span> <span class="toc_entry">XHTML Renderer</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0018.html"><span class="toc_ref">5.4.1</span> <span class="toc_entry">Themes</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-html5.html"><span class="toc_ref">5.5</span> <span class="toc_entry">HTML5 Renderer</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-html5-pkg.html"><span class="toc_ref">5.5.1</span> <span class="toc_entry">Interactions with packages</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0019.html"><span class="toc_ref">5.6</span> <span class="toc_entry">tBook Renderer</span></a>
+ </li>
+<li class="">
+  <a href="sect0020.html"><span class="toc_ref">5.7</span> <span class="toc_entry">DocBook Renderer</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active">
+  <a href="sect0021.html"><span class="toc_ref">6</span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</span></a>
+<svg  class="icon icon-cross expand-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+  <ul class="sub-toc-1 active">
+     <li class="">
+  <a href="sec-macros-api.html"><span class="toc_ref">6.1</span> <span class="toc_entry"><span class="ttfamily">plasTeX</span> — The Python Macro and Document Interfaces</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0022.html"><span class="toc_ref">6.1.1</span> <span class="toc_entry">Macro Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-ConfigManager.html"><span class="toc_ref">6.2</span> <span class="toc_entry"><span class="ttfamily">plasTeX.ConfigManager</span> — plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Configuration</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0023.html"><span class="toc_ref">6.2.1</span> <span class="toc_entry">ConfigManager Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0024.html"><span class="toc_ref">6.2.2</span> <span class="toc_entry">ConfigSection Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0025.html"><span class="toc_ref">6.2.3</span> <span class="toc_entry">Configuration Option Types</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-DOM.html"><span class="toc_ref">6.3</span> <span class="toc_entry"><span class="ttfamily">plasTeX.DOM</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document Object Model (DOM)</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0026.html"><span class="toc_ref">6.3.1</span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X vs. XML</span></a>
+ </li>
+<li class="">
+  <a href="sect0027.html"><span class="toc_ref">6.3.2</span> <span class="toc_entry">Node Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0028.html"><span class="toc_ref">6.3.3</span> <span class="toc_entry">DocumentFragment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0029.html"><span class="toc_ref">6.3.4</span> <span class="toc_entry">Element Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0030.html"><span class="toc_ref">6.3.5</span> <span class="toc_entry">Text Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0031.html"><span class="toc_ref">6.3.6</span> <span class="toc_entry">Document Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0032.html"><span class="toc_ref">6.3.7</span> <span class="toc_entry">Command Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0033.html"><span class="toc_ref">6.3.8</span> <span class="toc_entry">Environment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0034.html"><span class="toc_ref">6.3.9</span> <span class="toc_entry">TeXFragment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sec-texdocument-objects.html"><span class="toc_ref">6.3.10</span> <span class="toc_entry">TeXDocument Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-TeX.html"><span class="toc_ref">6.4</span> <span class="toc_entry"><span class="ttfamily">plasTeX.TeX</span> — The T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Stream</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0035.html"><span class="toc_ref">6.4.1</span> <span class="toc_entry">TeX Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active">
+  <a href="module-plasTeX-Context.html"><span class="toc_ref">6.5</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Context</span> — The T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Context</span></a>
+<svg  class="icon icon-cross expand-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+  <ul class="sub-toc-2 active">
+     <li class=" active current">
+  <a href="sect0036.html"><span class="toc_ref">6.5.1</span> <span class="toc_entry">Context Objects</span></a>
+ </li>
+<li class="">
+  <a href="sec-context-language.html"><span class="toc_ref">6.5.2</span> <span class="toc_entry">Context language</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-Renderers.html"><span class="toc_ref">6.6</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Renderers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Rendering Framework</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0037.html"><span class="toc_ref">6.6.1</span> <span class="toc_entry">Renderer Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0038.html"><span class="toc_ref">6.6.2</span> <span class="toc_entry">Renderable MixIn</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-Imagers.html"><span class="toc_ref">6.7</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Imagers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Imaging Framework</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0039.html"><span class="toc_ref">6.7.1</span> <span class="toc_entry">Imager Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0040.html"><span class="toc_ref">6.7.2</span> <span class="toc_entry">Image Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0041.html"><span class="toc_ref">A</span> <span class="toc_entry">About This Document</span></a>
+ </li>
+<li class="">
+  <a href="sect0042.html"><span class="toc_ref">B</span> <span class="toc_entry">Frequently Asked Questions</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0043.html"><span class="toc_ref">B.1</span> <span class="toc_entry">Parsing L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0044.html"><span class="toc_ref">B.1.1</span> <span class="toc_entry">How can I make plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X work with my complicated macros?</span></a>
+ </li>
+<li class="">
+  <a href="sect0045.html"><span class="toc_ref">B.1.2</span> <span class="toc_entry">How can I get plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X to find my L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X packages?</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0046.html"><span class="toc_ref">C</span> <span class="toc_entry">Index</span></a>
+ </li>
+</ul>
+</nav>
+
+<div class="wrapper with-toc">
+<header>
+<h1 id="doc_title">plasTeX 2.0 — A Python Framework for Processing LaTeX Documents</h1>
+</header>
+
+<ul class="breadcrumbs">
+<li class="crumb"><a href="index.html" class="crumb">plasTeX 2.0 — A Python Framework for Processing LaTeX Documents</a></li>
+<li class="crumb"><a href="sect0021.html" class="crumb">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</a></li>
+<li class="crumb"><a href="module-plasTeX-Context.html" class="crumb"><span class="ttfamily">plasTeX.Context</span> — The T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Context</a></li>
+  <li class="last_crumb">Context Objects</li>
+</ul>
+
+<div class="content">
+<h2 id="a0000000037">6.5.1 Context Objects</h2>
+<p>   <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><b class="bf">class </b><span class="rmfamily"><span class="ttfamily"><b class="bfseries">Context</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span>load<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000279" id="a0000000279"></a>  Instantiate a new context. </p>
+<p>If the <span class="rmfamily"><i class="itshape">load </i></span> argument is set to true, the context will load all of the base macros defined in plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X. This includes all of the macros used in the standard T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X and L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X distributions. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd> </dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">contexts</b></span></span></dt>
+  <dd><p><a name="a0000000280" id="a0000000280"></a>   stack of all macro and category code collections currently in the document being processed. The item at index 0 include the global macro set and default category codes. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd> </dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">counters</b></span></span></dt>
+  <dd><p><a name="a0000000281" id="a0000000281"></a>   a dictionary of counters. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd> </dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">currentlabel</b></span></span></dt>
+  <dd><p><a name="a0000000282" id="a0000000282"></a>   the object that is given the label when a \<span class="ttfamily">label</span> macro is invoked. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd> </dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">isMathMode</b></span></span></dt>
+  <dd><p><a name="a0000000283" id="a0000000283"></a>   boolean that specifies if we are currently in T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X’s math mode or not. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd> </dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">labels</b></span></span></dt>
+  <dd><p><a name="a0000000284" id="a0000000284"></a>   a dictionary of labels and the objects that they refer to. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">addGlobal</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">key, value </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000285" id="a0000000285"></a>   add a macro <span class="rmfamily"><i class="itshape">value </i></span> with name <span class="rmfamily"><i class="itshape">key </i></span> to the global namespace. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">addLocal</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">key, value </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000286" id="a0000000286"></a>   add a macro <span class="rmfamily"><i class="itshape">value </i></span> with name <span class="rmfamily"><i class="itshape">key </i></span> to the current namespace. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">append</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span>context<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000287" id="a0000000287"></a>   same as <span class="ttfamily">push()</span> </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">catcode</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">char, code </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000288" id="a0000000288"></a>   set the category code for a character in the current scope. <span class="rmfamily"><i class="itshape">char </i></span> is the character that will have its category code changed. <span class="rmfamily"><i class="itshape">code </i></span> is the T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X category code (0-15) to change it to. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">chardef</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">name, num </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000289" id="a0000000289"></a>   create a new T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X chardef like \<span class="ttfamily">chardef</span>. </p>
+<p><span class="rmfamily"><i class="itshape">name </i></span> is the name of the command to create. </p>
+<p><span class="rmfamily"><i class="itshape">num </i></span> is the character number to use. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">__getitem__</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">key </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000290" id="a0000000290"></a>   look through the stack of macros and return the one with the name <span class="rmfamily"><i class="itshape">key </i></span>. The return value is an <em>instance</em> of the requested macro, not a reference to the macro class. This method allows you to use Python’s dictionary syntax to retrieve the item from the context as shown below. </p>
+<pre class="verbatim">
+tex.context['section']
+</pre>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">importMacros</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">context </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000291" id="a0000000291"></a>   import macros from another context into the global namespace. The argument, <span class="rmfamily"><i class="itshape">context </i></span>, must be a dictionary of macros. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">label</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">label </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000292" id="a0000000292"></a>   set the given label to the currently labelable object. An object can only have one label associated with it. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">let</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">dest, source </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000293" id="a0000000293"></a>   create a new T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X let like \<span class="ttfamily">let</span>. </p>
+<p><span class="rmfamily"><i class="itshape">dest </i></span> is the command sequence to create. </p>
+<p><span class="rmfamily"><i class="itshape">source </i></span> is the token to set the command sequence equivalent to. </p>
+<p><b class="bfseries">Example</b> </p>
+<pre class="verbatim">
+c.let('bgroup', BeginGroup('{'))
+</pre>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">loadBaseMacros</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000294" id="a0000000294"></a>   imports all of the base macros defined by plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X. This includes all of the macros specified by the T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X and L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X systems. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">loadLanguage</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">language, document </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000295" id="a0000000295"></a>   loads a language package to configure names such as \<span class="ttfamily">figurename</span>, \<span class="ttfamily">tablename</span>, etc. See Section&#160;<a href="sec-context-language.html">6.5.2</a> for more information. </p>
+<p><span class="rmfamily"><i class="itshape">language </i></span> is a string containing the name of the language file to load. </p>
+<p><span class="rmfamily"><i class="itshape">document </i></span> is the document object being processed. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">loadINIPackage</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">inifile </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000296" id="a0000000296"></a>   load an INI formatted package file (see section <a href="sec-packages.html">4.3</a> for more information). </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">loadPackage</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">tex, file, <span class="textnormal"><big class="xlarge">[</big></span>options<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000297" id="a0000000297"></a>   loads a L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X package. </p>
+<p><span class="rmfamily"><i class="itshape">tex </i></span> is the T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X processor to use in parsing the package content </p>
+<p><span class="rmfamily"><i class="itshape">file </i></span> is the name of the package to load </p>
+<p><span class="rmfamily"><i class="itshape">options </i></span> is a dictionary containing the options to pass to the package. This generally comes from the optional argument on a \<span class="ttfamily">usepackage</span> or \<span class="ttfamily">documentclass</span> macro. </p>
+<p>The package being loaded by this method can be one of three type: 1) a native L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X package, 2) a Python package, or 3) an INI formatted file. The Python version of the package is searched for first. If it is found, it is loaded and an INI version of the package is also loaded if it exists. If there is no Python version, the true L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X version of the package is loaded. If there is an INI version of the package in the same directory as the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X version, that file is loaded also. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">newcommand</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">name<span class="textnormal"><big class="xlarge">[</big></span>, nargs<span class="textnormal"><big class="xlarge">[</big></span>, definition<span class="textnormal"><big class="xlarge">[</big></span>, opt<span class="textnormal"><big class="xlarge">]</big></span><span class="textnormal"><big class="xlarge">]</big></span><span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000298" id="a0000000298"></a>   create a new L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X command like \<span class="ttfamily">newcommand</span>. </p>
+<p><span class="rmfamily"><i class="itshape">name </i></span> is the name of the macro to create. </p>
+<p><span class="rmfamily"><i class="itshape">nargs </i></span> is the number of arguments including optional arguments. </p>
+<p><span class="rmfamily"><i class="itshape">definition </i></span> is a string containing the macro definition. </p>
+<p><span class="rmfamily"><i class="itshape">opt </i></span> is a string containing the default optional value. </p>
+<p><b class="bfseries">Examples</b> </p>
+<pre class="verbatim">
+c.newcommand('bold', 1, r'\\textbf{#1}')
+c.newcommand('foo', 2, r'{\\bf #1#2}', opt='myprefix')
+</pre>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">newcount</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">name<span class="textnormal"><big class="xlarge">[</big></span>, initial<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000299" id="a0000000299"></a>   create a new count like \<span class="ttfamily">newcount</span>. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">newcounter</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">name, <span class="textnormal"><big class="xlarge">[</big></span>resetby, initial, format<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000300" id="a0000000300"></a>   create a new counter like \<span class="ttfamily">newcounter</span>. </p>
+<p><span class="rmfamily"><i class="itshape">name </i></span> is the name of the counter to create. </p>
+<p><span class="rmfamily"><i class="itshape">resetby </i></span> is the counter that, when incremented, will reset the new counter. </p>
+<p><span class="rmfamily"><i class="itshape">initial </i></span> is the initial value for the counter. </p>
+<p><span class="rmfamily"><i class="itshape">format </i></span> is the printed format of the counter. </p>
+<p>In addition to creating a new counter macro, another macro corresponding to the \<span class="ttfamily">the<span class="rmfamily"><i class="itshape">name </i></span></span> is created which prints the value of the counter just like in L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">newdef</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">name<span class="textnormal"><big class="xlarge">[</big></span>, args<span class="textnormal"><big class="xlarge">[</big></span>, definition<span class="textnormal"><big class="xlarge">[</big></span>, local<span class="textnormal"><big class="xlarge">]</big></span><span class="textnormal"><big class="xlarge">]</big></span><span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000301" id="a0000000301"></a>   create a new T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X definition like \<span class="ttfamily">def</span>. </p>
+<p><span class="rmfamily"><i class="itshape">name </i></span> is the name of the definition to create. </p>
+<p><span class="rmfamily"><i class="itshape">args </i></span> is a string containing the T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X argument profile. </p>
+<p><span class="rmfamily"><i class="itshape">definition </i></span> is a string containing the macro code to expand when the definition is invoked. </p>
+<p><span class="rmfamily"><i class="itshape">local </i></span> is a boolean that specifies that the definition should only exist in the local scope. The default value is true. </p>
+<p><b class="bfseries">Examples</b> </p>
+<pre class="verbatim">
+c.newdef('bold', '#1', '{\\bf #1}')
+c.newdef('put', '(#1,#2)#3', '\\dostuff{#1}{#2}{#3}')
+</pre>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">newdimen</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">name<span class="textnormal"><big class="xlarge">[</big></span>, initial<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000302" id="a0000000302"></a>   create a new dimen like \<span class="ttfamily">newdimen</span>. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">newenvironment</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">name<span class="textnormal"><big class="xlarge">[</big></span>, nargs<span class="textnormal"><big class="xlarge">[</big></span>, definition<span class="textnormal"><big class="xlarge">[</big></span>, opt<span class="textnormal"><big class="xlarge">]</big></span><span class="textnormal"><big class="xlarge">]</big></span><span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000303" id="a0000000303"></a>   create a new L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X environment like \<span class="ttfamily">newenvironment</span>. This works exactly like the <span class="ttfamily">newcommand()</span> method, except that the <span class="rmfamily"><i class="itshape">definition </i></span> argument is a two element tuple where the first element is a string containing the macro content to expand at the \<span class="ttfamily">begin</span>, and the second element is the macro content to expand at the \<span class="ttfamily">end</span>. </p>
+<p><b class="bfseries">Example</b> </p>
+<pre class="verbatim">
+c.newenvironment('mylist', 0, (r'\\begin{itemize}', r'\\end{itemize}'))
+</pre>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">newif</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">name<span class="textnormal"><big class="xlarge">[</big></span>, initial<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000304" id="a0000000304"></a>   create a new if like \<span class="ttfamily">newif</span>. This also creates macros corresponding to \<span class="ttfamily"><span class="rmfamily"><i class="itshape">name </i></span>true</span> and \<span class="ttfamily"><span class="rmfamily"><i class="itshape">name </i></span>false</span>. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">newmuskip</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">name<span class="textnormal"><big class="xlarge">[</big></span>, initial<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000305" id="a0000000305"></a>   create a new muskip like \<span class="ttfamily">newmuskip</span>. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">newskip</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">name<span class="textnormal"><big class="xlarge">[</big></span>, initial<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000306" id="a0000000306"></a>   create a new skip like \<span class="ttfamily">newskip</span>. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd> </dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">packages</b></span></span></dt>
+  <dd><p><a name="a0000000307" id="a0000000307"></a>   a dictionary of L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X packages. The keys are the names of the packages. The values are dictionaries containing the options that were specified when the package was loaded. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">pop</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span>obj<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000308" id="a0000000308"></a>   pop the top scope off of the stack. If <span class="rmfamily"><i class="itshape">obj </i></span> is specified, continue to pop scopes off of the context stack until the scope that was originally added by <span class="rmfamily"><i class="itshape">obj </i></span> is found. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">push</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span>context<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000309" id="a0000000309"></a>   add a new scope to the stack. If a macro instance <span class="rmfamily"><i class="itshape">context </i></span> is specified, the new scope’s namespace is given by that object. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">ref</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">obj, label </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000310" id="a0000000310"></a>   set up a reference for resolution. </p>
+<p><span class="rmfamily"><i class="itshape">obj </i></span> is the macro object that is doing the referencing. </p>
+<p><span class="rmfamily"><i class="itshape">label </i></span> is the label of the node that <span class="rmfamily"><i class="itshape">obj </i></span> is looking for. </p>
+<p>If the item that <span class="rmfamily"><i class="itshape">obj </i></span> is looking for has already been labeled, the <span class="ttfamily">idref</span> attribute of <span class="rmfamily"><i class="itshape">obj </i></span> is set to the abject. Otherwise, the reference is stored away to be resolved later. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">setVerbatimCatcodes</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000311" id="a0000000311"></a>   set the current set of category codes to the set used for the verbatim environment. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">whichCode</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">char </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000312" id="a0000000312"></a>   return the character code that <span class="rmfamily"><i class="itshape">char </i></span> belongs to. The category codes are the same codes used by T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X and are defined in the <span class="ttfamily">Token</span> class. </p>
+</dd>
+</dl> </p>
+
 </div>
 
-<div class="breadcrumbs">
-<span>
-<span>
-<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
-</span>
+<nav class="prev_up_next">
+  <a href="module-plasTeX-Context.html" title="plasTeX.Context — The TeX Context"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="module-plasTeX-Context.html" title="plasTeX.Context — The TeX Context"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="sec-context-language.html" title="Context language"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+  <a href="sect0046.html" class="index">Index</a>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+</nav>
 
-</span><span>
-<span>
-<a href="sect0024.html">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</a> <b>:</b>
-</span>
-
-</span><span>
-<span>
-<a href="module-plasTeX-DOM.html"><tt class="ttfamily">plasTeX.DOM</tt> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document Object Model (DOM)</a> <b>:</b>
-</span>
-
-</span><span>
-
-<span>
-<b class="current">Environment Objects</b>
-</span>
-</span>
-<hr />
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
 </div>
-
-<div><h2 id="a0000013789">6.3.8 Environment Objects</h2>
-<p>   <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt><b class="bf">class </b><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">Environment</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
-    <dd><p><a name="a0000013853" id="a0000013853"></a>  The <tt class="ttfamily">Environment</tt> class is a subclass of <tt class="ttfamily">Macro</tt>. This is the class that should be subclassed when creating Python based macros that correspond to L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X environments. The main difference between the processing of <tt class="ttfamily">Command</tt>s and <tt class="ttfamily">Environment</tt>s is that the <tt class="ttfamily">invoke()</tt> method does special handling of the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document context, and the <tt class="ttfamily">digest()</tt> method absorbs the output stream tokens that are encapsulated by the \<tt class="ttfamily">begin</tt> and \<tt class="ttfamily">end</tt> tokens. </p><p>For more information on the <tt class="ttfamily">Environment</tt> class’ API, see the <tt class="ttfamily">Macro</tt> class. </p></dd>
-
-</dl> </p></div>
-
-
-
-
-
-<div class="navigation">
-<table cellspacing="2" cellpadding="0" width="100%">
-<tr>
-<td><a href="sect0035.html" title="Command Objects"><img alt="Previous: Command Objects" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
-
-<td><a href="module-plasTeX-DOM.html" title="plasTeX.DOM — The plasTeX Document Object Model (DOM)"><img alt="Up: plasTeX.DOM — The plasTeX Document Object Model (DOM)" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
-
-<td><a href="sect0037.html" title="TeXFragment Objects"><img alt="Next: TeXFragment Objects" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
-
-<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
-<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
-
-<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
-
-<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
-</tr>
-</table>
-</div>
-
-<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
-
 </body>
 </html>

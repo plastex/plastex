@@ -1,74 +1,402 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [ ['\\(','\\)']]}});
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+</script>
 <meta name="generator" content="plasTeX" />
-<meta content="text/html; charset=utf-8" http-equiv="content-type" />
-<title>plasTeX — A Python Framework for Processing LaTeX Documents: Python Classes</title>
-
-<link href="sec-inimacros.html" title="INI Files" rel="next" />
-<link href="sect0009.html" title="Defining Macros in Python" rel="prev" />
-<link href="sect0009.html" title="Defining Macros in Python" rel="up" />
-<link rel="stylesheet" href="styles/styles.css" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>plasTeX 2.0 — A Python Framework for Processing LaTeX Documents: Python Classes</title>
+<link rel="next" href="sec-inimacros.html" title="INI Files" />
+<link rel="prev" href="sect0007.html" title="Defining Macros in Python" />
+<link rel="up" href="sect0007.html" title="Defining Macros in Python" />
+<link rel="stylesheet" href="styles/theme-green.css" />
 </head>
+
 <body>
+<nav class="toc">
+<svg  class="icon icon-cross close-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 
-<div class="navigation">
-<table cellspacing="2" cellpadding="0" width="100%">
-<tr>
-<td><a href="sect0009.html" title="Defining Macros in Python"><img alt="Previous: Defining Macros in Python" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref">1</span> <span class="toc_entry">Introduction</span></a>
+ </li>
+<li class="">
+  <a href="sec-command-line.html"><span class="toc_ref">2</span> <span class="toc_entry"><b class="bf">plastex</b> — The Command-Line Interface</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0002.html"><span class="toc_ref">2.1</span> <span class="toc_entry">Command-Line and Configuration Options</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-general-options.html"><span class="toc_ref">2.1.1</span> <span class="toc_entry">General Options</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-document.html"><span class="toc_ref">2.1.2</span> <span class="toc_entry">Document Properties</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html"><span class="toc_ref">2.1.3</span> <span class="toc_entry">Counters</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-links.html"><span class="toc_ref">2.1.4</span> <span class="toc_entry">Document Links</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-files.html"><span class="toc_ref">2.1.5</span> <span class="toc_entry">Input and Output Files</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-images.html"><span class="toc_ref">2.1.6</span> <span class="toc_entry">Image Options</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-html5.html"><span class="toc_ref">2.1.7</span> <span class="toc_entry">HTML5 Renderer Options</span></a>
+ </li>
 
-<td><a href="sect0009.html" title="Defining Macros in Python"><img alt="Up: Defining Macros in Python" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
 
-<td><a href="sec-inimacros.html" title="INI Files"><img alt="Next: INI Files" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-document.html"><span class="toc_ref">3</span> <span class="toc_entry">The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-sections.html"><span class="toc_ref">3.1</span> <span class="toc_entry">Sections</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-links.html"><span class="toc_ref">3.1.1</span> <span class="toc_entry">Navigation and Links</span></a>
+ </li>
+<li class="">
+  <a href="sec-tableofcontents.html"><span class="toc_ref">3.1.2</span> <span class="toc_entry">Table of Contents</span></a>
+ </li>
 
-<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
-<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-paragraphs.html"><span class="toc_ref">3.2</span> <span class="toc_entry">Paragraphs</span></a>
+ </li>
+<li class="">
+  <a href="sec-complexdoc.html"><span class="toc_ref">3.3</span> <span class="toc_entry">Complex Structures</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-lists.html"><span class="toc_ref">3.3.1</span> <span class="toc_entry">Lists</span></a>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref">3.3.2</span> <span class="toc_entry">Bibliography</span></a>
+ </li>
+<li class="">
+  <a href="sec-arrays.html"><span class="toc_ref">3.3.3</span> <span class="toc_entry">Arrays and Tabular Environments</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html"><span class="toc_ref">3.3.4</span> <span class="toc_entry">Indexes</span></a>
+ </li>
 
-<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
 
-<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
-</tr>
-</table>
-</div>
+  </ul>
+ </li>
+<li class=" active">
+  <a href="sec-macros.html"><span class="toc_ref">4</span> <span class="toc_entry">Understanding Macros and Packages</span></a>
+<svg  class="icon icon-cross expand-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+  <ul class="sub-toc-1 active">
+     <li class="">
+  <a href="sect0006.html"><span class="toc_ref">4.1</span> <span class="toc_entry">Defining Macros in L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X</span></a>
+ </li>
+<li class=" active">
+  <a href="sect0007.html"><span class="toc_ref">4.2</span> <span class="toc_entry">Defining Macros in Python</span></a>
+<svg  class="icon icon-cross expand-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+  <ul class="sub-toc-2 active">
+     <li class=" active current">
+  <a href="sec-macroclasses.html"><span class="toc_ref">4.2.1</span> <span class="toc_entry">Python Classes</span></a>
+ </li>
+<li class="">
+  <a href="sec-inimacros.html"><span class="toc_ref">4.2.2</span> <span class="toc_entry">INI Files</span></a>
+ </li>
+<li class="">
+  <a href="sec-contextmacros.html"><span class="toc_ref">4.2.3</span> <span class="toc_entry">The Document Context</span></a>
+ </li>
 
-<div class="breadcrumbs">
-<span>
-<span>
-<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
-</span>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-packages.html"><span class="toc_ref">4.3</span> <span class="toc_entry">Packages</span></a>
+ </li>
 
-</span><span>
-<span>
-<a href="sec-macros.html">Understanding Macros and Packages</a> <b>:</b>
-</span>
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0008.html"><span class="toc_ref">5</span> <span class="toc_entry">Renderers</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-simple-renderer-ex.html"><span class="toc_ref">5.1</span> <span class="toc_entry">Simple Renderer Example</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0009.html"><span class="toc_ref">5.1.1</span> <span class="toc_entry">Extending the Simple Renderer</span></a>
+ </li>
+<li class="">
+  <a href="subsec-renderer-from-script.html"><span class="toc_ref">5.1.2</span> <span class="toc_entry">Using a Renderer from the plastex Script</span></a>
+ </li>
 
-</span><span>
-<span>
-<a href="sect0009.html">Defining Macros in Python</a> <b>:</b>
-</span>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-renderable.html"><span class="toc_ref">5.2</span> <span class="toc_entry">Renderable Objects</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0010.html"><span class="toc_ref">5.2.1</span> <span class="toc_entry">Determining the Correct Rendering Method</span></a>
+ </li>
+<li class="">
+  <a href="sect0011.html"><span class="toc_ref">5.2.2</span> <span class="toc_entry">Generating Files</span></a>
+ </li>
+<li class="">
+  <a href="sect0012.html"><span class="toc_ref">5.2.3</span> <span class="toc_entry">Generating Images</span></a>
+ </li>
+<li class="">
+  <a href="sect0013.html"><span class="toc_ref">5.2.4</span> <span class="toc_entry">Generating Vector Images</span></a>
+ </li>
+<li class="">
+  <a href="sect0014.html"><span class="toc_ref">5.2.5</span> <span class="toc_entry">Static Images</span></a>
+ </li>
 
-</span><span>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-zpt.html"><span class="toc_ref">5.3</span> <span class="toc_entry">Page Template Renderer</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0015.html"><span class="toc_ref">5.3.1</span> <span class="toc_entry">Defining and Using Templates</span></a>
+ </li>
+<li class="">
+  <a href="sect0016.html"><span class="toc_ref">5.3.2</span> <span class="toc_entry">Defining and Using Themes</span></a>
+ </li>
+<li class="">
+  <a href="sec-zpttutorial.html"><span class="toc_ref">5.3.3</span> <span class="toc_entry">Zope Page Template Tutorial</span></a>
+ </li>
 
-<span>
-<b class="current">Python Classes</b>
-</span>
-</span>
-<hr />
-</div>
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0017.html"><span class="toc_ref">5.4</span> <span class="toc_entry">XHTML Renderer</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0018.html"><span class="toc_ref">5.4.1</span> <span class="toc_entry">Themes</span></a>
+ </li>
 
-<div><h2 id="sec:macroclasses">4.2.1 Python Classes</h2>
-<p>Both L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X command and environments can be implemented in Python classes. plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X includes a base class for each one: <tt class="ttfamily">Command</tt> for commands and <tt class="ttfamily">Environment</tt> for environments. For the most part, these two classes behave in the same way. They both are responsible for parsing their arguments, organizing their child nodes, incrementing counters, etc. much like their L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X counterparts. The Python macro class feature set is based on common L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X  conventions. So if the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X macro you are implementing in Python uses standard L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X conventions, you job will be very easy. If you are doing unconventional operations, you will probably still succeed, you just might have to do a little more work. </p><p>The three most important parts of the Python macro API are: 1) the <tt class="ttfamily">args</tt> attribute, 2) the <tt class="ttfamily">invoke</tt> method, and 3) the <tt class="ttfamily">digest</tt> method. When writing your own macros, these are used the most by far. </p><h3 id="a0000002172">The <tt class="ttfamily">args</tt> Attribute</h3>
-<p>The <tt class="ttfamily">args</tt> attribute is a string attribute on the class that indicates what the arguments to the macro are. In addition to simply indicating the number of arguments, whether they are mandatory or optional, and what characters surround the argument as in L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X, the <tt class="ttfamily">args</tt> string also gives names to each of the argument and can also indicate the content of the argument (i.e. int, float, list, dictionary, string, etc.). The names given to each argument determine the key that the argument is stored under in the the <tt class="ttfamily">attributes</tt> dictionary of the class instance. Below is a simple example of a macro class. </p><pre>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-html5.html"><span class="toc_ref">5.5</span> <span class="toc_entry">HTML5 Renderer</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-html5-pkg.html"><span class="toc_ref">5.5.1</span> <span class="toc_entry">Interactions with packages</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0019.html"><span class="toc_ref">5.6</span> <span class="toc_entry">tBook Renderer</span></a>
+ </li>
+<li class="">
+  <a href="sect0020.html"><span class="toc_ref">5.7</span> <span class="toc_entry">DocBook Renderer</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0021.html"><span class="toc_ref">6</span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-macros-api.html"><span class="toc_ref">6.1</span> <span class="toc_entry"><span class="ttfamily">plasTeX</span> — The Python Macro and Document Interfaces</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0022.html"><span class="toc_ref">6.1.1</span> <span class="toc_entry">Macro Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-ConfigManager.html"><span class="toc_ref">6.2</span> <span class="toc_entry"><span class="ttfamily">plasTeX.ConfigManager</span> — plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Configuration</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0023.html"><span class="toc_ref">6.2.1</span> <span class="toc_entry">ConfigManager Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0024.html"><span class="toc_ref">6.2.2</span> <span class="toc_entry">ConfigSection Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0025.html"><span class="toc_ref">6.2.3</span> <span class="toc_entry">Configuration Option Types</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-DOM.html"><span class="toc_ref">6.3</span> <span class="toc_entry"><span class="ttfamily">plasTeX.DOM</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document Object Model (DOM)</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0026.html"><span class="toc_ref">6.3.1</span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X vs. XML</span></a>
+ </li>
+<li class="">
+  <a href="sect0027.html"><span class="toc_ref">6.3.2</span> <span class="toc_entry">Node Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0028.html"><span class="toc_ref">6.3.3</span> <span class="toc_entry">DocumentFragment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0029.html"><span class="toc_ref">6.3.4</span> <span class="toc_entry">Element Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0030.html"><span class="toc_ref">6.3.5</span> <span class="toc_entry">Text Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0031.html"><span class="toc_ref">6.3.6</span> <span class="toc_entry">Document Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0032.html"><span class="toc_ref">6.3.7</span> <span class="toc_entry">Command Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0033.html"><span class="toc_ref">6.3.8</span> <span class="toc_entry">Environment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0034.html"><span class="toc_ref">6.3.9</span> <span class="toc_entry">TeXFragment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sec-texdocument-objects.html"><span class="toc_ref">6.3.10</span> <span class="toc_entry">TeXDocument Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-TeX.html"><span class="toc_ref">6.4</span> <span class="toc_entry"><span class="ttfamily">plasTeX.TeX</span> — The T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Stream</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0035.html"><span class="toc_ref">6.4.1</span> <span class="toc_entry">TeX Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-Context.html"><span class="toc_ref">6.5</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Context</span> — The T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Context</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0036.html"><span class="toc_ref">6.5.1</span> <span class="toc_entry">Context Objects</span></a>
+ </li>
+<li class="">
+  <a href="sec-context-language.html"><span class="toc_ref">6.5.2</span> <span class="toc_entry">Context language</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-Renderers.html"><span class="toc_ref">6.6</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Renderers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Rendering Framework</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0037.html"><span class="toc_ref">6.6.1</span> <span class="toc_entry">Renderer Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0038.html"><span class="toc_ref">6.6.2</span> <span class="toc_entry">Renderable MixIn</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-Imagers.html"><span class="toc_ref">6.7</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Imagers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Imaging Framework</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0039.html"><span class="toc_ref">6.7.1</span> <span class="toc_entry">Imager Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0040.html"><span class="toc_ref">6.7.2</span> <span class="toc_entry">Image Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0041.html"><span class="toc_ref">A</span> <span class="toc_entry">About This Document</span></a>
+ </li>
+<li class="">
+  <a href="sect0042.html"><span class="toc_ref">B</span> <span class="toc_entry">Frequently Asked Questions</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0043.html"><span class="toc_ref">B.1</span> <span class="toc_entry">Parsing L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0044.html"><span class="toc_ref">B.1.1</span> <span class="toc_entry">How can I make plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X work with my complicated macros?</span></a>
+ </li>
+<li class="">
+  <a href="sect0045.html"><span class="toc_ref">B.1.2</span> <span class="toc_entry">How can I get plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X to find my L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X packages?</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0046.html"><span class="toc_ref">C</span> <span class="toc_entry">Index</span></a>
+ </li>
+</ul>
+</nav>
+
+<div class="wrapper with-toc">
+<header>
+<h1 id="doc_title">plasTeX 2.0 — A Python Framework for Processing LaTeX Documents</h1>
+</header>
+
+<ul class="breadcrumbs">
+<li class="crumb"><a href="index.html" class="crumb">plasTeX 2.0 — A Python Framework for Processing LaTeX Documents</a></li>
+<li class="crumb"><a href="sec-macros.html" class="crumb">Understanding Macros and Packages</a></li>
+<li class="crumb"><a href="sect0007.html" class="crumb">Defining Macros in Python</a></li>
+  <li class="last_crumb">Python Classes</li>
+</ul>
+
+<div class="content">
+<h2 id="sec:macroclasses">4.2.1 Python Classes</h2>
+<p>Both L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X command and environments can be implemented in Python classes. plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X includes a base class for each one: <span class="ttfamily">Command</span> for commands and <span class="ttfamily">Environment</span> for environments. For the most part, these two classes behave in the same way. They both are responsible for parsing their arguments, organizing their child nodes, incrementing counters, etc. much like their L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X counterparts. There is also a variant of the <span class="ttfamily">Environment</span> class called <span class="ttfamily">NoCharSubEnvironment</span> which temporarily turns off character substitutions described in Section&#160;<a href="sec-texdocument-objects.html">6.3.10</a>. The Python macro class feature set is based on common L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X  conventions. So if the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X macro you are implementing in Python uses standard L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X conventions, you job will be very easy. If you are doing unconventional operations, you will probably still succeed, you just might have to do a little more work. </p>
+<p>The three most important parts of the Python macro API are: 1) the <span class="ttfamily">args</span> attribute, 2) the <span class="ttfamily">invoke</span> method, and 3) the <span class="ttfamily">digest</span> method. When writing your own macros, these are used the most by far. </p>
+<h3 id="a0000000053">The <span class="ttfamily">args</span> Attribute</h3>
+<p>The <span class="ttfamily">args</span> attribute is a string attribute on the class that indicates what the arguments to the macro are. In addition to simply indicating the number of arguments, whether they are mandatory or optional, and what characters surround the argument as in L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X, the <span class="ttfamily">args</span> string also gives names to each of the argument and can also indicate the content of the argument (i.e. int, float, list, dictionary, string, etc.). The names given to each argument determine the key that the argument is stored under in the the <span class="ttfamily">attributes</span> dictionary of the class instance. Below is a simple example of a macro class. </p>
+<pre class="verbatim">
 from plasTeX import Command, Environment
 
 class framebox(Command):
     """ \framebox[width][pos]{text} """
     args = '[ width ] [ pos ] text'
-</pre><p>In the <tt class="ttfamily">args</tt> string of the \<tt class="ttfamily">framebox</tt> macro, three arguments are defined. The first two are optional and the third one is mandatory. Once each argument is parsed, in is put into the <tt class="ttfamily">attributes</tt> dictionary under the name given in the <tt class="ttfamily">args</tt> string. For example, the <tt class="ttfamily">attributes</tt> dictionary of an instance of \<tt class="ttfamily">framebox</tt> will have the keys “width”, “pos”, and “text” once it is parsed and can be accessed in the usual Python way. </p><pre>
+</pre>
+<p>In the <span class="ttfamily">args</span> string of the \<span class="ttfamily">framebox</span> macro, three arguments are defined. The first two are optional and the third one is mandatory. Once each argument is parsed, in is put into the <span class="ttfamily">attributes</span> dictionary under the name given in the <span class="ttfamily">args</span> string. For example, the <span class="ttfamily">attributes</span> dictionary of an instance of \<span class="ttfamily">framebox</span> will have the keys “width”, “pos”, and “text” once it is parsed and can be accessed in the usual Python way. </p>
+<pre class="verbatim">
 self.attributes['width']
 self.attributes['pos']
 self.attributes['text']
-</pre><p>In plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X, any argument that isn’t mandatory (i.e. no grouping characters in the <tt class="ttfamily">args</tt> string) is optional<a href="#a0000002195" class="footnote"><sup class="footnotemark">1</sup></a>. This includes arguments surrounded by parentheses (( )), square brackets ([ ]), and angle brackets (&lt; &gt;). This also lets you combine multiple versions of a command into one macro. For example, the \<tt class="ttfamily">framebox</tt> command also has a form that looks like: \<tt class="ttfamily">framebox(x_dimen,y_dimen)[pos]{text}</tt>. This leads to the Python macro class in the following code sample that encompasses both forms. </p><pre>
+</pre>
+<p>In plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X, any argument that isn’t mandatory (i.e. no grouping characters in the <span class="ttfamily">args</span> string) is optional<a class="footnote" href="#a0000000054">
+  <sup class="footnotemark">1</sup>
+</a>. This includes arguments surrounded by parentheses ((&#160;)), square brackets ([&#160;]), and angle brackets (&lt;&#160;&gt;). This also lets you combine multiple versions of a command into one macro. For example, the \<span class="ttfamily">framebox</span> command also has a form that looks like: \<span class="ttfamily">framebox(x_dimen,y_dimen)[pos]{text}</span>. This leads to the Python macro class in the following code sample that encompasses both forms. </p>
+<pre class="verbatim">
 from plasTeX import Command, Environment
 
 class framebox(Command):
@@ -79,299 +407,518 @@ class framebox(Command):
 
     """
     args = '( dimens ) [ width ] [ pos ] text'
-</pre><p> The only thing to keep in mind is that in the second form, the <span class="rmfamily"><i class="itshape">pos</i></span> attribute is going to end up under the <span class="rmfamily"><i class="itshape">width</i></span> key in the <tt class="ttfamily">attributes</tt> dictionary since it is the first argument in square brackets, but this can be fixed up in the <tt class="ttfamily">invoke</tt> method if needed. Also, if an optional argument is not present on the macro, the value of that argument in the <tt class="ttfamily">attributes</tt> dictionary is set to <span class="rmfamily"><i class="itshape">None</i></span>. </p><p>As mentioned earlier, it is also possible to convert arguments to data types other than the default (a document fragment). A list of the available types is shown in the table below. <center><table cellspacing="0" class="tabular">
-<tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><b class="bf">Name</b></p></td>
-
-    
-    <td style="text-align:left"><p><b class="bf">Purpose</b> </p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; text-align:left; border-top-color:black; border-top-width:1px; border-right:1px solid black"><p> <span class="rmfamily"><i class="itshape">str</i></span></p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left"><p>expands all macros then sets the value of the argument in the <tt class="ttfamily">attributes</tt> dictionary to the string content of the argument</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">chr</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as ‘str’</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">char</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as ‘str’</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">cs</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>sets the attribute to an unexpanded control sequence</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">label</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>expands all macros, converts the result to a string, then sets the current label to the object that is in the <tt class="ttfamily">currentlabel</tt> attribute of the document context. Generally, an object is put into the <tt class="ttfamily">currentlabel</tt> attribute if it incremented a counter when it was invoked. The value stored in the <tt class="ttfamily">attributes</tt> dictionary is the string value of the argument.</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">id</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as ‘label’</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">idref</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>expands all macros, converts the result to a string, retrieves the object that was labeled by that value, then adds the labeled object to the <tt class="ttfamily">idref</tt> dictionary under the name of the argument. This type of argument is used in commands like \<tt class="ttfamily">ref</tt> that must reference other abjects. The nice thing about ‘idref’ is that it gives you a reference to the object itself which you can then use to retrieve any type of information from it such as the reference value, title, etc. The value stored in the <tt class="ttfamily">attributes</tt> dictionary is the string value of the argument.</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">ref</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as ‘idref’</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">nox</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>just parses the argument, but doesn’t expand the macros</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">list</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>converts the argument to a Python list. By default, the list item separator is a comma (,). You can change the item separator in the args string by appending a set of parentheses surrounding the separator character immediately after ‘list’. For example, to specify a semi-colon separated list for an argument called “foo” you would use the <tt class="ttfamily">args</tt> string: “foo:list(;)”. It is also possible to cast the type of each item by appending another colon and the data type from this table that you want each item to be. However, you are limited to one data type for every item in the list.</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">dict</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>converts the argument to a Python dictionary. This is commonly used by arguments set up using L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X’s ‘<span class="sffamily">keyval</span>’ package. By default, key/value pairs are separated by commas, although this character can be changed in the same way as the delimiter in the ‘list’ type. You can also cast each value of the dictionary using the same method as the ‘list’ type. In all cases, keys are converted to strings.</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">dimen</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>reads a dimension and returns an instance of <tt class="ttfamily">dimen</tt></p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">dimension</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as ‘dimen’</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">length</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as ‘dimen’</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">number</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>reads an integer and returns a Python integer</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">count</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as ‘number’</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">int</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as ‘number’</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">float</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>reads a decimal value and returns a Python float</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">double</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as ‘float’</p></td>
-
-</tr>
-</table></center> </p><p>There are also several argument types used for more low-level routines. These don’t parse the typical L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X arguments, they are used for the somewhat more free-form T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X arguments. <center><table cellspacing="0" class="tabular">
-<tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><b class="bf">Name</b></p></td>
-
-    
-    <td style="text-align:left"><p><b class="bf">Purpose</b> </p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; text-align:left; border-top-color:black; border-top-width:1px; border-right:1px solid black"><p> <span class="rmfamily"><i class="itshape">Dimen</i></span></p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left"><p>reads a T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X dimension and returns an instance of <tt class="ttfamily">dimen</tt></p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">Length</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as ‘Dimen’</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">Dimension</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as ‘Dimen’</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">MuDimen</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>reads a T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X mu-dimension and returns an instance of <tt class="ttfamily">mudimen</tt></p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">MuLength</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as ‘MuDimen’</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">Glue</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>reads a T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X glue parameter and returns an instance of <tt class="ttfamily">glue</tt></p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">Skip</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as ‘MuLength’</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">Number</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>reads a T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X integer parameter and returns a Python integer</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">Int</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as ‘Number’</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">Integer</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as ‘Number’</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">Token</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>reads an unexpanded token</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">Tok</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as ‘Token’</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">XToken</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>reads an expanded token</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">XTok</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as ‘XToken’</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">Args</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>reads tokens up to the first begin group (i.e. {)</p></td>
-
-</tr>
-</table></center> </p><p>To use one of the data types, simple append a colon (:) and the data type name to the attribute name in the <tt class="ttfamily">args</tt> string. Going back to the \<tt class="ttfamily">framebox</tt> example, the argument in parentheses would be better represented as a list of dimensions. The <span class="rmfamily"><i class="itshape">width</i></span> parameter is also a dimension, and the <span class="rmfamily"><i class="itshape">pos</i></span> parameter is a string. </p><pre>
+</pre>
+<p> The only thing to keep in mind is that in the second form, the <span class="rmfamily"><i class="itshape">pos </i></span> attribute is going to end up under the <span class="rmfamily"><i class="itshape">width </i></span> key in the <span class="ttfamily">attributes</span> dictionary since it is the first argument in square brackets, but this can be fixed up in the <span class="ttfamily">invoke</span> method if needed. Also, if an optional argument is not present on the macro, the value of that argument in the <span class="ttfamily">attributes</span> dictionary is set to <span class="rmfamily"><i class="itshape">None </i></span>. </p>
+<p>As mentioned earlier, it is also possible to convert arguments to data types other than the default (a document fragment). A list of the available types is shown in the table below. <div class="centered"><table class="tabular">
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><b class="bf">Name</b></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p><b class="bf">Purpose</b> </p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <span class="rmfamily"><i class="itshape">str </i></span></p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>expands all macros then sets the value of the argument in the <span class="ttfamily">attributes</span> dictionary to the string content of the argument</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">chr </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as ‘str’</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">char </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as ‘str’</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">cs </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>sets the attribute to an unexpanded control sequence</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">label </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>expands all macros, converts the result to a string, then sets the current label to the object that is in the <span class="ttfamily">currentlabel</span> attribute of the document context. Generally, an object is put into the <span class="ttfamily">currentlabel</span> attribute if it incremented a counter when it was invoked. The value stored in the <span class="ttfamily">attributes</span> dictionary is the string value of the argument.</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">id </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as ‘label’</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">idref </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>expands all macros, converts the result to a string, retrieves the object that was labeled by that value, then adds the labeled object to the <span class="ttfamily">idref</span> dictionary under the name of the argument. This type of argument is used in commands like \<span class="ttfamily">ref</span> that must reference other abjects. The nice thing about ‘idref’ is that it gives you a reference to the object itself which you can then use to retrieve any type of information from it such as the reference value, title, etc. The value stored in the <span class="ttfamily">attributes</span> dictionary is the string value of the argument.</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">ref </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as ‘idref’</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">nox </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>just parses the argument, but doesn’t expand the macros</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">list </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>converts the argument to a Python list. By default, the list item separator is a comma (,). You can change the item separator in the args string by appending a set of parentheses surrounding the separator character immediately after ‘list’. For example, to specify a semi-colon separated list for an argument called “foo” you would use the <span class="ttfamily">args</span> string: “foo:list(;)”. It is also possible to cast the type of each item by appending another colon and the data type from this table that you want each item to be. However, you are limited to one data type for every item in the list.</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">dict </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>converts the argument to a Python dictionary. This is commonly used by arguments set up using L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X’s ‘<span class="sffamily">keyval</span>’ package. By default, key/value pairs are separated by commas, although this character can be changed in the same way as the delimiter in the ‘list’ type. You can also cast each value of the dictionary using the same method as the ‘list’ type. In all cases, keys are converted to strings.</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">dimen </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>reads a dimension and returns an instance of <span class="ttfamily">dimen</span></p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">dimension </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as ‘dimen’</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">length </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as ‘dimen’</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">number </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>reads an integer and returns a Python integer</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">count </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as ‘number’</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">int </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as ‘number’</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">float </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>reads a decimal value and returns a Python float</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">double </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as ‘float’</p>
+
+    </td>
+  </tr>
+</table></div> </p>
+<p>There are also several argument types used for more low-level routines. These don’t parse the typical L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X arguments, they are used for the somewhat more free-form T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X arguments. <div class="centered"><table class="tabular">
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><b class="bf">Name</b></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p><b class="bf">Purpose</b> </p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <span class="rmfamily"><i class="itshape">Dimen </i></span></p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>reads a T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X dimension and returns an instance of <span class="ttfamily">dimen</span></p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">Length </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as ‘Dimen’</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">Dimension </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as ‘Dimen’</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">MuDimen </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>reads a T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X mu-dimension and returns an instance of <span class="ttfamily">mudimen</span></p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">MuLength </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as ‘MuDimen’</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">Glue </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>reads a T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X glue parameter and returns an instance of <span class="ttfamily">glue</span></p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">Skip </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as ‘MuLength’</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">Number </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>reads a T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X integer parameter and returns a Python integer</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">Int </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as ‘Number’</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">Integer </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as ‘Number’</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">Token </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>reads an unexpanded token</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">Tok </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as ‘Token’</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">XToken </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>reads an expanded token</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">XTok </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as ‘XToken’</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">Args </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>reads tokens up to the first begin group (i.e. {)</p>
+
+    </td>
+  </tr>
+</table></div> </p>
+<p>To use one of the data types, simple append a colon (:) and the data type name to the attribute name in the <span class="ttfamily">args</span> string. Going back to the \<span class="ttfamily">framebox</span> example, the argument in parentheses would be better represented as a list of dimensions. The <span class="rmfamily"><i class="itshape">width </i></span> parameter is also a dimension, and the <span class="rmfamily"><i class="itshape">pos </i></span> parameter is a string. </p>
+<pre class="verbatim">
 from plasTeX import Command, Environment
 
 class framebox(Command):
@@ -382,8 +929,12 @@ class framebox(Command):
 
     """
     args = '( dimens:list:dimen ) [ width:dimen ] [ pos:chr ] text'
-</pre><h3 id="a0000002649">The <tt class="ttfamily">invoke</tt> Method</h3>
-<p>The <tt class="ttfamily">invoke</tt> method is responsible for creating a new document context, parsing the macro arguments, and incrementing counters. In most cases, the default implementation will work just fine, but you may want to do some extra processing of the macro arguments or counters before letting the parsing of the document proceed. There are actually several methods in the API that are called within the scope of the <tt class="ttfamily">invoke</tt> method: <tt class="ttfamily">preParse</tt>, <tt class="ttfamily">preArgument</tt>, <tt class="ttfamily">postArgument</tt>, and <tt class="ttfamily">postParse</tt>. </p><p>The order of execution is quite simple. Before any arguments have been parsed, the <tt class="ttfamily">preParse</tt> method is called. The <tt class="ttfamily">preArgument</tt> and <tt class="ttfamily">postArgument</tt> methods are called before and after each argument, respectively. Then, after all arguments have been parsed, the <tt class="ttfamily">postParse</tt> method is called. The default implementations of these methods handle the stepping of counters and setting the current labeled item in the document. By default, macros that have been “starred” (i.e. have a ‘*’ before the arguments) do not increment the counter. You can override this behavior in one of these methods if you prefer. </p><p>The most common reason for overriding the <tt class="ttfamily">invoke</tt> method is to post-process the arguments in the <tt class="ttfamily">attributes</tt> dictionary, or add information to the instance. For example, the \<tt class="ttfamily">color</tt> command in L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X’s color package could convert the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X color to the correct CSS format and add it to the CSS style object. </p><pre>
+</pre>
+<h3 id="a0000000055">The <span class="ttfamily">invoke</span> Method</h3>
+<p>The <span class="ttfamily">invoke</span> method is responsible for creating a new document context, parsing the macro arguments, and incrementing counters. In most cases, the default implementation will work just fine, but you may want to do some extra processing of the macro arguments or counters before letting the parsing of the document proceed. There are actually several methods in the API that are called within the scope of the <span class="ttfamily">invoke</span> method: <span class="ttfamily">preParse</span>, <span class="ttfamily">preArgument</span>, <span class="ttfamily">postArgument</span>, and <span class="ttfamily">postParse</span>. </p>
+<p>The order of execution is quite simple. Before any arguments have been parsed, the <span class="ttfamily">preParse</span> method is called. The <span class="ttfamily">preArgument</span> and <span class="ttfamily">postArgument</span> methods are called before and after each argument, respectively. Then, after all arguments have been parsed, the <span class="ttfamily">postParse</span> method is called. The default implementations of these methods handle the stepping of counters and setting the current labeled item in the document. By default, macros that have been “starred” (i.e. have a ‘*’ before the arguments) do not increment the counter. You can override this behavior in one of these methods if you prefer. </p>
+<p>The most common reason for overriding the <span class="ttfamily">invoke</span> method is to post-process the arguments in the <span class="ttfamily">attributes</span> dictionary, or add information to the instance. For example, the \<span class="ttfamily">color</span> command in L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X’s color package could convert the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X color to the correct CSS format and add it to the CSS style object. </p>
+<pre class="verbatim">
 from plasTeX import Command, Environment
 
 def latex2htmlcolor(arg):
@@ -404,8 +955,13 @@ class color(Environment):
     def invoke(self, tex):
         a = Environment.invoke(tex)
         self.style['color'] = latex2htmlcolor(a['color'])
-</pre><p>While simple things like attribute post-processing is the most common use of the <tt class="ttfamily">invoke</tt> method, you can do very advanced things like changing category codes, and iterating over the tokens in the T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X processor directly like the <tt class="ttfamily">verbatim</tt> environment does. </p><p>One other feature of the <tt class="ttfamily">invoke</tt> method that may be of interest is the return value. Most <tt class="ttfamily">invoke</tt> method implementations do not return anything (or return <span class="rmfamily"><i class="itshape">None</i></span>). In this case, the macro instance itself is sent to the output stream. However, you can also return a list of tokens. If a list of tokens is returned, instead of the macro instance, those tokens are inserted into the output stream. This is useful if you don’t want the macro instance to be part of the output stream or document. In this case, you can simply return an empty list. </p><h3 id="a0000002686">The <tt class="ttfamily">digest</tt> Method</h3>
-<p>The <tt class="ttfamily">digest</tt> method is responsible for converting the output stream into the final document structure. For commands, this generally doesn’t mean anything since they just consist of arguments which have already been parsed. Environments, on the other hand, have a beginning and an ending which surround tokens that belong to that environment. In most cases, the tokens between the \<tt class="ttfamily">begin</tt> and \<tt class="ttfamily">end</tt> need to be absorbed into the <tt class="ttfamily">childNodes</tt> list. </p><p>The default implementation of the <tt class="ttfamily">digest</tt> method should work for most macros, but there are instances where you may want to do some extra processing on the document structure. For example, the \<tt class="ttfamily">caption</tt> command within <tt class="ttfamily">figure</tt>s and <tt class="ttfamily">table</tt>s uses the <tt class="ttfamily">digest</tt> method to populate the enclosing figure/table’s <tt class="ttfamily">caption</tt> attribute. </p><pre>
+</pre>
+<p>While simple things like attribute post-processing is the most common use of the <span class="ttfamily">invoke</span> method, you can do very advanced things like changing category codes, and iterating over the tokens in the T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X processor directly like the <span class="ttfamily">verbatim</span> environment does. </p>
+<p>One other feature of the <span class="ttfamily">invoke</span> method that may be of interest is the return value. Most <span class="ttfamily">invoke</span> method implementations do not return anything (or return <span class="rmfamily"><i class="itshape">None </i></span>). In this case, the macro instance itself is sent to the output stream. However, you can also return a list of tokens. If a list of tokens is returned, instead of the macro instance, those tokens are inserted into the output stream. This is useful if you don’t want the macro instance to be part of the output stream or document. In this case, you can simply return an empty list. </p>
+<h3 id="a0000000056">The <span class="ttfamily">digest</span> Method</h3>
+<p>The <span class="ttfamily">digest</span> method is responsible for converting the output stream into the final document structure. For commands, this generally doesn’t mean anything since they just consist of arguments which have already been parsed. Environments, on the other hand, have a beginning and an ending which surround tokens that belong to that environment. In most cases, the tokens between the \<span class="ttfamily">begin</span> and \<span class="ttfamily">end</span> need to be absorbed into the <span class="ttfamily">childNodes</span> list. </p>
+<p>The default implementation of the <span class="ttfamily">digest</span> method should work for most macros, but there are instances where you may want to do some extra processing on the document structure. For example, the \<span class="ttfamily">caption</span> command within <span class="ttfamily">figure</span>s and <span class="ttfamily">table</span>s uses the <span class="ttfamily">digest</span> method to populate the enclosing figure/table’s <span class="ttfamily">caption</span> attribute. </p>
+<pre class="verbatim">
 from plasTeX import Command, Environment
 
 class Caption(Command):
@@ -431,7 +987,9 @@ class figure(Environment):
     class caption_(Caption):
         macroName = 'caption'
         counter = 'figure'
-</pre><p>More advanced uses of the <tt class="ttfamily">digest</tt> method might be to construct more complex document structures. For example, tabular and array structures in a document get converted from a simple list of tokens to complex structures with lots of style information added (see section <a href="sec-arrays.html">3.3.3</a>). One simple example of a <tt class="ttfamily">digest</tt> that does something extra is shown below. It looks for the first node with the name “item” then bails out. </p><pre>
+</pre>
+<p>More advanced uses of the <span class="ttfamily">digest</span> method might be to construct more complex document structures. For example, tabular and array structures in a document get converted from a simple list of tokens to complex structures with lots of style information added (see section <a href="sec-arrays.html">3.3.3</a>). One simple example of a <span class="ttfamily">digest</span> that does something extra is shown below. It looks for the first node with the name “item” then bails out. </p>
+<pre class="verbatim">
 from plasTeX import Command, Environment
 
 class toitem(Command):
@@ -442,55 +1000,64 @@ class toitem(Command):
                # Put the item back into the stream
                tokens.push(tok)
                break
-</pre><p>One of the more advanced uses of the <tt class="ttfamily">digest</tt> is on the sectioning commands: \<tt class="ttfamily">section</tt>, \<tt class="ttfamily">subsection</tt>, etc. The digest method on sections absorb tokens based on the <tt class="ttfamily">level</tt> attribute which indicates the hierarchical level of the node. When digested, each section absorbs all tokens until it reaches a section that has a level that is equal to or higher than its own level. This creates the overall document structure as discussed in section <a href="sec-document.html">3</a>. </p><h3 id="a0000002719">Other Nifty Methods and Attributes</h3>
-<p>There are many other attributes and methods on macros that can be used to affect their behavior. For a full listing, see the API documentation in section <a href="module-plasTeX.html">6.1</a>. Below are descriptions of some of the more commonly used attributes and methods. </p><h4 id="a0000002722">The <tt class="ttfamily">level</tt> attribute</h4>
-<p> The <tt class="ttfamily">level</tt> attribute is an integer that indicates the hierarchical level of the node in the output document structure. The values of this attribute are taken from L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X: \<tt class="ttfamily">part</tt> is -1, \<tt class="ttfamily">chapter</tt> is 0, \<tt class="ttfamily">section</tt> is 1, \<tt class="ttfamily">subsection</tt> is 2, etc. To create your owne sectioning commands, you can either subclass one of the existing sectioning macros, or simply set its <tt class="ttfamily">level</tt> attribute to the appropriate number. </p><h4 id="a0000002736">The <tt class="ttfamily">macroName</tt> attribute</h4>
-<p> The <tt class="ttfamily">macroName</tt> attribute is used when you are creating a L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X macro whose name is not a legal Python class name. For example, the macro \<tt class="ttfamily">@ifundefined</tt> has a ‘@’ in the name which isn’t legal in a Python class name. In this case, you could define the macro as shown below. </p><pre>
+</pre>
+<p>One of the more advanced uses of the <span class="ttfamily">digest</span> is on the sectioning commands: \<span class="ttfamily">section</span>, \<span class="ttfamily">subsection</span>, etc. The digest method on sections absorb tokens based on the <span class="ttfamily">level</span> attribute which indicates the hierarchical level of the node. When digested, each section absorbs all tokens until it reaches a section that has a level that is equal to or higher than its own level. This creates the overall document structure as discussed in section <a href="sec-document.html">3</a>. </p>
+<h3 id="a0000000057">Other Nifty Methods and Attributes</h3>
+<p>There are many other attributes and methods on macros that can be used to affect their behavior. For a full listing, see the API documentation in section <a href="sec-macros-api.html">6.1</a>. Below are descriptions of some of the more commonly used attributes and methods. </p>
+<h4 id="a0000000058">The <span class="ttfamily">level</span> attribute</h4>
+<p> The <span class="ttfamily">level</span> attribute is an integer that indicates the hierarchical level of the node in the output document structure. The values of this attribute are taken from L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X: \<span class="ttfamily">part</span> is -1, \<span class="ttfamily">chapter</span> is 0, \<span class="ttfamily">section</span> is 1, \<span class="ttfamily">subsection</span> is 2, etc. To create your owne sectioning commands, you can either subclass one of the existing sectioning macros, or simply set its <span class="ttfamily">level</span> attribute to the appropriate number. </p>
+<h4 id="a0000000059">The <span class="ttfamily">macroName</span> attribute</h4>
+<p> The <span class="ttfamily">macroName</span> attribute is used when you are creating a L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X macro whose name is not a legal Python class name. For example, the macro \<span class="ttfamily">@ifundefined</span> has a ‘@’ in the name which isn’t legal in a Python class name. In this case, you could define the macro as shown below. </p>
+<pre class="verbatim">
 class ifundefined_(Command):
     macroName = '@ifundefined'
-</pre><h4 id="a0000002746">The <tt class="ttfamily">counter</tt> attribute</h4>
-<p> The <tt class="ttfamily">counter</tt> attribute associates a counter with the macro class. It is simply a string that contains the name of the counter. Each time that an instance of the macro class is invoked, the counter is incremented (unless the macro has a ‘*’ argument). </p><h4 id="a0000002750">The <tt class="ttfamily">ref</tt> attribute</h4>
-<p> The <tt class="ttfamily">ref</tt> attribute contains the value normally returned by the \<tt class="ttfamily">ref</tt> command. </p><h4 id="a0000002756">The <tt class="ttfamily">title</tt> attribute</h4>
-<p> The <tt class="ttfamily">title</tt> attribute retrieves the “title” attribute from the <tt class="ttfamily">attributes</tt> dictionary. This attribute is also overridable. </p><h4 id="a0000002761">The <tt class="ttfamily">fullTitle</tt> attribute</h4>
-<p> The same as the <tt class="ttfamily">title</tt> attribute, but also includes the counter value at the beginning. </p><h4 id="a0000002765">The <tt class="ttfamily">tocEntry</tt> attribute</h4>
-<p> The <tt class="ttfamily">tocEntry</tt> attribute retrieves the “toc” attribute from the <tt class="ttfamily">attributes</tt> dictionary. This attribute is also overridable. </p><h4 id="a0000002770">The <tt class="ttfamily">fullTocEntry</tt> attribute</h4>
-<p> The same as the <tt class="ttfamily">tocEntry</tt> attribute, but also includes the counter value at the beginning. </p><h4 id="a0000002774">The <tt class="ttfamily">style</tt> attribute</h4>
-<p> The <tt class="ttfamily">style</tt> attribute is a CSS style object. Essentially, this is just a dictionary where the key is the CSS property name and the value is the CSS property value. It has an attribute called <tt class="ttfamily">inline</tt> which contains an inline version of the CSS properties for use in the style= attribute of HTML elements. </p><h4 id="a0000002779">The <tt class="ttfamily">id</tt> attribute</h4>
-<p> This attribute contains a unique ID for the object. If the object was labeled by a \<tt class="ttfamily">label</tt> command, the ID for the object will be that label; otherwise, an ID is generated. </p><h4 id="a0000002784">The <tt class="ttfamily">source</tt> attribute</h4>
-<p> The <tt class="ttfamily">source</tt> attribute contains the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X source representation of the node and all of its contents. </p><h4 id="a0000002790">The <tt class="ttfamily">currentSection</tt> attribute</h4>
-<p> The <tt class="ttfamily">currentSection</tt> attribute contains the section that the node belongs to. </p><h4 id="a0000002794">The <tt class="ttfamily">expand</tt> method</h4>
-<p> The <tt class="ttfamily">expand</tt> method is a thin wrapper around the <tt class="ttfamily">invoke</tt> method. It simply invokes the macro and returns the result of expanding all of the tokens. Unlike <tt class="ttfamily">invoke</tt>, you will always get the expanded node (or nodes); you will not get a <span class="rmfamily"><i class="itshape">None</i></span> return value. </p><h4 id="a0000002805">The <tt class="ttfamily">paragraphs</tt> method</h4>
-<p> The <tt class="ttfamily">paragraphs</tt> method does the final processing of paragraphs in a node’s child nodes. It makes sure that all content is wrapped within paragraph nodes. This method is generally called from the <tt class="ttfamily">digest</tt> method. </p></div>
+</pre>
+<h4 id="a0000000060">The <span class="ttfamily">counter</span> attribute</h4>
+<p> The <span class="ttfamily">counter</span> attribute associates a counter with the macro class. It is simply a string that contains the name of the counter. Each time that an instance of the macro class is invoked, the counter is incremented (unless the macro has a ‘*’ argument). </p>
+<h4 id="a0000000061">The <span class="ttfamily">ref</span> attribute</h4>
+<p> The <span class="ttfamily">ref</span> attribute contains the value normally returned by the \<span class="ttfamily">ref</span> command. </p>
+<h4 id="a0000000062">The <span class="ttfamily">title</span> attribute</h4>
+<p> The <span class="ttfamily">title</span> attribute retrieves the “title” attribute from the <span class="ttfamily">attributes</span> dictionary. This attribute is also overridable. </p>
+<h4 id="a0000000063">The <span class="ttfamily">fullTitle</span> attribute</h4>
+<p> The same as the <span class="ttfamily">title</span> attribute, but also includes the counter value at the beginning. </p>
+<h4 id="a0000000064">The <span class="ttfamily">tocEntry</span> attribute</h4>
+<p> The <span class="ttfamily">tocEntry</span> attribute retrieves the “toc” attribute from the <span class="ttfamily">attributes</span> dictionary. This attribute is also overridable. </p>
+<h4 id="a0000000065">The <span class="ttfamily">fullTocEntry</span> attribute</h4>
+<p> The same as the <span class="ttfamily">tocEntry</span> attribute, but also includes the counter value at the beginning. </p>
+<h4 id="a0000000066">The <span class="ttfamily">style</span> attribute</h4>
+<p> The <span class="ttfamily">style</span> attribute is a CSS style object. Essentially, this is just a dictionary where the key is the CSS property name and the value is the CSS property value. It has an attribute called <span class="ttfamily">inline</span> which contains an inline version of the CSS properties for use in the style= attribute of HTML elements. </p>
+<h4 id="a0000000067">The <span class="ttfamily">id</span> attribute</h4>
+<p> This attribute contains a unique ID for the object. If the object was labeled by a \<span class="ttfamily">label</span> command, the ID for the object will be that label; otherwise, an ID is generated. </p>
+<h4 id="a0000000068">The <span class="ttfamily">source</span> attribute</h4>
+<p> The <span class="ttfamily">source</span> attribute contains the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X source representation of the node and all of its contents. </p>
+<h4 id="a0000000069">The <span class="ttfamily">currentSection</span> attribute</h4>
+<p> The <span class="ttfamily">currentSection</span> attribute contains the section that the node belongs to. </p>
+<h4 id="a0000000070">The <span class="ttfamily">expand</span> method</h4>
+<p> The <span class="ttfamily">expand</span> method is a thin wrapper around the <span class="ttfamily">invoke</span> method. It simply invokes the macro and returns the result of expanding all of the tokens. Unlike <span class="ttfamily">invoke</span>, you will always get the expanded node (or nodes); you will not get a <span class="rmfamily"><i class="itshape">None </i></span> return value. </p>
+<h4 id="a0000000071">The <span class="ttfamily">paragraphs</span> method</h4>
+<p> The <span class="ttfamily">paragraphs</span> method does the final processing of paragraphs in a node’s child nodes. It makes sure that all content is wrapped within paragraph nodes. This method is generally called from the <span class="ttfamily">digest</span> method. </p>
 
-
-
-<div id="footnotes">
-<p><b>Footnotes</b></p>
+<footer id="footnotes">
 <ol>
-<li id="a0000002195">While this isn’t always true when L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X expands the macros, it will not cause any problems when plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X compiles the document because plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X is less stringent.</li>
+  <li id="a0000000054">While this isn’t always true when L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X expands the macros, it will not cause any problems when plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X compiles the document because plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X is less stringent.</li>
 </ol>
+</footer>
 </div>
 
-<div class="navigation">
-<table cellspacing="2" cellpadding="0" width="100%">
-<tr>
-<td><a href="sect0009.html" title="Defining Macros in Python"><img alt="Previous: Defining Macros in Python" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+<nav class="prev_up_next">
+  <a href="sect0007.html" title="Defining Macros in Python"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="sect0007.html" title="Defining Macros in Python"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="sec-inimacros.html" title="INI Files"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+  <a href="sect0046.html" class="index">Index</a>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+</nav>
 
-<td><a href="sect0009.html" title="Defining Macros in Python"><img alt="Up: Defining Macros in Python" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
-
-<td><a href="sec-inimacros.html" title="INI Files"><img alt="Next: INI Files" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
-
-<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
-<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
-
-<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
-
-<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
-</tr>
-</table>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
 </div>
-
-<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
-
 </body>
 </html>

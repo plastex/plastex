@@ -1,327 +1,406 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [ ['\\(','\\)']]}});
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+</script>
 <meta name="generator" content="plasTeX" />
-<meta content="text/html; charset=utf-8" http-equiv="content-type" />
-<title>plasTeX — A Python Framework for Processing LaTeX Documents: Renderer Objects</title>
-
-<link href="sect0042.html" title="Renderable MixIn" rel="next" />
-<link href="module-plasTeX-Renderers.html" title="plasTeX.Renderers — The plasRendering Framework" rel="prev" />
-<link href="module-plasTeX-Renderers.html" title="plasTeX.Renderers — The plasRendering Framework" rel="up" />
-<link rel="stylesheet" href="styles/styles.css" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>plasTeX 2.0 — A Python Framework for Processing LaTeX Documents: About This Document</title>
+<link rel="next" href="sect0042.html" title="Frequently Asked Questions" />
+<link rel="prev" href="sect0040.html" title="Image Objects" />
+<link rel="up" href="index.html" title="plasTeX 2.0 — A Python Framework for Processing LaTeX Documents" />
+<link rel="stylesheet" href="styles/theme-green.css" />
 </head>
+
 <body>
+<nav class="toc">
+<svg  class="icon icon-cross close-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 
-<div class="navigation">
-<table cellspacing="2" cellpadding="0" width="100%">
-<tr>
-<td><a href="module-plasTeX-Renderers.html" title="plasTeX.Renderers — The plasTeX Rendering Framework"><img alt="Previous: plasTeX.Renderers — The plasTeX Rendering Framework" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref">1</span> <span class="toc_entry">Introduction</span></a>
+ </li>
+<li class="">
+  <a href="sec-command-line.html"><span class="toc_ref">2</span> <span class="toc_entry"><b class="bf">plastex</b> — The Command-Line Interface</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0002.html"><span class="toc_ref">2.1</span> <span class="toc_entry">Command-Line and Configuration Options</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-general-options.html"><span class="toc_ref">2.1.1</span> <span class="toc_entry">General Options</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-document.html"><span class="toc_ref">2.1.2</span> <span class="toc_entry">Document Properties</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html"><span class="toc_ref">2.1.3</span> <span class="toc_entry">Counters</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-links.html"><span class="toc_ref">2.1.4</span> <span class="toc_entry">Document Links</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-files.html"><span class="toc_ref">2.1.5</span> <span class="toc_entry">Input and Output Files</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-images.html"><span class="toc_ref">2.1.6</span> <span class="toc_entry">Image Options</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-html5.html"><span class="toc_ref">2.1.7</span> <span class="toc_entry">HTML5 Renderer Options</span></a>
+ </li>
 
-<td><a href="module-plasTeX-Renderers.html" title="plasTeX.Renderers — The plasTeX Rendering Framework"><img alt="Up: plasTeX.Renderers — The plasTeX Rendering Framework" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
 
-<td><a href="sect0042.html" title="Renderable MixIn"><img alt="Next: Renderable MixIn" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-document.html"><span class="toc_ref">3</span> <span class="toc_entry">The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-sections.html"><span class="toc_ref">3.1</span> <span class="toc_entry">Sections</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-links.html"><span class="toc_ref">3.1.1</span> <span class="toc_entry">Navigation and Links</span></a>
+ </li>
+<li class="">
+  <a href="sec-tableofcontents.html"><span class="toc_ref">3.1.2</span> <span class="toc_entry">Table of Contents</span></a>
+ </li>
 
-<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
-<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-paragraphs.html"><span class="toc_ref">3.2</span> <span class="toc_entry">Paragraphs</span></a>
+ </li>
+<li class="">
+  <a href="sec-complexdoc.html"><span class="toc_ref">3.3</span> <span class="toc_entry">Complex Structures</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-lists.html"><span class="toc_ref">3.3.1</span> <span class="toc_entry">Lists</span></a>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref">3.3.2</span> <span class="toc_entry">Bibliography</span></a>
+ </li>
+<li class="">
+  <a href="sec-arrays.html"><span class="toc_ref">3.3.3</span> <span class="toc_entry">Arrays and Tabular Environments</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html"><span class="toc_ref">3.3.4</span> <span class="toc_entry">Indexes</span></a>
+ </li>
 
-<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
 
-<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
-</tr>
-</table>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-macros.html"><span class="toc_ref">4</span> <span class="toc_entry">Understanding Macros and Packages</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0006.html"><span class="toc_ref">4.1</span> <span class="toc_entry">Defining Macros in L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html"><span class="toc_ref">4.2</span> <span class="toc_entry">Defining Macros in Python</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-macroclasses.html"><span class="toc_ref">4.2.1</span> <span class="toc_entry">Python Classes</span></a>
+ </li>
+<li class="">
+  <a href="sec-inimacros.html"><span class="toc_ref">4.2.2</span> <span class="toc_entry">INI Files</span></a>
+ </li>
+<li class="">
+  <a href="sec-contextmacros.html"><span class="toc_ref">4.2.3</span> <span class="toc_entry">The Document Context</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-packages.html"><span class="toc_ref">4.3</span> <span class="toc_entry">Packages</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0008.html"><span class="toc_ref">5</span> <span class="toc_entry">Renderers</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-simple-renderer-ex.html"><span class="toc_ref">5.1</span> <span class="toc_entry">Simple Renderer Example</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0009.html"><span class="toc_ref">5.1.1</span> <span class="toc_entry">Extending the Simple Renderer</span></a>
+ </li>
+<li class="">
+  <a href="subsec-renderer-from-script.html"><span class="toc_ref">5.1.2</span> <span class="toc_entry">Using a Renderer from the plastex Script</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-renderable.html"><span class="toc_ref">5.2</span> <span class="toc_entry">Renderable Objects</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0010.html"><span class="toc_ref">5.2.1</span> <span class="toc_entry">Determining the Correct Rendering Method</span></a>
+ </li>
+<li class="">
+  <a href="sect0011.html"><span class="toc_ref">5.2.2</span> <span class="toc_entry">Generating Files</span></a>
+ </li>
+<li class="">
+  <a href="sect0012.html"><span class="toc_ref">5.2.3</span> <span class="toc_entry">Generating Images</span></a>
+ </li>
+<li class="">
+  <a href="sect0013.html"><span class="toc_ref">5.2.4</span> <span class="toc_entry">Generating Vector Images</span></a>
+ </li>
+<li class="">
+  <a href="sect0014.html"><span class="toc_ref">5.2.5</span> <span class="toc_entry">Static Images</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-zpt.html"><span class="toc_ref">5.3</span> <span class="toc_entry">Page Template Renderer</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0015.html"><span class="toc_ref">5.3.1</span> <span class="toc_entry">Defining and Using Templates</span></a>
+ </li>
+<li class="">
+  <a href="sect0016.html"><span class="toc_ref">5.3.2</span> <span class="toc_entry">Defining and Using Themes</span></a>
+ </li>
+<li class="">
+  <a href="sec-zpttutorial.html"><span class="toc_ref">5.3.3</span> <span class="toc_entry">Zope Page Template Tutorial</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0017.html"><span class="toc_ref">5.4</span> <span class="toc_entry">XHTML Renderer</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0018.html"><span class="toc_ref">5.4.1</span> <span class="toc_entry">Themes</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-html5.html"><span class="toc_ref">5.5</span> <span class="toc_entry">HTML5 Renderer</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-html5-pkg.html"><span class="toc_ref">5.5.1</span> <span class="toc_entry">Interactions with packages</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0019.html"><span class="toc_ref">5.6</span> <span class="toc_entry">tBook Renderer</span></a>
+ </li>
+<li class="">
+  <a href="sect0020.html"><span class="toc_ref">5.7</span> <span class="toc_entry">DocBook Renderer</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0021.html"><span class="toc_ref">6</span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-macros-api.html"><span class="toc_ref">6.1</span> <span class="toc_entry"><span class="ttfamily">plasTeX</span> — The Python Macro and Document Interfaces</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0022.html"><span class="toc_ref">6.1.1</span> <span class="toc_entry">Macro Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-ConfigManager.html"><span class="toc_ref">6.2</span> <span class="toc_entry"><span class="ttfamily">plasTeX.ConfigManager</span> — plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Configuration</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0023.html"><span class="toc_ref">6.2.1</span> <span class="toc_entry">ConfigManager Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0024.html"><span class="toc_ref">6.2.2</span> <span class="toc_entry">ConfigSection Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0025.html"><span class="toc_ref">6.2.3</span> <span class="toc_entry">Configuration Option Types</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-DOM.html"><span class="toc_ref">6.3</span> <span class="toc_entry"><span class="ttfamily">plasTeX.DOM</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document Object Model (DOM)</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0026.html"><span class="toc_ref">6.3.1</span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X vs. XML</span></a>
+ </li>
+<li class="">
+  <a href="sect0027.html"><span class="toc_ref">6.3.2</span> <span class="toc_entry">Node Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0028.html"><span class="toc_ref">6.3.3</span> <span class="toc_entry">DocumentFragment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0029.html"><span class="toc_ref">6.3.4</span> <span class="toc_entry">Element Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0030.html"><span class="toc_ref">6.3.5</span> <span class="toc_entry">Text Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0031.html"><span class="toc_ref">6.3.6</span> <span class="toc_entry">Document Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0032.html"><span class="toc_ref">6.3.7</span> <span class="toc_entry">Command Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0033.html"><span class="toc_ref">6.3.8</span> <span class="toc_entry">Environment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0034.html"><span class="toc_ref">6.3.9</span> <span class="toc_entry">TeXFragment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sec-texdocument-objects.html"><span class="toc_ref">6.3.10</span> <span class="toc_entry">TeXDocument Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-TeX.html"><span class="toc_ref">6.4</span> <span class="toc_entry"><span class="ttfamily">plasTeX.TeX</span> — The T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Stream</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0035.html"><span class="toc_ref">6.4.1</span> <span class="toc_entry">TeX Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-Context.html"><span class="toc_ref">6.5</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Context</span> — The T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Context</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0036.html"><span class="toc_ref">6.5.1</span> <span class="toc_entry">Context Objects</span></a>
+ </li>
+<li class="">
+  <a href="sec-context-language.html"><span class="toc_ref">6.5.2</span> <span class="toc_entry">Context language</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-Renderers.html"><span class="toc_ref">6.6</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Renderers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Rendering Framework</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0037.html"><span class="toc_ref">6.6.1</span> <span class="toc_entry">Renderer Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0038.html"><span class="toc_ref">6.6.2</span> <span class="toc_entry">Renderable MixIn</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-Imagers.html"><span class="toc_ref">6.7</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Imagers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Imaging Framework</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0039.html"><span class="toc_ref">6.7.1</span> <span class="toc_entry">Imager Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0040.html"><span class="toc_ref">6.7.2</span> <span class="toc_entry">Image Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active current">
+  <a href="sect0041.html"><span class="toc_ref">A</span> <span class="toc_entry">About This Document</span></a>
+ </li>
+<li class="">
+  <a href="sect0042.html"><span class="toc_ref">B</span> <span class="toc_entry">Frequently Asked Questions</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0043.html"><span class="toc_ref">B.1</span> <span class="toc_entry">Parsing L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0044.html"><span class="toc_ref">B.1.1</span> <span class="toc_entry">How can I make plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X work with my complicated macros?</span></a>
+ </li>
+<li class="">
+  <a href="sect0045.html"><span class="toc_ref">B.1.2</span> <span class="toc_entry">How can I get plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X to find my L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X packages?</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0046.html"><span class="toc_ref">C</span> <span class="toc_entry">Index</span></a>
+ </li>
+</ul>
+</nav>
+
+<div class="wrapper with-toc">
+<header>
+<h1 id="doc_title">plasTeX 2.0 — A Python Framework for Processing LaTeX Documents</h1>
+</header>
+
+<ul class="breadcrumbs">
+<li class="crumb"><a href="index.html" class="crumb">plasTeX 2.0 — A Python Framework for Processing LaTeX Documents</a></li>
+  <li class="last_crumb">About This Document</li>
+</ul>
+
+<div class="content">
+<h1 id="a0000000042">A About This Document</h1>
+
+<p>This document was writted using LaTeX (<a href="http://www.latex-project.org/">http://www.latex-project.org/</a>). The documents use macros written for documenting the Python (<a href="http://www.python.org">http://www.python.org</a>) language and Python packages. Generating the PDF version of the document is simply a matter of using the <b class="bf">pdflatex</b> command. Generating the HTML version of the document, of course, uses plasTeX. </p>
+<p>The wonderful thing about the HTML version is that it was generated from the LaTeX source and Python style files without customization<a class="footnote" href="#a0000000371">
+  <sup class="footnotemark">1</sup>
+</a>! In fact, in its current state, plasTeX can generate the HTML versions of the Python documentation found on their website, <a href="http://www.python.org/doc/">http://www.python.org/doc/</a>. Without customization of plasTeX, the only remaining issues are that the module index is missing and there are some formatting differences. Not bad, considering plasTeX is doing actually expanding the LaTeX document natively.  </p>
+
+<footer id="footnotes">
+<ol>
+  <li id="a0000000371"> Ok, there was one customization to \<span class="ttfamily">var</span> for a whitespace issue, but the change works both in the PDF and HTML version</li>
+</ol>
+</footer>
 </div>
 
-<div class="breadcrumbs">
-<span>
-<span>
-<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
-</span>
+<nav class="prev_up_next">
+  <a href="sect0040.html" title="Image Objects"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="plasTeX 2.0 — A Python Framework for Processing LaTeX Documents"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="sect0042.html" title="Frequently Asked Questions"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+  <a href="sect0046.html" class="index">Index</a>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+</nav>
 
-</span><span>
-<span>
-<a href="sect0024.html">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</a> <b>:</b>
-</span>
-
-</span><span>
-<span>
-<a href="module-plasTeX-Renderers.html"><tt class="ttfamily">plasTeX.Renderers</tt> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Rendering Framework</a> <b>:</b>
-</span>
-
-</span><span>
-
-<span>
-<b class="current">Renderer Objects</b>
-</span>
-</span>
-<hr />
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
 </div>
-
-<div><h2 id="a0000017726">6.6.1 Renderer Objects</h2>
-<p>   <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt><b class="bf">class </b><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">Renderer</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
-    <dd><p><a name="a0000017790" id="a0000017790"></a>  Base class for all renderers. <tt class="ttfamily">Renderer</tt> is a dictionary and contains functions that are called for each node in the plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document object. The keys in the dictionary correspond to the names of the nodes. </p></dd>
-
-</dl> </p><p>This renderer implementation uses a mixin called <tt class="ttfamily">Renderable</tt> that is mixed into the <tt class="ttfamily">Node</tt> class prior to rendering. <tt class="ttfamily">Renderable</tt> adds various methods to the <tt class="ttfamily">Node</tt> namespace to assist in the rendering process. The primary inclusion is the <tt class="ttfamily">__unicode__()</tt> method. This method returns a unicode representation of the current node and all of its child nodes. For more information, see the <tt class="ttfamily">Renderable</tt> class documentation. </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">default</b></tt></span></dt>
-    <dd><p><a name="a0000017825" id="a0000017825"></a> the default renderer value. If a node is being rendered and no key in the renderer matches the name of the node being rendered, this function is used instead. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">fileExtension</b></tt></span></dt>
-    <dd><p><a name="a0000017847" id="a0000017847"></a> contains the file extension to use for generated files. This extension is only used if the filename generator does not supply a file extension. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">files</b></tt></span></dt>
-    <dd><p><a name="a0000017869" id="a0000017869"></a> a list of files created during rendering. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">imageAttrs</b></tt></span></dt>
-    <dd><p><a name="a0000017891" id="a0000017891"></a> contains a string template that renders the placeholder for the image attributes: width, height, and depth. This placeholder is inserted into the document where the width, height, and depth of an image is needed. The placeholder is needed because images are not generated until after the document is rendered. See the <tt class="ttfamily">Imager</tt> API (section <a href="module-plasTeX-Imagers.html">6.7</a>) for more information. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">imageUnits</b></tt></span></dt>
-    <dd><p><a name="a0000017915" id="a0000017915"></a> contains a string template that renders the placeholder for the image attribute units. This placeholder is inserted in the document any time an attribute of a particular unit is requested. This placeholder will always occur immediately after the string generated by <tt class="ttfamily">imageAttrs</tt>. The placeholder is needed because images are not generated until after the document is rendered. See the <tt class="ttfamily">Imager</tt> API (section <a href="module-plasTeX-Imagers.html">6.7</a>) for more information. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">imager</b></tt></span></dt>
-    <dd><p><a name="a0000017940" id="a0000017940"></a> a reference to an <tt class="ttfamily">Imager</tt> implementation. Imagers are responsible for generating images from L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X code. This is needed for output types which aren’t capable of displaying equations, L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X pictures, etc. such as HTML. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">imageTypes</b></tt></span></dt>
-    <dd><p><a name="a0000017967" id="a0000017967"></a> contains a list of file extensions of valid image types for the renderer. The first element in the list is the default image format. This format is used when generating images (if the image type isn’t specified by the filename generater). When static images are simply copied from the document, their format is checked against the list of supported image types. If the static image is not in the correct format it is converted to the default image format. Below is an example of a list of image types used in the HTML renderer. These image types are valid because web browsers all support these formats. </p><pre>
-imageTypes = ['.png','.gif','.jpg','.jpeg']
-</pre></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">vectorImageTypes</b></tt></span></dt>
-    <dd><p><a name="a0000017991" id="a0000017991"></a> contains a list of file extensions of valid vector image types for the renderer. The first element in the list is the default vector image format. This format is used when generating images. Static images are simply copied into the output document directory. Below is an example of a list of image types used in the HTML renderer. These image types are valid because there are plug-ins available for these formats. </p><pre>
-vectorImageTypes = ['.svg']
-</pre></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">newFilename</b></tt></span></dt>
-    <dd><p><a name="a0000018015" id="a0000018015"></a> filename generator. This method generates a basename based on the options in the configuration. </p><p>The generator has an attribute called <tt class="ttfamily">namespace</tt> which contains the namespace used to resolve the variables in the filename string. This namespace should be populated prior to invoking the generator. After a successful filename is generated, the namespace is automatically cleared (with the exception of the variables sent in the namespace when the generator was instantiated). </p><p><b class="bf">Note:</b> This generator can be accessed in the usual generator fashion, or called like a function. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">outputType</b></tt></span></dt>
-    <dd><p><a name="a0000018042" id="a0000018042"></a> a function that converts the content returned from each rendered node to the appropriate value. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">textDefault</b></tt></span></dt>
-    <dd><p><a name="a0000018064" id="a0000018064"></a> the default renderer to use for text nodes. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd>  </dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">cleanup</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">document, files<span class="textnormal"><big class="xlarge">[</big></span>, postProcess<span class="textnormal"><big class="xlarge">]</big></span></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
-    <dd><p><a name="a0000018133" id="a0000018133"></a> this method is called once the entire rendering process is finished. Subclasses can use this method to run any post-rendering cleanup tasks. The first argument, <span class="rmfamily"><i class="itshape">document</i></span>, is the document instance that is being rendered. The second argument, <span class="rmfamily"><i class="itshape">files</i></span>, is a list of all of the filenames that were created. </p><p>This method opens each file, reads the content, and calls <tt class="ttfamily">processFileContent</tt> on the file content. It is suggested that renderers override that method instead of <tt class="ttfamily">cleanup</tt>. </p><p>In addition to overriding <tt class="ttfamily">processFileContent</tt>, you can post-process file content without having to subclass a renderer by using the <span class="rmfamily"><i class="itshape">postProcess</i></span> argument. See the <tt class="ttfamily">render</tt> method for more information. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd>  </dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">find</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">keys<span class="textnormal"><big class="xlarge">[</big></span>, default<span class="textnormal"><big class="xlarge">]</big></span></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
-    <dd><p><a name="a0000018223" id="a0000018223"></a> locate a rendering method from a list of possibilities. </p><p><span class="rmfamily"><i class="itshape">keys</i></span> is a list of strings containing the requested name of a rendering method. This list is traversed in order. The first renderer that is found is returned. </p><p><span class="rmfamily"><i class="itshape">default</i></span> is a default rendering method to return if none of the keys exists in the renderer. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd>  </dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">initialize</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
-    <dd><p><a name="a0000018296" id="a0000018296"></a> this routine is called after the renderer is instantiated. It can be used by subclasses to do any initialization routines before the rendering process. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd>  </dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">processFileContent</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">document, content</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
-    <dd><p><a name="a0000018357" id="a0000018357"></a> post-processing routine that allows renders to modify the output documents one last time before the rendering process is finished. <span class="rmfamily"><i class="itshape">document</i></span> is the input document instance. <span class="rmfamily"><i class="itshape">content</i></span> is the content of the file in a unicode object. The value returned from this method will be written to the output file in the appropriate encoding. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd>  </dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">render</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">document<span class="textnormal"><big class="xlarge">[</big></span>, postProcess<span class="textnormal"><big class="xlarge">]</big></span></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
-    <dd><p><a name="a0000018436" id="a0000018436"></a> invokes the rendering process on <span class="rmfamily"><i class="itshape">document</i></span>. You can post-process each file after it is rendered by passing a function into the <span class="rmfamily"><i class="itshape">postProcess</i></span> argument. This function must take two arguments: 1) the document object and 2) the content of a file as a unicode object. It should do whatever processing it needs to the file content and return a unicode object. </p></dd>
-
-</dl> </p></div>
-
-
-
-
-
-<div class="navigation">
-<table cellspacing="2" cellpadding="0" width="100%">
-<tr>
-<td><a href="module-plasTeX-Renderers.html" title="plasTeX.Renderers — The plasTeX Rendering Framework"><img alt="Previous: plasTeX.Renderers — The plasTeX Rendering Framework" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
-
-<td><a href="module-plasTeX-Renderers.html" title="plasTeX.Renderers — The plasTeX Rendering Framework"><img alt="Up: plasTeX.Renderers — The plasTeX Rendering Framework" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
-
-<td><a href="sect0042.html" title="Renderable MixIn"><img alt="Next: Renderable MixIn" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
-
-<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
-<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
-
-<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
-
-<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
-</tr>
-</table>
-</div>
-
-<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
-
 </body>
 </html>

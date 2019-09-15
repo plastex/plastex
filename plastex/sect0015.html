@@ -1,135 +1,945 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [ ['\\(','\\)']]}});
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+</script>
 <meta name="generator" content="plasTeX" />
-<meta content="text/html; charset=utf-8" http-equiv="content-type" />
-<title>plasTeX — A Python Framework for Processing LaTeX Documents: Generating Images</title>
-
-<link href="sect0016.html" title="Generating Vector Images" rel="next" />
-<link href="sect0014.html" title="Generating Files" rel="prev" />
-<link href="sec-renderable.html" title="Renderable Objects" rel="up" />
-<link rel="stylesheet" href="styles/styles.css" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>plasTeX 2.0 — A Python Framework for Processing LaTeX Documents: Defining and Using Templates</title>
+<link rel="next" href="sect0016.html" title="Defining and Using Themes" />
+<link rel="prev" href="sec-zpt.html" title="Page Template Renderer" />
+<link rel="up" href="sec-zpt.html" title="Page Template Renderer" />
+<link rel="stylesheet" href="styles/theme-green.css" />
 </head>
+
 <body>
+<nav class="toc">
+<svg  class="icon icon-cross close-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 
-<div class="navigation">
-<table cellspacing="2" cellpadding="0" width="100%">
-<tr>
-<td><a href="sect0014.html" title="Generating Files"><img alt="Previous: Generating Files" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref">1</span> <span class="toc_entry">Introduction</span></a>
+ </li>
+<li class="">
+  <a href="sec-command-line.html"><span class="toc_ref">2</span> <span class="toc_entry"><b class="bf">plastex</b> — The Command-Line Interface</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0002.html"><span class="toc_ref">2.1</span> <span class="toc_entry">Command-Line and Configuration Options</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-general-options.html"><span class="toc_ref">2.1.1</span> <span class="toc_entry">General Options</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-document.html"><span class="toc_ref">2.1.2</span> <span class="toc_entry">Document Properties</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html"><span class="toc_ref">2.1.3</span> <span class="toc_entry">Counters</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-links.html"><span class="toc_ref">2.1.4</span> <span class="toc_entry">Document Links</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-files.html"><span class="toc_ref">2.1.5</span> <span class="toc_entry">Input and Output Files</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-images.html"><span class="toc_ref">2.1.6</span> <span class="toc_entry">Image Options</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-html5.html"><span class="toc_ref">2.1.7</span> <span class="toc_entry">HTML5 Renderer Options</span></a>
+ </li>
 
-<td><a href="sec-renderable.html" title="Renderable Objects"><img alt="Up: Renderable Objects" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
 
-<td><a href="sect0016.html" title="Generating Vector Images"><img alt="Next: Generating Vector Images" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-document.html"><span class="toc_ref">3</span> <span class="toc_entry">The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-sections.html"><span class="toc_ref">3.1</span> <span class="toc_entry">Sections</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-links.html"><span class="toc_ref">3.1.1</span> <span class="toc_entry">Navigation and Links</span></a>
+ </li>
+<li class="">
+  <a href="sec-tableofcontents.html"><span class="toc_ref">3.1.2</span> <span class="toc_entry">Table of Contents</span></a>
+ </li>
 
-<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
-<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-paragraphs.html"><span class="toc_ref">3.2</span> <span class="toc_entry">Paragraphs</span></a>
+ </li>
+<li class="">
+  <a href="sec-complexdoc.html"><span class="toc_ref">3.3</span> <span class="toc_entry">Complex Structures</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-lists.html"><span class="toc_ref">3.3.1</span> <span class="toc_entry">Lists</span></a>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref">3.3.2</span> <span class="toc_entry">Bibliography</span></a>
+ </li>
+<li class="">
+  <a href="sec-arrays.html"><span class="toc_ref">3.3.3</span> <span class="toc_entry">Arrays and Tabular Environments</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html"><span class="toc_ref">3.3.4</span> <span class="toc_entry">Indexes</span></a>
+ </li>
 
-<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
 
-<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
-</tr>
-</table>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-macros.html"><span class="toc_ref">4</span> <span class="toc_entry">Understanding Macros and Packages</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0006.html"><span class="toc_ref">4.1</span> <span class="toc_entry">Defining Macros in L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html"><span class="toc_ref">4.2</span> <span class="toc_entry">Defining Macros in Python</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-macroclasses.html"><span class="toc_ref">4.2.1</span> <span class="toc_entry">Python Classes</span></a>
+ </li>
+<li class="">
+  <a href="sec-inimacros.html"><span class="toc_ref">4.2.2</span> <span class="toc_entry">INI Files</span></a>
+ </li>
+<li class="">
+  <a href="sec-contextmacros.html"><span class="toc_ref">4.2.3</span> <span class="toc_entry">The Document Context</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-packages.html"><span class="toc_ref">4.3</span> <span class="toc_entry">Packages</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active">
+  <a href="sect0008.html"><span class="toc_ref">5</span> <span class="toc_entry">Renderers</span></a>
+<svg  class="icon icon-cross expand-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+  <ul class="sub-toc-1 active">
+     <li class="">
+  <a href="sec-simple-renderer-ex.html"><span class="toc_ref">5.1</span> <span class="toc_entry">Simple Renderer Example</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0009.html"><span class="toc_ref">5.1.1</span> <span class="toc_entry">Extending the Simple Renderer</span></a>
+ </li>
+<li class="">
+  <a href="subsec-renderer-from-script.html"><span class="toc_ref">5.1.2</span> <span class="toc_entry">Using a Renderer from the plastex Script</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-renderable.html"><span class="toc_ref">5.2</span> <span class="toc_entry">Renderable Objects</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0010.html"><span class="toc_ref">5.2.1</span> <span class="toc_entry">Determining the Correct Rendering Method</span></a>
+ </li>
+<li class="">
+  <a href="sect0011.html"><span class="toc_ref">5.2.2</span> <span class="toc_entry">Generating Files</span></a>
+ </li>
+<li class="">
+  <a href="sect0012.html"><span class="toc_ref">5.2.3</span> <span class="toc_entry">Generating Images</span></a>
+ </li>
+<li class="">
+  <a href="sect0013.html"><span class="toc_ref">5.2.4</span> <span class="toc_entry">Generating Vector Images</span></a>
+ </li>
+<li class="">
+  <a href="sect0014.html"><span class="toc_ref">5.2.5</span> <span class="toc_entry">Static Images</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active">
+  <a href="sec-zpt.html"><span class="toc_ref">5.3</span> <span class="toc_entry">Page Template Renderer</span></a>
+<svg  class="icon icon-cross expand-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+  <ul class="sub-toc-2 active">
+     <li class=" active current">
+  <a href="sect0015.html"><span class="toc_ref">5.3.1</span> <span class="toc_entry">Defining and Using Templates</span></a>
+ </li>
+<li class="">
+  <a href="sect0016.html"><span class="toc_ref">5.3.2</span> <span class="toc_entry">Defining and Using Themes</span></a>
+ </li>
+<li class="">
+  <a href="sec-zpttutorial.html"><span class="toc_ref">5.3.3</span> <span class="toc_entry">Zope Page Template Tutorial</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0017.html"><span class="toc_ref">5.4</span> <span class="toc_entry">XHTML Renderer</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0018.html"><span class="toc_ref">5.4.1</span> <span class="toc_entry">Themes</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-html5.html"><span class="toc_ref">5.5</span> <span class="toc_entry">HTML5 Renderer</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-html5-pkg.html"><span class="toc_ref">5.5.1</span> <span class="toc_entry">Interactions with packages</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0019.html"><span class="toc_ref">5.6</span> <span class="toc_entry">tBook Renderer</span></a>
+ </li>
+<li class="">
+  <a href="sect0020.html"><span class="toc_ref">5.7</span> <span class="toc_entry">DocBook Renderer</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0021.html"><span class="toc_ref">6</span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-macros-api.html"><span class="toc_ref">6.1</span> <span class="toc_entry"><span class="ttfamily">plasTeX</span> — The Python Macro and Document Interfaces</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0022.html"><span class="toc_ref">6.1.1</span> <span class="toc_entry">Macro Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-ConfigManager.html"><span class="toc_ref">6.2</span> <span class="toc_entry"><span class="ttfamily">plasTeX.ConfigManager</span> — plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Configuration</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0023.html"><span class="toc_ref">6.2.1</span> <span class="toc_entry">ConfigManager Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0024.html"><span class="toc_ref">6.2.2</span> <span class="toc_entry">ConfigSection Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0025.html"><span class="toc_ref">6.2.3</span> <span class="toc_entry">Configuration Option Types</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-DOM.html"><span class="toc_ref">6.3</span> <span class="toc_entry"><span class="ttfamily">plasTeX.DOM</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document Object Model (DOM)</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0026.html"><span class="toc_ref">6.3.1</span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X vs. XML</span></a>
+ </li>
+<li class="">
+  <a href="sect0027.html"><span class="toc_ref">6.3.2</span> <span class="toc_entry">Node Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0028.html"><span class="toc_ref">6.3.3</span> <span class="toc_entry">DocumentFragment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0029.html"><span class="toc_ref">6.3.4</span> <span class="toc_entry">Element Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0030.html"><span class="toc_ref">6.3.5</span> <span class="toc_entry">Text Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0031.html"><span class="toc_ref">6.3.6</span> <span class="toc_entry">Document Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0032.html"><span class="toc_ref">6.3.7</span> <span class="toc_entry">Command Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0033.html"><span class="toc_ref">6.3.8</span> <span class="toc_entry">Environment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0034.html"><span class="toc_ref">6.3.9</span> <span class="toc_entry">TeXFragment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sec-texdocument-objects.html"><span class="toc_ref">6.3.10</span> <span class="toc_entry">TeXDocument Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-TeX.html"><span class="toc_ref">6.4</span> <span class="toc_entry"><span class="ttfamily">plasTeX.TeX</span> — The T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Stream</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0035.html"><span class="toc_ref">6.4.1</span> <span class="toc_entry">TeX Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-Context.html"><span class="toc_ref">6.5</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Context</span> — The T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Context</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0036.html"><span class="toc_ref">6.5.1</span> <span class="toc_entry">Context Objects</span></a>
+ </li>
+<li class="">
+  <a href="sec-context-language.html"><span class="toc_ref">6.5.2</span> <span class="toc_entry">Context language</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-Renderers.html"><span class="toc_ref">6.6</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Renderers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Rendering Framework</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0037.html"><span class="toc_ref">6.6.1</span> <span class="toc_entry">Renderer Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0038.html"><span class="toc_ref">6.6.2</span> <span class="toc_entry">Renderable MixIn</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-Imagers.html"><span class="toc_ref">6.7</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Imagers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Imaging Framework</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0039.html"><span class="toc_ref">6.7.1</span> <span class="toc_entry">Imager Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0040.html"><span class="toc_ref">6.7.2</span> <span class="toc_entry">Image Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0041.html"><span class="toc_ref">A</span> <span class="toc_entry">About This Document</span></a>
+ </li>
+<li class="">
+  <a href="sect0042.html"><span class="toc_ref">B</span> <span class="toc_entry">Frequently Asked Questions</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0043.html"><span class="toc_ref">B.1</span> <span class="toc_entry">Parsing L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0044.html"><span class="toc_ref">B.1.1</span> <span class="toc_entry">How can I make plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X work with my complicated macros?</span></a>
+ </li>
+<li class="">
+  <a href="sect0045.html"><span class="toc_ref">B.1.2</span> <span class="toc_entry">How can I get plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X to find my L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X packages?</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0046.html"><span class="toc_ref">C</span> <span class="toc_entry">Index</span></a>
+ </li>
+</ul>
+</nav>
+
+<div class="wrapper with-toc">
+<header>
+<h1 id="doc_title">plasTeX 2.0 — A Python Framework for Processing LaTeX Documents</h1>
+</header>
+
+<ul class="breadcrumbs">
+<li class="crumb"><a href="index.html" class="crumb">plasTeX 2.0 — A Python Framework for Processing LaTeX Documents</a></li>
+<li class="crumb"><a href="sect0008.html" class="crumb">Renderers</a></li>
+<li class="crumb"><a href="sec-zpt.html" class="crumb">Page Template Renderer</a></li>
+  <li class="last_crumb">Defining and Using Templates</li>
+</ul>
+
+<div class="content">
+<h2 id="a0000000016">5.3.1 Defining and Using Templates</h2>
+<p><b class="bf">Note:</b> If you are not familiar with the ZPT language, you should read the tutorial in section <a href="sec-zpttutorial.html">5.3.3</a> before continuing in this section. See the links in the previous section for documentation on the other template engines. </p>
+<p>By default, templates are loaded from the directory where the renderer module was imported from. In addition, the templates from each of the parent renderer class modules are also loaded. This makes it very easy to extend a renderer and add just a few new templates to support the additions that were made. </p>
+<p>The template files in the module directories can have three different forms. The first is HTML. HTML templates must have an extension of ‘<span class="sffamily">.htm</span>’ or ‘<span class="sffamily">.html</span>’. These templates are compiled using SimpleTAL’s HTML compiler. XML templates, the second form of template, uses SimpleTAL’s XML compiler, so they must be well-formed XML fragments. XML templates must have the file extension ‘<span class="sffamily">.xml</span>’, ‘<span class="sffamily">.xhtml</span>’, or ‘<span class="sffamily">.xhtm</span>’. In any case, the basename of the template file is used as the key to store the template in the renderer. Keep in mind that the names of the keys in the renderer correspond to the node names in the document object. </p>
+<p>The extensions used for all templating engines are shown in the table below. <div class="centered"><table class="tabular">
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><b class="bf">Engine</b></p>
+
+    </td>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><b class="bf">Extension</b></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p><b class="bf">Output Type</b> </p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ZPT</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>.html, .htm, .zpt</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>HTML</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>Jinja2</p>
+
+    </td>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>.jinja2</p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>Any</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">&nbsp;</td>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>.xhtml, .xhtm, .xml</p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>XML/XHTML</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>Python string formatting</p>
+
+    </td>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>.pyt</p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>Any</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>Python string templates</p>
+
+    </td>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>.st</p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>Any</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>Kid</p>
+
+    </td>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>.kid</p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>XML/XHTML</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>Cheetah</p>
+
+    </td>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>.che</p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>XML/XHTML</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>Genshi</p>
+
+    </td>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>.gen</p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>HTML</p>
+
+    </td>
+  </tr>
+</table></div> </p>
+<p>The file listing below is an example of a directory of template files. In this case the templates correspond to nodes in the document created by the <span class="ttfamily">description</span> environment, the <span class="ttfamily">tabular</span> environment, \<span class="ttfamily">textbf</span>, and \<span class="ttfamily">textit</span>. </p>
+<pre class="verbatim">
+description.xml
+tabular.xml
+textbf.html
+textit.html
+</pre>
+<p>Since there are a lot of templates that are merely one line, it would be inconvenient to have to create a new file for each template. In cases like this, you can use the ‘<span class="sffamily">.zpts</span>’ extension for collections of ZPT templates, or the ‘<span class="sffamily">.jinja2s</span>’ extension for collections of Jinja2 templates, or more generally ‘<span class="sffamily">.pts</span>’ for collections of various template types. Files with this extension have multiple templates in them. Each template is separated from the next by the template metadata which includes things like the name of the template, the type (xml, html, or text), and can also alias template names to another template in the renderer. The following metadata names are currently supported. <div class="centered"><table class="tabular">
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><b class="bf">Name</b></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p><b class="bf">Purpose</b> </p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> engine</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>the name of the templating engine to use. At the time of this writing, the value could be zpt, tal (same as zpt), html (ZPT HTML template), xml (ZPT XML template), jinja2, python (Python formatted string), string (Python string template), kid, cheetah, or genshi.</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>name</p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>the name or names of the template that is to follow. This name is used as the key in the renderer, and also corresponds to the node name that will be rendered by the template. If more than one name is desired, they are simply separated by spaces.</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>type</p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>the type of the template: xml, html, or text. XML templates must contain a well-formed XML fragment. HTML templates are more forgiving, but do not support all features of ZPT (see the SimpleTAL documentation).</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>alias</p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>specifies the name of another template that the given names should be aliased to. This allows you to simply reference another template to use rather than redefining one. For example, you might create a new section heading called \<span class="ttfamily">introduction</span> that should render the same way as \<span class="ttfamily">section</span>. In this case, you would set the name to “introduction” and the alias to “section”.</p>
+
+    </td>
+  </tr>
+</table></div> </p>
+<p>There are also some defaults that you can set at the top of the file that get applied to the entire file unles overridden by the meta-data on a particular template. <div class="centered"><table class="tabular">
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><b class="bf">Name</b></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p><b class="bf">Purpose</b> </p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> default-engine</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>the name of the engine to use for all templates in the file.</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>default-type</p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>the default template type for all templates in the file.</p>
+
+    </td>
+  </tr>
+</table></div> </p>
+<p>The code sample below shows the basic format of a zpts file. </p>
+<pre class="verbatim">
+name: textbf bfseries
+&lt;b tal:content="self"&gt;bold content&lt;/b&gt;
+
+name: textit
+&lt;i tal:content="self"&gt;italic content&lt;/i&gt;
+
+name: introduction introduction*
+alias: section
+
+name: description
+type: xml
+&lt;dl&gt;
+&lt;metal:block tal:repeat="item self"&gt;
+    &lt;dt tal:content="item/attributes/term"&gt;definition term&lt;/dt&gt;
+    &lt;dd tal:content="item"&gt;definition content&lt;/dd&gt;
+&lt;/metal:block&gt;
+&lt;/dl&gt;
+</pre>
+<p>The code above is a zpts file that contains four templates. Each template begins when a line starts with “name:”. Other directives have the same format (i.e. the name of the directive followed by a colon) and must immediately follow the name directive. The first template definition actually applies to two types of nodes <span class="rmfamily"><i class="itshape">textbf </i></span> and <span class="rmfamily"><i class="itshape">bfseries </i></span>. You can specify ony number of names on the name line. The third template isn’t a template at all; it is an alias. When an alias is specified, the name (or names) given use the same template as the one specified in the alias directive. Notice also that starred versions of a macro can be specified separately. This means that they can use a different template than the un-starred versions of the command. The last template is just a simple XML formatted template. By default, templates in a zpts file use the HTML compiler in SimpleTAL. You can specify that a template is an XML template by using the type directive. </p>
+<p>Here is an example of using various templates engines in a single file. </p>
+<pre class="verbatim">
+name: equation
+engine: jinja2
+&lt;div class="equation" id="{{ obj.id }}"&gt;
+  &lt;span class="equation_label"&gt;{{ obj.ref }}&lt;/span&gt;
+  {{ obj }}
+&lt;/div&gt;
+
+name: textbf
+engine: python
+&lt;b&gt;%(self)s&lt;/b&gt;
+
+name: textit
+engine: string
+&lt;i&gt;${self}&lt;/i&gt;
+
+name: textsc
+engine: cheetah
+&lt;span class="textsc"&gt;${here}&lt;/span&gt;
+
+name: textrm
+engine: kid
+&lt;span class="textrm" py:content="XML(unicode(here))"&gt;normal text&lt;/span&gt;
+
+name: textup
+engine: genshi
+&lt;span class="textup" py:content="markup(here)"&gt;upcase text&lt;/span&gt;
+</pre>
+<p>There are several variables inserted into the template namespace. Here is a list of the variables and the templates that support them. </p>
+<div class="centered"> <table class="tabular">
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><b class="bfseries">Object</b> </p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <b class="bfseries">ZPT/Python Formats/String Template</b> </p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <b class="bfseries">Jinja2</b> </p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <b class="bfseries">Cheetah</b> </p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <b class="bfseries">Kid/Genshi</b></p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>document node </p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <span class="rmfamily"><i class="itshape">self </i></span> or <span class="rmfamily"><i class="itshape">here </i></span> </p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <span class="rmfamily"><i class="itshape">obj </i></span> or <span class="rmfamily"><i class="itshape">here </i></span> </p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <span class="rmfamily"><i class="itshape">here </i></span> </p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <span class="rmfamily"><i class="itshape">here </i></span> </p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>parent node </p>
+
+    </td>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <span class="rmfamily"><i class="itshape">container </i></span> </p>
+
+    </td>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <span class="rmfamily"><i class="itshape">container </i></span> </p>
+
+    </td>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <span class="rmfamily"><i class="itshape">container </i></span> </p>
+
+    </td>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <span class="rmfamily"><i class="itshape">container </i></span> </p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>document config </p>
+
+    </td>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <span class="rmfamily"><i class="itshape">config </i></span> </p>
+
+    </td>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <span class="rmfamily"><i class="itshape">config </i></span> </p>
+
+    </td>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <span class="rmfamily"><i class="itshape">config </i></span> </p>
+
+    </td>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <span class="rmfamily"><i class="itshape">config </i></span> </p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>template instance </p>
+
+    </td>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <span class="rmfamily"><i class="itshape">template </i></span> </p>
+
+    </td>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">&nbsp;</td>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">&nbsp;</td>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">&nbsp;</td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black; border-left:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
+        rowspan=""
+        colspan="">
+      <p>renderer instance </p>
+
+    </td>
+    <td  style="text-align:left; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
+        rowspan=""
+        colspan="">
+      <p> <span class="rmfamily"><i class="itshape">templates </i></span> </p>
+
+    </td>
+    <td  style="text-align:left; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
+        rowspan=""
+        colspan="">
+      <p> <span class="rmfamily"><i class="itshape">templates </i></span> </p>
+
+    </td>
+    <td  style="text-align:left; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
+        rowspan=""
+        colspan="">
+      <p> <span class="rmfamily"><i class="itshape">templates </i></span> </p>
+
+    </td>
+    <td  style="text-align:left; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
+        rowspan=""
+        colspan="">
+      <p> <span class="rmfamily"><i class="itshape">templates </i></span> </p>
+
+    </td>
+  </tr>
+</table> </div>
+<p>You’ll notice that Kid and Genshi templates require some extra processing of the variables in order to get the proper markup. By default, these templates escape characters like &lt;, &gt;, and &amp;. In order to get HTML/XML markup from the variables you must wrap them in the code shown in the example above. Hopefully, this limitation will be removed in the future. </p>
+<p>When using Jinja2 templates, the default configuration trims white spaces before and after template tags (see trim_blocks and lstrip_blocks in Jinja2’s documentation). Also, when developing Jinja2 templates, inserting <code class="verbatim">{{ debug() }}</code> will launch a python debugger session to allow inspection of the <span class="rmfamily"><i class="itshape">context </i></span> variable during rendering. </p>
+<h3 id="sec:tmploverrides">Template Overrides</h3>
+<p>It is possible to override the templates located in a renderer’s directory with templates defined elsewhere. This is done using the <span class="ttfamily">*TEMPLATES</span> environment variable. The “*” in the name <span class="ttfamily">*TEMPLATES</span> is a wildcard and must be replaced by the name of the renderer. For example, if you are using the XHTML renderer, the environment variable would be <span class="ttfamily">XHTMLTEMPLATES</span>. For the PageTemplate renderer, the environment variable would be <span class="ttfamily">PAGETEMPLATETEMPLATES</span>. </p>
+<p>The format of this variable is the same as that of the <span class="ttfamily">PATH</span> environment variable which means that you can put multiple directory names in this variable. In addition, the environment variables for each of the parent renderers is also used, so that you can use multiple layers of template directories. </p>
+<p>You can actually create an entire renderer just using overrides and the PT renderer. Since the PT renderer doesn’t actually define any templates, it is just a framework for defining other XML/HTML renderers, you can simply load the PT renderer and set the <span class="ttfamily">PAGETEMPLATETEMPLATES</span> environment variable to the locations of your templates. This method of creating renderers will work for any XML/HTML that doesn’t require any special post-processing. </p>
+
 </div>
 
-<div class="breadcrumbs">
-<span>
-<span>
-<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
-</span>
+<nav class="prev_up_next">
+  <a href="sec-zpt.html" title="Page Template Renderer"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="sec-zpt.html" title="Page Template Renderer"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="sect0016.html" title="Defining and Using Themes"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+  <a href="sect0046.html" class="index">Index</a>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+</nav>
 
-</span><span>
-<span>
-<a href="sect0010.html">Renderers</a> <b>:</b>
-</span>
-
-</span><span>
-<span>
-<a href="sec-renderable.html">Renderable Objects</a> <b>:</b>
-</span>
-
-</span><span>
-
-<span>
-<b class="current">Generating Images</b>
-</span>
-</span>
-<hr />
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
 </div>
-
-<div><h2 id="a0000003197">5.2.3 Generating Images</h2>
-<p>Not all output types that you might render are going to support everything that L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X is capable of. For example, HTML has no way of representing equations, and most output types won’t be capable of rendering L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X’s <tt class="ttfamily">picture</tt> environment. In cases like these, you can let plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X generate images of the document node. Generating images is done with a subclass of <tt class="ttfamily">plasTeX.Imagers.Imager</tt>. The imager is responsible for creating a L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document from the requested document fragments, compiling the document and converting each page of the output document into individual images. Currently, there are two <tt class="ttfamily">Imager</tt> subclasses included with plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X. Each of them use the standard L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X compiler to generate a DVI file. The DVI file is then converted into images using one of the available imagers (see section <a href="sec-config-images.html">2.1.6</a> on how to select different imagers). </p><p>To generate an image of a document node, simply access the <tt class="ttfamily">image</tt> property during the rendering process. This property will return an <tt class="ttfamily">plasTeX.Imagers.Image</tt> instance. In most cases, the image file will not be available until the rendering process is finished since most renderers will need the generated L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document to be complete before compiling it and generating the final images. </p><p>The example below demonstrates how to generate an image for the <tt class="ttfamily">equation</tt> environment. </p><pre>
-# Import renderer from first renderer example
-from MyRenderer import Renderer
-
-from plasTeX.TeX import TeX
-
-def handle_equation(node):
-    return u'&lt;div&gt;&lt;img src="%s"/&gt;&lt;/div&gt;' % node.image.url
-
-# Instantiate a TeX processor and parse the input text
-tex = TeX()
-tex.input(r'''
-\documentclass{book}
-\begin{document}
-
-Previous paragraph.
-
-\begin{equation}
-\Sigma_{x=0}^{x+n} = \beta^2
-\end{equation}
-
-Next paragraph.
-
-\end{document}
-''')
-document = tex.parse()
-
-# Instantiate the renderer
-renderer = Renderer()
-
-# Insert the rendering method into all of the environments that might need it
-renderer['equation'] = handle_equation
-renderer['displaymath'] = handle_equation
-renderer['eqnarray'] = handle_equation
-
-# Render the document
-renderer.render(document)
-</pre><p>The rendered output looks like the following, and the image is generated is located in ‘<span class="sffamily">images/img-0001.png</span>’. </p><pre>
-&lt;document&gt;
-&lt;par&gt;
-Previous paragraph.
-&lt;/par&gt;&lt;par&gt;
-&lt;div&gt;&lt;img src="images/img-0001.png"/&gt;&lt;/div&gt;
-&lt;/par&gt;&lt;par&gt;
-Next paragraph.
-&lt;/par&gt;
-&lt;/document&gt;
-</pre><p>The names of the image files are determined by the document’s configuration. The filename generator is very powerful, and is in fact, the same filename generator used to create the other output filenames. For more information on customizing the image filenames see section <a href="sec-config-images.html">2.1.6</a>. </p><p>In addition, the image types are customizable as well. plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X uses the Python Imaging Library (PIL) to do the final cropping and saving of the image files, so any image format that PIL supports can be used. The format that PIL saves the images in is determined by the file extension in the generated filenames, so you must use a file extension that PIL recognizes. </p><p>It is possible to write your own <tt class="ttfamily">Imager</tt> subclass if necessary. See the <tt class="ttfamily">Imager</tt> API documentation for more information (see <a href="module-plasTeX-Imagers.html">6.7</a>). </p></div>
-
-
-
-
-
-<div class="navigation">
-<table cellspacing="2" cellpadding="0" width="100%">
-<tr>
-<td><a href="sect0014.html" title="Generating Files"><img alt="Previous: Generating Files" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
-
-<td><a href="sec-renderable.html" title="Renderable Objects"><img alt="Up: Renderable Objects" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
-
-<td><a href="sect0016.html" title="Generating Vector Images"><img alt="Next: Generating Vector Images" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
-
-<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
-<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
-
-<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
-
-<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
-</tr>
-</table>
-</div>
-
-<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
-
 </body>
 </html>

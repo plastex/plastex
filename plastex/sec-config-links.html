@@ -1,270 +1,743 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [ ['\\(','\\)']]}});
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+</script>
 <meta name="generator" content="plasTeX" />
-<meta content="text/html; charset=utf-8" http-equiv="content-type" />
-<title>plasTeX — A Python Framework for Processing LaTeX Documents: Document Links</title>
-
-<link href="sec-config-files.html" title="Input and Output Files" rel="next" />
-<link href="sect0005.html" title="Counters" rel="prev" />
-<link href="sect0003.html" title="Command-Line and Configuration Options" rel="up" />
-<link rel="stylesheet" href="styles/styles.css" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>plasTeX 2.0 — A Python Framework for Processing LaTeX Documents: Document Links</title>
+<link rel="next" href="sec-config-files.html" title="Input and Output Files" />
+<link rel="prev" href="sect0003.html" title="Counters" />
+<link rel="up" href="sect0002.html" title="Command-Line and Configuration Options" />
+<link rel="stylesheet" href="styles/theme-green.css" />
 </head>
+
 <body>
-
-<div class="navigation">
-<table cellspacing="2" cellpadding="0" width="100%">
-<tr>
-<td><a href="sect0005.html" title="Counters"><img alt="Previous: Counters" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
-
-<td><a href="sect0003.html" title="Command-Line and Configuration Options"><img alt="Up: Command-Line and Configuration Options" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
-
-<td><a href="sec-config-files.html" title="Input and Output Files"><img alt="Next: Input and Output Files" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
-
-<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
-<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
-
-<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
-
-<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
-</tr>
-</table>
-</div>
-
-<div class="breadcrumbs">
-<span>
-<span>
-<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
-</span>
-
-</span><span>
-<span>
-<a href="sect0002.html"><b class="bf">plastex</b> — The Command-Line Interface</a> <b>:</b>
-</span>
-
-</span><span>
-<span>
-<a href="sect0003.html">Command-Line and Configuration Options</a> <b>:</b>
-</span>
-
-</span><span>
-
-<span>
-<b class="current">Document Links</b>
-</span>
-</span>
-<hr />
-</div>
-
-<div><h2 id="sec:config-links">2.1.4 Document Links</h2>
-<p>The links section of the configuration is a little different than the others. The options in the links section are not preconfigured, they are all user-specified. The links section includes information to be included in the navigation object available on all sections in a document. By default, the section’s navigation object includes things like the previous and next objects in the document, the child nodes, the sibling nodes, etc. The table below lists all of the navigation objects that are already defined. The names for these items came from the link types defined at <a href="http://fantasai.tripod.com/qref/Appendix/LinkTypes/ltdef.html">http://fantasai.tripod.com/qref/Appendix/LinkTypes/ltdef.html</a>. Of course, it is up to the renderer to actually make use of them. </p><p><center><table cellspacing="0" class="tabular">
-<tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><b class="bf">Name</b></p></td>
-
-    
-    <td style="text-align:left"><p><b class="bf">Description</b> </p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; text-align:left; border-top-color:black; border-top-width:1px; border-right:1px solid black"><p> <span class="rmfamily"><i class="itshape">home</i></span></p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left"><p>the first section in the document</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">start</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as <span class="rmfamily"><i class="itshape">home</i></span></p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">begin</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as <span class="rmfamily"><i class="itshape">home</i></span></p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">first</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as <span class="rmfamily"><i class="itshape">home</i></span></p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">end</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>the last section in the document</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">last</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as <span class="rmfamily"><i class="itshape">end</i></span></p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">next</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>the next section in the document</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">prev</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>the previous section in the document</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">previous</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as <span class="rmfamily"><i class="itshape">prev</i></span></p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">up</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>the parent section</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">top</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>the top section in the document</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">origin</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as <span class="rmfamily"><i class="itshape">top</i></span></p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">parent</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>the parent section</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">child</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>a list of the subsections</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">siblings</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>a list of the sibling sections</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">document</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>the document object</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">part</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>the current part object</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">chapter</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>the current chapter object</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">section</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>the current section object</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">subsection</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>the current subsection object</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">navigator</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>the top node in the document object</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">toc</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>the node containing the table of contents</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">contents</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>same as <span class="rmfamily"><i class="itshape">toc</i></span></p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><span class="rmfamily"><i class="itshape">breadcrumbs</i></span></p></td>
-
-    
-    <td style="text-align:left"><p>a list of the parent objects of the current node</p></td>
-
-</tr>
-</table></center> </p><p>Since each of these items references an object that is expected to have a URL and a title, any user-defined fields should contain these as well (although the URL is optional in some items). To create a user-defined field in this object, you need to use two options: one for the title and one for the URL, if one exists. They are specified in the config file as follows: </p><pre>
+<nav class="toc">
+<svg  class="icon icon-cross close-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref">1</span> <span class="toc_entry">Introduction</span></a>
+ </li>
+<li class=" active">
+  <a href="sec-command-line.html"><span class="toc_ref">2</span> <span class="toc_entry"><b class="bf">plastex</b> — The Command-Line Interface</span></a>
+<svg  class="icon icon-cross expand-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+  <ul class="sub-toc-1 active">
+     <li class=" active">
+  <a href="sect0002.html"><span class="toc_ref">2.1</span> <span class="toc_entry">Command-Line and Configuration Options</span></a>
+<svg  class="icon icon-cross expand-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+  <ul class="sub-toc-2 active">
+     <li class="">
+  <a href="sec-general-options.html"><span class="toc_ref">2.1.1</span> <span class="toc_entry">General Options</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-document.html"><span class="toc_ref">2.1.2</span> <span class="toc_entry">Document Properties</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html"><span class="toc_ref">2.1.3</span> <span class="toc_entry">Counters</span></a>
+ </li>
+<li class=" active current">
+  <a href="sec-config-links.html"><span class="toc_ref">2.1.4</span> <span class="toc_entry">Document Links</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-files.html"><span class="toc_ref">2.1.5</span> <span class="toc_entry">Input and Output Files</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-images.html"><span class="toc_ref">2.1.6</span> <span class="toc_entry">Image Options</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-html5.html"><span class="toc_ref">2.1.7</span> <span class="toc_entry">HTML5 Renderer Options</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-document.html"><span class="toc_ref">3</span> <span class="toc_entry">The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-sections.html"><span class="toc_ref">3.1</span> <span class="toc_entry">Sections</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-links.html"><span class="toc_ref">3.1.1</span> <span class="toc_entry">Navigation and Links</span></a>
+ </li>
+<li class="">
+  <a href="sec-tableofcontents.html"><span class="toc_ref">3.1.2</span> <span class="toc_entry">Table of Contents</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-paragraphs.html"><span class="toc_ref">3.2</span> <span class="toc_entry">Paragraphs</span></a>
+ </li>
+<li class="">
+  <a href="sec-complexdoc.html"><span class="toc_ref">3.3</span> <span class="toc_entry">Complex Structures</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-lists.html"><span class="toc_ref">3.3.1</span> <span class="toc_entry">Lists</span></a>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref">3.3.2</span> <span class="toc_entry">Bibliography</span></a>
+ </li>
+<li class="">
+  <a href="sec-arrays.html"><span class="toc_ref">3.3.3</span> <span class="toc_entry">Arrays and Tabular Environments</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html"><span class="toc_ref">3.3.4</span> <span class="toc_entry">Indexes</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-macros.html"><span class="toc_ref">4</span> <span class="toc_entry">Understanding Macros and Packages</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0006.html"><span class="toc_ref">4.1</span> <span class="toc_entry">Defining Macros in L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html"><span class="toc_ref">4.2</span> <span class="toc_entry">Defining Macros in Python</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-macroclasses.html"><span class="toc_ref">4.2.1</span> <span class="toc_entry">Python Classes</span></a>
+ </li>
+<li class="">
+  <a href="sec-inimacros.html"><span class="toc_ref">4.2.2</span> <span class="toc_entry">INI Files</span></a>
+ </li>
+<li class="">
+  <a href="sec-contextmacros.html"><span class="toc_ref">4.2.3</span> <span class="toc_entry">The Document Context</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-packages.html"><span class="toc_ref">4.3</span> <span class="toc_entry">Packages</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0008.html"><span class="toc_ref">5</span> <span class="toc_entry">Renderers</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-simple-renderer-ex.html"><span class="toc_ref">5.1</span> <span class="toc_entry">Simple Renderer Example</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0009.html"><span class="toc_ref">5.1.1</span> <span class="toc_entry">Extending the Simple Renderer</span></a>
+ </li>
+<li class="">
+  <a href="subsec-renderer-from-script.html"><span class="toc_ref">5.1.2</span> <span class="toc_entry">Using a Renderer from the plastex Script</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-renderable.html"><span class="toc_ref">5.2</span> <span class="toc_entry">Renderable Objects</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0010.html"><span class="toc_ref">5.2.1</span> <span class="toc_entry">Determining the Correct Rendering Method</span></a>
+ </li>
+<li class="">
+  <a href="sect0011.html"><span class="toc_ref">5.2.2</span> <span class="toc_entry">Generating Files</span></a>
+ </li>
+<li class="">
+  <a href="sect0012.html"><span class="toc_ref">5.2.3</span> <span class="toc_entry">Generating Images</span></a>
+ </li>
+<li class="">
+  <a href="sect0013.html"><span class="toc_ref">5.2.4</span> <span class="toc_entry">Generating Vector Images</span></a>
+ </li>
+<li class="">
+  <a href="sect0014.html"><span class="toc_ref">5.2.5</span> <span class="toc_entry">Static Images</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-zpt.html"><span class="toc_ref">5.3</span> <span class="toc_entry">Page Template Renderer</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0015.html"><span class="toc_ref">5.3.1</span> <span class="toc_entry">Defining and Using Templates</span></a>
+ </li>
+<li class="">
+  <a href="sect0016.html"><span class="toc_ref">5.3.2</span> <span class="toc_entry">Defining and Using Themes</span></a>
+ </li>
+<li class="">
+  <a href="sec-zpttutorial.html"><span class="toc_ref">5.3.3</span> <span class="toc_entry">Zope Page Template Tutorial</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0017.html"><span class="toc_ref">5.4</span> <span class="toc_entry">XHTML Renderer</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0018.html"><span class="toc_ref">5.4.1</span> <span class="toc_entry">Themes</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-html5.html"><span class="toc_ref">5.5</span> <span class="toc_entry">HTML5 Renderer</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-html5-pkg.html"><span class="toc_ref">5.5.1</span> <span class="toc_entry">Interactions with packages</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0019.html"><span class="toc_ref">5.6</span> <span class="toc_entry">tBook Renderer</span></a>
+ </li>
+<li class="">
+  <a href="sect0020.html"><span class="toc_ref">5.7</span> <span class="toc_entry">DocBook Renderer</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0021.html"><span class="toc_ref">6</span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-macros-api.html"><span class="toc_ref">6.1</span> <span class="toc_entry"><span class="ttfamily">plasTeX</span> — The Python Macro and Document Interfaces</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0022.html"><span class="toc_ref">6.1.1</span> <span class="toc_entry">Macro Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-ConfigManager.html"><span class="toc_ref">6.2</span> <span class="toc_entry"><span class="ttfamily">plasTeX.ConfigManager</span> — plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Configuration</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0023.html"><span class="toc_ref">6.2.1</span> <span class="toc_entry">ConfigManager Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0024.html"><span class="toc_ref">6.2.2</span> <span class="toc_entry">ConfigSection Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0025.html"><span class="toc_ref">6.2.3</span> <span class="toc_entry">Configuration Option Types</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-DOM.html"><span class="toc_ref">6.3</span> <span class="toc_entry"><span class="ttfamily">plasTeX.DOM</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document Object Model (DOM)</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0026.html"><span class="toc_ref">6.3.1</span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X vs. XML</span></a>
+ </li>
+<li class="">
+  <a href="sect0027.html"><span class="toc_ref">6.3.2</span> <span class="toc_entry">Node Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0028.html"><span class="toc_ref">6.3.3</span> <span class="toc_entry">DocumentFragment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0029.html"><span class="toc_ref">6.3.4</span> <span class="toc_entry">Element Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0030.html"><span class="toc_ref">6.3.5</span> <span class="toc_entry">Text Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0031.html"><span class="toc_ref">6.3.6</span> <span class="toc_entry">Document Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0032.html"><span class="toc_ref">6.3.7</span> <span class="toc_entry">Command Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0033.html"><span class="toc_ref">6.3.8</span> <span class="toc_entry">Environment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0034.html"><span class="toc_ref">6.3.9</span> <span class="toc_entry">TeXFragment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sec-texdocument-objects.html"><span class="toc_ref">6.3.10</span> <span class="toc_entry">TeXDocument Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-TeX.html"><span class="toc_ref">6.4</span> <span class="toc_entry"><span class="ttfamily">plasTeX.TeX</span> — The T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Stream</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0035.html"><span class="toc_ref">6.4.1</span> <span class="toc_entry">TeX Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-Context.html"><span class="toc_ref">6.5</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Context</span> — The T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Context</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0036.html"><span class="toc_ref">6.5.1</span> <span class="toc_entry">Context Objects</span></a>
+ </li>
+<li class="">
+  <a href="sec-context-language.html"><span class="toc_ref">6.5.2</span> <span class="toc_entry">Context language</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-Renderers.html"><span class="toc_ref">6.6</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Renderers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Rendering Framework</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0037.html"><span class="toc_ref">6.6.1</span> <span class="toc_entry">Renderer Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0038.html"><span class="toc_ref">6.6.2</span> <span class="toc_entry">Renderable MixIn</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-Imagers.html"><span class="toc_ref">6.7</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Imagers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Imaging Framework</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0039.html"><span class="toc_ref">6.7.1</span> <span class="toc_entry">Imager Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0040.html"><span class="toc_ref">6.7.2</span> <span class="toc_entry">Image Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0041.html"><span class="toc_ref">A</span> <span class="toc_entry">About This Document</span></a>
+ </li>
+<li class="">
+  <a href="sect0042.html"><span class="toc_ref">B</span> <span class="toc_entry">Frequently Asked Questions</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0043.html"><span class="toc_ref">B.1</span> <span class="toc_entry">Parsing L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0044.html"><span class="toc_ref">B.1.1</span> <span class="toc_entry">How can I make plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X work with my complicated macros?</span></a>
+ </li>
+<li class="">
+  <a href="sect0045.html"><span class="toc_ref">B.1.2</span> <span class="toc_entry">How can I get plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X to find my L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X packages?</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0046.html"><span class="toc_ref">C</span> <span class="toc_entry">Index</span></a>
+ </li>
+</ul>
+</nav>
+
+<div class="wrapper with-toc">
+<header>
+<h1 id="doc_title">plasTeX 2.0 — A Python Framework for Processing LaTeX Documents</h1>
+</header>
+
+<ul class="breadcrumbs">
+<li class="crumb"><a href="index.html" class="crumb">plasTeX 2.0 — A Python Framework for Processing LaTeX Documents</a></li>
+<li class="crumb"><a href="sec-command-line.html" class="crumb"><b class="bf">plastex</b> — The Command-Line Interface</a></li>
+<li class="crumb"><a href="sect0002.html" class="crumb">Command-Line and Configuration Options</a></li>
+  <li class="last_crumb">Document Links</li>
+</ul>
+
+<div class="content">
+<h2 id="sec:config-links">2.1.4 Document Links</h2>
+<p>The links section of the configuration is a little different than the others. The options in the links section are not preconfigured, they are all user-specified. The links section includes information to be included in the navigation object available on all sections in a document. By default, the section’s navigation object includes things like the previous and next objects in the document, the child nodes, the sibling nodes, etc. The table below lists all of the navigation objects that are already defined. The names for these items came from the link types defined at <a href="http://fantasai.tripod.com/qref/Appendix/LinkTypes/ltdef.html">http://fantasai.tripod.com/qref/Appendix/LinkTypes/ltdef.html</a>. Of course, it is up to the renderer to actually make use of them. </p>
+<p><div class="centered"><table class="tabular">
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><b class="bf">Name</b></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p><b class="bf">Description</b> </p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <span class="rmfamily"><i class="itshape">home </i></span></p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>the first section in the document</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">start </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as <span class="rmfamily"><i class="itshape">home </i></span></p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">begin </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as <span class="rmfamily"><i class="itshape">home </i></span></p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">first </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as <span class="rmfamily"><i class="itshape">home </i></span></p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">end </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>the last section in the document</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">last </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as <span class="rmfamily"><i class="itshape">end </i></span></p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">next </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>the next section in the document</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">prev </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>the previous section in the document</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">previous </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as <span class="rmfamily"><i class="itshape">prev </i></span></p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">up </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>the parent section</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">top </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>the top section in the document</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">origin </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as <span class="rmfamily"><i class="itshape">top </i></span></p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">parent </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>the parent section</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">child </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>a list of the subsections</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">siblings </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>a list of the sibling sections</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">document </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>the document object</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">part </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>the current part object</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">chapter </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>the current chapter object</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">section </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>the current section object</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">subsection </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>the current subsection object</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">navigator </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>the top node in the document object</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">toc </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>the node containing the table of contents</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">contents </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>same as <span class="rmfamily"><i class="itshape">toc </i></span></p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">breadcrumbs </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>a list of the parent objects of the current node</p>
+
+    </td>
+  </tr>
+</table></div> </p>
+<p>Since each of these items references an object that is expected to have a URL and a title, any user-defined fields should contain these as well (although the URL is optional in some items). To create a user-defined field in this object, you need to use two options: one for the title and one for the URL, if one exists. They are specified in the config file as follows: </p>
+<pre class="verbatim">
 [links]
 next-url=http://myhost.com/glossary
 next-title=The Next Document
 mylink-title=Another Title
-</pre><p>These option names are split on the dash (-) to create a key, before the dash, and a member, after the dash. A dictionary is inserted into the navigation object with the name of the key, and the members are added to that dictionary. The configuration above would create the following Python dictionary. </p><pre>
+</pre>
+<p>These option names are split on the dash (-) to create a key, before the dash, and a member, after the dash. A dictionary is inserted into the navigation object with the name of the key, and the members are added to that dictionary. The configuration above would create the following Python dictionary. </p>
+<pre class="verbatim">
 {
     'next':
         {
@@ -276,37 +749,30 @@ mylink-title=Another Title
             'title':'Another Title'
         }
 }
-</pre><p>While you can not override a field that is populated by the document, there are times when a field isn’t populated. This occurs, for example, in the <span class="rmfamily"><i class="itshape">prev</i></span> field at the beginning of the document, or the <span class="rmfamily"><i class="itshape">next</i></span> field at the end of the document. If you specify a <span class="rmfamily"><i class="itshape">prev</i></span> or <span class="rmfamily"><i class="itshape">next</i></span> field in your configuration, those fields will be used when no <span class="rmfamily"><i class="itshape">prev</i></span> or <span class="rmfamily"><i class="itshape">next</i></span> is available. This allows you to link to external documents at those points. </p><p><dl class="description">
+</pre>
+<p>While you can not override a field that is populated by the document, there are times when a field isn’t populated. This occurs, for example, in the <span class="rmfamily"><i class="itshape">prev </i></span> field at the beginning of the document, or the <span class="rmfamily"><i class="itshape">next </i></span> field at the end of the document. If you specify a <span class="rmfamily"><i class="itshape">prev </i></span> or <span class="rmfamily"><i class="itshape">next </i></span> field in your configuration, those fields will be used when no <span class="rmfamily"><i class="itshape">prev </i></span> or <span class="rmfamily"><i class="itshape">next </i></span> is available. This allows you to link to external documents at those points. </p>
+<p><dl class="description">
+  <dt><b class="bfseries">Set document links</b></dt>
+  <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--links=<span class="rmfamily"><i class="itshape">[ key optional-url title ]</i></span></b></span><br />specifies links to be included in the navigation object. Since at least two values are needed in the links (key and title, with an optional URL), the values are grouped in square brackets on the command-line ([&#160;]). </p>
+</dd>
+</dl> </p>
 
-    <dt><b class="bfseries">Set document links</b></dt>
-    <dd><p><br /><b class="bfseries">Command-Line Options:</b> <tt class="ttfamily"><b class="bf">--links=<span class="rmfamily"><i class="itshape">[ key optional-url title ]</i></span></b></tt><br />specifies links to be included in the navigation object. Since at least two values are needed in the links (key and title, with an optional URL), the values are grouped in square brackets on the command-line ([ ]). </p></dd>
-
-</dl> </p></div>
-
-
-
-
-
-<div class="navigation">
-<table cellspacing="2" cellpadding="0" width="100%">
-<tr>
-<td><a href="sect0005.html" title="Counters"><img alt="Previous: Counters" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
-
-<td><a href="sect0003.html" title="Command-Line and Configuration Options"><img alt="Up: Command-Line and Configuration Options" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
-
-<td><a href="sec-config-files.html" title="Input and Output Files"><img alt="Next: Input and Output Files" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
-
-<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
-<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
-
-<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
-
-<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
-</tr>
-</table>
 </div>
 
-<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+<nav class="prev_up_next">
+  <a href="sect0003.html" title="Counters"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="sect0002.html" title="Command-Line and Configuration Options"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="sec-config-files.html" title="Input and Output Files"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+  <a href="sect0046.html" class="index">Index</a>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+</nav>
 
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+</div>
 </body>
 </html>

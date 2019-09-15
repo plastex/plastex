@@ -1,611 +1,794 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [ ['\\(','\\)']]}});
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+</script>
 <meta name="generator" content="plasTeX" />
-<meta content="text/html; charset=utf-8" http-equiv="content-type" />
-<title>plasTeX — A Python Framework for Processing LaTeX Documents: Macro Objects</title>
-
-<link href="module-plasTeX-ConfigManager.html" title="plasTeX.ConfigManager — plasConfiguration" rel="next" />
-<link href="module-plasTeX.html" title="plasTeX — The Python Macro and Document Interfaces" rel="prev" />
-<link href="module-plasTeX.html" title="plasTeX — The Python Macro and Document Interfaces" rel="up" />
-<link rel="stylesheet" href="styles/styles.css" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>plasTeX 2.0 — A Python Framework for Processing LaTeX Documents: Configuration Option Types</title>
+<link rel="next" href="module-plasTeX-DOM.html" title="plasTeX.DOM — The plas Document Object Model (DOM)" />
+<link rel="prev" href="sect0024.html" title="ConfigSection Objects" />
+<link rel="up" href="module-plasTeX-ConfigManager.html" title="plasTeX.ConfigManager — plas Configuration" />
+<link rel="stylesheet" href="styles/theme-green.css" />
 </head>
+
 <body>
+<nav class="toc">
+<svg  class="icon icon-cross close-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 
-<div class="navigation">
-<table cellspacing="2" cellpadding="0" width="100%">
-<tr>
-<td><a href="module-plasTeX.html" title="plasTeX — The Python Macro and Document Interfaces"><img alt="Previous: plasTeX — The Python Macro and Document Interfaces" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref">1</span> <span class="toc_entry">Introduction</span></a>
+ </li>
+<li class="">
+  <a href="sec-command-line.html"><span class="toc_ref">2</span> <span class="toc_entry"><b class="bf">plastex</b> — The Command-Line Interface</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0002.html"><span class="toc_ref">2.1</span> <span class="toc_entry">Command-Line and Configuration Options</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-general-options.html"><span class="toc_ref">2.1.1</span> <span class="toc_entry">General Options</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-document.html"><span class="toc_ref">2.1.2</span> <span class="toc_entry">Document Properties</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html"><span class="toc_ref">2.1.3</span> <span class="toc_entry">Counters</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-links.html"><span class="toc_ref">2.1.4</span> <span class="toc_entry">Document Links</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-files.html"><span class="toc_ref">2.1.5</span> <span class="toc_entry">Input and Output Files</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-images.html"><span class="toc_ref">2.1.6</span> <span class="toc_entry">Image Options</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-html5.html"><span class="toc_ref">2.1.7</span> <span class="toc_entry">HTML5 Renderer Options</span></a>
+ </li>
 
-<td><a href="module-plasTeX.html" title="plasTeX — The Python Macro and Document Interfaces"><img alt="Up: plasTeX — The Python Macro and Document Interfaces" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
 
-<td><a href="module-plasTeX-ConfigManager.html" title="plasTeX.ConfigManager — plasTeX Configuration"><img alt="Next: plasTeX.ConfigManager — plasTeX Configuration" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-document.html"><span class="toc_ref">3</span> <span class="toc_entry">The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-sections.html"><span class="toc_ref">3.1</span> <span class="toc_entry">Sections</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-links.html"><span class="toc_ref">3.1.1</span> <span class="toc_entry">Navigation and Links</span></a>
+ </li>
+<li class="">
+  <a href="sec-tableofcontents.html"><span class="toc_ref">3.1.2</span> <span class="toc_entry">Table of Contents</span></a>
+ </li>
 
-<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
-<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-paragraphs.html"><span class="toc_ref">3.2</span> <span class="toc_entry">Paragraphs</span></a>
+ </li>
+<li class="">
+  <a href="sec-complexdoc.html"><span class="toc_ref">3.3</span> <span class="toc_entry">Complex Structures</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-lists.html"><span class="toc_ref">3.3.1</span> <span class="toc_entry">Lists</span></a>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref">3.3.2</span> <span class="toc_entry">Bibliography</span></a>
+ </li>
+<li class="">
+  <a href="sec-arrays.html"><span class="toc_ref">3.3.3</span> <span class="toc_entry">Arrays and Tabular Environments</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html"><span class="toc_ref">3.3.4</span> <span class="toc_entry">Indexes</span></a>
+ </li>
 
-<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
 
-<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
-</tr>
-</table>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-macros.html"><span class="toc_ref">4</span> <span class="toc_entry">Understanding Macros and Packages</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0006.html"><span class="toc_ref">4.1</span> <span class="toc_entry">Defining Macros in L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html"><span class="toc_ref">4.2</span> <span class="toc_entry">Defining Macros in Python</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-macroclasses.html"><span class="toc_ref">4.2.1</span> <span class="toc_entry">Python Classes</span></a>
+ </li>
+<li class="">
+  <a href="sec-inimacros.html"><span class="toc_ref">4.2.2</span> <span class="toc_entry">INI Files</span></a>
+ </li>
+<li class="">
+  <a href="sec-contextmacros.html"><span class="toc_ref">4.2.3</span> <span class="toc_entry">The Document Context</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-packages.html"><span class="toc_ref">4.3</span> <span class="toc_entry">Packages</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0008.html"><span class="toc_ref">5</span> <span class="toc_entry">Renderers</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-simple-renderer-ex.html"><span class="toc_ref">5.1</span> <span class="toc_entry">Simple Renderer Example</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0009.html"><span class="toc_ref">5.1.1</span> <span class="toc_entry">Extending the Simple Renderer</span></a>
+ </li>
+<li class="">
+  <a href="subsec-renderer-from-script.html"><span class="toc_ref">5.1.2</span> <span class="toc_entry">Using a Renderer from the plastex Script</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-renderable.html"><span class="toc_ref">5.2</span> <span class="toc_entry">Renderable Objects</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0010.html"><span class="toc_ref">5.2.1</span> <span class="toc_entry">Determining the Correct Rendering Method</span></a>
+ </li>
+<li class="">
+  <a href="sect0011.html"><span class="toc_ref">5.2.2</span> <span class="toc_entry">Generating Files</span></a>
+ </li>
+<li class="">
+  <a href="sect0012.html"><span class="toc_ref">5.2.3</span> <span class="toc_entry">Generating Images</span></a>
+ </li>
+<li class="">
+  <a href="sect0013.html"><span class="toc_ref">5.2.4</span> <span class="toc_entry">Generating Vector Images</span></a>
+ </li>
+<li class="">
+  <a href="sect0014.html"><span class="toc_ref">5.2.5</span> <span class="toc_entry">Static Images</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-zpt.html"><span class="toc_ref">5.3</span> <span class="toc_entry">Page Template Renderer</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0015.html"><span class="toc_ref">5.3.1</span> <span class="toc_entry">Defining and Using Templates</span></a>
+ </li>
+<li class="">
+  <a href="sect0016.html"><span class="toc_ref">5.3.2</span> <span class="toc_entry">Defining and Using Themes</span></a>
+ </li>
+<li class="">
+  <a href="sec-zpttutorial.html"><span class="toc_ref">5.3.3</span> <span class="toc_entry">Zope Page Template Tutorial</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0017.html"><span class="toc_ref">5.4</span> <span class="toc_entry">XHTML Renderer</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0018.html"><span class="toc_ref">5.4.1</span> <span class="toc_entry">Themes</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-html5.html"><span class="toc_ref">5.5</span> <span class="toc_entry">HTML5 Renderer</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-html5-pkg.html"><span class="toc_ref">5.5.1</span> <span class="toc_entry">Interactions with packages</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0019.html"><span class="toc_ref">5.6</span> <span class="toc_entry">tBook Renderer</span></a>
+ </li>
+<li class="">
+  <a href="sect0020.html"><span class="toc_ref">5.7</span> <span class="toc_entry">DocBook Renderer</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active">
+  <a href="sect0021.html"><span class="toc_ref">6</span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</span></a>
+<svg  class="icon icon-cross expand-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+  <ul class="sub-toc-1 active">
+     <li class="">
+  <a href="sec-macros-api.html"><span class="toc_ref">6.1</span> <span class="toc_entry"><span class="ttfamily">plasTeX</span> — The Python Macro and Document Interfaces</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0022.html"><span class="toc_ref">6.1.1</span> <span class="toc_entry">Macro Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active">
+  <a href="module-plasTeX-ConfigManager.html"><span class="toc_ref">6.2</span> <span class="toc_entry"><span class="ttfamily">plasTeX.ConfigManager</span> — plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Configuration</span></a>
+<svg  class="icon icon-cross expand-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+  <ul class="sub-toc-2 active">
+     <li class="">
+  <a href="sect0023.html"><span class="toc_ref">6.2.1</span> <span class="toc_entry">ConfigManager Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0024.html"><span class="toc_ref">6.2.2</span> <span class="toc_entry">ConfigSection Objects</span></a>
+ </li>
+<li class=" active current">
+  <a href="sect0025.html"><span class="toc_ref">6.2.3</span> <span class="toc_entry">Configuration Option Types</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-DOM.html"><span class="toc_ref">6.3</span> <span class="toc_entry"><span class="ttfamily">plasTeX.DOM</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document Object Model (DOM)</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0026.html"><span class="toc_ref">6.3.1</span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X vs. XML</span></a>
+ </li>
+<li class="">
+  <a href="sect0027.html"><span class="toc_ref">6.3.2</span> <span class="toc_entry">Node Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0028.html"><span class="toc_ref">6.3.3</span> <span class="toc_entry">DocumentFragment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0029.html"><span class="toc_ref">6.3.4</span> <span class="toc_entry">Element Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0030.html"><span class="toc_ref">6.3.5</span> <span class="toc_entry">Text Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0031.html"><span class="toc_ref">6.3.6</span> <span class="toc_entry">Document Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0032.html"><span class="toc_ref">6.3.7</span> <span class="toc_entry">Command Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0033.html"><span class="toc_ref">6.3.8</span> <span class="toc_entry">Environment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0034.html"><span class="toc_ref">6.3.9</span> <span class="toc_entry">TeXFragment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sec-texdocument-objects.html"><span class="toc_ref">6.3.10</span> <span class="toc_entry">TeXDocument Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-TeX.html"><span class="toc_ref">6.4</span> <span class="toc_entry"><span class="ttfamily">plasTeX.TeX</span> — The T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Stream</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0035.html"><span class="toc_ref">6.4.1</span> <span class="toc_entry">TeX Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-Context.html"><span class="toc_ref">6.5</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Context</span> — The T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Context</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0036.html"><span class="toc_ref">6.5.1</span> <span class="toc_entry">Context Objects</span></a>
+ </li>
+<li class="">
+  <a href="sec-context-language.html"><span class="toc_ref">6.5.2</span> <span class="toc_entry">Context language</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-Renderers.html"><span class="toc_ref">6.6</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Renderers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Rendering Framework</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0037.html"><span class="toc_ref">6.6.1</span> <span class="toc_entry">Renderer Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0038.html"><span class="toc_ref">6.6.2</span> <span class="toc_entry">Renderable MixIn</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-Imagers.html"><span class="toc_ref">6.7</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Imagers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Imaging Framework</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0039.html"><span class="toc_ref">6.7.1</span> <span class="toc_entry">Imager Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0040.html"><span class="toc_ref">6.7.2</span> <span class="toc_entry">Image Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0041.html"><span class="toc_ref">A</span> <span class="toc_entry">About This Document</span></a>
+ </li>
+<li class="">
+  <a href="sect0042.html"><span class="toc_ref">B</span> <span class="toc_entry">Frequently Asked Questions</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0043.html"><span class="toc_ref">B.1</span> <span class="toc_entry">Parsing L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0044.html"><span class="toc_ref">B.1.1</span> <span class="toc_entry">How can I make plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X work with my complicated macros?</span></a>
+ </li>
+<li class="">
+  <a href="sect0045.html"><span class="toc_ref">B.1.2</span> <span class="toc_entry">How can I get plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X to find my L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X packages?</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0046.html"><span class="toc_ref">C</span> <span class="toc_entry">Index</span></a>
+ </li>
+</ul>
+</nav>
+
+<div class="wrapper with-toc">
+<header>
+<h1 id="doc_title">plasTeX 2.0 — A Python Framework for Processing LaTeX Documents</h1>
+</header>
+
+<ul class="breadcrumbs">
+<li class="crumb"><a href="index.html" class="crumb">plasTeX 2.0 — A Python Framework for Processing LaTeX Documents</a></li>
+<li class="crumb"><a href="sect0021.html" class="crumb">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</a></li>
+<li class="crumb"><a href="module-plasTeX-ConfigManager.html" class="crumb"><span class="ttfamily">plasTeX.ConfigManager</span> — plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Configuration</a></li>
+  <li class="last_crumb">Configuration Option Types</li>
+</ul>
+
+<div class="content">
+<h2 id="a0000000026">6.2.3 Configuration Option Types</h2>
+<p>There are several option types that should cover just about any type of command-line and configuration option that you may have. However, in the spirit of object-orientedness, you can, of course, subclass one of these and create your own types. <span class="ttfamily">GenericOption</span> is the base class for all options. It contains all of the underlying framework for options, but should never be instantiated directly. Only subclasses should be instantiated. </p>
+<p>   <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><b class="bf">class </b><span class="rmfamily"><span class="ttfamily"><b class="bfseries">GenericOption</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"> <span class="textnormal"><big class="xlarge">[</big></span>docsTring, options, default, optional, values, category, callback, synopsis, environ, registry, mandatory, name, source<span class="textnormal"><big class="xlarge">]</big></span>  </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000171" id="a0000000171"></a>  Declare a command line option. </p>
+<p>Instances of subclasses of <span class="ttfamily">GenericOption</span> must be placed in a <span class="ttfamily">ConfigManager</span> instance to be used. See the documentation for <span class="ttfamily">ConfigManager</span> for more details. </p>
+<p><span class="rmfamily"><i class="itshape">docstring </i></span> is a string in the format of Python documentation strings that describes the option and its usage. The first line is assumed to be a one-line summary for the option. The following paragraphs are assumed to be a complete description of the option. You can give a paragraph with the label ’Valid Values:’ that contains a short description of the values that are valid for the current option. If this paragraph exists and an error is encountered while validating the option, this paragraph will be printed instead of the somewhat generic error message for that option type. </p>
+<p><span class="rmfamily"><i class="itshape">options </i></span> is a string containing all possible variants of the option. All variants should contain the ’-’, ’–’, etc. at the beginning. For boolean options, the option can be preceded by a ’!’ to mean that the option should be turned OFF rather than ON which is the default. </p>
+<p><span class="rmfamily"><i class="itshape">default </i></span> is a value for the option to take if it isn’t specified on the command line </p>
+<p><span class="rmfamily"><i class="itshape">optional </i></span> is a value for the option if it is given without a value. This is only used for options that normally take a value, but you also want a default that indicates that the option was given without a value. </p>
+<p><span class="rmfamily"><i class="itshape">values </i></span> defines valid values for the option. This argument can take the following forms: </p>
+<p><div class="centered"><table class="tabular">
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><b class="bf">Type</b></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p><b class="bf">Description</b> </p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <span class="rmfamily"><i class="itshape">single value </i></span></p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>for <span class="ttfamily">StringOption</span> this this is a string, for <span class="ttfamily">IntegerOption</span> this is an integer, for <span class="ttfamily">FloatOption</span> this is a float. The single value mode is most useful when the value is a regular expression. For example, to specify that a <span class="ttfamily">StringOption</span> must be a string of characters followed by a digit, ’values’ would be set to <span class="rmfamily"><span class="ttfamily">re.compile(r’\w+\d’)</span></span>.</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">range of values </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>a two element list can be given to specify the endpoints of a range of valid values. This is probably most useful on <span class="ttfamily">IntegerOption</span> and <span class="ttfamily">FloatOption</span>. For example, to specify that an IntegerOption can only take the values from 0 to 10, ’values’ would be set to [0,10]. <b class="bf">Note:</b> This mode must <em>always</em> use a Python list since using a tuple means something else entirely.</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">tuple of values </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>a tuple of values can be used to specify a complete list of valid values. For example, to specify that an <span class="ttfamily">IntegerOption</span> can take the values 1, 2, or 3, ’values’ would be set to <span class="rmfamily"><span class="ttfamily">(1,2,3)</span></span>. If a string value can only take the values, ’hi’, ’bye’, and any string of characters beginning with the letter ’z’, ’values’ would be set to <span class="rmfamily"><span class="ttfamily">(’hi’,’bye’,re.compile(r’z.*?’))</span></span>. <b class="bf">Note:</b> This mode must *always* use a Python tuple since using a list means something else entirely.</p>
+
+    </td>
+  </tr>
+</table></div> </p>
+<p><span class="rmfamily"><i class="itshape">category </i></span> is a category key which specifies which category the option belongs to (see the <span class="ttfamily">ConfigManager</span> documentation on how to create categories). </p>
+<p><span class="rmfamily"><i class="itshape">callback </i></span> is a function to call after the value of the option has been validated. This function will be called with the validated option value as its only argument. </p>
+<p><span class="rmfamily"><i class="itshape">environ </i></span> is an environment variable to use as default value instead of specified value. If the environment variable exists, it will be used for the default value instead of the specified value. </p>
+<p><span class="rmfamily"><i class="itshape">registry </i></span> is a registry key to use as default value instead of specified value. If the registry key exists, it will be used for the default value instead of the specified value. A specified environment variable takes precedence over this value. <b class="bf">Note:</b> This is not implemented yet. </p>
+<p><span class="rmfamily"><i class="itshape">name </i></span> is a key used to get the option from its corresponding section. You do not need to specify this. It will be set automatically when you put the option into the <span class="ttfamily">ConfigManager</span> instance. </p>
+<p><span class="rmfamily"><i class="itshape">mandatory </i></span> is a flag used to determine if the option itself is required to be present. The idea of a "mandatory option" is a little strange, but I have seen it done. </p>
+<p><span class="rmfamily"><i class="itshape">source </i></span> is a flag used to determine whether the option was set directly in the <span class="ttfamily">ConfigManager</span> instance through Python, by a configuration file/command line option, etc. You do not need to specify this, it will be set automatically during parsing. This flag should have the value of <span class="rmfamily"><i class="itshape">BUILTIN </i></span>, <span class="rmfamily"><i class="itshape">COMMANDLINE </i></span>, <span class="rmfamily"><i class="itshape">CONFIGFILE </i></span>, <span class="rmfamily"><i class="itshape">ENVIRONMENT </i></span>, <span class="rmfamily"><i class="itshape">REGISTRY </i></span>, or <span class="rmfamily"><i class="itshape">CODE </i></span>. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">acceptsArgument</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000172" id="a0000000172"></a>   return a boolean indicating whether or not the option accepts an argument on the command-line. For example, boolean options do not accept an argument. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">cast</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">arg </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000173" id="a0000000173"></a>   cast the given value to the appropriate type. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">checkValues</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">value </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000174" id="a0000000174"></a>   check <span class="rmfamily"><i class="itshape">value </i></span> against all possible valid values for the option. If the value is invalid, raise an <span class="ttfamily">InvalidOptionError</span> exception. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">clearValue</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000175" id="a0000000175"></a>   reset the value of the option as if it had never been set. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">getValue</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span>default<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000176" id="a0000000176"></a>   return the current value of the option. If <span class="rmfamily"><i class="itshape">default </i></span> is specified and a value cannot be gotten from any source, it is returned. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">__repr__</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000177" id="a0000000177"></a>   return a string containing a command-line representation of the option and its value. </p>
+</dd>
+</dl> </p>
+<p>  <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd>  </dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">requiresArgument</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000178" id="a0000000178"></a>   return a boolean indicating whether or not the option requires an argument on the command-line. </p>
+</dd>
+</dl> </p>
+<p>As mentioned previously, <span class="ttfamily">GenericOption</span> is an abstract class (i.e. it should not be instantiated directly). Only subclasses of <span class="ttfamily">GenericOption</span> should be instantiated. Below are some examples of use of some of these subclasses, followed by the descriptions of the subclasses themselves. </p>
+<pre class="verbatim">
+   BooleanOption(
+      ''' Display help message ''',
+      options = '--help -h',
+      callback = usage,  # usage() function must exist prior to this
+   )
+</pre>
+<pre class="verbatim">
+   BooleanOption(
+      ''' Set verbosity ''',
+      options = '-v --verbose !-q !--quiet',
+   )
+</pre>
+<pre class="verbatim">
+   StringOption(
+      '''
+      IP address option
+
+      This option accepts an IP address to connect to.
+
+      Valid Values:
+      '#.#.#.#' where # is a number from 1 to 255
+
+      ''',
+      options = '--ip-address',
+      values = re.compile(r'\d{1,3}(\.\d{1,3}){3}'),
+      default = '127.0.0.0',
+      synopsis = '#.#.#.#',
+      category = 'network',  # Assumes 'network' category exists
+   )
+</pre>
+<pre class="verbatim">
+   IntegerOption(
+      '''
+      Number of seconds to wait before timing out
+
+      Valid Values:
+      positive integer
+
+      ''',
+      options = '--timeout -t',
+      default = 300,
+      values = [0,1e9],
+      category = 'network',
+   )
+</pre>
+<pre class="verbatim">
+   IntegerOption(
+      '''
+      Number of tries to connect to the host before giving up
+
+      Valid Values:
+      accepts 1, 2, or 3 retries
+
+      ''',
+      options = '--tries',
+      default = 1,
+      values = (1,2,3),
+      category = 'network',
+   )
+</pre>
+<pre class="verbatim">
+   StringOption(
+      '''
+      Nonsense option for example purposes only
+
+      Valid Values:
+      accepts 'hi', 'bye', or any string beginning with the letter 'z'
+
+      ''',
+      options = '--nonsense -n',
+      default = 'hi',
+      values = ('hi', 'bye', re.compile(r'z.*?')),
+   )
+</pre>
+<p>   <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><b class="bf">class </b><span class="rmfamily"><span class="ttfamily"><b class="bfseries">BooleanOption</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span><span class="ttfamily">GenericOption</span> arguments<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000179" id="a0000000179"></a>  Boolean options are simply options that allow you to specify an ‘on’ or ‘off’ state. The accepted values for a boolean option in a config file are ‘on’, ‘off’, ‘true’, ‘false’, ‘yes’, ‘no’, 0, and 1. Boolean options on the command-line do not take an argument; simply specifying the option sets the state to true. </p>
+<p>One interesting feature of boolean options is in specifying the command-line options. Since you cannot specify a value on the command-line (the existence of the option indicates the state), there must be a way to set the state to false. This is done using the ‘not’ operator (!). When specifying the <span class="rmfamily"><i class="itshape">options </i></span> argument of the constructor, if you prefix an command-line option with an exclamation point, the existence of that option indicates a false state rather than a true state. Below is an example of an <span class="rmfamily"><i class="itshape">options </i></span> value that has a way to turn debugging information on (<b class="bf">--debug</b>) or off (<b class="bf">--no-debug</b>). </p>
+<pre class="verbatim">
+BooleanOption( options = '--debug !--no-debug' )
+</pre>
+</dd>
+</dl> </p>
+<p>   <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><b class="bf">class </b><span class="rmfamily"><span class="ttfamily"><b class="bfseries">CompoundOption</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span><span class="ttfamily">GenericOption</span> arguments<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000180" id="a0000000180"></a>  Compound options are options that contain multiple elements on the command-line. They are simply groups of command-line arguments surrounded by a pair of grouping characters (e.g. (&#160;), [&#160;], {&#160;}, &lt;&#160;&gt;). This grouping can contain anything including other command-line arguments. However, all content between the grouping characters is unparsed. This can be useful if you have a program that wraps another program and you want to be able to forward the wrapped program’s options on. An example of a compound option used on the command-line is shown below. </p>
+<pre class="verbatim">
+# Capture the --diff-opts options to send to another program
+mycommand --other-opt --diff-opts ( -ib --minimal ) file1 file2
+</pre>
+</dd>
+</dl> </p>
+<p>   <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><b class="bf">class </b><span class="rmfamily"><span class="ttfamily"><b class="bfseries">CountedOption</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span><span class="ttfamily">GenericOption</span> arguments<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000181" id="a0000000181"></a>  A <span class="ttfamily">CountedOption</span> is a boolean option that keeps track of how many times it has been specified. This is useful for options that control the verbosity of logging messages in a program where the number of times an option is specified, the more logging information is printed. </p>
+</dd>
+</dl> </p>
+<p>   <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><b class="bf">class </b><span class="rmfamily"><span class="ttfamily"><b class="bfseries">InputDirectoryOption</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span><span class="ttfamily">GenericOption</span> arguments<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000182" id="a0000000182"></a>  An <span class="ttfamily">InputDirectoryOption</span> is an option that accepts a directory name for input. This directory name is checked to make sure that it exists and that it is readable. If it is not, a <span class="ttfamily">InvalidOptionError</span> exception is raised. </p>
+</dd>
+</dl> </p>
+<p>   <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><b class="bf">class </b><span class="rmfamily"><span class="ttfamily"><b class="bfseries">OutputDirectoryOption</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span><span class="ttfamily">GenericOption</span> arguments<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000183" id="a0000000183"></a>  An <span class="ttfamily">OutputDirectoryOption</span> is an option that accepts a directory name for output. If the directory exists, it is checked to make sure that it is readable. If it does not exist, it is created. </p>
+</dd>
+</dl> </p>
+<p>   <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><b class="bf">class </b><span class="rmfamily"><span class="ttfamily"><b class="bfseries">InputFileOption</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span><span class="ttfamily">GenericOption</span> arguments<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000184" id="a0000000184"></a>  An <span class="ttfamily">InputFileOption</span> is an option that accepts a file name for input. The filename is checked to make sure that it exists and is readable. If it isn’t, an <span class="ttfamily">InvalidOptionError</span> exception is raised. </p>
+</dd>
+</dl> </p>
+<p>   <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><b class="bf">class </b><span class="rmfamily"><span class="ttfamily"><b class="bfseries">OutputFileOption</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span><span class="ttfamily">GenericOption</span> arguments<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000185" id="a0000000185"></a>  An <span class="ttfamily">OutputFileOption</span> is an option that accepts a file name for output. If the file exists, it is checked to make sure that it is writable. If a name contains a directory, the path is checked to make sure that it is writable. If the directory does not exist, it is created. </p>
+</dd>
+</dl> </p>
+<p>   <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><b class="bf">class </b><span class="rmfamily"><span class="ttfamily"><b class="bfseries">FloatOption</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span><span class="ttfamily">GenericOption</span> arguments<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000186" id="a0000000186"></a>  A <span class="ttfamily">FloatOption</span> is an option that accepts a floating point number. </p>
+</dd>
+</dl> </p>
+<p>   <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><b class="bf">class </b><span class="rmfamily"><span class="ttfamily"><b class="bfseries">IntegerOption</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span><span class="ttfamily">GenericOption</span> arguments<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000187" id="a0000000187"></a>  An <span class="ttfamily">IntegerOption</span> is an option that accepts an integer value. </p>
+</dd>
+</dl> </p>
+<p>   <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><b class="bf">class </b><span class="rmfamily"><span class="ttfamily"><b class="bfseries">MultiOption</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span><span class="ttfamily">GenericOption</span> arguments, <span class="textnormal"><big class="xlarge">[</big></span>delim, range, template<span class="textnormal"><big class="xlarge">]</big></span><span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000188" id="a0000000188"></a>  A <span class="ttfamily">MultiOption</span> is an option that is intended to be used multiple times on the command-line, or take a list of values. Other options when specified more than once simply overwrite the previous value. <span class="ttfamily">MultiOption</span>s will append the new values to a list. </p>
+<p>The delimiter used to separate multiple values is the comma (,). A different character can be specified in the <span class="rmfamily"><i class="itshape">delim </i></span> argument. </p>
+<p>In addition, it is possible to specify the number of values that are legal in the <span class="rmfamily"><i class="itshape">range </i></span> argument. The range argument takes a two element list. The first element is the minimum number of times the argument is required. The second element is the maximum number of times it is required. You can use a ‘*’ (in quotes) to mean an infinite number. </p>
+<p>You can cast each element in the list of values to a particular type by using the <span class="rmfamily"><i class="itshape">template </i></span> argument. The <span class="rmfamily"><i class="itshape">template </i></span> argument takes a reference to the option class that you want the values to be converted to. </p>
+</dd>
+</dl> </p>
+<p>   <dl class="list">
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt></dt>
+  <dd></dd>
+  <dt><b class="bf">class </b><span class="rmfamily"><span class="ttfamily"><b class="bfseries">StringOption</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span><span class="ttfamily">GenericOption</span> arguments<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
+  <dd><p><a name="a0000000189" id="a0000000189"></a>  A <span class="ttfamily">StringOption</span> is an option that accepts an arbitrary string. </p>
+</dd>
+</dl>  </p>
+
 </div>
 
-<div class="breadcrumbs">
-<span>
-<span>
-<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
-</span>
+<nav class="prev_up_next">
+  <a href="sect0024.html" title="ConfigSection Objects"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="module-plasTeX-ConfigManager.html" title="plasTeX.ConfigManager — plasTeX Configuration"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="module-plasTeX-DOM.html" title="plasTeX.DOM — The plasTeX Document Object Model (DOM)"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+  <a href="sect0046.html" class="index">Index</a>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+</nav>
 
-</span><span>
-<span>
-<a href="sect0024.html">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</a> <b>:</b>
-</span>
-
-</span><span>
-<span>
-<a href="module-plasTeX.html"><tt class="ttfamily">plasTeX</tt> — The Python Macro and Document Interfaces</a> <b>:</b>
-</span>
-
-</span><span>
-
-<span>
-<b class="current">Macro Objects</b>
-</span>
-</span>
-<hr />
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
 </div>
-
-<div><h2 id="a0000004185">6.1.1 Macro Objects</h2>
-<p>   <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt><b class="bf">class </b><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">Macro</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
-    <dd><p><a name="a0000004249" id="a0000004249"></a>  The <tt class="ttfamily">Macro</tt> class is the base class for all Python based macros although you will generally want to subclass from <tt class="ttfamily">Command</tt> or <tt class="ttfamily">Environment</tt> in real-world use. There are various attributes and methods that affect how Python macros are parsed, constructed and inserted into the resulting DOM. These are described below. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">args</b></tt></span></dt>
-    <dd><p><a name="a0000004274" id="a0000004274"></a> specifies the arguments to the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X macro and their data types. The <tt class="ttfamily">args</tt> attribute gives you a very simple, yet extremely powerful way of parsing L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X macro arguments and converting them into Python objects. Once parsed, each L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X macro argument is set in the <tt class="ttfamily">attributes</tt> dictionary of the Python instance using the name given in the <tt class="ttfamily">args</tt> string. For example, the following <tt class="ttfamily">args</tt> string will direct plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X to parse two mandatory arguments, ‘id’ and ‘title’, and put them into the <tt class="ttfamily">attributes</tt> dictonary. </p><pre>
-args = 'id title'
-</pre><p>You can also parse optional arguments, usually surrounded by square brackets ([ ]). However, in plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X, any arguments specified in the <tt class="ttfamily">args</tt> string that aren’t mandatory (i.e. no braces surrounding it) are automatically considered optional. This may not truly be the case, but it doesn’t make much difference. If they truly are mandatory, then your L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X source file will always have them and plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X will simply always find them even though it considers them to be optional. </p><p>Optional arguments in the <tt class="ttfamily">args</tt> string are surround by matching square brackets ([ ]), angle brackets (&lt; &gt;), or parentheses (( )). The name for the attribute is placed between the matching symbols as follows: </p><pre>
-args = '[ toc ] title'
-args = '( position ) object'
-args = '&lt; markup &gt; ref'
-</pre><p> You can have as many optional arguments as you wish. It is also possible to have optional arguments using braces ({ }), but this requires you to change T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X’s category codes and is not common. </p><p>Modifiers such as asterisks (*) are also allowed in the <tt class="ttfamily">args</tt> string. You can also use the plus (+) and minus (-) signs as modifiers although these are not common. Using modifiers can affect the incrementing of counters (see the <tt class="ttfamily">parse()</tt> method for more information). </p><p>In addition to specifying which arguments to parse, you can also specify what the data type should be. By default, all arguments are processed and stored as document fragments. However, some arguments may be simpler than that. They may contain an integer, a string, an ID, etc. Others may be collections like a list or dictionary. There are even more esoteric types for mostly internal use that allow you to get unexpanded tokens, T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X dimensions, and the like. Regardless, all of these directives are specified in the same way, using the typecast operator: ‘:’. To cast an argument, simply place a colon (:) and the name of the argument type immediately after the name of the argument. The following example casts the ‘filename’ argument to a string. </p><pre>
-args = 'filename:str'
-</pre><p>Parsing compound arguments such as lists and dictionaries is very similar. </p><pre>
-args = 'filenames:list'
-</pre><p> By default, compound arguments are assumed to be comma separated. If you are using a different separator, it is specified in parentheses after the type. </p><pre>
-args = 'filenames:list(;)'
-</pre><p> Again, each element element in the list, by default, is a document fragment. However, you can also give the data type of the elements with another typecast. </p><pre>
-args = 'filenames:list(;):str'
-</pre><p>Parsing dictionaries is a bit more restrictive. plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X assumes that dictionary arguments are always key-value pairs, that the key is always a string and the separator between the key and value is an equals sign (=). Other than that, they operate in the same manner. </p><p>A full list of the supported data types as well as more examples are discussed in section <a href="sec-macros.html">4</a>. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">argSource</b></tt></span></dt>
-    <dd><p><a name="a0000004357" id="a0000004357"></a> the source for the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X arguments to this macro. This is a read-only attribute. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">arguments</b></tt></span></dt>
-    <dd><p><a name="a0000004381" id="a0000004381"></a> gives the arguments in the <tt class="ttfamily">args</tt> attribute in object form (i.e. <tt class="ttfamily">Argument</tt> objects). <b class="bf">Note:</b> This is a read-only attribute. <b class="bf">Note:</b> This is generally an internal-use-only attribute. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">blockType</b></tt></span></dt>
-    <dd><p><a name="a0000004409" id="a0000004409"></a> indicates whether the macro node should be considered a block-level element. If true, this node will be put into its own paragraph node (which also has the <tt class="ttfamily">blockType</tt> set to <span class="rmfamily"><i class="itshape">True</i></span>) to make it easier to generate output that requires block-level to exist outside of paragraphs. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">counter</b></tt></span></dt>
-    <dd><p><a name="a0000004437" id="a0000004437"></a> specifies the name of the counter to associate with this macro. Each time an instance of this macro is created, this counter is incremented. The incrementing of this counter, of course, resets any “child” counters just like in L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X. By default and L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X convention, if the macro’s first argument is an asterisk (i.e. *), the counter is not incremented. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">id</b></tt></span></dt>
-    <dd><p><a name="a0000004462" id="a0000004462"></a> specifies a unique ID for the object. If the object has an associated label (i.e. \<tt class="ttfamily">label</tt>), that is its ID. You can also set the ID manually. Otherwise, an ID will be generated based on the result of Python’s <tt class="ttfamily">id()</tt> function. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">idref</b></tt></span></dt>
-    <dd><p><a name="a0000004487" id="a0000004487"></a> a dictionary containing all of the objects referenced by “idref” type arguments. Each idref attribute is stored under the name of the argument in the <tt class="ttfamily">idref</tt> dictionary. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">level</b></tt></span></dt>
-    <dd><p><a name="a0000004510" id="a0000004510"></a> specifies the hierarchical level of the node in the DOM. For most macros, this will be set to <tt class="ttfamily">Node.COMMAND_LEVEL</tt> or <tt class="ttfamily">Node.ENVIRONMENT_LEVEL</tt> by the <tt class="ttfamily">Command</tt> and <tt class="ttfamily">Environment</tt> macros, respectively. However, there are other levels that invoke special processing. In particular, sectioning commands such as \<tt class="ttfamily">section</tt> and \<tt class="ttfamily">subsection</tt> have levels set to <tt class="ttfamily">Node.SECTION_LEVEL</tt> and <tt class="ttfamily">Node.SUBSECTION_LEVEL</tt>. These levels assist in the building of an appropriate DOM. Unless you are creating a sectioning command or a command that should act like a paragraph, you should leave the value of this attribute alone. See section <a href="module-plasTeX-DOM.html">6.3</a> for more information. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">macroName</b></tt></span></dt>
-    <dd><p><a name="a0000004543" id="a0000004543"></a> specifies the name of the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X macro that this class corresponds to. By default, the Python class name is the name that is used, but there are some legal L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X macro names that are not legal Python class names. In those cases, you would use <tt class="ttfamily">macroName</tt> to specify the correct name. Below is an example. </p><pre>
-class _illegalname(Command):
-    macroName = '@illegalname'
-</pre><p> <b class="bf">Note:</b> This is a class attribute, not an instance attribute. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">macroMode</b></tt></span></dt>
-    <dd><p><a name="a0000004575" id="a0000004575"></a> specifies what the current parsing mode is for this macro. Macro classes are instantiated for every invocation including each \<tt class="ttfamily">begin</tt> and \<tt class="ttfamily">end</tt>. This attribute is set to <tt class="ttfamily">Macro.MODE_NONE</tt> for normal commands, <tt class="ttfamily">Macro.MODE_BEGIN</tt> for the beginning of an environment, and <tt class="ttfamily">Macro.MODE_END</tt> for the end of an environment. </p><p>These attributes are used in the <tt class="ttfamily">invoke()</tt> method to determine the scope of macros used within the environment. They are also used in printing the source of the macro in the <tt class="ttfamily">source</tt> attribute. Unless you really know what you are doing, this should be treated as a read-only attribute. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">mathMode</b></tt></span></dt>
-    <dd><p><a name="a0000004607" id="a0000004607"></a> boolean that indicates that the macro is in T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X’s “math mode.” This is a read-only attribute. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">nodeName</b></tt></span></dt>
-    <dd><p><a name="a0000004630" id="a0000004630"></a> the name of the node in the DOM. This will either be the name given in <tt class="ttfamily">macroName</tt>, if defined, or the name of the class itself. <b class="bf">Note:</b> This is a read-only attribute. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">ref</b></tt></span></dt>
-    <dd><p><a name="a0000004655" id="a0000004655"></a> specifies the value to return when this macro is referenced (i.e. \<tt class="ttfamily">ref</tt>). This is set automatically when the counter associated with the macro is incremented. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">source</b></tt></span></dt>
-    <dd><p><a name="a0000004679" id="a0000004679"></a> specifies the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X source that was parsed to create the object. This is most useful in the renderer if you need to generate an image of a document node. You can simply retrieve the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X source from this attribute, create a L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document including the source, then convert the DVI file to the appropriate image type. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">style</b></tt></span></dt>
-    <dd><p><a name="a0000004707" id="a0000004707"></a> specifies style overrides, in CSS format, that should be applied to the output. This object is a dictionary, so style property names are given as the key and property values are given as the values. </p><pre>
-inst.style['color'] = 'red'
-inst.style['background-color'] = 'blue'
-</pre><p> <b class="bf">Note:</b> Not all renderers are going to support CSS styles. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">tagName</b></tt></span></dt>
-    <dd><p><a name="a0000004734" id="a0000004734"></a> same as <tt class="ttfamily">nodeName</tt> </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd> </dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">title</b></tt></span></dt>
-    <dd><p><a name="a0000004757" id="a0000004757"></a> specifies the title of the current object. If the attributes dictionary contains a title, that object is returned. An <tt class="ttfamily">AttributeError</tt> is thrown if there is no ‘title’ key in that dictionary. A title can also be set manually by setting this attribute. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd>  </dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">digest</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">tokens</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
-    <dd><p><a name="a0000004819" id="a0000004819"></a> absorb the tokens from the given output stream that belong to the current object. In most commands, this does nothing. However, L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X environments have a \<tt class="ttfamily">begin</tt> and an \<tt class="ttfamily">end</tt> that surround content that belong to them. In this case, these environments need to absorb those tokens and construct them into the appropriate document object model (see the <tt class="ttfamily">Environment</tt> class for more information). </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd>  </dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">digestUntil</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">tokens, endclass</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
-    <dd><p><a name="a0000004887" id="a0000004887"></a> utility method to help macros like lists and tables digest their contents. In lists and tables, the items, rows, and cells are delimited by \<tt class="ttfamily">begin</tt> and \<tt class="ttfamily">end</tt> tokens. They are simply delimited by the occurrence of another item, row, or cell. This method allows you to absorb tokens until a particular class is reached. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd>  </dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">expand</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
-    <dd><p><a name="a0000004952" id="a0000004952"></a> the <tt class="ttfamily">expand</tt> method is a thin wrapper around the <tt class="ttfamily">invoke</tt> method. The <tt class="ttfamily">expand</tt> method makes sure that all tokens are expanded and will not return a <span class="rmfamily"><i class="itshape">None</i></span> value like <tt class="ttfamily">invoke</tt>. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd>  </dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">invoke</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
-    <dd><p><a name="a0000005022" id="a0000005022"></a> invakes the macro. Invoking the macro, in the general case, includes creating a new context, parsing the options of the macro, and removing the context. L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X environments are slightly different. If <tt class="ttfamily">macroMode</tt> is set to <tt class="ttfamily">Macro.MODE_BEGIN</tt>, the new context is kept on the stack. If <tt class="ttfamily">macroMode</tt> is set to <tt class="ttfamily">Macro.MODE_END</tt>, no arguments are parsed, the context is simply popped. For most macros, the default implementation will work fine. </p><p>The return value for this method is generally <span class="rmfamily"><i class="itshape">None</i></span> (an empty return statement or simply no return statement). In this case, the current object is simply put into the resultant output stream. However, you can also return a list of tokens. In this case, the returned tokens will be put into the output stream in place of the current object. You can even return an empty list to indicate that you don’t want anything to be inserted into the output stream. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd>  </dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">locals</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape"></i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
-    <dd><p><a name="a0000005097" id="a0000005097"></a> retrieves all of the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X macros that belong to the scope of the current Python based macro. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd>  </dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">paragraphs</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">force=True</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
-    <dd><p><a name="a0000005160" id="a0000005160"></a> group content into paragraphs. Paragraphs are grouped once all other content has been <tt class="ttfamily">digest</tt>ed. The paragraph grouping routine works like T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X’s, in that environments are included inside paragraphs. This is unlike HTML’s model, where lists and tables are not included inside paragraphs. The <span class="rmfamily"><i class="itshape">force</i></span> argument allows you to decide whether or not paragraphs should be forced. By default, all content of the node is grouped into paragraphs whether or not the content originally contained a paragraph node. However, with <span class="rmfamily"><i class="itshape">force</i></span> set to <span class="rmfamily"><i class="itshape">False</i></span>, a node will only be grouped into paragraphs if the original content contained at least one paragraph node. </p><p>Even though the paragraph method follow’s T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X’s model, it is still possible to generate valid HTML content. Any node with the <span class="rmfamily"><i class="itshape">blockType</i></span> attribute set to <span class="rmfamily"><i class="itshape">True</i></span> is considered to be a block-level node. This means that it will be contained in its own paragraph node. This paragraph node will also have the <span class="rmfamily"><i class="itshape">blockType</i></span> attribute set to <span class="rmfamily"><i class="itshape">True</i></span> so that in the renderer the paragraph can be inserted or ignored based on this attribute. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd>  </dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">parse</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">tex</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
-    <dd><p><a name="a0000005260" id="a0000005260"></a> parses the arguments defined in the <tt class="ttfamily">args</tt> attribute from the given token stream. This method also calls several hooks as described in the table below. </p><p><center><table cellspacing="0" class="tabular">
-<tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><b class="bf">Method Name</b></p></td>
-
-    
-    <td style="text-align:left"><p><b class="bf">Description</b> </p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; text-align:left; border-top-color:black; border-top-width:1px; border-right:1px solid black"><p> <tt class="ttfamily">preParse()</tt></p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left"><p>called at the beginning of the argument parsing process</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><tt class="ttfamily">preArgument()</tt></p></td>
-
-    
-    <td style="text-align:left"><p>called before parsing each argument</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><tt class="ttfamily">postArgument()</tt></p></td>
-
-    
-    <td style="text-align:left"><p>called after parsing each argument</p></td>
-
-</tr><tr>
-
-    
-    <td style="text-align:left; border-right:1px solid black"><p><tt class="ttfamily">postParse()</tt></p></td>
-
-    
-    <td style="text-align:left"><p>called at the end of the argument parsing process</p></td>
-
-</tr>
-</table></center> </p><p>The methods are called to assist in labeling and counting. For example, by default, the counter associated with a macro is automatically incremented when the macro is parsed. However, if the first argument is a modifier (i.e. *, +, -), the counter will not be incremented. This is handled in the <tt class="ttfamily">preArgument()</tt> and <tt class="ttfamily">postArgument()</tt> methods. </p><p>Each time an argument is parsed, the result is put into the <tt class="ttfamily">attributes</tt> dictionary. The key in the dictionary is, of course, the name given to that argument in the <tt class="ttfamily">args</tt> string. Modifiers such as *, +, and - are stored under the special key ‘*modifier*’. </p><p>The return value for this method is simply a reference to the <tt class="ttfamily">attributes</tt> dictionary. </p><p><b class="bf">Note:</b> If <tt class="ttfamily">parse()</tt> is called on an instance with <tt class="ttfamily">macroMode</tt> set to <tt class="ttfamily">Macro.MODE_END</tt>, no parsing takes place. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd>  </dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">postArgument</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">arg, tex</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
-    <dd><p><a name="a0000005376" id="a0000005376"></a> called after parsing each argument. This is generally where label and counter mechanisms are handled. </p><p><span class="rmfamily"><i class="itshape">arg</i></span> is the Argument instance that holds all argument meta-data including the argument’s name, source, and options. </p><p><span class="rmfamily"><i class="itshape">tex</i></span> is the TeX instance containing the current context </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd>  </dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">postParse</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">tex</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
-    <dd><p><a name="a0000005449" id="a0000005449"></a> do any operations required immediately after parsing the arguments. This generally includes setting up the value that will be returned when referencing the object. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd>  </dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">preArgument</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">arg, tex</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
-    <dd><p><a name="a0000005510" id="a0000005510"></a> called before parsing each argument. This is generally where label and counter mechanisms are handled. </p><p><span class="rmfamily"><i class="itshape">arg</i></span> is the Argument instance that holds all argument meta-data including the argument’s name, source, and options. </p><p><span class="rmfamily"><i class="itshape">tex</i></span> is the TeX instance containing the current context </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd>  </dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">preParse</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">tex</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
-    <dd><p><a name="a0000005583" id="a0000005583"></a> do any operations required immediately before parsing the arguments. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd>  </dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">refstepcounter</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">tex</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
-    <dd><p><a name="a0000005644" id="a0000005644"></a> set the object as the current labellable object and increment its counter. When an object is set as the current labellable object, the next \<tt class="ttfamily">label</tt> command will point to that object. </p></dd>
-
-</dl> </p><p>  <dl class="description">
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd>  </dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt></dt>
-    <dd></dd>
-
-    <dt><span class="rmfamily"><tt class="ttfamily"><b class="bfseries">stepcounter</b></tt></span><span class="rmfamily"><tt class="ttfamily">(</tt></span><span style="width:0.0pt" class="parbox"><span class="rmfamily"><i class="itshape">tex</i></span><span class="rmfamily"><tt class="ttfamily">)</tt></span></span></dt>
-    <dd><p><a name="a0000005707" id="a0000005707"></a> step the counter associated with the macro </p></dd>
-
-</dl>  </p></div>
-
-
-
-
-
-<div class="navigation">
-<table cellspacing="2" cellpadding="0" width="100%">
-<tr>
-<td><a href="module-plasTeX.html" title="plasTeX — The Python Macro and Document Interfaces"><img alt="Previous: plasTeX — The Python Macro and Document Interfaces" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
-
-<td><a href="module-plasTeX.html" title="plasTeX — The Python Macro and Document Interfaces"><img alt="Up: plasTeX — The Python Macro and Document Interfaces" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
-
-<td><a href="module-plasTeX-ConfigManager.html" title="plasTeX.ConfigManager — plasTeX Configuration"><img alt="Next: plasTeX.ConfigManager — plasTeX Configuration" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
-
-<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
-<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
-
-<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
-
-<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
-</tr>
-</table>
-</div>
-
-<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
-
 </body>
 </html>

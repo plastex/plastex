@@ -1,138 +1,460 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [ ['\\(','\\)']]}});
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+</script>
 <meta name="generator" content="plasTeX" />
-<meta content="text/html; charset=utf-8" http-equiv="content-type" />
-<title>plasTeX — A Python Framework for Processing LaTeX Documents: Input and Output Files</title>
-
-<link href="sec-config-images.html" title="Image Options" rel="next" />
-<link href="sec-config-links.html" title="Document Links" rel="prev" />
-<link href="sect0003.html" title="Command-Line and Configuration Options" rel="up" />
-<link rel="stylesheet" href="styles/styles.css" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>plasTeX 2.0 — A Python Framework for Processing LaTeX Documents: Input and Output Files</title>
+<link rel="next" href="sec-config-images.html" title="Image Options" />
+<link rel="prev" href="sec-config-links.html" title="Document Links" />
+<link rel="up" href="sect0002.html" title="Command-Line and Configuration Options" />
+<link rel="stylesheet" href="styles/theme-green.css" />
 </head>
+
 <body>
+<nav class="toc">
+<svg  class="icon icon-cross close-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 
-<div class="navigation">
-<table cellspacing="2" cellpadding="0" width="100%">
-<tr>
-<td><a href="sec-config-links.html" title="Document Links"><img alt="Previous: Document Links" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref">1</span> <span class="toc_entry">Introduction</span></a>
+ </li>
+<li class=" active">
+  <a href="sec-command-line.html"><span class="toc_ref">2</span> <span class="toc_entry"><b class="bf">plastex</b> — The Command-Line Interface</span></a>
+<svg  class="icon icon-cross expand-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+  <ul class="sub-toc-1 active">
+     <li class=" active">
+  <a href="sect0002.html"><span class="toc_ref">2.1</span> <span class="toc_entry">Command-Line and Configuration Options</span></a>
+<svg  class="icon icon-cross expand-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+  <ul class="sub-toc-2 active">
+     <li class="">
+  <a href="sec-general-options.html"><span class="toc_ref">2.1.1</span> <span class="toc_entry">General Options</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-document.html"><span class="toc_ref">2.1.2</span> <span class="toc_entry">Document Properties</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html"><span class="toc_ref">2.1.3</span> <span class="toc_entry">Counters</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-links.html"><span class="toc_ref">2.1.4</span> <span class="toc_entry">Document Links</span></a>
+ </li>
+<li class=" active current">
+  <a href="sec-config-files.html"><span class="toc_ref">2.1.5</span> <span class="toc_entry">Input and Output Files</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-images.html"><span class="toc_ref">2.1.6</span> <span class="toc_entry">Image Options</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-html5.html"><span class="toc_ref">2.1.7</span> <span class="toc_entry">HTML5 Renderer Options</span></a>
+ </li>
 
-<td><a href="sect0003.html" title="Command-Line and Configuration Options"><img alt="Up: Command-Line and Configuration Options" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
 
-<td><a href="sec-config-images.html" title="Image Options"><img alt="Next: Image Options" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-document.html"><span class="toc_ref">3</span> <span class="toc_entry">The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-sections.html"><span class="toc_ref">3.1</span> <span class="toc_entry">Sections</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-links.html"><span class="toc_ref">3.1.1</span> <span class="toc_entry">Navigation and Links</span></a>
+ </li>
+<li class="">
+  <a href="sec-tableofcontents.html"><span class="toc_ref">3.1.2</span> <span class="toc_entry">Table of Contents</span></a>
+ </li>
 
-<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
-<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-paragraphs.html"><span class="toc_ref">3.2</span> <span class="toc_entry">Paragraphs</span></a>
+ </li>
+<li class="">
+  <a href="sec-complexdoc.html"><span class="toc_ref">3.3</span> <span class="toc_entry">Complex Structures</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-lists.html"><span class="toc_ref">3.3.1</span> <span class="toc_entry">Lists</span></a>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref">3.3.2</span> <span class="toc_entry">Bibliography</span></a>
+ </li>
+<li class="">
+  <a href="sec-arrays.html"><span class="toc_ref">3.3.3</span> <span class="toc_entry">Arrays and Tabular Environments</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html"><span class="toc_ref">3.3.4</span> <span class="toc_entry">Indexes</span></a>
+ </li>
 
-<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
+  </ul>
+ </li>
 
-<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
-</tr>
-</table>
-</div>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-macros.html"><span class="toc_ref">4</span> <span class="toc_entry">Understanding Macros and Packages</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0006.html"><span class="toc_ref">4.1</span> <span class="toc_entry">Defining Macros in L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html"><span class="toc_ref">4.2</span> <span class="toc_entry">Defining Macros in Python</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-macroclasses.html"><span class="toc_ref">4.2.1</span> <span class="toc_entry">Python Classes</span></a>
+ </li>
+<li class="">
+  <a href="sec-inimacros.html"><span class="toc_ref">4.2.2</span> <span class="toc_entry">INI Files</span></a>
+ </li>
+<li class="">
+  <a href="sec-contextmacros.html"><span class="toc_ref">4.2.3</span> <span class="toc_entry">The Document Context</span></a>
+ </li>
 
-<div class="breadcrumbs">
-<span>
-<span>
-<a href="index.html">plasTeX — A Python Framework for Processing LaTeX Documents</a> <b>:</b>
-</span>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-packages.html"><span class="toc_ref">4.3</span> <span class="toc_entry">Packages</span></a>
+ </li>
 
-</span><span>
-<span>
-<a href="sect0002.html"><b class="bf">plastex</b> — The Command-Line Interface</a> <b>:</b>
-</span>
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0008.html"><span class="toc_ref">5</span> <span class="toc_entry">Renderers</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-simple-renderer-ex.html"><span class="toc_ref">5.1</span> <span class="toc_entry">Simple Renderer Example</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0009.html"><span class="toc_ref">5.1.1</span> <span class="toc_entry">Extending the Simple Renderer</span></a>
+ </li>
+<li class="">
+  <a href="subsec-renderer-from-script.html"><span class="toc_ref">5.1.2</span> <span class="toc_entry">Using a Renderer from the plastex Script</span></a>
+ </li>
 
-</span><span>
-<span>
-<a href="sect0003.html">Command-Line and Configuration Options</a> <b>:</b>
-</span>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-renderable.html"><span class="toc_ref">5.2</span> <span class="toc_entry">Renderable Objects</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0010.html"><span class="toc_ref">5.2.1</span> <span class="toc_entry">Determining the Correct Rendering Method</span></a>
+ </li>
+<li class="">
+  <a href="sect0011.html"><span class="toc_ref">5.2.2</span> <span class="toc_entry">Generating Files</span></a>
+ </li>
+<li class="">
+  <a href="sect0012.html"><span class="toc_ref">5.2.3</span> <span class="toc_entry">Generating Images</span></a>
+ </li>
+<li class="">
+  <a href="sect0013.html"><span class="toc_ref">5.2.4</span> <span class="toc_entry">Generating Vector Images</span></a>
+ </li>
+<li class="">
+  <a href="sect0014.html"><span class="toc_ref">5.2.5</span> <span class="toc_entry">Static Images</span></a>
+ </li>
 
-</span><span>
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-zpt.html"><span class="toc_ref">5.3</span> <span class="toc_entry">Page Template Renderer</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0015.html"><span class="toc_ref">5.3.1</span> <span class="toc_entry">Defining and Using Templates</span></a>
+ </li>
+<li class="">
+  <a href="sect0016.html"><span class="toc_ref">5.3.2</span> <span class="toc_entry">Defining and Using Themes</span></a>
+ </li>
+<li class="">
+  <a href="sec-zpttutorial.html"><span class="toc_ref">5.3.3</span> <span class="toc_entry">Zope Page Template Tutorial</span></a>
+ </li>
 
-<span>
-<b class="current">Input and Output Files</b>
-</span>
-</span>
-<hr />
-</div>
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0017.html"><span class="toc_ref">5.4</span> <span class="toc_entry">XHTML Renderer</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0018.html"><span class="toc_ref">5.4.1</span> <span class="toc_entry">Themes</span></a>
+ </li>
 
-<div><h2 id="sec:config-files">2.1.5 Input and Output Files</h2>
-<p>If you have a renderer that only generates one file, specifying the output filename is simple: use the <b class="bf">--filename</b> option to specify the name. However, if the renderer you are using generates multiple files, things get more complicated. The <b class="bf">--filename</b> option is also capable of handling multiple names, as well as giving you a templating way to build filenames. </p><p>Below is a list of all of the options that affect filename generation. </p><p><dl class="description">
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-html5.html"><span class="toc_ref">5.5</span> <span class="toc_entry">HTML5 Renderer</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-html5-pkg.html"><span class="toc_ref">5.5.1</span> <span class="toc_entry">Interactions with packages</span></a>
+ </li>
 
-    <dt><b class="bfseries">Characters that shouldn’t be used in a filename</b></dt>
-    <dd><p><br /><b class="bfseries">Command-Line Options:</b> <tt class="ttfamily"><b class="bf">--bad-filename-chars=<span class="rmfamily"><i class="itshape">string</i></span></b></tt><br /><b class="bfseries">Config File:</b> [ files ] bad-chars<br /><b class="bfseries">Default:</b> : #$%^&amp;*!~‘"’=?/[]()|&lt;&gt;;\,.<br />specifies all characters that should not be allowed in a filename. These characters will be replaced by the value in <b class="bf">--bad-filename-chars-sub</b>. </p></dd>
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0019.html"><span class="toc_ref">5.6</span> <span class="toc_entry">tBook Renderer</span></a>
+ </li>
+<li class="">
+  <a href="sect0020.html"><span class="toc_ref">5.7</span> <span class="toc_entry">DocBook Renderer</span></a>
+ </li>
 
-</dl> </p><p><dl class="description">
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0021.html"><span class="toc_ref">6</span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-macros-api.html"><span class="toc_ref">6.1</span> <span class="toc_entry"><span class="ttfamily">plasTeX</span> — The Python Macro and Document Interfaces</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0022.html"><span class="toc_ref">6.1.1</span> <span class="toc_entry">Macro Objects</span></a>
+ </li>
 
-    <dt><b class="bfseries">String to use in place of invalid characters</b></dt>
-    <dd><p><br /><b class="bfseries">Command-Line Options:</b> <tt class="ttfamily"><b class="bf">--bad-filename-chars-sub</b>=<span class="rmfamily"><i class="itshape">string</i></span></tt><br /><b class="bfseries">Config File:</b> [ files ] bad-chars-sub<br /><b class="bfseries">Default:</b> -<br />specifies a string to use in place of invalid filename characters ( specified by the <b class="bf">--bad-chars-sub</b> option) </p></dd>
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-ConfigManager.html"><span class="toc_ref">6.2</span> <span class="toc_entry"><span class="ttfamily">plasTeX.ConfigManager</span> — plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Configuration</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0023.html"><span class="toc_ref">6.2.1</span> <span class="toc_entry">ConfigManager Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0024.html"><span class="toc_ref">6.2.2</span> <span class="toc_entry">ConfigSection Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0025.html"><span class="toc_ref">6.2.3</span> <span class="toc_entry">Configuration Option Types</span></a>
+ </li>
 
-</dl> </p><p><dl class="description">
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-DOM.html"><span class="toc_ref">6.3</span> <span class="toc_entry"><span class="ttfamily">plasTeX.DOM</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document Object Model (DOM)</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0026.html"><span class="toc_ref">6.3.1</span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X vs. XML</span></a>
+ </li>
+<li class="">
+  <a href="sect0027.html"><span class="toc_ref">6.3.2</span> <span class="toc_entry">Node Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0028.html"><span class="toc_ref">6.3.3</span> <span class="toc_entry">DocumentFragment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0029.html"><span class="toc_ref">6.3.4</span> <span class="toc_entry">Element Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0030.html"><span class="toc_ref">6.3.5</span> <span class="toc_entry">Text Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0031.html"><span class="toc_ref">6.3.6</span> <span class="toc_entry">Document Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0032.html"><span class="toc_ref">6.3.7</span> <span class="toc_entry">Command Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0033.html"><span class="toc_ref">6.3.8</span> <span class="toc_entry">Environment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0034.html"><span class="toc_ref">6.3.9</span> <span class="toc_entry">TeXFragment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sec-texdocument-objects.html"><span class="toc_ref">6.3.10</span> <span class="toc_entry">TeXDocument Objects</span></a>
+ </li>
 
-    <dt><b class="bfseries">Output Directory</b></dt>
-    <dd><p><br /><b class="bfseries">Command-Line Options:</b> <tt class="ttfamily"><b class="bf">--dir=<span class="rmfamily"><i class="itshape">directory</i></span></b> or <b class="bf">-d <span class="rmfamily"><i class="itshape">directory</i></span></b></tt><br /><b class="bfseries">Config File:</b> [ files ] directory<br /><b class="bfseries">Default:</b> $jobname<br />specifies a directory name to use as the output directory. </p></dd>
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-TeX.html"><span class="toc_ref">6.4</span> <span class="toc_entry"><span class="ttfamily">plasTeX.TeX</span> — The T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Stream</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0035.html"><span class="toc_ref">6.4.1</span> <span class="toc_entry">TeX Objects</span></a>
+ </li>
 
-</dl> </p><p><dl class="description">
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-Context.html"><span class="toc_ref">6.5</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Context</span> — The T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Context</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0036.html"><span class="toc_ref">6.5.1</span> <span class="toc_entry">Context Objects</span></a>
+ </li>
+<li class="">
+  <a href="sec-context-language.html"><span class="toc_ref">6.5.2</span> <span class="toc_entry">Context language</span></a>
+ </li>
 
-    <dt><b class="bfseries">Escaping characters higher than 7-bit</b></dt>
-    <dd><p><br /><b class="bfseries">Command-Line Options:</b> <tt class="ttfamily"><b class="bf">--escape-high-chars</b></tt><br /><b class="bfseries">Config File:</b> [ files ] escape-high-chars<br /><b class="bfseries">Default:</b> False<br />some output types allow you to represent characters that are greater than 7-bits with an alternate representation to alleviate the issue of file encoding. This option indicates that these alternate representations should be used. </p><p><b class="bf">Note:</b> The renderer is responsible for doing the translation into the alternate format. This might not be supported by all output types. </p></dd>
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-Renderers.html"><span class="toc_ref">6.6</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Renderers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Rendering Framework</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0037.html"><span class="toc_ref">6.6.1</span> <span class="toc_entry">Renderer Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0038.html"><span class="toc_ref">6.6.2</span> <span class="toc_entry">Renderable MixIn</span></a>
+ </li>
 
-</dl> </p><p><dl class="description">
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-Imagers.html"><span class="toc_ref">6.7</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Imagers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Imaging Framework</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0039.html"><span class="toc_ref">6.7.1</span> <span class="toc_entry">Imager Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0040.html"><span class="toc_ref">6.7.2</span> <span class="toc_entry">Image Objects</span></a>
+ </li>
 
-    <dt><b class="bfseries">Template to use for output filenames</b></dt>
-    <dd><p><br /><b class="bfseries">Command-Line Options:</b> <tt class="ttfamily"><b class="bf">--filename=<span class="rmfamily"><i class="itshape">string</i></span></b></tt><br /><b class="bfseries">Config File:</b> [ files ] filename<br />specifies the templates to use for generating filenames. The filename template is a list of space separated names. Each name in the list is returned once. An example is shown below. </p><pre>
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0041.html"><span class="toc_ref">A</span> <span class="toc_entry">About This Document</span></a>
+ </li>
+<li class="">
+  <a href="sect0042.html"><span class="toc_ref">B</span> <span class="toc_entry">Frequently Asked Questions</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0043.html"><span class="toc_ref">B.1</span> <span class="toc_entry">Parsing L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0044.html"><span class="toc_ref">B.1.1</span> <span class="toc_entry">How can I make plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X work with my complicated macros?</span></a>
+ </li>
+<li class="">
+  <a href="sect0045.html"><span class="toc_ref">B.1.2</span> <span class="toc_entry">How can I get plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X to find my L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X packages?</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0046.html"><span class="toc_ref">C</span> <span class="toc_entry">Index</span></a>
+ </li>
+</ul>
+</nav>
+
+<div class="wrapper with-toc">
+<header>
+<h1 id="doc_title">plasTeX 2.0 — A Python Framework for Processing LaTeX Documents</h1>
+</header>
+
+<ul class="breadcrumbs">
+<li class="crumb"><a href="index.html" class="crumb">plasTeX 2.0 — A Python Framework for Processing LaTeX Documents</a></li>
+<li class="crumb"><a href="sec-command-line.html" class="crumb"><b class="bf">plastex</b> — The Command-Line Interface</a></li>
+<li class="crumb"><a href="sect0002.html" class="crumb">Command-Line and Configuration Options</a></li>
+  <li class="last_crumb">Input and Output Files</li>
+</ul>
+
+<div class="content">
+<h2 id="sec:config-files">2.1.5 Input and Output Files</h2>
+<p>If you have a renderer that only generates one file, specifying the output filename is simple: use the <b class="bf">--filename</b> option to specify the name. However, if the renderer you are using generates multiple files, things get more complicated. The <b class="bf">--filename</b> option is also capable of handling multiple names, as well as giving you a templating way to build filenames. </p>
+<p>Below is a list of all of the options that affect filename generation. </p>
+<p><dl class="description">
+  <dt><b class="bfseries">Characters that shouldn’t be used in a filename</b></dt>
+  <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--bad-filename-chars=<span class="rmfamily"><i class="itshape">string</i></span></b></span><br /><b class="bfseries">Config File:</b> [ files ] bad-chars<br /><b class="bfseries">Default:</b> :&#160;#$%^&amp;*!~‘“=?/[]()|&lt;&gt;;\,.<br />specifies all characters that should not be allowed in a filename. These characters will be replaced by the value in <b class="bf">--bad-filename-chars-sub</b>. </p>
+</dd>
+</dl> </p>
+<p><dl class="description">
+  <dt><b class="bfseries">String to use in place of invalid characters</b></dt>
+  <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--bad-filename-chars-sub</b>=<span class="rmfamily"><i class="itshape">string</i></span></span><br /><b class="bfseries">Config File:</b> [ files ] bad-chars-sub<br /><b class="bfseries">Default:</b> -<br />specifies a string to use in place of invalid filename characters ( specified by the <b class="bf">--bad-chars-sub</b> option) </p>
+</dd>
+</dl> </p>
+<p><dl class="description">
+  <dt><b class="bfseries">Output Directory</b></dt>
+  <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--dir=<span class="rmfamily"><i class="itshape">directory</i></span></b> or <b class="bf">-d <span class="rmfamily"><i class="itshape">directory</i></span></b></span><br /><b class="bfseries">Config File:</b> [ files ] directory<br /><b class="bfseries">Default:</b> $jobname<br />specifies a directory name to use as the output directory. </p>
+</dd>
+</dl> </p>
+<p><dl class="description">
+  <dt><b class="bfseries">Escaping characters higher than 7-bit</b></dt>
+  <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--escape-high-chars</b></span><br /><b class="bfseries">Config File:</b> [ files ] escape-high-chars<br /><b class="bfseries">Default:</b> False<br />some output types allow you to represent characters that are greater than 7-bits with an alternate representation to alleviate the issue of file encoding. This option indicates that these alternate representations should be used. </p>
+<p><b class="bf">Note:</b> The renderer is responsible for doing the translation into the alternate format. This might not be supported by all output types. </p>
+</dd>
+</dl> </p>
+<p><dl class="description">
+  <dt><b class="bfseries">Template to use for output filenames</b></dt>
+  <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--filename=<span class="rmfamily"><i class="itshape">string</i></span></b></span><br /><b class="bfseries">Config File:</b> [ files ] filename<br />specifies the templates to use for generating filenames. The filename template is a list of space separated names. Each name in the list is returned once. An example is shown below. </p>
+<pre class="verbatim">
 index.html toc.html file1.html file2.html
-</pre><p>If you don’t know how many files you are going to be reproducing, using static filenames like in the example above is not practical. For this reason, these filenames can also contain variables as described in Python’s string Templates (e.g. <span class="rmfamily"><i class="itshape">$title</i></span>, <span class="rmfamily"><i class="itshape">$id</i></span>). These variables come from the namespace created in the renderer and include: <span class="rmfamily"><i class="itshape">$id</i></span>, the ID (i.e. label) of the item, <span class="rmfamily"><i class="itshape">$title</i></span>, the title of the item, and <span class="rmfamily"><i class="itshape">$jobname</i></span>, the basename of the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X file being processed. One special variable is <span class="rmfamily"><i class="itshape">$num</i></span>. This value in generated dynamically whenever a filename with <span class="rmfamily"><i class="itshape">$num</i></span> is requested. Each time a filename with <span class="rmfamily"><i class="itshape">$num</i></span> is successfully generated, the value of <span class="rmfamily"><i class="itshape">$num</i></span> is incremented. </p><p>The values of variables can also be modified by a format specified in parentheses after the variable. The format is simply an integer that specifies how wide of a field to create for integers (zero-padded), or, for strings, how many space separated words to limit the name to. The example below shows <span class="rmfamily"><i class="itshape">$num</i></span> being padded to four places and <span class="rmfamily"><i class="itshape">$title</i></span> being limited to five words. </p><pre>
+</pre>
+<p>If you don’t know how many files you are going to be reproducing, using static filenames like in the example above is not practical. For this reason, these filenames can also contain variables as described in Python’s string Templates (e.g. <span class="rmfamily"><i class="itshape">$title </i></span>, <span class="rmfamily"><i class="itshape">$id </i></span>). These variables come from the namespace created in the renderer and include: <span class="rmfamily"><i class="itshape">$id </i></span>, the ID (i.e. label) of the item, <span class="rmfamily"><i class="itshape">$title </i></span>, the title of the item, and <span class="rmfamily"><i class="itshape">$jobname </i></span>, the basename of the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X file being processed. One special variable is <span class="rmfamily"><i class="itshape">$num </i></span>. This value in generated dynamically whenever a filename with <span class="rmfamily"><i class="itshape">$num </i></span> is requested. Each time a filename with <span class="rmfamily"><i class="itshape">$num </i></span> is successfully generated, the value of <span class="rmfamily"><i class="itshape">$num </i></span> is incremented. </p>
+<p>The values of variables can also be modified by a format specified in parentheses after the variable. The format is simply an integer that specifies how wide of a field to create for integers (zero-padded), or, for strings, how many space separated words to limit the name to. The example below shows <span class="rmfamily"><i class="itshape">$num </i></span> being padded to four places and <span class="rmfamily"><i class="itshape">$title </i></span> being limited to five words. </p>
+<pre class="verbatim">
 sect$num(4).html $title(5).html
-</pre><p>The list can also contain a wildcard filename (which should be specified last). Once a wildcard name is reached, it is used from that point on to generate the remaining filenames. The wildcard filename contains a list of alternatives to use as part of the filename indicated by a comma separated list of alternatives surrounded by a set of square brackets ([ ]). Each of the alternatives specified is tried until a filename is successfully created (i.e. all variables resolve). For example, the specification below creates three alternatives. </p><pre>
+</pre>
+<p>The list can also contain a wildcard filename (which should be specified last). Once a wildcard name is reached, it is used from that point on to generate the remaining filenames. The wildcard filename contains a list of alternatives to use as part of the filename indicated by a comma separated list of alternatives surrounded by a set of square brackets ([ ]). Each of the alternatives specified is tried until a filename is successfully created (i.e. all variables resolve). For example, the specification below creates three alternatives. </p>
+<pre class="verbatim">
 $jobname_[$id, $title, sect$num(4)].html
-</pre><p>The code above is expanded to the following possibilities. </p><pre>
+</pre>
+<p>The code above is expanded to the following possibilities. </p>
+<pre class="verbatim">
 $jobname_$id.html
 $jobname_$title.html
 $jobname_sect$num(4).html
-</pre><p>Each of the alternatives is attempted until one of them succeeds. In order for an alternative to succeed, all of the variables referenced in the template must be populated. For example, the <span class="rmfamily"><i class="itshape">$id</i></span> variable will not be populated unless the node had a \<tt class="ttfamily">$label</tt> macro pointing to it. The <span class="rmfamily"><i class="itshape">title</i></span> variable would not be populated unless the node had a title associated with it (e.g. such as section, subsection, etc.). Generally, the last one should contain no variables except for <span class="rmfamily"><i class="itshape">$num</i></span> as a fail-safe alternative. </p></dd>
+</pre>
+<p>Each of the alternatives is attempted until one of them succeeds. In order for an alternative to succeed, all of the variables referenced in the template must be populated. For example, the <span class="rmfamily"><i class="itshape">$id </i></span> variable will not be populated unless the node had a \<span class="ttfamily">$label</span> macro pointing to it. The <span class="rmfamily"><i class="itshape">title </i></span> variable would not be populated unless the node had a title associated with it (e.g. such as section, subsection, etc.). Generally, the last one should contain no variables except for <span class="rmfamily"><i class="itshape">$num </i></span> as a fail-safe alternative. </p>
+</dd>
+</dl> </p>
+<p><dl class="description">
+  <dt><b class="bfseries">Input Encoding</b></dt>
+  <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--input-encoding=<span class="rmfamily"><i class="itshape">string</i></span></b></span><br /><b class="bfseries">Config File:</b> [ files ] input-encoding<br /><b class="bfseries">Default:</b> utf-8<br />specifies which encoding the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X source file is in </p>
+</dd>
+</dl> </p>
+<p><dl class="description">
+  <dt><b class="bfseries">Output Encoding</b></dt>
+  <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--output-encoding=<span class="rmfamily"><i class="itshape">string</i></span></b></span><br /><b class="bfseries">Config File:</b> [ files ] output-encoding<br /><b class="bfseries">Default:</b> utf-8<br />specifies which encoding the output files should use. <b class="bf">Note:</b> This depends on the output format as well. While HTML and XML use encodings, a binary format like MS Word, would not. </p>
+</dd>
+</dl> </p>
+<p><dl class="description">
+  <dt><b class="bfseries">Splitting document into multiple files</b></dt>
+  <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--split-level=<span class="rmfamily"><i class="itshape">integer</i></span></b></span><br /><b class="bfseries">Config File:</b> [ files ] split-level<br /><b class="bfseries">Default:</b> 2<br />specifies the highest section level that generates a new file. Each section in a L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document has a number associated with its hierarchical level. These levels are -2 for the document, -1 for parts, 0 for chapters, 1 for sections, 2 for subsections, 3 for subsubsections, 4 for paragraphs, and 5 for subparagraphs. A new file will be generated for every section in the hierarchy with a value less than or equal to the value of this option. This means that for the value of 2, files will be generated for the document, parts, chapters, sections, and subsections. </p>
+</dd>
+</dl> </p>
 
-</dl> </p><p><dl class="description">
-
-    <dt><b class="bfseries">Input Encoding</b></dt>
-    <dd><p><br /><b class="bfseries">Command-Line Options:</b> <tt class="ttfamily"><b class="bf">--input-encoding=<span class="rmfamily"><i class="itshape">string</i></span></b></tt><br /><b class="bfseries">Config File:</b> [ files ] input-encoding<br /><b class="bfseries">Default:</b> utf-8<br />specifies which encoding the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X source file is in </p></dd>
-
-</dl> </p><p><dl class="description">
-
-    <dt><b class="bfseries">Output Encoding</b></dt>
-    <dd><p><br /><b class="bfseries">Command-Line Options:</b> <tt class="ttfamily"><b class="bf">--output-encoding=<span class="rmfamily"><i class="itshape">string</i></span></b></tt><br /><b class="bfseries">Config File:</b> [ files ] output-encoding<br /><b class="bfseries">Default:</b> utf-8<br />specifies which encoding the output files should use. <b class="bf">Note:</b> This depends on the output format as well. While HTML and XML use encodings, a binary format like MS Word, would not. </p></dd>
-
-</dl> </p><p><dl class="description">
-
-    <dt><b class="bfseries">Splitting document into multiple files</b></dt>
-    <dd><p><br /><b class="bfseries">Command-Line Options:</b> <tt class="ttfamily"><b class="bf">--split-level=<span class="rmfamily"><i class="itshape">integer</i></span></b></tt><br /><b class="bfseries">Config File:</b> [ files ] split-level<br /><b class="bfseries">Default:</b> 2<br />specifies the highest section level that generates a new file. Each section in a L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document has a number associated with its hierarchical level. These levels are -2 for the document, -1 for parts, 0 for chapters, 1 for sections, 2 for subsections, 3 for subsubsections, 4 for paragraphs, and 5 for subparagraphs. A new file will be generated for every section in the hierarchy with a value less than or equal to the value of this option. This means that for the value of 2, files will be generated for the document, parts, chapters, sections, and subsections. </p></dd>
-
-</dl> </p></div>
-
-
-
-
-
-<div class="navigation">
-<table cellspacing="2" cellpadding="0" width="100%">
-<tr>
-<td><a href="sec-config-links.html" title="Document Links"><img alt="Previous: Document Links" border="0" src="icons/previous.gif" width="32" height="32" /></a></td>
-
-<td><a href="sect0003.html" title="Command-Line and Configuration Options"><img alt="Up: Command-Line and Configuration Options" border="0" src="icons/up.gif" width="32" height="32" /></a></td>
-
-<td><a href="sec-config-images.html" title="Image Options"><img alt="Next: Image Options" border="0" src="icons/next.gif" width="32" height="32" /></a></td>
-
-<td class="navtitle" align="center">plasTeX — A Python Framework for Processing LaTeX Documents</td>
-<td><a href="index.html" title="Table of Contents"><img border="0" alt="" src="icons/contents.gif" width="32" height="32" /></a></td>
-
-<td><a href="sect0050.html" title="Index"><img border="0" alt="" src="icons/index.gif" width="32" height="32" /></a></td>
-
-<td><img border="0" alt="" src="icons/blank.gif" width="32" height="32" /></td>
-</tr>
-</table>
 </div>
 
-<script language="javascript" src="icons/imgadjust.js" type="text/javascript"></script>
+<nav class="prev_up_next">
+  <a href="sec-config-links.html" title="Document Links"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="sect0002.html" title="Command-Line and Configuration Options"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="sec-config-images.html" title="Image Options"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+  <a href="sect0046.html" class="index">Index</a>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+</nav>
 
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+</div>
 </body>
 </html>
