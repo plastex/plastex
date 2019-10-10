@@ -105,7 +105,7 @@ class ArgumentParsing(TestCase):
 
     def testDictArgument2(self):
         s = TeX()
-        s.input('{one=1, two={\par}, three={$(x,y)$}, four=4}')
+        s.input(r'{one=1, two={\par}, three={$(x,y)$}, four=4}')
         arg = s.readArgument(type='dict')
         keys = list(arg.keys())
         keys.sort()
@@ -182,12 +182,12 @@ class ArgumentParsing(TestCase):
         assert arg == dimen(0), arg 
 
         # Coerced dimen
-        s.input('{\mycount}')
+        s.input(r'{\mycount}')
         arg = s.readArgument(type='dimen')
         assert arg == dimen(120), arg
 
         # Coerced glue
-        s.input('{\myglue}')
+        s.input(r'{\myglue}')
         arg = s.readArgument(type='dimen')
         assert arg == dimen(10), arg
 
@@ -213,12 +213,12 @@ class ArgumentParsing(TestCase):
         assert arg == dimen('100pt'), arg
 
         # Set by other dimen
-        s.input('\mydimen')
+        s.input(r'\mydimen')
         arg = s.readArgument(type='Dimen')
         assert arg == dimen('12sp'), arg
 
         # Multiply by other dimen
-        s.input('3\mydimen')
+        s.input(r'3\mydimen')
         arg = s.readArgument(type='Dimen')
         assert arg == dimen('36sp'), arg
 
@@ -279,12 +279,12 @@ class ArgumentParsing(TestCase):
         assert arg == count(0), arg 
 
         # Coerced dimen
-        s.input('{\mydimen}')
+        s.input(r'{\mydimen}')
         arg = s.readArgument(type='number')
         assert arg == count(12), arg
 
         # Coerced glue
-        s.input('{\myglue}')
+        s.input(r'{\myglue}')
         arg = s.readArgument(type='number')
         assert arg == count(10), arg
 
@@ -346,12 +346,12 @@ class ArgumentParsing(TestCase):
         assert arg == count('100'), arg
 
         # Set by other dimen
-        s.input('\mycount')
+        s.input(r'\mycount')
         arg = s.readArgument(type='Number')
         assert arg == count('120'), arg
 
         # Multiply by other dimen
-        s.input('3\mycount')
+        s.input(r'3\mycount')
         arg = s.readArgument(type='Number')
         assert arg == count('360'), arg
 
@@ -369,7 +369,7 @@ class ArgumentParsing(TestCase):
                     \newskip\myglue\myglue=10sp plus1pt minus2pt''')
         s.parse()
 
-        s.input('{1, \mycount, 3}')
+        s.input(r'{1, \mycount, 3}')
         arg = s.readArgument(type='list', subtype='int')
         assert arg == [1, 120, 3], arg
     
@@ -380,7 +380,7 @@ class ArgumentParsing(TestCase):
                     \newskip\myglue\myglue=10sp plus1pt minus2pt''')
         s.parse()
 
-        s.input('{one=1, two={\mycount} , three={3}}')
+        s.input(r'{one=1, two={\mycount} , three={3}}')
         arg = s.readArgument(type='dict', expanded=True)
         keys = list(arg.keys())
         keys.sort()
