@@ -5,7 +5,7 @@ from plasTeX.Filenames import Filenames
 from plasTeX.DOM import Node
 from plasTeX.Logging import getLogger
 from plasTeX.Imagers import Image, PILImage
-import collections
+import collections.abc
 
 log = getLogger()
 status = getLogger('status')
@@ -552,7 +552,7 @@ class Renderer(dict):
                 continue
 
             s = self.processFileContent(document, s)
-            if isinstance(postProcess, collections.Callable):
+            if isinstance(postProcess, collections.abc.Callable):
                 s = postProcess(document, s)
 
             with open(f, 'w', encoding=encoding) as fd:
