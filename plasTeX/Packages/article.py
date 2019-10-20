@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
 from plasTeX.Packages.report import *
+from plasTeX import Environment
+from plasTeX.Packages import report
 
 def ProcessOptions(options, document):
-    from plasTeX.Packages import report
     report.ProcessOptions(options, document)
     document.context['thesection'].format = '${section}'
     document.context['theindex'].counter = 'section'
