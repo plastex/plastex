@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys, unittest, re, os, tempfile, shutil, glob, difflib, subprocess
+import sys, unittest, os, tempfile, shutil, difflib, subprocess
 from unittest import TestCase
 
 def which(name, path=None, exts=('',)):
