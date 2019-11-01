@@ -134,8 +134,7 @@ class TeX(object):
                     encoding = 'utf_8_sig'
 
                 fname = self.kpsewhich(myfile)
-                with open(fname, encoding=encoding) as fd:
-                    self.input(fd.read())
+                self.input(open(fname, encoding=encoding))
                 self.jobname = os.path.basename(os.path.splitext(myfile)[0])
 
             # File object
