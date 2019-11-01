@@ -130,10 +130,9 @@ class swapnumbers(plasTeX.Command):
 
 def ProcessOptions(options, document):
     context = document.context
-    context.newenvironment("proof", 1, [
+    context.newenvironment("proof", 1, 
         u"\\par\\noindent{\\normalfont\\itshape #1.}\\enspace",
-        r""
-    ], opt = u"\\proofname")
+        None, opt = u"\\proofname")
     document.userdata.setPath('packages/amsthm/styles',{
         'plain' : {
             'name': 'plain',

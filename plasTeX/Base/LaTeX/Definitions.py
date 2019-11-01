@@ -50,7 +50,7 @@ class newenvironment(Command):
     def invoke(self, tex):
         self.parse(tex)
         a = self.attributes
-        args = (a['name'], a['nargs'], [a['begin'], a['end']])
+        args = (a['name'], a['nargs'], a['begin'], a['end'])
         kwargs = {'opt':a['opt']}
         deflog.debug('environment %s %s %s', *args)
         self.ownerDocument.context.newenvironment(*args, **kwargs)
