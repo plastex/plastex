@@ -3,31 +3,31 @@
 \label{sec:command-line}
 
 While \plasTeX\ makes it possible to parse \LaTeX\ directly from Python
-code, most people will simply use the supplied command-line interface, 
+code, most people will simply use the supplied command-line interface,
 \program{plastex}.  \program{plastex} will invoke the parsing processes
 and apply a specified renderer.  By default, \program{plastex} will
 convert to HTML, although this can be changed in the \program{plastex}
-configuration.  
+configuration.
 
-Invoking \program{plastex} is very simple.  To convert a \LaTeX\ document 
+Invoking \program{plastex} is very simple.  To convert a \LaTeX\ document
 to HTML using all of the defaults, simply type the following at shell prompt.
 
 \begin{verbatim}
 plastex mylatex.tex
 \end{verbatim}
 
-where \file{mylatex.tex} is the name of your \LaTeX\ file.  The 
-\LaTeX\ source will be parsed, all packages will be loaded and macros 
+where \file{mylatex.tex} is the name of your \LaTeX\ file.  The
+\LaTeX\ source will be parsed, all packages will be loaded and macros
 expanded, and converted to HTML.  Hopefully, at this point you will have
-a lovely set of HTML files that accurately reflect the \LaTeX\ source 
-document.  Unfortunately, converting \LaTeX\ to other formats can be 
+a lovely set of HTML files that accurately reflect the \LaTeX\ source
+document.  Unfortunately, converting \LaTeX\ to other formats can be
 tricky, and there are many pitfalls.  If you are getting warnings or
 errors while converting your document, you may want to check the FAQ
 in the appendix to see if your problem is addressed.
 
 Running \program{plastex} with the default options may not give you output
 exactly the way you had envisioned.  Luckily, there are many options
-that allow you to change the rendering behavior.  These options are 
+that allow you to change the rendering behavior.  These options are
 described in the following section.
 
 
@@ -35,14 +35,14 @@ described in the following section.
 
 There are many options to \program{plastex} that allow you to control
 things input and output file encodings, where files are generated and
-what the filenames look like, rendering parameters, etc.  While 
+what the filenames look like, rendering parameters, etc.  While
 \program{plastex} is the interface where the options are specified, for
 the most part these options are simply passed to the parser and renderers
 for their use.  It is even possible to create your own options for use
 in your own Python-based macros and renderers (see in particular
 Section~\ref{subsec:renderer-from-script}).
 The following options are currently available
-on the \program{plastex} command. They are categorized for convenience. 
+on the \program{plastex} command. They are categorized for convenience.
 
 \subsection{General Options}\label{sec:general-options}
 
@@ -88,7 +88,7 @@ specifies which theme to use.
 \end{configuration}
 
 \begin{configuration}{Extra theme files}
-\options{\longprogramopt{copy-theme-extras} or 
+\options{\longprogramopt{copy-theme-extras} or
          \longprogramopt{ignore-theme-extras}}
 \config{general}{copy-theme-extras}
 \default{yes}
@@ -155,7 +155,7 @@ command-line using the \longprogramopt{counter} option or the
 ``counters'' section in a configuration file.  The configuration
 file format for setting counters is very simple.  The option name
 in the configuration file corresponds to the counter name, and the
-value is the value to set the counter to.  
+value is the value to set the counter to.
 \begin{verbatim}
 [counters]
 chapter=4
@@ -187,10 +187,10 @@ specifies the initial counter values.
 
 The links section of the configuration is a little different than the
 others.  The options in the links section are not preconfigured, they
-are all user-specified.  The links section includes information 
-to be included in the navigation object available on all sections in 
+are all user-specified.  The links section includes information
+to be included in the navigation object available on all sections in
 a document.  By default, the section's navigation object includes things
-like the previous and next objects in the document, the child nodes, 
+like the previous and next objects in the document, the child nodes,
 the sibling nodes, etc.  The table below lists all of the navigation
 objects that are already defined.  The names for these items came from
 the link types defined at \url{http://fantasai.tripod.com/qref/Appendix/LinkTypes/ltdef.html}.  Of course, it is up to the renderer to actually make use
@@ -244,7 +244,7 @@ The configuration above would create the following Python dictionary.
 {
     'next':
         {
-            'url':'http://myhost.com/glossary', 
+            'url':'http://myhost.com/glossary',
             'title':'The Next Document'
         },
     'mylink':
@@ -254,9 +254,9 @@ The configuration above would create the following Python dictionary.
 }
 \end{verbatim}
 
-While you can not override a field that is populated by the document, 
+While you can not override a field that is populated by the document,
 there are times when a field isn't populated.  This occurs, for example,
-in the \var{prev} field at the beginning of the document, or the 
+in the \var{prev} field at the beginning of the document, or the
 \var{next} field at the end of the document.  If you specify a \var{prev}
 or \var{next} field in your configuration, those fields will be used
 when no \var{prev} or \var{next} is available.  This allows you to link
@@ -287,7 +287,7 @@ Below is a list of all of the options that affect filename generation.
 \config{files}{bad-chars}
 \default{:~\#\$\%\textasciicircum\&*!\textasciitilde`"'=?/{}[]()|<>;\textbackslash,.}
 specifies all characters that should not be allowed in a filename.
-These characters will be replaced by the value in 
+These characters will be replaced by the value in
 \longprogramopt{bad-filename-chars-sub}.
 \end{configuration}
 
@@ -311,19 +311,19 @@ specifies a directory name to use as the output directory.
 \config{files}{escape-high-chars}
 \default{False}
 some output types allow you to represent characters that are greater than
-7-bits with an alternate representation to alleviate the issue of 
+7-bits with an alternate representation to alleviate the issue of
 file encoding.  This option indicates that these alternate representations
 should be used.
 
-\note{The renderer is responsible for doing the translation into the 
+\note{The renderer is responsible for doing the translation into the
 alternate format.  This might not be supported by all output types.}
 \end{configuration}
 
 \begin{configuration}{Template to use for output filenames}
 \options{\longprogramopt{filename=\optval{string}}}
 \config{files}{filename}
-specifies the templates to use for generating filenames.  
-The filename template is a list of space separated names.  Each name 
+specifies the templates to use for generating filenames.
+The filename template is a list of space separated names.  Each name
 in the list is returned once.  An example is shown below.
 
 \begin{verbatim}
@@ -332,57 +332,90 @@ index.html toc.html file1.html file2.html
 
 If you don't know how many files you are going to be reproducing,
 using static filenames like in the example above is not practical.
-For this reason, these filenames can also contain variables as described in 
-Python's string Templates (e.g. \var{\$title}, \var{\${id}}).  These variables
-come from the namespace created in the renderer and include:
-\var{\$id}, the ID (i.e. label) of the item, \var{\$title}, the title of the
-item, and \var{\$jobname}, the basename of the \LaTeX\ file being processed.  
-One special variable is \var{\$num}.  This value in generated dynamically 
-whenever a filename with \var{\$num} is requested.  Each time a filename 
+For this reason, these filenames can also contain variables as described in
+Python's string Templates (e.g. \var{\$title}, \var{\${id}}).
+Note that, if this option is configured on command line
+rather than in a configuration file, the dollar characters probably need
+to be protected. For instance bash would require single quote
+protection, as in \verb+plastex --filename='$id'+.
+These variables come from the namespace created in the renderer and
+include:
+\begin{itemize}
+\item
+\var{\$name}, the name of the item (e.g. part, chapter or section),
+\item
+\var{\$id}, the ID (i.e. label) of the item,
+\item
+\var{\$ref}, the counter associated to the item (if it exists),
+\item
+\var{\$title}, the title of the item,
+\item
+\var{\$jobname}, the basename of the \LaTeX\ file being processed.
+\end{itemize}
+One special variable is \var{\$num}.  This value in generated dynamically
+whenever a filename with \var{\$num} is requested.  Each time a filename
 with \var{\$num} is successfully generated, the value of \var{\$num}
 is incremented.
 
 The values of variables can also be modified by a format specified
 in parentheses after the variable.  The format is simply an integer
-that specifies how wide of a field to create for integers 
+that specifies how wide of a field to create for integers
 (zero-padded), or, for strings, how many space separated words
 to limit the name to.  The example below shows \var{\$num} being padded
 to four places and \var{\$title} being limited to five words.
 
 \begin{verbatim}
-sect$num(4).html $title(5).html
+sect$num(4) $title(5)
 \end{verbatim}
 
-The list can also contain a wildcard filename (which should be 
-specified last).  Once a wildcard name is reached, it is 
-used from that point on to generate the remaining filenames.  
+The list can also contain a wildcard filename (which should be
+specified last).  Once a wildcard name is reached, it is
+used from that point on to generate the remaining filenames.
 The wildcard filename contains a list of alternatives to use as
-part of the filename indicated by a comma separated list of 
+part of the filename indicated by a comma separated list of
 alternatives surrounded by a set of square brackets ([ ]).
 Each of the alternatives specified is tried until a filename is
 successfully created (i.e. all variables resolve).  For example,
 the specification below creates three alternatives.
 
 \begin{verbatim}
-$jobname_[$id, $title, sect$num(4)].html
+$jobname_[$id, $title, sect$num(4)]
 \end{verbatim}
 
 The code above is expanded to the following possibilities.
 
 \begin{verbatim}
-$jobname_$id.html
-$jobname_$title.html
-$jobname_sect$num(4).html
+$jobname_$id
+$jobname_$title
+$jobname_sect$num(4)
 \end{verbatim}
 
 Each of the alternatives is attempted until one of them succeeds.
 In order for an alternative to succeed, all of the variables referenced
 in the template must be populated.  For example, the \var{\$id} variable
 will not be populated unless the node had a \macro{\$label} macro
-pointing to it.  The \var{title} variable would not be populated unless
+pointing to it.  The \var{\$title} variable would not be populated unless
 the node had a title associated with it (e.g. such as section, subsection, etc.).
 Generally, the last one should contain no variables except for
 \var{\$num} as a fail-safe alternative.
+
+The default value for this option is \verb+index [$id, sect$num(4)]+
+which, assuming HTML output, will first generate a file
+\var{index.html}. Then, for each node triggering a file creation, it
+will try to use the node label. If no label exists, it will use
+\var{sectN.html} where \var{N} is the next available number (starting
+from one), padded to four digits. Of course the prefix \var{sect} is
+chosen because the default value for \var{split-level} is $2$, which
+means generating a new file or each section.
+
+As last example, one could use \var{index \$name-[\$ref, sect\$num(4)]}.
+Assuming our document contains two chapters which each contain two
+sections (and using the \LaTeX default numbering scheme and default
+\plasTeX split level), we would get filenames
+\var{index.html}, \var{chapter-1.html}, \var{section-1-1.html},
+\var{section-1-2.html}, \var{chapter-2.html}, \var{section-2-1.html},
+\var{section-2-2.html}.
+
 \end{configuration}
 
 \begin{configuration}{Input Encoding}
@@ -396,8 +429,8 @@ specifies which encoding the \LaTeX\ source file is in
 \options{\longprogramopt{output-encoding=\optval{string}}}
 \config{files}{output-encoding}
 \default{utf-8}
-specifies which encoding the output files should use.  
-\note{This depends on the output format as well.  While HTML and XML use 
+specifies which encoding the output files should use.
+\note{This depends on the output format as well.  While HTML and XML use
 encodings, a binary format like MS Word, would not.}
 \end{configuration}
 
@@ -410,7 +443,7 @@ in a \LaTeX\ document has a number associated with its hierarchical level.
 These levels are -2 for the document, -1 for parts, 0 for chapters,
 1 for sections, 2 for subsections, 3 for subsubsections, 4 for paragraphs,
 and 5 for subparagraphs.  A new file will be generated for every section
-in the hierarchy with a value less than or equal to the value of this 
+in the hierarchy with a value less than or equal to the value of this
 option.  This means that for the value of 2, files will be generated for
 the document, parts, chapters, sections, and subsections.
 \end{configuration}
@@ -418,7 +451,7 @@ the document, parts, chapters, sections, and subsections.
 
 \subsection{Image Options\label{sec:config-images}}
 
-Images are created by renderers when the output type in incapable of 
+Images are created by renderers when the output type in incapable of
 rendering the content in any other way. This method was commonly used
 to display equations in XHTML output. Nowadays, MathJax arguably
 provides a better method, see Section~\ref{sec:config-html5} below.
@@ -458,8 +491,8 @@ indicates whether or not images should use a cache between runs.
 \config{images}{imager}
 \default{dvipng dvi2bitmap gsdvipng gspdfpng OSXCoreGraphics}
 specifies which converter will be used to take the output from the
-\LaTeX\ compiler and convert it to images.  You can specify a space 
-delimited list of names as well.  If a list of names is specified, 
+\LaTeX\ compiler and convert it to images.  You can specify a space
+delimited list of names as well.  If a list of names is specified,
 each one is verified in order to see if it works on the current machine.
 The first one that succeeds is used.
 
@@ -480,15 +513,15 @@ option.
 \config{images}{vector-imager}
 \default{dvisvgm}
 specifies which converter will be used to take the output from the
-\LaTeX\ compiler and convert it to vector images.  You can specify a space 
-delimited list of names as well.  If a list of names is specified, 
+\LaTeX\ compiler and convert it to vector images.  You can specify a space
+delimited list of names as well.  If a list of names is specified,
 each one is verified in order to see if it works on the current machine.
 The first one that succeeds is used.
 
 You can use the value of ``none'' to turn the vector imager off.
 
 \note{When using the vector imager, a bitmap image is also created
-using the regular imager.  This bitmap is used to determine the 
+using the regular imager.  This bitmap is used to determine the
 depth information about the vector image and can also be used as
 a backup if the vector image is not supported by the viewer.}
 \end{configuration}
@@ -535,7 +568,7 @@ specifies from which level one creates breadcrumbs navigation links.
 \options{\longprogramopt{use-theme-css} or \longprogramopt{no-theme-css}}
 \config{html5}{use-theme-css}
 \default{True}
-specifies whether to use CSS files from the theme. 
+specifies whether to use CSS files from the theme.
 \end{configuration}
 
 \begin{configuration}{Theme CSS file}
@@ -570,7 +603,7 @@ and proofs.
 \config{html5}{extra-css}
 \default{''}
 specifies a comma separated list of javascript files to use (in addition
-to those coming from the theme is the use-theme-js option is set to true). 
+to those coming from the theme is the use-theme-js option is set to true).
 These files are copied to the output directory by the
 renderer and loaded by the main layout template in the list order after
 the theme javascript files (if any) and the packages javascript files (if any).

@@ -316,6 +316,16 @@ class Renderable(object):
                     ns['title'] = self.title.textContent
                 elif isinstance(self.title, str):
                     ns['title'] = self.title
+            if hasattr(self, 'ref'):
+                ref = ''
+                if hasattr(self.ref, 'textContent'):
+                    ref = self.ref.textContent
+                elif isinstance(self.ref, str):
+                    ref = self.ref
+                if ref:
+                    ns['ref'] = ref
+            if self.nodeName:
+                ns['name'] = self.nodeName
             r.files[self] = filename = r.newFilename()
 
 #       print type(self), filename
