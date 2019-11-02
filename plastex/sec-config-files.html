@@ -405,22 +405,37 @@
 <pre class="verbatim">
 index.html toc.html file1.html file2.html
 </pre>
-<p>If you don’t know how many files you are going to be reproducing, using static filenames like in the example above is not practical. For this reason, these filenames can also contain variables as described in Python’s string Templates (e.g. <span class="rmfamily"><i class="itshape">$title </i></span>, <span class="rmfamily"><i class="itshape">$id </i></span>). These variables come from the namespace created in the renderer and include: <span class="rmfamily"><i class="itshape">$id </i></span>, the ID (i.e. label) of the item, <span class="rmfamily"><i class="itshape">$title </i></span>, the title of the item, and <span class="rmfamily"><i class="itshape">$jobname </i></span>, the basename of the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X file being processed. One special variable is <span class="rmfamily"><i class="itshape">$num </i></span>. This value in generated dynamically whenever a filename with <span class="rmfamily"><i class="itshape">$num </i></span> is requested. Each time a filename with <span class="rmfamily"><i class="itshape">$num </i></span> is successfully generated, the value of <span class="rmfamily"><i class="itshape">$num </i></span> is incremented. </p>
+<p>If you don’t know how many files you are going to be reproducing, using static filenames like in the example above is not practical. For this reason, these filenames can also contain variables as described in Python’s string Templates (e.g. <span class="rmfamily"><i class="itshape">$title </i></span>, <span class="rmfamily"><i class="itshape">$id </i></span>). Note that, if this option is configured on command line rather than in a configuration file, the dollar characters probably need to be protected. For instance bash would require single quote protection, as in <code class="verbatim">plastex --filename='$id'</code>. These variables come from the namespace created in the renderer and include: </p>
+<ul class="itemize">
+  <li><p><span class="rmfamily"><i class="itshape">$name </i></span>, the name of the item (e.g. part, chapter or section), </p>
+</li>
+  <li><p><span class="rmfamily"><i class="itshape">$id </i></span>, the ID (i.e. label) of the item, </p>
+</li>
+  <li><p><span class="rmfamily"><i class="itshape">$ref </i></span>, the counter associated to the item (if it exists), </p>
+</li>
+  <li><p><span class="rmfamily"><i class="itshape">$title </i></span>, the title of the item, </p>
+</li>
+  <li><p><span class="rmfamily"><i class="itshape">$jobname </i></span>, the basename of the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X file being processed. </p>
+</li>
+</ul>
+<p> One special variable is <span class="rmfamily"><i class="itshape">$num </i></span>. This value in generated dynamically whenever a filename with <span class="rmfamily"><i class="itshape">$num </i></span> is requested. Each time a filename with <span class="rmfamily"><i class="itshape">$num </i></span> is successfully generated, the value of <span class="rmfamily"><i class="itshape">$num </i></span> is incremented. </p>
 <p>The values of variables can also be modified by a format specified in parentheses after the variable. The format is simply an integer that specifies how wide of a field to create for integers (zero-padded), or, for strings, how many space separated words to limit the name to. The example below shows <span class="rmfamily"><i class="itshape">$num </i></span> being padded to four places and <span class="rmfamily"><i class="itshape">$title </i></span> being limited to five words. </p>
 <pre class="verbatim">
-sect$num(4).html $title(5).html
+sect$num(4) $title(5)
 </pre>
 <p>The list can also contain a wildcard filename (which should be specified last). Once a wildcard name is reached, it is used from that point on to generate the remaining filenames. The wildcard filename contains a list of alternatives to use as part of the filename indicated by a comma separated list of alternatives surrounded by a set of square brackets ([ ]). Each of the alternatives specified is tried until a filename is successfully created (i.e. all variables resolve). For example, the specification below creates three alternatives. </p>
 <pre class="verbatim">
-$jobname_[$id, $title, sect$num(4)].html
+$jobname_[$id, $title, sect$num(4)]
 </pre>
 <p>The code above is expanded to the following possibilities. </p>
 <pre class="verbatim">
-$jobname_$id.html
-$jobname_$title.html
-$jobname_sect$num(4).html
+$jobname_$id
+$jobname_$title
+$jobname_sect$num(4)
 </pre>
-<p>Each of the alternatives is attempted until one of them succeeds. In order for an alternative to succeed, all of the variables referenced in the template must be populated. For example, the <span class="rmfamily"><i class="itshape">$id </i></span> variable will not be populated unless the node had a \<span class="ttfamily">$label</span> macro pointing to it. The <span class="rmfamily"><i class="itshape">title </i></span> variable would not be populated unless the node had a title associated with it (e.g. such as section, subsection, etc.). Generally, the last one should contain no variables except for <span class="rmfamily"><i class="itshape">$num </i></span> as a fail-safe alternative. </p>
+<p>Each of the alternatives is attempted until one of them succeeds. In order for an alternative to succeed, all of the variables referenced in the template must be populated. For example, the <span class="rmfamily"><i class="itshape">$id </i></span> variable will not be populated unless the node had a \<span class="ttfamily">$label</span> macro pointing to it. The <span class="rmfamily"><i class="itshape">$title </i></span> variable would not be populated unless the node had a title associated with it (e.g. such as section, subsection, etc.). Generally, the last one should contain no variables except for <span class="rmfamily"><i class="itshape">$num </i></span> as a fail-safe alternative. </p>
+<p>The default value for this option is <code class="verbatim">index [$id, sect$num(4)]</code> which, assuming HTML output, will first generate a file <span class="rmfamily"><i class="itshape">index.html </i></span>. Then, for each node triggering a file creation, it will try to use the node label. If no label exists, it will use <span class="rmfamily"><i class="itshape">sectN.html </i></span> where <span class="rmfamily"><i class="itshape">N </i></span> is the next available number (starting from one), padded to four digits. Of course the prefix <span class="rmfamily"><i class="itshape">sect </i></span> is chosen because the default value for <span class="rmfamily"><i class="itshape">split-level </i></span> is $2$, which means generating a new file or each section. </p>
+<p>As last example, one could use <span class="rmfamily"><i class="itshape">index $name-[$ref, sect$num(4)] </i></span>. Assuming our document contains two chapters which each contain two sections (and using the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>Xdefault numbering scheme and default plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>Xsplit level), we would get filenames <span class="rmfamily"><i class="itshape">index.html </i></span>, <span class="rmfamily"><i class="itshape">chapter-1.html </i></span>, <span class="rmfamily"><i class="itshape">section-1-1.html </i></span>, <span class="rmfamily"><i class="itshape">section-1-2.html </i></span>, <span class="rmfamily"><i class="itshape">chapter-2.html </i></span>, <span class="rmfamily"><i class="itshape">section-2-1.html </i></span>, <span class="rmfamily"><i class="itshape">section-2-2.html </i></span>. </p>
 </dd>
 </dl> </p>
 <p><dl class="description">
