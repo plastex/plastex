@@ -34,10 +34,13 @@ class documentclass(PackageLoader):
     extension = '.cls'
     def invoke(self, tex):
         a = self.parse(tex)
+        at_catcode = self.ownerDocument.context.whichCode('@')
+        self.ownerDocument.context.catcode('@', Token.CC_LETTER)
         self.load(tex, a['name'], a['options'])
         packages = self.ownerDocument.context.packages
         if a['name'] in list(packages.keys()):
             packages['documentclass'] = packages[a['name']]
+        self.ownerDocument.context.catcode('@', at_catcode)
 
 class documentstyle(documentclass):
     pass
