@@ -17,7 +17,7 @@ DEFAULT_CATEGORIES = [
    '_',   # 8  - Subscript
    '\x00',# 9  - Ignored character
    ' \t\r\f', # 10 - Space
-   encoding.stringletters() + '@', # - Letter
+   encoding.stringletters(), # - Letter
    '',    # 12 - Other character - This isn't explicitly defined.  If it
           #                        isn't any of the other categories, then
           #                        it's an "other" character.

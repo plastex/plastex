@@ -71,8 +71,11 @@ class usepackage(PackageLoader):
         self.ownerDocument.context.catcode('&', Token.CC_LETTER)
         a = self.parse(tex)
         self.ownerDocument.context.catcode('&', catcode)
+        at_catcode = self.ownerDocument.context.whichCode('@')
+        self.ownerDocument.context.catcode('@', Token.CC_LETTER)
         for fname in a['names']:
             self.load(tex, fname, a['options'])
+        self.ownerDocument.context.catcode('@', at_catcode)
 
 class RequirePackage(usepackage):
     pass
