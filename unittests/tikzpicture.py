@@ -173,7 +173,7 @@ def test_tikzcd_config_options(monkeypatch, tmpdir, document_cd):
 
 def test_functional(tmpdir):
     cur_dir = os.getcwd()
-    tmpdir.join('test.tex').write("""
+    tmpdir.join('test.tex').write(r"""
     \documentclass{article} 
     \usepackage{tikz, tikz-cd}
 
