@@ -7,6 +7,7 @@ C.15 Font Selection (p225)
 
 from plasTeX import Command, Environment
 from plasTeX.Logging import getLogger
+from plasTeX.Base.TeX.Primitives import BoxCommand
 
 
 log = getLogger()
@@ -30,8 +31,8 @@ class scshape(TextDeclaration): pass
 class normalfont(TextDeclaration): pass
 
 
-class TextCommand(Command):
-    args = 'self'
+class TextCommand(BoxCommand):
+    pass
 
 class textmd(TextCommand): pass
 class textbf(TextCommand): pass
