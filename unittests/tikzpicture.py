@@ -33,7 +33,7 @@ def document():
 
         doc = TeXDocument(config=conf)
         tex = TeX(doc)
-        tex.input("\\documentclass{article}\\usepackage{tikz}\n\\begin{document}\\begin{tikzpicture}\draw (0,0) -- (1,0);\\end{tikzpicture}\n\\end{document}")
+        tex.input(r"\documentclass{article}\usepackage{tikz}\begin{document}\begin{tikzpicture}\draw (0,0) -- (1,0);\end{tikzpicture}\end{document}")
         doc = tex.parse()
         doc.userdata['working-dir'] = '.'
         doc.rendererdata['html5'] = {}
@@ -177,18 +177,18 @@ def test_functional(tmpdir):
     \documentclass{article} 
     \usepackage{tikz, tikz-cd}
 
-    \\begin{document}
-    \\begin{tikzpicture}
+    \begin{document}
+    \begin{tikzpicture}
             \draw (0, 0) -- (1, 0);
     \end{tikzpicture}
 
-    \\begin{tikzcd}
+    \begin{tikzcd}
             A \\rar & B
     \end{tikzcd}
     \end{document}""")
     os.chdir(str(tmpdir))
     subprocess.call(
-            ['plastex', '--renderer', 'HTML5', str(tmpdir.join('test.tex'))])
+            ['plastex', '--renderer', 'HTML5', 'test.tex'])
     assert os.path.isdir(str(tmpdir.join('test')))
     assert os.path.isfile(str(tmpdir.join('test', 'index.html')))
     soup = BeautifulSoup(tmpdir.join('test', 'index.html').read(), "html.parser")

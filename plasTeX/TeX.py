@@ -1365,7 +1365,7 @@ class TeX(object):
 
         except:
             fullname = ''
-            paths = os.environ.get("TEXINPUTS", '').split(os.path.pathsep)
+            paths = os.environ.get("TEXINPUTS", '.').split(os.path.pathsep)
             for path in [x for x in paths if x]:
                 if name in os.listdir(path):
                     fullname = os.path.join(path,name)
