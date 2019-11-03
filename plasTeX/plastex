@@ -6,7 +6,7 @@ import plasTeX
 from plasTeX.TeX import TeX
 from plasTeX.Config import config
 from plasTeX.ConfigManager import *
-from plasTeX.Logging import getLogger
+from plasTeX.Logging import getLogger, updateLogLevels
 
 log = getLogger()
 
@@ -43,6 +43,9 @@ def main(argv):
         sys.exit(1)
 
     file = args.pop(0)
+
+    if config['logging']:
+        updateLogLevels(config['logging'])
 
     # Create document instance that output will be put into
     document = plasTeX.TeXDocument(config=config)

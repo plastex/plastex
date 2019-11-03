@@ -181,3 +181,14 @@ def fileLogging(fname):
             logger.removeHandler(handler)
         logger.addHandler(fhandler)
         logger.addFilter(logfilter)
+
+def updateLogLevels(levels):
+    """
+    Update logging levels from dictionary
+    whose keys are logger names and values are levels
+    (both are strings).
+    Non-existent loggers are created.
+    Loggers whose names are not keys of the input dictionary are unaffected.
+    """
+    for name, lvl in levels.items():
+        getLogger(None if name == 'root' else name).setLevel(lvl)
