@@ -60,6 +60,9 @@ class EquationStar(_AMSEquationStar):
 class aligned(_AMSEquation):
     pass
 
+class gathered(MathEnvironmentPre):
+    pass
+
 class cases(_AMSEquation):
     pass
 
