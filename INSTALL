@@ -1,8 +1,8 @@
 
 Installation of plasTeX is very simple.  It installs just like any other
-Python package.  Simply run the following command.  Python 2.4+ is required.
+Python package.  Simply run the following command.  Python 3.5+ is required.
 
-    python setup.py install
+    pip install .
 
 To generate images for destinations like HTML, you will also need to have
 a LaTeX distribution installed, and either ghostscript or, preferably, 
