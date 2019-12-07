@@ -117,7 +117,7 @@ class Benched(TestCase):
 def testSuite():
     """ Locate all .tex files and create a test suite from them """
     suite = unittest.TestSuite()
-    for root, dirs, files in os.walk('.'):
+    for root, dirs, files in os.walk(os.path.dirname(__file__)):
         for f in files:
             if os.path.splitext(f)[-1] != '.tex':
                 continue
