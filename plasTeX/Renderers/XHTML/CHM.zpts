@@ -101,7 +101,7 @@ Title=<span tal:replace='self/title/textContent'>My Title</span>
 Help="<span tal:replace='self/title/textContent'>My Title</span>","chm.hhc","chm.hhk","index.html","index.html",,,,,0x73520,,0x383e,[200,200,1000,800],,,,,,,0
 
 [FILES]
-<metal:block tal:repeat="file templates/files/values"><span tal:replace="file">myhtml.htm</span>
+<metal:block tal:define="files templates/files/values; sorted_files python:sequence.sort(files)" tal:repeat="file sorted_files"><span tal:replace="file">myhtml.htm</span>
 </metal:block>
 
 [MERGE FILES]
