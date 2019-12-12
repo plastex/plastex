@@ -1,4 +1,5 @@
 import os
+import shlex
 import subprocess
 from bs4 import BeautifulSoup 
 try:
@@ -182,9 +183,13 @@ def test_functional(tmpdir):
             A \\rar & B
     \end{tikzcd}
     \end{document}""")
+    commandline = os.environ.get('PLASTEX_COMMANDLINE', 'plastex')
+    commandline = shlex.split(commandline)
     with tmpdir.as_cwd():
-        subprocess.call(
-            ['plastex', '--renderer', 'HTML5', 'test.tex'])
+        subprocess.call(commandline + [
+            '--renderer', 'HTML5',
+            'test.tex'
+        ])
     assert os.path.isdir(str(tmpdir.join('test')))
     assert os.path.isfile(str(tmpdir.join('test', 'index.html')))
     soup = BeautifulSoup(tmpdir.join('test', 'index.html').read(), "html.parser")
