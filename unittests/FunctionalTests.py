@@ -34,6 +34,7 @@ class Process(object):
             kwargs['stderr'] = subprocess.STDOUT
         self.process = subprocess.Popen(args, **kwargs)
         self.log = self.process.stdout.read().decode('utf8')
+        self.process.wait()
         self.returncode = self.process.returncode
         self.process.stdout.close()
         self.process.stdin.close()
