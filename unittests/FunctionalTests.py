@@ -56,22 +56,23 @@ class Benched(TestCase):
         shutil.copyfile(src, texfile)
 
         # Run preprocessing commands
-        for line in open(src):
-            if line.startswith('%*'):
-                command = line[2:].strip()
-                p = Process(cwd=outdir, *command.split())
-                if p.returncode:
-                    raise OSError('Preprocessing command exited abnormally with return code %s: %s' % (command, p.log))
-            elif line.startswith('%#'):
-                filename = line[2:].strip()
-                shutil.copyfile(os.path.join(root,'extras',filename),
-                                os.path.join(outdir,filename))
-            elif line.startswith('%'):
-                continue
-            elif not line.strip():
-                continue
-            else:
-                break
+        with open(src) as fh:
+            for line in fh:
+                if line.startswith('%*'):
+                    command = line[2:].strip()
+                    p = Process(cwd=outdir, *command.split())
+                    if p.returncode:
+                        raise OSError('Preprocessing command exited abnormally with return code %s: %s' % (command, p.log))
+                elif line.startswith('%#'):
+                    filename = line[2:].strip()
+                    shutil.copyfile(os.path.join(root,'extras',filename),
+                                    os.path.join(outdir,filename))
+                elif line.startswith('%'):
+                    continue
+                elif not line.strip():
+                    continue
+                else:
+                    break
 
         # Run plastex
         outfile = os.path.join(outdir, os.path.splitext(os.path.basename(src))[0]+'.html')
@@ -86,30 +87,38 @@ class Benched(TestCase):
             raise OSError('plastex failed with code %s: %s' % (p.returncode, p.log))
 
         # Read output file
-        output = open(outfile)
+        with open(outfile) as output:
 
-        # Get name of output file / benchmark file
-        benchfile = os.path.join(root,'benchmarks',os.path.basename(outfile))
-        if os.path.isfile(benchfile):
-            bench = open(benchfile).readlines()
-            output = output.readlines()
-        else:
-            try: os.makedirs(os.path.join(root,'new'))
-            except: pass
-            newfile = os.path.join(root,'new',os.path.basename(outfile))
-            open(newfile,'w').write(output.read())
-            shutil.rmtree(outdir, ignore_errors=True)
-            raise OSError('No benchmark file: %s' % benchfile)
+            # Get name of output file / benchmark file
+            benchfile = os.path.join(root,'benchmarks',
+                                     os.path.basename(outfile))
+            if os.path.isfile(benchfile):
+                with open(benchfile) as fh:
+                    bench = fh.readlines()
+                output = output.readlines()
+            else:
+                try: os.makedirs(os.path.join(root, 'new'))
+                except: pass
+                newfile = os.path.join(root, 'new',
+                                       os.path.basename(outfile))
+                with open(newfile,'w') as fh:
+                    fh.write(output.read())
+                shutil.rmtree(outdir, ignore_errors=True)
+                raise OSError('No benchmark file: %s' % benchfile)
 
-        # Compare files
-        diff = ''.join(list(difflib.unified_diff(bench, output))).strip()
-        if diff:
-            shutil.rmtree(outdir, ignore_errors=True)
-            try: os.makedirs(os.path.join(root,'new'))
-            except: pass
-            newfile = os.path.join(root,'new',os.path.basename(outfile))
-            open(newfile,'w').writelines(output)
-            assert not(diff), 'Differences were found: %s' % diff
+            # Compare files
+            diff = ''.join(list(difflib.unified_diff(bench, output))).strip()
+            bench.close()
+
+            if diff:
+                shutil.rmtree(outdir, ignore_errors=True)
+                try: os.makedirs(os.path.join(root,'new'))
+                except: pass
+                newfile = os.path.join(root, 'new',
+                                       os.path.basename(outfile))
+                with open(newfile,'w') as outfh:
+                    outfh.writelines(output)
+                assert not(diff), 'Differences were found: %s' % diff
 
         # Clean up
         shutil.rmtree(outdir, ignore_errors=True)
