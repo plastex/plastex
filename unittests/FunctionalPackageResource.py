@@ -19,8 +19,10 @@ def test_package_resource(tmpdir):
 	
 	doc = tex.parse()
 	doc.userdata['working-dir'] = os.path.dirname(__file__)
-	os.chdir(str(tmpdir))
-	Renderer().render(doc)
+
+	with tmpdir.as_cwd():
+		Renderer().render(doc)
+
 	assert tmpdir.join('styles', 'test.css').isfile()
 	assert tmpdir.join('js', 'test.js').isfile()
 	assert 'class="em"' in tmpdir.join('index.html').read()

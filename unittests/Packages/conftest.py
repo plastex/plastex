@@ -50,8 +50,9 @@ def renderXHTML():
         # Create document file
 
         # Run plastex on the document
-        os.chdir(str(tmpdir))
-        Renderer().render(doc)
+        with tmpdir.as_cwd():
+            Renderer().render(doc)
+
         assert tmpdir.join('index.html').isfile()
 
         # Get output file
