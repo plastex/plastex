@@ -186,7 +186,7 @@ def test_functional(tmpdir):
     commandline = os.environ.get('PLASTEX_COMMANDLINE', 'plastex')
     commandline = shlex.split(commandline)
     with tmpdir.as_cwd():
-        subprocess.call(commandline + [
+        subprocess.check_call(commandline + [
             '--renderer', 'HTML5',
             'test.tex'
         ])
