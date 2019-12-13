@@ -234,9 +234,10 @@ class Context(object):
         import pickle
         if os.path.exists(filename):
             try:
-                d = pickle.load(open(filename, 'rb'))
-                if rtype not in list(d.keys()):
-                    d[rtype] = {}
+                with open(filename, 'rb') as fh:
+                    d = pickle.load(fh)
+                    if rtype not in list(d.keys()):
+                        d[rtype] = {}
             except:
                 os.remove(filename)
                 d = {rtype:{}}
@@ -246,7 +247,8 @@ class Context(object):
         for key, value in list(self.persistentLabels.items()):
             data[key] = value.persist()
         try:
-            pickle.dump(d, open(filename, 'wb'))
+            with open(filename, 'wb') as fh:
+                pickle.dump(d, fh)
         except Exception as msg:
             log.warning('Could not save auxiliary information. (%s)' % msg)
 

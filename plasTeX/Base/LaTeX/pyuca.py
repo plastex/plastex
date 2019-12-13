@@ -78,36 +78,37 @@ class Collator:
         self.load(filename)
 
     def load(self, filename):
-        for line in open(filename):
-            if line.startswith("#") or line.startswith("%"):
-                continue
-            if line.strip() == "":
-                continue
-            line = line[:line.find("#")] + "\n"
-            line = line[:line.find("%")] + "\n"
-            line = line.strip()
-        
-            if line.startswith("@"):
-                pass
-            else:
-                semicolon = line.find(";")
-                charList = line[:semicolon].strip().split()
-                x = line[semicolon:]
-                collElements = []
-                while True:
-                    begin = x.find("[")
-                    if begin == -1:
-                        break                
-                    end = x[begin:].find("]")
-                    collElement = x[begin:begin+end+1]
-                    x = x[begin + 1:]
-    
-                    alt = collElement[1]
-                    chars = collElement[2:-1].split(".")
-                    
-                    collElements.append((alt, chars))
-                integer_points = [int(ch, 16) for ch in charList]
-                self.table.add(integer_points, collElements)
+        with open(filename) as fh:
+            for line in fh:
+                if line.startswith("#") or line.startswith("%"):
+                    continue
+                if line.strip() == "":
+                    continue
+                line = line[:line.find("#")] + "\n"
+                line = line[:line.find("%")] + "\n"
+                line = line.strip()
+
+                if line.startswith("@"):
+                    pass
+                else:
+                    semicolon = line.find(";")
+                    charList = line[:semicolon].strip().split()
+                    x = line[semicolon:]
+                    collElements = []
+                    while True:
+                        begin = x.find("[")
+                        if begin == -1:
+                            break
+                        end = x[begin:].find("]")
+                        collElement = x[begin:begin+end+1]
+                        x = x[begin + 1:]
+
+                        alt = collElement[1]
+                        chars = collElement[2:-1].split(".")
+
+                        collElements.append((alt, chars))
+                    integer_points = [int(ch, 16) for ch in charList]
+                    self.table.add(integer_points, collElements)
 
     def sort_key(self, string):
         

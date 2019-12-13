@@ -524,45 +524,45 @@ class PageTemplate(BaseRenderer):
         defaults = options.copy()
         name = None
         if not options or 'name' not in options:
-            f = open(filename, 'r')
-            for i, line in enumerate(f):
-                # Found a meta-data command
-                if re.match(r'(default-)?\w+:', line):
+            with open(filename, 'r') as f:
+                for i, line in enumerate(f):
+                    # Found a meta-data command
+                    if re.match(r'(default-)?\w+:', line):
 
-                    # Purge any awaiting templates
-                    if template:
-                        try:
-                            num_templates += 1
-                            self.setTemplate(''.join(template), options)
-                        except ValueError as msg:
-                            print('ERROR: %s at line %s in file %s' % (msg, i, filename))
-                        options = defaults.copy()
-                        template = []
+                        # Purge any awaiting templates
+                        if template:
+                            try:
+                                num_templates += 1
+                                self.setTemplate(''.join(template), options)
+                            except ValueError as msg:
+                                print('ERROR: %s at line %s in file %s' % (msg, i, filename))
+                            options = defaults.copy()
+                            template = []
 
-                    # Done purging previous template, start a new one
-                    name, value = line.split(':', 1)
-                    name = name.strip()
-                    value = value.rstrip()
-                    while value.endswith('\\'):
-                        value = value[:-1] + ' '
-                        for line in f:
-                            value += line.rstrip()
-                            break
+                        # Done purging previous template, start a new one
+                        name, value = line.split(':', 1)
+                        name = name.strip()
+                        value = value.rstrip()
+                        while value.endswith('\\'):
+                            value = value[:-1] + ' '
+                            for line in f:
+                                value += line.rstrip()
+                                break
 
-                    value = re.sub(r'\s+', r' ', value.strip())
-                    if name.startswith('default-'):
-                        name = name.split('-')[-1]
-                        defaults[name] = value
-                        if name not in options or num_templates == 0:
+                        value = re.sub(r'\s+', r' ', value.strip())
+                        if name.startswith('default-'):
+                            name = name.split('-')[-1]
+                            defaults[name] = value
+                            if name not in options or num_templates == 0:
+                                options[name] = value
+                        else:
                             options[name] = value
-                    else:
-                        options[name] = value
-                    continue
+                        continue
 
-                if template or (not(template) and line.strip()):
-                    template.append(line)
-                elif not(template) and 'name' in options:
-                    template.append('')
+                    if template or (not(template) and line.strip()):
+                        template.append(line)
+                    elif not(template) and 'name' in options:
+                        template.append('')
 
         else:
             with open(filename, encoding='utf-8') as f:
