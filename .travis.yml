@@ -6,6 +6,16 @@ python:
   - "3.7"
   - "3.8"
 
+addons:
+  apt:
+    packages:
+    - dvipng
+    - pdf2svg
+    - texlive-binaries
+    - texlive-latex-base
+    - texlive-latex-extra
+
+
 install:
   - pip install tox-travis
   - pip install -r requirements.txt
