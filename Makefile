@@ -93,7 +93,7 @@ git-branch-push-${GIT_CURRENT_BRANCH}:
 ### Targets for Python virtual environments
 ### ==================================================================
 
-.PHONY: python-create-virtual-environment 
+.PHONY: python-create-virtual-environment
 
 python-create-virtual-environment:
 	@if pyenv virtualenvs | \
