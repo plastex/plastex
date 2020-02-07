@@ -1,25 +1,33 @@
+### Makefile for fork of plasTeX project
+
+### ==================================================================
+### Variables
+### ==================================================================
+
 PROJECT = plastex
+GIT_REMOTES = origin upstream
 GIT_REMOTE_ORIGIN_URL = git@github.com:nyraghu/plastex.git
 GIT_REMOTE_UPSTREAM_URL = https://github.com/plastex/plastex.git
-GIT_BRANCH = html-notes
+GIT_BRANCHES = html-notes master
+GIT_CURRENT_BRANCH = $(shell git rev-parse --abbrev-ref HEAD)
 PYTHON_VERSION = 3.8.1
 PYTHON_VIRTUAL_ENVIRONMENT = ${PROJECT}_${PYTHON_VERSION}
 
+### ==================================================================
+### Default target
+### ==================================================================
+
 .DEFAULT_GOAL = all
 
-define PHONIES =
-all \
-git-checkout-master \
-python-create-virtual-environment \
-python-delete-virtual-environment \
-python-install-project
-endef
-
-.PHONY: ${PHONIES}
+.PHONY: all
 
 all:
 	@echo "This is a dummy default target; use one of the \
 specific targets."
+
+### ==================================================================
+### Targets for adding Git remotes
+### ==================================================================
 
 define upcase =
 $(shell echo $1 | tr a-z A-Z)
@@ -41,11 +49,12 @@ endef
 $(foreach remote,origin upstream,$(eval $(call \
 			GIT_REMOTE_ADD_template,${remote})))
 
-git-checkout-master:
-	git checkout master
+### ==================================================================
+### Targets for creating and checking out Git branches
+### ==================================================================
 
 define GIT_BRANCH_template =
-.PHONY: git-branch-create-$1 git-branch-checkout-$1 git-branch-push-$1
+.PHONY: git-branch-create-$1
 
 git-branch-create-$1:
 	@if git show-ref --verify --quiet refs/heads/$1 ; \
@@ -56,14 +65,35 @@ already exists" ; \
 			git branch $1 ; \
 	fi
 
+.PHONY: git-branch-checkout-$1
+
 git-branch-checkout-$1:
 	git checkout $1
 
-git-branch-push-$1:
-	 git push --set-upstream origin $1
+.PHONY: git-branch-merge-$1
+
+git-branch-merge-$1:
+	git checkout master
+	git merge $1
 endef
 
-$(eval $(call GIT_BRANCH_template,${GIT_BRANCH}))
+$(foreach branch,${GIT_BRANCHES},$(eval $(call \
+			GIT_BRANCH_template,${branch})))
+
+### ==================================================================
+### Target for pushing the current branch
+### ==================================================================
+
+.PHONY: git-branch-push-${GIT_CURRENT_BRANCH}
+
+git-branch-push-${GIT_CURRENT_BRANCH}:
+	 git push --set-upstream origin $1
+
+### ==================================================================
+### Targets for Python virtual environments
+### ==================================================================
+
+.PHONY: python-create-virtual-environment 
 
 python-create-virtual-environment:
 	@if pyenv virtualenvs | \
@@ -77,6 +107,8 @@ ${PYTHON_VIRTUAL_ENVIRONMENT} already exists" ; \
 			pyenv local ${PYTHON_VIRTUAL_ENVIRONMENT} ; \
 	fi
 
+.PHONY: python-delete-virtual-environment
+
 python-delete-virtual-environment:
 	@if pyenv virtualenvs | \
 	grep -q ${PYTHON_VIRTUAL_ENVIRONMENT} ; \
@@ -89,6 +121,14 @@ python-delete-virtual-environment:
 ${PYTHON_VIRTUAL_ENVIRONMENT} does not exist" ; \
 	fi
 
-python-install-project: python-create-virtual-environment
+### ==================================================================
+### Target for installing the project
+### ==================================================================
+
+.PHONY: python-install-${PROJECT}
+
+python-install-${PROJECT}: python-create-virtual-environment
 	pip install --requirement requirements.txt
 	pip install --editable .
+
+### End of file
