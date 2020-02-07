@@ -3,8 +3,7 @@ GIT_REMOTE_ORIGIN_URL = git@github.com:nyraghu/plastex.git
 GIT_REMOTE_UPSTREAM_URL = https://github.com/plastex/plastex.git
 GIT_BRANCH = html-notes
 PYTHON_VERSION = 3.8.1
-PYTHON_VIRTUAL_ENVIRONMENT = \
-	${PROJECT}_${GIT_BRANCH}_${PYTHON_VERSION}
+PYTHON_VIRTUAL_ENVIRONMENT = ${PROJECT}_${PYTHON_VERSION}
 
 .DEFAULT_GOAL = all
 
