@@ -34,7 +34,7 @@ git-remote-add-$1:
 		then \
 			echo "Git remote $1 already exists" ; \
 		else \
-			git remote add origin \
+			git remote add $1 \
 			${GIT_REMOTE_$(call upcase,$1)_URL} ; \
 	fi
 endef
