@@ -59,20 +59,19 @@ define GIT_BRANCH_template =
 git-branch-create-$1:
 	@if git show-ref --verify --quiet refs/heads/$1 ; \
 		then \
-			echo "Git branch ${GIT_BRANCH} \
-already exists" ; \
+			echo "Git branch $1 already exists" ; \
 		else \
 			git branch $1 ; \
 	fi
 
 .PHONY: git-branch-checkout-$1
 
-git-branch-checkout-$1:
+git-branch-checkout-$1: git-branch-create-$1
 	git checkout $1
 
 .PHONY: git-branch-merge-$1
 
-git-branch-merge-$1:
+git-branch-merge-$1: git-branch-create-$1
 	git checkout master
 	git merge $1
 endef
@@ -93,7 +92,7 @@ git-branch-push-${GIT_CURRENT_BRANCH}:
 ### Targets for Python virtual environments
 ### ==================================================================
 
-.PHONY: python-create-virtual-environment 
+.PHONY: python-create-virtual-environment
 
 python-create-virtual-environment:
 	@if pyenv virtualenvs | \
