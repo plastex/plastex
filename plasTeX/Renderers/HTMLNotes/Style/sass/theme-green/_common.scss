@@ -1,0 +1,15 @@
+$main-background-color: white;
+$main-foreground-color: black;
+
+$navigation-color: #669933;
+$title-color: rgb(0, 0, 0);
+
+$document-title-foreground-color: #ffffcc;
+$document-title-background-color: $navigation-color;
+$document-title-background-image: linear-gradient(to bottom,
+        lighten($document-title-background-color, 10%) 0%,
+        darken($document-title-background-color, 10%) 100%);
+
+$table-of-contents-background-color: lighten($navigation-color, 10%);
+$table-of-contents-foreground-color: white;
+$table-of-contents-text-shadow: 2px 2px 2px rgba(0, 0, 0, .8);

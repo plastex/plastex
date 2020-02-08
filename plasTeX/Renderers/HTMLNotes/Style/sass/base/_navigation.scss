@@ -1,0 +1,37 @@
+$height: 2.5rem;
+$-z-index: 200;
+
+nav.prev_up_next {
+    position: fixed;
+    z-index: $-z-index;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    height: $height;
+
+    a {
+        font-size: 120%;
+        margin: auto;
+        padding: (.2 * $height) (.4 * $height);
+        text-decoration: none;
+        color: white;
+        background-color: transparent;
+        text-shadow: 1px 2px 0 rgba(0, 0, 0, .8);
+    }
+
+    svg#toc-toggle {
+        font-size: 120%;
+        margin: auto;
+        min-width: 2rem;
+        text-decoration: none;
+        color: white;
+        background-color: transparent;
+        text-shadow: 1px 2px 0 rgba(0, 0, 0, .8);
+    }
+}
+
+nav.prev_up_next a.index {
+    font-size: small;
+    padding-left: .5rem;
+    padding-right: .5rem;
+}
