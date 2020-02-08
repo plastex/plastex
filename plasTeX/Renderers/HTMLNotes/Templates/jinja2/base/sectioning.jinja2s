@@ -1,0 +1,4 @@
+name: section
+{% set separator = '&nbsp;&nbsp;&nbsp;' %}
+<h1 id="{{ obj.id }}"><span class="section-number">{{ obj.ref }}</span>{{ separator }}{{ obj.title }}</h1>
+{{ obj }}

@@ -1,0 +1,97 @@
+name: TTelement
+\mathrel{:}
+
+name: TTsame
+\equiv{}
+
+name: TTuniverse
+{% set grade = obj.attributes['grade'] %}
+{% set grade_subscript = ('_{%s}' % grade) if grade else '' %}
+{{ '\\mathscr{U}%s' % grade_subscript }}
+
+name: TTpitype
+{% set index = obj.attributes['index'] %}
+{% set index_indicator = ('%s.' % index) if index else '' %}
+{{ '\\Pi{}%s\,' % index_indicator }}
+
+name: TTabstraction
+{% set index = obj.attributes['index'] %}
+{% set index_indicator = ('%s.' % index) if index else '' %}
+{{ '\\lambda{}%s\,' % index_indicator }}
+
+name: TTdomain
+{{ '\\operatorname{Dom}(%s)' % obj.attributes['function'] }}
+
+name: TTcodomain
+{{ '\\operatorname{Cod}(%s)' % obj.attributes['function'] }}
+
+name: TTidfunction
+{% set domain = obj.attributes['domain'] %}
+{% set domain_subscript = ('_{%s}' % domain) if domain else '' %}
+{{ '\\operatorname{id}%s' % domain_subscript }}
+
+name: TTsigmatype
+{% set index = obj.attributes['index'] %}
+{% set index_indicator = ('%s.' % index) if index else '' %}
+{{ '\\Sigma{}%s\,' % index_indicator }}
+
+name: TTpair
+{% set attributes = obj.attributes %}
+({{ attributes['first_component'] }}, {{ attributes['second_component'] }})
+
+name: TTproduct
+{% set attributes = obj.attributes %}
+{{ attributes['first_factor'] }} \times{} {{ attributes['second_factor'] }}
+
+name: TTfirstprojection
+\operatorname{pr}_{1}
+
+name: TTsecondprojection
+\operatorname{pr}_{2}
+
+name: TTemptytype
+\mathbf{0}
+
+name: TTunittype
+\mathbf{1}
+
+name: TTunittypeelement
+\star{}
+
+name: TTbooleantype
+\mathbf{B}
+
+name: TTbooleantrueelement
+\mathbf{t}
+
+name: TTbooleanfalseelement
+\mathbf{f}
+
+name: TTcoproduct
+{% set attributes = obj.attributes %}
+{{ attributes['first_component'] }} \sqcup{} {{ attributes['second_component'] }}
+
+name: TTfirstinjection
+\operatorname{i}_{1}
+
+name: TTsecondinjection
+\operatorname{i}_{2}
+
+name: TTnatural
+\mathbf{N}
+
+name: TTzeronatural
+\operatorname{0}
+
+name: TTsuccessor
+\operatorname{S}
+
+name: TTpathfamily
+{{ '\operatorname{Path}_{%s}' % obj.attributes['base'] }}
+
+name: TTpathtype
+{% set attributes = obj.attributes %}
+{{ attributes['start'] }} = {{ attributes['end'] }}
+
+name: TTidloop
+{{ '\epsilon_{%s}' % obj.attributes['base'] }}

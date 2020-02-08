@@ -1,0 +1,38 @@
+name: math
+<span class="math">\({{- obj | trim | escape_html }}\)</span>
+
+name: dotsc
+\dotsc{}
+
+name: equation*
+<span class="equationstar">\begin{equation*}{{ obj | trim | escape_html }}\end{equation*}</span>
+
+name: active::_
+{{ '_{%s}' % obj }}
+
+name: lambda
+\lambda{}
+
+name: eta
+\eta{}
+
+name: phi
+\phi{}
+
+name: to
+\to{}
+
+name: circ
+\circ{}
+
+name: sigma
+\sigma{}
+
+name: tau
+\tau{}
+
+name: psi
+\psi{}
+
+name: epsilon
+\epsilon{}
