@@ -4,36 +4,20 @@ import datetime
 import glob
 import os
 import re
-import sys
 
-from plasTeX import Base, Command
+from plasTeX import Base
 from plasTeX.Logging import getLogger
-from plasTeX.Renderers.PageTemplate import Renderer as \
-    PageTemplateRenderer
+from plasTeX.Renderers import PageTemplate
 
 log = getLogger()
-this_directory = os.path.dirname(__file__)
 
-
-def add_package_directory():
-    import plasTeX
-    plastex_directory = os.path.dirname(plasTeX.__file__)
-    del plasTeX
-    package_directory = os.path.join(plastex_directory,
-                                     'LocalPackages')
-    sys.path.append(package_directory)
-
-
-add_package_directory()
 
 try:
     import jinja2
 except ImportError:
-    jinja2 = None
-
-if not jinja2:
     log.error('Jinja2 unavailable,'
               ' HTMLNotes renderer cannot be used')
+
 
 try:
     from jinja2_ansible_filters import AnsibleCoreFiltersExtension
@@ -45,21 +29,16 @@ if not AnsibleCoreFiltersExtension:
               ' HTMLNotes renderer cannot be used')
 
 
-class SetTitle(Command):
-    args = 'self'
-
-    def invoke(self, tex):
-        super().invoke(tex)
-        self.ownerDocument.userdata['SetTitle'] = self
-
-
-Base.SetTitle = SetTitle
+PageTemplate.jinja2_extensions.add(AnsibleCoreFiltersExtension)
 
 
 def format_datetime(thing, input_format, output_format):
     datetime_object = datetime.datetime.strptime(str(thing),
                                                  input_format)
     return datetime.datetime.strftime(datetime_object, output_format)
+
+
+PageTemplate.jinja2_filters['format_datetime'] = format_datetime
 
 
 def escape_html(string):
@@ -69,26 +48,7 @@ def escape_html(string):
             .replace('>', '&gt;'))
 
 
-def jinja2_template(string, encoding='utf8'):
-    environment = jinja2.Environment(trim_blocks=True,
-                                     lstrip_blocks=True)
-    environment.add_extension(AnsibleCoreFiltersExtension)
-    environment.filters['format_datetime'] = format_datetime
-    environment.filters['escape_html'] = escape_html
-
-    def render_jinja2(obj, s=string):
-        template_variables = {
-            'here': obj,
-            'obj': obj,
-            'container': obj.parentNode,
-            'config': obj.ownerDocument.config,
-            'context': obj.ownerDocument.context,
-            'templates': obj.renderer
-        }
-        template = environment.from_string(s)
-        return template.render(template_variables)
-
-    return render_jinja2
+PageTemplate.jinja2_filters['escape_html'] = escape_html
 
 
 def file_name_from_label(node):
@@ -113,17 +73,13 @@ def file_name_from_label(node):
 Base.section.filenameoverride = property(file_name_from_label)
 
 
-class HTMLNotes(PageTemplateRenderer):
+class HTMLNotes(PageTemplate.Renderer):
     fileExtension = '.html'
     imageTypes = ['.svg', '.png', '.jpg', '.jpeg', '.gif']
     vectorImageTypes = ['.svg']
 
-    def __init__(self, *arguments, **keyword_arguments):
-        super().__init__(self, *arguments, **keyword_arguments)
-        super().registerEngine('jinja2', None, '.jinja2',
-                               jinja2_template)
-
     def loadTemplates(self, document):
+        this_directory = os.path.dirname(__file__)
         template_directory = os.path.join(this_directory,
                                           'Templates')
         directories = glob.glob('%s%s**%s' % (template_directory,
@@ -139,7 +95,7 @@ class HTMLNotes(PageTemplateRenderer):
 
         super().loadTemplates(document)
 
-        renderer_data = document.rendererdata['htmlNotes'] = dict()
+        renderer_data = document.rendererdata['htmlNotes'] = {}
         config = document.config
         build_directory = os.getcwd()
 

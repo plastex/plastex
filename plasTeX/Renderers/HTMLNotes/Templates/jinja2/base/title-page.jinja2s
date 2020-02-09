@@ -8,8 +8,8 @@ name: abstract
 name: maketitle
 {% set metadata = obj.ownerDocument.userdata %}
 <div class="title-page">
-{% if metadata.SetTitle %}
-<h2 class="SetTitle">{{ metadata.SetTitle }}</h2>
+{% if metadata['set-title'] %}
+<h2 class="set-title">{{ metadata['set-title'] }}</h2>
 {% endif %}
 <h1 class="title">{{ metadata.title }}</h1>
 {% if metadata.author %}

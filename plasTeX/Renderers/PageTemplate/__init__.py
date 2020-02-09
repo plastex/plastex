@@ -30,14 +30,25 @@ else:
         import ipdb as pdb
     except ImportError:
         import pdb
-        
+
     @contextfunction
     def debug(context):
         pdb.set_trace()
 
+
+    jinja2_extensions = set()
+    jinja2_filters = {}
+
+
     def jinja2template(s, encoding='utf8'):
         env = Environment(trim_blocks=True, lstrip_blocks=True)
         env.globals['debug'] = debug
+
+        for extension in jinja2_extensions:
+            env.add_extension(extension)
+
+        for filter_name, function in jinja2_filters.items():
+            env.filters[filter_name] = function
 
         def renderjinja2(obj, s=s):
             tvars = {'here':obj, 
