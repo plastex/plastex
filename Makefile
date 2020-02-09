@@ -74,6 +74,12 @@ git-branch-checkout-$1: git-branch-create-$1
 git-branch-merge-$1: git-branch-create-$1
 	git checkout master
 	git merge $1
+
+.PHONY: git-branch-push-$1
+
+git-branch-push-$1:
+	 git push --set-upstream origin $1
+
 endef
 
 $(foreach branch,${GIT_BRANCHES},$(eval $(call \
@@ -83,10 +89,10 @@ $(foreach branch,${GIT_BRANCHES},$(eval $(call \
 ### Target for pushing the current branch
 ### ==================================================================
 
-.PHONY: git-branch-push-${GIT_CURRENT_BRANCH}
+.PHONY: git-branch-push-current
 
-git-branch-push-${GIT_CURRENT_BRANCH}:
-	 git push --set-upstream origin $1
+git-branch-push-current:
+	 git push --set-upstream origin
 
 ### ==================================================================
 ### Target for checking Git ignored files
