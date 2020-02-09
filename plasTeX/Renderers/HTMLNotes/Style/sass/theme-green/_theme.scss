@@ -1,0 +1,74 @@
+@use 'common';
+
+body {
+    color: common.$main-foreground-color;
+    background-color: common.$main-background-color;
+}
+
+ul.breadcrumbs a {
+    color: darken(common.$navigation-color, 10%);
+    background-color: transparent;
+}
+
+.wrapper header {
+    background-image: common.$document-title-background-image;
+    color: common.$document-title-foreground-color;
+    background-color: transparent;
+}
+
+h1#doc_title {
+    color: common.$document-title-foreground-color;
+    background-color: transparent;
+}
+
+nav.prev_up_next {
+    background: linear-gradient(to bottom,
+            lighten(common.$navigation-color, 10%) 0%,
+            darken(common.$navigation-color, 10%) 100%);
+}
+
+nav.toc {
+    background-color: common.$table-of-contents-background-color;
+}
+
+.toc ul {
+    a {
+        color: common.$table-of-contents-foreground-color;
+        background-color: transparent;
+        text-shadow: common.$table-of-contents-text-shadow;
+    }
+}
+
+.toc ul {
+    li {
+        background-color: common.$table-of-contents-background-color;
+        color: inherit;
+    }
+}
+
+.toc ul {
+    li.current {
+        background-color: lighten(common.$table-of-contents-background-color, 10%);
+        color: inherit;
+    }
+}
+
+svg.expand-toc {
+    color: common.$table-of-contents-foreground-color;
+    background-color: transparent;
+}
+
+svg.close-toc {
+    color: common.$table-of-contents-foreground-color;
+    background-color: Transparent;
+}
+
+h1 {
+    color: common.$title-color;
+    background-color: transparent;
+}
+
+h2 {
+    color: common.$title-color;
+    background-color: transparent;
+}

@@ -1,0 +1,25 @@
+@use 'navigation';
+@use 'table-of-contents';
+
+body {
+    margin: 0;
+    font-family: "Domine", "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    display: flex;
+    flex-direction: row;
+}
+
+div.wrapper {
+    width: 100%;
+}
+
+div.with-toc {
+    @media (min-width: table-of-contents.$break) {
+        margin-right: table-of-contents.$width;
+    }
+}
+
+div.content {
+    margin: 0 auto;
+    max-width: 35rem;
+    padding: 1rem 1rem navigation.$height 1rem;
+}

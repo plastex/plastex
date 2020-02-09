@@ -1,0 +1,34 @@
+@use 'table-of-contents';
+
+$-doc-title-font-size: 1.5rem;
+$-z-index: 400;
+
+.wrapper header {
+    z-index: $-z-index;
+    text-shadow: 1px 2px 0 rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: .5rem;
+    margin: 0 auto;
+    text-align: center;
+    vertical-align: middle;
+    top: 0;
+    left: 0;
+}
+
+svg#toc-toggle {
+    font-size: .75 * $-doc-title-font-size;
+    margin-right: auto;
+    margin-left: .5 * $-doc-title-font-size;
+
+    @media (min-width: table-of-contents.$break) {
+        display: none;
+    }
+}
+
+h1#doc_title {
+    font-size: $-doc-title-font-size;
+    margin: 0;
+}

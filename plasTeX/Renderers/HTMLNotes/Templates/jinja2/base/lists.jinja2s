@@ -1,0 +1,6 @@
+name: enumerate
+<ol class="enumerate">
+{% for item in obj %}
+<li>{{ item }}</li>
+{% endfor %}
+</ol>

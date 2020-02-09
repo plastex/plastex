@@ -1,0 +1,25 @@
+name: abstract
+<div class="abstract">
+{% for par in obj %}
+<p>{{ par | trim }}</p>
+{% endfor %}
+</div>
+
+name: maketitle
+{% set metadata = obj.ownerDocument.userdata %}
+<div class="title-page">
+{% if metadata.SetTitle %}
+<h2 class="SetTitle">{{ metadata.SetTitle }}</h2>
+{% endif %}
+<h1 class="title">{{ metadata.title }}</h1>
+{% if metadata.author %}
+<div class="authors">
+{% for author in metadata.author %}
+<p class="author">{{ author | regex_replace('\s+', '&nbsp;') }}</p>
+{% endfor %}
+</div>
+{% endif %}
+{% if metadata.date %}
+<p class="date">{{ metadata.date | format_datetime('%Y-%m-%d', '%d %B, %Y') }}</p>
+{% endif %}
+</div>

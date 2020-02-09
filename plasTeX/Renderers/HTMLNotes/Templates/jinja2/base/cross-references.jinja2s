@@ -1,0 +1,4 @@
+name: label
+
+name: Cref
+<a href="{{ obj.idref.label.url }}">{{ obj.idref.label.nodeName | title }}&nbsp;{{ obj.idref.label.ref }}</a>

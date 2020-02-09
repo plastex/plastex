@@ -89,6 +89,15 @@ git-branch-push-${GIT_CURRENT_BRANCH}:
 	 git push --set-upstream origin $1
 
 ### ==================================================================
+### Target for checking Git ignored files
+### ==================================================================
+
+.PHONY: git-check-ignore
+
+git-check-ignore:
+	git check-ignore -v $$(find * -type f)
+
+### ==================================================================
 ### Targets for Python virtual environments
 ### ==================================================================
 
