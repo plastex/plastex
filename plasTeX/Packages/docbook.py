@@ -1,4 +1,6 @@
-from plasTeX import Base, Command
+# DocBook elements
+
+from plasTeX import Command
 
 
 class DBsettitle(Command):
@@ -11,3 +13,6 @@ class DBsettitle(Command):
 
 class DBfirstterm(Command):
     args = 'self'
+
+# End of file
+
