@@ -1,4 +1,4 @@
-# Elements from the DocBook schema
+# Cross references between nodes
 
 from plasTeX import Command
 
