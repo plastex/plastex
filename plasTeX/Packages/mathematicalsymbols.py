@@ -61,7 +61,7 @@ arrow_symbols = [
     'mapsto', 'longmapsto', 'nearrow', 'hookleftarrow',
     'hookrightarrow', 'searrow', 'leftharpoonup', 'rightharpoonup',
     'swarrow', 'leftharpoondown', 'rightharpoondown', 'nwarrow',
-    'rightleftharpoons', 'leadsto'
+    'rightleftharpoons', 'leadsto', 'to'
 ]
 
 mathematical_symbols_with_no_arguments.extend(arrow_symbols)
