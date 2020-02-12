@@ -1,3 +1,5 @@
+# Type theory macros
+
 from plasTeX import Command
 
 
@@ -128,3 +130,5 @@ class TTpathtype(Command):
 class TTidloop(Command):
     mathMode = True
     args = 'base'
+
+# End of file
