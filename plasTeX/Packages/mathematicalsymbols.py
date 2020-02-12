@@ -1,12 +1,6 @@
 # Mathematical symbols from maths-symbols.tex
 
 from plasTeX import Command
-from plasTeX.Base.LaTeX.Math import MathEnvironment
-
-
-class EquationStar(MathEnvironment):
-    macroName = 'equation*'
-    blockType = False
 
 
 mathematical_symbols_with_no_arguments = []
