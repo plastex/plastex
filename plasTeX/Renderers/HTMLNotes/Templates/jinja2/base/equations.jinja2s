@@ -1,0 +1,2 @@
+name: equation*
+<span class="equationstar">\begin{equation*}{{ obj | trim | escape_html }}\end{equation*}</span>
