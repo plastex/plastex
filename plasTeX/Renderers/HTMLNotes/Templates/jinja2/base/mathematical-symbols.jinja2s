@@ -1,0 +1,119 @@
+name: alpha theta tau beta vartheta pi upsilon \
+      gamma iota varpi phi delta kappa rho \
+      varphi epsilon lambda varrho chi varepsilon \
+      mu sigma psi zeta nu varsigma omega eta \
+      xi Gamma Lambda Sigma Psi Delta Xi \
+      Upsilon Omega Theta Pi Phi \
+      pm cap diamond oplus mp cup bigtriangleup \
+      ominus times uplus bigtriangledown otimes div \
+      sqcap triangleleft oslash ast sqcup \
+      triangleright odot star vee lhd bigcirc circ \
+      wedge rhd dagger bullet setminus unlhd \
+      ddagger cdot wr unrhd amalg \
+      leq geq equiv models prec succ \
+      sim perp preceq succeq simeq mid ll gg \
+      asymp parallel subset supset approx bowtie \
+      subseteq supseteq cong Join sqsubset sqsupset \
+      neq smile sqsubseteq sqsupseteq doteq frown \
+      in ni propto vdash dashv \
+      colon ldotp cdotp \
+      leftarrow longleftarrow uparrow Leftarrow \
+      Longleftarrow Uparrow rightarrow longrightarrow \
+      downarrow Rightarrow Longrightarrow Downarrow \
+      leftrightarrow longleftrightarrow updownarrow \
+      Leftrightarrow Longleftrightarrow Updownarrow \
+      mapsto longmapsto nearrow hookleftarrow \
+      hookrightarrow searrow leftharpoonup rightharpoonup \
+      swarrow leftharpoondown rightharpoondown nwarrow \
+      rightleftharpoons leadsto to \
+      ldots cdots vdots ddots aleph \
+      prime forall infty hbar emptyset exists Box \
+      imath nabla neg Diamond jmath surd flat \
+      triangle ell top natural clubsuit wp bot \
+      sharp diamondsuit Re backslash heartsuit Im \
+      angle partial spadesuit mho dotsc dotsb dotsm \
+      dotsi dotso \
+      sum bigcap bigodot prod \
+      bigcup bigotimes coprod bigsqcup bigoplus int \
+      bigvee biguplus oint bigwedge \
+      arccos cos csc exp ker limsup \
+      min sinh arcsin cosh deg gcd lg ln Pr \
+      sup arctan cot det hom lim log sec tan \
+      arg coth dim inf liminf max sin tanh \
+      uparrow Uparrow downarrow Downarrow updownarrow \
+      Updownarrow lfloor rfloor lceil rceil langle \
+      rangle backslash \
+      rmoustache lmoustache rgroup lgroup arrowvert \
+      Arrowvert bracevert \
+      ulcorner urcorner llcorner lrcorner \
+      dashrightarrow dashleftarrow leftleftarrows \
+      leftrightarrows Lleftarrow twoheadleftarrow \
+      leftarrowtail looparrowleft leftrightharpoons \
+      curvearrowleft circlearrowleft Lsh upuparrows \
+      upharpoonleft downharpoonleft multimap \
+      leftrightsquigarrow rightrightarrows rightleftarrows \
+      rightrightarrows rightleftarrows twoheadrightarrow \
+      rightarrowtail looparrowright rightleftharpoons \
+      curvearrowright circlearrowright Rsh downdownarrows \
+      upharpoonright downharpoonright rightsquigarrow \
+      nleftarrow nrightarrow nLeftarrow nRightarrow \
+      nleftrightarrow nLeftrightarrow \
+      digamma varkappa \
+      beth daleth gimel \
+      hbar hslash vartriangle triangledown square \
+      lozenge circledS angle measuredangle nexists mho \
+      Finv Game Bbbk backprime varnothing \
+      blacktriangle blacktriangledown blacksquare \
+      blacklozenge bigstar sphericalangle complement eth \
+      diagup diagdown \
+      dotplus smallsetminus Cap Cup barwedge veebar \
+      doublebarwedge boxminus boxtimes boxdot boxplus \
+      divideontimes ltimes rtimes leftthreetimes \
+      rightthreetimes curlywedge curlyvee circleddash \
+      circledast circledcirc centerdot intercal \
+      leqq leqslant eqslantless lesssim lessapprox \
+      approxeq lessdot lll lessgtr lesseqgtr \
+      lesseqqgtr doteqdot risingdotseq fallingdotseq \
+      backsim backsimeq subseteqq Subset sqsubset \
+      preccurlyeq curlyeqprec precsim precapprox \
+      vartriangleleft trianglelefteq vDash Vvdash \
+      smallsmile smallfrown bumpeq Bumpeq geqq \
+      geqslant eqslantgtr gtrsim gtrapprox gtrdot ggg \
+      gtrless gtreqless gtreqqless eqcirc circeq \
+      triangleq thicksim thickapprox supseteqq Supset \
+      sqsupset succcurlyeq curlyeqsucc succsim succapprox \
+      vartriangleright trianglerighteq Vdash shortmid \
+      shortparallel between pitchfork varpropto \
+      blacktriangleleft therefore backepsilon \
+      blacktriangleright because \
+      nless nleq nleqslant nleqq lneq lneqq \
+      lvertneqq lnsim lnapprox nprec npreceq precnsim \
+      precnapprox nsim nshortmid nmid nvdash nvDash \
+      ntriangleleft ntrianglelefteq nsubseteq subsetneq \
+      varsubsetneq subsetneqq varsubsetneqq ngtr ngeq \
+      ngeqslant ngeqq gneq gneqq gvertneqq gnsim \
+      gnapprox nsucc nsucceq nsucceq succnsim \
+      succnapprox ncong nshortparallel nparallel nvDash \
+      nVDash ntriangleright ntrianglerighteq nsupseteq \
+      nsupseteqq supsetneq varsupsetneq supsetneqq \
+      varsupsetneqq
+{{ '\\%s{}' % obj.nodeName }}
+
+name: hat acute bar dot breve check grave vec \
+      ddot tilde \
+      widetilde widehat overleftarrow overrightarrow \
+      overline underline overbrace underbrace \
+      mathrm mathit mathnormal mathcal mathscr \
+      mathfrak mathbb
+{{ '\\%s{%s}' % (obj.nodeName, obj.attributes['argument']) }}
+
+name: sqrt
+{% set degree = obj.attributes['degree'] %}
+{% set operand = obj.attributes['operand'] %}
+{% set degree_argument = ('[%s]' % degree) if degree else '' %}
+{{ '\\sqrt%s{%s}' %(degree_argument, operand) }}
+
+name: frac
+{% set numerator = obj.attributes['numerator'] %}
+{% set denominator = obj.attributes['denominator'] %}
+{{ '\\frac{%s}{%s}' %(numerator, denominator) }}

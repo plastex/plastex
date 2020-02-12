@@ -1,0 +1,5 @@
+name: math
+<span class="math">\({{- obj | trim | escape_html }}\)</span>
+
+name: active::_
+{{ '_{%s}' % obj }}

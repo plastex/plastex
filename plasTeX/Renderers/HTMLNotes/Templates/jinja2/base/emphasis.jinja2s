@@ -1,2 +1,2 @@
-name: emph DBfirstterm
+name: emph
 <em class="{{ obj.nodeName }}">{{ obj }}</em>
