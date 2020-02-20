@@ -89,14 +89,14 @@ $(foreach branch,$(filter-out \
 	$(call GIT_CHECKOUT_template,${branch})))
 
 ### ==================================================================
-### Target for git push
+### Targets for git push
 ### ==================================================================
 
 define GIT_PUSH_template =
 .PHONY: git-push-$1
 
 git-push-$1: git-branch-$1
-	 git push --set-upstream origin $1
+	git push --set-upstream origin $1
 
 endef
 
@@ -106,7 +106,29 @@ $(foreach branch,${GIT_BRANCHES},$(eval $(call \
 .PHONY: git-push-current-branch
 
 git-push-current-branch:
-	 git push --set-upstream origin
+	git push --set-upstream origin
+
+### ==================================================================
+### Targets for git pull
+### ==================================================================
+
+define GIT_PULL_template =
+.PHONY: git-pull-$1
+
+git-pull-$1: git-checkout-$1
+	git branch --set-upstream-to=origin
+	git pull
+	git checkout ${GIT_CURRENT_BRANCH}
+endef
+
+$(foreach branch,${GIT_BRANCHES},$(eval $(call \
+			GIT_PULL_template,${branch})))
+
+.PHONY: git-pull-current-branch
+
+git-pull-current-branch:
+	git branch --set-upstream-to=origin
+	git push --set-upstream origin
 
 ### ==================================================================
 ### Targets for git merge
