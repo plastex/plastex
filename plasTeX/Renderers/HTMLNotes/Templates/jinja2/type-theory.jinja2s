@@ -1,97 +1,97 @@
-name: TTelement
+name: typetheory_element
 \mathrel{:}
 
-name: TTsame
+name: typetheory_same
 \equiv{}
 
-name: TTuniverse
+name: typetheory_universe
 {% set grade = obj.attributes['grade'] %}
 {% set grade_subscript = ('_{%s}' % grade) if grade else '' %}
 {{ '\\mathscr{U}%s' % grade_subscript }}
 
-name: TTpitype
+name: typetheory_piType
 {% set index = obj.attributes['index'] %}
 {% set index_indicator = ('%s.' % index) if index else '' %}
 {{ '\\Pi{}%s\,' % index_indicator }}
 
-name: TTabstraction
+name: typetheory_abstraction
 {% set index = obj.attributes['index'] %}
 {% set index_indicator = ('%s.' % index) if index else '' %}
 {{ '\\lambda{}%s\,' % index_indicator }}
 
-name: TTdomain
+name: typetheory_domain
 {{ '\\operatorname{Dom}(%s)' % obj.attributes['function'] }}
 
-name: TTcodomain
+name: typetheory_codomain
 {{ '\\operatorname{Cod}(%s)' % obj.attributes['function'] }}
 
-name: TTidfunction
+name: typetheory_idFunction
 {% set domain = obj.attributes['domain'] %}
 {% set domain_subscript = ('_{%s}' % domain) if domain else '' %}
 {{ '\\operatorname{id}%s' % domain_subscript }}
 
-name: TTsigmatype
+name: typetheory_sigmaType
 {% set index = obj.attributes['index'] %}
 {% set index_indicator = ('%s.' % index) if index else '' %}
 {{ '\\Sigma{}%s\,' % index_indicator }}
 
-name: TTpair
+name: typetheory_pair
 {% set attributes = obj.attributes %}
 ({{ attributes['first_component'] }}, {{ attributes['second_component'] }})
 
-name: TTproduct
+name: typetheory_product
 {% set attributes = obj.attributes %}
 {{ attributes['first_factor'] }} \times{} {{ attributes['second_factor'] }}
 
-name: TTfirstprojection
+name: typetheory_firstProjection
 \operatorname{pr}_{1}
 
-name: TTsecondprojection
+name: typetheory_secondProjection
 \operatorname{pr}_{2}
 
-name: TTemptytype
+name: typetheory_emptyType
 \mathbf{0}
 
-name: TTunittype
+name: typetheory_unitType
 \mathbf{1}
 
-name: TTunittypeelement
+name: typetheory_unitTypeElement
 \star{}
 
-name: TTbooleantype
+name: typetheory_booleanType
 \mathbf{B}
 
-name: TTbooleantrueelement
+name: typetheory_booleanTrueElement
 \mathbf{t}
 
-name: TTbooleanfalseelement
+name: typetheory_booleanFalseElement
 \mathbf{f}
 
-name: TTcoproduct
+name: typetheory_coproduct
 {% set attributes = obj.attributes %}
 {{ attributes['first_component'] }} \sqcup{} {{ attributes['second_component'] }}
 
-name: TTfirstinjection
+name: typetheory_firstInjection
 \operatorname{i}_{1}
 
-name: TTsecondinjection
+name: typetheory_secondInjection
 \operatorname{i}_{2}
 
-name: TTnatural
+name: typetheory_natural
 \mathbf{N}
 
-name: TTzeronatural
+name: typetheory_zeroNatural
 \operatorname{0}
 
-name: TTsuccessor
+name: typetheory_successor
 \operatorname{S}
 
-name: TTpathfamily
+name: typetheory_pathFamily
 {{ '\operatorname{Path}_{%s}' % obj.attributes['base'] }}
 
-name: TTpathtype
+name: typetheory_pathType
 {% set attributes = obj.attributes %}
 {{ attributes['start'] }} = {{ attributes['end'] }}
 
-name: TTidloop
+name: typetheory_idLoop
 {{ '\epsilon_{%s}' % obj.attributes['base'] }}

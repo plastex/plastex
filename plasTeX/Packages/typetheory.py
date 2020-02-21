@@ -2,132 +2,138 @@
 
 from plasTeX import Command
 
+package_prefix_exports = [
+    'abstraction', 'booleanFalseElement', 'booleanTrueElement', 
+    'booleanType', 'codomain', 'coproduct', 'domain', 'element', 
+    'emptyType', 'firstInjection', 'firstProjection', 'idFunction',
+    'idLoop', 'natural', 'pair', 'pathFamily', 'pathType', 'piType',
+    'product', 'same', 'secondInjection', 'secondProjection',
+    'sigmaType', 'successor', 'unitType', 'unitTypeElement',
+    'universe', 'zeroNatural' 
+]
 
-class TTelement(Command):
+
+class typetheory_element(Command):
     mathMode = True
 
 
-class TTsame(Command):
+class typetheory_same(Command):
     mathMode = True
 
 
-class TTuniverse(Command):
+class typetheory_universe(Command):
     args = '[ grade ]'
     mathMode = True
 
 
-class TTpitype(Command):
+class typetheory_piType(Command):
     args = '[ index ]'
     mathMode = True
 
 
-class TTabstraction(Command):
+class typetheory_abstraction(Command):
     args = '[ index ]'
     mathMode = True
 
 
-class TTdomain(Command):
+class typetheory_domain(Command):
     args = 'function'
     mathMode = True
 
 
-class TTcodomain(Command):
+class typetheory_codomain(Command):
     args = 'function'
     mathMode = True
 
 
-class TTidfunction(Command):
+class typetheory_idFunction(Command):
     args = '[ domain ]'
     mathMode = True
 
 
-class TTsigmatype(Command):
+class typetheory_sigmaType(Command):
     args = '[ index ]'
     mathMode = True
 
 
-class TTpair(Command):
+class typetheory_pair(Command):
     args = 'first_component second_component'
     mathMode = True
 
 
-class TTproduct(Command):
+class typetheory_product(Command):
     args = 'first_factor second_factor'
     mathMode = True
 
 
-class TTfirstprojection(Command):
+class typetheory_firstProjection(Command):
     mathMode = True
 
 
-class TTsecondprojection(Command):
+class typetheory_secondProjection(Command):
     mathMode = True
 
 
-class TTemptytype(Command):
+class typetheory_emptyType(Command):
     mathMode = True
 
 
-class TTunittype(Command):
+class typetheory_unitType(Command):
     mathMode = True
 
 
-class TTunittypeelement(Command):
+class typetheory_unitTypeElement(Command):
     mathMode = True
 
 
-class TTbooleantype(Command):
+class typetheory_booleanType(Command):
     mathMode = True
 
 
-class TTbooleantrueelement(Command):
+class typetheory_booleanTrueElement(Command):
     mathMode = True
 
 
-class TTbooleanfalseelement(Command):
+class typetheory_booleanFalseElement(Command):
     mathMode = True
 
 
-class TTcoproduct(Command):
+class typetheory_coproduct(Command):
     args = 'first_component second_component'
     mathMode = True
 
 
-class TTfirstinjection(Command):
+class typetheory_firstInjection(Command):
     mathMode = True
 
 
-class TTsecondinjection(Command):
+class typetheory_secondInjection(Command):
     mathMode = True
 
 
-class TTnatural(Command):
+class typetheory_natural(Command):
     mathMode = True
 
 
-class TTbooleantype(Command):
+class typetheory_zeroNatural(Command):
     mathMode = True
 
 
-class TTzeronatural(Command):
+class typetheory_successor(Command):
     mathMode = True
 
 
-class TTsuccessor(Command):
-    mathMode = True
-
-
-class TTpathfamily(Command):
+class typetheory_pathFamily(Command):
     mathMode = True
     args = 'base'
 
 
-class TTpathtype(Command):
+class typetheory_pathType(Command):
     mathMode = True
     args = 'start end'
 
 
-class TTidloop(Command):
+class typetheory_idLoop(Command):
     mathMode = True
     args = 'base'
 
