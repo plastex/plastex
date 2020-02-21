@@ -128,7 +128,7 @@ $(foreach branch,${GIT_BRANCHES},$(eval $(call \
 
 git-pull-current-branch:
 	git branch --set-upstream-to=origin
-	git push --set-upstream origin
+	git pull
 
 ### ==================================================================
 ### Targets for git merge
