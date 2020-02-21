@@ -116,7 +116,7 @@ define GIT_PULL_template =
 .PHONY: git-pull-$1
 
 git-pull-$1: git-checkout-$1
-	git branch --set-upstream-to=origin
+	git branch --set-upstream-to=origin/$1
 	git pull
 	git checkout ${GIT_CURRENT_BRANCH}
 endef
@@ -127,7 +127,7 @@ $(foreach branch,${GIT_BRANCHES},$(eval $(call \
 .PHONY: git-pull-current-branch
 
 git-pull-current-branch:
-	git branch --set-upstream-to=origin
+	git branch --set-upstream-to=origin/${GIT_CURRENT_BRANCH}
 	git pull
 
 ### ==================================================================
