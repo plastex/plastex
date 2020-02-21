@@ -2,16 +2,10 @@
 
 from plasTeX import Command
 
-
-class DBsettitle(Command):
-    args = 'self'
-
-    def invoke(self, tex):
-        super().invoke(tex)
-        self.ownerDocument.userdata['set-title'] = self
+package_prefix_exports = ['firstterm']
 
 
-class DBfirstterm(Command):
+class docbook_firstterm(Command):
     args = 'self'
 
 # End of file

@@ -1,2 +1,2 @@
-name: DBfirstterm
-<em class="{{ obj.nodeName }}">{{ obj }}</em>
+name: docbook_firstterm
+<em class="{{ obj.templateName }}">{{ obj }}</em>
