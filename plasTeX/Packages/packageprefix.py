@@ -22,11 +22,13 @@ class PackagePrefixAdder(Command):
             if exports is not None:
                 for export in exports:
                     copy_name = prefix + export
-                    main_name = 'Main_%s_%s' % (package, export)
+                    main_name = '%s_%s' % (package, export)
                     main_class = getattr(module, main_name, None)
                     if main_class is not None:
                         copy_class = type(
-                            copy_name, (main_class,), {}
+                            copy_name,
+                            (main_class,),
+                            {'templateName': main_name}
                         )
                         self.ownerDocument.context.addGlobal(
                             copy_name, copy_class
