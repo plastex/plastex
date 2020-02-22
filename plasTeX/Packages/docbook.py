@@ -9,4 +9,3 @@ class docbook_firstTerm(Command):
     args = 'self'
 
 # End of file
-
