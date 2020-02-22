@@ -1,2 +1,2 @@
-name: docbook_firstterm
+name: docbook_firstTerm
 <em class="{{ obj.templateName }}">{{ obj }}</em>

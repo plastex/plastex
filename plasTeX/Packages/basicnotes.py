@@ -5,11 +5,11 @@ from plasTeX.Packages.crossreferences import *
 from plasTeX.Packages.generalmathematics import *
 
 package_prefix_exports = [
-    'author', 'date', 'maketitle', 'settitle', 'title', 'titleabbrev'
+    'author', 'date', 'makeTitle', 'setTitle', 'shortTitle', 'title'
 ]
 
 
-class basicnotes_settitle(Command):
+class basicnotes_setTitle(Command):
     args = 'self'
 
     def invoke(self, tex):
@@ -26,7 +26,7 @@ class basicnotes_title(Command):
             self.ownerDocument.userdata['title'] = self
 
 
-class basicnotes_titleabbrev(Command):
+class basicnotes_shortTitle(Command):
     pass
 
 
@@ -49,7 +49,7 @@ class basicnotes_date(Command):
         self.ownerDocument.userdata['date'] = self
 
 
-class basicnotes_maketitle(Command):
+class basicnotes_makeTitle(Command):
     blockType = True
 
 

@@ -2,10 +2,10 @@
 
 from plasTeX import Command
 
-package_prefix_exports = ['firstterm']
+package_prefix_exports = ['firstTerm']
 
 
-class docbook_firstterm(Command):
+class docbook_firstTerm(Command):
     args = 'self'
 
 # End of file

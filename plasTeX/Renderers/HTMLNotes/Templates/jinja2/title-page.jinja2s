@@ -5,10 +5,10 @@ name: abstract
 {% endfor %}
 </div>
 
-name: basicnotes_author basicnotes_date basicnotes_settitle \
-      basicnotes_title basicnotes_titleabbrev
+name: basicnotes_author basicnotes_date basicnotes_setTitle \
+      basicnotes_shortTitle basicnotes_title
 
-name: basicnotes_maketitle
+name: basicnotes_makeTitle
 {% set metadata = obj.ownerDocument.userdata %}
 <div class="title-page">
 {% if metadata['set-title'] %}
