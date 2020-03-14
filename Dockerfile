@@ -1,17 +1,42 @@
 ### Dockerfile for fork of plasTeX project
 
-FROM node:13-buster-slim AS css-generation-stage
+ARG PYTHON_IMAGE_TAG
 
-RUN which npm
+FROM python:${PYTHON_IMAGE_TAG} as base
 
-WORKDIR /usr/local/plastex
+ARG NODE_JS_MAJOR_VERSION
 
-COPY plasTeX/Renderers/HTMLNotes/Style/install-prerequisites.sh .
+RUN DEBIAN_FRONTEND=noninteractive \
+    apt-get --quiet=2 update \
+    && apt-get --no-install-recommends --option="DPkg::Use-Pty=0" \
+               --quiet=2 install curl gosu make \
+    && { curl -sL https://deb.nodesource.com/setup_${NODE_JS_MAJOR_VERSION}.x \
+             | bash - ; } \
+    && apt-get --no-install-recommends --option="DPkg::Use-Pty=0" \
+               --quiet=2 install nodejs \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN /bin/sh install-prerequisites.sh
+COPY requirements.txt /var/cache/plastex/
 
-COPY plasTeX/Renderers/HTMLNotes/Style .
+ENV PYTHONDONTWRITEBYTECODE=1
 
-RUN /bin/sh generate-css.sh
+RUN pip install --requirement /var/cache/plastex/requirements.txt \
+    && npm install -g sass
+
+FROM base as development
+
+COPY docker/entry-point.sh /usr/local/src/docker/
+
+ENTRYPOINT ["/bin/sh", "/usr/local/src/docker/entry-point.sh"]
+
+FROM base as application
+
+COPY . /usr/local/src/plastex
+
+RUN make \
+    -C /usr/local/src/plastex/plasTeX/Renderers/HTMLNotes/Style \
+    install \
+    && pip install /usr/local/src/plastex \
+    && rm -r /usr/local/src/plastex
 
 ### End of file
