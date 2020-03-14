@@ -1,6 +1,6 @@
 ### Build a Docker image, and run Bash in a container of that image.
 
-## This shell script is for building and running Docker images for
+## This is a shell script for building and running Docker images for
 ## developing and running the plastex package.
 ##
 ## Usage: This script should be invoked from the main directory of the
