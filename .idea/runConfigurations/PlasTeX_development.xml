@@ -1,0 +1,36 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="PlasTeX development" type="docker-deploy" factoryName="dockerfile" singleton="false" server-name="Docker">
+    <deployment type="dockerfile">
+      <settings>
+        <option name="buildArgs">
+          <list>
+            <DockerEnvVarImpl>
+              <option name="name" value="PYTHON_IMAGE_TAG" />
+              <option name="value" value="3.8.2-slim-buster" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="NODE_JS_MAJOR_VERSION" />
+              <option name="value" value="13" />
+            </DockerEnvVarImpl>
+          </list>
+        </option>
+        <option name="buildCliOptions" value="--target=development" />
+        <option name="command" value="" />
+        <option name="containerName" value="plastex-development" />
+        <option name="entrypoint" value="" />
+        <option name="imageTag" value="nyraghu/plastex-development:0.1.0-python-3.8.2" />
+        <option name="commandLineOptions" value="-e &quot;DOCKERUID=1000&quot;" />
+        <option name="sourceFilePath" value="Dockerfile" />
+        <option name="volumeBindings">
+          <list>
+            <DockerVolumeBindingImpl>
+              <option name="containerPath" value="$PROJECT_DIR$/../../../docker/plastex" />
+              <option name="hostPath" value="$PROJECT_DIR$" />
+            </DockerVolumeBindingImpl>
+          </list>
+        </option>
+      </settings>
+    </deployment>
+    <method v="2" />
+  </configuration>
+</component>
