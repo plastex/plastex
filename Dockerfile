@@ -40,3 +40,7 @@ RUN make \
     && rm -r /usr/local/src/plastex
 
 ### End of file
+
+# Local Variables:
+# mode: sh
+# End:
