@@ -1,0 +1,14 @@
+#!/bin/sh
+
+target="$(echo "${DOCKER_REPO}" | cut -d '-' -f 2)"
+python_version="$(echo "${DOCKER_TAG}" | cut -d '-' -f 3)"
+python_image_type="slim-buster"
+python_image_tag="${python_version}-${python_image_type}"
+node_js_major_version="13"
+
+docker build \
+       --build-arg="PYTHON_IMAGE_TAG=${python_image_tag}" \
+       --build-arg="NODE_JS_MAJOR_VERSION=${node_js_major_version}" \
+       --tag=${IMAGE_NAME} --target=${target} .
+
+exit 0
