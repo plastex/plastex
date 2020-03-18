@@ -1,14 +1,22 @@
 #!/bin/sh
 
-target="$(echo "${DOCKER_REPO}" | cut -d '-' -f 2)"
-python_version="$(echo "${DOCKER_TAG}" | cut -d '-' -f 3)"
+image_version="0.1.0"
+python_version="3.8.2"
+node_js_major_version="13"
+
+docker_id="$(echo "${DOCKER_REPO}" | rev | cut -d '/' -f 2 | rev)"
+repository="$(echo "${DOCKER_REPO}" | rev | cut -d '/' -f 1 | rev)"
+
 python_image_type="slim-buster"
 python_image_tag="${python_version}-${python_image_type}"
-node_js_major_version="13"
+tag="${image_version}-python-${python_version}"
+image="${docker_id}/${repository}:${tag}"
+
+target="$(echo $DOCKER_REPO | rev | cut -d '-' -f 1 | rev)"
 
 docker build \
        --build-arg="PYTHON_IMAGE_TAG=${python_image_tag}" \
        --build-arg="NODE_JS_MAJOR_VERSION=${node_js_major_version}" \
-       --tag=${IMAGE_NAME} --target=${target} .
+       --tag=${image} --target=${target} .
 
 exit 0
