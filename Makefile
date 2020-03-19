@@ -106,7 +106,7 @@ $(foreach branch,${GIT_BRANCHES},$(eval $(call \
 .PHONY: git-push-current-branch
 
 git-push-current-branch:
-	git push --set-upstream origin
+	git push --set-upstream origin ${GIT_CURRENT_BRANCH}
 
 ### ==================================================================
 ### Targets for git pull
@@ -166,45 +166,33 @@ git-check-ignore:
 	git check-ignore -v $$(find * -type f)
 
 ### ==================================================================
-### Targets for Python virtual environments
+### Targets for building Docker images
 ### ==================================================================
 
-.PHONY: python-create-virtual-environment
+DOCKER_BUILD_HOOK = hooks/build
 
-python-create-virtual-environment:
-	@if pyenv virtualenvs | \
-	grep -q ${PYTHON_VIRTUAL_ENVIRONMENT} ; \
-		then \
-			echo "Python virtual environment \
-${PYTHON_VIRTUAL_ENVIRONMENT} already exists" ; \
-		else \
-			pyenv virtualenv ${PYTHON_VERSION} \
-				${PYTHON_VIRTUAL_ENVIRONMENT} ; \
-			pyenv local ${PYTHON_VIRTUAL_ENVIRONMENT} ; \
-	fi
+.PHONY: docker-build-development docker-build-application
 
-.PHONY: python-delete-virtual-environment
+docker-build-development:
+	DOCKER_REPO=index.docker.io/nyraghu/plastex-development \
+		DOCKER_TAG=latest ${DOCKER_BUILD_HOOK}
 
-python-delete-virtual-environment:
-	@if pyenv virtualenvs | \
-	grep -q ${PYTHON_VIRTUAL_ENVIRONMENT} ; \
-		then \
-			pyenv uninstall \
-				${PYTHON_VIRTUAL_ENVIRONMENT} ; \
-			${RM} .python-version ; \
-		else \
-			echo "Python virtual environment \
-${PYTHON_VIRTUAL_ENVIRONMENT} does not exist" ; \
-	fi
+docker-build-application:
+	DOCKER_REPO=index.docker.io/nyraghu/plastex-application \
+		DOCKER_TAG=latest ${DOCKER_BUILD_HOOK}
 
 ### ==================================================================
-### Target for installing the project
+### Targets for running Docker images
 ### ==================================================================
 
-.PHONY: python-install-${PROJECT}
+DOCKER_RUN_SCRIPT = docker/run.sh
 
-python-install-${PROJECT}: python-create-virtual-environment
-	pip install --requirement requirements.txt
-	pip install --editable .
+.PHONY: docker-run-development docker-run-application
+
+docker-run-development:
+	${SHELL} ${DOCKER_RUN_SCRIPT} development
+
+docker-run-application:
+	${SHELL} ${DOCKER_RUN_SCRIPT} application
 
 ### End of file
