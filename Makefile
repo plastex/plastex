@@ -12,6 +12,8 @@ GIT_BRANCHES = dockerisation html-notes master
 GIT_CURRENT_BRANCH = $(shell git rev-parse --abbrev-ref HEAD)
 PYTHON_VERSION = 3.8.1
 PYTHON_VIRTUAL_ENVIRONMENT = ${PROJECT}_${PYTHON_VERSION}
+DOCKER_BUILD_HOOK = hooks/build
+DOCKER_RUN_SCRIPT = docker/run.sh
 
 ### ==================================================================
 ### Default target
@@ -169,8 +171,6 @@ git-check-ignore:
 ### Targets for building Docker images
 ### ==================================================================
 
-DOCKER_BUILD_HOOK = hooks/build
-
 .PHONY: docker-build-development docker-build-application
 
 docker-build-development:
@@ -184,8 +184,6 @@ docker-build-application:
 ### ==================================================================
 ### Targets for running Docker images
 ### ==================================================================
-
-DOCKER_RUN_SCRIPT = docker/run.sh
 
 .PHONY: docker-run-development docker-run-application
 
