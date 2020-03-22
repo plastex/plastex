@@ -23,9 +23,13 @@ class Longtables(unittest.TestCase):
         return tex.parse()
 
     def testString(self):
+        # Test that reading a document containing accents raises no exception
+        # even when the current locale does not support accents.
+        loc = locale.getlocale(locale.LC_CTYPE)
         # Bad character encoding
-        locale.setlocale(locale.LC_ALL, "C")
-        out = self.runDocument(u"é")
+        locale.setlocale(locale.LC_CTYPE, "C")
+        self.runDocument(u"é")
+        locale.setlocale(locale.LC_CTYPE, loc)
 
 if __name__ == '__main__':
     unittest.main()
