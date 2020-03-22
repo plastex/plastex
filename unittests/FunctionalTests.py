@@ -116,9 +116,10 @@ def test_benchmark(src, tmpdir):
         raise OSError('No benchmark file: %s' % benchfile)
 
     # Compare files
-    diff = ''.join(list(difflib.unified_diff(bench, output))).strip()
+    diff = '\n\n'.join(list(difflib.unified_diff(bench, output))).strip()
 
     if diff:
+        print('\n'.join(output))
         (root/'new').mkdir(parents=True, exist_ok=True)
         shutil.copyfile(str(outfile), str(root/'new'/outfile.name))
         shutil.rmtree(outdir, ignore_errors=True)
