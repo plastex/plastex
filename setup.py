@@ -90,4 +90,5 @@ setup(name="plasTeX",
          'plasTeX.Renderers.S5.Themes.default.ui.default': templates+styles+images,
       },
       scripts=['plasTeX/plastex'],
+      install_requires=['Jinja2>=2.10.1', 'Unidecode>=0.4.21', 'beautifulsoup4>=4.6.0']
 )
