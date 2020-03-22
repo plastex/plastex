@@ -3,6 +3,72 @@
 from plasTeX import Command
 from plasTeX.Base.LaTeX import Accents
 
+class textleftarrow(Command):
+    str = '←'
+
+class textrightarrow(Command):
+    str = '→'
+
+class textuparrow(Command):
+    str = '↑'
+
+class textdownarrow(Command):
+    str = '↓'
+
+class textuparrow(Command):
+    str = '↑'
+
+class textlbrackdbl(Command):
+    str = '〚'
+
+class textrbrackdbl(Command):
+    str = '〛'
+
+class textbigcircle(Command):
+    str = '◯'
+
+class textohm(Command):
+    str = 'Ω'
+
+class textmu(Command):
+    str = 'µ'
+
+class textpm(Command):
+    str = '±'
+
+class textdagger(Command):
+    str = '†'
+
+class textdaggerdbl(Command):
+    str = '‡'
+
+class textbardbl(Command):
+    str = '‖'
+
+class textbrokenbar(Command):
+    str = '¦'
+
+class textdegree(Command):
+    str = '°'
+
+class textbullet(Command):
+    str = '•'
+
+class textsurd(Command):
+    str = '√'
+
+class textordmasculine(Command):
+    str = 'º'
+
+class textordfeminine(Command):
+    str = 'ª'
+
+class textnumero(Command):
+    str = '№'
+
+class textcent(Command):
+    str = '¢'
+
 class textonequarter(Command):
     str = '\u00BC'
 

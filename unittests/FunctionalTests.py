@@ -1,7 +1,26 @@
-#!/usr/bin/env python
+"""
+This file runs end-to-end tests by compiling full TeX files and comparing
+with reference output files. 
+The folder containing this test file and each of its subfolder contains a
+"sources" folder for TeX inputs, an optional "extras" folder for auxilliary
+input, and a "benchmarks" folder containing the expected outputs. 
 
-import sys, unittest, os, tempfile, shutil, difflib, subprocess
-from unittest import TestCase
+Each input TeX file can start with the following species of special lines:
+%* command to run     which runs a command before compilation
+%# filename           which copies extras/filename to the output folder
+                      before compilation
+%python 3.X           which skips the test if python is older than 3.X
+
+
+Each time such a test fails, the output is placed into a "new" folder.
+This allows both easy comparison and replacement of the benchmark in
+case the change is desired.
+"""
+
+import sys, os, shutil, difflib, subprocess
+from pathlib import Path
+import pytest
+
 
 def which(name, path=None, exts=('',)):
     """
@@ -39,106 +58,72 @@ class Process(object):
         self.process.stdout.close()
         self.process.stdin.close()
 
-class Benched(TestCase):
-    """ Compile LaTeX file and compare to benchmark file """
+@pytest.mark.parametrize('src', Path(__file__).parent.glob('**/*.tex'),
+                         ids=lambda p: p.name)
+def test_benchmark(src, tmpdir):
+    tmpdir = Path(str(tmpdir)) # For old python
+    root = src.parent.parent
 
-    filename = None
+    # Create temp dir and files
+    texfile = tmpdir/src.name
+    shutil.copyfile(str(src), str(texfile))
+    outdir = str(tmpdir)
 
-    def runTest(self):
-        if not self.filename:
-            return
-
-        src = self.filename
-        root = os.path.dirname(os.path.dirname(src))
-
-        # Create temp dir and files
-        outdir = tempfile.mkdtemp()
-        texfile = os.path.join(outdir, os.path.basename(src))
-        shutil.copyfile(src, texfile)
-
-        # Run preprocessing commands
-        with open(src) as fh:
-            for line in fh:
-                if line.startswith('%*'):
-                    command = line[2:].strip()
-                    p = Process(cwd=outdir, *command.split())
-                    if p.returncode:
-                        raise OSError('Preprocessing command exited abnormally with return code %s: %s' % (command, p.log))
-                elif line.startswith('%#'):
-                    filename = line[2:].strip()
-                    shutil.copyfile(os.path.join(root,'extras',filename),
-                                    os.path.join(outdir,filename))
-                elif line.startswith('%'):
-                    continue
-                elif not line.strip():
-                    continue
-                else:
-                    break
-
-        # Run plastex
-        outfile = os.path.join(outdir, os.path.splitext(os.path.basename(src))[0]+'.html')
-        plastex = which('plastex') or 'plastex'
-        python = sys.executable
-        p = Process(python, plastex,'--split-level=0','--no-theme-extras',
-                    '--dir=%s' % outdir,'--theme=minimal',
-                    '--filename=%s' % os.path.basename(outfile), os.path.basename(src),
-                    cwd=outdir)
-        if p.returncode:
-            shutil.rmtree(outdir, ignore_errors=True)
-            raise OSError('plastex failed with code %s: %s' % (p.returncode, p.log))
-
-        # Read output file
-        with open(outfile) as output:
-
-            # Get name of output file / benchmark file
-            benchfile = os.path.join(root,'benchmarks',
-                                     os.path.basename(outfile))
-            if os.path.isfile(benchfile):
-                with open(benchfile) as fh:
-                    bench = fh.readlines()
-                output = output.readlines()
-            else:
-                try: os.makedirs(os.path.join(root, 'new'))
-                except: pass
-                newfile = os.path.join(root, 'new',
-                                       os.path.basename(outfile))
-                with open(newfile,'w') as fh:
-                    fh.write(output.read())
-                shutil.rmtree(outdir, ignore_errors=True)
-                raise OSError('No benchmark file: %s' % benchfile)
-
-            # Compare files
-            diff = ''.join(list(difflib.unified_diff(bench, output))).strip()
-            bench.close()
-
-            if diff:
-                shutil.rmtree(outdir, ignore_errors=True)
-                try: os.makedirs(os.path.join(root,'new'))
-                except: pass
-                newfile = os.path.join(root, 'new',
-                                       os.path.basename(outfile))
-                with open(newfile,'w') as outfh:
-                    outfh.writelines(output)
-                assert not(diff), 'Differences were found: %s' % diff
-
-        # Clean up
-        shutil.rmtree(outdir, ignore_errors=True)
-
-def testSuite():
-    """ Locate all .tex files and create a test suite from them """
-    suite = unittest.TestSuite()
-    for root, dirs, files in os.walk(os.path.dirname(__file__)):
-        for f in files:
-            if os.path.splitext(f)[-1] != '.tex':
+    # Run preprocessing commands
+    with src.open() as fh:
+        for line in fh:
+            if line.startswith('%*'):
+                command = line[2:].strip()
+                p = Process(cwd=outdir, *command.split())
+                if p.returncode:
+                    raise OSError('Preprocessing command exited abnormally with return code %s: %s' % (command, p.log))
+            elif line.startswith('%#'):
+                filename = line[2:].strip()
+                shutil.copyfile(str(root/'extras'/filename),
+                                str(tmpdir/filename))
+            elif line.startswith('%python '):
+                # skip this test on old python
+                version = tuple(int(n) for n in line[8:].strip().split('.'))
+                if sys.version_info < version:
+                    pytest.skip('This python is too old')
+            elif line.startswith('%'):
                 continue
-            test = Benched()
-            test.filename = os.path.abspath(os.path.join(root, f))
-            suite.addTest(test)
-    return suite
+            elif not line.strip():
+                continue
+            else:
+                break
 
-def test():
-    """ Execute test suite """
-    unittest.TextTestRunner().run(testSuite())
+    # Run plastex
+    outfile = (tmpdir/src.name).with_suffix('.html')
+    plastex = which('plastex') or 'plastex'
+    python = sys.executable
+    p = Process(python, plastex,'--split-level=0','--no-theme-extras',
+                '--dir=%s' % outdir,'--theme=minimal',
+                '--filename=%s' % outfile.name, src.name,
+                cwd=outdir)
+    if p.returncode:
+        shutil.rmtree(outdir, ignore_errors=True)
+        raise OSError('plastex failed with code %s: %s' % (p.returncode, p.log))
 
-if __name__ == '__main__':
-    test()
+    benchfile = root/'benchmarks'/outfile.name
+    if benchfile.exists():
+        bench = benchfile.read_text().split('\n')
+        output = outfile.read_text().split('\n')
+    else:
+        (root/'new').mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(str(outfile), str(root/'new'/outfile.name))
+        shutil.rmtree(outdir, ignore_errors=True)
+        raise OSError('No benchmark file: %s' % benchfile)
+
+    # Compare files
+    diff = ''.join(list(difflib.unified_diff(bench, output))).strip()
+
+    if diff:
+        (root/'new').mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(str(outfile), str(root/'new'/outfile.name))
+        shutil.rmtree(outdir, ignore_errors=True)
+        assert not(diff), 'Differences were found: %s' % diff
+
+    # Clean up
+    shutil.rmtree(outdir, ignore_errors=True)
+
