@@ -116,14 +116,14 @@ def test_benchmark(src, tmpdir):
         raise OSError('No benchmark file: %s' % benchfile)
 
     # Compare files
-    diff = '\n\n'.join(list(difflib.unified_diff(bench, output))).strip()
+    diff = '\n'.join(difflib.unified_diff(bench, output, 
+        fromfile='benchmark', tofile='output')).strip()
 
     if diff:
-        print('\n'.join(output))
         (root/'new').mkdir(parents=True, exist_ok=True)
         shutil.copyfile(str(outfile), str(root/'new'/outfile.name))
         shutil.rmtree(outdir, ignore_errors=True)
-        assert not(diff), 'Differences were found: %s' % diff
+        assert not(diff), 'Differences were found: {}\nplasTeX log:\n{}'.format(diff,  p.log)
 
     # Clean up
     shutil.rmtree(outdir, ignore_errors=True)
