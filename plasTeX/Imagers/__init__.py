@@ -629,14 +629,11 @@ class Imager(object):
                 imagelog.info(line.strip())
             elif done is not None:
                 break
+
         if p.returncode:
             imagelog.warning(
                     'Image compilation {} seems to have failed.'.format(
                         cmd_line))
-            from pathlib import Path
-            print(Path(filename).read_text())
-            print(p.stdout.readlines())
-
         output = None
         for ext in ['.dvi','.pdf','.ps']:
             if os.path.isfile('images'+ext):
