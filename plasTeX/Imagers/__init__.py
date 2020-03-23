@@ -635,7 +635,7 @@ class Imager(object):
                         cmd_line))
             from pathlib import Path
             print(Path(filename).read_text())
-            print(p.stdout.decode())
+            print(p.stdout)
 
         output = None
         for ext in ['.dvi','.pdf','.ps']:
