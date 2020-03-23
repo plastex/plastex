@@ -23,14 +23,14 @@ development() {
 
     docker run --env="DOCKERUID=${uid}" --interactive=true --rm=true \
            --tty=true \
-           --mount type=bind,source=${sourcedir},target=${targetdir} \
-           ${image}
+           --mount type=bind,source="${sourcedir}",target="${targetdir}" \
+           "${image}"
 
     return 0
 }
 
 application() {
-    docker run --interactive=true --rm=true --tty=true ${image}
+    docker run --interactive=true --rm=true --tty=true "${image}"
 
     return 0
 }

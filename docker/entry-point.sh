@@ -25,7 +25,7 @@
 ##
 ## one can, for example, do the following:
 ##
-##   docker run -e DOCKERID=1729 -i -t foo:bar /bin/bash
+##   docker run -e DOCKERUID=1729 -i -t foo:bar /bin/bash
 ##
 ##   docker run -i -t foo:bar touch /root/quux
 ##
@@ -33,7 +33,7 @@
 ## https://denibertovic.com/posts/handling-permissions-with-docker-volumes/
 
 command="${@:-/bin/bash}"
-uid=${DOCKERUID:-0}
+uid="${DOCKERUID:-0}"
 
 ## Check if the specified UID is a natural number.
 ## https://stackoverflow.com/a/18620446
@@ -61,8 +61,8 @@ do_working_directory ()
 
     working_directory=${HOME}/plastex
 
-    mkdir -p ${working_directory}
-    cd ${working_directory}
+    mkdir -p "${working_directory}"
+    cd "${working_directory}"
     make -C plasTeX/Renderers/HTMLNotes/Style install
     pip install --editable .
 
@@ -106,11 +106,11 @@ do_user ()
     shell=/bin/bash
     home=/home/${name}
 
-    useradd -U -c "${comment}" -s ${shell} -u ${uid} ${name}
-    export HOME=${home}
+    useradd -U -c "${comment}" -s "${shell}" -u "${uid}" "${name}"
+    export HOME="${home}"
     export PS1="[\u:\w]\$ "
     do_working_directory
-    gosu ${name} ${command}
+    gosu "${name}" ${command}
 
     return 0
 }
@@ -125,7 +125,7 @@ do_execute ()
     if [ "${uid}" -eq 0 ] ; then
         do_root
     elif passwd_entry=$(getent passwd "${uid}") ; then
-        do_user_exists ${passwd_entry}
+        do_user_exists "${passwd_entry}"
     else
         do_user
     fi

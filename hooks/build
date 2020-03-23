@@ -1,6 +1,5 @@
 #!/bin/sh
 
-image_version="0.1.0"
 python_version="3.8.2"
 node_js_major_version="13"
 
@@ -17,6 +16,6 @@ target="$(echo "${DOCKER_REPO}" | rev | cut -d '-' -f 1 | rev)"
 docker build \
        --build-arg="PYTHON_IMAGE_TAG=${python_image_tag}" \
        --build-arg="NODE_JS_MAJOR_VERSION=${node_js_major_version}" \
-       --tag=${image} --target=${target} .
+       --tag="${image}" --target="${target}" .
 
 exit 0
