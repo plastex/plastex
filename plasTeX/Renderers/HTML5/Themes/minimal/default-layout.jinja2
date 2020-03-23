@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{% if config.html5['use-mathjax'] %}
+<script type="text/x-mathjax-config">
+{% if config.html5['mathjax-dollars'] %}
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+{% else %}
+  MathJax.Hub.Config({tex2jax: {inlineMath: [ ['\\(','\\)']]}});
+{% endif %}
+</script>
+<script type="text/javascript" src="{{ config.html5['mathjax-url'] }}">
+</script>
+{% endif %}
+<meta name="generator" content="plasTeX" />
+<meta charset="{{ config.files['output-encoding']}}" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+{% if obj.title %}
+<title>{{ obj.title }}</title>
+{% endif %}
+</head>
+
+<body>
+{{ obj }}
+{% if obj.footnotes %}
+<footer id="footnotes">
+<ol>
+{% for footnote in obj.footnotes %}
+  <li id="{{ footnote.id }}">{{ footnote }}</li>
+{% endfor %}
+</ol>
+</footer>
+{% endif %}
+</body>
+</html>
