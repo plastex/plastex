@@ -1,535 +1,983 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [ ['\\(','\\)']]}});
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The textcomp package</title>
 </head>
+
 <body>
-<div><div class="titlepage">
+
+<div class="titlepage">
 <h1>The textcomp package</h1>
-
-
-
-</div><center> <table class="tabular" cellspacing="0">
-<tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p> Name</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> Symbol</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> Name</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> Symbol</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textleftarrow</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ←</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textborn</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ★</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textrightarrow</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> →</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textdied</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> †</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textuparrow</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ↑</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textmarried</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ⚭</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textdownarrow</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ↓</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textdivorced</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ⚮</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textuparrow</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ↑</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textdagger</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> †</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textlbrackdbl</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> 〚</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textdaggerdbl</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ‡</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textrbrackdbl</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> 〛</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textperthousand</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ‰</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textbigcircle</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ◯</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textpertenthousand</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ‱</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textohm</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> Ω</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textbardbl</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ‖</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textmu</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> µ</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textbrokenbar</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ¦</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textpm</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ±</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textdegree</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> °</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textonequarter</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ¼</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textcelsius</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> °C</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textonehalf</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ½</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textbullet</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> •</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textthreequarters</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ¾</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textopenbullet</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ◦</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textsurd</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> √</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textsection</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> §</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textzerooldstyle</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> 0</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textcopyright</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ©</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textoneoldstyle</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> 1</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textordmasculine</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> º</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\texttwooldstyle</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> 2</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textordfeminine</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ª</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textthreeoldstyle</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> 3</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \texttrademark</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ™</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textfouroldstyle</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> 4</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textnumero</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> №</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textfiveoldstyle</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> 5</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textestimated</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ℮</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textsixoldstyle</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> 6</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textregistered</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ®</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textsevenoldstyle</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> 7</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textdollaroldstyle</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> $</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\texteightoldstyle</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> 8</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textdollar</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> $</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textnineoldstyle</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> 9</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p> \textcentoldstyle</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p> ¢</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textflorin</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p>ƒ</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p>\textcent</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p>¢</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textyen</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p>¥</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p>\textsterling</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p>£</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textwon</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p>₩</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p>\textlira</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p>₤</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textnaira</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p>₦</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p>\textguarani</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p>₲</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\textpeso</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p>₱</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p>\texteuro</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p>€</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\newtie{a}</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p><img src="images/img-0001.png" alt="\newtie{a}" style="vertical-align:0px; width:9px; height:11px" class="accent gen" /></p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p>\capitalnewtie{A}</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p><img src="images/img-0002.png" alt="\capitalnewtie{A}" style="vertical-align:0px; width:12px; height:15px" class="accent gen" /></p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\capitalacute {A}</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p>Á</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p>\capitalgrave {A}</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p>À</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\capitaldieresis {A}</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p>Ä</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p>\capitaldotaccent {A</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p>Ȧ</p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\capitalbreve {A}</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p>Ā</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p>\capitalcedilla {A}</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p><img src="images/img-0003.png" alt="\capitalcedilla{A}" style="vertical-align:-4px; width:12px; height:16px" class="accent gen" /></p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black"><p>\newtie {a}</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p><img src="images/img-0001.png" alt="\newtie{a}" style="vertical-align:0px; width:9px; height:11px" class="accent gen" /></p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black"><p>\t {aa}</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black"><p><img src="images/img-0004.png" alt="\t{aa}" style="vertical-align:0px; width:17px; height:11px" class="accent gen" /></p></td>
-
-</tr><tr>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px"><p>\capitaltie{II}</p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px"><p><img src="images/img-0005.png" alt="\capitaltie{II}" style="vertical-align:0px; width:12px; height:15px" class="accent gen" /></p></td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px">&nbsp;</td>
-
-    
-    <td style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px">&nbsp;</td>
-
-</tr>
-</table> </center><p> <small class="footnotesize">Herbert.Voss@alumni.tu-berlin.de</small> </p></div>
+</div>
+
+<div class="centered"> <table class="tabular">
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> Name</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> Symbol</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> Name</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> Symbol</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textleftarrow</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ←</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textborn</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ★</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textrightarrow</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> →</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textdied</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> †</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textuparrow</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ↑</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textmarried</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ⚭</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textdownarrow</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ↓</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textdivorced</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ⚮</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textuparrow</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ↑</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textdagger</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> †</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textlbrackdbl</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> 〚</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textdaggerdbl</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ‡</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textrbrackdbl</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> 〛</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textperthousand</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ‰</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textbigcircle</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ◯</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textpertenthousand</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ‱</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textohm</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> Ω</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textbardbl</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ‖</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textmu</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> µ</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textbrokenbar</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ¦</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textpm</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ±</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textdegree</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> °</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textonequarter</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ¼</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textcelsius</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> °C</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textonehalf</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ½</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textbullet</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> •</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textthreequarters</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ¾</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textopenbullet</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ◦</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textsurd</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> √</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textsection</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> §</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textzerooldstyle</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> 0</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textcopyright</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ©</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textoneoldstyle</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> 1</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textordmasculine</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> º</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\texttwooldstyle</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> 2</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textordfeminine</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ª</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textthreeoldstyle</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> 3</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \texttrademark</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ™</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textfouroldstyle</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> 4</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textnumero</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> №</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textfiveoldstyle</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> 5</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textestimated</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ℮</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textsixoldstyle</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> 6</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textregistered</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ®</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textsevenoldstyle</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> 7</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textdollaroldstyle</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> $</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\texteightoldstyle</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> 8</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textdollar</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> $</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textnineoldstyle</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> 9</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \textcentoldstyle</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> ¢</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textflorin</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>ƒ</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textcent</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>¢</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textyen</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>¥</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textsterling</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>£</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textwon</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>₩</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textlira</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>₤</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textnaira</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>₦</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textguarani</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>₲</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\textpeso</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>₱</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\texteuro</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>€</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\newtie{a}</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>ȃ</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\capitalnewtie{A}</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>A͡</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\capitalacute {A}</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>Á</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\capitalgrave {A}</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>À</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\capitaldieresis {A}</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>Ä</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\capitaldotaccent {A</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>Ȧ</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\capitalbreve {A}</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>Ā</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\capitalcedilla {A}</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>A̧</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\newtie {a}</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>ȃ</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\t {aa}</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>a͡a</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
+        rowspan=""
+        colspan="">
+      <p>\capitaltie{II}</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
+        rowspan=""
+        colspan="">
+      <p>I͡I</p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
+        rowspan=""
+        colspan="">&nbsp;</td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
+        rowspan=""
+        colspan="">&nbsp;</td>
+  </tr>
+</table> </div>
+
+<p> <small class="footnotesize">Herbert.Voss@alumni.tu-berlin.de</small> </p>
 
 </body>
 </html>

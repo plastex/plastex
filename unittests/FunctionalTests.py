@@ -97,7 +97,8 @@ def test_benchmark(src, tmpdir):
     outfile = (tmpdir/src.name).with_suffix('.html')
     plastex = which('plastex') or 'plastex'
     python = sys.executable
-    p = Process(python, plastex,'--split-level=0','--no-theme-extras',
+    p = Process(python, plastex,'--renderer=HTML5', 
+                '--split-level=0','--no-theme-extras',
                 '--dir=%s' % outdir,'--theme=minimal',
                 '--filename=%s' % outfile.name, src.name,
                 cwd=outdir)
