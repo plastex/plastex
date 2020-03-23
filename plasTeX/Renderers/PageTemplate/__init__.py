@@ -415,7 +415,7 @@ class PageTemplate(BaseRenderer):
                 singleenames[i] = key[0]
 
         if templatedir and os.path.isdir(templatedir):
-            files = os.listdir(templatedir)
+            files = sorted(os.listdir(templatedir))
 
             # Compile multi-pt files first
             for f in files:
