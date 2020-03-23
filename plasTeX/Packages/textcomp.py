@@ -162,8 +162,8 @@ class textcentoldstyle(Command):
 class textestimated(Command):
     str = '\u212e'
 
-class newtie(Accents.t):
-    macroName = None
+class newtie(Accents.Accent):
+    combining = '\u0311'
 
 class capitaltie(Accents.t):
     macroName = None
