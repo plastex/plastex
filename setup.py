@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+
+import glob
+import os
+
 try:
     from setuptools import setup
 except ImportError:
@@ -11,6 +15,20 @@ templates = ['*.html','*.htm','*.xml','*.zpt','*.zpts','*.jinja2','*.jinja2s']
 images = ['*.gif','*.png','*.jpg','*.jpeg','*.js','*.htc','*.svg']
 styles = ['*.css']
 javascript = ['*.js']
+
+
+## https://stackoverflow.com/a/36693250
+## https://stackoverflow.com/a/57887965
+def package_files(directory):
+    names = glob.glob('%s%s**%s*' % (directory, os.sep, os.sep),
+                      recursive=True)
+    return [os.path.relpath(name, directory)
+            for name in names if os.path.isfile(name)]
+
+
+htmlNotes_default_theme_javascript_files = package_files(
+    'plasTeX/Renderers/HTMLNotes/Themes/default/js'
+)
 
 setup(name="plasTeX",
       description="LaTeX document processing framework",
@@ -97,7 +115,7 @@ setup(name="plasTeX",
          'plasTeX.Renderers.HTMLNotes.Templates.jinja2': templates,
          'plasTeX.Renderers.HTMLNotes.Themes.default': templates+images,
          'plasTeX.Renderers.HTMLNotes.Themes.default.styles': styles,
-         'plasTeX.Renderers.HTMLNotes.Themes.default.js': javascript,
+         'plasTeX.Renderers.HTMLNotes.Themes.default.js': htmlNotes_default_theme_javascript_files,
          'plasTeX.Renderers.S5': templates,
          'plasTeX.Renderers.S5.Themes.default': templates,
          'plasTeX.Renderers.S5.Themes.default.ui.default': templates+styles+images,
