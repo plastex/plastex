@@ -9,7 +9,7 @@ ARG NODE_JS_MAJOR_VERSION
 RUN DEBIAN_FRONTEND=noninteractive \
     apt-get --quiet=2 update \
     && apt-get --no-install-recommends --option="DPkg::Use-Pty=0" \
-               --quiet=2 install curl gosu make \
+               --quiet=2 install curl dvipng gosu make \
     && { curl -sL https://deb.nodesource.com/setup_${NODE_JS_MAJOR_VERSION}.x \
              | bash - ; } \
     && apt-get --no-install-recommends --option="DPkg::Use-Pty=0" \
