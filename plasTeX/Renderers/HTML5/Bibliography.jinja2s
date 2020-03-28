@@ -21,6 +21,7 @@ name: cite
   <a href="{{ item.idref.bibitem.url }}">{{ item }}</a>
   {% else %}
   {{ item }}
+  {% endif %}
 {% endfor %}
 </span>
 
