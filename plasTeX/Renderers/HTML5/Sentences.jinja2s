@@ -48,3 +48,9 @@ comment: &#8201;
 
 name: underbar
 <span class="underbar">{{ obj }}</span>
+
+name: textsuperscript
+<sup>{{ obj }}</sup>
+
+name: textsubscript
+<sub>{{ obj }}</sub>
