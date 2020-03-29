@@ -425,6 +425,7 @@ class Imager(object):
 
     # Verification command to determine if the imager is available
     verification = ''
+    verifications = []
 
     fileExtension = '.png'
 
@@ -521,9 +522,16 @@ class Imager(object):
         if self.verification:
             proc = os.popen(self.verification)
             proc.read()
-            if not proc.close():
-                return True
-            return False
+            return not proc.close()
+
+        if self.verifications:
+            for command in self.verifications:
+                proc = os.popen(command)
+                proc.read()
+                if proc.close():
+                    return False
+
+            return True
 
         if not self.command.strip():
             return False
