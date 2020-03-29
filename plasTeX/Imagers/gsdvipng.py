@@ -10,7 +10,7 @@ if sys.platform.startswith('win'):
 class GSDVIPNG(gspdfpng.GSPDFPNG):
     """ Imager that uses gs to convert dvi to png """
     compiler = 'latex'
-    verification = '(%s --help && dvips --help)' % gs
+    verifications = ['%s --help' % gs, 'dvips --help', 'latex --help']
 
     def executeConverter(self, output):
         open('images.dvi', 'w').write(output.read())

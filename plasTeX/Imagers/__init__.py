@@ -424,7 +424,6 @@ class Imager(object):
     compiler = 'latex'
 
     # Verification command to determine if the imager is available
-    verification = ''
     verifications = []
 
     fileExtension = '.png'
@@ -519,11 +518,6 @@ class Imager(object):
 
     def verify(self):
         """ Verify that this commmand works on this machine """
-        if self.verification:
-            proc = os.popen(self.verification)
-            proc.read()
-            return not proc.close()
-
         if self.verifications:
             for command in self.verifications:
                 proc = os.popen(command)
