@@ -638,12 +638,18 @@ class Imager(object):
                         cmd_line))
         output = None
         for ext in ['.dvi','.pdf','.ps']:
-            if os.path.isfile('images'+ext):
-                output = open('images'+ext, 'rb')
+            try:
+                with open('images'+ext, 'rb') as f:
+                    output = open('images'+ext, 'rb').read()
                 break
+            except OSError:
+                # Ignore if file not found
+                pass
 
         # Change back to original working directory
         os.chdir(cwd)
+        if not self.config["images"]["save-file"]:
+            shutil.rmtree(tempdir, True)
 
         return output
 
@@ -652,7 +658,8 @@ class Imager(object):
         Execute the actual image converter
 
         Arguments:
-        output -- file object pointing to the rendered LaTeX output
+        output -- the content of the rendered LaTeX output, obtained by
+        open(...).read()
 
         Returns:
         two-element tuple.  The first element is the return code of the
@@ -661,7 +668,7 @@ class Imager(object):
         used, you can simply return None.
 
         """
-        open('images.out', 'wb').write(output.read())
+        open('images.out', 'wb').write(output)
         options = ''
         if self._configOptions:
             for opt, value in self._configOptions:

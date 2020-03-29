@@ -13,7 +13,7 @@ class GSDVIPNG(gspdfpng.GSPDFPNG):
     verifications = ['%s --help' % gs, 'dvips --help', 'latex --help']
 
     def executeConverter(self, output):
-        open('images.dvi', 'w').write(output.read())
+        open('images.dvi', 'w').write(output)
         rc = os.system('dvips -o images.ps images.dvi')
         if rc: return rc, None
         return gspdfpng.GSPDFPNG.executeConverter(self, open('images.ps'))

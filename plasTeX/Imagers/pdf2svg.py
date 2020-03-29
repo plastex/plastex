@@ -11,7 +11,7 @@ class PDFSVG(VectorImager):
     compiler = 'pdflatex'
 
     def executeConverter(self, output):
-        open('images-uncropped.pdf', 'wb').write(output.read())
+        open('images-uncropped.pdf', 'wb').write(output)
         subprocess.call(["pdfcrop", "images-uncropped.pdf", "images.pdf"], stdout=subprocess.PIPE)
 
         rc = 0

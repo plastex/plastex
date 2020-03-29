@@ -11,7 +11,7 @@ class DVISVGM(_Imager):
 
     def executeConverter(self, output):
         rc = 0
-        open('images.dvi', 'wb').write(output.read())
+        open('images.dvi', 'wb').write(output)
         page = 1
         while 1:
             filename = 'img%d.svg' % page
