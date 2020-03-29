@@ -6,7 +6,7 @@ from plasTeX.Imagers import VectorImager as _Imager
 class DVISVGM(_Imager):
     """ Imager that uses dvisvgm """
     fileExtension = '.svg'
-    verification = 'dvisvgm --help'
+    verifications = ['dvisvgm --help', 'latex --help']
     compiler = 'latex'
 
     def executeConverter(self, output):
