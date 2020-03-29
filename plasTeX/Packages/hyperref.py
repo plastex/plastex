@@ -12,6 +12,7 @@ TO DO:
 
 from plasTeX import Command, Environment
 from plasTeX.Base.LaTeX.Crossref import ref, pageref
+from plasTeX.Tokenizer import Tokenizer, Token
 import urllib.parse
 
 def addBaseURL(self, urlarg):
@@ -107,7 +108,7 @@ class pdfstringdef(Command):
     args = 'macroname:str tex:str'
 
 class texorpdfstring(Command):
-    args = 'tex:str pdf:str'
+    args = 'tex pdf:str'
 
 class pdfstringdefDisableCommands(Command):
     args = 'tex:str'
