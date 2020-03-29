@@ -35,7 +35,7 @@ class pdftoppm(_Imager):
         list of images.
 
         """
-        open('images.out', 'wb').write(output.read())
+        open('images.out', 'wb').write(output)
         options = ''
         if self._configOptions:
             for opt, value in self._configOptions:
