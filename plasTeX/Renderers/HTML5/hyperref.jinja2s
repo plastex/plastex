@@ -27,6 +27,9 @@ name: hypertarget
 name: phantomsection
 <a name="{{ obj.id }}"></a>
 
+name: texorpdfstring
+{{ obj.attributes['tex'] }}
+
 name: autoref
 <a href="{{ obj.idref.label.url }}" >{{ obj.idref.label.captionName}} {{ obj.idref.label.ref }}</a>
 
