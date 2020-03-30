@@ -193,4 +193,15 @@ docker-run-development:
 docker-run-application:
 	${SHELL} ${DOCKER_RUN_SCRIPT} application
 
+### ==================================================================
+### Targets for access control lists (ACL)
+### ==================================================================
+
+.PHONY docker-build-development docker-build-application: acl
+
+acl:
+	setfacl -R -b ${CURDIR}
+	setfacl -R -m u::rwX,g::r-X,o::r-X ${CURDIR}
+	setfacl -R -d -m u::rwx,g::r-x,o::r-x ${CURDIR}
+
 ### End of file
