@@ -26,7 +26,7 @@ install-$1: all-$1 | ${INSTALLATION_DIRECTORY}
 validate: validate-$1
 
 validate-$1: all-$1
-	css-validator --profile=css3svg --warning=2 $${OUTPUT_FILE_$1}
+	-css-validator --profile=css3svg --warning=2 $${OUTPUT_FILE_$1}
 
 endef
 
