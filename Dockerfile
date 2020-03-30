@@ -9,7 +9,7 @@ ARG NODE_JS_MAJOR_VERSION
 RUN DEBIAN_FRONTEND=noninteractive \
     apt-get --quiet=2 update \
     && apt-get --no-install-recommends --option="DPkg::Use-Pty=0" \
-               --quiet=2 install curl dvipng gosu make \
+               --quiet=2 install curl dvipng gosu make tidy \
     && { curl -sL https://deb.nodesource.com/setup_${NODE_JS_MAJOR_VERSION}.x \
              | bash - ; } \
     && apt-get --no-install-recommends --option="DPkg::Use-Pty=0" \
@@ -21,7 +21,7 @@ COPY requirements.txt /var/cache/plastex/
 ENV PYTHONDONTWRITEBYTECODE=1
 
 RUN pip install --requirement /var/cache/plastex/requirements.txt \
-    && npm install -g sass
+    && npm install -g css-validator html-validator-cli sass 
 
 FROM base as development
 

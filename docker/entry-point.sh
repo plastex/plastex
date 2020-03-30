@@ -37,55 +37,32 @@ uid="${DOCKERUID:-0}"
 
 ## Check if the specified UID is a natural number.
 ## https://stackoverflow.com/a/18620446
-check_uid_is_natural_number ()
-{
-    case "${uid}" in
-        *[!0-9]* | '')
-            printf "Error: value of DOCKERUID is not a natural number
+case "${uid}" in
+    *[!0-9]* | '')
+        printf "Error: value of DOCKERUID is not a natural number
 ===> DOCKERUID = ${uid}
 "
-            exit 1
-            ;;
-        * )
-            true
-            ;;
-    esac
-
-    return 0
-}
+        exit 1
+        ;;
+esac
 
 ## Create the working directory.
-do_working_directory ()
-{
-    local working_directory
+install_plastex() {
+    local project_directory
 
-    working_directory=${HOME}/plastex
+    project_directory="$1"
 
-    mkdir -p "${working_directory}"
-    cd "${working_directory}"
+    cd "${project_directory}"
     make -C plasTeX/Renderers/HTMLNotes/Style install
     pip install --editable .
 
     return 0
 }
 
-## Perfom this action if the specified UID is that of root.
-do_root ()
-{
-    do_working_directory
-    exec ${command}
-
-    return 0
-}
-
-## Perform this action if a non-root user with the specified UID
-## exists in the image.
-do_user_exists ()
-{
-    local passwd_entry
-
-    passwd_entry=$1
-
+if [ "${uid}" -eq 0 ] ; then
+    install_plastex "/root/plastex"
+    ${command}
+elif passwd_entry="$(getent passwd "${uid}")" ; then
     printf "Error: UID ${uid} is already assigned to a non-root user \
 in the Docker image
 ===> DOCKERUID = ${uid} conflicts with the following entry in \
@@ -93,48 +70,20 @@ in the Docker image
 ===> ${passwd_entry}
 "
     exit 2
-}
-
-## Perform this action if the specified UID is not that of root, and
-## does not belong to any non-root used in the image.
-do_user ()
-{
-    local comment home name shell
-
+else
     comment="Docker User"
-    name=docker
-    shell=/bin/bash
-    home=/home/${name}
+    name="docker"
+    shell="/bin/bash"
+    home="/home/${name}"
 
+    install_plastex "${home}/plastex"
     useradd -U -c "${comment}" -s "${shell}" -u "${uid}" "${name}"
-    export HOME="${home}"
-    export PS1="[\u:\w]\$ "
-    do_working_directory
+    mkdir -p "${home}"
+    cp -r /etc/skel/.[a-z]* "${home}"
+    echo 'PS1="[\u:\w]\$ "' >> ${home}/.bashrc
+    chown -R "${uid}:${uid}" "${home}"
     gosu "${name}" ${command}
-
-    return 0
-}
-
-## Combine all the above actions into one action.
-do_execute ()
-{
-    local passwd_entry
-
-    check_uid_is_natural_number
-
-    if [ "${uid}" -eq 0 ] ; then
-        do_root
-    elif passwd_entry=$(getent passwd "${uid}") ; then
-        do_user_exists "${passwd_entry}"
-    else
-        do_user
-    fi
-
-    return 0
-}
-
-## Perform the combined action.
-do_execute
+fi
 
 exit 0
 
