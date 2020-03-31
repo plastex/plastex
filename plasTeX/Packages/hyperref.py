@@ -12,7 +12,6 @@ TO DO:
 
 from plasTeX import Command, Environment
 from plasTeX.Base.LaTeX.Crossref import ref, pageref
-from plasTeX.Tokenizer import Tokenizer, Token
 import urllib.parse
 
 def addBaseURL(self, urlarg):
