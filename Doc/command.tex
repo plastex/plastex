@@ -526,6 +526,22 @@ depth information about the vector image and can also be used as
 a backup if the vector image is not supported by the viewer.}
 \end{configuration}
 
+\begin{configuration}{Save temporary files for debugging}
+\options{\longprogramopt{save-image-file} or \longprogramopt{delete-image-file}}
+\config{images}{save-file}
+\default{no}
+specifies whether the temporary images.tex file should be retained after
+compilation. It can be useful to retain the images for debugging purposes.
+\end{configuration}
+
+\begin{configuration}{Scale factor of image}
+\options{\longprogramopt{image-scale-factor}}
+\config{images}{scale-factor}
+\default{1.0}
+the scale factor to apply to images after compilation. Not all imagers respect
+this option.
+\end{configuration}
+
 \subsection{HTML5 Renderer Options\label{sec:config-html5}}
 
 Each renderer can define its own configuration options. This section
