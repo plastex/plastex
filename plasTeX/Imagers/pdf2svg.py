@@ -4,6 +4,7 @@ from pathlib import Path
 import subprocess
 import re
 import xml.etree.ElementTree as ET
+from typing import List, Tuple, Optional
 from plasTeX.Imagers import VectorImager
 
 length_re = re.compile('([0-9\\.]*)(.*)')
@@ -13,7 +14,7 @@ class PDFSVG(VectorImager):
     verifications = ['pdflatex --help', 'which pdf2svg', 'pdfcrop --help']
     compiler = 'pdflatex'
 
-    def executeConverter(self, output):
+    def executeConverter(self, output: bytes) -> Tuple[int, Optional[List[str]]]:
         Path("images-uncropped.pdf").write_bytes(output)
 
         subprocess.call(["pdfcrop", "images-uncropped.pdf", "images.pdf"], stdout=subprocess.DEVNULL)

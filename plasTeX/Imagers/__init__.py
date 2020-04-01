@@ -9,6 +9,7 @@ from plasTeX.Filenames import Filenames
 from collections import OrderedDict
 import subprocess
 import shlex
+from typing import List, Tuple, Optional
 
 log = getLogger()
 depthlog = getLogger('render.images.depth')
@@ -653,7 +654,7 @@ class Imager(object):
 
         return output
 
-    def executeConverter(self, output):
+    def executeConverter(self, output: bytes) -> Tuple[int, Optional[List[str]]]:
         """
         Execute the actual image converter
 
