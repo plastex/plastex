@@ -36,7 +36,7 @@ view of what it is capable of.
 
 ## Testing
 To run the tests locally, run tox.
-This will run tests locally using python 3.5 to 3.7.
+This will run tests locally using python 3.5 to 3.8.
 
 ## Status
 [![Build Status](https://travis-ci.org/plastex/plastex.svg?branch=master)](https://travis-ci.org/plastex/plastex)
