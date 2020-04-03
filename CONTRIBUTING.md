@@ -1,6 +1,6 @@
 # Contributing to plasTeX
 
-## Testing
+##  Testing
 
 We run our tests using [pytest](https://docs.pytest.org/en/latest/),
 although many of our tests were written long before pytest was written. 
@@ -27,11 +27,11 @@ After setting up `pyenv` and installing, say python 3.5.6, 3.6.8,
 3.7.2 and 3.8.0 (using `pyenv install 3.5.6` etc.), you can create,
 inside the toplevel folder of your working copy of plasTeX, a
 file `.python-version` containing
-`
+```
 3.8.0
 3.7.2
 3.6.8
 3.5.6
-`
+```
 Then you can run `tox` to run our test suite against all those versions
 of python.
