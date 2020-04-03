@@ -441,7 +441,7 @@ class Renderer(dict):
             elif name == 'OSXCoreGraphics':
                 from plasTeX.Imagers.OSXCoreGraphics  import Imager
             else:
-                log.warning("Invalid imager '%s'")
+                log.warning("Invalid imager '%s'" % name)
                 continue
 
             self.imager = Imager(document, self.imageTypes)
@@ -475,7 +475,7 @@ class Renderer(dict):
             elif name == 'pdf2svg':
                 from plasTeX.Imagers.pdf2svg import Imager as VectorImager
             else:
-                log.warning("Invalid imager '%s'")
+                log.warning("Invalid imager '%s'" % name)
                 continue
 
             self.vectorImager = VectorImager(document, self.vectorImageTypes)
