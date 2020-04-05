@@ -30,7 +30,7 @@ class HTML5(_Renderer):
 
         rendererDir = os.path.dirname(__file__)
 
-        srcDir = document.userdata['working-dir']
+        srcDir = document.userdata.get('working-dir', '.') # type: str
         buildDir = os.getcwd()
 
         # Theme css has already been copied by PageTemplate.loadTemplates,
