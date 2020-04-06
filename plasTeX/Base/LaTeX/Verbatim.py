@@ -5,81 +5,12 @@ C.6.4 Verbatim
 
 """
 
-from plasTeX import Environment, Command, sourceArguments, sourceChildren
+from plasTeX import VerbatimEnvironment, Command, sourceArguments, sourceChildren
 from plasTeX.Base.TeX.Text import bgroup
 from plasTeX.Tokenizer import Other
 
-
-class verbatim(Environment):
-    blockType = True
-    captionable = True
-
-    def invoke(self, tex):
-        r""" Parse until we reach `\end{verbatim}' or `\endverbatim' """
-        if self.macroMode == Environment.MODE_END:
-            return
-
-        escape = self.ownerDocument.context.categories[0][0]
-        bgroup = self.ownerDocument.context.categories[1][0]
-        egroup = self.ownerDocument.context.categories[2][0]
-        self.ownerDocument.context.push(self)
-        self.parse(tex)
-        self.ownerDocument.context.setVerbatimCatcodes()
-        tokens = [self]
-
-        # Should the end environment be expanded?
-        expand = True
-
-        # Get the name of the currently expanding environment
-        name = self.nodeName
-        if self.macroMode != Environment.MODE_NONE:
-            if self.ownerDocument.context.currenvir is not None:
-                name = self.ownerDocument.context.currenvir
-
-        # If we were invoke by a \begin{...} look for an \end{...}
-        endpattern = list(r'%send%s%s%s' % (escape, bgroup, name, egroup))
-
-        # If we were invoked as a command (i.e. \verbatim) look
-        # for an end without groupings (i.e. \endverbatim)
-        endpattern2 = list(r'%send%s' % (escape, name))
-
-        endlength = len(endpattern)
-        endlength2 = len(endpattern2)
-        # Iterate through tokens until the endpattern is found
-        for tok in tex:
-            tokens.append(tok)
-            if len(tokens) >= endlength:
-                if tokens[-endlength:] == endpattern:
-                    tokens = tokens[:-endlength]
-                    self.ownerDocument.context.pop(self)
-                    # Expand the end of the macro
-                    end = self.ownerDocument.createElement(name)
-                    end.parentNode = self.parentNode
-                    end.macroMode = Environment.MODE_END
-                    res = end.invoke(tex)
-                    if res is None:
-                        res = [end]
-                    tex.pushTokens(res)
-                    break
-            if len(tokens) >= endlength2:
-                if tokens[-endlength2:] == endpattern2:
-                    tokens = tokens[:-endlength2]
-                    self.ownerDocument.context.pop(self)
-                    # Expand the end of the macro
-                    end = self.ownerDocument.createElement(name)
-                    end.parentNode = self.parentNode
-                    end.macroMode = Environment.MODE_END
-                    res = end.invoke(tex)
-                    if res is None:
-                        res = [end]
-                    tex.pushTokens(res)
-                    break
-
-        return tokens
-
-    def normalize(self, charsubs=None):
-        """ Normalize, but don't allow character substitutions """
-        return Environment.normalize(self)
+class verbatim(VerbatimEnvironment):
+    pass
 
 class endverbatim(verbatim):
     def invoke(self, tex):

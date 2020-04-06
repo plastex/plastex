@@ -914,27 +914,97 @@ class Environment(Macro):
         if dopars:
             self.paragraphs()
 
-
 class NoCharSubEnvironment(Environment):
     """
     A subclass of Environment which prevents character substitution inside
     itself.
     """
-    def __init__(self, *args, **kwargs):
-        # Will hold the owner document charsubs to restore it at the end
-        self.charsubs = []
-        super(NoCharSubEnvironment, self).__init__(*args, **kwargs)
+
+    def normalize(self, charsubs=None):
+        """ Normalize, but don't allow character substitutions """
+        return Environment.normalize(self, charsubs=None)
+
+class VerbatimEnvironment(NoCharSubEnvironment):
+    """
+    A subclass of Environment that prevents processing of the contents. This is
+    used for the verbatim environment.
+
+    It is also useful in cases where you want to leave the processing to the
+    renderer (e.g. via the imager) and the content is sufficiently complex that
+    we don't want plastex to deal with the commands within it.
+
+    For example, for tikzpicture, there are many Tikz commands and it would be
+    tedious to attempt to define all of them in the python file, when we are
+    not going to use them anyway.
+    """
+
+    blockType = True
+    captionable = True
 
     def invoke(self, tex):
-        # The goal is to prevent any character substitution while handling a
-        # this environment.
-        doc = self.ownerDocument
-        if self.macroMode == Macro.MODE_BEGIN:
-            self.charsubs = doc.charsubs
-            doc.charsubs = []
-        elif self.macroMode == Macro.MODE_END:
-            doc.charsubs = self.charsubs
-        super(NoCharSubEnvironment, self).invoke(tex)
+        """
+        We enter verbatim mode by setting all category codes to CC_LETTER
+        or CC_OTHER. However, we will have to manually scan for the end of the
+        environment since the tokenizer does not tokenize the end of the
+        environment as an EscapeSequence Token.
+        """
+        if self.macroMode == Environment.MODE_END:
+            return
+
+        escape = self.ownerDocument.context.categories[0][0]
+        bgroup = self.ownerDocument.context.categories[1][0]
+        egroup = self.ownerDocument.context.categories[2][0]
+        self.ownerDocument.context.push(self)
+        self.parse(tex)
+        self.ownerDocument.context.setVerbatimCatcodes()
+        tokens = [self]
+
+        # Get the name of the currently expanding environment
+        name = self.nodeName
+        if self.macroMode != Environment.MODE_NONE:
+            if self.ownerDocument.context.currenvir is not None:
+                name = self.ownerDocument.context.currenvir
+
+        # If we were invoked by a \begin{...} look for an \end{...}
+        endpattern = list(r'%send%s%s%s' % (escape, bgroup, name, egroup))
+
+        # If we were invoked as a command (i.e. \verbatim) look
+        # for an end without groupings (i.e. \endverbatim)
+        endpattern2 = list(r'%send%s' % (escape, name))
+
+        endlength = len(endpattern)
+        endlength2 = len(endpattern2)
+        # Iterate through tokens until the endpattern is found
+        for tok in tex:
+            tokens.append(tok)
+            if len(tokens) >= endlength:
+                if tokens[-endlength:] == endpattern:
+                    tokens = tokens[:-endlength]
+                    self.ownerDocument.context.pop(self)
+                    # Expand the end of the macro
+                    end = self.ownerDocument.createElement(name)
+                    end.parentNode = self.parentNode
+                    end.macroMode = Environment.MODE_END
+                    res = end.invoke(tex)
+                    if res is None:
+                        res = [end]
+                    tex.pushTokens(res)
+                    break
+            if len(tokens) >= endlength2:
+                if tokens[-endlength2:] == endpattern2:
+                    tokens = tokens[:-endlength2]
+                    self.ownerDocument.context.pop(self)
+                    # Expand the end of the macro
+                    end = self.ownerDocument.createElement(name)
+                    end.parentNode = self.parentNode
+                    end.macroMode = Environment.MODE_END
+                    res = end.invoke(tex)
+                    if res is None:
+                        res = [end]
+                    tex.pushTokens(res)
+                    break
+
+        return tokens
 
 class IgnoreCommand(Command):
     """
