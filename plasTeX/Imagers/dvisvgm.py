@@ -12,10 +12,11 @@ class DVISVGM(_Imager):
     def executeConverter(self, output):
         rc = 0
         open('images.dvi', 'wb').write(output)
+        scale = self.config["images"]["scale-factor"]
         page = 1
         while 1:
             filename = 'img%d.svg' % page
-            rc = os.system('dvisvgm --exact --scale=1.6 --no-fonts --output=%s --page=%d images.dvi' % (filename, page))
+            rc = os.system('dvisvgm --exact --scale={} --no-fonts --output={} --page={} images.dvi'.format(scale, filename, page))
             if rc:
                 break
 
