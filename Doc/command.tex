@@ -467,7 +467,18 @@ specifies a base URL to prepend to the path of all images.
 \options{\longprogramopt{image-compiler=\optval{program}}}
 \config{images}{compiler}
 \default{latex}
-specifies which program to use to compile the images \LaTeX\ document.
+specifies which program to use to compile the images \LaTeX\ document. If
+unspecified, the default is specified by the imager. Note that not all imagers
+are compatible with all compilers. Specifically, some imagers need compilers
+that produces pdf's and others need dvi's.
+\end{configuration}
+
+\begin{configuration}{\LaTeX\ program to use to compile vector image document}
+\options{\longprogramopt{vector-image-compiler=\optval{program}}}
+\config{images}{vector-compiler}
+\default{latex}
+specifies which program to use to compile the vector images \LaTeX\ document. If
+unspecified, this uses the value of \longprogramopt{image-compiler}.
 \end{configuration}
 
 \begin{configuration}{Enable or disable image generation}
