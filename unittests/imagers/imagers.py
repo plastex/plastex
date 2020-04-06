@@ -17,6 +17,7 @@ from plasTeX.TeX import TeX
 
 @pytest.mark.parametrize('imager_tuple', 
         [('pdf2svg', '.svg', 'vector-imager'),
+         ('dvisvgm', '.svg', 'vector-imager'),
          ('dvipng', '.png', 'imager')],
         ids=lambda p: p[0])
 def test_imager(imager_tuple, tmpdir):
