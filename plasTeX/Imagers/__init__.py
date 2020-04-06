@@ -584,6 +584,9 @@ class Imager(object):
             os.makedirs(os.path.dirname(self._filecache))
         pickle.dump(self._cache, open(self._filecache,'wb'))
 
+    def getCompiler(self):
+        return self.config['images']['compiler'] or self.compiler
+
     def compileLatex(self, source):
         """
         Compile the LaTeX source
@@ -609,7 +612,8 @@ class Imager(object):
 
         # Run LaTeX
         os.environ['SHELL'] = '/bin/sh'
-        program = self.config['images']['compiler']
+        program = self.getCompiler()
+
         if not program:
             program = self.compiler
 
@@ -908,3 +912,6 @@ class VectorImager(Imager):
         Imager.writePreamble(self, document)
 #       self.source.write('\\usepackage{type1ec}\n')
         self.source.write('\\def\\plasTeXregister{}\n')
+
+    def getCompiler(self):
+        return self.config['images']['vector-compiler'] or Imager.getCompiler(self)

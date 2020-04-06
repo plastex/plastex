@@ -279,6 +279,12 @@ images['scale-factor'] = FloatOption(
     category = 'images',
 )
 
+images['vector-compiler'] = StringOption(
+    """ LaTeX command to use when compiling image document with vector imager""",
+    options = '--vector-image-compiler',
+    category = 'images',
+)
+
 images['compiler'] = StringOption(
     """ LaTeX command to use when compiling image document """,
     options = '--image-compiler',
