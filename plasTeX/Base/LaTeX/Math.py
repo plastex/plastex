@@ -632,6 +632,9 @@ class stackrel(MathAccent):
 class mathrm(Command):
     args = 'self'
 
+class mathop(Command):
+    args = 'self'
+
 class mathit(Command):
     args = 'self'
 
