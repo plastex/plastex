@@ -24,7 +24,7 @@ from plasTeX.TeX import TeX
         ids=lambda p: p[0])
 def test_imager(imager_tuple, tmpdir):
     imager, ext, kind, compiler = imager_tuple
-    tmpdir = Path(tmpdir) # for old pythons
+    tmpdir = Path(str(tmpdir)) # for old pythons
 
     tex = TeX()
     tex.ownerDocument.config['images'][kind] = imager
