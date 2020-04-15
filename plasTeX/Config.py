@@ -11,7 +11,12 @@ c = config = ConfigManager()
 general = c.add_section('general')
 
 general['renderer'] = StringOption(
-    """ Renderer to use for conversion """,
+    """
+    Renderer to use for conversion
+
+    This is either one of the built in renderers, or a path to the
+    directory of a renderer
+    """,
     options = '--renderer',
     default = 'XHTML',
 )

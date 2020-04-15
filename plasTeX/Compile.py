@@ -3,11 +3,28 @@
 import os, sys, string, glob
 import importlib
 import plasTeX
+from pathlib import Path
 from plasTeX.TeX import TeX
 from plasTeX.ConfigManager import *
 from plasTeX.Logging import getLogger, updateLogLevels
 
 log = getLogger()
+
+def import_file(path: Path):
+    module_name = path.name
+    while module_name in sys.modules:
+        module_name = module_name + "_"
+
+    # Using path.absolute() makes sure the __file__ property of the module is
+    # absolute, which is important since we may change directories later.
+    spec = importlib.util.spec_from_file_location(module_name, str(path.absolute() / "__init__.py"))
+    if spec is None:
+        raise ImportError
+
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+    return module
 
 def run(filename: str, config: ConfigManager):
     if config['logging']:
@@ -46,6 +63,19 @@ def run(filename: str, config: ConfigManager):
     os.environ['TEXINPUTS'] = '%s%s%s%s' % (os.getcwd(), os.pathsep,
                                          os.environ.get('TEXINPUTS',''), os.pathsep)
 
+    # Load renderer
+    rmodule = None
+    try:
+        rmodule = importlib.import_module('plasTeX.Renderers.'+rname)
+    except ImportError:
+        pass
+
+    if rmodule is None:
+        try:
+            rmodule = import_file(Path(rname))
+        except ImportError:
+            raise ImportError('Could not import renderer "%s".  Make sure that it is installed correctly, and can be imported by Python.' % rname)
+
     # Change to specified directory to output to
     outdir = config['files']['directory']
     if outdir:
@@ -54,13 +84,6 @@ def run(filename: str, config: ConfigManager):
             os.makedirs(outdir)
         log.info('Directing output files to directory: %s.' % outdir)
         os.chdir(outdir)
-
-    # Load renderer
-    try:
-        rmodule = importlib.import_module('plasTeX.Renderers.'+rname)
-    except ImportError as msg:
-        log.error('Could not import renderer "%s".  Make sure that it is installed correctly, and can be imported by Python.' % rname)
-        raise msg
 
     # Write expanded source file
     #sourcefile = '%s.source' % jobname
