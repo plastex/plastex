@@ -95,6 +95,7 @@ class newtheorem(Command):
 
 
 class proof(Environment):
+    blockType = True
     args ='[caption]'
 
     def digest(self, tokens):
