@@ -10,12 +10,30 @@ case the change is desired.
 
 import filecmp
 import os, shutil
-import sys
+import sys, subprocess
 from pathlib import Path
 
 from plasTeX.Config import config as base_config
 from plasTeX.Renderers import Renderer
 from plasTeX.TeX import TeX, TeXDocument
+
+def cmp_img(a: str, b: str) -> float:
+    out = subprocess.run(["compare", "-quiet", "-metric", "MSE", a, b, "/dev/null"], stderr=subprocess.PIPE, stdin=subprocess.DEVNULL, check=False)
+
+    # return code 1 is for dissimilar images, but we use our own threshold
+    # since imagemagick is too strict
+    if out.returncode == 2:
+        class CompareError(Exception):
+            def __init__(self, message):
+                self.message = message
+
+        raise CompareError("Compare failed on {}, {}".format(a, b))
+
+    # The result is b"... (diff)"
+    diff = out.stderr.split(b"(")[1][:-1]
+
+    # out.stderr is a byte sequence, but float can take byte sequences
+    return float(diff)
 
 def test_tikz(tmpdir):
     try:
@@ -29,7 +47,7 @@ def test_tikz(tmpdir):
     benchdir = root / "benchmarks" / test_id
     newdir = root / "new" / test_id
 
-    files = ["images/img-0001.svg", "images/img-0002.svg", "images/img-0001.png", "images/img-0002.png", "index"]
+    images = ["images/img-0001.svg", "images/img-0002.svg", "images/img-0001.png", "images/img-0002.png"]
 
     config = base_config.copy()
     config['images']['vector-imager'] = 'pdf2svg'
@@ -72,20 +90,36 @@ def test_tikz(tmpdir):
         shutil.copy(str(tmpdir / base), str(newfile))
 
     # Compare image output
-    match, mismatch, errors = filecmp.cmpfiles(str(tmpdir), str(benchdir), files, shallow=False)
+    error = False
 
-    for f in mismatch:
-        print('Differences were found: %s' % f, file=sys.stderr)
-        new_file(f)
+    try:
+        if not filecmp.cmp(str(tmpdir / "index"), str(benchdir / "index"), shallow=False):
+            print('Differences were found: index', file=sys.stderr)
+            error = True
+            new_file("index")
 
-    for f in errors:
+    except FileNotFoundError as e:
+        error = True
+        if e.filename == str(tmpdir / "index"):
+            print("Missing output file: index", file=sys.stderr)
+        else:
+            print("Missing benchmark file: index", file=sys.stderr)
+            new_file("index")
+
+    for f in images:
         if not (tmpdir / f).exists():
+            error = True
             print('Missing output file: %s' % f, file=sys.stderr)
         elif not (benchdir / f).exists():
+            error = True
             print('Missing benchmark file: %s' % f, file=sys.stderr)
             new_file(f)
-        else:
-            print('Failed to compare: %s' % f, file=sys.stderr)
 
-    if len(errors) + len(mismatch) > 0:
+        diff = cmp_img(str(tmpdir / f), str(benchdir / f))
+        if diff > 0.0001:
+            error = True
+            print('Differences were found: {} ({})'.format(f, diff), file=sys.stderr)
+            new_file(f)
+
+    if error:
         assert False
