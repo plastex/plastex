@@ -621,6 +621,7 @@ class Imager(object):
         p = subprocess.Popen(shlex.split(cmd),
                      stdout=subprocess.PIPE,
                      stderr=subprocess.STDOUT,
+                     stdin=subprocess.DEVNULL,
                      universal_newlines=True)
         cmd_line = '{} {}{}images.tex'.format(program, tempdir, os.sep)
         while True:
