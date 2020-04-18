@@ -16,6 +16,7 @@ addons:
     - texlive-latex-extra
     - texlive-extra-utils
     - imagemagick
+    - texlive-xetex
 
 
 install:

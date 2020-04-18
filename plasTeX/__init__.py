@@ -421,7 +421,8 @@ class Macro(Element):
         argSource = sourceArguments(self)
         if not argSource:
             argSource = ' '
-        elif argSource[0] in encoding.stringletters():
+        elif argSource[0] in encoding.stringletters() and\
+             not (len(self.macroName) == 1 and self.macroName[0] not in encoding.stringletters()):
             argSource = ' %s' % argSource
         s = '%s%s%s' % (escape, name, argSource)
 

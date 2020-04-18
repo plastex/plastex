@@ -75,4 +75,5 @@ def run(filename: str, config: ConfigManager):
     # Apply renderer
     rmodule.Renderer().render(document)
 
+    os.chdir(cwd)
     print()

@@ -72,3 +72,7 @@ Doc/plastex.pdf
 Doc/plastex.toc
 Doc/plastex/
 Doc/plastex6.syn
+
+# pytest artifacts
+unittests/**/new/*
+unittests/**/*.paux
