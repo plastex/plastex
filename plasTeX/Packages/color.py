@@ -62,7 +62,7 @@ def latex2htmlcolor(arg, model='rgb', named=None):
             return arg.strip()
     else:
         try: 
-            red = green = blue = float(arg)
+            red = green = blue = min(int(float(arg) * 255), 255)
         except ValueError:
             try:
                 return named[arg]
