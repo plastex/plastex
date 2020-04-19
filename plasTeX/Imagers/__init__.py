@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from pathlib import Path
 import os, time, tempfile, shutil, re, string, pickle
 try: from hashlib import md5
 except ImportError: from md5 import new as md5
@@ -413,6 +414,21 @@ class Image(object):
 
         return im, depth
 
+def run_command(cmd: str):
+    p = subprocess.Popen(shlex.split(cmd),
+                 stdin=subprocess.DEVNULL,
+                 stdout=subprocess.PIPE,
+                 stderr=subprocess.STDOUT,
+                 universal_newlines=True)
+    try:
+        for line in p.stdout:
+            imagelog.info(line.strip())
+    except Exception as e:
+        imagelog.error('Failed to read output from {}\n{}'.format(cmd, str(e)))
+
+    p.wait()
+    if p.returncode:
+        raise subprocess.CalledProcessError(p.returncode, cmd)
 
 class Imager(object):
     """ Generic Imager """
@@ -458,8 +474,8 @@ class Imager(object):
             except ImportError:
                 os.remove(self._filecache)
 
-        # List of images in the order that they appear in the LaTeX file
-        self.images = OrderedDict()
+        # List of images
+        self.images = {}
 
         # Images that are simply copied from the source directory
         self.staticimages = OrderedDict()
@@ -471,7 +487,7 @@ class Imager(object):
 
         # Start the document with a preamble
         self.source = StringIO()
-        self.source.write('\\scrollmode\n')
+        self.source.write('\\nonstopmode\n')
         self.writePreamble(document)
         self.source.write('\\begin{document}\n')
 
@@ -507,15 +523,22 @@ class Imager(object):
 #       self.source.write('\\showboxdepth=\maxdimen\n')
 #       self.source.write('\\newenvironment{plasTeXimage}[1]{\\def\\@current@file{#1}\\thispagestyle{empty}\\def\\@eqnnum{}\\setbox0=\\vbox\\bgroup}{\\egroup\\typeout{imagebox:\\@current@file(\\the\\ht0+\\the\\dp0)}\\box0\\newpage}')
 
-        self.source.write('\\@ifundefined{plasTeXimage}{'
-                          '\\newenvironment{plasTeXimage}[1]{' +
-                          '\\vfil\\break\\plasTeXregister' +
-                          '\\thispagestyle{empty}\\def\\@eqnnum{}\\def\\tagform@{\\@gobble}' +
-                          '\\ignorespaces}{}}{}\n')
-        self.source.write('\\@ifundefined{plasTeXregister}{' +
-                          '\\def\\plasTeXregister{\\parindent=-0.5in\\ifhmode\\hrule' +
-                          '\\else\\vrule\\fi height 2pt depth 0pt ' +
-                          'width 2pt\\hskip2pt}}{}\n')
+        self.source.write(r'''
+\newwrite\imager@log
+\immediate\openout\imager@log=images.csv
+\@ifundefined{plasTeXimage}{%
+\newenvironment{plasTeXimage}[1]{%
+\vfil\break\plasTeXregister%
+\thispagestyle{empty}\def\@eqnnum{}\def\tagform@{\@gobble}%
+\write\imager@log{\thepage,#1}%
+\ignorespaces}{}}{}
+''')
+        self.source.write(r'''
+\@ifundefined{plasTeXregister}{%
+\def\plasTeXregister{\parindent=-0.5in\ifhmode\hrule%
+\else\vrule\fi height 2pt depth 0pt %
+width 2pt\hskip2pt}}{}
+''')
 
     def verify(self):
         """ Verify that this commmand works on this machine """
@@ -552,14 +575,6 @@ class Imager(object):
 
     def close(self):
         """ Invoke the rendering code """
-        # Finish the document
-        self.source.write('\n\\end{document}\\endinput')
-
-        for value in list(self._cache.values()):
-            if value.checksum and os.path.isfile(value.path):
-                 d = md5(open(value.path,'r').read()).digest()
-                 if value.checksum != d:
-                     log.warning('The image data for "%s" on the disk has changed.  You may want to clear the image cache.' % value.filename)
         # Bail out if there are no images
         if not self.images:
             return
@@ -567,113 +582,141 @@ class Imager(object):
         if not self.enabled:
             return
 
+        # Finish the document
+        save_file = self.config["images"]["save-file"]
+
+        self.source.write('\n\\end{document}\\endinput')
+
+        for value in list(self._cache.values()):
+            if value.checksum and os.path.isfile(value.path):
+                 d = md5(open(value.path,'r').read()).digest()
+                 if value.checksum != d:
+                     log.warning('The image data for "%s" on the disk has changed.  You may want to clear the image cache.' % value.filename)
+
+        cwd = Path.cwd()
+
+        # Make a temporary directory to work in. We don't use
+        # `with TemporaryDirectory() as tempdir` because we want to retain the
+        # possibility of keeping the temporary directory.
+        tempdir = Path(tempfile.mkdtemp())
+        os.chdir(str(tempdir))
+
         # Compile LaTeX source, then convert the output
         self.source.seek(0)
-        output = self.compileLatex(self.source.read())
-        if output is None:
-            log.error('Compilation of the document containing the images failed.  No output file was found.')
+        Path("images.tex").write_text(self.source.read(), encoding=self.config['files']['input-encoding'])
+
+        def on_error():
+            log.warning("Source files are saved at {}.".format(tempdir))
+            os.chdir(str(cwd))
+
+        try:
+            self.compileLatex()
+        except:
+            log.warning("Failed to compile image")
+            on_error()
             return
 
-        self.convert(output)
+        # Execute converter
+        try:
+            images = self.executeConverter()
+        except:
+            log.warning("Failed to convert image")
+            on_error()
+            return
+
+        os.chdir(str(cwd))
+
+        if len(images) != len(self.images):
+            save_file = True
+            log.warning('The number of images generated (%d) and the number of images requested (%d) is not the same.' % (len(images), len(self.images)))
+
+        if PILImage is None and type(self) is not VectorImager:
+            log.warning('PIL (Python Imaging Library) is not installed.  ' +
+                        'Images will not be cropped.')
+
+
+        # Move images to their final location
+        for src, dest in images:
+            try:
+                dest_img = self.images[dest]
+            except KeyError:
+                save_file = True
+                log.warning("Generated extra image: {} => {}".format(src, dest))
+                continue
+
+            if not (cwd / dest).parent.is_dir():
+                (cwd / dest).parent.mkdir(parents=True)
+
+            # Move the image
+            try:
+                shutil.copy2(str(tempdir / src), str(cwd / dest))
+            except OSError:
+                shutil.copy(str(tempdir / src), str(cwd / dest))
+
+            # Crop the image
+            try:
+                dest_img.crop()
+                status.dot()
+            except Exception as msg:
+                import traceback
+                traceback.print_exc()
+                log.warning('failed to crop %s (%s)', dest, msg)
 
         for value in list(self._cache.values()):
             if value.checksum is None and os.path.isfile(value.path):
-                 value.checksum = md5(open(value.path,'rb').read()).digest()
+                value.checksum = md5(open(value.path,'rb').read()).digest()
 
         if not os.path.isdir(os.path.dirname(self._filecache)):
             os.makedirs(os.path.dirname(self._filecache))
+
         pickle.dump(self._cache, open(self._filecache,'wb'))
+
+        if save_file:
+            log.warning("Imager temp files saved at {}".format(tempdir))
+        else:
+            shutil.rmtree(str(tempdir), True)
 
     def getCompiler(self):
         return self.config['images']['compiler'] or self.compiler
 
-    def compileLatex(self, source):
+    def compileLatex(self):
         """
-        Compile the LaTeX source
+        Compile the LaTeX source, located at `images.tex`
 
-        Arguments:
-        source -- the LaTeX source to compile
-
-        Returns:
-        file object corresponding to the output from LaTeX
-
+        This should raise an exception if the compilation fails.
         """
-        cwd = os.getcwd()
-        # Make a temporary directory to work in
-        tempdir = tempfile.mkdtemp()
-        os.chdir(tempdir)
 
-        filename = 'images.tex'
-        # Write LaTeX source file
-        encoding = self.config['files']['input-encoding']
-        self.source.seek(0)
-        with open(filename, 'w', encoding=encoding) as f:
-            f.write(self.source.read())
+        run_command(r'%s images.tex' % self.getCompiler())
 
-        # Run LaTeX
-        os.environ['SHELL'] = '/bin/sh'
-        program = self.getCompiler()
-
-        if not program:
-            program = self.compiler
-
-        cmd = r'%s %s' % (program, filename)
-        p = subprocess.Popen(shlex.split(cmd),
-                     stdout=subprocess.PIPE,
-                     stderr=subprocess.STDOUT,
-                     universal_newlines=True)
-        cmd_line = '{} {}{}images.tex'.format(program, tempdir, os.sep)
-        while True:
-            try:
-                line = p.stdout.readline()
-            except Exception as e:
-                imagelog.error(
-                    'Failed to read compiler output: {}\n{}'.format(
-                        cmd_line, str(e)))
-                raise e
-            done = p.poll()
-            if line:
-                imagelog.info(line.strip())
-            elif done is not None:
-                break
-
-        if p.returncode:
-            imagelog.warning(
-                    'Image compilation {} seems to have failed.'.format(
-                        cmd_line))
-        output = None
-        for ext in ['.dvi','.pdf','.ps']:
-            try:
-                with open('images'+ext, 'rb') as f:
-                    output = open('images'+ext, 'rb').read()
-                break
-            except OSError:
-                # Ignore if file not found
-                pass
-
-        # Change back to original working directory
-        os.chdir(cwd)
-        if not self.config["images"]["save-file"]:
-            shutil.rmtree(tempdir, True)
-
-        return output
-
-    def executeConverter(self, output: bytes) -> Tuple[int, Optional[List[str]]]:
+    def executeConverter(self, outfile: Optional[str] = None) -> List[Tuple[str, str]]:
         """
         Execute the actual image converter
 
+        The converter should read `images.csv`. Each row of `images.csv` is a
+        pair `n,dest`, where `n` is the page that contains the image and `dest`
+        is the destination filename. The converter then converts the output on
+        page `n` to an image file.
+
         Arguments:
-        output -- the content of the rendered LaTeX output, obtained by
-        open(...).read()
+        outfile -- output file from latex to convert from. If left None, it
+        uses the default value. This is usually None.
 
         Returns:
-        two-element tuple.  The first element is the return code of the
-        command.  The second element is the list of filenames generated.
-        If the default filenames (i.e. img001.png, img002.png, ...) are
-        used, you can simply return None.
+        A list of pairs (src, dest), where src is the name of the image file
+        produced, and dest is the destination filename.
 
+        This should raise an exception if the conversion fails.
         """
-        open('images.out', 'wb').write(output)
+        if outfile is None:
+            for ext in ['.dvi', ".pdf", ".ps"]:
+                if Path("images" + ext).is_file():
+                    outfile = "images" + ext
+                    break
+
+        if outfile is None:
+            imagelog.warning("Missing image output file")
+            raise Exception
+
         options = ''
         if self._configOptions:
             for opt, value in self._configOptions:
@@ -682,86 +725,14 @@ class Imager(object):
                     value = '"%s"' % value
                 options += '%s %s ' % (opt, value)
 
-        cmd = r'%s %s%s' % (self.command, options, 'images.out')
-        p = subprocess.Popen(shlex.split(cmd),
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.STDOUT,
-                             universal_newlines=True
-                           )
-        done = None
-        while True:
-            line = p.stdout.readline()
-            done = p.poll()
-            if line:
-                imagelog.info(str(line.strip()))
-            elif done is not None:
-                break
-        return done, None
+        run_command(r'%s %s%s' % (self.command, options, outfile))
 
-    def convert(self, output):
-        """
-        Convert the output from LaTeX into images
+        images = []
+        for line in open("images.csv"):
+            page, output = line.split(",")
+            images.append(["img{}{}".format(page, self.fileExtension), output.rstrip()])
 
-        Arguments:
-        output -- output file object
-
-        """
-        if not self.command and self.executeConverter is Imager.executeConverter:
-            log.warning('No imager command is configured.  ' +
-                        'No images will be created.')
-            return
-
-        cwd = os.getcwd()
-
-        # Make a temporary directory to work in
-        tempdir = tempfile.mkdtemp()
-        os.chdir(tempdir)
-
-        # Execute converter
-        rc, images = self.executeConverter(output)
-        if rc:
-            log.warning('Image converter did not exit properly.  ' +
-                        'Images may be corrupted or missing.')
-
-        # Get a list of all of the image files
-        if images is None:
-            images = [f for f in os.listdir('.')
-                            if re.match(r'^img\d+\.\w+$', f)]
-        if len(images) != len(self.images):
-            log.warning('The number of images generated (%d) and the number of images requested (%d) is not the same.' % (len(images), len(self.images)))
-
-        # Sort by creation date
-        #images.sort(lambda a,b: cmp(os.stat(a)[9], os.stat(b)[9]))
-
-        images.sort(key=lambda x: int(re.search(r'(\d+)\.\w+$',x).group(1)))
-        os.chdir(cwd)
-
-        if PILImage is None:
-            log.warning('PIL (Python Imaging Library) is not installed.  ' +
-                        'Images will not be cropped.')
-
-        # Move images to their final location
-        for src, dest in zip(images, list(self.images.values())):
-            # Move the image
-            directory = os.path.dirname(dest.path)
-            if directory and not os.path.isdir(directory):
-                os.makedirs(directory)
-            try:
-                shutil.copy2(os.path.join(tempdir,src), dest.path)
-            except OSError:
-                shutil.copy(os.path.join(tempdir,src), dest.path)
-
-            # Crop the image
-            try:
-                dest.crop()
-                status.dot()
-            except Exception as msg:
-                import traceback
-                traceback.print_exc()
-                log.warning('failed to crop %s (%s)', dest.path, msg)
-
-        # Remove temporary directory
-        shutil.rmtree(tempdir, True)
+        return images
 
     def writeImage(self, filename, code, context):
         """

@@ -18,28 +18,45 @@ from plasTeX.TeX import TeX
 from helpers.utils import cmp_img
 
 @pytest.mark.parametrize('imager_tuple',
-        [('pdf2svg', '.svg', 'vector-imager', 'pdflatex'),
-         ('pdf2svg', '.svg', 'vector-imager', 'xelatex'),
-         ('pdf2svg', '.svg', 'vector-imager', 'lualatex'),
-         ('dvisvgm', '.svg', 'vector-imager', 'latex'),
-         ('dvipng', '.png', 'imager', 'latex')],
-        ids=lambda p: p[0])
+        [('dvipng', '.png', None),
+         ('dvisvgm', '.svg', None),
+         ('gsdvipng', '.png', None),
+         ('gspdfpng', '.png', None),
+         ('pdf2svg', '.svg', None),
+         ('pdf2svg', '.svg', 'xelatex'),
+         ('pdf2svg', '.svg', 'lualatex'),
+         ('pdftoppm', '.png', None)],
+        ids=lambda p: p[0] + "-" + str(p[2]))
 def test_imager(imager_tuple, tmpdir):
-    imager, ext, kind, compiler = imager_tuple
+    imager, ext, compiler = imager_tuple
+    if ext == ".svg":
+        kind = "vector-imager"
+    else:
+        kind = "imager"
+
     tmpdir = Path(str(tmpdir)) # for old pythons
 
     tex = TeX()
     tex.ownerDocument.config['images'][kind] = imager
-    tex.ownerDocument.config['images']["compiler"] = compiler
+    if compiler is not None:
+        tex.ownerDocument.config['images']["compiler"] = compiler
+
     tex.input(r'''
     \documentclass{article}
+    \AtBeginDocument{You should not be seeing this in the imager output. This
+    is injected into the document with \textbackslash AtBeginDocument. The actual
+    image is on the second page and the imager should get the images from
+    there.}
     \begin{document}
     $a + b = x$
     \end{document}
     ''')
 
     renderer = Renderer()
-    renderer['math'] = lambda node: node.vectorImage.url
+    if kind == "imager":
+        renderer['math'] = lambda node: node.image.url
+    else:
+        renderer['math'] = lambda node: node.vectorImage.url
 
     directory = os.getcwd()
     os.chdir(str(tmpdir))

@@ -13,6 +13,7 @@ addons:
     packages:
     - dvipng
     - pdf2svg
+    - poppler-utils
     - texlive-binaries
     - texlive-latex-base
     - texlive-latex-extra

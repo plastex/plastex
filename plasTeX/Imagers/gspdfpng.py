@@ -19,8 +19,8 @@ class GSPDFPNG(_Imager):
     compiler = 'pdflatex'
     fileExtension = '.png'
 
-    def executeConverter(self, output):
-        res = plasTeX.Imagers.Imager.executeConverter(self, output)
+    def executeConverter(self, outfile=None):
+        res = plasTeX.Imagers.Imager.executeConverter(self, outfile)
         self.scaleImages()
         return res
 

@@ -123,12 +123,12 @@ in the configuration.
 file object where the image \LaTeX\ document is written to.
 \end{memberdesc}
 
-\begin{memberdesc}[Imager]{verification}
-command that verifies the existence of the image converter on the current
-machine.  If \member{verification} is not specified, the executable 
-specified in \member{command} is executed with the \longprogramopt{help}.
-If the return code is zero, the imager is considered valid.  If the
-return code is anything else, the imager is not considered valid.
+\begin{memberdesc}[Imager]{verifications}
+a list of commands that verifies the existence of the image converter on the
+current machine. If \member{verifications} is not specified, the executable
+specified in \member{command} is executed with the \longprogramopt{help}.  If
+the return code of all commands are zero, the imager is considered valid.
+Otherwise, the imager is not considered valid.
 \end{memberdesc}
 
 
@@ -137,23 +137,18 @@ closes the generated \LaTeX\ document and starts the image generation routine.
 \end{methoddesc}
 
 \begin{methoddesc}[Imager]{compileLatex}{source}
-the method responsible for compiling the \LaTeX\ source.
+the method responsible for compiling the \LaTeX\ source. The source file is
+`images.tex` in the current working directory (which is a temporary directory,
+not the directory from which the command is run). The result should be saved in
+the same directory, to be used by `executeConverter`.
 
-\var{source} is a file object containing the \LaTeX\ document.
-\end{methoddesc}
 
-\begin{methoddesc}[Imager]{convert}{output}
-sets up the temporary environment for the image converter, then executes
-\method{executeConverter}.  It also moves the generated images into
-their final location specified in the configuration.
 \end{methoddesc}
 
 \begin{methoddesc}[Imager]{executeConverter}{output}
 executes the command that converts the output from the \LaTeX\ compiler
-into image files.
-
-\var{output} is a bytes object containing the compiled output of the
-\LaTeX\ document.
+into image files. In the default implementation, it tries to convert from
+`./images.dvi`, `./images.pdf` or `./images.ps`, in that order.
 \end{methoddesc}
 
 \begin{methoddesc}[Imager]{getImage}{node}
