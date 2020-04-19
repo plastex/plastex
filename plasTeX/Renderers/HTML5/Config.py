@@ -75,7 +75,7 @@ section['mathjax-url'] = StringOption(
     """ Url of the MathJax lib """,
     options='--mathjax-url',
     category='html5',
-    default='http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML',
+    default='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML',
 )
 
 section['mathjax-dollars'] = BooleanOption(
