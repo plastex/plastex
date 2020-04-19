@@ -11,31 +11,28 @@ class DVISVGM(_Imager):
     verifications = ['dvisvgm --help', 'latex --help']
     compiler = 'latex'
 
-    def executeConverter(self, output: bytes) -> Tuple[int, Optional[List[str]]]:
-        Path('images.dvi').write_bytes(output)
+    def executeConverter(self, outfile=None) -> List[Tuple[str, str]]:
+        if outfile is None:
+            outfile = "images.dvi"
 
         scale = self.config["images"]["scale-factor"]
-        rc = 0
-        for page in range(1, len(self.images) + 1):
-            out = Path('img{}.svg'.format(page))
 
-            rc = subprocess.call([
+        images = []
+        for no, line in enumerate(open("images.csv")):
+            out = 'img%d.svg' % no
+            page, output = line.split(",")
+            images.append([out, output.rstrip()])
+
+            rc = subprocess.run([
                 "dvisvgm",
                 "--exact",
                 "--scale={}".format(scale),
                 "--no-fonts",
                 "--output={}".format(out),
                 "--page={}".format(page),
-                "images.dvi"
-            ], stdout=subprocess.DEVNULL)
+                outfile
+            ], stdout=subprocess.DEVNULL, check=True)
 
-            if rc:
-                break
-
-            if not out.read_text().strip():
-                out.unlink()
-                break
-
-        return rc, None
+        return images
 
 Imager = DVISVGM

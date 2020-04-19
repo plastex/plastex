@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from pathlib import Path
 import subprocess
 import re
 import xml.etree.ElementTree as ET
@@ -14,19 +13,22 @@ class PDFSVG(VectorImager):
     verifications = ['pdflatex --help', 'which pdf2svg', 'pdfcrop --help']
     compiler = 'pdflatex'
 
-    def executeConverter(self, output: bytes) -> Tuple[int, Optional[List[str]]]:
-        Path("images-uncropped.pdf").write_bytes(output)
+    def executeConverter(self, outfile=None) -> List[Tuple[str, str]]:
+        if outfile is None:
+            outfile = "images.pdf"
 
-        subprocess.call(["pdfcrop", "images-uncropped.pdf", "images.pdf"], stdout=subprocess.DEVNULL)
+        subprocess.call(["pdfcrop", outfile, "images-cropped.pdf"], stdout=subprocess.DEVNULL)
 
-        rc = 0
-        for page in range(1, len(self.images) + 1):
-            filename = 'img%d.svg' % page
-            rc = subprocess.call(['pdf2svg', 'images.pdf', filename, str(page)], stdout=subprocess.DEVNULL)
-            if rc:
-                break
+        scale = self.config["images"]["scale-factor"]
 
-            scale = self.config["images"]["scale-factor"]
+        images = []
+        for no, line in enumerate(open("images.csv")):
+            filename = 'img%d.svg' % no
+            page, output = line.split(",")
+            images.append([filename, output.rstrip()])
+
+            subprocess.run(['pdf2svg', 'images-cropped.pdf', filename, str(page)], stdout=subprocess.DEVNULL, check=True)
+
             if scale != 1:
                 tree = ET.parse(filename)
                 root = tree.getroot()
@@ -37,6 +39,6 @@ class PDFSVG(VectorImager):
 
                 tree.write(filename)
 
-        return rc, None
+        return images
 
 Imager = PDFSVG

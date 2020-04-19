@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os, sys
+import subprocess, sys
 import plasTeX.Imagers.gspdfpng as gspdfpng
 
 gs = 'gs'
@@ -12,10 +12,11 @@ class GSDVIPNG(gspdfpng.GSPDFPNG):
     compiler = 'latex'
     verifications = ['%s --help' % gs, 'dvips --help', 'latex --help']
 
-    def executeConverter(self, output):
-        open('images.dvi', 'w').write(output)
-        rc = os.system('dvips -o images.ps images.dvi')
-        if rc: return rc, None
-        return gspdfpng.GSPDFPNG.executeConverter(self, open('images.ps'))
+    def executeConverter(self, outfile=None):
+        if outfile is None:
+            outfile = 'images.dvi'
+
+        subprocess.run(['dvips', '-o', "images.ps", outfile], check=True)
+        return gspdfpng.GSPDFPNG.executeConverter(self, "images.ps")
 
 Imager = GSDVIPNG
