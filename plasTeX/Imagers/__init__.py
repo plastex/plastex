@@ -605,24 +605,23 @@ width 2pt\hskip2pt}}{}
         self.source.seek(0)
         Path("images.tex").write_text(self.source.read(), encoding=self.config['files']['input-encoding'])
 
-        def on_error():
+        def on_error(e):
             log.warning("Source files are saved at {}.".format(tempdir))
             os.chdir(str(cwd))
+            raise e
 
         try:
             self.compileLatex()
-        except:
-            log.warning("Failed to compile image")
-            on_error()
-            return
+        except Exception as e:
+            log.warning("Failed to compile image: {}".format(e))
+            on_error(e)
 
         # Execute converter
         try:
             images = self.executeConverter()
-        except:
-            log.warning("Failed to convert image")
-            on_error()
-            return
+        except Exception as e:
+            log.warning("Failed to convert image: {}".format(e))
+            on_error(e)
 
         os.chdir(str(cwd))
 
