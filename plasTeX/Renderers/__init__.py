@@ -508,9 +508,17 @@ class Renderer(dict):
         else:
             str(document)
 
-        # Finish rendering images
-        self.imager.close()
-        self.vectorImager.close()
+        # Finish rendering images. We pass upon encountering errors because
+        # Imager already logged the error.
+        try:
+            self.imager.close()
+        except:
+            pass
+
+        try:
+            self.vectorImager.close()
+        except:
+            pass
 
         # Run any cleanup activities
         self.cleanup(document, list(self.files.values()), postProcess=postProcess)
