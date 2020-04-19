@@ -471,7 +471,7 @@ class Tokenizer(object):
                 else: token = EscapeSequence()
 
                 # Check for any \let aliases
-                token = context.lets.get(token, token)
+                token = context.get_let(token)
 
                 # TODO: This action should be generalized so that the
                 #       tokens are processed recursively
@@ -489,7 +489,7 @@ class Tokenizer(object):
 
             elif code == CC_ACTIVE:
                 token = EscapeSequence('active::%s' % token)
-                token = context.lets.get(token, token)
+                token = context.get_let(token)
                 self.state = STATE_M
 
             else:

@@ -28,6 +28,7 @@ class ContextItem(dict):
     def __init__(self, data=None):
         dict.__init__(self, data or {})
         self.categories = None
+        self.lets = {}
         self.obj = None
         self.parent = None
         self.owner = None
@@ -174,9 +175,6 @@ class Context(object):
         # LaTeX counters
         self.counters = Counters()
         self.counters.context = self
-
-        # Tokens aliased by \let
-        self.lets = {}
 
         # Imported packages and their options
         self.packages = {}
@@ -560,7 +558,6 @@ class Context(object):
 
     def __contains__(self, key):
         return key in self.top
-
 
     def mapMethods(self):
         # Getter methods use the most local context
@@ -1047,6 +1044,14 @@ class Context(object):
         else:
             self.addGlobal(name, newclass)
 
+    def get_let(self, command):
+        for context in reversed(self.contexts):
+            try:
+                return context.lets[command]
+            except KeyError:
+                pass
+        return command
+
     def let(self, dest, source):
         """
         Create a \\let
@@ -1059,7 +1064,12 @@ class Context(object):
             c.let('bgroup', BeginGroup('{'))
 
         """
-        self.lets[dest] = source
+        if source.catcode == Token.CC_ESCAPE and source.macroName == "relax":
+            del self.top[dest.macroName]
+        elif source.catcode == Token.CC_ESCAPE:
+            self.top[dest.macroName] = self[source.macroName]
+        else:
+            self.top.lets[dest.macroName] = source
 
     def chardef(self, name, num):
         """
