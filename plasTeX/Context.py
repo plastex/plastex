@@ -2,6 +2,7 @@
 
 from plasTeX import ismacro, macroName
 from plasTeX.Logging import getLogger
+from plasTeX.Base.TeX.Primitives import relax
 from plasTeX.Tokenizer import Tokenizer, Token, DEFAULT_CATEGORIES, VERBATIM_CATEGORIES
 import os
 import configparser
@@ -938,7 +939,7 @@ class Context(object):
         """
         # Macro already exists
         if name in list(self.keys()):
-            if not issubclass(self[name], (plasTeX.NewCommand, plasTeX.Definition)):
+            if not issubclass(self[name], (plasTeX.NewCommand, plasTeX.Definition, relax)):
                 if not issubclass(self[name], plasTeX.TheCounter):
                     return
             macrolog.debug('redefining command "%s"', name)
@@ -1064,9 +1065,7 @@ class Context(object):
             c.let('bgroup', BeginGroup('{'))
 
         """
-        if source.catcode == Token.CC_ESCAPE and source.macroName == "relax":
-            del self.top[dest.macroName]
-        elif source.catcode == Token.CC_ESCAPE:
+        if source.catcode == Token.CC_ESCAPE:
             self.top[dest.macroName] = self[source.macroName]
         else:
             self.top.lets[dest.macroName] = source
