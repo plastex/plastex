@@ -33,7 +33,7 @@ class PDFSVG(VectorImager):
 
                 for attrib in ["width", "height"]:
                     m = length_re.match(root.attrib[attrib])
-                    root.attrib[attrib] = "{}{}".format(float(m.group(1)) * scale, m.group(2))
+                    root.attrib[attrib] = "{:.2f}{}".format(float(m.group(1)) * scale, m.group(2))
 
                 tree.write(filename)
 
