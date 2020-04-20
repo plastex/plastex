@@ -23,12 +23,6 @@ class DocumentTest(TestCase):
         node = doc.createTextNode('foo')
         assert isinstance(node, Text)
         assert node == 'foo'
-    
-    def testCreateComment(self):
-        doc = Document()
-        node = doc.createComment('foo')
-        assert isinstance(node, Comment)
-        assert node == 'foo'
 
     def testCreateCDATASection(self):
         doc = Document()

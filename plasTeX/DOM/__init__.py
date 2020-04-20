@@ -1749,16 +1749,6 @@ class Text(CharacterData):
         return self.parentNode.textContent
 
 
-class Comment(CharacterData):
-    """
-    Comment
-
-    http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html#ID-1728279322
-    """
-    nodeName = '#comment'
-    nodeType = Node.COMMENT_NODE
-    __slots__ = Node.TEXT_SLOTS
-
 
 class TypeInfo(object):
     """
@@ -2027,7 +2017,6 @@ class Document(Node):
     elementClass = Element
     documentFragmentClass = DocumentFragment
     textNodeClass = Text
-    commentClass = Comment
     cdataSectionClass = CDATASection
     processingInstructionClass = ProcessingInstruction
     attributeClass = Attr
@@ -2092,22 +2081,6 @@ class Document(Node):
 
         """
         o = self.textNodeClass(data)
-        o.ownerDocument = self
-        o.parentNode = None
-        return o
-
-    def createComment(self, data):
-        """
-        Instantiate a new comment node
-
-        Required Arguments:
-        data -- string to initialize the comment with
-
-        Returns:
-        new comment node
-
-        """
-        o = self.commentClass(data)
         o.ownerDocument = self
         o.parentNode = None
         return o

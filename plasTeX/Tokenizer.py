@@ -3,6 +3,7 @@
 from plasTeX.DOM import Node, Text
 from plasTeX import encoding
 from io import BytesIO, StringIO, TextIOWrapper
+from typing import Tuple, NewType
 
 # Default TeX categories
 DEFAULT_CATEGORIES = [
@@ -29,6 +30,7 @@ DEFAULT_CATEGORIES = [
 VERBATIM_CATEGORIES = [''] * 16
 VERBATIM_CATEGORIES[11] = encoding.stringletters()
 
+CategoryCode = NewType('CategoryCode', int)
 
 class Token(Text):
     """ Base class for all TeX tokens """
@@ -137,11 +139,6 @@ class Alignment(Token):
     macroName = 'active::&'
     __slots__ = Token.TOKEN_SLOTS
 
-class EndOfLine(Token):
-    catcode = Token.CC_EOL
-    isElementContentWhitespace = True
-    __slots__ = Token.TOKEN_SLOTS
-
 class Parameter(Token):
     catcode = Token.CC_PARAMETER
     __slots__ = Token.TOKEN_SLOTS
@@ -169,17 +166,6 @@ class Other(Token):
     catcode = Token.CC_OTHER
     __slots__ = Token.TOKEN_SLOTS
 
-class Active(Token):
-    catcode = Token.CC_ACTIVE
-    __slots__ = Token.TOKEN_SLOTS
-
-class Comment(Token):
-    catcode = Token.CC_COMMENT
-    nodeType = Node.COMMENT_NODE
-    nodeName = '#comment'
-    isElementContentWhitespace = True
-    __slots__ = Token.TOKEN_SLOTS
-
 class Tokenizer(object):
 
     # Tokenizer states
@@ -187,22 +173,16 @@ class Tokenizer(object):
     STATE_M = 2
     STATE_N = 4
 
-    # Array for getting token class for the corresponding catcode
     tokenClasses = [None] * 16
-    tokenClasses[Token.CC_ESCAPE] = EscapeSequence
     tokenClasses[Token.CC_BGROUP] = BeginGroup
     tokenClasses[Token.CC_EGROUP] = EndGroup
     tokenClasses[Token.CC_MATHSHIFT] = MathShift
     tokenClasses[Token.CC_ALIGNMENT] = Alignment
-    tokenClasses[Token.CC_EOL] = EndOfLine
     tokenClasses[Token.CC_PARAMETER] = Parameter
     tokenClasses[Token.CC_SUPER] = Superscript
     tokenClasses[Token.CC_SUB] = Subscript
-    tokenClasses[Token.CC_SPACE] = Space
     tokenClasses[Token.CC_LETTER] = Letter
     tokenClasses[Token.CC_OTHER] = Other
-    tokenClasses[Token.CC_ACTIVE] = Active
-    tokenClasses[Token.CC_COMMENT] = Comment
 
     def __init__(self, source, context):
         """
@@ -249,7 +229,7 @@ class Tokenizer(object):
             if not char or ord(char) == 10:
                 break
 
-    def iterchars(self):
+    def iterchars(self) -> Tuple[CategoryCode, str]:
         """
         Get the next character in the stream and its category code
 
@@ -264,7 +244,6 @@ class Tokenizer(object):
         """
         # Create locals before going into the generator loop
         mybuffer = self._charBuffer
-        classes = self.tokenClasses
         read = self.read
 
         whichCode = self.context.whichCode
@@ -308,9 +287,9 @@ class Tokenizer(object):
             if code in (CC_IGNORED, CC_INVALID):
                 continue
 
-            yield classes[code](token)
+            yield (code, token)
 
-    def pushChar(self, char):
+    def pushChar(self, char: str):
         """
         Push a character back into the stream to be re-read
 
@@ -357,6 +336,7 @@ class Tokenizer(object):
         global Space, EscapeSequence
         Space = Space
         EscapeSequence = EscapeSequence
+        tokenClasses = self.tokenClasses
         mybuffer = self._tokBuffer
         charIter = self.iterchars()
         context = self.context
@@ -383,18 +363,14 @@ class Tokenizer(object):
 
             # Get the next character
             try:
-                token = next(charIter)
+                (code, char) = next(charIter)
             except StopIteration:
                 return
-
-            if token.nodeType == ELEMENT_NODE:
-                raise ValueError('Expanded tokens should never make it here')
-
-            code = token.catcode
 
             # Short circuit letters and other since they are so common
             if code in (CC_LETTER, CC_OTHER):
                 self.state = STATE_M
+                token = tokenClasses[code](char)
 
             # Whitespace
             elif code == CC_SPACE:
@@ -416,7 +392,7 @@ class Tokenizer(object):
                 elif state == STATE_N:
                     # ord(token) != 10 is the same as saying token != '\n'
                     # but it is much faster.
-                    if ord(token) != 10:
+                    if ord(char) != 10:
                         self.lineNumber += 1
                         self.readline()
                     token = EscapeSequence('par')
@@ -431,26 +407,26 @@ class Tokenizer(object):
                 # Get name of command sequence
                 self.state = STATE_M
 
-                for token in charIter:
+                for (next_code, next_char) in charIter:
 
-                    if token.catcode == CC_LETTER:
-                        word = [token]
-                        for t in charIter:
-                            if t.catcode == CC_LETTER:
-                                word.append(t)
+                    if next_code == CC_LETTER:
+                        word = [next_char]
+                        for (next_code_, next_char_) in charIter:
+                            if next_code_ == CC_LETTER:
+                                word.append(next_char_)
                             else:
-                                pushChar(t)
+                                pushChar(next_char_)
                                 break
                         token = EscapeSequence(''.join(word))
 
-                    elif token.catcode == CC_EOL:
+                    elif next_code == CC_EOL:
                         #pushChar(token)
                         #token = EscapeSequence()
                         token = Space(' ')
                         self.state = STATE_S
 
                     else:
-                        token = EscapeSequence(token)
+                        token = EscapeSequence(next_char)
 #
 # Because we can implement macros both in LaTeX and Python, we don't
 # always want the whitespace to be eaten.  For example, implementing
@@ -458,7 +434,7 @@ class Tokenizer(object):
 # another macro class that would eat whitspace incorrectly.  So we
 # have to do this kind of thing in the parse() method of Macro.
 #
-                    if token.catcode != CC_EOL:
+                    if next_code != CC_EOL:
 # HACK: I couldn't get the parse() thing to work so I'm just not
 #       going to parse whitespace after EscapeSequences that end in
 #       non-letter characters as a half-assed solution.
@@ -488,11 +464,12 @@ class Tokenizer(object):
                 continue
 
             elif code == CC_ACTIVE:
-                token = EscapeSequence('active::%s' % token)
+                token = EscapeSequence('active::%s' % char)
                 token = context.get_let(token)
                 self.state = STATE_M
 
             else:
+                token = tokenClasses[code](char)
                 self.state = STATE_M
 
             prev = token
