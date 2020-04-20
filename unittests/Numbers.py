@@ -225,5 +225,23 @@ class Parameters(TestCase):
         baselineskip = t.ownerDocument.context['baselineskip'].value
         assert foo == (-4*baselineskip), '"%s" != "%s"' % (foo, (-4*baselineskip))
 
+    def testRomanNumeral(self):
+        t = TeX()
+        t.input(r'\romannumeral5')
+        p = t.parse()
+        assert ''.join(p) == 'v'
+
+    def testRomanNumeralSection(self):
+        t = TeX()
+        t.input(r'''
+\documentclass{article}
+\begin{document}
+\section{}
+\section{}
+\romannumeral\thesection
+\end{document}
+''')
+        assert t.parse().textContent.strip() == 'ii'
+
 if __name__ == '__main__':
     unittest.main()
