@@ -1615,6 +1615,7 @@ class Counter(object):
 class TheCounter(Command):
     """ Base class for \\thecounter commands """
     format = None
+    trimLeft = False
 
     def invoke(self, tex):
 
@@ -1639,11 +1640,11 @@ class TheCounter(Command):
 
         t = re.sub(r'\$\{\s*(\w+)(?:\.(\w+))?\s*\}', counterValue, format)
 
-        # This is kind of a hack.  Since number formats aren't quite as
-        # flexible as in LaTeX, we have to do somethings heuristically.
-        # In this case, whenever a counter value comes out as a zero,
-        # just hank it out.  This is especially useful in document classes
-        # such as book and report which do this in the \thefigure format macro.
-        t = re.sub(r'\b0[^\dA-Za-z]+', r'', t)
+        # If trimLeft is set to True, we remove any "0." at the beginning.
+        # Document classes such as book and report which do this in the
+        # \thefigure format macro.
+        if self.trimLeft:
+            while t.startswith("0."):
+                t = t[2:]
 
         return tex.textTokens(t)

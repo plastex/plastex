@@ -779,7 +779,7 @@ class Context(object):
         """
         self.contexts[-1].categories = self.categories = VERBATIM_CATEGORIES[:]
 
-    def newcounter(self, name, resetby=None, initial=0, format=None):
+    def newcounter(self, name, resetby=None, initial=0, format=None, trimLeft = False):
         """
         Create a new counter
 
@@ -804,7 +804,7 @@ class Context(object):
         if format is None:
             format = '${%s}' % name
         newclass = type('the' + name, (plasTeX.TheCounter,),
-                               {'format': format})
+                {'format': format, 'trimLeft': trimLeft})
         self.addGlobal('the' + name, newclass)
 
     def newwrite(self, name, file):
