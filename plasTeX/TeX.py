@@ -276,31 +276,6 @@ class TeX(object):
             except IndexError:
                 break
 
-    def iterchars(self):
-        """
-        Iterate over input characters (untokenized)
-
-        Returns:
-        generator that iterates through the untokenized characters
-
-        """
-        # Create locals before going into generator loop
-        inputs = self.inputs
-        context = self.ownerDocument.context
-        endInput = self.endInput
-        ownerDocument = self.ownerDocument
-
-        while inputs:
-            # Walk through characters
-            try:
-                for char in inputs[-1][0].iterchars():
-                    yield char
-                else:
-                    endInput()
-            # This really shouldn't happen, but just in case...
-            except IndexError:
-                break
-
     def __iter__(self):
         """
         Iterate over tokens while expanding them
