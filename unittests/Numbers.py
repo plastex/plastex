@@ -231,6 +231,18 @@ class Parameters(TestCase):
         p = t.parse()
         assert ''.join(p) == 'v'
 
+    def testNumberSection(self):
+        t = TeX()
+        t.input(r'''
+\documentclass{article}
+\begin{document}
+\section{}
+\section{}
+\number\thesection
+\end{document}
+''')
+        assert t.parse().textContent.strip() == '2'
+
     def testRomanNumeralSection(self):
         t = TeX()
         t.input(r'''
