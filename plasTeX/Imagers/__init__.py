@@ -478,7 +478,7 @@ class Imager(object):
         self.images = {}
 
         # Images that are simply copied from the source directory
-        self.staticimages = OrderedDict()
+        self.staticimages = {}
 
         # Filename generator
         self.newFilename = Filenames(self.config['images'].get('filenames', raw=True),
