@@ -143,6 +143,15 @@ class Macro(Element):
     # Force there to be at least on paragraph in the content
     forcePars = False
 
+    # Macros do not have but we give EscapeSequence a catcode of 0 so I guess
+    # we should follow suit... Normally commands only check the catcode of
+    # unexpanded tokens from the tokenizer, which all have the right catcode
+    # set. This is done by assuming that tokens further down the token stream
+    # have not been expanded. There are corner cases where this assumption is
+    # not true, and causes some code to crash, e.g. when \expandafter is used.
+    # So we set the catcode to ensure correct behaviour.
+    catcode = 0
+
     def persist(self, attrs=None):
         """
         Store attributes needed for cross-document links
