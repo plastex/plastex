@@ -113,6 +113,11 @@ class EscapeSequence(Token):
     @property
     def macroName(self):
         return self
+
+    @property
+    def nodeName(self):
+        return self.macroName
+
     __slots__ = Token.TOKEN_SLOTS
 
 class BeginGroup(Token):
