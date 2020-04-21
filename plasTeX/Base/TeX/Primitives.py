@@ -468,16 +468,7 @@ class noligs_(Command):
 
 class expandafter(Command):
     def invoke(self, tex):
-        nexttok = None
-        for tok in tex.itertokens():
-            nextok = tok
-            break
-        for tok in tex:
-            aftertok = tok
-            break
-        tex.pushToken(aftertok)
-        tex.pushToken(nexttok)
-        return []
+        return [next(tex.itertokens()), next(tex.__iter__())]
 
 class vskip(Command):
     args = 'size:Dimen'
