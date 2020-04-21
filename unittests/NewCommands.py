@@ -6,6 +6,8 @@ from plasTeX import Macro, Environment, Node, Command
 from plasTeX.TeX import TeX
 from plasTeX.Context import Context
 
+from helpers.utils import compare_output
+
 class ContextGenerated(TestCase):
     def testNewcommand(self):
         c = Context()
@@ -196,6 +198,8 @@ class NewCommands(TestCase):
         output = [x for x in s]
         assert output[-1].str == 'A', output
 
+    def testRedefineUndefinedCommand(self):
+        compare_output(r'\let\bar\foo\newcommand\foo{Foo}\foo')
 
 class Python(TestCase):
 
