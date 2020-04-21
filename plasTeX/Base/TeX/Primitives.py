@@ -157,7 +157,14 @@ class DefCommand(Command):
                         newarg.append(t)
                         params = 0
                 a[key] = newarg
-        self.ownerDocument.context.newdef(a['name'], a['args'], a['definition'], local=self.local)
+
+        # nodeName works for both EscapeSequence and Macro. We can end up with
+        # a macro in the name position if we used \expandafter, e.g.
+        # \expandafter\def\csname foo\endcsname. This works even in the case
+        # where \foo is not yet defined, and becomes an unrecognized macro.
+        name = a['name'].nodeName
+
+        self.ownerDocument.context.newdef(name, a['args'], a['definition'], local=self.local)
 
 class def_(DefCommand):
     macroName = 'def'

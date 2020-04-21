@@ -1065,10 +1065,13 @@ class Context(object):
             c.let('bgroup', BeginGroup('{'))
 
         """
+        # Use nodeName instead of macroName to work with Macros as well as
+        # EscapeSequence, e.g. when we do
+        # \expandafter\let\csname foo\endcsname=1
         if source.catcode == Token.CC_ESCAPE:
-            self.top[dest.macroName] = self[source.macroName]
+            self.top[dest.nodeName] = self[source.nodeName]
         else:
-            self.top.lets[dest.macroName] = source
+            self.top.lets[dest.nodeName] = source
 
     def chardef(self, name, num):
         """
