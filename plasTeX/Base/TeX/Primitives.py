@@ -2,7 +2,7 @@
 
 import datetime
 from plasTeX.Tokenizer import Token, EscapeSequence, Other
-from plasTeX import Command, CountCommand
+from plasTeX import Macro, Command, CountCommand
 from plasTeX import sourceChildren
 from plasTeX.Logging import getLogger
 
@@ -475,7 +475,22 @@ class noligs_(Command):
 
 class expandafter(Command):
     def invoke(self, tex):
-        return [next(tex.itertokens()), next(tex.__iter__())]
+        nexttok = next(tex.itertokens())
+        aftertok = next(tex.itertokens())
+
+        # We expand aftertok once, not recursively
+        expanded = None
+        if isinstance(aftertok, EscapeSequence):
+            obj = tex.ownerDocument.createElement(aftertok.macroName)
+            obj.contextDepth = aftertok.contextDepth
+            obj.parentNode = aftertok.parentNode
+            aftertok = obj
+        if isinstance(aftertok, Macro):
+            expanded = aftertok.invoke(tex)
+
+        expanded = expanded or [aftertok]
+
+        return [nexttok] + expanded
 
 class vskip(Command):
     args = 'size:Dimen'
