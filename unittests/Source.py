@@ -32,6 +32,14 @@ class Source(TestCase):
         source = normalize(output.source)
         assert input == source, '"%s" != "%s"' % (input, source)
 
+    def testMathCal(self):
+        input = r'a $ \mathcal A $ b'
+        s = TeX()
+        s.input(input)
+        output = s.parse()
+        source = normalize(output.source)
+        assert input == source, '"%s" != "%s"' % (input, source)
+
     def testDisplayMath(self):
         input = r'a \[ x^{y_3} \]b'
         s = TeX()
