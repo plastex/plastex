@@ -34,10 +34,12 @@ def cmp_img(a: str, b: str) -> float:
     # out.stderr is a byte sequence, but float can take byte sequences
     return float(diff)
 
-# This checks whether plastex produces the same output as tex. This only works
-# for things with simple plain text output, and is intended to be used for
-# testing primitives such as \let, \def, \expandafter etc.
 def compare_output(tex: str):
+    r"""
+    This checks whether plastex produces the same output as tex. This only works
+    for things with simple plain text output, and is intended to be used for
+    testing primitives such as \let, \def, \expandafter etc.
+    """
     cwd = os.getcwd()
     try:
         plastex_out = TeX().input(tex).parse().textContent
