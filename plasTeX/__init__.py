@@ -2,6 +2,7 @@
 
 __version__ = '2.1'
 
+from typing import Optional
 from plasTeX import Logging, encoding
 from plasTeX.DOM import Element, Text, Node, DocumentFragment, Document
 from plasTeX.Tokenizer import Token, BeginGroup, EndGroup, Other
@@ -115,7 +116,7 @@ class Macro(Element):
     MODE_BEGIN = 1
     MODE_END = 2
 
-    macroName = None  # TeX macro name (instead of class name)
+    macroName = None # type: Optional[str] # TeX macro name (instead of class name)
     macroMode = MODE_NONE  # begin, end, or none
     mathMode = None
 
@@ -125,7 +126,7 @@ class Macro(Element):
     nodeValue = None
 
     # Counter associated with this macro
-    counter = None
+    counter = None # type: Optional[str]
 
     # Value to return when macro is referred to by \ref
     ref = None
@@ -1141,8 +1142,8 @@ class NewCommand(Macro):
 
 class Definition(Macro):
     """ Superclass for all \\def-type commands """
-    args = None
-    definition = None
+    args = None # type: Optional[str]
+    definition = None # type: Optional[str]
 
     def invoke(self, tex):
         if not self.args: return self.definition
