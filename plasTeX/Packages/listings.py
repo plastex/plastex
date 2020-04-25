@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import sys, re
 from plasTeX import Base
 

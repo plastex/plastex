@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from plasTeX import Environment
 from plasTeX.Base.LaTeX.Floats import Caption
 

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 This package is dynamically generated.  It loads data from the ent.xml file.
 

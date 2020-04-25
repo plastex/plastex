@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.3.1 Making Sentences (p170)
 

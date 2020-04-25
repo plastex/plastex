@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import unittest, re
 from unittest import TestCase
 from plasTeX.TeX import TeX

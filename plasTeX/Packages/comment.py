@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from plasTeX.Base.LaTeX.Verbatim import verbatim
 
 class comment(verbatim):

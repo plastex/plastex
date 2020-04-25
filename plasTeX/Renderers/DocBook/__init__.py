@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import re
 from plasTeX.Renderers.PageTemplate import Renderer as _Renderer
 from plasTeX import Command

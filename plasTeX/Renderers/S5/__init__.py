@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from plasTeX.Renderers.XHTML import _Renderer
 
 class S5(_Renderer):

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.11.2 Cross-References (p209)
 

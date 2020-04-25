@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from plasTeX import Command, Environment
 from plasTeX.Base import textbf, textit, textsl, textrm, textsf
 from plasTeX.Base import List, label, newcommand, newenvironment

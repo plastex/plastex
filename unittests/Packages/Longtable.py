@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import re
 
 from pytest import mark

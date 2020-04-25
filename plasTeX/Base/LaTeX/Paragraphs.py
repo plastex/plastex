@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.3.2 Making Paragraphs (p171)
 

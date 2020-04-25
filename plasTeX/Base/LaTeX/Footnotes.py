@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.3.3 Footnotes (p172)
 

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 __version__ = '2.1'
 
 from typing import Optional, Union, List, Callable, Dict

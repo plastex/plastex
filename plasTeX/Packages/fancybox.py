@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 plasTeX package for fancy boxes
 

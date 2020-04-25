@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from plasTeX import Command
 from plasTeX.Base.LaTeX.Floats import Float, Caption
 

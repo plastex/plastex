@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import textwrap
 from logging import CRITICAL, DEBUG, INFO, Formatter
 from logging import Logger as _Logger

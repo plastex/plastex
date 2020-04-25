@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.8 Definitions, Numbering, and Programming
 

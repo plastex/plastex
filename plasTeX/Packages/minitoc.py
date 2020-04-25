@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 This is a huge package!  Most of the commands are simply stubbed out
 and not implemented yet.  Of course, many of the commands simply won't

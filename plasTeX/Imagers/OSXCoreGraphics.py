@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from plasTeX.Imagers import Imager as _Imager
 
 class CoreGraphics(_Imager):

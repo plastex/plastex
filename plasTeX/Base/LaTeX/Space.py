@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.13.2 Space (p216)
 

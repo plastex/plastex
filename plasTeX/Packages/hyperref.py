@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 r"""
 Implementation of the hyperref package
 

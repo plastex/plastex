@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 r"""
 This package is not properly implemented.  The \ifthenelse command simply
 returns the 'false' portion of the command.  Hopefully, some day this will

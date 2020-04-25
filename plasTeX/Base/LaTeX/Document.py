@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.2 The Structure of the Document (p170)
 

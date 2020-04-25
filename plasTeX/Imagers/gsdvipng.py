@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import subprocess, sys
 import plasTeX.Imagers.gspdfpng as gspdfpng
 

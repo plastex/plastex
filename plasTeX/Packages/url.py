@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from plasTeX.Base import Command
 
 class url(Command):

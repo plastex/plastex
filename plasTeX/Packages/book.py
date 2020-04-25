@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from plasTeX import Command, TheCounter
 
 def ProcessOptions(options, document):

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 B.2 Allocation of Registers (p346)
 

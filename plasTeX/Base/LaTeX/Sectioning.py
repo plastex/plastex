@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.4 Sectioning and Table of Contents (p174)
 

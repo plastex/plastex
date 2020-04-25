@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import subprocess, shlex
 import os, shutil, re
 from pathlib import Path

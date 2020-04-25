@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from pathlib import Path
 import os, time, tempfile, shutil, re, string, pickle
 try: from hashlib import md5

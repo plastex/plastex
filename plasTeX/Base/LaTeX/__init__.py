@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 #from Entities import *
 
 from plasTeX.Base.LaTeX.Accents import *

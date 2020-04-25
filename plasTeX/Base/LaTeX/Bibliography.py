@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.11.3 Bibliography and Citation (p208)
 

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.9 Figures and Other Floating Bodies (p196)
 

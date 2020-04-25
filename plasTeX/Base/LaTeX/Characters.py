@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 These macros are actually taken from the T1 font encoding package, but 
 I figure that it wouldn't hurt to put them all in by default.

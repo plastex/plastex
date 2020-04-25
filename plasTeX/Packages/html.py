@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from plasTeX import Command, IgnoreCommand
 from plasTeX.Base.LaTeX.Verbatim import verbatim
 from plasTeX.DOM import Text
