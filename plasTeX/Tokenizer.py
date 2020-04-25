@@ -3,7 +3,7 @@
 from plasTeX.DOM import Node, Text
 from plasTeX import encoding
 from io import BytesIO, StringIO, TextIOWrapper
-from typing import Tuple, NewType
+from typing import Tuple, NewType, Optional, Callable, List, Generator
 
 # Default TeX categories
 DEFAULT_CATEGORIES = [
@@ -30,33 +30,33 @@ DEFAULT_CATEGORIES = [
 VERBATIM_CATEGORIES = [''] * 16
 VERBATIM_CATEGORIES[11] = encoding.stringletters()
 
-CategoryCode = NewType('CategoryCode', int)
+CatCode = NewType('CatCode', int)
 
 class Token(Text):
     """ Base class for all TeX tokens """
 
     # The 16 category codes defined by TeX
-    CC_ESCAPE = 0
-    CC_BGROUP = 1
-    CC_EGROUP = 2
-    CC_MATHSHIFT = 3
-    CC_ALIGNMENT = 4
-    CC_EOL = 5
-    CC_PARAMETER = 6
-    CC_SUPER = 7
-    CC_SUB = 8
-    CC_IGNORED = 9
-    CC_SPACE = 10
-    CC_LETTER = 11
-    CC_OTHER = 12
-    CC_ACTIVE = 13
-    CC_COMMENT = 14
-    CC_INVALID = 15
+    CC_ESCAPE = CatCode(0)
+    CC_BGROUP = CatCode(1)
+    CC_EGROUP = CatCode(2)
+    CC_MATHSHIFT = CatCode(3)
+    CC_ALIGNMENT = CatCode(4)
+    CC_EOL = CatCode(5)
+    CC_PARAMETER = CatCode(6)
+    CC_SUPER = CatCode(7)
+    CC_SUB = CatCode(8)
+    CC_IGNORED = CatCode(9)
+    CC_SPACE = CatCode(10)
+    CC_LETTER = CatCode(11)
+    CC_OTHER = CatCode(12)
+    CC_ACTIVE = CatCode(13)
+    CC_COMMENT = CatCode(14)
+    CC_INVALID = CatCode(15)
 
     TOKEN_SLOTS = __slots__ = Text.TEXT_SLOTS
 
-    catcode = None       # TeX category code
-    macroName = None     # Macro to invoke in place of this token
+    catcode = None       # type: Optional[CatCode] # TeX category code
+    macroName = None     # type: Optional[str] # Macro to invoke in place of this token
 
     def __repr__(self):
         return self.source
@@ -173,7 +173,7 @@ class Tokenizer(object):
     STATE_M = 2
     STATE_N = 4
 
-    tokenClasses = [None] * 16
+    tokenClasses = [None] * 16 # type: List[Optional[Callable]]
     tokenClasses[Token.CC_BGROUP] = BeginGroup
     tokenClasses[Token.CC_EGROUP] = EndGroup
     tokenClasses[Token.CC_MATHSHIFT] = MathShift
@@ -229,7 +229,7 @@ class Tokenizer(object):
             if not char or ord(char) == 10:
                 break
 
-    def iterchars(self) -> Tuple[CategoryCode, str]:
+    def iterchars(self) -> Generator[Tuple[CatCode, str], None, None]:
         """
         Get the next character in the stream and its category code
 
