@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.14.1 The picture Environment (p219)
 

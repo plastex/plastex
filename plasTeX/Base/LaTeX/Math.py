@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.7 Mathematical Formulas (p187)
 

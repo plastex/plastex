@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.12 Line and Page Breaking (p212)
 

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.8.4 Numbering (p194)
 

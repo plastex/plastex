@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from plasTeX.Renderers import Renderer as BaseRenderer
 from plasTeX import encoding
 import textwrap, re, string

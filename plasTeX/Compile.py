@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import os, sys, string, glob
 import importlib
 import importlib.util

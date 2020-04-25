@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.11.1 Files (p206)
 C.11.4 Splitting the Input

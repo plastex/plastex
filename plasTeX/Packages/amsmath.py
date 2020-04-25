@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from plasTeX import Command
 from plasTeX.Base.LaTeX.Arrays import Array
 from plasTeX.Base.LaTeX.Math import EqnarrayStar, eqnarray

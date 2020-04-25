@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import unittest, sys
 from unittest import TestCase
 from plasTeX.Tokenizer import *

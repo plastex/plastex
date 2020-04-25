@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from plasTeX import Base
 lipsumdefault = [1,7]
 class setlipsumdefault(Base.Command):

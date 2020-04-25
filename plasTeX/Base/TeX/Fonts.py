@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 B.4 Font Information
 

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.11.5 Index and Glossary (p211)
 

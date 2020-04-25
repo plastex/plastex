@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import plasTeX.Imagers
 from plasTeX.Logging import getLogger
 from plasTeX.Imagers import Imager as _Imager

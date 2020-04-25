@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from plasTeX.DOM import Node, Text
 from plasTeX import encoding
 from io import BytesIO, StringIO, TextIOWrapper

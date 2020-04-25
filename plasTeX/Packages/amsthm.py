@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 
 plasTeX.Package.amsthm.py: Partial support for `amsthm.sty` LaTeX Package.

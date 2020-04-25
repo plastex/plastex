@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.10.2 The array and tabular Environments
 

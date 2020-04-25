@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import re, string, os.path
 
 class Filenames(object):

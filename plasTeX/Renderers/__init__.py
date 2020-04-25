@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import os, shutil, string, importlib
 from plasTeX.Filenames import Filenames
 from plasTeX.DOM import Node

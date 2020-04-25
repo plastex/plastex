@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.10.1 The tabbing Environment (p201)
 

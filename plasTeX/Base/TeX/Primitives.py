@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from datetime import datetime
 from plasTeX.Tokenizer import Token, EscapeSequence, Other
 from plasTeX import Macro, Command, CountCommand

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.15 Font Selection (p225)
 

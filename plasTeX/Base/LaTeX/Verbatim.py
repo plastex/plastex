@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.6.4 Verbatim
 

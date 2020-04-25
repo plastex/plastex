@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from plasTeX.Packages.report import *
 from plasTeX import Environment
 from plasTeX.Packages import report

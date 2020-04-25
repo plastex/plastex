@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from plasTeX.Packages.book import *
 from plasTeX.Packages import book
 

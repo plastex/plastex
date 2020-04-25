@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import unittest
 from unittest import TestCase
 from plasTeX import Macro

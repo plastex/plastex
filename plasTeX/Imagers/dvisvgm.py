@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import subprocess
 from pathlib import Path
 from plasTeX.Imagers import VectorImager as _Imager

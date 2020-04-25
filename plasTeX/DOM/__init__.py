@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import sys, re
 import builtins
 from typing import Optional, NewType

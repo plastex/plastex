@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.1.2 Environments (p167)
 

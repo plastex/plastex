@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.5 Classes, Packages, and Page Styles (p176)
 

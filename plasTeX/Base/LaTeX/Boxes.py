@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.13.3 Boxes (p217)
 

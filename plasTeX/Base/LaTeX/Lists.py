@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.6.2 List-Making Environments
 C.6.3 The list and trivlist Enviroments

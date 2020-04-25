@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 C.3.4 Accents and Special Symbols (p173)
 
