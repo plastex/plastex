@@ -636,7 +636,7 @@ class Node(object):
 
     # String containing type of node relating to navigation.
     # Common values are: glossary, bibliography, contents, index, search, etc.
-    linkType = None
+    linkType = None # type: Optional[str]
 
     def toXML(self, debug=False):
         """

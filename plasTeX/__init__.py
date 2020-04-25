@@ -118,7 +118,7 @@ class Macro(Element):
 
     macroName = None # type: Optional[str] # TeX macro name (instead of class name)
     macroMode = MODE_NONE  # begin, end, or none
-    mathMode = None
+    mathMode = None # type: Optional[bool]
 
     # Node variables
     level = Node.COMMAND_LEVEL
