@@ -1,40 +1,33 @@
-from plasTeX.TeX import TeX
+from helpers.utils import compare_output
 
 def test_let_redef():
-    tex = TeX()
-    tex.input(r'''
+    compare_output(r'''
 \newcommand\foo{a}
 \let\bar\foo
 \renewcommand\foo{b}
 \bar
 ''')
-    assert tex.parse().textContent.strip() == "a"
 
 def test_let_nonrecursive():
-    tex = TeX()
-    tex.input(r'''
+    compare_output(r'''
 \newcommand\foo{a}
 \newcommand\fooo{\foo}
 \let\bar\fooo
 \renewcommand\foo{b}
 \bar
 ''')
-    assert tex.parse().textContent.strip() == "b"
 
 def test_let_recursive():
-    tex = TeX()
-    tex.input(r'''
+    compare_output(r'''
 \newcommand\foo{a}
 \let\fooo\foo
 \let\bar\fooo
 \renewcommand\foo{b}
 \bar
 ''')
-    assert tex.parse().textContent.strip() == "a"
 
 def test_let_scope():
-    tex = TeX()
-    tex.input(r'''
+    compare_output(r'''
 {
    \let\foo=a
    \foo%
@@ -42,4 +35,3 @@ def test_let_scope():
 \let\foo=b%
 \foo
 ''')
-    assert tex.parse().textContent.strip() == "ab"
