@@ -2,6 +2,7 @@
 
 import os, sys, string, glob
 import importlib
+import importlib.util
 import plasTeX
 from pathlib import Path
 from plasTeX.TeX import TeX
@@ -23,7 +24,9 @@ def import_file(path: Path):
 
     module = importlib.util.module_from_spec(spec)
     sys.modules[module_name] = module
-    spec.loader.exec_module(module)
+    if spec.loader is None:
+        raise ImportError()
+    spec.loader.exec_module(module) # type: ignore
     return module
 
 def run(filename: str, config: ConfigManager):

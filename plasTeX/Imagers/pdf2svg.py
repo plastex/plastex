@@ -25,7 +25,7 @@ class PDFSVG(VectorImager):
         for no, line in enumerate(open("images.csv")):
             filename = 'img%d.svg' % no
             page, output = line.split(",")
-            images.append([filename, output.rstrip()])
+            images.append((filename, output.rstrip()))
 
             subprocess.run(['pdf2svg', 'images-cropped.pdf', filename, str(page)], stdout=subprocess.DEVNULL, check=True)
 
@@ -35,6 +35,8 @@ class PDFSVG(VectorImager):
 
                 for attrib in ["width", "height"]:
                     m = length_re.match(root.attrib[attrib])
+                    if m is None:
+                        raise ValueError
                     root.attrib[attrib] = "{:.2f}{}".format(float(m.group(1)) * scale, m.group(2))
 
                 tree.write(filename)

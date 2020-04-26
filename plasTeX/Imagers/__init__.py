@@ -421,8 +421,9 @@ def run_command(cmd: str):
                  stderr=subprocess.STDOUT,
                  universal_newlines=True)
     try:
-        for line in p.stdout:
-            imagelog.info(line.strip())
+        if p.stdout is not None:
+            for line in p.stdout:
+                imagelog.info(line.strip())
     except Exception as e:
         imagelog.error('Failed to read output from {}\n{}'.format(cmd, str(e)))
 
@@ -729,7 +730,7 @@ width 2pt\hskip2pt}}{}
         images = []
         for line in open("images.csv"):
             page, output = line.split(",")
-            images.append(["img{}{}".format(page, self.fileExtension), output.rstrip()])
+            images.append(("img{}{}".format(page, self.fileExtension), output.rstrip()))
 
         return images
 

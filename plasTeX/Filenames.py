@@ -197,7 +197,7 @@ class Filenames(object):
                 if result not in self.invalid:
                     self.invalid[result] = None
                     yield result
-            except KeyError as key:
+            except KeyError:
                 continue
 
         # We've reached the wildcard stage.  The wildcard gives us

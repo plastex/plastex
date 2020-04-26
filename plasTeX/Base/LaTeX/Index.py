@@ -11,6 +11,7 @@ from plasTeX import Command, Environment, IgnoreCommand, encoding
 from plasTeX.Logging import getLogger
 from plasTeX.Base.LaTeX.Sectioning import SectionUtils
 
+from typing import Optional
 
 log = getLogger()
 
@@ -37,7 +38,7 @@ class hyperindexformat(IgnoreCommand):
 class IndexUtils(object):
     """ Helper functions for generating indexes """
 
-    linkType = 'index'
+    linkType = 'index' # type: Optional[str]
     level = Command.CHAPTER_LEVEL
 
     class Index(Command):

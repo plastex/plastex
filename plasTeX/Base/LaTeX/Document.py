@@ -15,6 +15,10 @@ class document(Environment, SectionUtils):
     def title(self):
         return self.ownerDocument.userdata.get('title','')
 
+    @title.setter
+    def title(self, value):
+        self.ownerDocument.userdata["title"] = value
+
     def invoke(self, tex):
         res = Environment.invoke(self, tex)
 
