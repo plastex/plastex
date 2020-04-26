@@ -20,21 +20,21 @@ class TestIfs(TestCase):
     def testIf(self):
         compare_output(r'\if*! bye\else text\fi\if** one\else two\fi')
 
-    @pytest.mark.xfail
     def testIfNum(self):
         compare_output(r'\ifnum 5 < 2 bye\else text\fi\ifnum 2 = 2 one\else two\fi')
 
     def testIfDim(self):
         compare_output(r'\ifdim -5 pt > 2in bye\else text\fi\ifdim 2mm = 2 mm one\else two\fi')
 
-    @pytest.mark.xfail
     def testIfOdd(self):
         compare_output(r'\ifodd 2 bye\else text\fi\ifodd 3 one\else two\fi')
 
+    # This is not implemented correctly; it is unconditionally false
     @pytest.mark.xfail
     def testIfVMode(self):
         compare_output(r'\ifvmode bye\else text\fi\ifvmode one\else two\fi')
 
+    # This is not implemented correctly; it is unconditionally true
     @pytest.mark.xfail
     def testIfHMode(self):
         compare_output(r'\ifhmode bye\else text\fi\ifhmode one\else two\fi')
@@ -51,6 +51,7 @@ class TestIfs(TestCase):
     def testIfX(self):
         compare_output(r'\ifx!!bye\else text\fi\ifx!( one\else two\fi')
 
+    # This is defined to be unconditionally false
     @pytest.mark.xfail
     def testIfVoid(self):
         compare_output(r'\ifvoid12 bye\else text\fi\ifvoid16 one\else two\fi')
@@ -61,6 +62,7 @@ class TestIfs(TestCase):
     def testIfVBox(self):
         compare_output(r'\ifvbox12 bye\else text\fi\ifvbox16 one\else two\fi')
 
+    # This is defined to be unconditionally false
     @pytest.mark.xfail
     def testIfEOF(self):
         compare_output(r'\ifeof12 bye\else text\fi\ifeof16 one\else two\fi')
