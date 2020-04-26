@@ -784,24 +784,16 @@ class TeXFragment(DocumentFragment):
 class TeXDocument(Document):
     """ TeX Document node """
     documentFragmentClass = TeXFragment
-    charsubs = [
-        ('``', chr(8220)),
-        ("''", chr(8221)),
-        ('"`', chr(8222)),
-        ('"\'', chr(8220)),
-        ('`', chr(8216)),
-        ("'", chr(8217)),
-        ('---', chr(8212)),
-        ('--', chr(8211)),
-#       ('fj', unichr(58290)),
-#       ('ff', unichr(64256)),
-#       ('fi', unichr(64257)),
-#       ('fl', unichr(64258)),
-#       ('ffi',unichr(64259)),
-#       ('ffl',unichr(64260)),
-#       ('ij', unichr(307)),
-#       ('IJ', unichr(308)),
-    ]
+    defaultCharsubs = [
+            ('``', chr(8220)),
+            ("''", chr(8221)),
+            ('"`', chr(8222)),
+            ('"\'', chr(8220)),
+            ('`', chr(8216)),
+            ("'", chr(8217)),
+            ('---', chr(8212)),
+            ('--', chr(8211)),
+        ]
 
     def __init__(self, *args, **kwargs):
         # super(TeXDocument, self).__init__(*args, **kwargs)
@@ -823,6 +815,8 @@ class TeXDocument(Document):
 
         self.packageResources = []
         self.rendererdata = dict()
+
+        self.charsubs = [x for x in TeXDocument.defaultCharsubs if x[0] not in self.config["document"]["disable-charsub"].split(",")]
 
     def addPackageResource(self, resource):
         """

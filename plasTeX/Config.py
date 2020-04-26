@@ -384,6 +384,13 @@ doc['lang-terms'] = StringOption(
     default = '',
 )
 
+doc['disable-charsub'] = StringOption(
+    """Specifies a "," delimited list of characters to not perform character substitutions""",
+    options = "--disable-charsub",
+    category = "document",
+    default = ""
+)
+
 config.read('~/.plasTeXrc')
 config.read('/usr/local/etc/plasTeXrc')
 config.read(os.path.join(os.path.dirname(__file__), 'plasTeXrc'))
