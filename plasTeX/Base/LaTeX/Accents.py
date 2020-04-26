@@ -7,7 +7,7 @@ C.3.4 Accents and Special Symbols (p173)
 
 from plasTeX import Command
 from plasTeX.DOM import Node, Text
-
+from typing import Optional
 
 #
 # Table 3.1: Accents
@@ -47,7 +47,7 @@ class Accent(Command):
 
 
 class Grave(Accent):
-    macroName = '`'
+    macroName = '`' # type: Optional[str]
     chars = {
         'A': chr(192),
         'E': chr(200),
@@ -65,7 +65,7 @@ class Grave(Accent):
     combining = '\u0300'
 
 class Acute(Accent):
-    macroName = "'"
+    macroName = "'" # type: Optional[str]
     chars = {
         'A': chr(193),
         'E': chr(201),
@@ -97,7 +97,7 @@ class Acute(Accent):
     combining = '\u0300'
 
 class Circumflex(Accent):
-    macroName = '^'
+    macroName = '^' # type: Optional[str]
     chars = {
         'A': chr(194),
         'E': chr(202),
@@ -127,7 +127,7 @@ class Circumflex(Accent):
     }
 
 class Umlaut(Accent):
-    macroName = '"'
+    macroName = '"' # type: Optional[str]
     chars = {
         'A': chr(196),
         'E': chr(203),
@@ -145,7 +145,7 @@ class Umlaut(Accent):
     combining = '\u030e'
 
 class Tilde(Accent):
-    macroName = '~'
+    macroName = '~' # type: Optional[str]
     chars = {
         'A': chr(195),
         'N': chr(209),
@@ -161,7 +161,7 @@ class Tilde(Accent):
     combining = '\u0303'
 
 class Macron(Accent):
-    macroName = '='
+    macroName = '=' # type: Optional[str]
     chars = {
         'A': chr(256),
         'a': chr(257),
@@ -179,7 +179,7 @@ class Macron(Accent):
     combining = '\u0304'
 
 class Dot(Accent):
-    macroName = '.'
+    macroName = '.' # type: Optional[str]
     chars = {
         'C': chr(266),
         'c': chr(267),

@@ -129,7 +129,7 @@ class Macro(Element):
     counter = None # type: Optional[str]
 
     # Value to return when macro is referred to by \ref
-    ref = None
+    ref = None # type: Optional[str]
 
     # Attributes that should be persisted between runs for nodes
     # that can be referenced.  This allows for cross-document links.
@@ -139,7 +139,7 @@ class Macro(Element):
     argSource = ''
 
     # LaTeX argument template
-    args = ''
+    args = '' # type: str
 
     # Force there to be at least on paragraph in the content
     forcePars = False
@@ -1150,7 +1150,7 @@ class NewCommand(Macro):
 
 class Definition(Macro):
     """ Superclass for all \\def-type commands """
-    args = None # type: Optional[str]
+    args = '' # type: str
     definition = None # type: Optional[str]
 
     def invoke(self, tex):
