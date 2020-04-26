@@ -45,9 +45,10 @@ class MultilineStar(_AMSEquationStar):
     macroName = 'multiline*'
 
 class alignat(_AMSEquation):
-    pass
+    args = 'column:int'
 
 class AlignatStar(_AMSEquationStar):
+    args = 'column:int'
     macroName = 'alignat*'
 
 class split(_AMSEquation):
@@ -65,12 +66,6 @@ class gathered(MathEnvironmentPre):
 
 class cases(_AMSEquation):
     pass
-
-class alignat(_AMSEquation):
-    args = 'column:int'
-class AlignatStar(_AMSEquationStar):
-    args = 'column:int'
-    macroName = 'alignat*'
 
 class flalign(_AMSEquation):
     pass

@@ -15,9 +15,6 @@ class textuparrow(Command):
 class textdownarrow(Command):
     str = '↓'
 
-class textuparrow(Command):
-    str = '↑'
-
 class textlbrackdbl(Command):
     str = '〚'
 

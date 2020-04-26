@@ -12,9 +12,9 @@ just here for backwards compatibility.
 
 """
 
-from plasTeX.Renderers.PageTemplate import Renderer
+from plasTeX.Renderers.PageTemplate import Renderer as _Renderer
 
-class ZPT(Renderer):
+class ZPT(_Renderer):
     pass
 
 Renderer = ZPT

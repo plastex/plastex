@@ -3,7 +3,8 @@
 import os, re
 from plasTeX import Command
 
-from plasTeX.Packages.graphics import DeclareGraphicsExtensions, graphicspath
+from plasTeX.Packages.graphics import DeclareGraphicsExtensions as DeclareGraphicsExtensions_
+from plasTeX.Packages.graphics import graphicspath as graphicspath_
 
 class includegraphics(Command):
     args = '* [ options:dict ] file:str'
@@ -91,8 +92,8 @@ class includegraphics(Command):
 
         return res
 
-class DeclareGraphicsExtensions(DeclareGraphicsExtensions):
+class DeclareGraphicsExtensions(DeclareGraphicsExtensions_):
     packageName = 'graphicx'
 
-class graphicspath(graphicspath):
+class graphicspath(graphicspath_):
     packageName = 'graphicx'

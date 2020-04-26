@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
 import textwrap
-from logging import CRITICAL, DEBUG, INFO, Logger, StreamHandler, Formatter
+from logging import CRITICAL, DEBUG, INFO, Formatter
+from logging import Logger as _Logger
+from logging import StreamHandler as _StreamHandler
 from logging import addLevelName, setLoggerClass, FileHandler, Filter
 from plasTeX.Config import config as _config
 
@@ -21,9 +23,6 @@ addLevelName(DEBUG2, 'DEBUG-2')
 addLevelName(DEBUG3, 'DEBUG-3')
 addLevelName(DEBUG4, 'DEBUG-4')
 addLevelName(DEBUG5, 'DEBUG-5')
-
-_Logger = Logger
-_StreamHandler = StreamHandler
 
 class Logger(_Logger):
 

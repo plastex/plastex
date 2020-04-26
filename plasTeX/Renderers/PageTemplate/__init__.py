@@ -29,7 +29,7 @@ else:
     try:
         import ipdb as pdb
     except ImportError:
-        import pdb
+        import pdb # type: ignore # mypy bug
         
     @contextfunction
     def debug(context):
