@@ -22,23 +22,11 @@ class indent(Command):
 # Style Parameters
 #
 
-class textwidth(DimenCommand):
-    value = DimenCommand.new('6.5in')
-
 class columnwidth(DimenCommand):
     value = DimenCommand.new('6.5in')
 
 class linewidth(DimenCommand):
     value = DimenCommand.new('6.5in')
 
-class parindent(DimenCommand):
-    value = DimenCommand.new(0)
-
-class baselineskip(DimenCommand):
-    value = DimenCommand.new('12pt')
-
 class baselinestretch(Command):
     str = '1'
-
-class parskip(DimenCommand):
-    value = DimenCommand.new(0)

@@ -33,6 +33,7 @@ from plasTeX.Base.LaTeX.Tabbing import *
 from plasTeX.Base.LaTeX.Verbatim import *
 
 from plasTeX import Command
+from plasTeX.Tokenizer import Token
 
 class ifundefined_(Command):
     macroName = '@ifundefined'
@@ -57,8 +58,8 @@ class verbatiminput(Command):
 
 class makeatother(Command):
     def invoke(self, tex):
-        self.ownerDocument.context.catcode('@', 12)
+        self.ownerDocument.context.catcode('@', Token.CC_OTHER)
 
 class makeatletter(Command):
     def invoke(self, tex):
-        self.ownerDocument.context.catcode('@', 11)
+        self.ownerDocument.context.catcode('@', Token.CC_LETTER)

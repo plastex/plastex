@@ -133,15 +133,6 @@ class nointerlineskip(Command):
 class offinterlineskip(Command):
     pass
 
-class smallskip(Command):
-    pass
-
-class medskip(Command):
-    pass
-
-class bigskip(Command):
-    pass
-
 class TeXBreak(Command):
     macroName = 'break'
     str = ''
@@ -208,9 +199,6 @@ class textindent(Command):
     args = 'self'
 
 class narrower(Command):
-    pass
-
-class raggedright(Environment):
     pass
 
 #

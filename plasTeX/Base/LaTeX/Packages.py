@@ -58,9 +58,6 @@ class columnsep(DimenCommand):
 class columnseprule(DimenCommand):
     value = DimenCommand.new(0)
 
-class mathindent(DimenCommand):
-    value = DimenCommand.new(0)
-
 #
 # C.5.2 Packages
 #
@@ -149,9 +146,6 @@ class marginparsep(DimenCommand):
 
 class marginparwidth(DimenCommand):
     value = DimenCommand.new('0.75in')
-
-class topskip(DimenCommand):
-    value = DimenCommand.new(0)
 
 #
 # C.5.4 The Title Page and Abstract

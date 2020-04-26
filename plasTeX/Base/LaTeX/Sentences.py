@@ -42,12 +42,6 @@ class EndOfSentence(Command):
     macroName = '@'
     str = ''
 
-class frenchspacing(Command): 
-    pass
-
-class nonfrenchspacing(Command):
-    pass
-
 #
 # Special characters
 #
