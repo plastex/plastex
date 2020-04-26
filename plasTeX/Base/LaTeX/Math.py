@@ -8,7 +8,7 @@ C.7 Mathematical Formulas (p187)
 from plasTeX.Base.LaTeX.Arrays import Array
 from plasTeX import Command, Environment, sourceChildren
 from plasTeX import DimenCommand, GlueCommand
-
+from typing import Optional
 
 #
 # C.7.1
@@ -108,7 +108,7 @@ class equation(MathEnvironment):
     counter = 'equation'
 
 class EqnarrayStar(Array):
-    macroName = 'eqnarray*'
+    macroName = 'eqnarray*' # type: Optional[str]
     blockType = True
     mathMode = True
 

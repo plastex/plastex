@@ -8,6 +8,7 @@ from pathlib import Path
 from plasTeX.TeX import TeX
 from plasTeX.ConfigManager import *
 from plasTeX.Logging import getLogger, updateLogLevels
+from typing import Any
 
 log = getLogger()
 
@@ -67,7 +68,7 @@ def run(filename: str, config: ConfigManager):
                                          os.environ.get('TEXINPUTS',''), os.pathsep)
 
     # Load renderer
-    rmodule = None
+    rmodule = None # type: Any
     try:
         rmodule = importlib.import_module('plasTeX.Renderers.'+rname)
     except ImportError:

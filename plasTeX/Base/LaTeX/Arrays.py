@@ -8,6 +8,7 @@ C.10.2 The array and tabular Environments
 import sys
 from plasTeX import Macro, Environment, Command, DimenCommand
 from plasTeX import sourceChildren, sourceArguments
+from typing import Optional
 
 class ColumnType(Macro):
 
@@ -70,7 +71,7 @@ class Array(Environment):
         """ Table caption """
         args = '* [ toc ] self'
         labelable = True
-        counter = 'table'
+        counter = 'table' # type: Optional[str]
         blockType = True
         def invoke(self, tex):
             res = Command.invoke(self, tex)
@@ -91,8 +92,8 @@ class Array(Environment):
 
     class EndRow(Command):
         """ End of a row """
-        macroName = '\\'
-        args = '* [ space ]'
+        macroName = '\\' # type: Optional[str]
+        args = '* [ space ]' # type: str
 
         def invoke(self, tex):
             # Pop and push a new context for each row, this keeps

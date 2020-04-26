@@ -2,6 +2,7 @@
 
 import sys, re
 from plasTeX.Logging import getLogger
+import builtins
 from typing import Optional, NewType
 
 NodeType = NewType("NodeType", int)
@@ -635,7 +636,7 @@ class Node(object):
 
     # String containing type of node relating to navigation.
     # Common values are: glossary, bibliography, contents, index, search, etc.
-    linkType = None # type: Optional[str]
+    linkType = None # type: Optional[builtins.str]
 
     def toXML(self, debug=False):
         """

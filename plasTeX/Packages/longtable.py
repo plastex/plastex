@@ -39,7 +39,7 @@ class longtable(tabular):
     class tabularnewline(Command): pass
 
     class LongTableEndRow(tabular.EndRow):
-        args = None
+        args = ''
         macroName = None
         digested = False
         def digest(self, tokens):
