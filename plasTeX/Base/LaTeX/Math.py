@@ -379,12 +379,6 @@ class hookrightarrow(MathSymbol): str = chr(8618)
 class rightharpoonup(MathSymbol): str = chr(8640)
 class rightharpoondown(MathSymbol): str = chr(8641)
 class leadsto(MathSymbol): pass
-class uparrow(MathSymbol): str = chr(8593)
-class Uparrow(MathSymbol): str = chr(8657)
-class downarrow(MathSymbol): str = chr(8595)
-class Downarrow(MathSymbol): str = chr(8659)
-class updownarrow(MathSymbol): str = chr(8597)
-class Updownarrow(MathSymbol): str = chr(8661)
 class nearrow(MathSymbol): str = chr(8599)
 class searrow(MathSymbol): str = chr(8600)
 class swarrow(MathSymbol): str = chr(8601)
@@ -396,8 +390,6 @@ class nwarrow(MathSymbol): str = chr(8598)
 
 class aleph(MathSymbol): str = chr(8501)
 class hbar(MathSymbol): str = chr(8463)
-class imath(MathSymbol): pass
-class jmath(MathSymbol): pass
 class ell(MathSymbol): str = chr(8467)
 class wp(MathSymbol): str = chr(8472)
 class Re(MathSymbol): str = chr(8476)
@@ -417,7 +409,6 @@ class neg(MathSymbol): pass
 class flat(MathSymbol): str = chr(9837)
 class natural(MathSymbol): str = chr(9838)
 class sharp(MathSymbol): str = chr(9839)
-class backslash(MathSymbol): str = chr(92)
 class partial(MathSymbol): str = chr(8706)
 class infty(MathSymbol): str = chr(8734)
 class Box(MathSymbol): pass

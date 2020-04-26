@@ -4,7 +4,7 @@ from plasTeX.Packages.report import *
 from plasTeX import Environment
 from plasTeX.Packages import report
 
-def ProcessOptions(options, document):
+def ProcessOptions(options, document): # type: ignore
     report.ProcessOptions(options, document)
     document.context['thesection'].format = '${section}'
     document.context['theindex'].counter = 'section'
@@ -14,7 +14,7 @@ def ProcessOptions(options, document):
     document.context['bibliography'].counter = 'section'
     document.context['bibliography'].level = Command.SECTION_LEVEL
 
-class appendix(Command):
+class appendix(Command): # type: ignore
 
     class thesection(TheCounter):
         format = '${section.Alph}'
