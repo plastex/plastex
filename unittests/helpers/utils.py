@@ -1,8 +1,12 @@
 import subprocess
 import re
+from pathlib import Path
 import os
 from plasTeX.TeX import TeX
 from tempfile import TemporaryDirectory
+from hashlib import md5
+
+CACHE_LOCATION = Path(__file__).absolute().parent / "compare_cache"
 
 def cmp_img(a: str, b: str) -> float:
     out = subprocess.run(["compare", "-quiet", "-metric", "MSE",
@@ -40,32 +44,42 @@ def compare_output(tex: str):
     for things with simple plain text output, and is intended to be used for
     testing primitives such as \let, \def, \expandafter etc.
     """
+    if not CACHE_LOCATION.is_dir():
+        CACHE_LOCATION.mkdir()
+
     cwd = os.getcwd()
     try:
-        plastex_out = TeX().input(tex).parse().textContent
-        with TemporaryDirectory() as tmpdir:
-            os.chdir(tmpdir)
+        plastex_out = TeX().input(tex).parse().textContent.strip()
+        tex_hash = md5(tex.encode('utf-8')).hexdigest()
+        tex_out = None
+        try:
+            tex_out = (CACHE_LOCATION / tex_hash).read_text()
+        except IOError:
+            with TemporaryDirectory() as tmpdir:
+                os.chdir(tmpdir)
 
-            if r'\documentclass{article}' not in tex:
-                tex = r'\documentclass{article}\usepackage{microtype}\DisableLigatures{encoding = *, family = *}\begin{document}' + tex + r'\end{document}'
-            tex = r'\nonstopmode\AtBeginDocument{\thispagestyle{empty}}' + tex
+                if r'\documentclass{article}' not in tex:
+                    tex = r'\documentclass{article}\usepackage{microtype}\DisableLigatures{encoding = *, family = *}\begin{document}' + tex + r'\end{document}'
+                tex = r'\nonstopmode\AtBeginDocument{\thispagestyle{empty}}' + tex
 
-            with open("test.tex", "w") as f:
-                f.write(tex)
+                with open("test.tex", "w") as f:
+                    f.write(tex)
 
-            subprocess.run(["pdflatex", "test.tex"], check=True)
-            if not os.path.exists("test.pdf"):
-                # If pdflatex was successful but a pdf file was not produced,
-                # this means 0 pages were produced, so the content is empty.
-                return plastex_out.strip() == ""
+                subprocess.run(["pdflatex", "test.tex"], check=True)
+                if not os.path.exists("test.pdf"):
+                    # If pdflatex was successful but a pdf file was not produced,
+                    # this means 0 pages were produced, so the content is empty.
+                    return plastex_out.strip() == ""
 
-            out = subprocess.run(
-                    ["gs", "-q", "-sDEVICE=txtwrite", "-o", "%stdout%", "test.pdf"],
-                    check=True,
-                    stdout=subprocess.PIPE,
-                    stdin=subprocess.DEVNULL,
-                    universal_newlines=True)
-            tex_out = out.stdout
-        assert plastex_out.strip() == tex_out.strip()
+                out = subprocess.run(
+                        ["gs", "-q", "-sDEVICE=txtwrite", "-o", "%stdout%", "test.pdf"],
+                        check=True,
+                        stdout=subprocess.PIPE,
+                        stdin=subprocess.DEVNULL,
+                        universal_newlines=True)
+                tex_out = out.stdout.strip()
+                (CACHE_LOCATION / tex_hash).write_text(tex_out)
+
+        assert plastex_out == tex_out
     finally:
         os.chdir(cwd)
