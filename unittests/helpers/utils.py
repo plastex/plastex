@@ -47,7 +47,7 @@ def compare_output(tex: str):
             os.chdir(tmpdir)
 
             if r'\documentclass{article}' not in tex:
-                tex = r'\documentclass{article}\begin{document}' + tex + r'\end{document}'
+                tex = r'\documentclass{article}\usepackage{microtype}\DisableLigatures{encoding = *, family = *}\begin{document}' + tex + r'\end{document}'
             tex = r'\nonstopmode\AtBeginDocument{\thispagestyle{empty}}' + tex
 
             with open("test.tex", "w") as f:
