@@ -162,10 +162,9 @@ class ValidationErr(DOMException):
 class _DOMList(list):
     """ Generic List """
 
-    def length():
-        def fget(self): return len(self)
-        return locals()
-    length = property(**length())
+    @property
+    def length(self):
+        return len(self)
 
     def item(self, i):
         try: return self[i]
@@ -253,7 +252,8 @@ class NamedNodeMap(dict):
 
     """
 
-    def parentNode():
+    @property
+    def parentNode(self):
         """
         Get/Set the parent node
 
@@ -262,15 +262,14 @@ class NamedNodeMap(dict):
         our children.
 
         """
-        def fget(self):
-            return getattr(self, '_dom_parentNode', None)
-        def fset(self, value):
-            if getattr(self, '_dom_parentNode', None) is not value:
-                self._dom_parentNode = value
-                for value in list(self.values()):
-                    self._resetPosition(value.parentNode)
-        return locals()
-    parentNode = property(**parentNode())
+        return getattr(self, '_dom_parentNode', None)
+
+    @parentNode.setter
+    def parentNode(self, value):
+        if getattr(self, '_dom_parentNode', None) is not value:
+            self._dom_parentNode = value
+            for value in list(self.values()):
+                self._resetPosition(value.parentNode)
 
     @property
     def ownerDocument(self):
@@ -626,7 +625,7 @@ class Node(object):
     baseURI = None
 
     nodeName = None # type: Optional[str]
-    nodeValue = None
+    nodeValue = None # type: Optional[str]
     nodeType = None # type: Optional[NodeType]
     parentNode = None
     ownerDocument = None
@@ -1384,9 +1383,9 @@ class Attr(Node):
     nodeType = Node.ATTRIBUTE_NODE
 #   __slots__ = Node.NODE_SLOTS + ['name']
 
-    name = None
+    name = None # type: Optional[str]
     specified = None
-    value = None
+    value = None # type: Optional[str]
     ownerElement = None
     schemaTypeInfo = None
     isId = None
@@ -1394,18 +1393,21 @@ class Attr(Node):
     def __repr__(self):
         return '<%s attribute at 0x%s>' % (self.nodeName, id(self))
 
-    def nodeName():
-        def fget(self): return self.name
-        def fset(self, value): self.name = value
-        return locals()
-    nodeName = property(**nodeName())
+    @property
+    def nodeName(self) -> Optional[str]:
+        return self.name
 
-    def nodeValue():
-        def fget(self): return self.value
-        def fset(self, value): self.value = value
-        return locals()
-    nodeValue = property(**nodeValue())
+    @nodeName.setter
+    def nodeName(self, value):
+        self.name = value
 
+    @property
+    def nodeValue(self):
+        return self.value
+
+    @nodeValue.setter
+    def nodeValue(self, value):
+        self.value = value
 
 class Element(Node):
     """
@@ -1430,11 +1432,13 @@ class Element(Node):
         self._dom_attributes = nnm
         return nnm
 
-    def tagName():
-        def fget(self): return self.nodeName
-        def fset(self, value): self.nodeName = value
-        return locals()
-    tagName = property(**tagName())
+    @property
+    def tagName(self):
+        return self.nodeName
+
+    @tagName.setter
+    def tagName(self, value):
+        self.nodeName = value
 
     def getAttribute(self, name):
         """
@@ -1934,11 +1938,13 @@ class DocumentType(Node):
     systemId = None
     internalSubset = None
 
-    def nodeName():
-        def fget(self): return self.name
-        def fset(self, value): self.name = value
-        return locals()
-    nodeName = property(**nodeName())
+    @property
+    def nodeName(self):
+        return self.name
+
+    @nodeName.setter
+    def nodeName(self, value):
+        self.name = value
 
 
 class Notation(Node):
@@ -1990,21 +1996,24 @@ class ProcessingInstruction(Node):
     nodeType = Node.PROCESSING_INSTRUCTION_NODE
     __slots__ = Node.NODE_SLOTS
 
-    target = None
-    data = None
+    target = None # type: Optional[str]
+    data = None # type: Optional[str]
 
-    def nodeName():
-        def fget(self): return self.target
-        def fset(self, value): self.target = value
-        return locals()
-    nodeName = property(**nodeName())
+    @property
+    def nodeName(self):
+        return self.target
 
-    def nodeValue():
-        def fget(self): return self.data
-        def fset(self, value): self.data = value
-        return locals()
-    nodeValue = property(**nodeValue())
+    @nodeName.setter
+    def nodeName(self, value):
+        self.target = value
 
+    @property
+    def nodeValue(self):
+        return self.data
+
+    @nodeName.setter
+    def nodeValue(self, value):
+        self.data = value
 
 class Document(Node):
     """

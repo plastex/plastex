@@ -182,44 +182,44 @@ class Image(object):
         self.bitmap = self
         self.checksum = None
 
-    def height():
-        def fget(self):
-            return getattr(self.bitmap, '_height', None)
-        def fset(self, value):
-            if value is None:
-                self._height = value
-            elif isinstance(value, DimensionPlaceholder):
-                self._height = value
-            else:
-                self._height = Dimension(value)
-        return locals()
-    height = property(**height())
+    @property
+    def height(self):
+        return getattr(self.bitmap, '_height', None)
 
-    def width():
-        def fget(self):
-            return getattr(self.bitmap, '_width', None)
-        def fset(self, value):
-            if value is None:
-                self._width = value
-            elif isinstance(value, DimensionPlaceholder):
-                self._width = value
-            else:
-                self._width = Dimension(value)
-        return locals()
-    width = property(**width())
+    @height.setter
+    def height(self, value):
+        if value is None:
+            self._height = value
+        elif isinstance(value, DimensionPlaceholder):
+            self._height = value
+        else:
+            self._height = Dimension(value)
 
-    def depth():
-        def fget(self):
-            return getattr(self, '_depth', None)
-        def fset(self, value):
-            if value is None:
-                self._depth = value
-            elif isinstance(value, DimensionPlaceholder):
-                self._depth = value
-            else:
-                self._depth = Dimension(value)
-        return locals()
-    depth = property(**depth())
+    @property
+    def width(self):
+        return getattr(self.bitmap, '_width', None)
+
+    @width.setter
+    def width(self, value):
+        if value is None:
+            self._width = value
+        elif isinstance(value, DimensionPlaceholder):
+            self._width = value
+        else:
+            self._width = Dimension(value)
+
+    @property
+    def depth(self):
+        return getattr(self, '_depth', None)
+
+    @depth.setter
+    def depth(self, value):
+        if value is None:
+            self._depth = value
+        elif isinstance(value, DimensionPlaceholder):
+            self._depth = value
+        else:
+            self._depth = Dimension(value)
 
     @property
     def url(self):

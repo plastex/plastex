@@ -205,93 +205,93 @@ class Macro(Element):
         setattr(self, '@idref', d)
         return d
 
-    def captionName():
+    @property
+    def captionName(self):
         """ Name associated with the counter """
-        def fget(self):
-            if hasattr(self, '@captionName'):
-                return getattr(self, '@captionName')
-            self.captionName = name = self.ownerDocument.createTextNode('')
-            return name
-        def fset(self, value):
-            setattr(self, '@captionName', value)
-        return locals()
-    captionName = property(**captionName())
+        if hasattr(self, '@captionName'):
+            return getattr(self, '@captionName')
+        self.captionName = name = self.ownerDocument.createTextNode('')
+        return name
 
-    def title():
+    @captionName.setter
+    def captionName(self, value):
+        setattr(self, '@captionName', value)
+
+    @property
+    def title(self):
         """ Retrieve title from variable or attributes dictionary """
-        def fget(self):
+        try:
+            return getattr(self, '@title')
+        except AttributeError:
             try:
-                return getattr(self, '@title')
-            except AttributeError:
-                try:
-                    return self.attributes['title']
-                except KeyError:
-                    pass
-            raise AttributeError('could not find attribute "title"')
-        def fset(self, value):
-            setattr(self, '@title', value)
-        return locals()
-    title = property(**title())
+                return self.attributes['title']
+            except KeyError:
+                pass
+        raise AttributeError('could not find attribute "title"')
 
-    def fullTitle():
+    @title.setter
+    def title(self, value):
+        setattr(self, '@title', value)
+
+    @property
+    def fullTitle(self):
         """ Retrieve title including the section number """
-        def fget(self):
+        try:
+            return getattr(self, '@fullTitle')
+        except AttributeError:
+            if self.ref is not None:
+                fullTitle = self.ownerDocument.createDocumentFragment()
+                fullTitle.extend([self.ref, ' ', self.title], setParent=False)
+            else:
+                fullTitle = self.title
+            setattr(self, '@fullTitle', fullTitle)
+            return fullTitle
+
+    @fullTitle.setter
+    def fullTitle(self, value):
+        setattr(self, '@fullTitle', value)
+
+    @property
+    def tocEntry(self):
+        """ Retrieve table of contents entry """
+        try:
+            return getattr(self, '@tocEntry')
+        except AttributeError:
             try:
-                return getattr(self, '@fullTitle')
+                if 'toc' in list(self.attributes.keys()):
+                    toc = self.attributes['toc']
+                    if toc is None:
+                        toc = self.title
+                    setattr(self, '@tocEntry', toc)
+                    return toc
+            except (KeyError, AttributeError):
+                pass
+        return self.title
+
+    @tocEntry.setter
+    def tocEntry(self, value):
+        setattr(self, '@tocEntry', value)
+
+    @property
+    def fullTocEntry(self):
+        """ Retrieve title including the section number """
+        try:
+            try:
+                return getattr(self, '@fullTocEntry')
             except AttributeError:
                 if self.ref is not None:
-                    fullTitle = self.ownerDocument.createDocumentFragment()
-                    fullTitle.extend([self.ref, ' ', self.title], setParent=False)
+                    fullTocEntry = self.ownerDocument.createDocumentFragment()
+                    fullTocEntry.extend([self.ref, ' ', self.tocEntry], setParent=False)
                 else:
-                    fullTitle = self.title
-                setattr(self, '@fullTitle', fullTitle)
-                return fullTitle
-        def fset(self, value):
-            setattr(self, '@fullTitle', value)
-        return locals()
-    fullTitle = property(**fullTitle())
-
-    def tocEntry():
-        """ Retrieve table of contents entry """
-        def fget(self):
-            try:
-                return getattr(self, '@tocEntry')
-            except AttributeError:
-                try:
-                    if 'toc' in list(self.attributes.keys()):
-                        toc = self.attributes['toc']
-                        if toc is None:
-                            toc = self.title
-                        setattr(self, '@tocEntry', toc)
-                        return toc
-                except (KeyError, AttributeError):
-                    pass
+                    fullTocEntry = self.tocEntry
+                setattr(self, '@fullTocEntry', fullTocEntry)
+                return fullTocEntry
+        except Exception as msg:
             return self.title
-        def fset(self, value):
-            setattr(self, '@tocEntry', value)
-        return locals()
-    tocEntry = property(**tocEntry())
 
-    def fullTocEntry():
-        """ Retrieve title including the section number """
-        def fget(self):
-            try:
-                try:
-                    return getattr(self, '@fullTocEntry')
-                except AttributeError:
-                    if self.ref is not None:
-                        fullTocEntry = self.ownerDocument.createDocumentFragment()
-                        fullTocEntry.extend([self.ref, ' ', self.tocEntry], setParent=False)
-                    else:
-                        fullTocEntry = self.tocEntry
-                    setattr(self, '@fullTocEntry', fullTocEntry)
-                    return fullTocEntry
-            except Exception as msg:
-                return self.title
-        def fset(self, value):
-            setattr(self, '@fullTocEntry', value)
-        return locals()
-    fullTocEntry = property(**fullTocEntry())
+    @fullTocEntry.setter
+    def fullTocEntry(self, value):
+        setattr(self, '@fullTocEntry', value)
 
     @property
     def style(self):
@@ -326,22 +326,22 @@ class Macro(Element):
         setattr(tself, localsname, loc)
         return loc
 
-    def id():
-        def fset(self, value):
-            if value:
-                setattr(self, '@id', value)
-            else:
-                delattr(self, '@id')
-        def fget(self):
-            id = getattr(self, '@id', None)
-            if id is None:
-                for id in idgen:
-                    setattr(self, '@hasgenid', True)
-                    self.id = id
-                    break
-            return id
-        return locals()
-    id = property(**id())
+    @property
+    def id(self):
+        id = getattr(self, '@id', None)
+        if id is None:
+            for id in idgen:
+                setattr(self, '@hasgenid', True)
+                self.id = id
+                break
+        return id
+
+    @id.setter
+    def id(self, value):
+        if value:
+            setattr(self, '@id', value)
+        else:
+            delattr(self, '@id')
 
     def expand(self, tex):
         """ Fully expand the macro """

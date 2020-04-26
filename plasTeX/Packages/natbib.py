@@ -198,15 +198,15 @@ class thebibliography(Base.thebibliography):
                 obj.append('??')
                 value.attributes[item] = obj
             return value
-            
-        def ref():
-            def fset(self, value):
-                pass
-            def fget(self):
-                return self.bibcite.textContent
-            return locals()
-        ref = property(**ref())
-    
+
+        @property
+        def ref(self):
+            return self.bibcite.textContent
+
+        @ref.setter
+        def ref(self, value):
+            pass
+
 class harvarditem(thebibliography.bibitem):
     args = '[ abbrlabel ] label year key:str'
 

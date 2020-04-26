@@ -202,20 +202,22 @@ class Context(object):
         if load:
             self.loadBaseMacros()
 
-    def currenvir():
-        def fget(self):
-            if self._currenvir:
-                return self._currenvir[-1]
-            return
-        def fset(self, value):
-            if value is None:
-                self._currenvir.pop()
-            else:
-                self._currenvir.append(value)
-        def fdel(self):
+    @property
+    def currenvir(self):
+        if self._currenvir:
+            return self._currenvir[-1]
+        return
+
+    @currenvir.setter
+    def currenvir(self, value):
+        if value is None:
             self._currenvir.pop()
-        return locals()
-    currenvir = property(**currenvir())
+        else:
+            self._currenvir.append(value)
+
+    @currenvir.deleter
+    def currenvir(self):
+        self._currenvir.pop()
 
     def persist(self, filename, rtype='none'):
         """
