@@ -6,7 +6,7 @@ from plasTeX.Base import List, label, newcommand, newenvironment
 from plasTeX.Base import renewcommand, renewenvironment
 from plasTeX.Base import itemize, enumerate_, description
 from plasTeX.Base import part, section, subsection, subsubsection
-from plasTeX.Base import tableofcontents, thebibliography, appendix
+from plasTeX.Base import tableofcontents, thebibliography
 from plasTeX.Base import abstract, verse, quotation, quote, footnote
 from plasTeX.Packages.color import color
 from plasTeX.Packages.graphicx import includegraphics

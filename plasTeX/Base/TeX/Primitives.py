@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import datetime
+from datetime import datetime
 from plasTeX.Tokenizer import Token, EscapeSequence, Other
 from plasTeX import Command, CountCommand
 from plasTeX import sourceChildren
@@ -373,10 +373,6 @@ class NameDef(Command):
     macroName = '@namedef'
     args = 'name:str value:nox'
 
-class makeatletter(Command):
-    def invoke(self, tex):
-        self.ownerDocument.context.catcode('@', Token.CC_LETTER)
-
 class everypar(Command):
     args = 'tokens:nox'
 
@@ -522,9 +518,9 @@ class the(Command):
         result = Command.invoke(self, tex) 
         name = self.attributes['arg']
         if name == 'year':
-            return [Other(datetime.datetime.now().strftime('%Y'))]
+            return [Other(datetime.now().strftime('%Y'))]
         elif name == 'month':
-            return [Other(datetime.datetime.now().strftime('%-m'))]
+            return [Other(datetime.now().strftime('%-m'))]
         elif name == 'day':
-            return [Other(datetime.datetime.now().strftime('%-d'))]
+            return [Other(datetime.now().strftime('%-d'))]
         return [Other('???')]

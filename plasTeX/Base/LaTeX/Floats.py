@@ -141,11 +141,5 @@ class normalmarginpar(Command):
 
 # Style Parameters
 
-class marginparwidth(DimenCommand):
-    value = DimenCommand.new(0)
-
-class marginparsep(DimenCommand):
-    value = DimenCommand.new(0)
-
 class marginparpush(DimenCommand):
     value = DimenCommand.new(0)

@@ -178,18 +178,6 @@ class jot(DimenCommand):
 class mathindent(DimenCommand):
     value = DimenCommand.new(0)
 
-class abovedisplayskip(GlueCommand):
-    value = GlueCommand.new(0)
-
-class belowdisplayskip(GlueCommand):
-    value = GlueCommand.new(0)
-
-class abovedisplayshortskip(GlueCommand):
-    value = GlueCommand.new(0)
-
-class belowdisplayshortskip(GlueCommand):
-    value = GlueCommand.new(0)
-
 
 #
 # C.7.2 Common Structures

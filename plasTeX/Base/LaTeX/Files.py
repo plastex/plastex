@@ -15,27 +15,6 @@ log = getLogger()
 class nofiles(Command):
     pass
 
-class input(Command):
-    """ \\input """
-    args = 'name:str'
-    def invoke(self, tex):
-        a = self.parse(tex)
-        try:
-            path = tex.kpsewhich(attrs['name'])
-            status.info(' (%s.tex ' % path)
-            encoding = self.config['files']['input-encoding']
-            with open(path, encoding=encoding) as f:
-                tex.input(f.read())
-            status.info(' ) ')
-
-        except (OSError, IOError):
-            log.warning('\nProblem opening file "%s"', path)
-            status.info(' ) ')
-        return []
-
-class include(input):
-    pass
-
 class includeonly(Command):
     args = 'files:list:str'
 

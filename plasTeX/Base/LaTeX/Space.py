@@ -32,7 +32,7 @@ class bigskipamount(DimenCommand):
 class medskipamount(DimenCommand):
     value = DimenCommand.new('12pt')
 
-class smallskip(DimenCommand):
+class smallskipamount(DimenCommand):
     value = DimenCommand.new('6pt')
 
 class addvspace(Command):
