@@ -41,6 +41,7 @@ htmlcov/
 .cache
 nosetests.xml
 coverage.xml
+unittests/helpers/compare_cache/
 
 # Translations
 *.mo
