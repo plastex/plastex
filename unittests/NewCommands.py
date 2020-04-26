@@ -21,12 +21,7 @@ class ContextGenerated(TestCase):
 class NC(TestCase):
 
     def testNewcommand(self):
-        s = TeX()
-        s.input(r'\newcommand\mycommand[2][optional]{\itshape{#1:#2}}\newcommand{ \foo }{{this is foo}}\mycommand[hi]{{\foo}!!!}')
-        res = [x for x in s]
-        text = [x for x in res if x.nodeType == Node.TEXT_NODE]
-        expected = list('hi:this is foo!!!')
-        assert text == expected, '%s != %s' % (text, expected)
+        compare_output(r'\newcommand\mycommand[2][optional]{\itshape{#1:#2}}\newcommand{ \foo }{{this is foo}}\mycommand[hi]{{\foo}!!!}')
 
     def testNewenvironment(self):
         s = TeX()
@@ -158,11 +153,7 @@ class NewCommands(TestCase):
         assert text == list('before:hi:after'), text
 
     def testDef(self):
-        s = TeX()
-        s.input(r'\def\mymacro#1#2;#3\endmacro{this #1 is #2 my #3 command}\mymacro{one}x;y\endmacro morestuff')
-        output = [x for x in s]
-        text = [x for x in output if x.nodeType == Node.TEXT_NODE]
-        assert text == list('this one is x my y commandmorestuff'), text
+        compare_output(r'\def\mymacro#1#2;#3\endmacro{this #1 is #2 my #3 command}\mymacro{one}x;y\endmacro morestuff')
 
     def testDef2(self):
         s = TeX()
@@ -175,11 +166,7 @@ class NewCommands(TestCase):
         assert output[9].nodeName == 'ldots'
 
     def testDef3(self):
-        s = TeX()
-        s.input(r'\def\foo#1#2{:#1:#2:}\foo x y')
-        output = [x for x in s]
-        text = [x for x in output if x.nodeType == Node.TEXT_NODE]
-        assert text == list(':x:y:'), text
+        compare_output(r'\def\foo#1#2{:#1:#2:}\foo x y')
 
     def testLet(self):
         s = TeX()
@@ -193,10 +180,7 @@ class NewCommands(TestCase):
         assert output[1].source == '{', '"%s" != "%s"' % (output[1].source, '{')
 
     def testChardef(self):
-        s = TeX()
-        s.input(r'\chardef\foo=65\relax\foo')
-        output = [x for x in s]
-        assert output[-1].str == 'A', output
+        compare_output(r'\chardef\foo=65\relax\foo')
 
     def testRedefineUndefinedCommand(self):
         compare_output(r'\let\bar\foo\newcommand\foo{Foo}\foo')
