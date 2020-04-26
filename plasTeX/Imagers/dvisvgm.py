@@ -21,7 +21,7 @@ class DVISVGM(_Imager):
         for no, line in enumerate(open("images.csv")):
             out = 'img%d.svg' % no
             page, output = line.split(",")
-            images.append([out, output.rstrip()])
+            images.append((out, output.rstrip()))
 
             rc = subprocess.run([
                 "dvisvgm",

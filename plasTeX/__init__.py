@@ -2,7 +2,7 @@
 
 __version__ = '2.1'
 
-from typing import Optional
+from typing import Optional, Union
 from plasTeX import Logging, encoding
 from plasTeX.DOM import Element, Text, Node, DocumentFragment, Document
 from plasTeX.Tokenizer import Token, BeginGroup, EndGroup, Other
@@ -401,6 +401,11 @@ class Macro(Element):
         if t.macroName is None:
             return t.__name__
         return t.macroName
+
+    @tagName.setter
+    def tagName(self, value):
+        self.macroName = value
+
     nodeName = tagName
 
     @property
@@ -1409,7 +1414,7 @@ class muglue(glue):
 
 class ParameterCommand(Command):
     args = '= value:Number'
-    value = count(0)
+    value = count(0) # type: Union[count, dimen]
 
     enabled = True
     _enablelevel = 0

@@ -378,7 +378,7 @@ class GenericOption(object):
                            'directly, you must use a subclass.')
       self.parent = None
       self.initialize(locals())
-      self.data = None
+      self.data = None # type: Any
 
    def initialize(self, vars):
       """ Initialize all instance variables """

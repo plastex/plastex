@@ -68,6 +68,10 @@ class thebibliography(List):
         def id(self):
             return self.attributes['key']
 
+        @id.setter
+        def id(self, value):
+            self.attributes['key'] = value
+
         @property
         def bibcite(self):
             doc = self.ownerDocument
