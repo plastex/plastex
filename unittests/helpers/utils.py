@@ -54,6 +54,11 @@ def compare_output(tex: str):
                 f.write(tex)
 
             subprocess.run(["pdflatex", "test.tex"], check=True)
+            if not os.path.exists("test.pdf"):
+                # If pdflatex was successful but a pdf file was not produced,
+                # this means 0 pages were produced, so the content is empty.
+                return plastex_out.strip() == ""
+
             out = subprocess.run(
                     ["gs", "-q", "-sDEVICE=txtwrite", "-o", "%stdout%", "test.pdf"],
                     check=True,
