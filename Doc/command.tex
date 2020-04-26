@@ -148,6 +148,16 @@ table of contents.  By default, only sections that create files will show
 up in the table of contents.
 \end{configuration}
 
+\begin{configuration}{Disable character substitutions}
+\options{\longprogramopt{disable-charsub}}
+\config{document}{disable-charsub}
+specifies a ","-delimited list of characters not to perform character
+substitutions on. Character substitutions replace certain characters or groups
+of characters with typographically superior unicode versions, e.g.\ \code{`}
+with `. This may be unsuitable for certain use cases. For example, it may make
+search harder.
+\end{configuration}
+
 
 \subsection{Counters}
 
