@@ -72,7 +72,8 @@ class subfloat(Command):
         Command.invoke(self, tex)
         self.title = self.attributes['caption'] or self.attributes['toc']
 
-    def ref():
+    @property
+    def ref(self):
         """
         This is a bit crazy.  We have to override ref so that we can
         add some new functionality.  The value normally gotten by ref
@@ -80,23 +81,22 @@ class subfloat(Command):
         of the parent float node.
 
         """
-        def fset(self, value):
-            self.subref = value
-        def fget(self):
-            # Find the parent float of this subfloat
-            node = self.parentNode
-            while node is not None and not(isinstance(node, Float)):
-                node = node.parentNode
-            parentFloat = node
+        # Find the parent float of this subfloat
+        node = self.parentNode
+        while node is not None and not(isinstance(node, Float)):
+            node = node.parentNode
+        parentFloat = node
 
-            # Add the float number to the ref value
-            doc = self.ownerDocument
-            frag = doc.createDocumentFragment()
-            frag.append(parentFloat.caption.ref)
-            frag.append(self.subref)
-            return frag
-        return locals()
-    ref = property(**ref())
+        # Add the float number to the ref value
+        doc = self.ownerDocument
+        frag = doc.createDocumentFragment()
+        frag.append(parentFloat.caption.ref)
+        frag.append(self.subref)
+        return frag
+
+    @ref.setter
+    def ref(self, value):
+        self.subref = value
 
 class subref(Command):
     args = '* label:idref'
