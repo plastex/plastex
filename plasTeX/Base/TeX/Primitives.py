@@ -203,7 +203,7 @@ class ifnum(IfCommand):
     def invoke(self, tex):
         self.parse(tex)
         attrs = self.attributes
-        attrs['b'] = tex.readNumber(optspace=False)
+        attrs['b'] = tex.readNumber()
         relation = attrs['rel']
         a, b = attrs['a'], attrs['b']
         if relation == '<':
@@ -239,7 +239,7 @@ class ifdim(IfCommand):
 class ifodd(IfCommand):
     """ Test for odd integer """
     def invoke(self, tex):
-        tex.processIfContent(bool(tex.readNumber(optspace=False) % 2))
+        tex.processIfContent(bool(tex.readNumber() % 2))
         return []
 
 class ifvmode(IfCommand):
@@ -287,28 +287,28 @@ class ifx(IfCommand):
 class ifvoid(IfCommand):
     """ Test a box register """
     def invoke(self, tex):
-        tex.readNumber(optspace=False)
+        tex.readNumber()
         tex.processIfContent(False)
         return []
 
 class ifhbox(IfCommand):
     """ Test a box register """
     def invoke(self, tex):
-        tex.readNumber(optspace=False)
+        tex.readNumber()
         tex.processIfContent(False)
         return []
 
 class ifvbox(IfCommand):
     """ Test a box register """
     def invoke(self, tex):
-        tex.readNumber(optspace=False)
+        tex.readNumber()
         tex.processIfContent(False)
         return []
 
 class ifeof(IfCommand):
     """ Test for end of file """
     def invoke(self, tex):
-        tex.readNumber(optspace=False)
+        tex.readNumber()
         tex.processIfContent(False)
         return []
 
@@ -340,7 +340,7 @@ class pdftrue(Command): pass
 class ifcase(IfCommand):
     """ Cases """
     def invoke(self, tex):
-        tex.processIfContent(tex.readNumber(optspace=False))
+        tex.processIfContent(tex.readNumber())
         return []
 
 
