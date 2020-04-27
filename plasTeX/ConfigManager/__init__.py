@@ -498,6 +498,7 @@ class ConfigManager(UserDict, object):
             newcopy.data[key] = value.copy()
         return newcopy
 
+    @classmethod
     def set_prefixes(cls, arg1, arg2=None):
         """
         Set the command-line option prefixes
@@ -516,8 +517,6 @@ class ConfigManager(UserDict, object):
         else:
            cls.long_prefix = arg2
            cls.short_prefix = arg1
-
-    set_prefixes = classmethod(set_prefixes)
 
     def add_help_on_option(self, category=None):
         """
@@ -1154,6 +1153,7 @@ class ConfigManager(UserDict, object):
                     option.occurrences += 1
                     option.setValue(value)
 
+    @classmethod
     def get_prefixes(cls):
         """ Prepare option prefixes to make sure that they are always lists """
         long_prefixes = cls.long_prefix
@@ -1163,8 +1163,6 @@ class ConfigManager(UserDict, object):
         if type(short_prefixes) not in [list, tuple]:
            short_prefixes = [short_prefixes]
         return [x for x in short_prefixes if x],[x for x in long_prefixes if x]
-
-    get_prefixes = classmethod(get_prefixes)
 
     def do_longs(self, opts, opt, longopts, args):
         """
@@ -1232,6 +1230,7 @@ class ConfigManager(UserDict, object):
         opts.append((option, optarg))
         return opts, args
 
+    @classmethod
     def has_following_argument(cls, args):
         """
         Return boolean indicating the existence of a following argument
@@ -1257,8 +1256,6 @@ class ConfigManager(UserDict, object):
 
         # All other cases fail.  This must be an argument.
         return 1
-
-    has_following_argument = classmethod(has_following_argument)
 
     def get_match(self, opt, longopts):
         """
