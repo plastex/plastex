@@ -4,6 +4,7 @@ import unittest
 from unittest import TestCase
 from plasTeX import *
 from plasTeX.TeX import TeX
+import pytest
 
 class ArgumentParsing(TestCase):
 
@@ -68,6 +69,7 @@ class ArgumentParsing(TestCase):
         output = 'foo bar one'
         assert arg == output, '"%s" != "%s"' % (arg, output)
 
+    @pytest.mark.xfail # Issue #196
     def testIntegerArgument(self):
         s = TeX()
         s.input('{1{0}2}')
@@ -75,7 +77,7 @@ class ArgumentParsing(TestCase):
         output = 102
         assert arg == output, '"%s" != "%s"' % (arg, output)
 
-    def testIntegerArgument(self):
+    def testFloatArgument(self):
         s = TeX()
         s.input('{ -1{0}2.67 }')
         arg = s.readArgument(type='float')
@@ -290,7 +292,7 @@ class ArgumentParsing(TestCase):
 
         assert ParameterCommand._enablelevel == 0
 
-    def testTeXDimen(self):
+    def testTeXDimen2(self):
         s = TeX()
         s.input(r'''\newcount\mycount\mycount=120
                     \newdimen\mydimen\mydimen=12sp
