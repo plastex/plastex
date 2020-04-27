@@ -389,10 +389,11 @@ class catcode(Command):
     def invoke(self, tex):
         a = self.parse(tex)
         self.ownerDocument.context.catcode(chr(a['char']), a['code'])
+
+    @property
     def source(self):
         return r'\catcode`%s=%s' % (chr(self.attributes['char']),
                                      self.attributes['code'])
-    source = property(source)
 
 class csname(Command):
     """ \\csname """

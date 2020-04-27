@@ -199,7 +199,7 @@ class thebibliography(Base.thebibliography):
                 value.attributes[item] = obj
             return value
 
-        @property
+        @property # type: ignore # mypy#4125
         def ref(self):
             return self.bibcite.textContent
 
@@ -493,7 +493,7 @@ class citet(NatBibCite):
                     res.append(bibpunct.punctuation['close'])
         return res
 
-    def numcitation(self, full=False, capitalize=False):
+    def numcitation(self):
         """ (1, 2) """
         element = self.ownerDocument.createElement
         orig = res = self.ownerDocument.createDocumentFragment()

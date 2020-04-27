@@ -50,7 +50,7 @@ try:
     use_lexical_handler = 1
 except ImportError:
     use_lexical_handler = 0
-    class LexicalHandler: # type: ignore # mypy bug
+    class LexicalHandler: # type: ignore # mypy#1153
         pass
 
 try:
