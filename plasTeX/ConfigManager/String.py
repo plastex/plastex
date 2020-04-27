@@ -47,6 +47,10 @@ class StringOption(StringParser, GenericOption, UserString):
 
       return self
 
+   def __add__(self, other):
+      new = self.deepcopy()
+      new += other
+      return new
 
 class StringArgument(GenericArgument, StringOption):
    """ String command-line option """

@@ -99,5 +99,10 @@ class CompoundOption(CompoundParser, StringOption):
 
       return self
 
+   def __add__(self, other):
+      new = self.deepcopy()
+      new += other
+      return new
+
 class CompoundArgument(GenericArgument, CompoundOption):
    """ Compound command-line argument """

@@ -140,6 +140,11 @@ class MultiOption(MultiParser, GenericOption, UserList):
          raise TooManyValues("Expecting at most %s values for option '%s'." % (range[1], name))
       return self
 
+   def __add__(self, other):
+      new = self.deepcopy()
+      new += other
+      return new
+
    def validate(self, arg):
       """ Validate the value of the option """
       new_values = []
