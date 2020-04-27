@@ -397,7 +397,7 @@ class Macro(Element):
     def tagName(self, value):
         self.macroName = value
 
-    nodeName = tagName
+    nodeName = tagName # type: ignore # mypy#4125
 
     @property
     def source(self):

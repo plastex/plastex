@@ -72,7 +72,7 @@ class subfloat(Command):
         Command.invoke(self, tex)
         self.title = self.attributes['caption'] or self.attributes['toc']
 
-    @property
+    @property # type: ignore # mypy#4125
     def ref(self):
         """
         This is a bit crazy.  We have to override ref so that we can

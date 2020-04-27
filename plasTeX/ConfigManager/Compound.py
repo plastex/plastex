@@ -61,8 +61,14 @@ class CompoundParser:
 
       return value, args
 
+# We suppress the mypy error
+#
+# > error: Definition of "getArgument" in base class "CompoundParser" is
+# > incompatible with definition in base class "GenericParser"
+#
+# Unfortunately this suppresses type checking of the whole class.
+class CompoundOption(CompoundParser, StringOption): # type: ignore # See above
 
-class CompoundOption(CompoundParser, StringOption):
    """
    Compound configuration option
 
@@ -104,5 +110,5 @@ class CompoundOption(CompoundParser, StringOption):
       new += other
       return new
 
-class CompoundArgument(GenericArgument, CompoundOption):
+class CompoundArgument(GenericArgument, CompoundOption): # type: ignore # See CompoundOption ignore
    """ Compound command-line argument """

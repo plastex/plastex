@@ -27,7 +27,7 @@ def import_file(path: Path):
     sys.modules[module_name] = module
     if spec.loader is None:
         raise ImportError()
-    spec.loader.exec_module(module) # type: ignore
+    spec.loader.exec_module(module) # type: ignore # mypy doesn't understand importlib well enough
     return module
 
 def run(filename: str, config: ConfigManager):

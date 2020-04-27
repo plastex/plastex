@@ -3,7 +3,7 @@
 from pathlib import Path
 import os, time, tempfile, shutil, re, string, pickle
 try: from hashlib import md5
-except ImportError: from md5 import new as md5 # type: ignore # mypy bug
+except ImportError: from md5 import new as md5 # type: ignore # mypy#1153
 from plasTeX.Logging import getLogger
 from io import StringIO
 from plasTeX.Filenames import Filenames

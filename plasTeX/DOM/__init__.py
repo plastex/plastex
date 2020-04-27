@@ -1394,15 +1394,15 @@ class Attr(Node):
     def __repr__(self):
         return '<%s attribute at 0x%s>' % (self.nodeName, id(self))
 
-    @property
-    def nodeName(self) -> Optional[str]:
+    @property # type: ignore # mypy#4125
+    def nodeName(self) -> Optional[str]: # type: ignore # mypy#4125
         return self.name
 
     @nodeName.setter
     def nodeName(self, value):
         self.name = value
 
-    @property
+    @property # type: ignore # mypy#4125
     def nodeValue(self):
         return self.value
 
@@ -1939,7 +1939,7 @@ class DocumentType(Node):
     systemId = None
     internalSubset = None
 
-    @property
+    @property # type: ignore # mypy#4125
     def nodeName(self):
         return self.name
 
@@ -2000,7 +2000,7 @@ class ProcessingInstruction(Node):
     target = None # type: Optional[str]
     data = None # type: Optional[str]
 
-    @property
+    @property # type: ignore # mypy#4125
     def nodeName(self):
         return self.target
 
@@ -2008,7 +2008,7 @@ class ProcessingInstruction(Node):
     def nodeName(self, value):
         self.target = value
 
-    @property
+    @property # type: ignore # mypy#4125
     def nodeValue(self):
         return self.data
 
