@@ -6,7 +6,7 @@ import traceback, pdb
 import plasTeX
 from plasTeX.Logging import getLogger
 from plasTeX.Compile import run
-from plasTeX.Config import config as base_config
+from plasTeX.Config import config
 
 log = getLogger()
 
@@ -28,7 +28,6 @@ def main(argv):
     """ Main program routine """
     print('plasTeX version %s' % __version__)
 
-    config = base_config.copy()
     collect_renderer_config(config)
 
     # Parse the command line options
