@@ -84,6 +84,7 @@ class Filenames(object):
     def parseFilenames(self, spec):
         """ Parse and expand the filename string """
         # Normalize string before parsing
+        spec = spec.strip()
         spec = re.sub(r'\$(\w+)', r'${\1}', spec)
         spec = re.sub(r'\${\s*(\w+)\s*}', r'${\1}', spec)
         spec = re.sub(r'\}\(\s*(\d+)\s*\)', r'.\1}', spec)
