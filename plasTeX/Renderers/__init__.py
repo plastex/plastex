@@ -299,8 +299,7 @@ class Renderable(object):
             if not hasattr(self, 'config'):
                 return
 
-            level = getattr(self, 'splitlevel',
-                            self.config['files']['split-level'])
+            level = getattr(self, 'splitlevel', r.level)
 
             # If our level doesn't invoke a split, don't return a filename
             if self.level > level:
@@ -404,6 +403,11 @@ class Renderer(dict):
 
         """
         config = document.config
+
+        self.level = config["files"]["split-level"]
+        filenameTemplate = config["files"]["filename"].strip()
+        if ' ' not in filenameTemplate and '[' not in filenameTemplate:
+            self.level = -10
 
         # If there are no keys, print a warning.
         # This is most likely a problem.
