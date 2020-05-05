@@ -1,9 +1,9 @@
 """
 This file runs end-to-end tests by compiling full TeX files and comparing
-with reference output files. 
+with reference output files.
 The folder containing this test file and each of its subfolder contains a
 "sources" folder for TeX inputs, an optional "extras" folder for auxilliary
-input, and a "benchmarks" folder containing the expected outputs. 
+input, and a "benchmarks" folder containing the expected outputs.
 
 Each input TeX file can start with the following species of special lines:
 %* command to run     which runs a command before compilation
@@ -58,7 +58,10 @@ class Process(object):
         self.process.stdout.close()
         self.process.stdin.close()
 
-@pytest.mark.parametrize('src', Path(__file__).parent.glob('**/*.tex'),
+files = [path for path in Path(__file__).parent.glob('**/*.tex')
+         if 'sources' in path.parts]
+
+@pytest.mark.parametrize('src', files,
                          ids=lambda p: p.name)
 def test_benchmark(src, tmpdir):
     tmpdir = Path(str(tmpdir)) # For old python
@@ -97,7 +100,7 @@ def test_benchmark(src, tmpdir):
     outfile = (tmpdir/src.name).with_suffix('.html')
     plastex = which('plastex') or 'plastex'
     python = sys.executable
-    p = Process(python, plastex,'--renderer=HTML5', 
+    p = Process(python, plastex,'--renderer=HTML5',
                 '--split-level=0','--no-theme-extras',
                 '--dir=%s' % outdir,'--theme=minimal',
                 '--filename=%s' % outfile.name, src.name,
@@ -117,7 +120,7 @@ def test_benchmark(src, tmpdir):
         raise OSError('No benchmark file: %s' % benchfile)
 
     # Compare files
-    diff = '\n'.join(difflib.unified_diff(bench, output, 
+    diff = '\n'.join(difflib.unified_diff(bench, output,
         fromfile='benchmark', tofile='output')).strip()
 
     if diff:
