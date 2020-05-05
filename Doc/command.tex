@@ -44,6 +44,23 @@ Section~\ref{subsec:renderer-from-script}).
 The following options are currently available
 on the \program{plastex} command. They are categorized for convenience.
 
+Note that some commands such as \longprogramopt{link} and
+\longprogramopt{lang-terms} take in a variable number of arguments. If this is
+the last option supplied, you would have to separate the filename from the list
+of arguments, e.g.
+\begin{verbatim}
+plastex --lang-terms foo bar -- input.tex
+\end{verbatim}
+
+The \program{plasTeX} command line and configuration supports interpolation.
+That is, in options whose value is a string (or a list of string), we replace
+all instances of \code{\%(foo)s} with the value of the option \code{foo}. The
+formatting is done with pythons \%-formatting and all \%-formatting features
+are supported. Note that we only specify the name of the option, and not the
+section it belongs to.
+
+Interpolation is performed each time a configuration option is accessed.
+
 \subsection{General Options}\label{sec:general-options}
 
 \begin{configuration}{Configuration files}
@@ -113,10 +130,9 @@ specifies the number of columns to group the index into.
 \end{configuration}
 
 \begin{configuration}{Language terms}
-\options{\longprogramopt{lang-terms=\optval{string}}}
+\options{\longprogramopt{lang-terms \optval{string1 string2 \ldots}}}
 \config{document}{lang-terms}
-Specifies a list of files that contain language terms, delimited by the
-OS path separator (such as : for POSIX and ; for Windows).
+specifies a list of files that contain language terms
 \end{configuration}
 
 \begin{configuration}{Section number depth}
@@ -151,11 +167,10 @@ up in the table of contents.
 \begin{configuration}{Disable character substitutions}
 \options{\longprogramopt{disable-charsub}}
 \config{document}{disable-charsub}
-specifies a ","-delimited list of characters not to perform character
-substitutions on. Character substitutions replace certain characters or groups
-of characters with typographically superior unicode versions, e.g.\ \code{`}
-with `. This may be unsuitable for certain use cases. For example, it may make
-search harder.
+specifies a list of characters not to perform character substitutions on.
+Character substitutions replace certain characters or groups of characters with
+typographically superior unicode versions, e.g.\ \code{`} with `. This may be
+unsuitable for certain use cases. For example, it may make search harder.
 \end{configuration}
 
 
@@ -182,14 +197,20 @@ Each counter set in the \longprogramopt{counter}
 option requires two values: the name of the counter and the value to
 set the counter to.  An example of \longprogramopt{counter} is shown below.
 \begin{verbatim}
-plastex --counter [ part 2 chapter 4 ] file.tex
+plastex --counter part 2 --counter chapter 4 file.tex
 \end{verbatim}
 
 Just as in the configuration example, this command-line sets the
 part counter to 2, and the chapter counter to 4.
 
+Note that our notion of ``setting'' a counter to `n` is equivalent to
+the \LaTeX{} command \verb!\setcounter{counter}{n - 1}!. This is so that, for
+example, in the above configuration, when we first encounter
+\verb!\section{Foo}!, we get Section 2 instead of Section 3 (since
+\verb!\section! first increments the counter then uses the counter value).
+
 \begin{configuration}{Set initial counter values}
-\options{\longprogramopt{counter=\optval{[ counter-name initial-value ]}}}
+\options{\longprogramopt{counter=\optval{counter-name initial-value}}}
 specifies the initial counter values.
 \end{configuration}
 
@@ -275,10 +296,8 @@ to external documents at those points.
 
 
 \begin{configuration}{Set document links}
-\options{\longprogramopt{links=\optval{[ key optional-url title ]}}}
-specifies links to be included in the navigation object.  Since at
-least two values are needed in the links (key and title, with an optional
-URL), the values are grouped in square brackets on the command-line ([~]).
+\options{\longprogramopt{links=\optval{key optional-url title}}}
+specifies links to be included in the navigation object.
 \end{configuration}
 
 
@@ -618,10 +637,10 @@ green.
 \end{configuration}
 
 \begin{configuration}{Extra CSS file}
-\options{\longprogramopt{extra-css=\optval{filename1, ...}}}
+  \options{\longprogramopt{extra-css \optval{filename1 filename2 ...}}}
 \config{html5}{extra-css}
-\default{''}
-specifies a comma separated list of css files to use in addition the
+\default{[]}
+specifies a list of css files to use in addition the
 theme css. These files are copied to the output directory by the
 renderer and loaded by the main layout template in the list order after
 the theme css files (if any) and the packages css files (if any).
@@ -637,10 +656,10 @@ and proofs.
 \end{configuration}
 
 \begin{configuration}{Extra javascript}
-\options{\longprogramopt{extra-js=\optval{filename1, ...}}}
+  \options{\longprogramopt{extra-js \optval{filename1 filename2 ...}}}
 \config{html5}{extra-css}
-\default{''}
-specifies a comma separated list of javascript files to use (in addition
+\default{[]}
+specifies a list of javascript files to use (in addition
 to those coming from the theme is the use-theme-js option is set to true).
 These files are copied to the output directory by the
 renderer and loaded by the main layout template in the list order after
@@ -675,10 +694,10 @@ specifies whether single dollars are used as math delimiters instead of
 
 
 \begin{configuration}{Filters applied on output}
-\options{\longprogramopt{filters=\optval{filter1, \ldots}}}
+  \options{\longprogramopt{filters \optval{filter1 filter2 \ldots}}}
 \config{html5}{filters}
-\default{''}
-specifies a comma separated list of commands to invoke on each output
+\default{[]}
+specifies a list of commands to invoke on each output
 page. Each command should expect one file to convert on stdin and output
 the converted file on stdout.
 \end{configuration}

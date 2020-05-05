@@ -1,6 +1,6 @@
 import plasTeX
 from plasTeX.TeX import TeX
-from plasTeX.Config import config
+from plasTeX.Config import defaultConfig
 from plasTeX.ConfigManager import *
 from plasTeX.Renderers.XHTML import Renderer as XHTMLRenderer
 from plasTeX.Renderers.PageTemplate.simpletal import simpleTAL, simpleTALES
@@ -263,7 +263,7 @@ class Epub(object):
     def __init__(self, name):
         self.name = name
         self.filename = '%s.tex' % name
-        self.config = config
+        self.config = defaultConfig()
         self.config['general']['renderer'] = 'Epub'
         self.config['general']['theme'] = 'default'
 

@@ -5,7 +5,7 @@ from logging import CRITICAL, DEBUG, INFO, Formatter
 from logging import Logger as _Logger
 from logging import StreamHandler as _StreamHandler
 from logging import addLevelName, setLoggerClass, FileHandler, Filter
-from plasTeX.Config import config as _config
+from plasTeX.Config import defaultConfig
 
 MAX_WIDTH = 75
 LOG_FORMAT = '[%(name)s] %(levelname)s: %(message)s'
@@ -29,8 +29,7 @@ class Logger(_Logger):
     def __init__(self, name='', *args, **kwargs):
         _Logger.__init__(self, name, *args, **kwargs)
         self.propagate = 0
-        try: level = eval(_config['logging'][name])
-        except: level = None
+        level = locals().get(defaultConfig()['logging']['logging'].get(name))
         if not name:
             handler = StreamHandler()
             handler.setFormatter(StreamFormatter(ROOT_LOG_FORMAT))

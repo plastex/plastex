@@ -23,15 +23,8 @@ class document(Environment, SectionUtils):
         res = Environment.invoke(self, tex)
 
         # Set initial counter values
-        if 'counters' in self.config:
-            counters = self.config['counters']
-            for name in list(counters.keys()):
-                if name.startswith(';'):
-                    continue
-                try:
-                    self.ownerDocument.context.counters[name].setcounter(counters[name]-1)
-                except TypeError:
-                    self.ownerDocument.context.counters[name].setcounter(int(counters[name])-1)
+        for name, value in self.config["counters"]["counters"].items():
+            self.ownerDocument.context.counters[name].setcounter(value-1)
 
         return res
  

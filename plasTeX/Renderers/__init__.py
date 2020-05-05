@@ -422,7 +422,7 @@ class Renderer(dict):
         Node.renderer = self
 
         # Create a filename generator
-        self.newFilename = Filenames(config['files'].get('filename', raw=True),
+        self.newFilename = Filenames(config['files'].get('filename'),
                                      (config['files']['bad-chars'],
                                       config['files']['bad-chars-sub']),
                                      {'jobname':document.userdata.get('jobname', '')}, self.fileExtension)

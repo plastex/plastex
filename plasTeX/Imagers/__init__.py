@@ -10,7 +10,7 @@ from plasTeX.Filenames import Filenames
 from collections import OrderedDict
 import subprocess
 import shlex
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Dict, Any
 
 log = getLogger()
 depthlog = getLogger('render.images.depth')
@@ -167,7 +167,7 @@ class DimensionPlaceholder(str):
 class Image(object):
     """ Generic image object """
 
-    def __init__(self, filename, config, width=None, height=None, alt=None,
+    def __init__(self, filename, config: Dict[str, Any], width=None, height=None, alt=None,
                        depth=None, longdesc=None):
         self.filename = filename
         self.path = os.path.join(os.getcwd(), self.filename)
@@ -482,7 +482,7 @@ class Imager(object):
         self.staticimages = {}
 
         # Filename generator
-        self.newFilename = Filenames(self.config['images'].get('filenames', raw=True),
+        self.newFilename = Filenames(self.config['images'].get('filenames'),
                            variables={'jobname':document.userdata.get('jobname','')},
                            extension=self.fileExtension, invalid=usednames)
 
@@ -780,7 +780,7 @@ width 2pt\hskip2pt}}{}
         #log.debug('Creating %s from %s', filename, text)
         self.writeImage(filename, text, context)
 
-        img = Image(filename, self.config['images'])
+        img = Image(filename, dict(self.config['images']))
 
         # Populate image attrs that will be bound later
         if self.imageAttrs:

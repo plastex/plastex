@@ -820,7 +820,7 @@ class TeXDocument(Document):
 
         if 'config' not in list(kwargs.keys()):
             from plasTeX import Config
-            self.config = Config.config
+            self.config = Config.defaultConfig()
         else:
             self.config = kwargs['config']
 
@@ -830,7 +830,7 @@ class TeXDocument(Document):
         self.packageResources = []
         self.rendererdata = dict()
 
-        self.charsubs = [x for x in TeXDocument.defaultCharsubs if x[0] not in self.config["document"]["disable-charsub"].split(",")]
+        self.charsubs = [x for x in TeXDocument.defaultCharsubs if x[0] not in self.config["document"]["disable-charsub"]]
 
     def addPackageResource(self, resource):
         """

@@ -13,7 +13,7 @@ except ImportError:
 from pytest import fixture
 
 from plasTeX.TeX import TeX, TeXDocument
-from plasTeX.Config import config
+from plasTeX.Config import defaultConfig
 from plasTeX.Renderers.XHTML import Renderer
 
 
@@ -31,7 +31,7 @@ def make_document():
 
         """
 
-        doc = TeXDocument(config=config)
+        doc = TeXDocument(config=defaultConfig())
         tex = TeX(doc)
         tex.disableLogging()
         tex.input(r'''

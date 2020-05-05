@@ -13,7 +13,7 @@ import os, shutil
 import sys
 from pathlib import Path
 
-from plasTeX.Config import config as base_config
+from plasTeX.Config import defaultConfig
 from plasTeX.Renderers import Renderer
 from plasTeX.TeX import TeX, TeXDocument
 from helpers.utils import cmp_img
@@ -32,7 +32,7 @@ def test_tikz(tmpdir):
 
     images = ["images/img-0001.svg", "images/img-0002.svg", "images/img-0001.png", "images/img-0002.png"]
 
-    config = base_config.copy()
+    config = defaultConfig()
     config['images']['vector-imager'] = 'pdf2svg'
     config['images']['imager'] = 'gspdfpng'
 
