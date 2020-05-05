@@ -307,7 +307,7 @@ class Context(object):
         """
 
         if not self.languages:
-            files = document.config['document']['lang-terms'].split(os.pathsep)
+            files = document.config['document']['lang-terms']
             files.append(os.path.join(os.path.dirname(__file__), 'i18n.xml'))
 
             LanguageParser(self.languages).parse(reversed(files))

@@ -4,9 +4,10 @@ import os, sys
 import importlib
 import traceback, pdb
 import plasTeX
+from argparse import ArgumentParser
 from plasTeX.Logging import getLogger
 from plasTeX.Compile import run
-from plasTeX.Config import config
+from plasTeX.Config import defaultConfig
 
 log = getLogger()
 
@@ -22,27 +23,34 @@ def collect_renderer_config(config):
         except ImportError as msg:
             continue
 
-        config += conf.config
+        conf.addConfig(config)
 
 def main(argv):
     """ Main program routine """
     print('plasTeX version %s' % __version__)
 
+    config = defaultConfig()
     collect_renderer_config(config)
 
-    # Parse the command line options
-    try:
-        opts, args = config.getopt(argv[1:])
-    except Exception as msg:
-        log.error(msg)
-        print(config.usage())
-        sys.exit(1)
+    parser = ArgumentParser("plasTeX")
 
-    if not args:
-        print(config.usage())
-        sys.exit(1)
+    group = parser.add_argument_group("External Configuration Files")
+    group.add_argument("--config", "-c", dest="config", help="Config files to load. Non-existent files are silently ignored", action="append")
 
-    run(args.pop(0), config)
+    config.registerArgparse(parser)
+
+    parser.add_argument("file", help="File to process")
+
+    data = parser.parse_args()
+    data = vars(data)
+    if data["config"] is not None:
+        config.read(data["config"])
+
+    config.updateFromDict(data)
+
+    filename = data["file"]
+
+    run(filename, config)
 
 def info(type, value, tb):
    if hasattr(sys, 'ps1') or not sys.stderr.isatty():

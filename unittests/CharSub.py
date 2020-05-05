@@ -1,9 +1,9 @@
 from plasTeX.TeX import TeX
 from plasTeX import TeXDocument
-from plasTeX.Config import config as base_config
+from plasTeX.Config import defaultConfig
 
 def test_charsub():
-    config = base_config.copy()
+    config = defaultConfig()
 
     doc = TeXDocument(config=config)
     tex = TeX(doc)
@@ -13,8 +13,8 @@ def test_charsub():
     assert p.textContent == "“” ’—"
 
 def test_modify_charsub():
-    config = base_config.copy()
-    config["document"]["disable-charsub"] = "'"
+    config = defaultConfig()
+    config["document"]["disable-charsub"] = ["'"]
 
     doc = TeXDocument(config=config)
     tex = TeX(doc)

@@ -31,8 +31,7 @@ def import_file(path: Path):
     return module
 
 def run(filename: str, config: ConfigManager):
-    if config['logging']:
-        updateLogLevels(config['logging'])
+    updateLogLevels(config['logging']['logging'])
 
     # Create document instance that output will be put into
     document = plasTeX.TeXDocument(config=config)

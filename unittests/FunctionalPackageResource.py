@@ -3,12 +3,14 @@ import os
 from plasTeX.TeX import TeX
 from plasTeX.TeX import TeXDocument
 from plasTeX.Renderers.HTML5 import Renderer
-from plasTeX.Config import config
-from plasTeX.Renderers.HTML5.Config import config as html5_config
+from plasTeX.Config import defaultConfig
+from plasTeX.Renderers.HTML5.Config import addConfig
 
 
 def test_package_resource(tmpdir):
-	doc = TeXDocument(config=config+html5_config)
+	config = defaultConfig()
+	addConfig(config)
+	doc = TeXDocument(config=config)
 	tex = TeX(doc)
 	tex.input("""
 		\\documentclass{article}
