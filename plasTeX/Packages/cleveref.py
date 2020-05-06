@@ -24,6 +24,7 @@ class CleverRef(ref):
             if label.level >= Node.SECTION_LEVEL:
                 return "section"
             else:
+                assert label.counter is not None
                 return label.counter
 
         if isinstance(label, equation):
