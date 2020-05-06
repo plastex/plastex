@@ -37,8 +37,3 @@ view of what it is capable of.
 ## Testing
 To run the tests locally, run tox.
 This will run tests locally using python 3.5 to 3.7.
-
-## Status
-[![Build Status](https://travis-ci.org/plastex/plastex.svg?branch=master)](https://travis-ci.org/plastex/plastex)
-[![Coverage Status](https://coveralls.io/repos/github/plastex/plastex/badge.svg?branch=master)](https://coveralls.io/github/plastex/plastex?branch=master)
-
