@@ -39,7 +39,7 @@ def test_imager(imager_tuple, tmpdir):
     tex = TeX()
     tex.ownerDocument.config['images'][kind] = imager
     if compiler is not None:
-        tex.ownerDocument.config['images']["compiler"] = compiler
+        tex.ownerDocument.config['images'][kind.replace("imager", "compiler")] = compiler
 
     tex.input(r'''
     \documentclass{article}
