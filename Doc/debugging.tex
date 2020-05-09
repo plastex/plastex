@@ -1,0 +1,62 @@
+\section{Logging levels}
+\label{sec:logging-levels}
+
+\plasTeX uses standard python logging to document what it is doing. The
+loggers that are defined by default are
+\verb+context+,
+\verb+context.macros+,
+\verb+context.stack+,
+\verb+imager+,
+\verb+parse+,
+\verb+parse.commands+,
+\verb+parse.definitions+,
+\verb+parse.digest+,
+\verb+parse.environments+,
+\verb+parse.mathshift+,
+\verb+parse.persistent+,
+\verb+parse.sections+,
+\verb+parse.tokens+,
+\verb+render+,
+\verb+render.images+,
+\verb+render.images.depth+,
+\verb+simpleTAL+,
+\verb+simpleTALES+,
+\verb+status+,
+\verb+tex+,
+\verb+tex.kpsewhich+.
+
+When using the main \program{plastex} script, you can change the
+corresponding levels to values \verb+CRITICAL+, \verb+ERROR+,
+\verb+WARNING+, \verb+INFO+, or \verb+DEBUG+ by using a configuration
+file with a \verb+[logging]+ section such as:
+\begin{verbatim}
+[logging]
+parse.environments=DEBUG
+\end{verbatim}
+if you want more information about environment parsing.
+
+If the renderer you use does not call \LaTeX for creating images, you
+can also achieve the same result from your \LaTeX document
+by writing \verb+\usepackage{debugplastex}+ and then
+\verb+\setloglevel{parse.environments}{DEBUG}+.
+
+When using \plasTeX from python, you can use the function
+\verb+plasTeX.Logging.updateLogLevels+ to update logging levels. It takes
+a dictionary whose keys are logger names and values are levels (both are
+strings). Non-existent loggers are created, loggers whose names are not
+keys of the input dictionary are unaffected.
+
+
+\section{Using the python debugger}
+
+For more drastic debugging, the \verb+debugplastex+ package also
+provides the command \verb+settrace+ to drop into the python debugger
+while parsing. You can also use
+\verb+\usepackage[post_parse_trace]{debugplastex}+ to ask \plasTeX
+to drop into the python debugger after parsing the full LaTeX input.
+
+When using Jinja2 templates with a renderer extending
+\verb+PageTemplate+, you can also use \verb+{{ debug() }}+ in a template in
+order to drop into the python debugger while rendering the template. In
+particular this allows to inspect \verb+context['obj']+ which contains
+the node being rendered.
