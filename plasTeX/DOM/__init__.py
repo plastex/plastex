@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import sys, re
-from plasTeX.Logging import getLogger
 import builtins
 from typing import Optional, NewType
 

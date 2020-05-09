@@ -11,10 +11,8 @@ TODO:
 
 """
 
-import plasTeX, re, string
+import re, string
 from plasTeX import Base, Text
-
-log = plasTeX.Logging.getLogger()
 
 PackageOptions = {}
 
