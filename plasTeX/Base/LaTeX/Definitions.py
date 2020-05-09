@@ -8,10 +8,7 @@ C.8 Definitions, Numbering, and Programming
 from plasTeX import Command, Environment
 from plasTeX.Logging import getLogger
 
-log = getLogger()
-status = getLogger('status')
 deflog = getLogger('parse.definitions')
-envlog = getLogger('parse.environments')
 
 #
 # C.8.1 Defining Commands

@@ -10,7 +10,6 @@ from plasTeX.Logging import getLogger
 log = getLogger()
 status = getLogger('status')
 deflog = getLogger('parse.definitions')
-envlog = getLogger('parse.environments')
 mathshiftlog = getLogger('parse.mathshift')
 
 class relax(Command):

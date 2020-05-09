@@ -14,7 +14,6 @@ sys.path.append(os.path.dirname(Packages.__file__))
 del Packages
 
 log = getLogger()
-status = getLogger('status')
 
 class PackageLoader(Command):
     extension = '.sty'

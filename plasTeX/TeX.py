@@ -29,8 +29,6 @@ __all__ = ['TeX']
 
 log = getLogger()
 status = getLogger('status')
-tokenlog = getLogger('parse.tokens')
-digestlog = getLogger('parse.digest')
 _type = type
 
 class bufferediter(object):

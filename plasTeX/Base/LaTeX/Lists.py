@@ -7,9 +7,6 @@ C.6.3 The list and trivlist Enviroments
 """
 
 from plasTeX import Environment, Command, DimenCommand
-from plasTeX import Logging
-
-log = Logging.getLogger()
 
 class enuminame(Command): str = ''
 class enumiiname(Command): str = ''
