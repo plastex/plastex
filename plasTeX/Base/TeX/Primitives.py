@@ -242,12 +242,6 @@ class ifodd(IfCommand):
         tex.processIfContent(bool(tex.readNumber(optspace=False) % 2))
         return []
 
-class ifeven(IfCommand):
-    """ Test for even integer """
-    def invoke(self, tex):
-        tex.processIfContent(not(tex.readNumber(optspace=False) % 2))
-        return []
-
 class ifvmode(IfCommand):
     """ Test for vertical mode """
     def invoke(self, tex):
