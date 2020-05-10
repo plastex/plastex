@@ -50,13 +50,6 @@ class TestIfs(TestCase):
         expected = 'text one'
         assert output == expected, '"%s" != "%s"' % (output, expected)
 
-    def testIfEven(self):
-        s = TeX()
-        s.input(r'\ifeven 7 bye\else text\fi\ifeven 100 one\else two\fi')
-        output = ''.join([x for x in s]).strip()
-        expected = 'text one'
-        assert output == expected, '"%s" != "%s"' % (output, expected)
-
     def testIfVMode(self):
         s = TeX()
         s.input(r'\ifvmode bye\else text\fi\ifvmode one\else two\fi')
