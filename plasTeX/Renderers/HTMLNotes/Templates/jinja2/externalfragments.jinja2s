@@ -1,0 +1,6 @@
+name: externalfragments_block
+{% set language, text = obj.fragment %}
+{% set class = 'class="%s %s"' % (obj.templateName, language) %}
+{% set a = '<a id="id-%s"></a>' % obj.attributes['identifier'] %}
+{% set code = '<code>%s</code>' % text %}
+<pre {{ class }}>{{ a }}{{ code }}</pre>
