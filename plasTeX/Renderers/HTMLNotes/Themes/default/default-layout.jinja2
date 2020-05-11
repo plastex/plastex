@@ -54,7 +54,7 @@ MathJax = {
 {% if links.next.url %}<link rel="next" href="{{ links.next.url }}" title="{{ links.next.title.textContent }}">{% endif %}
 {% if links.prev.url %}<link rel="prev"  href="{{ links.prev.url }}" title="{{ links.prev.title.textContent }}">{% endif %}
 {% if links.up.url %}<link rel="parent" href="{{ links.up.url }}" title="{{ links.up.title.textContent }}">{% endif %}
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Domine%7CRoboto+Mono%26display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Domine&amp;family=Roboto+Mono&amp;display=swap">
 {% for css in rendererdata.get('css', []) %}<link rel="stylesheet" href="styles/{{ css }}">{% endfor %}
 <script>{{ mathjax_configuration }}</script>
 <script src="{{ mathjax_url }}" async></script>
