@@ -17,6 +17,35 @@ li.crumb::after {
   content: " / ";
 }
 
+code {
+  font-family: "Roboto Mono", Menlo, Consolas, "DejaVu Sans Mono", Monaco, monospace;
+  font-size: 0.9rem;
+  hyphens: none;
+  text-align: start;
+  text-transform: none;
+}
+
+pre {
+  border-left-style: solid;
+  border-width: 0.5rem;
+  margin: 1rem auto;
+  overflow: auto;
+  padding: 0.5rem;
+  page-break-inside: avoid;
+}
+
+pre.coq {
+  background: #ffe6ff;
+  border-color: #ff99ff;
+  color: inherit;
+}
+
+pre.text {
+  background: #E9FBE9;
+  border-color: #52E052;
+  color: inherit;
+}
+
 nav.toc {
   position: fixed;
   z-index: 300;
@@ -214,7 +243,7 @@ div.wrapper {
 
 div.content {
   margin: 0 auto;
-  max-width: 35rem;
+  max-width: 50rem;
   padding: 1rem 1rem 2.5rem 1rem;
 }
 

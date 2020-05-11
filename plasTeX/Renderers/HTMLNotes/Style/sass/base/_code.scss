@@ -1,0 +1,32 @@
+code {
+    font-family: "Roboto Mono", Menlo, Consolas, "DejaVu Sans Mono",
+                 Monaco, monospace;
+    font-size: 0.9rem;
+    hyphens: none;
+    text-align: start;
+    text-transform: none;
+}
+
+pre {
+    border-left-style: solid;
+    border-width: .5rem;
+    margin: 1rem auto;
+    overflow: auto;
+    padding: .5rem;
+    page-break-inside: avoid;
+}
+
+// https://www.w3.org/TR/xslt-30/#element-stylesheet
+pre.coq {
+    background: #ffe6ff;
+    border-color: #ff99ff;
+    color: inherit;
+}
+
+// https://www.w3.org/TR/xslt-30/#xslt-namespace ("Note:" div)
+// https://www.w3.org/TR/pointerevents2/#issue-container-generatedID-1
+pre.text {
+    background: #E9FBE9;
+    border-color: #52E052;
+    color: inherit;
+}
