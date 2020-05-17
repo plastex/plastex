@@ -72,3 +72,6 @@ Doc/plastex.pdf
 Doc/plastex.toc
 Doc/plastex/
 Doc/plastex6.syn
+
+# nix-build output
+result
