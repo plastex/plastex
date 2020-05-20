@@ -123,6 +123,14 @@ specifies which renderer to use. This is either one of the built in renderers,
 a renderer defined by a plugin, or a path to the directory of a renderer.
 \end{configuration}
 
+\begin{configuration}{Packages directories}
+\options{\longprogramopt{packages-dir=\optval{directories}}}
+\config{general}{packages-dirs}
+\default{[]}
+specifies a list of directories where python implementations
+of packages should be searched.
+\end{configuration}
+
 \begin{configuration}{Themes}
 \options{\longprogramopt{theme=\optval{theme-name}}}
 \config{general}{theme}

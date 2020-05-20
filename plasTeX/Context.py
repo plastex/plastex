@@ -1,15 +1,19 @@
-#!/usr/bin/env python
+import sys
+import os
+import configparser
+import re
+import time
+from pathlib import Path
 from typing import Optional, Dict
+from importlib import import_module
+
 from plasTeX import ismacro, macroName
 from plasTeX.TeX import TeX
 from plasTeX.Logging import getLogger
 from plasTeX.Base.TeX.Primitives import relax
 from plasTeX.Tokenizer import Tokenizer, Token, DEFAULT_CATEGORIES, VERBATIM_CATEGORIES
-import os
-import configparser
-import re
-import time
 import plasTeX
+import plasTeX.Packages
 
 # Only export the Context singleton
 __all__ = ['Context']
@@ -380,7 +384,14 @@ class Context(object):
 
         A Python version of the package is searched for first,
         if one cannot be found then a LaTeX version of the package
-        is searched for.
+        is searched for if config['general']['load-tex-packages']
+        is True, or the package has been white-listed in
+        config['general']['tex-packages'].
+
+        Python versions are first searched for in
+        the directories of config['general']['packages-dirs'], then
+        in plugins listed in config['general']['plugins'], and this
+        among builtin packages.
 
         Required Arguments:
         tex -- the instance of the TeX engine to use for parsing
@@ -395,6 +406,7 @@ class Context(object):
 
         """
         config = tex.ownerDocument.config
+        working_dir = tex.ownerDocument.userdata.get('working-dir', '')
         options = options or {}
         module = os.path.splitext(file_name)[0]
         # See if it has already been loaded
@@ -404,33 +416,81 @@ class Context(object):
         packagesini = os.path.join(os.path.dirname(plasTeX.Packages.__file__),
                                    os.path.basename(module) + '.ini')
 
-        try:
-            # Try to import a Python package by that name
-            m = __import__(module, globals(), locals())
-            status.info(' ( %s ' % m.__file__)
-            if hasattr(m, 'ProcessOptions'):
-                m.ProcessOptions(options, tex.ownerDocument)
+        imported = None
+        for pkg_dir in config['general']['packages-dirs']:
+            path = Path(pkg_dir)
+            if not path.is_absolute():
+                path = Path(working_dir)/path
+            sys.path.insert(0, str(path))
+            try:
+                imported = import_module(module)
+                sys.path.remove(str(path))
+                break
+            except ImportError as msg:
+                # No Python module
+                if 'No module' in str(msg) and module in str(msg):
+                    pass
+                    # Failed to load Python package
+                # Error while importing
+                else:
+                    sys.path.remove(str(path))
+                    raise
+            sys.path.remove(str(path))
 
-            self.importMacros(vars(m))
-            moduleini = os.path.splitext(m.__file__)[0] + '.ini'
+        if imported is None:
+            for plugin in reversed(config['general']['plugins']):
+                plugin_module = import_module(plugin)
+                path = str(Path(plugin_module.__file__).parent/'Packages')
+                sys.path.insert(0, path)
+                try:
+                    imported = import_module(module)
+                    sys.path.remove(str(path))
+                    break
+                except ImportError as msg:
+                    # No Python module
+                    if 'No module' in str(msg) and module in str(msg):
+                        pass
+                        # Failed to load Python package
+                    # Error while importing
+                    else:
+                        sys.path.remove(str(path))
+                        raise
+                sys.path.remove(path)
+
+        if imported is None:
+            # Now try builtin plasTeX packages
+            path = str(Path(__file__).parent/'Packages')
+            sys.path.insert(0, path)
+            try:
+                imported = import_module(module)
+            except ImportError as msg:
+                # No Python module
+                if 'No module' in str(msg) and module in str(msg):
+                    pass
+                    # Failed to load Python package
+                # Error while importing
+                else:
+                    sys.path.remove(str(path))
+                    raise
+            sys.path.remove(path)
+
+        if imported:
+            status.info(' (loading package %s ' % imported.__file__)
+            if hasattr(imported, 'ProcessOptions'):
+                imported.ProcessOptions(options, tex.ownerDocument) # type: ignore
+            self.importMacros(vars(imported))
+            moduleini = os.path.splitext(imported.__file__)[0] + '.ini'
             self.loadINIPackage([packagesini, moduleini])
             self.packages[module] = options
             status.info(' ) ')
             return True
 
-        except ImportError as msg:
-            log.warning('No Python version of %s was found' % file_name)
-            # No Python module
-            if 'No module' in str(msg) and module in str(msg):
-                pass
-                # Failed to load Python package
-            # Error while importing
-            else:
-                raise
+        log.warning('No Python version of %s was found' % file_name)
 
         # Try to load a LaTeX implementation
         if (config['general']['load-tex-packages'] or
               module in config['general']['tex-packages']):
+            log.warning('Will now try to load a LaTeX implementation of %s' % file_name)
             result = tex.loadPackage(file_name, options)
             try:
                 moduleini = os.path.join(os.path.dirname(tex.kpsewhich(file_name)),

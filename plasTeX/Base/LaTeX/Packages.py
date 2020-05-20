@@ -4,14 +4,8 @@
 C.5 Classes, Packages, and Page Styles (p176)
 
 """
-import sys, os
 from plasTeX import Command, Environment, DimenCommand, Token
 from plasTeX.Logging import getLogger
-
-# Put the plasTeX packages into the path
-from plasTeX import Packages
-sys.path.append(os.path.dirname(Packages.__file__))
-del Packages
 
 log = getLogger()
 

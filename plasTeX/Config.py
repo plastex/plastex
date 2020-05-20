@@ -79,6 +79,14 @@ def defaultConfig(loadConfigFiles: bool=False):
         options = '--tex-packages',
     )
 
+    general['packages-dirs'] = MultiOption(
+        """
+        Directories where packages could be implemented in python.
+        Use either absolute paths or paths relative to the current directory.
+        """,
+        options = '--packages-dirs',
+    )
+
     #
     # Links
     #

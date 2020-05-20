@@ -9,14 +9,14 @@ natively.  Others may have to be implemented in Python.  In most
 cases, both implementations work transparently together.  If you don't
 define that many macros, and the ones that you do define are simple
 or even of intermediate complexity, it's probably better to just let
-\plasTeX\ handle them natively. However, 
+\plasTeX\ handle them natively. However,
 there are some reasons that you may want to implement Python versions
 of your macros:
 \begin{itemize}
 \item Python versions of macros are generally faster
 \item You have more control over what gets inserted into the output document
 \item You can store information in the document's \member{userdata}
-    dictionary for use later 
+    dictionary for use later
 \item You can prevent a macro from being expanded into primitive \LaTeX\
     commands, so that a custom renderer can be used on that node
 \item Some macros just don't make sense in a \plasTeX\ document
@@ -39,15 +39,15 @@ cases such as these, you can use the \macro{ifplastex} construct.
 As you may know in \TeX, you can define your own \macro{if} commands using
 the \macro{newif} primitive.  There is an \macro{if} command called
 \macro{ifplastex} built into the \plasTeX\ engine that is always set to
-true.  In you document, you can define this command and set it to 
+true.  In you document, you can define this command and set it to
 false (as far as \LaTeX\ is concerned) as follows.
 \begin{verbatim}
 \newif\ifplastex
 \plastexfalse
 \end{verbatim}
 
-Now you can surround the portions of your macros that \plasTeX\ has 
-trouble with, or even write alternative versions of the macro for 
+Now you can surround the portions of your macros that \plasTeX\ has
+trouble with, or even write alternative versions of the macro for
 \LaTeX\ and \plasTeX.  Here is an example.
 \begin{verbatim}
 \newcommand{\foo}[1]{
@@ -78,26 +78,26 @@ context.  These three methods are described in the following sections.
 Both \LaTeX\ command and environments can be implemented in Python
 classes.  \plasTeX\ includes a base class for each one: \class{Command}
 for commands and \class{Environment} for environments.  For the most
-part, these two classes behave in the same way.  They both are 
+part, these two classes behave in the same way.  They both are
 responsible for parsing their arguments, organizing their child nodes,
 incrementing counters, etc. much like their \LaTeX\ counterparts.
-There is also a variant of the \class{Environment} class called 
+There is also a variant of the \class{Environment} class called
 \class{NoCharSubEnvironment} which temporarily turns off character
 substitutions described in Section~\ref{sec:texdocument-objects}.
-The Python macro class feature set is based on common \LaTeX\ 
+The Python macro class feature set is based on common \LaTeX\
 conventions.  So if the \LaTeX\ macro you are implementing in Python
 uses standard \LaTeX\ conventions, you job will be very easy.  If you
 are doing unconventional operations, you will probably still succeed,
 you just might have to do a little more work.
 
-The three most important parts of the Python macro API are: 1) the 
+The three most important parts of the Python macro API are: 1) the
 \member{args} attribute, 2) the \method{invoke} method, and 3) the
 \member{digest} method.  When writing your own macros, these are
 used the most by far.
 
 \subsubsection{The \member{args} Attribute}
 
-The \member{args} attribute is a string attribute on the class 
+The \member{args} attribute is a string attribute on the class
 that indicates what the arguments to the macro are.  In addition to
 simply indicating the number of arguments, whether they are mandatory
 or optional, and what characters surround the argument as in \LaTeX,
@@ -135,27 +135,27 @@ when \LaTeX\ expands the macros, it will not cause any problems when
 This includes arguments surrounded by parentheses ((~)), square brackets
 ([~]), and angle brackets (<~>).  This also lets you combine multiple
 versions of a command into one macro.  For example, the \macro{framebox}
-command also has a form that looks like: 
-\macro{framebox(x_dimen,y_dimen)[pos]\{text\}}.  This leads to the 
-Python macro class in the following code sample that encompasses both 
+command also has a form that looks like:
+\macro{framebox(x_dimen,y_dimen)[pos]\{text\}}.  This leads to the
+Python macro class in the following code sample that encompasses both
 forms.
 \begin{verbatim}
 from plasTeX import Command, Environment
 
 class framebox(Command):
-    """ 
+    """
 
-    \framebox[width][pos]{text} or 
-    \framebox(x_dimen,ydimen)[pos]{text} 
+    \framebox[width][pos]{text} or
+    \framebox(x_dimen,ydimen)[pos]{text}
 
     """
     args = '( dimens ) [ width ] [ pos ] text'
 \end{verbatim}
 The only thing to keep in mind is that in the second form, the \var{pos}
-attribute is going to end up under the \var{width} key in the 
-\member{attributes} dictionary since it is the first argument in 
+attribute is going to end up under the \var{width} key in the
+\member{attributes} dictionary since it is the first argument in
 square brackets, but this can be fixed up in the \method{invoke} method
-if needed.  Also, if an optional argument is not present on the 
+if needed.  Also, if an optional argument is not present on the
 macro, the value of that argument in the \member{attributes} dictionary
 is set to \var{None}.
 
@@ -170,12 +170,12 @@ of the available types is shown in the table below.
 \lineii{cs}{sets the attribute to an unexpanded control sequence}
 \lineii{label}{expands all macros, converts the result to a string, then sets
     the current label to the object that is in the \member{currentlabel}
-    attribute of the document context.  Generally, an object is put into the 
+    attribute of the document context.  Generally, an object is put into the
     \member{currentlabel} attribute if it incremented a counter when it
     was invoked.  The value stored in the \member{attributes} dictionary
     is the string value of the argument.}
 \lineii{id}{same as `label'}
-\lineii{idref}{expands all macros, converts the result to a string, 
+\lineii{idref}{expands all macros, converts the result to a string,
     retrieves the object that was labeled by that value,
     then adds the labeled object to the \member{idref} dictionary under
     the name of the argument.
@@ -183,13 +183,13 @@ of the available types is shown in the table below.
     reference other abjects.  The nice thing about `idref' is that it
     gives you a reference to the object itself which you can then use
     to retrieve any type of information from it such as the reference
-    value, title, etc.  The value stored in the \member{attributes} 
+    value, title, etc.  The value stored in the \member{attributes}
     dictionary is the string value of the argument.}
 \lineii{ref}{same as `idref'}
 \lineii{nox}{just parses the argument, but doesn't expand the macros}
 \lineii{list}{converts the argument to a Python list.  By default, the list item
     separator is a comma (,).  You can change the item separator in
-    the args string by appending a set of parentheses surrounding the 
+    the args string by appending a set of parentheses surrounding the
     separator character immediately after `list'.  For example, to
     specify a semi-colon separated list for an argument called ``foo''
     you would use the \member{args} string: ``foo:list(;)''.  It is also
@@ -236,7 +236,7 @@ the somewhat more free-form \TeX\ arguments.
 
 To use one of the data types, simple append a colon (:) and the data
 type name to the attribute name in the \member{args} string.
-Going back to the \macro{framebox} example, the argument in 
+Going back to the \macro{framebox} example, the argument in
 parentheses would be better represented as a list of dimensions.
 The \var{width} parameter is also a dimension, and the \var{pos} parameter
 is a string.
@@ -244,10 +244,10 @@ is a string.
 from plasTeX import Command, Environment
 
 class framebox(Command):
-    """ 
+    """
 
-    \framebox[width][pos]{text} or 
-    \framebox(x_dimen,ydimen)[pos]{text} 
+    \framebox[width][pos]{text} or
+    \framebox(x_dimen,ydimen)[pos]{text}
 
     """
     args = '( dimens:list:dimen ) [ width:dimen ] [ pos:chr ] text'
@@ -259,7 +259,7 @@ class framebox(Command):
 The \method{invoke} method is responsible for creating a new document
 context, parsing the macro arguments, and incrementing counters.
 In most cases, the default implementation will work just fine, but you
-may want to do some extra processing of the macro arguments or 
+may want to do some extra processing of the macro arguments or
 counters before letting the parsing of the document proceed.  There
 are actually several methods in the API that are called within the
 scope of the \method{invoke} method: \method{preParse}, \method{preArgument},
@@ -269,10 +269,10 @@ The order of execution is quite simple.  Before any arguments have been
 parsed, the \method{preParse} method is called.  The \method{preArgument}
 and \method{postArgument} methods are called before and after each
 argument, respectively.  Then, after all arguments have been parsed, the
-\method{postParse} method is called.  The default implementations of 
-these methods handle the stepping of counters and setting the 
+\method{postParse} method is called.  The default implementations of
+these methods handle the stepping of counters and setting the
 current labeled item in the document.  By default, macros that have
-been ``starred'' (i.e. have a `*' before the arguments) do not 
+been ``starred'' (i.e. have a `*' before the arguments) do not
 increment the counter.  You can override this behavior in one of these
 methods if you prefer.
 
@@ -326,17 +326,17 @@ empty list.
 
 The \method{digest} method is responsible for converting the output
 stream into the final document structure.  For commands, this generally
-doesn't mean anything since they just consist of arguments which 
-have already been parsed.  Environments, on the other hand, have a 
+doesn't mean anything since they just consist of arguments which
+have already been parsed.  Environments, on the other hand, have a
 beginning and an ending which surround tokens that belong to that
 environment.  In most cases, the tokens between the \macro{begin}
 and \macro{end} need to be absorbed into the \member{childNodes}
 list.
 
 The default implementation of the \method{digest} method should work
-for most macros, but there are instances where you may want to 
+for most macros, but there are instances where you may want to
 do some extra processing on the document structure.  For example,
-the \macro{caption} command within \environment{figure}s and 
+the \macro{caption} command within \environment{figure}s and
 \environment{table}s uses the \method{digest} method to populate
 the enclosing figure/table's \method{caption} attribute.
 \begin{verbatim}
@@ -348,7 +348,7 @@ class Caption(Command):
     def digest(self, tokens):
         res = Command.digest(self, tokens)
 
-        # Look for the figure environment that we belong to 
+        # Look for the figure environment that we belong to
         node = self.parentNode
         while node is not None and not isinstance(node, figure):
             node = node.parentNode
@@ -371,8 +371,8 @@ More advanced uses of the \method{digest} method might be to construct
 more complex document structures.  For example, tabular and array
 structures in a document get converted from a simple list of tokens
 to complex structures with lots of style information added (see section
-\ref{sec:arrays}).  One simple example of a \method{digest} that 
-does something extra is shown below.  It looks for the first 
+\ref{sec:arrays}).  One simple example of a \method{digest} that
+does something extra is shown below.  It looks for the first
 node with the name ``item'' then bails out.
 \begin{verbatim}
 from plasTeX import Command, Environment
@@ -392,7 +392,7 @@ commands: \macro{section}, \macro{subsection}, etc.  The digest method
 on sections absorb tokens based on the \member{level} attribute which
 indicates the hierarchical level of the node.  When digested, each section
 absorbs all tokens until it reaches a section that has a level that is
-equal to or higher than its own level.  This creates the overall 
+equal to or higher than its own level.  This creates the overall
 document structure as discussed in section \ref{sec:document}.
 
 
@@ -404,8 +404,8 @@ in section \ref{sec:macros-api}.  Below are descriptions of some of the
 more commonly used attributes and methods.
 
 \paragraph{The \member{level} attribute}
-The \member{level} attribute is an integer that indicates the 
-hierarchical level of the node in the output document structure.  
+The \member{level} attribute is an integer that indicates the
+hierarchical level of the node in the output document structure.
 The values of this attribute are taken from \LaTeX: \macro{part}
 is -1, \macro{chapter} is 0, \macro{section} is 1, \macro{subsection}
 is 2, etc.  To create your owne sectioning commands, you can either
@@ -414,7 +414,7 @@ subclass one of the existing sectioning macros, or simply set its
 
 \paragraph{The \member{macroName} attribute}
 The \member{macroName} attribute is used when you are creating a
-\LaTeX\ macro whose name is not a legal Python class name.  
+\LaTeX\ macro whose name is not a legal Python class name.
 For example, the macro \macro{@ifundefined} has a `@' in the name
 which isn't legal in a Python class name.  In this case, you could define
 the macro as shown below.
@@ -438,7 +438,7 @@ The \member{title} attribute retrieves the ``title'' attribute from
 the \member{attributes} dictionary.  This attribute is also overridable.
 
 \paragraph{The \member{fullTitle} attribute}
-The same as the \member{title} attribute, but also includes the 
+The same as the \member{title} attribute, but also includes the
 counter value at the beginning.
 
 \paragraph{The \member{tocEntry} attribute}
@@ -446,19 +446,19 @@ The \member{tocEntry} attribute retrieves the ``toc'' attribute from
 the \member{attributes} dictionary.  This attribute is also overridable.
 
 \paragraph{The \member{fullTocEntry} attribute}
-The same as the \member{tocEntry} attribute, but also includes the 
+The same as the \member{tocEntry} attribute, but also includes the
 counter value at the beginning.
 
 \paragraph{The \member{style} attribute}
 The \member{style} attribute is a CSS style object.  Essentially, this is
-just a dictionary where the key is the CSS property name and the value 
+just a dictionary where the key is the CSS property name and the value
 is the CSS property value.  It has an attribute called \member{inline}
 which contains an inline version of the CSS properties for use
 in the style= attribute of HTML elements.
 
 \paragraph{The \member{id} attribute}
 This attribute contains a unique ID for the object.  If the object
-was labeled by a \macro{label} command, the ID for the object will 
+was labeled by a \macro{label} command, the ID for the object will
 be that label; otherwise, an ID is generated.
 
 \paragraph{The \member{source} attribute}
@@ -471,8 +471,8 @@ node belongs to.
 
 \paragraph{The \method{expand} method}
 The \method{expand} method is a thin wrapper around the \method{invoke}
-method.  It simply invokes the macro and returns the result of 
-expanding all of the tokens.  Unlike \method{invoke}, you will 
+method.  It simply invokes the macro and returns the result of
+expanding all of the tokens.  Unlike \method{invoke}, you will
 always get the expanded node (or nodes); you will not get a \var{None}
 return value.
 
@@ -486,8 +486,8 @@ within paragraph nodes.  This method is generally called from the
 \subsection{INI Files\label{sec:inimacros}}
 
 Using INI files is the simplest way of creating customized Python macro
-classes.  It does require a little bit of knowledge of writing 
-macros in Python classes (section \ref{sec:macroclasses}), but not 
+classes.  It does require a little bit of knowledge of writing
+macros in Python classes (section \ref{sec:macroclasses}), but not
 much.  The only two pieces of information about Python macro classes
 you need to know are 1) the \member{args} string format, and 2)
 the superclass name (in most cases, you can simply use \class{Command}
@@ -523,11 +523,11 @@ headii=( options:dict ) [ toc ] title
 \end{verbatim}
 
 In the INI file above, six macro are being defined.  \macro{program} and
-\macro{programopt} both inherit from \class{Command}, the generic 
+\macro{programopt} both inherit from \class{Command}, the generic
 \LaTeX\ macro superclass.  They also both take a single mandatory argument
-called ``self.''  There are two environments defined also: 
+called ``self.''  There are two environments defined also:
 \environment{methoddesc} and \environment{memberdesc}.  Each of these
-has three arguments where the first argument is optional.  The 
+has three arguments where the first argument is optional.  The
 last two macros actually inherit from standard \LaTeX\ sectioning commands.
 They add an option, surrounded by parentheses, to the options that
 \macro{section} and \macro{subsection} already had defined.
@@ -540,21 +540,21 @@ section \ref{sec:packages}.
 \subsection{The Document Context\label{sec:contextmacros}}
 
 It is possible to define commands using the same interface that is used
-by the \plasTeX\ engine itself.  This interface belongs to the 
+by the \plasTeX\ engine itself.  This interface belongs to the
 \class{Context} object (usually accessed through the document object's
 \member{context} attribute).  Defining commands using the context object
-is generally done in the \function{ProcessOptions} function of a 
+is generally done in the \function{ProcessOptions} function of a
 package.  The following methods of the context object create new commands.
 \begin{tableii}{l|p{4in}}{method}{Method}{Purpose}
 \lineii{newcounter}{creates a new counter, and also creates a command
     called \macro{the{\it counter}} which generates the formatted version
-    of the counter.  This macro corresponds to the \macro{newcounter} 
+    of the counter.  This macro corresponds to the \macro{newcounter}
     macro in \LaTeX.}
 \lineii{newcount}{corresponds to \TeX's \macro{newcount} command.}
 \lineii{newdimen}{corresponds to \TeX's \macro{newdimen} command.}
 \lineii{newskip}{corresponds to \TeX's \macro{newskip} command.}
 \lineii{newmuskip}{corresponds to \TeX's \macro{newmuskip} command.}
-\lineii{newif}{corresponds to \TeX's \macro{newif} command.  This 
+\lineii{newif}{corresponds to \TeX's \macro{newif} command.  This
     command also generates macros for \macro{{\it ifcommand}true} and
     \macro{{\it ifcommand}false}.}
 \lineii{newcommand}{corresponds to \LaTeX's \macro{newcommand} macro.}
@@ -563,19 +563,19 @@ package.  The following methods of the context object create new commands.
 \lineii{chardef}{corresponds to \TeX's \macro{chardef} command.}
 \end{tableii}
 
-\note{Since many of these methods accept strings containing \LaTeX\ 
+\note{Since many of these methods accept strings containing \LaTeX\
 markup, you need to remember that the category codes of some characters
 can be changed during processing.  If you are defining macros using
 these methods in the \function{ProcessOptions} function in a package,
-you should be safe since this function is executed in the preamble of the 
+you should be safe since this function is executed in the preamble of the
 document where category codes are not changed frequently.  However, if
 you define a macro with this interface in a context where the category
-codes are not set to the default values, you will have to adjust the 
+codes are not set to the default values, you will have to adjust the
 markup in your macros accordingly.}
 
 Below is an example of using this interface within the context of a package
 to define some commands.  For the full usage of these methods see the
-API documentation of the \class{Context} object in section 
+API documentation of the \class{Context} object in section
 \ref{sec:context-api}.
 \begin{verbatim}
 def ProcessOptions(options, document):
@@ -606,20 +606,29 @@ would do. This happens only if the \longprogramopt{load-tex-packages} option
 is set, or the package is white-listed in the \longprogramopt{tex-packages}
 option (see Section\ref{sec:general-options}).
 
-Python packages are located using Python's search paths, listed in
-\var{sys.path}. This includes the current directory as well as those listed in
-the \environment{PYTHONPATH} environment variable. After a package is
-loaded, it is checked to see if there is a function called
-\function{ProcessOptions} in its namespace.  If there is, that function
-is called with two arguments: 1) the dictionary of options that were
-specified when loading the package, and 2) the document object that is
-currently being processed.  This function allows you to make adjustments
-to the loaded macros based on the options specified, and define new
-commands in the document's context (see section \ref{sec:contextmacros} 
-for more information).  Of course, you can also define Python based
-macros (section \ref{sec:macroclasses}) in the Python package as well.
+Python packages are located by successively trying three strategies.
+First \plasTeX\ looks into the directories listed in the
+\longprogramopt{packages-dirs} option (see
+Section\ref{sec:general-options}), in the order they are listed.
+If this fail then \plasTeX\ looks into the plugins listed in the
+\longprogramopt{plugins} option (see
+Section\ref{sec:general-options}), in the reversed order they are listed
+(the general idea here is that later plugins are allowed to overrule
+earlier ones).
+If this also fails then \plasTeX\ looks into the builtin packages folder
+that comes with every installation of \plasTeX.
+After a package is loaded, it is checked to see if there is a function
+called \function{ProcessOptions} in its namespace.  If there is, that
+function is called with two arguments: 1) the dictionary of options that
+were specified when loading the package, and 2) the document object that
+is currently being processed.  This function allows you to make
+adjustments to the loaded macros based on the options specified, and
+define new commands in the document's context (see section
+\ref{sec:contextmacros} for more information).  Of course, you can also
+define Python based macros (section \ref{sec:macroclasses}) in the
+Python package as well.
 
-The last type of packages is based on the INI file format.  This 
+The last type of packages is based on the INI file format.  This
 format is discussed in more detail in section \ref{sec:inimacros}.
 INI formatted packages are loaded in conjunction with a \LaTeX\ or
 Python package.  When a package is loaded, an INI file with the same
@@ -627,5 +636,5 @@ basename is searched for in the same director as the package.  If it
 exists, it is loaded as well.  For example, if you had a package
 called \file{python.sty} and a file called \file{python.ini} in the same
 package directory, \file{python.sty} would be loaded first,
-then \file{python.ini} would be loaded.  The same operation applies 
+then \file{python.ini} would be loaded.  The same operation applies
 for Python based packages.
