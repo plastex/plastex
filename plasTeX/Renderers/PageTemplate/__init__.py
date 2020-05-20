@@ -244,12 +244,6 @@ def copytree(src, dest, symlink=None):
                 os.symlink(os.readlink(srcpath), destpath)
             elif not os.path.isdir(destpath):
                 os.makedirs(destpath)
-                try:
-                    shutil.copymode(srcpath, destpath)
-                except: pass
-                try:
-                    shutil.copystat(srcpath, destpath)
-                except: pass
         for f in files:
             if f.startswith('.'):
                 continue
