@@ -229,7 +229,8 @@ class Renderable(object):
     def vectorImage(self):
         """ Generate a vector image and return the image filename """
         image = Node.renderer.vectorImager.getImage(self)
-        image.bitmap = Node.renderer.imager.getImage(self)
+        if Node.renderer.vectorBitmap:
+            image.bitmap = Node.renderer.imager.getImage(self)
         return image
 
     @property
@@ -353,6 +354,7 @@ class Renderer(dict):
     textDefault = str
     default = str
     outputType = str
+    vectorBitmap = True
     imageTypes = []
     vectorImageTypes = []
     fileExtension = ''
