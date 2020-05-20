@@ -3,16 +3,17 @@
 import os, sys, string, glob
 import importlib
 import importlib.util
+from types import ModuleType
 import plasTeX
 from pathlib import Path
 from plasTeX.TeX import TeX
 from plasTeX.ConfigManager import *
 from plasTeX.Logging import getLogger, updateLogLevels
-from typing import Any
+from plasTeX.Renderers import Renderer
 
 log = getLogger()
 
-def import_file(path: Path):
+def import_file(path: Path) -> ModuleType:
     module_name = path.name
     while module_name in sys.modules:
         module_name = module_name + "_"
@@ -30,13 +31,35 @@ def import_file(path: Path):
     spec.loader.exec_module(module) # type: ignore # mypy doesn't understand importlib well enough
     return module
 
+def load_renderer(rname: str, config: ConfigManager) -> Renderer:
+    """Load a renderer by name. First look by name among builtin renderers,
+    then among renderers provided by plugins, and then try interpreting rname
+    as a path."""
+    try:
+        return getattr(importlib.import_module('plasTeX.Renderers.'+rname), 'Renderer')()
+    except ImportError:
+        pass
+
+    for plugin in config['general']['plugins'] or []:
+        try:
+            return getattr(importlib.import_module(plugin + rname),
+                           'Renderer')()
+        except ImportError:
+            pass
+
+    try:
+        return getattr(import_file(Path(rname)), 'Renderer')()
+    except ImportError:
+        raise ImportError('Could not import renderer "%s".  Make sure that it is installed correctly, and can be imported by Python.' % rname)
+
+
 def run(filename: str, config: ConfigManager):
     updateLogLevels(config['logging']['logging'])
 
     # Create document instance that output will be put into
     document = plasTeX.TeXDocument(config=config)
 
-    # Instantiate the TeX processor and parse the document
+    # Instantiate the TeX processor
     tex = TeX(document, myfile=filename)
 
     # Send log message to file "jobname.log" instead of console
@@ -66,18 +89,7 @@ def run(filename: str, config: ConfigManager):
     os.environ['TEXINPUTS'] = '%s%s%s%s' % (os.getcwd(), os.pathsep,
                                          os.environ.get('TEXINPUTS',''), os.pathsep)
 
-    # Load renderer
-    rmodule = None # type: Any
-    try:
-        rmodule = importlib.import_module('plasTeX.Renderers.'+rname)
-    except ImportError:
-        pass
-
-    if rmodule is None:
-        try:
-            rmodule = import_file(Path(rname))
-        except ImportError:
-            raise ImportError('Could not import renderer "%s".  Make sure that it is installed correctly, and can be imported by Python.' % rname)
+    renderer = load_renderer(rname, config)
 
     # Change to specified directory to output to
     outdir = config['files']['directory']
@@ -99,7 +111,7 @@ def run(filename: str, config: ConfigManager):
             f.write(document.toXML())
 
     # Apply renderer
-    rmodule.Renderer().render(document)
+    renderer.render(document)
 
     os.chdir(cwd)
     print()

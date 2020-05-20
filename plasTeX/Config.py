@@ -54,6 +54,15 @@ def defaultConfig(loadConfigFiles: bool=False):
         default = [],
     )
 
+    general['plugins'] = MultiOption(
+        """
+        A list of plugins to use. Each element must be a valid python module name,
+        accessible from the current python path.
+
+        """,
+        options = '--plugins',
+    )
+
     #
     # Links
     #
