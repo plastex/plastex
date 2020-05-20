@@ -14,6 +14,7 @@ class HTML5(_Renderer):
     fileExtension = '.html'
     imageTypes = ['.svg', '.png','.jpg','.jpeg','.gif']
     vectorImageTypes = ['.svg']
+    vectorBitmap = False
 
     def loadTemplates(self, document):
         """Load templates as in PageTemplate but also look for packages that
