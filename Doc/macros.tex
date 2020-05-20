@@ -602,7 +602,9 @@ program is used to locate the requested file which can be either in
 the search path of your \LaTeX\ distribution or in one of the directories
 specified in the \environment{TEXINPUTS} environment variable.
 \plasTeX\ read the file and expand the macros therein just as \LaTeX\
-would do.
+would do. This happens only if the \longprogramopt{load-tex-packages} option
+is set, or the package is white-listed in the \longprogramopt{tex-packages}
+option (see Section\ref{sec:general-options}).
 
 Python packages are located using Python's search paths, listed in
 \var{sys.path}. This includes the current directory as well as those listed in

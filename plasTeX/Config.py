@@ -63,6 +63,22 @@ def defaultConfig(loadConfigFiles: bool=False):
         options = '--plugins',
     )
 
+    general['load-tex-packages'] = BooleanOption(
+        """Try to load the TeX implementation of packages having no python
+        implementation.""",
+        options = '--load-tex-packages',
+        default = True,
+    )
+
+    general['tex-packages'] =  MultiOption(
+        """
+        Packages that we will try to load from their TeX implementation if no
+        python implementation is found, even if the load-tex-packages
+        option is False.
+        """,
+        options = '--tex-packages',
+    )
+
     #
     # Links
     #

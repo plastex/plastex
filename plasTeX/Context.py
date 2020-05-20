@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-
+from typing import Optional, Dict
 from plasTeX import ismacro, macroName
+from plasTeX.TeX import TeX
 from plasTeX.Logging import getLogger
 from plasTeX.Base.TeX.Primitives import relax
 from plasTeX.Tokenizer import Tokenizer, Token, DEFAULT_CATEGORIES, VERBATIM_CATEGORIES
@@ -373,7 +374,7 @@ class Context(object):
                                                 {'args': value})
             self.importMacros(macros)
 
-    def loadPackage(self, tex, file, options=None):
+    def loadPackage(self, tex: TeX, file_name: str, options: Optional[Dict] = None) -> bool:
         """
         Load a Python or LaTeX package
 
@@ -384,7 +385,7 @@ class Context(object):
         Required Arguments:
         tex -- the instance of the TeX engine to use for parsing
             the LaTeX file, if needed.
-        file -- the name of the file to load
+        file_name -- the name of the file to load
 
         Keyword Arguments:
         options -- the options given on the macro to pass to the package
@@ -393,10 +394,11 @@ class Context(object):
         boolean indicating whether or not the package loaded successfully
 
         """
+        config = tex.ownerDocument.config
         options = options or {}
-        module = os.path.splitext(file)[0]
+        module = os.path.splitext(file_name)[0]
         # See if it has already been loaded
-        if module in list(self.packages.keys()):
+        if module in self.packages:
             return True
 
         packagesini = os.path.join(os.path.dirname(plasTeX.Packages.__file__),
@@ -417,7 +419,7 @@ class Context(object):
             return True
 
         except ImportError as msg:
-            log.warning('No Python version of %s was found' % file)
+            log.warning('No Python version of %s was found' % file_name)
             # No Python module
             if 'No module' in str(msg) and module in str(msg):
                 pass
@@ -426,13 +428,17 @@ class Context(object):
             else:
                 raise
 
-        result = tex.loadPackage(file, options)
-        try:
-            moduleini = os.path.join(os.path.dirname(tex.kpsewhich(file)),
-                                     os.path.basename(module) + '.ini')
-            self.loadINIPackage([packagesini, moduleini])
-        except OSError: pass
-        return result
+        # Try to load a LaTeX implementation
+        if (config['general']['load-tex-packages'] or
+              module in config['general']['tex-packages']):
+            result = tex.loadPackage(file_name, options)
+            try:
+                moduleini = os.path.join(os.path.dirname(tex.kpsewhich(file_name)),
+                                         os.path.basename(module) + '.ini')
+                self.loadINIPackage([packagesini, moduleini])
+            except OSError: pass
+            return result
+        return False
 
 
     def label(self, label, node=None):
@@ -951,10 +957,10 @@ class Context(object):
         assert isinstance(nargs, int), 'nargs must be an integer'
 
         if isinstance(definition, str):
-            definition = [x for x in Tokenizer(definition, self)]
+            definition = list(Tokenizer(definition, self))
 
         if isinstance(opt, str):
-            opt = [x for x in Tokenizer(opt, self)]
+            opt = list(Tokenizer(opt, self))
 
         macrolog.debug('creating newcommand %s', name)
         newclass = type(name, (plasTeX.NewCommand,),
@@ -997,7 +1003,7 @@ class Context(object):
             def_after = list(Tokenizer(def_after, self))
 
         if isinstance(opt, str):
-            opt = [x for x in Tokenizer(opt, self)]
+            opt = list(Tokenizer(opt, self))
 
         macrolog.debug('creating newenvironment %s', name)
 
@@ -1036,7 +1042,7 @@ class Context(object):
 #           macrolog.debug('redefining definition "%s"', name)
 
         if isinstance(definition, str):
-            definition = [x for x in Tokenizer(definition, self)]
+            definition = list(Tokenizer(definition, self))
 
         macrolog.debug('creating def %s', name)
         newclass = type(name, (plasTeX.Definition,),

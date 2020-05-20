@@ -98,6 +98,23 @@ specifies a list of plugins to be used. Each element should be package
 name that python can import.
 \end{configuration}
 
+\begin{configuration}{Load \LaTeX packages}
+\options{\longprogramopt{load-tex-packages} or \longprogramopt{no-load-tex-packages}}
+\config{general}{load-tex-packages}
+\default{True}
+specifies whether to attempt loading \LaTeX implementations of packages
+when no python implementation exists.
+\end{configuration}
+
+\begin{configuration}{\LaTeX packages white-list}
+\options{\longprogramopt{tex-packages=\optval{packages}}}
+\config{general}{tex-packages}
+\default{[]}
+specifies a list of packages whose \LaTeX implementation should be loaded
+if there is no python implementations, even if \longprogramopt{no-load-tex-packages}
+is set.
+\end{configuration}
+
 \begin{configuration}{Renderer}
 \options{\longprogramopt{renderer=\optval{renderer-name}}}
 \config{general}{renderer}
