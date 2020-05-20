@@ -92,6 +92,15 @@ which aren't capable of displaying equations, \LaTeX\ pictures, etc. such
 as HTML.
 \end{memberdesc}
 
+\begin{memberdesc}[Renderer]{vectorBitmap}
+a boolean indicating whether bitmap versions should be generated for vector
+images. The bitmap version is used to read off the height, width and depth of
+the image. If such information is not used by the renderer, we can skip
+producing the bitmap, which may take a long time.
+
+This defaults to \code{True}.
+\end{memberdesc}
+
 \begin{memberdesc}[Renderer]{imageTypes}
 contains a list of file extensions of valid image types for the renderer.
 The first element in the list is the default image format.  This format
