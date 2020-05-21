@@ -1,26 +1,22 @@
+from pathlib import Path
 from plasTeX.PackageResource import (
-	PackageResource, PackageCss, PackageJs, PackageTemplateDir)
-from plasTeX import Command
+        PackageCss, PackageJs, PackageTemplateDir,
+        PackagePreCleanupCB)
 
 def ProcessOptions(options, document):
-	css = PackageCss(
-		renderers='html5',
-		data='test.css',
-		package='mypkg')
-	js = PackageJs(
-		renderers='html5',
-		data='test.js',
-		package='mypkg')
-	tpl = PackageTemplateDir(
-		renderers='html5',
-		package='mypkg')
+    css = PackageCss(
+            renderers='html5',
+            path=Path(__file__).parent/'mypkg'/'test.css')
+    js = PackageJs(
+            renderers='html5',
+            path=Path(__file__).parent/'mypkg'/'test.js')
+    tpl = PackageTemplateDir(
+            renderers='html5',
+            path=Path(__file__).parent/'mypkg')
 
-	def cb(document):
-		document.userdata['testing'] = 'test'
-		return []
+    def cb(document):
+        document.userdata['testing'] = 'test'
+        return []
 
-	callback = PackageResource(
-		renderers='html5',
-		key='preCleanupCallbacks',
-		data=cb)
-	document.addPackageResource([css, js, tpl, callback])
+    callback = PackagePreCleanupCB(renderers='html5', data=cb)
+    document.addPackageResource([css, js, tpl, callback])

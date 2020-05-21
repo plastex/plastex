@@ -3,7 +3,7 @@
 
 Renderers allow you to convert a \plasTeX\ document object into viewable
 output such as HTML, RTF, or PDF, or simply a data structure format such
-as DocBook or tBook.  Since the \plasTeX\ document object gives you 
+as DocBook or tBook.  Since the \plasTeX\ document object gives you
 everything that you could possibly want to know about the \LaTeX\ document,
 it should, in theory, be possible to generate any type of output from
 the \plasTeX\ document object while preserving as much information as the
@@ -19,10 +19,10 @@ it is also very powerful.  Some of the main features are listed below.
 \begin{itemize}
 \item ability to generate multiple output files
 \item automatic splitting of files is configurable by section level,
-    or can be invoked using ad-hoc methods in the 
+    or can be invoked using ad-hoc methods in the
     \member{filenameoverride} property
 \item powerful output filename generation utility
-\item image generation for portions of the document that cannot be 
+\item image generation for portions of the document that cannot be
     easily rendered in a particular output formate (e.g. equations in HTML)
 \item themeing support
 \item hooks for post-processing of output files
@@ -36,34 +36,34 @@ the rendering process.  It's only argument is a \plasTeX\ document object.
 The \method{cleanup} method is called at the end of the rendering process.
 It is passed the document object and a list of all of the files that were
 generated.  This method allows you to do post-processing on the output files.
-In general, this method will probably only be of interest to someone 
-writing a subclass of the \class{Renderer} class, so most users of 
+In general, this method will probably only be of interest to someone
+writing a subclass of the \class{Renderer} class, so most users of
 \plasTeX\ will only use the \method{render} method.  The real work of
 the rendering process is handled in the \class{Renderable} class which
 is discussed later in this chapter.
 
-The \class{Renderer} class is a subclass of the Python dictionary.  
-Each key in the renderer corresponds to the name of a node in the 
+The \class{Renderer} class is a subclass of the Python dictionary.
+Each key in the renderer corresponds to the name of a node in the
 document object.  The value stored under each key is a function.
-As each node in the document object is traversed, the renderer is queried 
-to see if there is a key that matches the name of the node.  If a 
-key is found, the value at that key (which must be a function) is 
+As each node in the document object is traversed, the renderer is queried
+to see if there is a key that matches the name of the node.  If a
+key is found, the value at that key (which must be a function) is
 called with the node as its only argument.  The return value from this
 call must be a unicode object that contains the rendered output.
-Based on the configuration, the renderer will handle all of the file 
+Based on the configuration, the renderer will handle all of the file
 generation and encoding issues.
 
-If a node is traversed that doesn't correspond to a key in the 
-renderer dictionary, the default rendering method is called.  The 
+If a node is traversed that doesn't correspond to a key in the
+renderer dictionary, the default rendering method is called.  The
 default rendering method is stored in the \member{default} attribute.
-One exception to this rule is for text nodes.  The default 
+One exception to this rule is for text nodes.  The default
 rendering method for text nodes is actually stored in \member{textDefault}.
 Again, these attributes simply need to reference any Python function
-that returns a unicode object of the rendered output.  The 
+that returns a unicode object of the rendered output.  The
 default method in both of these attributes is the \function{unicode}
 built-in function.
 
-As mention previously, most of the work of the renderer is actually 
+As mention previously, most of the work of the renderer is actually
 done by the \class{Renderable} class.  This is a mixin class\footnote{
 A mixin class is simply a class that is merely a collection of methods
 that are intended to be included in the namespace of another class.} that is
@@ -76,14 +76,14 @@ of the \class{Renderable} class are discussed in section \ref{sec:renderable}.
 It is possible to write a renderer with just a couple of methods:
 \method{default} and \method{textDefault}.
 The code below demonstrates how one might create a generic XML
-renderer that simply uses the node names as XML tag names.  
+renderer that simply uses the node names as XML tag names.
 The text node renderer escapes the <, >, and \& characters.
 \begin{verbatim}
 import string
 from plasTeX.Renderers import Renderer
 
 class Renderer(Renderer):
-    
+
     def default(self, node):
         """ Rendering method for all non-text nodes """
         s = []
@@ -186,19 +186,19 @@ is fine for most nodes, but for the \macro{section} node we want to do
 something special.  For the section node, we want the title argument
 to correspond to the title attribute in the output XML\footnote{This
 will only work properly in XML if the content of the title is plain text
-since other nodes will generate markup.}.  To do this we need a 
+since other nodes will generate markup.}.  To do this we need a
 method like the following.
 \begin{verbatim}
 def handle_section(node):
     return u'\n\n<%s title="%s">\n%s\n</%s>\n' % \
-            (node.nodeName, unicode(node.attributes['title']), 
+            (node.nodeName, unicode(node.attributes['title']),
              unicode(node), node.nodeName)
 \end{verbatim}
 
 Now we simply insert the rendering method into the renderer under the
 appropriate key.  Remember that the key in the renderer should match
-the name of the node you want to render.  Since the above rendering 
-method will work for all section types, we'll insert it into the 
+the name of the node you want to render.  Since the above rendering
+method will work for all section types, we'll insert it into the
 renderer for each \LaTeX\ sectioning command.
 \begin{verbatim}
 renderer = Renderer()
@@ -232,8 +232,8 @@ Next paragraph.
 \end{verbatim}
 
 Of course, you aren't limited to using just Python methods.  Any function
-that accepts a node as an argument can be used.  The 
-Page Template renderer included with \plasTeX\ is an example 
+that accepts a node as an argument can be used.  The
+Page Template renderer included with \plasTeX\ is an example
 of how to write a renderer that uses a templating language to render
 the nodes (see section \ref{sec:zpt}).
 
@@ -291,22 +291,22 @@ could access the value of the option defined above as
 
 The \class{Renderable} class is the real workhorse of the rendering process.
 It traverses the document object, looks up the appropriate rendering
-methods in the renderer, and generates the output files.  It also 
+methods in the renderer, and generates the output files.  It also
 invokes the image generating process when needed for parts of a document
 that cannot be rendered in the given output format.
 
-Most of the work of the \class{Renderable} class is done in the 
+Most of the work of the \class{Renderable} class is done in the
 \method{__unicode__} method.  This is rather convenient since each of
 the rendering methods in the renderer are required to return a unicode
 object.  When the \function{unicode} function is called with a renderable
 object as its argument, the document traversal begins for that node.
 This traversal includes iterating through each of the node's child nodes, and
 looking up and calling the appropriate rendering method in the renderer.
-If the child node is configured to generate a new output file, the 
+If the child node is configured to generate a new output file, the
 file is created and the rendered output is written to it; otherwise,
 the rendered output is appended to the rendered output of previous nodes.
 Once all of the child nodes have been rendered, the unicode object containing
-that output is returned.  This recursive process continues until the 
+that output is returned.  This recursive process continues until the
 entire document has been rendered.
 
 There are a few useful things to know about renderable objects such as
@@ -317,12 +317,12 @@ things are discussed below.
 
 \subsection{Determining the Correct Rendering Method}
 
-Looking up the correct rendering method is quite straight-forward.  
-If the node is a text node, the \member{textDefault} attribute on 
+Looking up the correct rendering method is quite straight-forward.
+If the node is a text node, the \member{textDefault} attribute on
 the renderer is used.  If it is not a text node, then the node's name
 determines the key name in the renderer.  In most cases, the node's
 name is the same name as the \LaTeX\ macro that created it.  If the
-macro used some type of modifier argument (i.e. *, +, -), a name 
+macro used some type of modifier argument (i.e. *, +, -), a name
 with that modifier applied to it is also searched for first.  For example,
 if you used the \environment{tablular*} environment in your \LaTeX\
 document, the renderer will look for ``tabular*'' first, then ``tabular''.
@@ -333,7 +333,7 @@ in the renderer's \member{default} attribute is used.
 
 \subsection{Generating Files}
 
-Any node in a document has the ability to generate a new file. 
+Any node in a document has the ability to generate a new file.
 During document traversal, each node is queried for a filename.  If
 a non-\var{None} is returned, a new file is created for the content
 of that node using the given filename.  The querying for the filename
@@ -342,8 +342,8 @@ node.  This property is added to the node's namespace during the
 mixin process.  The default behavior for this property is to only
 return filenames for sections with a level less than the split-level
 given in the configuration (see section \ref{sec:config-files}).
-The filenames generated by this routine are very flexible.  They can 
-be statically given names, or names based on the ID and/or title, 
+The filenames generated by this routine are very flexible.  They can
+be statically given names, or names based on the ID and/or title,
 or simply generically numbered.  For more information on configuring
 filenames see section \ref{sec:config-files}.
 
@@ -352,11 +352,11 @@ your files names based on some other information.  This is possible through
 the \member{filenameoverride} attribute.  If the \member{filenameoverride}
 is set, the name returned by that attribute is used as the filename.
 The string in \member{filenameoverride} is still processed in the same
-way as the filename specifier in the configuration so that you can 
+way as the filename specifier in the configuration so that you can
 use things like the ID or title of the section in the overridden filename.
 
 The string used to specify filenames can also contain directory paths.
-This is not terribly useful at the moment since there is no way to 
+This is not terribly useful at the moment since there is no way to
 get the relative URLs between two nodes for linking purposes.
 
 If you want to use a filename override, but want to do it conditionally
@@ -374,7 +374,7 @@ class mymacro{Command):
             return self.attributes['filename']
         raise AttributeError, 'filenameoverride'
 \end{verbatim}
-\note{The filename in the \member{filenameoverride} attribute must 
+\note{The filename in the \member{filenameoverride} attribute must
    contain any directory paths as well as a file extension.}
 
 
@@ -382,7 +382,7 @@ class mymacro{Command):
 
 Not all output types that you might render are going to support everything
 that \LaTeX\ is capable of.  For example, HTML has no way of representing
-equations, and most output types won't be capable of rendering 
+equations, and most output types won't be capable of rendering
 \LaTeX's \environment{picture} environment.  In cases like these, you
 can let \plasTeX\ generate images of the document node.  Generating
 images is done with a subclass of \class{plasTeX.Imagers.Imager}.
@@ -401,7 +401,7 @@ file will not be available until the rendering process is finished
 since most renderers will need the generated \LaTeX\ document to be
 complete before compiling it and generating the final images.
 
-The example below demonstrates how to generate an image for the 
+The example below demonstrates how to generate an image for the
 \environment{equation} environment.
 \begin{verbatim}
 # Import renderer from first renderer example
@@ -465,7 +465,7 @@ In addition, the image types are customizable as well.  \plasTeX\ uses
 the Python Imaging Library (PIL) to do the final cropping and saving of the
 image files, so any image format that PIL supports can be used.  The
 format that PIL saves the images in is determined by the file extension
-in the generated filenames, so you must use a file extension that 
+in the generated filenames, so you must use a file extension that
 PIL recognizes.
 
 It is possible to write your own \class{Imager} subclass if necessary.
@@ -482,13 +482,13 @@ resolution.
 
 Generating a vector image is just as easy as generating a bitmap image,
 you simply access the \member{vectorImage} property of the node that
-you want an image of.  This will return an \class{plasTeX.Imagers.Image} 
+you want an image of.  This will return an \class{plasTeX.Imagers.Image}
 instance that corresponds to the vector image.
 
-Everything that was described about generating images in the previous 
+Everything that was described about generating images in the previous
 section is also true of vector images with the exception of cropping.
 \plasTeX\ does not attempt to crop vector images.  The program that
-converts the \LaTeX\ output to a vector image is expected to crop the 
+converts the \LaTeX\ output to a vector image is expected to crop the
 image down to the image content.  Depending on the renderer configuration, a
 bitmap may be generated to determine the proper height, width and depth of
 the vector image.
@@ -498,19 +498,19 @@ the vector image.
 
 There are some images in a document that don't need to be generated, they
 simply need to be copied to the output directory and possibly converted
-to an appropriate formate.  This is accomplished with the 
+to an appropriate formate.  This is accomplished with the
 \member{imageoverride} attribute.  When the \member{image} property
 is accessed, the \member{imageoverride} attribute is checked to see if
 an image is already available for that node.  If there is, the image
-is copied to the image output directory using a name generated 
+is copied to the image output directory using a name generated
 using the same method as described in the previous section.  The image
-is copied to that new filename and converted to the appropriate 
+is copied to that new filename and converted to the appropriate
 image format if needed.  While it would be possible to simply copy the
 image over using the same filename, this may cause filename collisions
 depending on the directory structure that the original images were
 store in.
 
-Below is an example of using \member{imageoverride} for copying 
+Below is an example of using \member{imageoverride} for copying
 stock icons that are used throughout the document.
 \begin{verbatim}
 from plasTeX import Command
@@ -530,55 +530,55 @@ raise an \exception{AttributeError} exception.
 \section{Page Template Renderer\label{sec:zpt}}
 
 The Page Template (PT) renderer is a renderer for \plasTeX\ document
-objects that supports various page template engines such as 
+objects that supports various page template engines such as
 \href{http://www.zope.org/Documentation/Books/ZopeBook/2_6Edition/ZPT.stx}{Zope
 Page Templates (ZPT)}, \href{http://jinja.pocoo.org/}{Jinja2 templates},
-\href{http://www.cheetahtemplate.org/}{Cheetah templates}, 
-\href{http://kid-templating.org/}{Kid templates}, 
-\href{http://genshi.edgewall.org/}{Genshi templates}, 
-\href{http://docs.python.org/lib/node40.html}{Python string templates}, 
-as well as plain old \href{http://docs.python.org/lib/typesseq-strings.html}{Python string formatting}.  It is also possible to add support for other 
-template engines.  Note that all template engines except ZPT, Python formats, 
-and Python string templates must be installed in your Python installation. 
+\href{http://www.cheetahtemplate.org/}{Cheetah templates},
+\href{http://kid-templating.org/}{Kid templates},
+\href{http://genshi.edgewall.org/}{Genshi templates},
+\href{http://docs.python.org/lib/node40.html}{Python string templates},
+as well as plain old \href{http://docs.python.org/lib/typesseq-strings.html}{Python string formatting}.  It is also possible to add support for other
+template engines.  Note that all template engines except ZPT, Python formats,
+and Python string templates must be installed in your Python installation.
 They are not included. In particular the Jinja2 template engine must be
 installed in order to use the HTML5 renderer.
 
 The ZPT engine is used for all of the \plasTeX\ delivered templates
 in the XHTML renderer; however, the other templates work in a very similar way.
-The actual ZPT implementation used is SimpleTAL 
+The actual ZPT implementation used is SimpleTAL
 (\url{http://www.owlfish.com/software/simpleTAL/}).  This implementation
 implements almost all of the ZPT API and is very stable.  However, some
 changes were made to this package to make it more convenient to use
-within \plasTeX.  These changes are discussed in detail in the 
+within \plasTeX.  These changes are discussed in detail in the
 ZPT Tutorial (see section \ref{sec:zpttutorial}).
 
-Since the above template engines can be used to generate any form of 
+Since the above template engines can be used to generate any form of
 XML or HTML, the PT
-renderer is a general solution for rendering XML or HTML from a 
-\plasTeX\ document object.  When switching from one DTD to another, 
+renderer is a general solution for rendering XML or HTML from a
+\plasTeX\ document object.  When switching from one DTD to another,
 you simply need to use a different set of templates.
 
 As in all \class{Renderer}-based renderers, each key in the PT renderer
-returns a function.  These functions are actually generated when the 
+returns a function.  These functions are actually generated when the
 template files are parsed by the PT renderer.
 As is the case with all rendering methods, the only argument is the node to be
-rendered, and the output is a unicode object containing the rendered 
+rendered, and the output is a unicode object containing the rendered
 output. In addition to the rendering methods, the \method{textDefault} method
 escapes all characters that are special in XML and HTML (i.e. <, >, and \&).
 
-The following sections describe how templates are loaded into the 
+The following sections describe how templates are loaded into the
 renderer, how to extend the set of templates with your own, as well
-as a theming mechanism that allows you to apply different looks to 
+as a theming mechanism that allows you to apply different looks to
 output types that are visual (e.g. HTML).
 
 \subsection{Defining and Using Templates}
 
-\note{If you are not familiar with the ZPT language, you should read the 
-tutorial in section \ref{sec:zpttutorial} before continuing in this 
+\note{If you are not familiar with the ZPT language, you should read the
+tutorial in section \ref{sec:zpttutorial} before continuing in this
 section.  See the links in the previous section for documentation on
 the other template engines.}
 
-By default, templates are loaded from the directory where the 
+By default, templates are loaded from the directory where the
 renderer module was imported from.  In addition, the templates from
 each of the parent renderer class modules are also loaded.  This makes
 it very easy to extend a renderer and add just a few new templates
@@ -586,14 +586,14 @@ to support the additions that were made.
 
 The template files in the module directories can have three different forms.
 The first is HTML.  HTML templates must have an extension of \file{.htm} or
- \file{.html}.  These templates are compiled using 
-SimpleTAL's HTML compiler.  XML templates, the second form of template, 
-uses SimpleTAL's XML compiler, so they must be well-formed XML 
-fragments.  XML templates must have the file extension \file{.xml}, 
+ \file{.html}.  These templates are compiled using
+SimpleTAL's HTML compiler.  XML templates, the second form of template,
+uses SimpleTAL's XML compiler, so they must be well-formed XML
+fragments.  XML templates must have the file extension \file{.xml},
 \file{.xhtml}, or \file{.xhtm}.  In any case, the basename of the template
 file is used as the key to store the template in the renderer.  Keep in
 mind that the names of the keys in the renderer correspond to the node
-names in the document object.  
+names in the document object.
 
 The extensions used for all templating engines are shown in the table below.
 \begin{tableiii}{l|l|l}{}{Engine}{Extension}{Output Type}
@@ -605,7 +605,7 @@ The extensions used for all templating engines are shown in the table below.
 \lineiii{Kid}{.kid}{XML/XHTML}
 \lineiii{Cheetah}{.che}{XML/XHTML}
 \lineiii{Genshi}{.gen}{HTML}
-\end{tableiii} 
+\end{tableiii}
 
 The file listing below is an example of a directory of template files.
 In this case the templates correspond to nodes in the document created
@@ -622,26 +622,26 @@ Since there are a lot of templates that are merely one line, it would be
 inconvenient to have to create a new file for each template.  In cases
 like this, you can use the \file{.zpts} extension for collections of
 ZPT templates, or the \file{.jinja2s} extension for collections of
-Jinja2 templates, or more generally \file{.pts} for collections of various 
+Jinja2 templates, or more generally \file{.pts} for collections of various
 template types.  Files with this
 extension have multiple templates in them.  Each template is separated
-from the next by the template metadata which includes things like the 
-name of the template, the type (xml, html, or text), and can also alias 
-template names to another template in the renderer.  The following 
+from the next by the template metadata which includes things like the
+name of the template, the type (xml, html, or text), and can also alias
+template names to another template in the renderer.  The following
 metadata names are currently supported.
 \begin{tableii}{l|p{4in}}{}{Name}{Purpose}
 \lineii{engine}{the name of the templating engine to use.  At the time of
-    this writing, the value could be zpt, tal (same as zpt), 
-    html (ZPT HTML template), xml (ZPT XML template), jinja2, 
+    this writing, the value could be zpt, tal (same as zpt),
+    html (ZPT HTML template), xml (ZPT XML template), jinja2,
     python (Python formatted string), string (Python string template),
     kid, cheetah, or genshi.}
-\lineii{name}{the name or names of the template that is to follow. 
-    This name is used as the key in the renderer, and also 
+\lineii{name}{the name or names of the template that is to follow.
+    This name is used as the key in the renderer, and also
     corresponds to the node name that will be rendered by the template.
     If more than one name is desired, they are simply separated by
     spaces.}
 \lineii{type}{the type of the template: xml, html, or text.  XML templates
-    must contain a well-formed XML fragment.  HTML templates are more 
+    must contain a well-formed XML fragment.  HTML templates are more
     forgiving, but do not support all features of ZPT (see the SimpleTAL
     documentation).}
 \lineii{alias}{specifies the name of another template that the given
@@ -654,7 +654,7 @@ metadata names are currently supported.
 \end{tableii}
 
 There are also some defaults that you can set at the top of the file that
-get applied to the entire file unles overridden by the meta-data on a 
+get applied to the entire file unles overridden by the meta-data on a
 particular template.
 \begin{tableii}{l|p{4in}}{}{Name}{Purpose}
 \lineii{default-engine}{the name of the engine to use for all templates in
@@ -685,12 +685,12 @@ type: xml
 
 The code above is a zpts file that contains four templates.  Each template
 begins when a line starts with ``name:''.  Other directives have the same
-format (i.e. the name of the directive followed by a colon) and must 
-immediately follow the name directive.  The first template definition 
+format (i.e. the name of the directive followed by a colon) and must
+immediately follow the name directive.  The first template definition
 actually applies to two types of nodes \var{textbf} and \var{bfseries}.
 You can specify ony number of names on the name line.  The third template
 isn't a template at all; it is an alias.  When an alias is specified,
-the name (or names) given use the same template as the one specified 
+the name (or names) given use the same template as the one specified
 in the alias directive.  Notice also that starred versions of a macro
 can be specified separately.  This means that they can use a different
 template than the un-starred versions of the command.
@@ -761,25 +761,25 @@ will launch a python debugger session to allow inspection of the
 \subsubsection{Template Overrides\label{sec:tmploverrides}}
 
 It is possible to override the templates located in a renderer's directory
-with templates defined elsewhere.  This is done using the 
+with templates defined elsewhere.  This is done using the
 \environment{*TEMPLATES} environment variable.  The ``*'' in the name
 \environment{*TEMPLATES} is a wildcard and must be replaced by the name of the
-renderer.  For example, if you are using the XHTML renderer, the 
+renderer.  For example, if you are using the XHTML renderer, the
 environment variable would be \environment{XHTMLTEMPLATES}.  For the PageTemplate
 renderer, the environment variable would be \environment{PAGETEMPLATETEMPLATES}.
 
 The format of this variable is the same as that of the \environment{PATH}
-environment variable which means that you can put multiple directory 
-names in this variable.  In addition, the environment variables for 
+environment variable which means that you can put multiple directory
+names in this variable.  In addition, the environment variables for
 each of the parent renderers is also used, so that you can use
 multiple layers of template directories.
 
 You can actually create an entire renderer just using overrides and the
 PT renderer.  Since the PT renderer doesn't actually define any templates,
 it is just a framework for defining other XML/HTML renderers, you can
-simply load the PT renderer and set the \environment{PAGETEMPLATETEMPLATES} 
+simply load the PT renderer and set the \environment{PAGETEMPLATETEMPLATES}
 environment
-variable to the locations of your templates.  This method of creating 
+variable to the locations of your templates.  This method of creating
 renderers will work for any XML/HTML that doesn't require any special
 post-processing.
 
@@ -788,19 +788,19 @@ post-processing.
 
 In addition to the templates that define how each node should be rendered,
 there are also templates that define page layouts.  Page layouts are used
-whenever a node in the document generates a new file.   Page layouts 
+whenever a node in the document generates a new file.   Page layouts
 generally include all of the markup required to make a complete document
 of the desired DTD, and may include things like navigation buttons,
 tables of contents, breadcrumb trails, etc. to link the current file to
-other files in the document. 
+other files in the document.
 
 When rendering files, the content of the
 node is generated first, then that content is wrapped in a page layout.
 The page layouts are defined the same way as regular templates; however,
-they all include ``-layout'' at the end of the template name.  For 
+they all include ``-layout'' at the end of the template name.  For
 example the sectioning commands in \LaTeX\ would use the layout templates
 ``section-layout'', ``subsection-layout'', ``subsubsection-layout'', etc.
-Again, these templates can exist in files by themselves or multiply 
+Again, these templates can exist in files by themselves or multiply
 specified in a zpts file.  If no layout template exists for a particular
 node, the template name ``default-layout'' is used.
 
@@ -808,7 +808,7 @@ Since there can be several themes defined within a renderer, theme files
 are stored in a subdirectory of a renderer directory.  This directory
 is named \file{Themes}.  The \file{Themes} directory itself only contains
 directories that correspond to the themes themselves where the name
-of the directory corresponds to the name of the theme.  These theme 
+of the directory corresponds to the name of the theme.  These theme
 directories generally only consist of the layout files described above,
 but can override other templates as well.  Below is a file listing
 demonstrating the structure of a renderer with multiple themese.
@@ -829,7 +829,7 @@ XHTML/Themes/plain/
 
 Since all template directories are created equally, you can also define
 themes in template directories specified by environment variables as
-described in section \ref{sec:tmploverrides}.  Also, theme files are 
+described in section \ref{sec:tmploverrides}.  Also, theme files are
 searched in the same way as regular templates, so any theme defined
 in a renderer superclass' directory is valid as well.
 
@@ -838,19 +838,19 @@ in a renderer superclass' directory is valid as well.
 
 The Zope Page Template (ZPT) language is actually just a set of XML
 attributes that can be applied to markup of an DTD.  These attributes
-tell the ZPT interpreter how to process the element.  There are 
+tell the ZPT interpreter how to process the element.  There are
 seven different attributes that you can use to direct the processing
-of an XML or HTML file (in order of evaluation): define, condition, repeat, 
+of an XML or HTML file (in order of evaluation): define, condition, repeat,
 content, replace, attributes, and omit-tag.  These attributes are
 described in section \ref{sec:talattributes}.  For a more complete description,
-see the official ZPT documentation at 
+see the official ZPT documentation at
 \url{http://www.zope.org/Documentation/Books/ZopeBook/2_6Edition/ZPT.stx}.
 
 
 \subsubsection{Template Attribute Language Expression Syntax (TALES)}
 
 The Template Attribute Language Expression Syntax (TALES) is used
-by the attribute language described in the next section.  The TALES 
+by the attribute language described in the next section.  The TALES
 syntax is used to evaluate expressions based on objects in the
 template namespace.  The results of these expressions can be used to
 define variables, produce output, or be used as booleans.  There are
@@ -868,7 +868,7 @@ is shown below.
 
 The \var{path:} operator is actually optional on all paths.  Leaving it
 off makes no difference.  The ``string'' in the above syntax is a '/'
-delimited string of names.  Each name refers to a property of the 
+delimited string of names.  Each name refers to a property of the
 previous name in the string.  Properties can include attributes, methods,
 or keys in a dictionary.  These properties can in turn have properties
 of their own.  Some examples of paths are shown below.
@@ -914,7 +914,7 @@ the operator returns false.   The syntax is as follows.
 exists:path
 \end{verbatim}
 
-The ``path'' in the code above is a path as described in section 
+The ``path'' in the code above is a path as described in section
 \ref{sec:pathoperator}.  This operator is commonly combined with the
 not: operator.
 
@@ -922,7 +922,7 @@ not: operator.
 \paragraph{nocall: operator}
 
 By default, if a property that is retrieved is callable, it will be
-called automatically.  Using the nocall: operator, prevents this 
+called automatically.  Using the nocall: operator, prevents this
 execution from happening.  The syntax is shown below.
 \begin{verbatim}
 nocall:path
@@ -968,11 +968,11 @@ python:python-code
 The ``python-code'' in the expression above can include any of the Python
 built-in functions and operators as well as four new functions that
 correspond to the TALES operators: path, string, exists, and nocall.
-Each of these functions takes a string containing the path to be 
+Each of these functions takes a string containing the path to be
 evaluated (e.g. path('foo/bar'), exists('chapter/title'), etc.).
 
 When using Python operators, you must escape any characters that would
-not be legal in an XML/HTML document (i.e. <>\&).  For example, 
+not be legal in an XML/HTML document (i.e. <>\&).  For example,
 to write an expression to test if a number was less than or greater than
 two numbers, you would need to do something like the following example.
 \begin{verbatim}
@@ -1004,16 +1004,16 @@ the template).  The syntax of the define attribute is shown below.
 tal:define="[ local | global ] name expression [; define-expression ]"
 \end{verbatim}
 
-The define attributes sets the value of ``name'' to ``expression.''  
+The define attributes sets the value of ``name'' to ``expression.''
 By default, the scope of the variable is local, but can be specified
-as global by including the ``global'' keyword before the name of the 
-variable.  As shown in the grammar above, you can specify multiple 
+as global by including the ``global'' keyword before the name of the
+variable.  As shown in the grammar above, you can specify multiple
 variables in one \attr{tal:define} attribute by separating the define
 expressions by semi-colons.
 
 Examples of using the \attr{tal:define} attribute are shown belaw.
 \begin{verbatim}
-<p tal:define="global title document/title; 
+<p tal:define="global title document/title;
                next self/links/next;
                previous self/links/previous;
                length python:len(self);
@@ -1032,10 +1032,10 @@ tal:condition="expression"
 \end{verbatim}
 
 The \attr{tal:condition} attribute is very simple.  If the expression
-evaluates to true, the element and its children will be evaluated and 
-included in the output.  If the expression evaluates to false, the element 
+evaluates to true, the element and its children will be evaluated and
+included in the output.  If the expression evaluates to false, the element
 and its children will not be evaluated or included in the output.
-Valid expressions for the \attr{tal:condition} attribute are the same 
+Valid expressions for the \attr{tal:condition} attribute are the same
 as those for the expressions in the \attr{tal:define} attribute.
 \begin{verbatim}
 <p tal:condition="python:len(self)">
@@ -1047,7 +1047,7 @@ as those for the expressions in the \attr{tal:define} attribute.
 
 \paragraph{tal:repeat\label{sec:talrepeat}}
 
-The \attr{tal:repeat} attribute allows you to repeat an element multiple 
+The \attr{tal:repeat} attribute allows you to repeat an element multiple
 times; the syntax is shown below.
 \begin{verbatim}
 tal:repeat="name expression"
@@ -1060,7 +1060,7 @@ set to ``name'' much like in the \attr{tal:define} attribute.
 
 Within the scope of the repeated element, another variable is available:
 \var{repeat}.  This variable contains several properties related to
-the loop.  
+the loop.
 \begin{tableii}{l|p{4in}}{var}{Name}{Purpose}
 \lineii{index}{number of the current iteration starting from zero}
 \lineii{number}{number of the current iteration starting from one}
@@ -1081,10 +1081,10 @@ the loop.
     number starting with 'I'}
 \end{tableii}
 
-To access the properties listed above, you must use the property of 
+To access the properties listed above, you must use the property of
 the \var{repeat} variable that corresponds to the repeat variable name.
 For example, if your repeat variable name is ``item'', you would access
-the above variables using the expressions \var{repeat/item/index}, 
+the above variables using the expressions \var{repeat/item/index},
 \var{repeat/item/number}, \var{repeat/item/even}, etc.
 
 A simple example of the \attr{tal:repeat} attribute is shown below.
@@ -1099,9 +1099,9 @@ This is a little bit tricky with ZPT since the \attr{tal:condition}
 attribute is evaluated before the \attr{tal:repeat} directive.  You
 can get around this by using the \namespace{metal} namespace.  This
 is the namespace used by ZPT's macro language\footnote{The macro language
-isn't discussed here.  See the official ZPT documentation for more 
-information.}  You can create another element around the element you 
-want to be conditional.  This wrapper element is simply there to do the 
+isn't discussed here.  See the official ZPT documentation for more
+information.}  You can create another element around the element you
+want to be conditional.  This wrapper element is simply there to do the
 iterating, but is not included in the output.  The example below shows
 how to do alternating row colors in an HTML table.
 \begin{verbatim}
@@ -1132,17 +1132,17 @@ tal:content="[ text | structure ] expression"
 \end{verbatim}
 
 The \var{text} and \var{structure} options in the \attr{tal:content}
-attribute indicate whether or not the content returned by the 
+attribute indicate whether or not the content returned by the
 expression should be escaped (i.e. "\&<> replaced by \&quot;, \&amp;, \&lt;,
 and \&gt;, respectively).  When the \var{text} option is used, these
 special characters are escaped; this is the default behavior.  When
 the \var{structure} option is specified, the result of the expression is
-assumed to be valid markup and is not escaped.  
+assumed to be valid markup and is not escaped.
 
 In SimpleTAL, the default
-behavior is the same as using the \var{text} option.  However, in 
+behavior is the same as using the \var{text} option.  However, in
 \plasTeX, 99.9\% of the time the content returned by the expression is
-valid markup, so the default was changed to \var{structure} in the 
+valid markup, so the default was changed to \var{structure} in the
 SimpleTAL package distributed with \plasTeX.
 
 
@@ -1173,8 +1173,8 @@ The syntax of the \attr{tal:attributes} attribute is very similar to
 that of the \attr{tal:define} attribute.  However, in the case of the
 \attr{tal:attributes} attribute, the name is the name of the attribute
 to be created on the element and the expression is evaluated to
-get the value of the attribute.  If an error occurs or \var{None} is 
-returned by the expression, then the attribute is removed from the 
+get the value of the attribute.  If an error occurs or \var{None} is
+returned by the expression, then the attribute is removed from the
 element.
 
 Just as in the case of the \attr{tal:define} attribute, you can specify
@@ -1184,7 +1184,7 @@ semi-colon (;;).
 
 An example of using the \attr{tal:attributes} is shown below.
 \begin{verbatim}
-<a tal:attributes="href self/links/next/url; 
+<a tal:attributes="href self/links/next/url;
                    title self/links/next/title">link text</a>
 \end{verbatim}
 
@@ -1197,9 +1197,9 @@ element.  The syntax is shown below.
 tal:omit-tag="expression"
 \end{verbatim}
 
-If the value of ``expression'' evaluates to true (or is empty), the element 
+If the value of ``expression'' evaluates to true (or is empty), the element
 is omitted; however, the content of the element is still sent to the output.
-If the expression evaluates to false, the element is included in the 
+If the expression evaluates to false, the element is included in the
 output.
 
 
@@ -1218,10 +1218,10 @@ CSS information is added in post-processing (i.e. the \method{cleanup}
 method).
 
 In addition to the processing of images, all characters with a ordinal
-greater than 127 are converted into numerical entities.  This should 
+greater than 127 are converted into numerical entities.  This should
 prevent any rendering problems due to unknown encodings.
 
-Most of the work in this renderer was in creating the templates for 
+Most of the work in this renderer was in creating the templates for
 every \LaTeX\ construct.  Since this renderer was intended to be the
 basis of all HTML-based renderers, it must be capable of rendering
 all \LaTeX\ constructs; therefore, there are ZPT templates for every
@@ -1242,7 +1242,7 @@ in them.  The names of the directories in the \file{Themes} directory
 corresponds to the name of the theme.  There are currently two themes
 included with \plasTeX: default and plain.  The default theme is a
 minor variation of the one used in the Python 1.6 documentation.  The
-plain theme is a theme with no extra navigation bars. 
+plain theme is a theme with no extra navigation bars.
 
 \section{HTML5 Renderer}\label{sec:html5}
 
@@ -1290,7 +1290,7 @@ modifications are not enough, one can override templates as discussed in
 Section~\ref{sec:tmploverrides}.
 
 The normal way to handle mathematics in this renderer is to use MathJax
-(see \url{https://www.mathjax.org}) to render mathematics on client side. 
+(see \url{https://www.mathjax.org}) to render mathematics on client side.
 This is controlled by the \longprogramopt{use-mathjax} option which is
 set to true by default. Option \longprogramopt{mathjax-url} indicates
 where to find the MathJax library. By default it uses a CDN which
@@ -1318,7 +1318,7 @@ level language called PGF. The HTML5 renderer tries to handle
 \program{pdf2svg} and including in the final html file. This should work
 without any tweak in the simplest cases where the TeX source contains
 only \verb+\usepackage{tikz}+ with no option, tikz library etc\ldots and the
-tikzpicture environment itself uses no user defined macro. 
+tikzpicture environment itself uses no user defined macro.
 
 For more complicated cases, there are three configuration options that
 can be set either on the command line or in a configuration file. Option
@@ -1352,7 +1352,7 @@ like:
 \end{verbatim}
 
 In the resulting html file, the \environment{tikzpicture} will appear as
-something like 
+something like
 \begin{verbatim}
 <div class="tikzpicture">
   <object class="tikzpicture" data="images/a0000000001.svg" type="image/svg+xml">
@@ -1388,34 +1388,33 @@ This section is useful for packages authors. The HTML5 Renderer allows
 packages to interact with the rendering process in several ways through
 packages resources. Each such resource is wrapped in an object whose
 class inherits from \class{PackageResource} located in the module
-\module{plasTeX.PackageResource}. Those objects are typically attach to
+\module{plasTeX.PackageResource}. Those objects are typically attached to
 the document during package loading using the document
 \method{addPackageResource} method inside the \function{ProcessOptions}
 function.
 
 \subsubsection*{Extra input files}
 
-Inside the main renderer directory \file{plasTeX/Renderers/HTML5/}
-package authors can add directories containing extra input files. 
-Users that create their own python packages for plasTeX can also put
-these files in a subdirectory of the working directory (from which
-plasTeX is invoked). The following example shows how a package can
-register templates overriding regular renderer templates, as well as
-extra CSS and javascript files. The following function should be part of a python package, say \file{mypkg.py}.
+The following example shows how a package can register templates
+overriding regular renderer templates, as well as extra CSS and
+javascript files.
+The following function should be part of a python package, say
+\file{mypkg.py} which imports \class{Path} from \module{pathlib}.
+Next to this file, there should be a
+folder \file{mypkg} containing files \file{test.css} and \file{test.js},
+and a \file{templates} subfolder.
 
 \begin{verbatim}
 def ProcessOptions(options, document):
     css = PackageCss(
         renderers='html5',
-        data='test.css',
-        package='mypkg')
+        path=Path(__file__).parent/'mypkg'/'test.css')
     js = PackageJs(
         renderers='html5',
-        data='test.js',
-        package='mypkg')
+        path=Path(__file__).parent/'mypkg'/'test.js')
     tpl = PackageTemplateDir(
         renderers='html5',
-        package='mypkg')
+        path=Path(__file__).parent/'mypkg'/'templates')
 
     document.addPackageResource([css, js, tpl])
 \end{verbatim}
@@ -1423,23 +1422,23 @@ def ProcessOptions(options, document):
 When rendering any document containing \verb+\usepackage{mypkg}+,
 the HTML5 renderer will
 \begin{itemize}
-\item 
-    copy \file{plasTeX/Renderers/HTML5/mypkg/test.css}
+\item
+    copy \file{mypkg/test.css}
     to the \file{styles} subdirectory of the output directory
     and call it from the default html layout
-\item 
-    copy \file{plasTeX/Renderers/HTML5/mypkg/test.js}
+\item
+    copy \file{mypkg/test.js}
     to the \file{js} subdirectory of the output directory
     and call it from the default html layout
 \item
-    load any template contained in \file{plasTeX/Renderers/HTML5/mypkg/}, overiding the renderer default templates if needed.
+    load any template contained in \file{mypkg/templates}, overiding the renderer default templates if needed.
 \end{itemize}
 
 
 \subsubsection*{Extra output files and filters}
 
 The HTML5 Renderer allows packages to produce extra output files and
-define filters that are applied to any output file. 
+define filters that are applied to any output file.
 
 In order to create new output files, any package can register a callback
 function taking a document as input a returning a list of created file
@@ -1457,23 +1456,22 @@ def ProcessOptions(options, document):
         with open('stats.html', 'w') as outfile:
             outfile.write("%d chapters and %d sections" % (nbChap, nbSec))
         return ['stats.html']
-    cb = PackageResource(
+    cb = PackagePreCleanupCB(
         renderers='html5',
-        key='preCleanupCallbacks',
         data=makeStats)
     document.addPackageResource(cb)
 \end{verbatim}
 
 As suggested by the key name, those pre-cleanup callbacks are called before
-the renderer \method{cleanup} method. Packages can also register filters to be
-applied during the cleanup process. Those filters are functions that take a
-document and a string to filter and return the filtered string (using the
-document object to provide context if needed). They will be called on the
-content of each rendered file, after all files have been rendered.
-Registration is analogous to pre-cleanup callbacks but replacing the key
-\verb+preCleanupCallbacks+ by \verb+processFileContents+. This method can be
-used to call an external renderer to handle some complex environment (e.g. a
-TikZ picture).
+the renderer \method{cleanup} method.
+
+Packages can also register filters to be applied during the cleanup
+process. Those filters are functions that take a document and a string
+to filter and return the filtered string (using the document object to
+provide context if needed). They will be called on the content of each
+rendered file, after all files have been rendered.  Registration is
+analogous to pre-cleanup callbacks but replacing
+\class{PackagePreCleanupCB} by \class{PackageProcessFileContent}.
 
 
 \section{tBook Renderer}

@@ -2,6 +2,7 @@
 
 import subprocess, shlex
 import os, shutil, re
+from pathlib import Path
 from plasTeX.Renderers.PageTemplate import Renderer as _Renderer
 from plasTeX.Renderers import Renderer as BaseRenderer
 from plasTeX.Logging import getLogger
@@ -58,7 +59,7 @@ class HTML5(_Renderer):
             pass
 
         # Start building the js list for use by the layout template
-        if (config['html5']['use-theme-js'] and 
+        if (config['html5']['use-theme-js'] and
                 config['general']['copy-theme-extras']):
             rendererdata['js'] = sorted(
                     os.listdir(os.path.join(self.loadedTheme, 'js')))
@@ -72,7 +73,7 @@ class HTML5(_Renderer):
                     renderer=self,
                     rendererName='html5',
                     document=document,
-                    target=buildDir)
+                    target=Path(buildDir))
 
         # Last loaded files (hence overriding everything else) come from user
         # configuration

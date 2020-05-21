@@ -18,7 +18,7 @@ from plasTeX.Renderers.PageTemplate.simpletal.simpleTALES import Context as TALC
 log = plasTeX.Logging.getLogger()
 
 # Support for Jinja2 templates
-try: 
+try:
     from jinja2 import Environment, contextfunction
 except ImportError:
     def jinja2template(s, encoding='utf8'):
@@ -30,7 +30,7 @@ else:
         import ipdb as pdb
     except ImportError:
         import pdb # type: ignore # mypy#1153
-        
+
     @contextfunction
     def debug(context):
         pdb.set_trace()
@@ -40,7 +40,7 @@ else:
         env.globals['debug'] = debug
 
         def renderjinja2(obj, s=s):
-            tvars = {'here':obj, 
+            tvars = {'here':obj,
                      'obj':obj,
                      'container':obj.parentNode,
                      'config':obj.ownerDocument.config,
@@ -48,7 +48,7 @@ else:
                      'templates':obj.renderer}
 
             tpl = env.from_string(s)
-            return tpl.render(tvars) 
+            return tpl.render(tvars)
 
         return renderjinja2
 
@@ -381,7 +381,7 @@ class PageTemplate(BaseRenderer):
 
     def importDirectory(self, templatedir):
         """
-        Compile all ZPT files in the given directory
+        Compile all templates files in the given directory
 
         Templates can exist in two different forms.  First, a template
         can be a file unto itself.  If an XML template is desired,
@@ -590,7 +590,7 @@ class PageTemplate(BaseRenderer):
                 if ord(item) > 127:
                     s[i] = '&#%.3d;' % ord(item)
             s = ''.join(s)
-        
+
         return BaseRenderer.processFileContent(self, document, s)
 
     def setImageData(self, m):

@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 from plasTeX.TeX import TeX
 from plasTeX.TeX import TeXDocument
@@ -8,24 +9,30 @@ from plasTeX.Renderers.HTML5.Config import addConfig
 
 
 def test_package_resource(tmpdir):
-	config = defaultConfig()
-	addConfig(config)
-	doc = TeXDocument(config=config)
-	tex = TeX(doc)
-	tex.input("""
-		\\documentclass{article}
-		\\usepackage{examplePackage}
-		\\begin{document}
-		\\emph{Hello}
-		\\end{document}""")
-	
-	doc = tex.parse()
-	doc.userdata['working-dir'] = os.path.dirname(__file__)
+    config = defaultConfig()
+    config['general'].data['packages-dirs'].setValue([str(Path(__file__).parent)])
+    addConfig(config)
+    doc = TeXDocument(config=config)
+    tex = TeX(doc)
+    tex.input("""
+            \\documentclass{article}
+            \\usepackage{examplePackage}
+            \\begin{document}
+            \\emph{Hello}
+            \\end{document}""")
 
-	with tmpdir.as_cwd():
-		Renderer().render(doc)
+    doc = tex.parse()
+    doc.userdata['working-dir'] = os.path.dirname(__file__)
 
-	assert tmpdir.join('styles', 'test.css').isfile()
-	assert tmpdir.join('js', 'test.js').isfile()
-	assert 'class="em"' in tmpdir.join('index.html').read()
-	assert doc.userdata['testing'] == 'test'
+    doc = tex.parse()
+    # Work around crazy sharing of config
+    doc.config['general'].data['packages-dirs'].setValue([])
+    doc.userdata['working-dir'] = os.path.dirname(__file__)
+
+    with tmpdir.as_cwd():
+            Renderer().render(doc)
+
+    assert tmpdir.join('styles', 'test.css').isfile()
+    assert tmpdir.join('js', 'test.js').isfile()
+    assert 'class="em"' in tmpdir.join('index.html').read()
+    assert doc.userdata['testing'] == 'test'
