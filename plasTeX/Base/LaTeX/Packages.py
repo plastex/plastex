@@ -15,8 +15,9 @@ class PackageLoader(Command):
         try:
             self.ownerDocument.context.loadPackage(
                     tex, file+self.extension, options or {})
-        except Exception as msg:
-            log.error('Could not load package "%s": %s' % (file, msg))
+        except Exception as exc:
+            log.error('Loading package "%s" raised exception %s : %s' % (
+                file, type(exc).__name__, exc))
 
 #
 # C.5.1 Document Class
