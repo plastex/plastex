@@ -5,28 +5,44 @@
 \declaremodule{standard}{plasTeX.ConfigManager}
 \modulesynopsis{\plasTeX's configuration management system}
 
-The configuration system in \plasTeX\ that parses the command-line options
-and configuration files is very flexible.  While many options are setup
-by the \plasTeX\ framework, it is possible for you to add your own options.
-This is useful if you have macros that may need to be configured by 
-configurable options, or if you write a renderer that surfaces special options
-to control it.
+A \class{ConfigManager} manages the configuration options for plastex. From the
+end user's point of view, this behaves like a 2-layered nested \class{dict}, so
+that configuration options can be retrieved as
+\code{config["general"]["theme"]}, for example. However, \class{ConfigManager} is
+much more powerful than a nested dict. It supports reading in configuration
+options from \code{.ini} files and command line arguments.
 
-The config files that \class{ConfigManager} supports are standard INI-style
-files.  This is the same format supported by Python's \class{ConfigParser}.
-However, this API has been extended with some dictionary-like behaviors
-to make it more Python friendly.
+The former is performed via the \method{read} function, and the latter is via
+the \method{registerArgparse} and \method{updateFromDict} functions. The first
+function adds the options to an \class{ArgumentParser} from \method{argparse},
+and the latter reads in the values obtained from \method{argparse}. The
+interaction looks as follows:
 
-In addition to the config files, \class{ConfigManager} can also parse
-command-line options and merge the options from the command-line into
-the options set by the given config files.  In fact, when adding options
-to a \class{ConfigManager}, you specify both how they appear in the config
-file as well as how they appear on the command-line.  Below is a basic 
-example.
+\begin{verbatim}
+
+config = ConfigManager()
+
+# Set up the config manager here
+
+# Construct an ArgumentParser
+parser = ArgumentParser("plasTeX")
+
+# This function adds a command line option to `parser` for each
+# configuration item in `config`
+config.registerArgparse(parser)
+
+# We now let the parser parse the arguments in `sys.argv`
+data = vars(parser.parse_args())
+
+# Finally, we let `config` read the values back in
+config.updateFromDict(data)
+
+\end{verbatim}
+
+The following sample code shows how one would set up a `ConfigManager` object:
 
 \begin{verbatim}
 from plasTeX.ConfigManager import *
-from argparse import ArgumentParser
 c = ConfigManager()
 
 # Create a new section in the config file.  This corresponds to the
@@ -48,72 +64,77 @@ d['verbose'] = BooleanOption(
 
 # Read config files
 c.loadFromFiles(['/etc/myconfig.ini', '~/myconfig.ini')
-
-# Construct an ArgumentParser and add config options to the parser
-parser = ArgumentParser("plasTeX")
-c.registerArgparse(parser)
-
-# Parse commands and input into config.
-data = vars(parser.parse_args())
-c.updateFromDict(data)
-
-# Print the value of the 'verbose' option in the 'debugging' section
-print(c['debugging']['verbose'])
 \end{verbatim}
 
-One interesting thing to note about retrieving values from a 
-\class{ConfigManager} is that you get the value of the option
-rather than the option instance that you put in.  For example, in the
-code above.  A \class{BooleanOption} in put into the `verbose' option
-slot, but when it is retrieved in the \function{print} statement at
-the end, it prints out a boolean value.  This is true of all option
-types.  You can access the option instance in the \member{data} attribute
-of the section (e.g. \code{c['debugging'].data['verbose']}).
+The configuration system supports interpolation. That is, in options whose
+value is a string (or a list of strings), we replace all instances of
+\code{\%(foo)s} with the value of the option \code{foo}. The formatting is done
+with pythons \%-formatting and all \%-formatting features are supported. Note
+that we only specify the name of the option, and not the section it belongs to.
+For example,
+\begin{verbatim}
+plastex --renderer=HTML5 --theme=%(renderer)stheme
+\end{verbatim}
+sets the theme to \code{HTML5theme}.
 
+Interpolation is performed when you access the value of an option, not when the
+value is set. For example, if we modify the \code{renderer} variable in runtime
+and then access \code{theme}, it changes accordingly. Specifically, this is
+performed in \method{ConfigSection.__getitem__}.
 
 \subsection{ConfigManager Objects}
 
 \begin{classdesc}{ConfigManager}{}
-Instantiate a configuration class for \plasTeX\ that parses the command-line options
-as well as reads the config files. The class inherits \class{dict}, and the
-underlying \class{dict} is the dict of sections.
+A configuration manager.
 \end{classdesc}
 
 \begin{methoddesc}[ConfigManager]{addSection}{name, description=None}
-create a new section in the configuration with the given name.  This 
-name is the name used for the section heading in the INI file (i.e. the
-name used within square brackets (\lbrack~\rbrack) to start a section). The
-description is the section header that shows up in the command line interface.
-This defaults to \code{name.capitalize() + " Options"}.
+  Creates a section with the given name and description and adds it to the
+  \class{ConfigManager}.
 
-The return value of this method is a reference to the newly created section.
+  \var{name} is the key for accessing the section, which is also the section
+        header used in the INI file.
+
+  \var{description} is the header of the section for the cli `--help` function.
+  Defaults to `name.capitalize() + " Options"`
+
+  Returns the new \class{ConfigSection} object produced.
 \end{methoddesc}
 
 \begin{methoddesc}[ConfigManager]{read}{filenames}
-read configuration data contained in files specified by \var{filenames}.
-Files that cannot be opened are silently ignored.  This is designed so that
-you can specify a list of potential configuration file locations (e.g.
-current directory, user's home directory, system directory), and all 
-existing configuration files in the list will be read.  A single filename
-may also be given.
+loads config from the INI files in \var{filenames}. The function ignores files
+that do not exist. The argument may also be a single filename.
 \end{methoddesc}
 
 \begin{methoddesc}[ConfigManager]{registerArgparse}{parser}
-adds the command line options specified by the config to the parser.
+  adds command line options to \var{parser} for each configuration item. This
+  function merely delegates the job to the identically-named function of each
+  of the sections.
 \end{methoddesc}
 
 \begin{methoddesc}[ConfigManager]{updateFromDict}{data}
-  updates the configuration based on the data in \var{data}. The format of
-  \var{data} is defined to be what is returned by
-  \code{vars(parser.parse_args())}, where \var{parser} is populated by
-  \method{registerArgparse}. This is intended to be used in conjuction with
-  \method{registerArgparse}.
+  reads in configuration options from the dict returned by
+  `vars(ArgumentParser.parse_args)`. This function merely delegates the job to
+  the identically-named function of each of the sections.
 \end{methoddesc}
 
 \subsection{ConfigSection Objects}
 
 \begin{classdesc}{ConfigSection}{name, parent}
-Instantiate a \class{ConfigSection} object.
+For the most part, a \class{ConfigSection} is a dict of \class{ConfigOption}s.
+However, when we access \code{section["key"]}, it doesn't return the
+\class{ConfigOption} itself, but the value of the option.
+
+The rationale for this setup is that we want to think of a \class{ConfigOption}
+as the value of the option together with some metadata. When trying to read or
+write the config option, what we want to do is the read or write to the value
+and ignoring the metadata.
+
+The only exception is when we want to add a new config option to the section,
+where we would write
+\begin{verbatim}
+section["new_key"] = ConfigOption(...)
+\end{verbatim}
 
 \var{name} is the name of the section.
 
@@ -121,10 +142,10 @@ Instantiate a \class{ConfigSection} object.
 \end{classdesc}
 
 \begin{memberdesc}[ConfigSection]{data}
-dictionary that contains the option instances.  This is only accessed
-if you want to retrieve the real option instances.  Normally, you would
-use standard dictionary key access syntax on the section itself to
-retrieve the option values.
+dictionary that contains the option instances. This is only accessed if you
+want to retrieve the real option instances. Normally, you would use standard
+dictionary key access syntax on the section itself to retrieve the option
+values.
 \end{memberdesc}
 
 \begin{memberdesc}[ConfigSection]{name}
@@ -143,11 +164,6 @@ retrieve the value of \var{option}, returning \keyword{None} if \var{option} doe
 # Print the value of the 'optionname' option
 print(mysection['optionname'])
 \end{verbatim}
-
-  \note{Interpolation is performed when the value is retrieved with
-    \method{__getitem__} or \method{get}. In particular, changing a
-    configuration option during runtime can modify the values of other options
-    if interpolation is used.}
 \end{methoddesc}
 
 \begin{memberdesc}[ConfigSection]{parent}
@@ -167,32 +183,33 @@ mysection['optionname'] = 10
 
 \subsection{Configuration Option Types}
 
-\begin{classdesc}{Option[T]}{description, options, default}
+\begin{classdesc}{ConfigOption[T]}{description, options, default}
   This class represents an option whose value has a ``simple'' type.
   Specifically, we require \code{T(s)} to correctly converts a string \var{s}
   to an object of type \class{T}. The type is determined at runtime based on
   the type of the default value. More complex options should inherit this class.
 
   From the point of view of the external API, every option item is expected to
-  inherit \class{Option}, and is expected to implement the methods described
+  inherit \class{ConfigOption}, and is expected to implement the methods described
   below correctly. Moreover, the instance attribute \member{value} is expected
   to hold the value of the option.
 
   On the other hand, custom \method{__init__} implementations are not required
-  to set the other instance attributes described below.
+  to set the other instance attributes (i.e.\ \member{description},
+  \member{options} and \member{name}) described below.
 \end{classdesc}
 
-\begin{memberdesc}[Option]{description}
-  description of this option to be used in the \code{plastex --help} output.
+\begin{memberdesc}[ConfigOption]{description}
+  description of this option to be used in the \code{plastex -{}-help} output.
 \end{memberdesc}
 
-\begin{memberdesc}[Option]{options}
+\begin{memberdesc}[ConfigOption]{options}
   space separated list of command line argument that correspond to this option.
   The behaviour of this variable may be customized by implementations of
-  \class{Option}.
+  \class{ConfigOption}.
 \end{memberdesc}
 
-\begin{memberdesc}[Option]{name}
+\begin{memberdesc}[ConfigOption]{name}
   the key used by \var{argparse} to store the value read from the command line.
   Note that \var{argparse} does not group the argument values by section, so
   one has to be careful to avoid collision.
@@ -201,16 +218,16 @@ mysection['optionname'] = 10
   stripped.
 \end{memberdesc}
 
-\begin{memberdesc}[Option]{value}
+\begin{memberdesc}[ConfigOption]{value}
   the actual value of the option
 \end{memberdesc}
 
-\begin{methoddesc}[Option]{registerArgparse}{group}
+\begin{methoddesc}[ConfigOption]{registerArgparse}{group}
   this function should add the command line arguments for this configuration to
   the \var{argparse._ArgumentGroup} object \var{group}.
 \end{methoddesc}
 
-\begin{methoddesc}[Option]{updateFromDict}{data}
+\begin{methoddesc}[ConfigOption]{updateFromDict}{data}
   sets the value of the option based on the data in \var{data}. The format of
   \var{data} is defined to be what is returned by
   \code{vars(parser.parse_args())}, where \var{parser} is populated by
@@ -218,7 +235,7 @@ mysection['optionname'] = 10
   \method{registerArgparse}.
 \end{methoddesc}
 
-\begin{classdesc}{BooleanOption}{\optional{\class{Option} arguments}}
+\begin{classdesc}{BooleanConfigOption}{\optional{\class{ConfigOption} arguments}}
 Boolean options are simply options that allow you to specify an `on' or 
 `off' state. In a config file, the value is converted to a boolean via the
 builtin \code{bool} function. Boolean options on the command-line do not take
@@ -238,19 +255,19 @@ BooleanOption("", options = '--debug !--no-debug', default=True)
 \end{verbatim}
 \end{classdesc}
 
-\begin{classdesc}{FloatOption}{\optional{\class{Option} arguments}}
+\begin{classdesc}{FloatOption}{\optional{\class{ConfigOption} arguments}}
 A \class{FloatOption} is an option that accepts a floating point number.
 \end{classdesc}
 
-\begin{classdesc}{IntegerOption}{\optional{\class{Option} arguments}}
+\begin{classdesc}{IntegerOption}{\optional{\class{ConfigOption} arguments}}
 An \class{IntegerOption} is an option that accepts an integer value.
 \end{classdesc}
 
-\begin{classdesc}{StringOption}{\optional{\class{Option} arguments}}
+\begin{classdesc}{StringOption}{\optional{\class{ConfigOption} arguments}}
 A \class{StringOption} is an option that accepts an arbitrary string.
 \end{classdesc}
 
-\begin{classdesc}{MultiStringOption}{\optional{\class{Option} arguments}}
+\begin{classdesc}{MultiStringOption}{\optional{\class{ConfigOption} arguments}}
 A \class{MultiStringOption} is an option that is intended to be used multiple
 times on the command-line, or take a list of values. Other options when
 specified more than once simply overwrite the previous value.
@@ -264,13 +281,18 @@ The individual values of \class{MultiStringOption} are strings. This can, of
 course, be made generic, but such a use case has not arisen.
 \end{classdesc}
 
-\begin{classdesc}{DictOption[T]}{\optional{\class{Option} arguments}}
+\begin{classdesc}{DictOption[T]}{\optional{\class{ConfigOption} arguments}}
   This is an abstract base class for options whose value is a
   \code{Dict[str, T]}. This receives special treatment by
-  \method{ConfigManager.read} --- if an unknown option is encounted in the
-  configuration file, it looks for the first \class{DictOption} in the section
-  and adds the \code{key, value} pair to the \class{DictOption}. It is an error
-  to set the value of this option directly in a config file.
+  \method{ConfigManager.read} --- in a config file, any line whose key is
+  unrecognized (i.e.\ not the key of an existing option) is added to the first
+  \class{DictOption} in the section. Usually, such sections only contain a
+  single option which is a \class{DictOption}.
+
+  The value can also be set directly, in the form
+\begin{verbatim}
+data=a=b,c=d,e=f
+\end{verbatim}
 
   There is no implementor in \code{ConfigManager.py}, but is used by
   \var{CountersOption}, \var{LinksOption} and \var{LogOption} in
@@ -278,7 +300,7 @@ course, be made generic, but such a use case has not arisen.
 
   Note that all implementors of \class{DictOption} must also implement
   \method{registerArgparse} (and can optionally implement other methods of
-  \class{Option}).
+  \class{ConfigOption}).
 \end{classdesc}
 
 \begin{methoddesc}[DictOption]{entryFromString}{entry}

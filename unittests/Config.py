@@ -27,6 +27,35 @@ def test_interpolate_fail():
     with pytest.raises(KeyError):
         x = config["general"]["theme"]
 
+def test_stringoption():
+    option = StringOption("Test", "--test", "")
+
+    parser = ArgumentParser()
+    group = parser.add_argument_group("test")
+    option.registerArgparse(group)
+
+    data = vars(parser.parse_args(["--test", "foo"]))
+    option.updateFromDict(data)
+
+    assert option.value == "foo"
+
+def test_booloption():
+    option = BooleanOption("Test", "--test !--notest", False)
+
+    parser = ArgumentParser()
+    group = parser.add_argument_group("test")
+    option.registerArgparse(group)
+
+    data = vars(parser.parse_args(["--test"]))
+    option.updateFromDict(data)
+
+    assert option.value
+
+    data = vars(parser.parse_args(["--notest"]))
+    option.updateFromDict(data)
+
+    assert not option.value
+
 def test_multistringoption():
     option = MultiStringOption("Test", "--test", ["a"])
 
@@ -45,6 +74,7 @@ def test_dict_option(tmpdir):
 [test]
 foo=3
 bar=5
+test=test=7,item2=8
 ''')
         config = ConfigManager()
         sect = config.addSection("test")
@@ -54,7 +84,78 @@ bar=5
             def entryFromString(cls, entry: str) -> str:
                 return entry
 
-        sect["data"] = TestOption("", "", {"baz": "6"})
+            def registerArgparse(self, group):
+                pass
+
+        sect["test"] = TestOption("", "", {"baz": "6"})
         config.read("test.ini")
 
-        assert config["test"]["data"] == {"baz": "6", "foo": "3", "bar": "5"}
+        assert config["test"]["test"] == {"baz": "6", "foo": "3", "bar": "5", "test": "7", "item2": "8"}
+
+def test_counter(tmpdir):
+    with tmpdir.as_cwd():
+        Path("test.ini").write_text('''
+[counters]
+chapter=4
+part=2
+''')
+        config = defaultConfig()
+        config.read("test.ini")
+
+        parser = ArgumentParser()
+        config.registerArgparse(parser)
+        data = vars(parser.parse_args(["--counter", "section", "4", "--counter", "subsection", "7"]))
+        config.updateFromDict(data)
+
+        assert config["counters"]["counters"] == \
+                {
+                    "chapter": 4,
+                    "part": 2,
+                    "section": 4,
+                    "subsection": 7
+                }
+
+def test_logging(tmpdir):
+    with tmpdir.as_cwd():
+        Path("test.ini").write_text('''
+[logging]
+parse.environments=DEBUG
+''')
+        config = defaultConfig()
+        config.read("test.ini")
+
+        parser = ArgumentParser()
+        config.registerArgparse(parser)
+        data = vars(parser.parse_args(["--logging", "test", "INFO"]))
+        config.updateFromDict(data)
+
+        assert config["logging"]["logging"] == \
+                {
+                    "parse.environments": "DEBUG",
+                    "test": "INFO",
+                }
+
+def test_links(tmpdir):
+    with tmpdir.as_cwd():
+        Path("test.ini").write_text('''
+[links]
+next-url=https://example.com
+next-title=The Next Document
+mylink-title=AnotherTitle
+''')
+        config = defaultConfig()
+        config.read("test.ini")
+
+        parser = ArgumentParser()
+        config.registerArgparse(parser)
+        data = vars(parser.parse_args(["--link", "prev", "https://example.com/2", "Prev Document", "--link", "secondlink", "ATitle"]))
+        config.updateFromDict(data)
+
+        assert config["links"]["links"] == {
+                "next-url": "https://example.com",
+                "next-title": "The Next Document",
+                "mylink-title": "AnotherTitle",
+                "prev-url": "https://example.com/2",
+                "prev-title": "Prev Document",
+                "secondlink-title": "ATitle",
+            }
