@@ -168,7 +168,11 @@ class TeX(object):
 
         """
         if self.inputs:
-            self.inputs.pop()
+            old_input = self.inputs.pop()
+            try:
+                old_input.source.close()
+            except AttributeError:
+                pass
         if self.inputs:
             self.currentInput = self.inputs[-1]
 

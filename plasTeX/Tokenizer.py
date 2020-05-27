@@ -216,6 +216,7 @@ class Tokenizer(object):
             self.filename = '<tokens>'
         else:
             self.filename = source.name
+        self.source = source
         self.seek = source.seek
         self.read = source.read
         self.readline = source.readline
