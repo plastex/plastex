@@ -45,15 +45,15 @@ The following options are currently available
 on the \program{plastex} command. They are categorized for convenience.
 
 Note that some commands such as \longprogramopt{link} and
-\longprogramopt{lang-terms} take in a variable number of arguments. If this is
-the last option supplied, you would have to separate the filename from the list
-of arguments, e.g.
+\longprogramopt{lang-terms} take in a list of arguments. If this is the last
+option supplied, you would have to separate the filename from the list of
+arguments, e.g.
 \begin{verbatim}
 plastex --lang-terms foo bar -- input.tex
 \end{verbatim}
 
 The \program{plasTeX} command line and configuration supports interpolation.
-That is, in options whose value is a string (or a list of string), we replace
+That is, in options whose value is a string (or a list of strings), we replace
 all instances of \code{\%(foo)s} with the value of the option \code{foo}. The
 formatting is done with pythons \%-formatting and all \%-formatting features
 are supported. Note that we only specify the name of the option, and not the
@@ -268,24 +268,6 @@ next-title=The Next Document
 mylink-title=Another Title
 \end{verbatim}
 
-These option names are split on the dash (-) to create a key, before the dash,
-and a member, after the dash.  A dictionary is inserted into the navigation
-object with the name of the key, and the members are added to that dictionary.
-The configuration above would create the following Python dictionary.
-\begin{verbatim}
-{
-    'next':
-        {
-            'url':'http://myhost.com/glossary',
-            'title':'The Next Document'
-        },
-    'mylink':
-        {
-            'title':'Another Title'
-        }
-}
-\end{verbatim}
-
 While you can not override a field that is populated by the document,
 there are times when a field isn't populated.  This occurs, for example,
 in the \var{prev} field at the beginning of the document, or the
@@ -294,9 +276,8 @@ or \var{next} field in your configuration, those fields will be used
 when no \var{prev} or \var{next} is available.  This allows you to link
 to external documents at those points.
 
-
 \begin{configuration}{Set document links}
-\options{\longprogramopt{links=\optval{key optional-url title}}}
+\options{\longprogramopt{link=\optval{key optional-url title}}}
 specifies links to be included in the navigation object.
 \end{configuration}
 
