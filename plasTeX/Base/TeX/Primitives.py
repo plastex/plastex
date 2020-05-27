@@ -410,8 +410,7 @@ class input(Command):
             path = tex.kpsewhich(a['name'])
             status.info(' ( %s ' % path)
             encoding = self.config['files']['input-encoding']
-            with open(path, encoding=encoding) as f:
-                tex.input(f.read())
+            tex.input(open(path, encoding=encoding))
             status.info(' ) ')
 
         except (OSError, IOError) as msg:
