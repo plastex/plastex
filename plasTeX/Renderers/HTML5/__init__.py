@@ -27,7 +27,7 @@ class HTML5(_Renderer):
             log.error('Jinja2 is not available, hence the HTML5 renderer cannot be used.')
 
         _Renderer.loadTemplates(self, document)
-        rendererdata = document.rendererdata['html5'] = dict()
+        rendererdata = document.rendererdata.setdefault('html5', dict())
         config = document.config
 
         rendererDir = os.path.dirname(__file__)
