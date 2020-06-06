@@ -96,6 +96,7 @@ disable=
     wildcard-import,
     wrong-import-order,
     wrong-import-position,
+    import-outside-toplevel
 
 [REPORTS]
 reports=no

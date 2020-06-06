@@ -32,4 +32,4 @@ def ProcessOptions(options, document):
             config = document.config
             context = document.context
             pdb.set_trace()
-        document.postParseCallbacks.append(trace_callback)
+        document.addPostParseCallbacks(1000, trace_callback)

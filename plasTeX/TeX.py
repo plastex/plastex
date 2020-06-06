@@ -392,7 +392,6 @@ class TeX(object):
 
         return out
 
-
     def parse(self, output=None):
         """
         Parse stream content until it is empty
@@ -424,8 +423,9 @@ class TeX(object):
             raise
 
         if self.toplevel:
-            for callback in self.ownerDocument.postParseCallbacks:
-                callback()
+            for order, callbacks in sorted(self.ownerDocument.postParseCallbacks.items()):
+                for callback in callbacks:
+                    callback()
         return output
 
     def textTokens(self, text):

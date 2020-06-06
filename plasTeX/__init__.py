@@ -2,7 +2,7 @@
 
 __version__ = '2.1'
 
-from typing import Optional, Union
+from typing import Optional, Union, List, Callable, Dict
 from plasTeX import Logging, encoding
 from plasTeX.DOM import Element, Text, Node, DocumentFragment, Document
 from plasTeX.Tokenizer import Token, BeginGroup, EndGroup, Other
@@ -824,8 +824,9 @@ class TeXDocument(Document):
         else:
             self.config = kwargs['config']
 
-        # post parsing callbacks list
-        self.postParseCallbacks = []
+        # post parsing callbacks dictionary
+        # each key is an ordering number (low numbers are called first)
+        self.postParseCallbacks = dict() # type: Dict[int, List[Callable[[],None]]]
 
         self.packageResources = []
         self.rendererdata = dict()
@@ -834,13 +835,24 @@ class TeXDocument(Document):
 
     def addPackageResource(self, resource):
         """
-        Adds a pacakge resource or a list of package resources to 
+        Adds a pacakge resource or a list of package resources to
         self.packageResources.
         """
         if isinstance(resource, list):
             self.packageResources.extend(resource)
         else:
             self.packageResources.append(resource)
+
+    def addPostParseCallbacks(self, order: int,
+            cbs: Union[Callable[[],None], List[Callable[[],None]]]) -> None:
+        """Add a function or a list of functions to be called after
+        parsing, at the given order time."""
+        cur = self.postParseCallbacks.setdefault(order, [])
+        if isinstance(cbs, list):
+            cur += cbs
+        else:
+            cur.append(cbs)
+
 
     def createElement(self, name):
         elem = self.context[name]()
@@ -1200,8 +1212,7 @@ class Definition(Macro):
                 for t in tex.itertokens():
                     if t == a:
                         break
-                    else:
-                        param.append(t)
+                    param.append(t)
                 inparam = False
                 params.append(param)
 
@@ -1210,9 +1221,8 @@ class Definition(Macro):
                 for t in tex.itertokens():
                     if t == a:
                         break
-                    else:
-                        log.info('Arguments of "%s" don\'t match definition. Got "%s" but was expecting "%s" (%s).' % (name, t, a, ''.join(self.args)))
-                        break
+                    log.info('Arguments of "%s" don\'t match definition. Got "%s" but was expecting "%s" (%s).' % (name, t, a, ''.join(self.args)))
+                    break
 
         if inparam:
             params.append(tex.readArgument(parentNode=self,
