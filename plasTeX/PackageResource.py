@@ -14,11 +14,11 @@ class PackageResource:
     key = ''
 
     def __init__(self, renderers: Optional[Union[List[str], str]] = None,
-                 path: Optional[Path] = None, data: Any = None):
+                 path: Optional[Path] = None, data: Any = None, **kwargs):
         if isinstance(renderers, list):
             self.rendererPatterns = renderers
         elif renderers is None:
-            self.rendererPatterns = []
+            self.rendererPatterns = ['html5']
         else:
             self.rendererPatterns = [renderers]
         self.path = path
@@ -60,11 +60,13 @@ class PackageCss(PackageResource):
     copy = True
 
     def __init__(self, renderers: Optional[Union[List[str], str]] = None,
-                 path: Optional[Path] = None, data: Any = None):
+            path: Optional[Path] = None, data: Any = None, copy_only: bool = False):
         super().__init__(renderers, path, data)
         if path is None:
             raise ValueError('PackageCss path was not provided')
         self.data = path.name
+        if copy_only:
+            self.key = ''
 
 class PackageJs(PackageResource):
     outdir = 'js'
@@ -72,11 +74,13 @@ class PackageJs(PackageResource):
     copy = True
 
     def __init__(self, renderers: Optional[Union[List[str], str]] = None,
-                 path: Optional[Path] = None, data: Any = None):
+                 path: Optional[Path] = None, data: Any = None, copy_only: bool = False):
         super().__init__(renderers, path, data)
         if path is None:
             raise ValueError('PackageJs path was not provided')
         self.data = path.name
+        if copy_only:
+            self.key = ''
 
 class PackageTemplateDir(PackageResource):
     """A directory of templates to load, specified using the path argument."""

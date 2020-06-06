@@ -1434,6 +1434,11 @@ the HTML5 renderer will
     load any template contained in \file{mypkg/templates}, overiding the renderer default templates if needed.
 \end{itemize}
 
+If you want to copy a CSS or Javascript file to the output directory but
+without linking to it from the default html layout, you can
+use the keyword argument \verb+copy_only=True+.
+The \verb+renderer+ argument can also be a list of renderers, and
+its default value is \verb+html5+.
 
 \subsubsection*{Extra output files and filters}
 
