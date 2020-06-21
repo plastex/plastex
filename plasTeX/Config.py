@@ -54,13 +54,14 @@ def defaultConfig(loadConfigFiles: bool=False):
         default = [],
     )
 
-    general['plugins'] = MultiOption(
+    general['plugins'] = MultiStringOption(
         """
         A list of plugins to use. Each element must be a valid python module name,
         accessible from the current python path.
 
         """,
         options = '--plugins',
+        default = [],
     )
 
     general['load-tex-packages'] = BooleanOption(
@@ -70,21 +71,23 @@ def defaultConfig(loadConfigFiles: bool=False):
         default = True,
     )
 
-    general['tex-packages'] =  MultiOption(
+    general['tex-packages'] =  MultiStringOption(
         """
         Packages that we will try to load from their TeX implementation if no
         python implementation is found, even if the load-tex-packages
         option is False.
         """,
         options = '--tex-packages',
+        default = [],
     )
 
-    general['packages-dirs'] = MultiOption(
+    general['packages-dirs'] = MultiStringOption(
         """
         Directories where packages could be implemented in python.
         Use either absolute paths or paths relative to the current directory.
         """,
         options = '--packages-dirs',
+        default = [],
     )
 
     #

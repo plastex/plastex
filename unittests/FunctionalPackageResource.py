@@ -10,7 +10,7 @@ from plasTeX.Renderers.HTML5.Config import addConfig
 
 def test_package_resource(tmpdir):
     config = defaultConfig()
-    config['general'].data['packages-dirs'].setValue([str(Path(__file__).parent)])
+    config['general'].data['packages-dirs'].value = [str(Path(__file__).parent)]
     addConfig(config)
     doc = TeXDocument(config=config)
     tex = TeX(doc)
@@ -22,11 +22,6 @@ def test_package_resource(tmpdir):
             \\end{document}""")
 
     doc = tex.parse()
-    doc.userdata['working-dir'] = os.path.dirname(__file__)
-
-    doc = tex.parse()
-    # Work around crazy sharing of config
-    doc.config['general'].data['packages-dirs'].setValue([])
     doc.userdata['working-dir'] = os.path.dirname(__file__)
 
     with tmpdir.as_cwd():

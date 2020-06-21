@@ -26,7 +26,7 @@ class mycmd(Command):
     my_var = 'ok'
 """)
     doc = TeXDocument()
-    doc.config['general'].data['packages-dirs'].setValue([str(tmpdir)])
+    doc.config['general'].data['packages-dirs'].value = [str(tmpdir)]
 
 
     tex = TeX(doc)
@@ -55,10 +55,7 @@ class mycmd(Command):
 """)
     sys.path.append(str(tmpdir))
     doc = TeXDocument()
-    # Avoid pollution from the preceding test (because crazy ConfigManager
-    # forces to share plasTeX.Config.config)
-    doc.config['general'].data['packages-dirs'].setValue([])
-    doc.config['general'].data['plugins'].setValue(['my_plugin'])
+    doc.config['general'].data['plugins'].value = ['my_plugin']
 
     tex = TeX(doc)
     tex.input(r"""
