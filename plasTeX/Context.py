@@ -418,13 +418,14 @@ class Context(object):
 
         imported = None
         for pkg_dir in config['general']['packages-dirs']:
-            path = Path(pkg_dir)
-            if not path.is_absolute():
-                path = Path(working_dir)/path
-            sys.path.insert(0, str(path))
+            if Path(pkg_dir).is_absolute():
+                path = str(Path(pkg_dir))
+            else:
+                path = str(Path(working_dir)/path)
+            sys.path.insert(0, path)
             try:
                 imported = import_module(module)
-                sys.path.remove(str(path))
+                sys.path.remove(path)
                 break
             except ImportError as msg:
                 # No Python module
@@ -433,9 +434,9 @@ class Context(object):
                     # Failed to load Python package
                 # Error while importing
                 else:
-                    sys.path.remove(str(path))
+                    sys.path.remove(path)
                     raise
-            sys.path.remove(str(path))
+            sys.path.remove(path)
 
         if imported is None:
             for plugin in reversed(config['general']['plugins']):
@@ -444,7 +445,7 @@ class Context(object):
                 sys.path.insert(0, path)
                 try:
                     imported = import_module(module)
-                    sys.path.remove(str(path))
+                    sys.path.remove(path)
                     break
                 except ImportError as msg:
                     # No Python module
@@ -453,7 +454,7 @@ class Context(object):
                         # Failed to load Python package
                     # Error while importing
                     else:
-                        sys.path.remove(str(path))
+                        sys.path.remove(path)
                         raise
                 sys.path.remove(path)
 
@@ -470,7 +471,7 @@ class Context(object):
                     # Failed to load Python package
                 # Error while importing
                 else:
-                    sys.path.remove(str(path))
+                    sys.path.remove(path)
                     raise
             sys.path.remove(path)
 
