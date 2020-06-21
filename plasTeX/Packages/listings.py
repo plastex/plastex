@@ -9,13 +9,11 @@ except: pygments = None
 class listingsname(Base.Command):
     str = 'Listing'
 
-PackageOptions = {}
-
 def ProcessOptions(options, document):
     document.context.newcounter('listings',
                                 resetby='chapter',
                                 format='${thechapter}.${listings}')
-    PackageOptions.update(options)
+    document.userdata['listings'] = options
 
 class lstset(Base.Command):
     args = 'arguments:dict'
@@ -57,8 +55,8 @@ def _format(self, file):
         self.attributes['arguments'] = {}
 
     linenos = False
-    if ('numbers' in list(self.attributes['arguments'].keys())
-        or 'numbers' in list(PackageOptions.keys())):
+    if ('numbers' in self.attributes['arguments']
+        or 'numbers' in document.userdata['listings']):
         linenos = 'inline'
 
     # If this listing includes a label, inform plasTeX.
