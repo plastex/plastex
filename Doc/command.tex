@@ -121,6 +121,9 @@ is set.
 \default{XHTML}
 specifies which renderer to use. This is either one of the built in renderers,
 a renderer defined by a plugin, or a path to the directory of a renderer.
+A plugin can provide a renderer \verb+my_renderer+ by having a
+\module{Renderers} submodule containing a \module{my_renderer} submodule exporting
+a \class{Renderer} class.
 \end{configuration}
 
 \begin{configuration}{Packages directories}

@@ -42,14 +42,14 @@ def load_renderer(rname: str, config: ConfigManager) -> Renderer:
 
     for plugin in config['general']['plugins'] or []:
         try:
-            return getattr(importlib.import_module(plugin + rname),
+            return getattr(importlib.import_module(plugin + '.Renderers.' + rname),
                            'Renderer')()
         except ImportError:
             pass
 
     try:
         return getattr(import_file(Path(rname)), 'Renderer')()
-    except ImportError:
+    except (ImportError, FileNotFoundError):
         raise ImportError('Could not import renderer "%s".  Make sure that it is installed correctly, and can be imported by Python.' % rname)
 
 
