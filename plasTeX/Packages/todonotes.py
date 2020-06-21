@@ -13,6 +13,6 @@ class todo(Command):
 
 def ProcessOptions(options, document):
     if options.get("disable"):
-        document.todoNotesDisable = True
+        document.userdata['todonotes'] = {'disable': True}
     else:
-        document.todoNotesDisable = False
+        document.userdata['todonotes'] = {'disable': False}

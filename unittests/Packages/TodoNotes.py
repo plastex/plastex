@@ -1,4 +1,4 @@
-from plasTeX.TeX import TeX, TeXDocument
+from plasTeX.TeX import TeX
 from plasTeX.Renderers import Renderer
 from pathlib import Path
 
@@ -15,7 +15,7 @@ def test_todo_inline():
 def test_todo_disable(tmpdir):
     renderer = Renderer()
     def render_todo(obj):
-        if obj.ownerDocument.todoNotesDisable:
+        if obj.ownerDocument.userdata['todonotes']['disable']:
             return "disabled"
         else:
             return str(obj.attributes["todo"])
