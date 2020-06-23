@@ -12,10 +12,6 @@ ifneq (,$(shell command -v git ;))
 include misc/git.mk
 endif
 
-ifneq (,$(shell command -v docker ;))
-include misc/docker.mk
-endif
-
 ifneq (,$(shell command -v pyenv ;))
 include misc/pyenv.mk
 endif
