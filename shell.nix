@@ -1,19 +1,9 @@
-with import <nixpkgs> {};
+### Specification for nix-shell
 
 let
-  python = python38;
-  jinja2-ansible-filters =
-    callPackage nix/jinja2-ansible-filters.nix python.pkgs; 
-  pythonEnvironment = python.withPackages (packages: [
-    packages.certifi
-    packages.chardet
-    packages.docopt
-    packages.jinja2
-    packages.pip
-    packages.pycodestyle
-    packages.setuptools
-    packages.unidecode
+  dependencies = import ./misc/dependencies.nix;
+in dependencies.mkShell {
+  buildInputs = dependencies.packages;
+}
 
-    jinja2-ansible-filters
-  ]);
-in mkShell { buildInputs = [ pythonEnvironment ]; }
+### End of file

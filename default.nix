@@ -1,18 +1,10 @@
-with import <nixpkgs> {};
+## Specification for nix-build
 
 let
-  python = python38;
-  jinja2-ansible-filters =
-    callPackage nix/jinja2-ansible-filters.nix python.pkgs; 
-in python.withPackages (packages: [
-  packages.certifi
-  packages.chardet
-  packages.docopt
-  packages.jinja2
-  packages.pip
-  packages.pycodestyle
-  packages.setuptools
-  packages.unidecode
+  dependencies = import ./misc/dependencies.nix;
+in dependencies.buildEnv {
+  name = "plastex-development";
+  paths = dependencies.packages;
+}
 
-  jinja2-ansible-filters
-])
+### End of file
