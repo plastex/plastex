@@ -74,4 +74,5 @@ Doc/plastex/
 Doc/plastex6.syn
 
 # nix-build output
+.nix_build_DONE
 result
