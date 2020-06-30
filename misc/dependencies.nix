@@ -26,6 +26,7 @@ let
   ];
 in {
   inherit (nixpkgs) buildEnv mkShell;
+  inherit (python.pkgs) buildPythonPackage;
   packages = [ pythonEnvironment texLiveEnvironment ]
              ++ nodeJsPackages;
 }
