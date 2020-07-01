@@ -1,9 +1,6 @@
 Jinja2>=2.11.1
-Unidecode==0.4.21
-certifi==2017.7.27.1
-chardet==3.0.4
-docopt==0.6.2
+Unidecode>=0.4.21
+certifi>=2017.7.27.1
+chardet>=3.0.4
+docopt>=0.6.2
 jinja2-ansible-filters>=1.2.1
-pip>=20.0.2
-pycodestyle>=2.5.0
-setuptools>=45.1.0
