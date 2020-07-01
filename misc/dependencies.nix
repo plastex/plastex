@@ -10,7 +10,9 @@ let
       packages.chardet
       packages.docopt
       packages.jinja2
+      packages.pip
       packages.pycodestyle
+      packages.setuptools
       packages.unidecode
       distributions.nixPython.jinja2-ansible-filters
     ]
