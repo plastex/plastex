@@ -36,5 +36,5 @@ in {
   packages = [ pythonEnvironment texliveEnvironment ]
              ++ nodeJsPackages;
 }
-  b
+
 ### End of file
