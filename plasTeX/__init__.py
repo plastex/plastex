@@ -102,7 +102,7 @@ class CSSStyles(dict):
         """
         if not self:
             return None
-        return '; '.join(['%s:%s' % (x[0], x[1]) for x in list(self.items())])
+        return '; '.join(['%s:%s' % (x[0], x[1]) for x in list(self.items()) if x[1]])
 
 
 class Macro(Element):
