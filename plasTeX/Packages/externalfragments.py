@@ -7,10 +7,11 @@ from typing import NamedTuple
 
 from plasTeX import Command
 from plasTeX.Logging import getLogger
+from plasTeX.Packages.packageprefix import define_prefixed_exports
 
 log = getLogger()
 
-package_prefix_exports = ['block']
+exports_to_be_prefixed = ['block']
 
 FRAGMENTS_FILE = 'external-fragments.csv'
 
@@ -21,7 +22,16 @@ class FragmentLocus(NamedTuple):
     end: int
 
 
-def ProcessOptions(_options, document):
+def ProcessOptions(options, document):
+    define_prefixed_exports(
+        options,
+        document,
+        exports_from_package=exports_to_be_prefixed,
+        classes_in_package=globals(),
+        prefix_in_package='externalfragments_',
+        default_prefix_in_document='EXTERNALFRAGMENTS',
+    )
+
     build_directory = document.config['files']['directory']
     if os.path.isabs(build_directory):
         directory = build_directory

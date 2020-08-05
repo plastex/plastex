@@ -1,8 +1,9 @@
 # Type theory macros
 
 from plasTeX import Command
+from plasTeX.Packages.packageprefix import define_prefixed_exports
 
-package_prefix_exports = [
+exports_to_be_prefixed = [
     'abstraction', 'booleanFalseElement', 'booleanTrueElement', 
     'booleanType', 'codomain', 'coproduct', 'domain', 'element', 
     'emptyType', 'firstInjection', 'firstProjection', 'idFunction',
@@ -11,6 +12,17 @@ package_prefix_exports = [
     'sigmaType', 'successor', 'unitType', 'unitTypeElement',
     'universe', 'zeroNatural' 
 ]
+
+
+def ProcessOptions(options, document):
+    define_prefixed_exports(
+        options,
+        document,
+        exports_from_package=exports_to_be_prefixed,
+        classes_in_package=globals(),
+        prefix_in_package='typetheory_',
+        default_prefix_in_document='TYPETHEORY',
+    )
 
 
 class typetheory_element(Command):

@@ -3,10 +3,22 @@
 from plasTeX import Command
 from plasTeX.Packages.crossreferences import *
 from plasTeX.Packages.generalmathematics import *
+from plasTeX.Packages.packageprefix import define_prefixed_exports
 
-package_prefix_exports = [
+exports_to_be_prefixed = [
     'author', 'date', 'makeTitle', 'setTitle', 'shortTitle', 'title'
 ]
+
+
+def ProcessOptions(options, document):
+    define_prefixed_exports(
+        options,
+        document,
+        exports_from_package=exports_to_be_prefixed,
+        classes_in_package=globals(),
+        prefix_in_package='basicnotes_',
+        default_prefix_in_document='BASICNOTES',
+    )
 
 
 class basicnotes_setTitle(Command):
