@@ -102,9 +102,10 @@ class CSSStyles(dict):
         string containing inline CSS
 
         """
-        if not self:
+        nonempty_keys = {k:str(v) for k,v in self.items() if v is not None and str(v)!=''}
+        if not nonempty_keys:
             return None
-        return '; '.join(['%s:%s' % (x[0], x[1]) for x in list(self.items()) if x[1]])
+        return '; '.join(['%s:%s' % (x[0], x[1]) for x in list(nonempty_keys.items())])
 
 
 class Macro(Element):
