@@ -416,6 +416,7 @@ class input(Command):
         except (OSError, IOError) as msg:
             log.warning(msg)
             status.info(' ) ')
+        return []
 
 class endinput(Command):
     def invoke(self, tex):
