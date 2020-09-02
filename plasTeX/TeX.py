@@ -557,10 +557,9 @@ class TeX(object):
                 cases[-1].append(t)
                 nesting += 1
             elif name == 'fi':
-                if nesting > 1:
-                    cases[-1].append(t)
-                elif not nesting:
+                if not nesting:
                     break
+                cases[-1].append(t)
                 nesting -= 1
             elif not(nesting) and name == 'else':
                 cases.append([])
