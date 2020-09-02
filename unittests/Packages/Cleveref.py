@@ -19,12 +19,12 @@ def test_cleveref():
 \begin{equation}
   x = y\label{eq}
 \end{equation}
-\Cref{sec}\Cref{fig}\Cref{subsec}\Cref{thm}\Cref{eq}
-\cref{sec}\cref{fig}\cref{subsec}\cref{thm}\cref{eq}
+\Cref{sec}\Cref{fig}\Cref{subsec}\Cref{thm}\Cref{eq}\Cref{missing}
+\cref{sec}\cref{fig}\cref{subsec}\cref{thm}\cref{eq}\cref{missing}
 \end{document}
 ''')
 
     p = tex.parse()
 
-    assert ["Section", "Figure", "Section", "TheoRem", "Equation"] == [x.refname() for x in p.getElementsByTagName("Cref")]
-    assert ["section", "figure", "section", "theoRem", "eq."] == [x.refname() for x in p.getElementsByTagName("cref")]
+    assert ["Section", "Figure", "Section", "TheoRem", "Equation", ""] == [x.refname() for x in p.getElementsByTagName("Cref")]
+    assert ["section", "figure", "section", "theoRem", "eq.", ""] == [x.refname() for x in p.getElementsByTagName("cref")]
