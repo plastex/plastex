@@ -77,10 +77,10 @@ class TestIfs(TestCase):
         compare_output(r'\ifcase 2 bye\or text\or one\else two\fi')
 
     def testNestedIf(self):
-        compare_output(r'\ifnum 2 < 3 bye\iftrue text\ifcat() hi\fi\else one\fi\fi')
+        compare_output(r'\ifnum 2 < 3 bye\iftrue text\ifcat() hi\fi\else one\fi\fi foo')
 
     def testNestedIf2(self):
-        compare_output(r'\ifnum 2 > 3 bye\iftrue text\ifcat() hi\fi\else one\fi\fi')
+        compare_output(r'\ifnum 2 > 3 bye\iftrue text\ifcat() hi\fi\else one\fi\fi foo')
 
 if __name__ == '__main__':
     unittest.main()
