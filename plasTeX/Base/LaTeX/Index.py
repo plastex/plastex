@@ -28,7 +28,7 @@ except ImportError:
     def unidecode(s):
         return s
 
-    
+
 class hyperpage(IgnoreCommand):
     args = 'page:nox'
 
@@ -85,7 +85,7 @@ class IndexUtils(object):
         batches = []
         current = ''
         for item in self:
-            try: 
+            try:
                 label = title = unidecode(item.sortkey[0]).upper()
                 if title in encoding.stringletters():
                     pass
@@ -410,16 +410,17 @@ class IndexEntry(object):
         return not(self.see) and not(self.seealso)
 
     def __lt__(self, other):
-        result = (list(zip([collator(x) for x in self.sortkey if isinstance(x, str)],
-                         [collator(x.textContent) for x in self.key],
-                         self.key))
-                         <
-                     list(zip([collator(x) for x in other.sortkey if isinstance(x, str)],
-                         [collator(x.textContent) for x in other.key],
-                         other.key)))
-        if not result and len(self.key) != len(other.key):
-            return (len(self.key) < len(other.key))
-        return result
+        key_self = list(zip([collator(x) for x in self.sortkey if isinstance(x, str)],
+                            [collator(x.textContent) for x in self.key],
+                            self.key))
+        key_other = list(zip([collator(x) for x in other.sortkey if isinstance(x, str)],
+                             [collator(x.textContent) for x in other.key],
+                             other.key))
+        if key_self < key_other:
+            return True
+        elif key_self > key_other:
+            return False
+        return (len(self.key) < len(other.key))
 
     def __repr__(self):
         if self.format is None:
