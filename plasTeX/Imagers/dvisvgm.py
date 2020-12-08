@@ -11,7 +11,7 @@ class DVISVGM(_Imager):
 
     def executeConverter(self, outfile=None) -> List[Tuple[str, str]]:
         if outfile is None:
-            outfile = "images.dvi"
+            outfile = self.tmpFile.with_suffix('.dvi').name
 
         scale = self.config["images"]["scale-factor"]
 

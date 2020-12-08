@@ -439,6 +439,9 @@ class Imager(object):
     # The compiler command used to compile the LaTeX document
     compiler = 'latex'
 
+    # The filename for temporary LaTeX source
+    tmpFile = Path('images.tex')
+
     # Verification command to determine if the imager is available
     verifications = []
 
@@ -602,7 +605,9 @@ width 2pt\hskip2pt}}{}
 
         # Compile LaTeX source, then convert the output
         self.source.seek(0)
-        Path("images.tex").write_text(self.source.read(), encoding=self.config['files']['input-encoding'])
+        (_, fname) = tempfile.mkstemp('.tex', 'images-', '.', True)
+        self.tmpFile = Path(fname)
+        self.tmpFile.write_text(self.source.read(), encoding=self.config['files']['input-encoding'])
 
         def on_error(e):
             log.warning("Source files are saved at {}.".format(tempdir))
@@ -679,12 +684,12 @@ width 2pt\hskip2pt}}{}
 
     def compileLatex(self):
         """
-        Compile the LaTeX source, located at `images.tex`
+        Compile the LaTeX source, located at self.tmpFile
 
         This should raise an exception if the compilation fails.
         """
 
-        run_command(r'%s images.tex' % self.getCompiler())
+        run_command(r'%s %s' % (self.getCompiler(), self.tmpFile.name))
 
     def executeConverter(self, outfile: Optional[str] = None) -> List[Tuple[str, str]]:
         """
@@ -707,8 +712,8 @@ width 2pt\hskip2pt}}{}
         """
         if outfile is None:
             for ext in ['.dvi', ".pdf", ".ps"]:
-                if Path("images" + ext).is_file():
-                    outfile = "images" + ext
+                if self.tmpFile.with_suffix(ext).is_file():
+                    outfile = self.tmpFile.with_suffix(ext).name
                     break
 
         if outfile is None:
