@@ -15,9 +15,9 @@ class PDFSVG(VectorImager):
 
     def executeConverter(self, outfile=None) -> List[Tuple[str, str]]:
         if outfile is None:
-            outfile = "images.pdf"
+            outfile = self.tmpFile.with_suffix('.pdf').name
 
-        subprocess.call(["pdfcrop", outfile, "images-cropped.pdf"], stdout=subprocess.DEVNULL)
+        subprocess.call(["pdfcrop", outfile, self.tmpFile.with_suffix('.cropped.pdf').name], stdout=subprocess.DEVNULL)
 
         scale = self.config["images"]["scale-factor"]
 
@@ -27,7 +27,7 @@ class PDFSVG(VectorImager):
             page, output = line.split(",")
             images.append((filename, output.rstrip()))
 
-            subprocess.run(['pdf2svg', 'images-cropped.pdf', filename, str(page)], stdout=subprocess.DEVNULL, check=True)
+            subprocess.run(['pdf2svg', self.tmpFile.with_suffix('.cropped.pdf').name, filename, str(page)], stdout=subprocess.DEVNULL, check=True)
 
             if scale != 1:
                 tree = ET.parse(filename)

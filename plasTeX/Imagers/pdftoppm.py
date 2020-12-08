@@ -35,7 +35,7 @@ class pdftoppm(_Imager):
 
         """
         if outfile is None:
-            outfile = "images.pdf"
+            outfile = self.tmpFile.with_suffix('.pdf')
 
         options = ''
         if self._configOptions:

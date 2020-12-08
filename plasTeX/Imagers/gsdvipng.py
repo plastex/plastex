@@ -14,9 +14,9 @@ class GSDVIPNG(gspdfpng.GSPDFPNG):
 
     def executeConverter(self, outfile=None):
         if outfile is None:
-            outfile = 'images.dvi'
+            outfile = self.tmpFile.with_suffix('.dvi').name
 
-        subprocess.run(['dvips', '-o', "images.ps", outfile], check=True)
-        return gspdfpng.GSPDFPNG.executeConverter(self, "images.ps")
+        subprocess.run(['dvips', '-o', self.tmpFile.with_suffix('.ps').name, outfile], check=True)
+        return gspdfpng.GSPDFPNG.executeConverter(self, self.tmpFile.with_suffix('.ps').name)
 
 Imager = GSDVIPNG
