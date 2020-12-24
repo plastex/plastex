@@ -103,11 +103,11 @@ class Renderer(Renderer):
                 # these nodes are the same as the child nodes
                 if key == 'self':
                     continue
-                s.append('<%s>%s</%s>' % (key, unicode(value), key))
+                s.append('<%s>%s</%s>' % (key, str(value), key))
             s.append('</attributes>')
 
         # Invoke rendering on child nodes
-        s.append(unicode(node))
+        s.append(str(node))
 
         # End tag
         s.append('</%s>' % node.nodeName)
