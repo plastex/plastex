@@ -22,15 +22,21 @@ class Accent(Command):
     @property
     def str(self):
         content = self.textContent.strip()
-        return type(self).chars.get(content,
-                content[0]+self.middle_combining+content[1:]+self.combining)
+        if not content:
+            return self.macroName or ''
+        elif len(content) == 1:
+            return type(self).chars.get(content,
+                    content[0]+self.combining)
+        else:
+            return type(self).chars.get(content,
+                    content[0]+self.middle_combining+content[1:]+self.combining)
 
-    @property    
+    @property
     def textContent(self):
         """
-        We need a customized textContent that doesn't look up 
+        We need a customized textContent that doesn't look up
         textContent recursively.
-        
+
         """
         output = []
         for item in self:
@@ -43,7 +49,7 @@ class Accent(Command):
         if self.ownerDocument is not None:
             return self.ownerDocument.createTextNode(''.join(output))
         else:
-            return Text(''.join(output))        
+            return Text(''.join(output))
 
 
 class Grave(Accent):
@@ -405,7 +411,7 @@ class r(Accent):
 class Symbol(Command):
     pass
 
-#class oe(Symbol): pass 
+#class oe(Symbol): pass
 #class OE(Symbol): pass
 #class ae(Symbol): pass
 #class AE(Symbol): pass
