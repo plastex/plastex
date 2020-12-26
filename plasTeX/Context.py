@@ -390,7 +390,7 @@ class Context(object):
 
         Python versions are first searched for in
         the directories of config['general']['packages-dirs'], then
-        in plugins listed in config['general']['plugins'], and this
+        in plugins listed in config['general']['plugins'], and then
         among builtin packages.
 
         Required Arguments:
@@ -417,15 +417,15 @@ class Context(object):
                                    os.path.basename(module) + '.ini')
 
         imported = None
+        orig_sys_path = sys.path
         for pkg_dir in config['general']['packages-dirs']:
             if Path(pkg_dir).is_absolute():
                 path = str(Path(pkg_dir))
             else:
                 path = str(Path(working_dir)/path)
-            sys.path.insert(0, path)
+            sys.path = [path]
             try:
                 imported = import_module(module)
-                sys.path.remove(path)
                 break
             except ImportError as msg:
                 # No Python module
@@ -434,18 +434,16 @@ class Context(object):
                     # Failed to load Python package
                 # Error while importing
                 else:
-                    sys.path.remove(path)
+                    sys.path = orig_sys_path
                     raise
-            sys.path.remove(path)
 
         if imported is None:
             for plugin in reversed(config['general']['plugins']):
+                sys.path = orig_sys_path
                 plugin_module = import_module(plugin)
-                path = str(Path(plugin_module.__file__).parent/'Packages')
-                sys.path.insert(0, path)
+                sys.path = [str(Path(plugin_module.__file__).parent/'Packages')]
                 try:
                     imported = import_module(module)
-                    sys.path.remove(path)
                     break
                 except ImportError as msg:
                     # No Python module
@@ -454,14 +452,12 @@ class Context(object):
                         # Failed to load Python package
                     # Error while importing
                     else:
-                        sys.path.remove(path)
+                        sys.path = orig_sys_path
                         raise
-                sys.path.remove(path)
 
         if imported is None:
             # Now try builtin plasTeX packages
-            path = str(Path(__file__).parent/'Packages')
-            sys.path.insert(0, path)
+            sys.path = [str(Path(__file__).parent/'Packages')]
             try:
                 imported = import_module(module)
             except ImportError as msg:
@@ -471,9 +467,10 @@ class Context(object):
                     # Failed to load Python package
                 # Error while importing
                 else:
-                    sys.path.remove(path)
+                    sys.path = orig_sys_path
                     raise
-            sys.path.remove(path)
+
+        sys.path = orig_sys_path
 
         if imported:
             status.info(' (loading package %s ' % imported.__file__)

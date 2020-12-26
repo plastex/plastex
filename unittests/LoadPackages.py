@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 from plasTeX.TeX import TeX, TeXDocument
+from plasTeX.Context import Context
 
 def test_builtin_packages():
     doc = TeXDocument()
@@ -70,3 +71,13 @@ class mycmd(Command):
     assert doc.getElementsByTagName('mycmd')
     node = doc.getElementsByTagName('mycmd')[0]
     assert node.my_var == 'ok'
+
+
+def test_crazy_package_name():
+    """
+    This test tries to load a package whose name clashes with a name of
+    the python standard library and does not exists in plasTeX.
+    """
+    ctx = Context()
+    tex = TeX()
+    assert not ctx.loadPackage(tex, 'rlcompleter')
