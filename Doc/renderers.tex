@@ -1478,6 +1478,29 @@ rendered file, after all files have been rendered.  Registration is
 analogous to pre-cleanup callbacks but replacing
 \class{PackagePreCleanupCB} by \class{PackageProcessFileContent}.
 
+\subsection{Themes}
+
+The theming support in the HTML5 renderer is a superset of that of the
+Page Template Renderer. Any template directory can have a subdirectory called
+\file{Themes} which contains theme directories with sets of templates
+in them.  The names of the directories in the \file{Themes} directory
+corresponds to the name of the theme. Each of these directories can contain
+folders named \file{css} and \file{js}, and containing CSS and javascript files
+respectively. Those files are copied while rendering, unless
+option \longprogramopt{copy-theme-extras} is unset.
+
+There are currently three themes included with \plasTeX: default, minimal and
+fragment. The first two themes produce standalone HTML files, including a head
+section. The fragment theme produces output that is meant to be inserted in a
+HTML document already containg a head section. The default theme include some
+javascript and CSS file. One can choose between three variations on CSS using
+option \longprogramopt{theme-css} which can be \optval{white}, \optval{blue} or
+\optval{green}. The default value is \optval{white} which uses a sober black on
+white color scheme with no gradient background of shadow. The \optval{green}
+CSS theme uses the historical \plasTeX{} green and yellow color scheme, with
+gradients and shadows. The \optval{blue} one uses a blue and gray color scheme,
+with gradients and shadows.
+
 
 \section{tBook Renderer}
 

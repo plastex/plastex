@@ -1,0 +1,10 @@
+{{ obj }}
+{% if obj.footnotes %}
+<footer id="footnotes">
+<ol>
+{% for footnote in obj.footnotes %}
+  <li id="{{ footnote.id }}">{{ footnote }}</li>
+{% endfor %}
+</ol>
+</footer>
+{% endif %}
