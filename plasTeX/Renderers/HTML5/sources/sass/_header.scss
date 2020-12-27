@@ -4,7 +4,7 @@
   z-index: $header-z-index;
   background: $doc-title-background;
   color: $doc-title-color;
-  text-shadow: 1px 2px 0px rgba(0,0,0,0.8);
+  text-shadow: $header-text-shadow;
   display: flex;
   align-items: center;
   justify-content: center;

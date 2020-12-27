@@ -19,7 +19,7 @@ ul.breadcrumbs a
 {
     text-decoration: none;
 
-    color: darken($prevupnext-nav-color, 10%);
+    color: $breadcrumbs-color;
 }
 
 

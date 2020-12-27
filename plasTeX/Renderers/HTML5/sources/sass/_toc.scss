@@ -100,7 +100,8 @@ nav.active
 
     li.current
     {
-        background-color: lighten($toc-background-color,10%);
+        background-color: $toc-current-bg-color;
+	font-weight: $tox-current-font-weight; 
     }
 }
 

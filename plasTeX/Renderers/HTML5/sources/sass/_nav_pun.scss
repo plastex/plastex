@@ -11,9 +11,7 @@ nav.prev_up_next
 
     height: $pun-height;
 
-    background: linear-gradient(to bottom,
-    lighten($prevupnext-nav-color, 10%) 0%,
-    darken($prevupnext-nav-color, 10%) 100%);
+    background: $pun-background;
     a
     {
         font-size: 150%;
@@ -23,19 +21,19 @@ nav.prev_up_next
 
         text-decoration: none;
 
-        color: white;
-        text-shadow: 1px 2px 0 rgba(0,0,0,.8);
+        color: $pun-color;
+        text-shadow: $pun-shadow;
     }
     svg#toc-toggle
     {
         font-size: 150%;
 
         margin: auto;
-				min-width: 2rem;
+	min-width: 2rem;
 
         text-decoration: none;
 
-        color: white;
-        text-shadow: 1px 2px 0 rgba(0,0,0,.8);
+        color: $pun-color;
+        text-shadow: $pun-shadow;
     }
 }

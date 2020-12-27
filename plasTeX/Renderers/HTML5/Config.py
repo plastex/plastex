@@ -19,7 +19,7 @@ def addConfig(config: ConfigManager):
     section['theme-css'] = StringOption(
         """ Theme css file""",
         options='--theme-css',
-        default='green',
+        default='white',
     )
 
     section['use-theme-css'] = BooleanOption(

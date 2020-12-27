@@ -7,8 +7,10 @@ sass --no-source-map --update sass:build
 cd build
 postcss --use autoprefixer -o theme-blue-pre.css  theme-blue.css
 postcss --use autoprefixer -o theme-green-pre.css  theme-green.css
+postcss --use autoprefixer -o theme-white-pre.css  theme-white.css
 cssnano theme-blue-pre.css > theme-blue.css
 cssnano theme-green-pre.css > theme-green.css
-mv theme-blue.css theme-green.css ../../Themes/default/styles/
+cssnano theme-white-pre.css > theme-white.css
+mv theme-blue.css theme-green.css theme-white.css ../../Themes/default/styles/
 cd ..
 rm -rf build
