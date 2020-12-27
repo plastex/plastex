@@ -61,8 +61,8 @@ class HTML5(_Renderer):
         if (config['html5']['use-theme-js'] and
                 config['general']['copy-theme-extras'] and
                 theme_js_path.exists()):
-            rendererdata['js'] = sorted(
-                    str(path) for path in theme_js_path.glob('*.js'))
+            rendererdata['js'] = sorted(path.name
+                    for path in theme_js_path.glob('*.js'))
         else:
             rendererdata['js'] = []
 
