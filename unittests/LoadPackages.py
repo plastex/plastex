@@ -43,6 +43,24 @@ class mycmd(Command):
     node = doc.getElementsByTagName('mycmd')[0]
     assert node.my_var == 'ok'
 
+
+def test_packages_dirs_name_clash(tmpdir):
+    tmpdir = Path(str(tmpdir))
+
+    (tmpdir / "plasTeX.py").write_text(
+    r"""
+from plasTeX import Command
+
+class mycmd(Command):
+    my_var = 'ok'
+""")
+    doc = TeXDocument()
+    doc.config['general'].data['packages-dirs'].value = [str(tmpdir)]
+
+
+    tex = TeX(doc)
+    assert not doc.context.loadPackage(tex, 'plasTeX')
+
 def test_plugin_packages(tmpdir):
     tmpdir = Path(str(tmpdir))
     (tmpdir/'my_plugin'/'Packages').mkdir(parents=True)

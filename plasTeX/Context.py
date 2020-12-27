@@ -6,6 +6,7 @@ import time
 from pathlib import Path
 from typing import Optional, Dict
 from importlib import import_module
+from importlib.util import find_spec
 
 from plasTeX import ismacro, macroName
 from plasTeX.TeX import TeX
@@ -420,14 +421,22 @@ class Context(object):
         orig_sys_path = sys.path
         for pkg_dir in config['general']['packages-dirs']:
             if Path(pkg_dir).is_absolute():
-                path = str(Path(pkg_dir))
+                path = Path(pkg_dir)
             else:
-                path = str(Path(working_dir)/path)
-            sys.path = [path]
+                path = Path(working_dir)/pkg_dir
+            sys.path = [str(path)]
             try:
+                pypath = (path/module).with_suffix('.py')
+                if (module in sys.modules and pypath.exists() and
+                        find_spec(module).origin != str(pypath)):
+                    log.warning('Python has already loaded a module named {} '
+                            ' independently from plasTeX, so we cannot load '
+                            'it from {}. You can fix this by creating a '
+                            'plugin.'.format(module, pkg_dir))
+                    break
                 imported = import_module(module)
                 break
-            except ImportError as msg:
+            except (ImportError, ModuleNotFoundError) as msg:
                 # No Python module
                 if 'No module' in str(msg) and module in str(msg):
                     pass
@@ -441,11 +450,11 @@ class Context(object):
             for plugin in reversed(config['general']['plugins']):
                 sys.path = orig_sys_path
                 plugin_module = import_module(plugin)
-                sys.path = [str(Path(plugin_module.__file__).parent/'Packages')]
+                sys.path = [str(Path(plugin_module.__file__).parent.parent)]
                 try:
-                    imported = import_module(module)
+                    imported = import_module(plugin + '.Packages.' + module)
                     break
-                except ImportError as msg:
+                except (ImportError, ModuleNotFoundError) as msg:
                     # No Python module
                     if 'No module' in str(msg) and module in str(msg):
                         pass
@@ -457,10 +466,10 @@ class Context(object):
 
         if imported is None:
             # Now try builtin plasTeX packages
-            sys.path = [str(Path(__file__).parent/'Packages')]
+            sys.path = [str(Path(__file__).parent.parent)]
             try:
-                imported = import_module(module)
-            except ImportError as msg:
+                imported = import_module('plasTeX.Packages.' + module)
+            except (ImportError, ModuleNotFoundError) as msg:
                 # No Python module
                 if 'No module' in str(msg) and module in str(msg):
                     pass
