@@ -10,16 +10,16 @@ from plasTeX.Renderers.HTML5.Config import addConfig
 
 def test_package_resource(tmpdir):
     config = defaultConfig()
-    config['general'].data['packages-dirs'].value = [str(Path(__file__).parent)]
+    config['general'].data['packages-dirs'].value = [str(Path(__file__).parent/'examplePackage')]
     addConfig(config)
     doc = TeXDocument(config=config)
     tex = TeX(doc)
-    tex.input("""
-            \\documentclass{article}
-            \\usepackage{examplePackage}
-            \\begin{document}
-            \\emph{Hello}
-            \\end{document}""")
+    tex.input(r"""
+            \documentclass{article}
+            \usepackage{examplePackage}
+            \begin{document}
+            \emph{Hello}
+            \end{document}""")
 
     doc = tex.parse()
     doc.userdata['working-dir'] = os.path.dirname(__file__)
