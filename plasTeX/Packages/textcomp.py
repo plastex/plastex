@@ -172,8 +172,8 @@ class capitaldieresis(Accents.Umlaut):
 class capitalbreve(Accents.Macron):
     macroName = None
 
-class capitalnewtie(Accents.t):
-    macroName = None
+class capitalnewtie(Accents.Accent):
+    combining = '\u0311'
 
 class capitalgrave(Accents.Grave):
     macroName = None
