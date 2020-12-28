@@ -2,12 +2,13 @@ import subprocess, shlex
 import os, shutil, re
 from pathlib import Path
 from plasTeX.Renderers.PageTemplate import Renderer as _Renderer
+from plasTeX.Renderers.HTML5.Config import addConfig
 from plasTeX.Logging import getLogger
 
 log = getLogger()
 
 class HTML5(_Renderer):
-    """ Renderer for HTML5 documents, heavily copied from XHTML renderer """
+    """Renderer targetting HTML5."""
 
     fileExtension = '.html'
     imageTypes = ['.svg', '.png','.jpg','.jpeg','.gif']
@@ -18,16 +19,11 @@ class HTML5(_Renderer):
         """Load templates as in PageTemplate but also look for packages that
         want to override some templates and handles extra css and javascript."""
 
-        try:
-            import jinja2
-        except ImportError:
-            log.error('Jinja2 is not available, hence the HTML5 renderer cannot be used.')
-
         _Renderer.loadTemplates(self, document)
         rendererdata = document.rendererdata.setdefault('html5', dict())
         config = document.config
-
-        rendererDir = os.path.dirname(__file__)
+        if 'html5' not in config:
+            addConfig(config)
 
         srcDir = document.userdata.get('working-dir', '.') # type: str
         buildDir = os.getcwd()
