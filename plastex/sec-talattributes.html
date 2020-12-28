@@ -9,10 +9,10 @@
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>plasTeX 2.1 — A Python Framework for Processing LaTeX Documents: <span class="ttfamily">plasTeX.Renderers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Rendering Framework</title>
-<link rel="next" href="sect0038.html" title="Renderer Objects" />
-<link rel="prev" href="sec-context-language.html" title="Context language" />
-<link rel="up" href="sect0022.html" title="plas Frameworks and APIs" />
+<title>plasTeX 2.1 — A Python Framework for Processing LaTeX Documents: Template Attribute Language (TAL) Attributes</title>
+<link rel="next" href="sect0050.html" title="Index" />
+<link rel="prev" href="sect0049.html" title="Template Attribute Language Expression Syntax (TALES)" />
+<link rel="up" href="sec-zpttutorial.html" title="Zope Page Template Tutorial" />
 <link rel="stylesheet" href="styles/theme-white.css" />
 </head>
 
@@ -214,10 +214,10 @@
 
   </ul>
  </li>
-<li class=" active">
+<li class="">
   <a href="sect0022.html"><span class="toc_ref">6</span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</span></a>
-<svg  class="icon icon-cross expand-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
-  <ul class="sub-toc-1 active">
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
      <li class="">
   <a href="sec-macros-api.html"><span class="toc_ref">6.1</span> <span class="toc_entry"><span class="ttfamily">plasTeX</span> — The Python Macro and Document Interfaces</span></a>
 <svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
@@ -304,10 +304,10 @@
 
   </ul>
  </li>
-<li class=" active current">
+<li class="">
   <a href="module-plasTeX-Renderers.html"><span class="toc_ref">6.6</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Renderers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Rendering Framework</span></a>
-<svg  class="icon icon-cross expand-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
-  <ul class="sub-toc-2 active">
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
      <li class="">
   <a href="sect0038.html"><span class="toc_ref">6.6.1</span> <span class="toc_entry">Renderer Objects</span></a>
  </li>
@@ -369,14 +369,14 @@
 
   </ul>
  </li>
-<li class="">
+<li class=" active">
   <a href="sec-zpttutorial.html"><span class="toc_ref">D</span> <span class="toc_entry">Zope Page Template Tutorial</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
-  <ul class="sub-toc-1">
+<svg  class="icon icon-cross expand-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+  <ul class="sub-toc-1 active">
      <li class="">
   <a href="sect0049.html"><span class="toc_ref">D.1</span> <span class="toc_entry">Template Attribute Language Expression Syntax (TALES)</span></a>
  </li>
-<li class="">
+<li class=" active current">
   <a href="sec-talattributes.html"><span class="toc_ref">D.2</span> <span class="toc_entry">Template Attribute Language (TAL) Attributes</span></a>
  </li>
 
@@ -395,32 +395,286 @@
 
 <ul class="breadcrumbs">
 <li class="crumb"><a href="index.html" class="crumb">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</a></li>
-<li class="crumb"><a href="sect0022.html" class="crumb">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</a></li>
-  <li class="last_crumb"><span class="ttfamily">plasTeX.Renderers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Rendering Framework</li>
+<li class="crumb"><a href="sec-zpttutorial.html" class="crumb">Zope Page Template Tutorial</a></li>
+  <li class="last_crumb">Template Attribute Language (TAL) Attributes</li>
 </ul>
 
 <div class="content">
-<h1 id="module-plasTeX.Renderers">6.6 <span class="ttfamily">plasTeX.Renderers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Rendering Framework</h1>
-<p>      <a name="a0000000262" id="a0000000262"></a>        </p>
-<p>The renderer is responsible for taking the information in a plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document object and creating a another (usually visual) representation of it. This representation may be HTML, XML, RTF, etc. While this could be implemented in various ways. One rendering framework is included with plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X. </p>
-<p>The renderer is essentially just a dictionary of functions<a class="footnote" href="#a0000000263">
+<h1 id="sec:talattributes">D.2 Template Attribute Language (TAL) Attributes</h1>
+<h4 id="a0000000326">tal:define</h4>
+<p>The <span class="ttfamily">tal:define</span> attribute allows you to define a variable for use later in the template. Variables can be specifies as local (only for use in the scope of the current element) or global (for use anywhere in the template). The syntax of the define attribute is shown below. </p>
+<pre class="verbatim">
+tal:define="[ local | global ] name expression [; define-expression ]"
+</pre>
+<p>The define attributes sets the value of “name” to “expression.” By default, the scope of the variable is local, but can be specified as global by including the “global” keyword before the name of the variable. As shown in the grammar above, you can specify multiple variables in one <span class="ttfamily">tal:define</span> attribute by separating the define expressions by semi-colons. </p>
+<p>Examples of using the <span class="ttfamily">tal:define</span> attribute are shown belaw. </p>
+<pre class="verbatim">
+&lt;p tal:define="global title document/title;
+               next self/links/next;
+               previous self/links/previous;
+               length python:len(self);
+               up string:Up - ${self/links/up}"&gt;
+...
+&lt;/p&gt;
+</pre>
+<h4 id="a0000000327">tal:condition</h4>
+<p>The <span class="ttfamily">tal:condition</span> attribute allows you to conditionally include an element. The syntax is shown below. </p>
+<pre class="verbatim">
+tal:condition="expression"
+</pre>
+<p>The <span class="ttfamily">tal:condition</span> attribute is very simple. If the expression evaluates to true, the element and its children will be evaluated and included in the output. If the expression evaluates to false, the element and its children will not be evaluated or included in the output. Valid expressions for the <span class="ttfamily">tal:condition</span> attribute are the same as those for the expressions in the <span class="ttfamily">tal:define</span> attribute. </p>
+<pre class="verbatim">
+&lt;p tal:condition="python:len(self)"&gt;
+    &lt;b tal:condition="self/caption"&gt;Caption for paragraph&lt;/b&gt;
+    ...
+&lt;/p&gt;
+</pre>
+<h4 id="sec:talrepeat">tal:repeat</h4>
+<p>The <span class="ttfamily">tal:repeat</span> attribute allows you to repeat an element multiple times; the syntax is shown below. </p>
+<pre class="verbatim">
+tal:repeat="name expression"
+</pre>
+<p>When the <span class="ttfamily">tal:repeat</span> attribute is used on an element, the result of“expression” is iterated over, and a new element is generated for each item in the iteration. The value of the current item is set to “name” much like in the <span class="ttfamily">tal:define</span> attribute. </p>
+<p>Within the scope of the repeated element, another variable is available: <span class="rmfamily"><i class="itshape">repeat </i></span>. This variable contains several properties related to the loop. <div class="centered"><table class="tabular">
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><b class="bf">Name</b></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p><b class="bf">Purpose</b> </p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <span class="rmfamily"><i class="itshape">index </i></span></p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>number of the current iteration starting from zero</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">number </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>number of the current iteration starting from one</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">even </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>is true if the iteration number is even</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">odd </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>is true if the iteration number is odd</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">start </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>is true if this is the first iteration</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">end </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>is true if this is the last iteration; This is never true if the repeat expression returns an iterator</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">length </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>the length of the sequence being iterated over; This is set to <span class="rmfamily"><i class="itshape">sys.maxint </i></span> for iterators.</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">letter </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>lower case letter corresponding to the current iteration number starting with ’a’</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">Letter </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>upper case letter corresponding to the current iteration number starting with ’A’</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">roman </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>lower case Roman numeral corresponding to the current iteration number starting with ’i’</p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p><span class="rmfamily"><i class="itshape">Roman </i></span></p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>upper case Roman numeral corresponding to the current iteration number starting with ’I’</p>
+
+    </td>
+  </tr>
+</table></div> </p>
+<p>To access the properties listed above, you must use the property of the <span class="rmfamily"><i class="itshape">repeat </i></span> variable that corresponds to the repeat variable name. For example, if your repeat variable name is “item”, you would access the above variables using the expressions <span class="rmfamily"><i class="itshape">repeat/item/index </i></span>, <span class="rmfamily"><i class="itshape">repeat/item/number </i></span>, <span class="rmfamily"><i class="itshape">repeat/item/even </i></span>, etc. </p>
+<p>A simple example of the <span class="ttfamily">tal:repeat</span> attribute is shown below. </p>
+<pre class="verbatim">
+&lt;ol&gt;
+&lt;li tal:repeat="option options" tal:content="option/name"&gt;option name&lt;/li&gt;
+&lt;/ol&gt;
+</pre>
+<p>One commonly used feature of rendering tables is alternating row colors. This is a little bit tricky with ZPT since the <span class="ttfamily">tal:condition</span> attribute is evaluated before the <span class="ttfamily">tal:repeat</span> directive. You can get around this by using the <span class="ttfamily">metal:</span> namespace. This is the namespace used by ZPT’s macro language<a class="footnote" href="#a0000000328">
   <sup class="footnotemark">1</sup>
-</a>. The keys in this dictionary correspond to names of the nodes in the document object. The values are the functions that are called when a node in the document object needs to be rendered. The only argument to the function is the node itself. What this function does in the rendering process is completely up to it; however, it should refrain from changing the document object itself as other renderers may be using that same object. </p>
-<p>There are some responsibilities that all renderers share. Renderers are responsible for checking options in the configuration object. For instance, renderers are responsible for generating filenames, creating directories, writing files in the proper encoding, generating images, splitting the document into multiple output files, etc. Of course, how it accomplishes this is really renderer dependent. An example of a renderer based on Zope Page Templates (ZPT) is included with plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X. This renderer is capable of generating XML and HTML output. </p>
+</a> You can create another element around the element you want to be conditional. This wrapper element is simply there to do the iterating, but is not included in the output. The example below shows how to do alternating row colors in an HTML table. </p>
+<pre class="verbatim">
+&lt;table&gt;
+&lt;metal:block tal:repeat="employee employees"&gt;
+&lt;!-- even rows --&gt;
+&lt;tr tal:condition="repeat/employee/even" style="background-color: white"&gt;
+    &lt;td tal:content="employee/name"&gt;&lt;/td&gt;
+    &lt;td tal:content="employee/title"&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;!-- odd rows --&gt;
+&lt;tr tal:condition="repeat/employee/odd" style="background-color: gray"&gt;
+    &lt;td tal:content="employee/name"&gt;&lt;/td&gt;
+    &lt;td tal:content="employee/title"&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/metal:block&gt;
+&lt;/table&gt;
+</pre>
+<h4 id="a0000000329">tal:content</h4>
+<p>The <span class="ttfamily">tal:content</span> attribute evaluates an expression and replaces the content of the element with the result of the expression. The syntax is shown below. </p>
+<pre class="verbatim">
+tal:content="[ text | structure ] expression"
+</pre>
+<p>The <span class="rmfamily"><i class="itshape">text </i></span> and <span class="rmfamily"><i class="itshape">structure </i></span> options in the <span class="ttfamily">tal:content</span> attribute indicate whether or not the content returned by the expression should be escaped (i.e. "&amp;&lt;&gt; replaced by &amp;quot;, &amp;amp;, &amp;lt;, and &amp;gt;, respectively). When the <span class="rmfamily"><i class="itshape">text </i></span> option is used, these special characters are escaped; this is the default behavior. When the <span class="rmfamily"><i class="itshape">structure </i></span> option is specified, the result of the expression is assumed to be valid markup and is not escaped. </p>
+<p>In SimpleTAL, the default behavior is the same as using the <span class="rmfamily"><i class="itshape">text </i></span> option. However, in plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X, 99.9% of the time the content returned by the expression is valid markup, so the default was changed to <span class="rmfamily"><i class="itshape">structure </i></span> in the SimpleTAL package distributed with plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X. </p>
+<h4 id="a0000000330">tal:replace</h4>
+<p>The <span class="ttfamily">tal:replace</span> attribute is much like the <span class="ttfamily">tal:content</span> attribute. They both evaluate an expression and include the content of that expression in the output, and they both have a <span class="rmfamily"><i class="itshape">text </i></span> and <span class="rmfamily"><i class="itshape">structure </i></span> option to indicate escaping of special characters. The difference is that when the <span class="ttfamily">tal:replace</span> attribute is used, the element with the <span class="ttfamily">tal:replace</span> attribute on it is not included in the output. Only the content of the evaluated expression is returned. The syntax of the <span class="ttfamily">tal:replace</span> attribute is shown below. </p>
+<pre class="verbatim">
+tal:replace="[ text | structure ] expression"
+</pre>
+<h4 id="a0000000331">tal:attributes</h4>
+<p>The <span class="ttfamily">tal:attributes</span> attribute allows you to programatically create attributes on the element. The syntax is shown below. </p>
+<pre class="verbatim">
+tal:attributes="name expression [; attribute-expression ]"
+</pre>
+<p>The syntax of the <span class="ttfamily">tal:attributes</span> attribute is very similar to that of the <span class="ttfamily">tal:define</span> attribute. However, in the case of the <span class="ttfamily">tal:attributes</span> attribute, the name is the name of the attribute to be created on the element and the expression is evaluated to get the value of the attribute. If an error occurs or <span class="rmfamily"><i class="itshape">None </i></span> is returned by the expression, then the attribute is removed from the element. </p>
+<p>Just as in the case of the <span class="ttfamily">tal:define</span> attribute, you can specify multiple attributes separated by semi-colons (;). If a semi-colon character is needed in the expression, then it must be represented by a double semi-colon (;;). </p>
+<p>An example of using the <span class="ttfamily">tal:attributes</span> is shown below. </p>
+<pre class="verbatim">
+&lt;a tal:attributes="href self/links/next/url;
+                   title self/links/next/title"&gt;link text&lt;/a&gt;
+</pre>
+<h4 id="a0000000332">tal:omit-tag</h4>
+<p>The <span class="ttfamily">tal:omit-tag</span> attribute allows you to conditionally omit an element. The syntax is shown below. </p>
+<pre class="verbatim">
+tal:omit-tag="expression"
+</pre>
+<p>If the value of “expression” evaluates to true (or is empty), the element is omitted; however, the content of the element is still sent to the output. If the expression evaluates to false, the element is included in the output.  </p>
 
 <footer id="footnotes">
 <ol>
-  <li id="a0000000263"> “functions” is being used loosely here. Actually, any Python callable object (i.e. function, method, or any object with the <span class="ttfamily">__call__</span> method implemented) can be used</li>
+  <li id="a0000000328">The macro language isn’t discussed here. See the official ZPT documentation for more information.</li>
 </ol>
 </footer>
 </div>
 
 <nav class="prev_up_next">
-  <a href="sec-context-language.html" title="Context language"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+  <a href="sect0049.html" title="Template Attribute Language Expression Syntax (TALES)"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
 </a>
-  <a href="sect0022.html" title="plasTeX Frameworks and APIs"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+  <a href="sec-zpttutorial.html" title="Zope Page Template Tutorial"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
 </a>
-  <a href="sect0038.html" title="Renderer Objects"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+  <a href="sect0050.html" title="Index"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
 </a>
   <a href="sect0050.html" class="index">Index</a>
 <svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>

@@ -9,10 +9,10 @@
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>plasTeX 2.0 — A Python Framework for Processing LaTeX Documents: Configuration Option Types</title>
-<link rel="next" href="module-plasTeX-DOM.html" title="plasTeX.DOM — The plas Document Object Model (DOM)" />
-<link rel="prev" href="sect0026.html" title="ConfigSection Objects" />
-<link rel="up" href="module-plasTeX-ConfigManager.html" title="plasTeX.ConfigManager — plas Configuration" />
+<title>plasTeX 2.1 — A Python Framework for Processing LaTeX Documents: plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X vs. XML</title>
+<link rel="next" href="sect0028.html" title="Node Objects" />
+<link rel="prev" href="module-plasTeX-DOM.html" title="plasTeX.DOM — The plas Document Object Model (DOM)" />
+<link rel="up" href="module-plasTeX-DOM.html" title="plasTeX.DOM — The plas Document Object Model (DOM)" />
 <link rel="stylesheet" href="styles/theme-white.css" />
 </head>
 
@@ -170,7 +170,7 @@
   </ul>
  </li>
 <li class="">
-  <a href="sec-zpt.html"><span class="toc_ref">5.3</span> <span class="toc_entry">Page Template Renderer</span></a>
+  <a href="sec-pt.html"><span class="toc_ref">5.3</span> <span class="toc_entry">Page Template Renderer</span></a>
 <svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
   <ul class="sub-toc-2">
      <li class="">
@@ -179,49 +179,43 @@
 <li class="">
   <a href="sect0016.html"><span class="toc_ref">5.3.2</span> <span class="toc_entry">Defining and Using Themes</span></a>
  </li>
-<li class="">
-  <a href="sec-zpttutorial.html"><span class="toc_ref">5.3.3</span> <span class="toc_entry">Zope Page Template Tutorial</span></a>
- </li>
 
   </ul>
  </li>
 <li class="">
-  <a href="sect0017.html"><span class="toc_ref">5.4</span> <span class="toc_entry">XHTML Renderer</span></a>
+  <a href="sec-html5.html"><span class="toc_ref">5.4</span> <span class="toc_entry">HTML5 Renderer</span></a>
 <svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
   <ul class="sub-toc-2">
      <li class="">
-  <a href="sect0018.html"><span class="toc_ref">5.4.1</span> <span class="toc_entry">Themes</span></a>
+  <a href="sect0017.html"><span class="toc_ref">5.4.1</span> <span class="toc_entry">Basic use and configuration</span></a>
+ </li>
+<li class="">
+  <a href="sec-html5-pkg.html"><span class="toc_ref">5.4.2</span> <span class="toc_entry">Interactions with packages</span></a>
+ </li>
+<li class="">
+  <a href="sect0018.html"><span class="toc_ref">5.4.3</span> <span class="toc_entry">Themes</span></a>
  </li>
 
   </ul>
  </li>
 <li class="">
-  <a href="sec-html5.html"><span class="toc_ref">5.5</span> <span class="toc_entry">HTML5 Renderer</span></a>
+  <a href="sect0019.html"><span class="toc_ref">5.5</span> <span class="toc_entry">XHTML Renderer</span></a>
 <svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
   <ul class="sub-toc-2">
      <li class="">
-  <a href="sect0019.html"><span class="toc_ref">5.5.1</span> <span class="toc_entry">Specific packages</span></a>
- </li>
-<li class="">
-  <a href="sec-html5-pkg.html"><span class="toc_ref">5.5.2</span> <span class="toc_entry">Interactions with packages</span></a>
- </li>
-<li class="">
-  <a href="sect0020.html"><span class="toc_ref">5.5.3</span> <span class="toc_entry">Themes</span></a>
+  <a href="sect0020.html"><span class="toc_ref">5.5.1</span> <span class="toc_entry">Themes</span></a>
  </li>
 
   </ul>
  </li>
 <li class="">
-  <a href="sect0021.html"><span class="toc_ref">5.6</span> <span class="toc_entry">tBook Renderer</span></a>
- </li>
-<li class="">
-  <a href="sect0022.html"><span class="toc_ref">5.7</span> <span class="toc_entry">DocBook Renderer</span></a>
+  <a href="sect0021.html"><span class="toc_ref">5.6</span> <span class="toc_entry">Other builtin renderers</span></a>
  </li>
 
   </ul>
  </li>
 <li class=" active">
-  <a href="sect0023.html"><span class="toc_ref">6</span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</span></a>
+  <a href="sect0022.html"><span class="toc_ref">6</span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</span></a>
 <svg  class="icon icon-cross expand-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
   <ul class="sub-toc-1 active">
      <li class="">
@@ -229,57 +223,57 @@
 <svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
   <ul class="sub-toc-2">
      <li class="">
-  <a href="sect0024.html"><span class="toc_ref">6.1.1</span> <span class="toc_entry">Macro Objects</span></a>
+  <a href="sect0023.html"><span class="toc_ref">6.1.1</span> <span class="toc_entry">Macro Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="module-plasTeX-ConfigManager.html"><span class="toc_ref">6.2</span> <span class="toc_entry"><span class="ttfamily">plasTeX.ConfigManager</span> — plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Configuration</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0024.html"><span class="toc_ref">6.2.1</span> <span class="toc_entry">ConfigManager Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0025.html"><span class="toc_ref">6.2.2</span> <span class="toc_entry">ConfigSection Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0026.html"><span class="toc_ref">6.2.3</span> <span class="toc_entry">Configuration Option Types</span></a>
  </li>
 
   </ul>
  </li>
 <li class=" active">
-  <a href="module-plasTeX-ConfigManager.html"><span class="toc_ref">6.2</span> <span class="toc_entry"><span class="ttfamily">plasTeX.ConfigManager</span> — plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Configuration</span></a>
+  <a href="module-plasTeX-DOM.html"><span class="toc_ref">6.3</span> <span class="toc_entry"><span class="ttfamily">plasTeX.DOM</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document Object Model (DOM)</span></a>
 <svg  class="icon icon-cross expand-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
   <ul class="sub-toc-2 active">
-     <li class="">
-  <a href="sect0025.html"><span class="toc_ref">6.2.1</span> <span class="toc_entry">ConfigManager Objects</span></a>
+     <li class=" active current">
+  <a href="sect0027.html"><span class="toc_ref">6.3.1</span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X vs. XML</span></a>
  </li>
 <li class="">
-  <a href="sect0026.html"><span class="toc_ref">6.2.2</span> <span class="toc_entry">ConfigSection Objects</span></a>
- </li>
-<li class=" active current">
-  <a href="sect0027.html"><span class="toc_ref">6.2.3</span> <span class="toc_entry">Configuration Option Types</span></a>
- </li>
-
-  </ul>
+  <a href="sect0028.html"><span class="toc_ref">6.3.2</span> <span class="toc_entry">Node Objects</span></a>
  </li>
 <li class="">
-  <a href="module-plasTeX-DOM.html"><span class="toc_ref">6.3</span> <span class="toc_entry"><span class="ttfamily">plasTeX.DOM</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document Object Model (DOM)</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
-  <ul class="sub-toc-2">
-     <li class="">
-  <a href="sect0028.html"><span class="toc_ref">6.3.1</span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X vs. XML</span></a>
+  <a href="sect0029.html"><span class="toc_ref">6.3.3</span> <span class="toc_entry">DocumentFragment Objects</span></a>
  </li>
 <li class="">
-  <a href="sect0029.html"><span class="toc_ref">6.3.2</span> <span class="toc_entry">Node Objects</span></a>
+  <a href="sect0030.html"><span class="toc_ref">6.3.4</span> <span class="toc_entry">Element Objects</span></a>
  </li>
 <li class="">
-  <a href="sect0030.html"><span class="toc_ref">6.3.3</span> <span class="toc_entry">DocumentFragment Objects</span></a>
+  <a href="sect0031.html"><span class="toc_ref">6.3.5</span> <span class="toc_entry">Text Objects</span></a>
  </li>
 <li class="">
-  <a href="sect0031.html"><span class="toc_ref">6.3.4</span> <span class="toc_entry">Element Objects</span></a>
+  <a href="sect0032.html"><span class="toc_ref">6.3.6</span> <span class="toc_entry">Document Objects</span></a>
  </li>
 <li class="">
-  <a href="sect0032.html"><span class="toc_ref">6.3.5</span> <span class="toc_entry">Text Objects</span></a>
+  <a href="sect0033.html"><span class="toc_ref">6.3.7</span> <span class="toc_entry">Command Objects</span></a>
  </li>
 <li class="">
-  <a href="sect0033.html"><span class="toc_ref">6.3.6</span> <span class="toc_entry">Document Objects</span></a>
+  <a href="sect0034.html"><span class="toc_ref">6.3.8</span> <span class="toc_entry">Environment Objects</span></a>
  </li>
 <li class="">
-  <a href="sect0034.html"><span class="toc_ref">6.3.7</span> <span class="toc_entry">Command Objects</span></a>
- </li>
-<li class="">
-  <a href="sect0035.html"><span class="toc_ref">6.3.8</span> <span class="toc_entry">Environment Objects</span></a>
- </li>
-<li class="">
-  <a href="sect0036.html"><span class="toc_ref">6.3.9</span> <span class="toc_entry">TeXFragment Objects</span></a>
+  <a href="sect0035.html"><span class="toc_ref">6.3.9</span> <span class="toc_entry">TeXFragment Objects</span></a>
  </li>
 <li class="">
   <a href="sec-texdocument-objects.html"><span class="toc_ref">6.3.10</span> <span class="toc_entry">TeXDocument Objects</span></a>
@@ -292,7 +286,7 @@
 <svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
   <ul class="sub-toc-2">
      <li class="">
-  <a href="sect0037.html"><span class="toc_ref">6.4.1</span> <span class="toc_entry">TeX Objects</span></a>
+  <a href="sect0036.html"><span class="toc_ref">6.4.1</span> <span class="toc_entry">TeX Objects</span></a>
  </li>
 
   </ul>
@@ -302,7 +296,7 @@
 <svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
   <ul class="sub-toc-2">
      <li class="">
-  <a href="sect0038.html"><span class="toc_ref">6.5.1</span> <span class="toc_entry">Context Objects</span></a>
+  <a href="sect0037.html"><span class="toc_ref">6.5.1</span> <span class="toc_entry">Context Objects</span></a>
  </li>
 <li class="">
   <a href="sec-context-language.html"><span class="toc_ref">6.5.2</span> <span class="toc_entry">Context language</span></a>
@@ -315,10 +309,10 @@
 <svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
   <ul class="sub-toc-2">
      <li class="">
-  <a href="sect0039.html"><span class="toc_ref">6.6.1</span> <span class="toc_entry">Renderer Objects</span></a>
+  <a href="sect0038.html"><span class="toc_ref">6.6.1</span> <span class="toc_entry">Renderer Objects</span></a>
  </li>
 <li class="">
-  <a href="sect0040.html"><span class="toc_ref">6.6.2</span> <span class="toc_entry">Renderable MixIn</span></a>
+  <a href="sect0039.html"><span class="toc_ref">6.6.2</span> <span class="toc_entry">Renderable MixIn</span></a>
  </li>
 
   </ul>
@@ -328,10 +322,10 @@
 <svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
   <ul class="sub-toc-2">
      <li class="">
-  <a href="sect0041.html"><span class="toc_ref">6.7.1</span> <span class="toc_entry">Imager Objects</span></a>
+  <a href="sect0040.html"><span class="toc_ref">6.7.1</span> <span class="toc_entry">Imager Objects</span></a>
  </li>
 <li class="">
-  <a href="sect0042.html"><span class="toc_ref">6.7.2</span> <span class="toc_entry">Image Objects</span></a>
+  <a href="sect0041.html"><span class="toc_ref">6.7.2</span> <span class="toc_entry">Image Objects</span></a>
  </li>
 
   </ul>
@@ -340,21 +334,21 @@
   </ul>
  </li>
 <li class="">
-  <a href="sect0043.html"><span class="toc_ref">A</span> <span class="toc_entry">About This Document</span></a>
+  <a href="sect0042.html"><span class="toc_ref">A</span> <span class="toc_entry">About This Document</span></a>
  </li>
 <li class="">
-  <a href="sect0044.html"><span class="toc_ref">B</span> <span class="toc_entry">Frequently Asked Questions</span></a>
+  <a href="sect0043.html"><span class="toc_ref">B</span> <span class="toc_entry">Frequently Asked Questions</span></a>
 <svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
   <ul class="sub-toc-1">
      <li class="">
-  <a href="sect0045.html"><span class="toc_ref">B.1</span> <span class="toc_entry">Parsing L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X</span></a>
+  <a href="sect0044.html"><span class="toc_ref">B.1</span> <span class="toc_entry">Parsing L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X</span></a>
 <svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
   <ul class="sub-toc-2">
      <li class="">
-  <a href="sect0046.html"><span class="toc_ref">B.1.1</span> <span class="toc_entry">How can I make plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X work with my complicated macros?</span></a>
+  <a href="sect0045.html"><span class="toc_ref">B.1.1</span> <span class="toc_entry">How can I make plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X work with my complicated macros?</span></a>
  </li>
 <li class="">
-  <a href="sect0047.html"><span class="toc_ref">B.1.2</span> <span class="toc_entry">How can I get plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X to find my L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X packages?</span></a>
+  <a href="sect0046.html"><span class="toc_ref">B.1.2</span> <span class="toc_entry">How can I get plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X to find my L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X packages?</span></a>
  </li>
 
   </ul>
@@ -363,235 +357,64 @@
   </ul>
  </li>
 <li class="">
-  <a href="sect0048.html"><span class="toc_ref">C</span> <span class="toc_entry">Debugging</span></a>
+  <a href="sect0047.html"><span class="toc_ref">C</span> <span class="toc_entry">Debugging</span></a>
 <svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
   <ul class="sub-toc-1">
      <li class="">
   <a href="sec-logging-levels.html"><span class="toc_ref">C.1</span> <span class="toc_entry">Logging levels</span></a>
  </li>
 <li class="">
-  <a href="sect0049.html"><span class="toc_ref">C.2</span> <span class="toc_entry">Using the python debugger</span></a>
+  <a href="sect0048.html"><span class="toc_ref">C.2</span> <span class="toc_entry">Using the python debugger</span></a>
  </li>
 
   </ul>
  </li>
 <li class="">
-  <a href="sect0050.html"><span class="toc_ref">D</span> <span class="toc_entry">Index</span></a>
+  <a href="sec-zpttutorial.html"><span class="toc_ref">D</span> <span class="toc_entry">Zope Page Template Tutorial</span></a>
+<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0049.html"><span class="toc_ref">D.1</span> <span class="toc_entry">Template Attribute Language Expression Syntax (TALES)</span></a>
+ </li>
+<li class="">
+  <a href="sec-talattributes.html"><span class="toc_ref">D.2</span> <span class="toc_entry">Template Attribute Language (TAL) Attributes</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0050.html"><span class="toc_ref">E</span> <span class="toc_entry">Index</span></a>
  </li>
 </ul>
 </nav>
 
 <div class="wrapper with-toc">
 <header>
-<h1 id="doc_title">plasTeX 2.0 — A Python Framework for Processing LaTeX Documents</h1>
+<h1 id="doc_title">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</h1>
 </header>
 
 <ul class="breadcrumbs">
-<li class="crumb"><a href="index.html" class="crumb">plasTeX 2.0 — A Python Framework for Processing LaTeX Documents</a></li>
-<li class="crumb"><a href="sect0023.html" class="crumb">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</a></li>
-<li class="crumb"><a href="module-plasTeX-ConfigManager.html" class="crumb"><span class="ttfamily">plasTeX.ConfigManager</span> — plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Configuration</a></li>
-  <li class="last_crumb">Configuration Option Types</li>
+<li class="crumb"><a href="index.html" class="crumb">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</a></li>
+<li class="crumb"><a href="sect0022.html" class="crumb">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</a></li>
+<li class="crumb"><a href="module-plasTeX-DOM.html" class="crumb"><span class="ttfamily">plasTeX.DOM</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document Object Model (DOM)</a></li>
+  <li class="last_crumb">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X vs. XML</li>
 </ul>
 
 <div class="content">
-<h2 id="a0000000028">6.2.3 Configuration Option Types</h2>
-<p>   <dl class="list">
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt><b class="bf">class </b><span class="rmfamily"><span class="ttfamily"><b class="bfseries">ConfigOption[T]</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">description, options, default </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
-  <dd><p><a name="a0000000138" id="a0000000138"></a>  This class represents an option whose value has a “simple” type. Specifically, we require <span class="rmfamily"><span class="ttfamily">T(s)</span></span> to correctly converts a string <span class="rmfamily"><i class="itshape">s </i></span> to an object of type <span class="ttfamily">T</span>. The type is determined at runtime based on the type of the default value. More complex options should inherit this class. </p>
-<p>From the point of view of the external API, every option item is expected to inherit <span class="ttfamily">ConfigOption</span>, and is expected to implement the methods described below correctly. Moreover, the instance attribute <span class="ttfamily">value</span> is expected to hold the value of the option. </p>
-<p>On the other hand, custom <span class="ttfamily">__init__</span> implementations are not required to set the other instance attributes (i.e. <span class="ttfamily">description</span>, <span class="ttfamily">options</span> and <span class="ttfamily">name</span>) described below. </p>
-</dd>
-</dl> </p>
-<p>  <dl class="list">
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd> </dd>
-  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">description</b></span></span></dt>
-  <dd><p><a name="a0000000139" id="a0000000139"></a>   description of this option to be used in the <span class="rmfamily"><span class="ttfamily">plastex --help</span></span> output. </p>
-</dd>
-</dl> </p>
-<p>  <dl class="list">
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd> </dd>
-  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">options</b></span></span></dt>
-  <dd><p><a name="a0000000140" id="a0000000140"></a>   space separated list of command line argument that correspond to this option. The behaviour of this variable may be customized by implementations of <span class="ttfamily">ConfigOption</span>. </p>
-</dd>
-</dl> </p>
-<p>  <dl class="list">
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd> </dd>
-  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">name</b></span></span></dt>
-  <dd><p><a name="a0000000141" id="a0000000141"></a>   the key used by <span class="rmfamily"><i class="itshape">argparse </i></span> to store the value read from the command line. Note that <span class="rmfamily"><i class="itshape">argparse </i></span> does not group the argument values by section, so one has to be careful to avoid collision. </p>
-<p>This is set to the first entry in <span class="ttfamily">self.option</span> with leading <span class="rmfamily"><span class="ttfamily">-</span></span>s stripped. </p>
-</dd>
-</dl> </p>
-<p>  <dl class="list">
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd> </dd>
-  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">value</b></span></span></dt>
-  <dd><p><a name="a0000000142" id="a0000000142"></a>   the actual value of the option </p>
-</dd>
-</dl> </p>
-<p>  <dl class="list">
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd>  </dd>
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">registerArgparse</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">group </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
-  <dd><p><a name="a0000000143" id="a0000000143"></a>   this function should add the command line arguments for this configuration to the <span class="rmfamily"><i class="itshape">argparse._ArgumentGroup </i></span> object <span class="rmfamily"><i class="itshape">group </i></span>. </p>
-</dd>
-</dl> </p>
-<p>  <dl class="list">
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd>  </dd>
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">updateFromDict</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">data </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
-  <dd><p><a name="a0000000144" id="a0000000144"></a>   sets the value of the option based on the data in <span class="rmfamily"><i class="itshape">data </i></span>. The format of <span class="rmfamily"><i class="itshape">data </i></span> is defined to be what is returned by <span class="rmfamily"><span class="ttfamily">vars(parser.parse_args())</span></span>, where <span class="rmfamily"><i class="itshape">parser </i></span> is populated by <span class="ttfamily">registerArgparse</span>. This is intended to be used in conjuction with <span class="ttfamily">registerArgparse</span>. </p>
-</dd>
-</dl> </p>
-<p>   <dl class="list">
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt><b class="bf">class </b><span class="rmfamily"><span class="ttfamily"><b class="bfseries">BooleanConfigOption</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span><span class="ttfamily">ConfigOption</span> arguments<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
-  <dd><p><a name="a0000000145" id="a0000000145"></a>  Boolean options are simply options that allow you to specify an ‘on’ or ‘off’ state. In a config file, the value is converted to a boolean via the builtin <span class="rmfamily"><span class="ttfamily">bool</span></span> function. Boolean options on the command-line do not take an argument; simply specifying the option sets the state to true. </p>
-<p>One interesting feature of boolean options is in specifying the command-line options. Since you cannot specify a value on the command-line (the existence of the option indicates the state), there must be a way to set the state to false. This is done using the ‘not’ operator (!). When specifying the <span class="rmfamily"><i class="itshape">options </i></span> argument of the constructor, if you prefix an command-line option with an exclamation point, the existence of that option indicates a false state rather than a true state. Below is an example of an <span class="rmfamily"><i class="itshape">options </i></span> value that has a way to turn debugging information on (<b class="bf">--debug</b>) or off (<b class="bf">--no-debug</b>). </p>
-<pre class="verbatim">
-BooleanOption("", options = '--debug !--no-debug', default=True)
-</pre>
-</dd>
-</dl> </p>
-<p>   <dl class="list">
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt><b class="bf">class </b><span class="rmfamily"><span class="ttfamily"><b class="bfseries">FloatOption</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span><span class="ttfamily">ConfigOption</span> arguments<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
-  <dd><p><a name="a0000000146" id="a0000000146"></a>  A <span class="ttfamily">FloatOption</span> is an option that accepts a floating point number. </p>
-</dd>
-</dl> </p>
-<p>   <dl class="list">
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt><b class="bf">class </b><span class="rmfamily"><span class="ttfamily"><b class="bfseries">IntegerOption</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span><span class="ttfamily">ConfigOption</span> arguments<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
-  <dd><p><a name="a0000000147" id="a0000000147"></a>  An <span class="ttfamily">IntegerOption</span> is an option that accepts an integer value. </p>
-</dd>
-</dl> </p>
-<p>   <dl class="list">
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt><b class="bf">class </b><span class="rmfamily"><span class="ttfamily"><b class="bfseries">StringOption</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span><span class="ttfamily">ConfigOption</span> arguments<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
-  <dd><p><a name="a0000000148" id="a0000000148"></a>  A <span class="ttfamily">StringOption</span> is an option that accepts an arbitrary string. </p>
-</dd>
-</dl> </p>
-<p>   <dl class="list">
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt><b class="bf">class </b><span class="rmfamily"><span class="ttfamily"><b class="bfseries">MultiStringOption</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span><span class="ttfamily">ConfigOption</span> arguments<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
-  <dd><p><a name="a0000000149" id="a0000000149"></a>  A <span class="ttfamily">MultiStringOption</span> is an option that is intended to be used multiple times on the command-line, or take a list of values. Other options when specified more than once simply overwrite the previous value. <span class="ttfamily">MultiStringOption</span>s will append the new values to a list. </p>
-<p>In the configuration file, this is a space separated list, interpreted in the same ways as shell arguments (with the same escaping/quoting rules for strings that contains whitespaces). In fact, it is processed by <span class="rmfamily"><span class="ttfamily">shlex.split</span></span>. </p>
-<p>The individual values of <span class="ttfamily">MultiStringOption</span> are strings. This can, of course, be made generic, but such a use case has not arisen. </p>
-</dd>
-</dl> </p>
-<p>   <dl class="list">
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt><b class="bf">class </b><span class="rmfamily"><span class="ttfamily"><b class="bfseries">DictOption[T]</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"><span class="textnormal"><big class="xlarge">[</big></span><span class="ttfamily">ConfigOption</span> arguments<span class="textnormal"><big class="xlarge">]</big></span> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
-  <dd><p><a name="a0000000150" id="a0000000150"></a>  This is an abstract base class for options whose value is a <span class="rmfamily"><span class="ttfamily">Dict[str, T]</span></span>. This receives special treatment by <span class="ttfamily">ConfigManager.read</span> — in a config file, any line whose key is unrecognized (i.e. not the key of an existing option) is added to the first <span class="ttfamily">DictOption</span> in the section. Usually, such sections only contain a single option which is a <span class="ttfamily">DictOption</span>. </p>
-<p>The value can also be set directly, in the form </p>
-<pre class="verbatim">
-data=a=b,c=d,e=f
-</pre>
-<p>There is no implementor in <span class="rmfamily"><span class="ttfamily">ConfigManager.py</span></span>, but is used by <span class="rmfamily"><i class="itshape">CountersOption </i></span>, <span class="rmfamily"><i class="itshape">LinksOption </i></span> and <span class="rmfamily"><i class="itshape">LogOption </i></span> in <span class="rmfamily"><span class="ttfamily">Config.py</span></span>. </p>
-<p>Note that all implementors of <span class="ttfamily">DictOption</span> must also implement <span class="ttfamily">registerArgparse</span> (and can optionally implement other methods of <span class="ttfamily">ConfigOption</span>). </p>
-</dd>
-</dl> </p>
-<p>  <dl class="list">
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd>  </dd>
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">entryFromString</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">entry </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
-  <dd><p><a name="a0000000151" id="a0000000151"></a>   a class method to convert a string to the desired value entry. This is used by the in the default implementation of <span class="ttfamily">set</span>. </p>
-</dd>
-</dl> </p>
-<p>  <dl class="list">
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd>  </dd>
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">set</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape">key, value </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
-  <dd><p><a name="a0000000152" id="a0000000152"></a>   sets the value of the dict. The <span class="rmfamily"><i class="itshape">value </i></span> is assumed to be a string. </p>
-</dd>
-</dl>  </p>
+<h2 id="a0000000028">6.3.1 plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X vs. XML</h2>
+<p>The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X DOM and XML DOM have more similarities than differences. This similarity is purely intentional to reduce the learning curve and to prevent reinventing the wheel. However, the XML DOM can be a bit cumbersome especially when you’re used to much simpler and more elegant Python code. Because of this, some Python behaviors were adopted into the plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X DOM. The good news is that these extensions do not break compatibility with the XML DOM. There are, however, some differences due to conventions used L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X. </p>
+<p>The only significant difference between the plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X DOM and the XML DOM is that plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X nodes do not have true attributes like in XML. Attributes in XML are more like arguments in L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X, because they are similar the plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X DOM actually puts the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X macro arguments into the <span class="ttfamily">attributes</span> dictionary. This does create an incompatibility though since XML DOM attributes can only be strings whereas L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X arguments can contain lots of markup. In addition, plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X allows you to convert these arguments into Python strings, lists, dictionaries, etc., so essentially any type of object can occur in the <span class="ttfamily">attributes</span> dictionary. </p>
+<p>Other than paying attention to the the attributes dictionary difference, you can use most other XML DOM methods on plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document objects to create nodes, delete nodes, etc. The full API is described below. </p>
+<p>In most cases, you will not need to be concerned with instantiating nodes. The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X framework does this. However, the API can be helpful if you want to modify the document object that plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X creates. </p>
 
 </div>
 
 <nav class="prev_up_next">
-  <a href="sect0026.html" title="ConfigSection Objects"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+  <a href="module-plasTeX-DOM.html" title="plasTeX.DOM — The plasTeX Document Object Model (DOM)"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
 </a>
-  <a href="module-plasTeX-ConfigManager.html" title="plasTeX.ConfigManager — plasTeX Configuration"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+  <a href="module-plasTeX-DOM.html" title="plasTeX.DOM — The plasTeX Document Object Model (DOM)"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
 </a>
-  <a href="module-plasTeX-DOM.html" title="plasTeX.DOM — The plasTeX Document Object Model (DOM)"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+  <a href="sect0028.html" title="Node Objects"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
 </a>
   <a href="sect0050.html" class="index">Index</a>
 <svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
