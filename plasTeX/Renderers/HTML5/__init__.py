@@ -2,7 +2,6 @@ import subprocess, shlex
 import os, shutil, re
 from pathlib import Path
 from plasTeX.Renderers.PageTemplate import Renderer as _Renderer
-from plasTeX.Renderers import Renderer as BaseRenderer
 from plasTeX.Logging import getLogger
 
 log = getLogger()
@@ -57,14 +56,15 @@ class HTML5(_Renderer):
             pass
 
         # Start building the js list for use by the layout template
-        theme_js_path = Path(self.loadedTheme)/'js'
-        if (config['html5']['use-theme-js'] and
-                config['general']['copy-theme-extras'] and
-                theme_js_path.exists()):
-            rendererdata['js'] = sorted(path.name
-                    for path in theme_js_path.glob('*.js'))
-        else:
-            rendererdata['js'] = []
+        if self.loadedTheme:
+            theme_js_path = Path(self.loadedTheme)/'js'
+            if (config['html5']['use-theme-js'] and
+                    config['general']['copy-theme-extras'] and
+                    theme_js_path.exists()):
+                rendererdata['js'] = sorted(path.name
+                        for path in theme_js_path.glob('*.js'))
+            else:
+                rendererdata['js'] = []
 
         for resrc in document.packageResources:
             # Next line may load templates or change
