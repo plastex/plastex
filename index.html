@@ -34,11 +34,13 @@
         <a href="http://www.tug.org/">LaTeX</a>
         document processing framework written entirely in
         <a title="Go to the Python web site" href="http://www.python.org/">Python</a>.
-        It currently comes bundled with an
-        <a href="http://www.w3.org/MarkUp/">XHTML</a>
-        renderer (including multiple themes), as well as a way to simply dump the document
+        It currently comes bundled with a
+        <a href="https://html.spec.whatwg.org/">HTML5</a>
+        renderer (including multiple themes), a simple text renderer and several less developped
+	renderers targetting Man pages, DocBook and EPUB,
+	as well as a way to simply dump the document
         to a generic form of <a href="http://www.w3.org/XML/">XML</a>.
-        Other renderers can be added as well and are planned for future releases.
+        Other renderers can be added.
       </p>
       <p>
         Here is
@@ -67,7 +69,8 @@ a cleaner document object, so that the rendering process is easier.
         Since the renderer has complete control over which pieces of the
 document are rendered, it is possible that the resultant document
 is structured quite differently than the input document.  This object
-actually allows you to traverse and edit the document tree.
+actually allows you to traverse and edit the document tree. It can also be 
+used to collect statistics about the document.
       </p>
 
       <p>
