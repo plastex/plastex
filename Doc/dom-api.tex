@@ -118,9 +118,9 @@ the node that owner of, and ultimate parent of, all nodes in the document
 contains just the text content of this node
 \end{memberdesc}
 
-\begin{memberdesc}[Node]{unicode}
-specifies a unicode string that could be used in place of the node.
-This unicode string will be converted into tokens in the \plasTeX\ 
+\begin{memberdesc}[Node]{str}
+specifies a string that could be used in place of the node.
+This string will be converted into tokens in the \plasTeX\ 
 output stream.
 \end{memberdesc}
 
@@ -295,7 +295,7 @@ using the key \var{name}
 \begin{classdesc}{Text}{}
 This is the node type used for all text data in a document object.
 Unlike XML DOM text nodes, text nodes in \plasTeX\ are 
-not mutable.  This is because they are a subclass of \var{unicode}.
+not mutable.  This is because they are a subclass of \var{str}.
 This means that they will respond to all of the standard Python
 string methods in addition to the \class{Node} methods and the methods
 described below.
@@ -395,10 +395,10 @@ A complete \LaTeX\ document.
 
 \begin{memberdesc}[TeXDocument]{charsubs}
 a list of two element tuples containing character substitutions for all
-text nodes in a document.  This is used to convert charcter strings
+text nodes in a document.  This is used to convert character strings
 like ``-{}-{}-'' into ``---''.  The first element in each tuple in the
-string to replace, the second element is the unicode character or 
-sequence to replace the original string with.
+string to replace, the second element is the character or sequence to 
+replace the original string with.
 \end{memberdesc}
 
 \begin{memberdesc}[TeXDocument]{preamble}

@@ -46,8 +46,8 @@ the nodes.
 This renderer implementation uses a mixin called \class{Renderable} that
 is mixed into the \class{Node} class prior to rendering.  \class{Renderable}
 adds various methods to the \class{Node} namespace to assist in the
-rendering process.  The primary inclusion is the \method{\_\_unicode\_\_()}
-method.  This method returns a unicode representation of the current node
+rendering process.  The primary inclusion is the \method{\_\_str\_\_()}
+method.  This method returns a string representation of the current node
 and all of its child nodes.  For more information, see the \class{Renderable}
 class documentation.
 
@@ -190,7 +190,7 @@ by subclasses to do any initialization routines before the rendering process.
 post-processing routine that allows renders to modify the output documents
 one last time before the rendering process is finished.  \var{document}
 is the input document instance.  \var{content} is the content of the 
-file in a unicode object.  The value returned from this method will be
+file in a string object.  The value returned from this method will be
 written to the output file in the appropriate encoding.
 \end{methoddesc}
 
@@ -198,8 +198,8 @@ written to the output file in the appropriate encoding.
 invokes the rendering process on \var{document}.  You can post-process each
 file after it is rendered by passing a function into the \var{postProcess}
 argument.  This function must take two arguments: 1) the document object and
-2) the content of a file as a unicode object.  It should do whatever 
-processing it needs to the file content and return a unicode object.
+2) the content of a file as a string object.  It should do whatever 
+processing it needs to the file content and return a string object.
 \end{methoddesc}
 
 
@@ -238,12 +238,7 @@ both the filename and the anchor will be returned
 (e.g. \file{foo.html\#bar}).
 \end{memberdesc}
 
-
 \begin{methoddesc}[Renderable]{__str__}{}
-same as \method{__unicode__()}.
-\end{methoddesc}
-
-\begin{methoddesc}[Renderable]{__unicode__}{}
 invoke the rendering process on all of the child nodes.  The rendering process
 includes walking through the child nodes, looking up the appropriate 
 rendering method from the renderer, and calling the method with the child

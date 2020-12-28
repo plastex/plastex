@@ -19,7 +19,7 @@ def defaultConfig(loadConfigFiles: bool=False):
         directory of a renderer
         """,
         options = '--renderer',
-        default = 'XHTML',
+        default = 'HTML5',
     )
 
     general['theme'] = StringOption(
@@ -220,13 +220,13 @@ def defaultConfig(loadConfigFiles: bool=False):
     images['imager'] = StringOption(
         """ LaTeX to image program """,
         options = '--imager',
-        default = 'dvipng dvi2bitmap pdftoppm gspdfpng gsdvipng OSXCoreGraphics',
+        default = 'gspdfpng pdftoppm dvipng dvi2bitmap gsdvipng OSXCoreGraphics',
     )
 
     images['vector-imager'] = StringOption(
         """ LaTeX to vector image program """,
         options = '--vector-imager',
-        default = 'none dvisvgm',
+        default = 'none pdf2svg dvisvgm',
     )
 
     images['filenames'] = StringOption(

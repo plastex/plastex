@@ -603,8 +603,9 @@ the search path of your \LaTeX\ distribution or in one of the directories
 specified in the \environment{TEXINPUTS} environment variable.
 \plasTeX\ read the file and expand the macros therein just as \LaTeX\
 would do. This happens only if the \longprogramopt{load-tex-packages} option
-is set, or the package is white-listed in the \longprogramopt{tex-packages}
-option (see Section\ref{sec:general-options}).
+is set (which is the default value), or the package is white-listed in the 
+\longprogramopt{tex-packages} option (see Section\ref{sec:general-options}).
+It will work as expected only for simple packages.
 
 Python packages are located by successively trying three strategies.
 First \plasTeX\ looks into the directories listed in the

@@ -1,4 +1,3 @@
-
 \chapter{Renderers}
 
 Renderers allow you to convert a \plasTeX\ document object into viewable
@@ -12,8 +11,8 @@ not affected by the rendering process, you can apply multiple renderers
 in sequence so that the \LaTeX\ document only needs to be parsed one time
 for all output types.
 
-While it is possible to write a completely custom renderer, one possible
-rendeerer implementation is included with the \plasTeX\ framework.
+While it is possible to write a completely custom renderer, a couple of
+renderer implementations are included with the \plasTeX\ framework.
 While the rendering process in this implementation is fairly simple,
 it is also very powerful.  Some of the main features are listed below.
 \begin{itemize}
@@ -23,7 +22,7 @@ it is also very powerful.  Some of the main features are listed below.
     \member{filenameoverride} property
 \item powerful output filename generation utility
 \item image generation for portions of the document that cannot be
-    easily rendered in a particular output formate (e.g. equations in HTML)
+    easily rendered in a particular output formate (e.g. TikZ pictures in HTML)
 \item themeing support
 \item hooks for post-processing of output files
 \item configurable output encodings
@@ -49,7 +48,7 @@ As each node in the document object is traversed, the renderer is queried
 to see if there is a key that matches the name of the node.  If a
 key is found, the value at that key (which must be a function) is
 called with the node as its only argument.  The return value from this
-call must be a unicode object that contains the rendered output.
+call must be a string object that contains the rendered output.
 Based on the configuration, the renderer will handle all of the file
 generation and encoding issues.
 
@@ -59,8 +58,8 @@ default rendering method is stored in the \member{default} attribute.
 One exception to this rule is for text nodes.  The default
 rendering method for text nodes is actually stored in \member{textDefault}.
 Again, these attributes simply need to reference any Python function
-that returns a unicode object of the rendered output.  The
-default method in both of these attributes is the \function{unicode}
+that returns a string object of the rendered output.  The
+default method in both of these attributes is the \function{str}
 built-in function.
 
 As mention previously, most of the work of the renderer is actually
@@ -89,7 +88,7 @@ class Renderer(Renderer):
         s = []
 
         # Handle characters like \&, \$, \%, etc.
-        if len(node.nodeName) == 1 and node.nodeName not in string.letters:
+        if len(node.nodeName) == 1 and node.nodeName not in string.ascii_letters:
             return self.textDefault(node.nodeName)
 
         # Start tag
@@ -112,7 +111,7 @@ class Renderer(Renderer):
         # End tag
         s.append('</%s>' % node.nodeName)
 
-        return u'\n'.join(s)
+        return '\n'.join(s)
 
     def textDefault(self, node):
         """ Rendering method for all text nodes """
@@ -190,9 +189,9 @@ since other nodes will generate markup.}.  To do this we need a
 method like the following.
 \begin{verbatim}
 def handle_section(node):
-    return u'\n\n<%s title="%s">\n%s\n</%s>\n' % \
-            (node.nodeName, unicode(node.attributes['title']),
-             unicode(node), node.nodeName)
+    return '\n\n<%s title="%s">\n%s\n</%s>\n' % \
+            (node.nodeName, str(node.attributes['title']),
+             str(node), node.nodeName)
 \end{verbatim}
 
 Now we simply insert the rendering method into the renderer under the
@@ -235,7 +234,7 @@ Of course, you aren't limited to using just Python methods.  Any function
 that accepts a node as an argument can be used.  The
 Page Template renderer included with \plasTeX\ is an example
 of how to write a renderer that uses a templating language to render
-the nodes (see section \ref{sec:zpt}).
+the nodes (see section \ref{sec:pt}).
 
 \subsection{Using a Renderer from the plastex Script}
 \label{subsec:renderer-from-script}
@@ -296,16 +295,16 @@ invokes the image generating process when needed for parts of a document
 that cannot be rendered in the given output format.
 
 Most of the work of the \class{Renderable} class is done in the
-\method{__unicode__} method.  This is rather convenient since each of
-the rendering methods in the renderer are required to return a unicode
-object.  When the \function{unicode} function is called with a renderable
+\method{__str__} method.  This is rather convenient since each of
+the rendering methods in the renderer are required to return a string
+object.  When the \function{str} function is called with a renderable
 object as its argument, the document traversal begins for that node.
 This traversal includes iterating through each of the node's child nodes, and
 looking up and calling the appropriate rendering method in the renderer.
 If the child node is configured to generate a new output file, the
 file is created and the rendered output is written to it; otherwise,
 the rendered output is appended to the rendered output of previous nodes.
-Once all of the child nodes have been rendered, the unicode object containing
+Once all of the child nodes have been rendered, the string object containing
 that output is returned.  This recursive process continues until the
 entire document has been rendered.
 
@@ -382,17 +381,16 @@ class mymacro{Command):
 
 Not all output types that you might render are going to support everything
 that \LaTeX\ is capable of.  For example, HTML has no way of representing
-equations, and most output types won't be capable of rendering
+TikZ pictures directly, and most output types won't be capable of rendering
 \LaTeX's \environment{picture} environment.  In cases like these, you
 can let \plasTeX\ generate images of the document node.  Generating
 images is done with a subclass of \class{plasTeX.Imagers.Imager}.
 The imager is responsible for creating a \LaTeX\ document from the
 requested document fragments, compiling the document and converting
-each page of the output document into individual images.  Currently,
-there are two \class{Imager} subclasses included with \plasTeX.
-Each of them use the standard \LaTeX\ compiler to generate a DVI file.
-The DVI file is then converted into images using one of the available
-imagers (see section \ref{sec:config-images} on how to select different imagers).
+each page of the output document into individual images.
+See section \ref{sec:config-images} on how to select an imager.
+The next section will explain how to generate \emph{vector} images such
+as SVG images, which are often a better solution because they scale much better.
 
 To generate an image of a document node, simply access the \member{image}
 property during the rendering process.  This property will return
@@ -402,15 +400,15 @@ since most renderers will need the generated \LaTeX\ document to be
 complete before compiling it and generating the final images.
 
 The example below demonstrates how to generate an image for the
-\environment{equation} environment.
+\environment{tikzcd} environment.
 \begin{verbatim}
 # Import renderer from first renderer example
 from MyRenderer import Renderer
 
 from plasTeX.TeX import TeX
 
-def handle_equation(node):
-    return u'<div><img src="%s"/></div>' % node.image.url
+def handle_tikzcd(node):
+    return '<div><img src="%s"/></div>' % node.image.url
 
 # Instantiate a TeX processor and parse the input text
 tex = TeX()
@@ -420,9 +418,10 @@ tex.input(r'''
 
 Previous paragraph.
 
-\begin{equation}
-\Sigma_{x=0}^{x+n} = \beta^2
-\end{equation}
+\begin{tikzcd}
+A \dar \rar & B \dar \\
+C \rar & D
+\end{tikzcd}
 
 Next paragraph.
 
@@ -433,10 +432,8 @@ document = tex.parse()
 # Instantiate the renderer
 renderer = Renderer()
 
-# Insert the rendering method into all of the environments that might need it
-renderer['equation'] = handle_equation
-renderer['displaymath'] = handle_equation
-renderer['eqnarray'] = handle_equation
+# Insert the rendering method into all of the environment that might need it
+renderer['tikzcd'] = handle_tikzcd
 
 # Render the document
 renderer.render(document)
@@ -475,7 +472,7 @@ See the \class{Imager} API documentation for more information (see
 
 \subsection{Generating Vector Images}
 
-If you have a vector imager configured (such as dvisvg or dvisvgm), you
+If you have a vector imager configured (such as pdf2svg), you
 can generate a vector version of the requested image. The nice thing about
 vector versions of images is that they can scale infinitely and not loose
 resolution.
@@ -527,7 +524,7 @@ so that the image override can done conditionally.  In the case
 where no override is desired in a property implementation, simply
 raise an \exception{AttributeError} exception.
 
-\section{Page Template Renderer\label{sec:zpt}}
+\section{Page Template Renderer\label{sec:pt}}
 
 The Page Template (PT) renderer is a renderer for \plasTeX\ document
 objects that supports various page template engines such as
@@ -537,32 +534,33 @@ Page Templates (ZPT)}, \href{http://jinja.pocoo.org/}{Jinja2 templates},
 \href{http://kid-templating.org/}{Kid templates},
 \href{http://genshi.edgewall.org/}{Genshi templates},
 \href{http://docs.python.org/lib/node40.html}{Python string templates},
-as well as plain old \href{http://docs.python.org/lib/typesseq-strings.html}{Python string formatting}.  It is also possible to add support for other
-template engines.  Note that all template engines except ZPT, Python formats,
+as well as plain old \href{http://docs.python.org/lib/typesseq-strings.html}{Python string formatting}.
+It is also possible to add support for other template engines. 
+Note that all template engines except ZPT, Python formats,
 and Python string templates must be installed in your Python installation.
 They are not included. In particular the Jinja2 template engine must be
-installed in order to use the HTML5 renderer.
+installed in order to use the HTML5 renderer (this is already taken care of
+if you installed \plasTeX\ in the recommended way).
 
-The ZPT engine is used for all of the \plasTeX\ delivered templates
-in the XHTML renderer; however, the other templates work in a very similar way.
+The Jinja2 engine is used for all of the \plasTeX\ delivered templates
+in the HTML5 renderer; however, the other templates work in a very similar way.
 The actual ZPT implementation used is SimpleTAL
 (\url{http://www.owlfish.com/software/simpleTAL/}).  This implementation
 implements almost all of the ZPT API and is very stable.  However, some
 changes were made to this package to make it more convenient to use
 within \plasTeX.  These changes are discussed in detail in the
-ZPT Tutorial (see section \ref{sec:zpttutorial}).
+ZPT Tutorial (see Appendix~\ref{sec:zpttutorial}).
 
 Since the above template engines can be used to generate any form of
-XML or HTML, the PT
-renderer is a general solution for rendering XML or HTML from a
-\plasTeX\ document object.  When switching from one DTD to another,
-you simply need to use a different set of templates.
+XML or HTML, the PT renderer is in particular a general solution for rendering
+XML or HTML from a \plasTeX\ document object.  When switching from one DTD to 
+another,you simply need to use a different set of templates.
 
 As in all \class{Renderer}-based renderers, each key in the PT renderer
 returns a function.  These functions are actually generated when the
 template files are parsed by the PT renderer.
 As is the case with all rendering methods, the only argument is the node to be
-rendered, and the output is a unicode object containing the rendered
+rendered, and the output is a string object containing the rendered
 output. In addition to the rendering methods, the \method{textDefault} method
 escapes all characters that are special in XML and HTML (i.e. <, >, and \&).
 
@@ -573,32 +571,23 @@ output types that are visual (e.g. HTML).
 
 \subsection{Defining and Using Templates}
 
-\note{If you are not familiar with the ZPT language, you should read the
-tutorial in section \ref{sec:zpttutorial} before continuing in this
-section.  See the links in the previous section for documentation on
-the other template engines.}
-
 By default, templates are loaded from the directory where the
 renderer module was imported from.  In addition, the templates from
 each of the parent renderer class modules are also loaded.  This makes
 it very easy to extend a renderer and add just a few new templates
 to support the additions that were made.
 
-The template files in the module directories can have three different forms.
-The first is HTML.  HTML templates must have an extension of \file{.htm} or
- \file{.html}.  These templates are compiled using
-SimpleTAL's HTML compiler.  XML templates, the second form of template,
-uses SimpleTAL's XML compiler, so they must be well-formed XML
-fragments.  XML templates must have the file extension \file{.xml},
-\file{.xhtml}, or \file{.xhtm}.  In any case, the basename of the template
-file is used as the key to store the template in the renderer.  Keep in
-mind that the names of the keys in the renderer correspond to the node
-names in the document object.
+The template files in the module directories can either contain a single 
+template, corresponding to a single type of node, or several templates.
+In the first case, the basename of the template file is used as the key to
+store the template in the renderer, and the extension specifies the template 
+engine to use. Keep in mind that the names of the keys in the renderer 
+correspond to the node names in the document object. The extensions used for 
+all templating engines are shown in the table below.
 
-The extensions used for all templating engines are shown in the table below.
 \begin{tableiii}{l|l|l}{}{Engine}{Extension}{Output Type}
-\lineiii{ZPT}{.html, .htm, .zpt}{HTML}
 \lineiii{Jinja2}{.jinja2}{Any}
+\lineiii{ZPT}{.html, .htm, .zpt}{HTML}
 \lineiii{}{.xhtml, .xhtm, .xml}{XML/XHTML}
 \lineiii{Python string formatting}{.pyt}{Any}
 \lineiii{Python string templates}{.st}{Any}
@@ -631,7 +620,7 @@ template names to another template in the renderer.  The following
 metadata names are currently supported.
 \begin{tableii}{l|p{4in}}{}{Name}{Purpose}
 \lineii{engine}{the name of the templating engine to use.  At the time of
-    this writing, the value could be zpt, tal (same as zpt),
+    this writing, the value could be jinja2, zpt, tal (same as zpt),
     html (ZPT HTML template), xml (ZPT XML template), jinja2,
     python (Python formatted string), string (Python string template),
     kid, cheetah, or genshi.}
@@ -662,28 +651,27 @@ particular template.
 \lineii{default-type}{the default template type for all templates in the file.}
 \end{tableii}
 
-The code sample below shows the basic format of a zpts file.
+The code sample below shows the basic format of a jinja2s file.
 \begin{verbatim}
 name: textbf bfseries
-<b tal:content="self">bold content</b>
+<b>{{ obj }}</b>
 
 name: textit
-<i tal:content="self">italic content</i>
+<i>{{ obj }}</i>
 
 name: introduction introduction*
 alias: section
 
 name: description
-type: xml
 <dl>
-<metal:block tal:repeat="item self">
-    <dt tal:content="item/attributes/term">definition term</dt>
-    <dd tal:content="item">definition content</dd>
-</metal:block>
+{% for item in obj %}
+  <dt>{{ item.attributes.term }}</dt>
+  <dd>{{ item }}</dd>
+{% endfor %}
 </dl>
 \end{verbatim}
 
-The code above is a zpts file that contains four templates.  Each template
+The code above is a jinja2s file that contains four templates.  Each template
 begins when a line starts with ``name:''.  Other directives have the same
 format (i.e. the name of the directive followed by a colon) and must
 immediately follow the name directive.  The first template definition
@@ -691,13 +679,10 @@ actually applies to two types of nodes \var{textbf} and \var{bfseries}.
 You can specify ony number of names on the name line.  The third template
 isn't a template at all; it is an alias.  When an alias is specified,
 the name (or names) given use the same template as the one specified
-in the alias directive.  Notice also that starred versions of a macro
-can be specified separately.  This means that they can use a different
+in the alias directive. Notice also that starred versions of a macro
+can be specified separately. This means that they can use a different
 template than the un-starred versions of the command.
-The last template is just a simple XML formatted
-template.  By default, templates in a zpts file use the HTML compiler
-in SimpleTAL.  You can specify that a template is an XML template by using
-the type directive.
+The last template shows a loop example.
 
 Here is an example of using various templates engines in a single file.
 \begin{verbatim}
@@ -722,7 +707,7 @@ engine: cheetah
 
 name: textrm
 engine: kid
-<span class="textrm" py:content="XML(unicode(here))">normal text</span>
+<span class="textrm" py:content="XML(str(here))">normal text</span>
 
 name: textup
 engine: genshi
@@ -764,8 +749,8 @@ It is possible to override the templates located in a renderer's directory
 with templates defined elsewhere.  This is done using the
 \environment{*TEMPLATES} environment variable.  The ``*'' in the name
 \environment{*TEMPLATES} is a wildcard and must be replaced by the name of the
-renderer.  For example, if you are using the XHTML renderer, the
-environment variable would be \environment{XHTMLTEMPLATES}.  For the PageTemplate
+renderer.  For example, if you are using the HTML5 renderer, the
+environment variable would be \environment{HTML5TEMPLATES}.  For the PageTemplate
 renderer, the environment variable would be \environment{PAGETEMPLATETEMPLATES}.
 
 The format of this variable is the same as that of the \environment{PATH}
@@ -814,15 +799,15 @@ but can override other templates as well.  Below is a file listing
 demonstrating the structure of a renderer with multiple themese.
 \begin{verbatim}
 # Renderer directory: contains template files
-XHTML/
+HTML5/
 
 # Theme directory: contains theme directories
-XHTML/Themes/
+HTML5/Themes/
 
 # Theme directories: contain page layout templates
-XHTML/Themes/default/
-XHTML/Themes/fancy/
-XHTML/Themes/plain/
+HTML5/Themes/default/
+HTML5/Themes/minimal/
+HTML5/Themes/fragment/
 \end{verbatim}
 \note{If no theme is specified in the document configuration, a theme
     with the name ``default'' is used.}
@@ -833,423 +818,13 @@ described in section \ref{sec:tmploverrides}.  Also, theme files are
 searched in the same way as regular templates, so any theme defined
 in a renderer superclass' directory is valid as well.
 
-
-\subsection{Zope Page Template Tutorial\label{sec:zpttutorial}}
-
-The Zope Page Template (ZPT) language is actually just a set of XML
-attributes that can be applied to markup of an DTD.  These attributes
-tell the ZPT interpreter how to process the element.  There are
-seven different attributes that you can use to direct the processing
-of an XML or HTML file (in order of evaluation): define, condition, repeat,
-content, replace, attributes, and omit-tag.  These attributes are
-described in section \ref{sec:talattributes}.  For a more complete description,
-see the official ZPT documentation at
-\url{http://www.zope.org/Documentation/Books/ZopeBook/2_6Edition/ZPT.stx}.
-
-
-\subsubsection{Template Attribute Language Expression Syntax (TALES)}
-
-The Template Attribute Language Expression Syntax (TALES) is used
-by the attribute language described in the next section.  The TALES
-syntax is used to evaluate expressions based on objects in the
-template namespace.  The results of these expressions can be used to
-define variables, produce output, or be used as booleans.  There are
-also several operators used to modify the behavior or interpretation
-of an expression.  The expressions and their modifiers are described
-below.
-
-\paragraph{path: operator\label{sec:pathoperator}}
-
-A ``path'' is the most basic form on an expression in ZPT.  The basic form
-is shown below.
-\begin{verbatim}
-[path:]string [ | TALES expression ]
-\end{verbatim}
-
-The \var{path:} operator is actually optional on all paths.  Leaving it
-off makes no difference.  The ``string'' in the above syntax is a '/'
-delimited string of names.  Each name refers to a property of the
-previous name in the string.  Properties can include attributes, methods,
-or keys in a dictionary.  These properties can in turn have properties
-of their own.  Some examples of paths are shown below.
-\begin{verbatim}
-# Access the parentNode attribute of chapter, then get its title
-chapter/parentNode/title
-
-# Get the key named 'foo' from the dictionary bar
-bar/foo
-
-# Call the title method on the string in the variable booktitle
-booktitle/title
-\end{verbatim}
-
-It is possible to specify multiple paths separated by a pipe (|).
-These paths are evaluated from left to right.  The first one to return
-a non-None value is used.
-\begin{verbatim}
-# Look for the title on the current chapter node as well as its parents
-chapter/title | chapter/parentNode/title | chapter/parentNode/parentNode/title
-
-# Look for the value of the option otherwise get its default value
-myoptions/encoding | myoptions/defaultencoding
-\end{verbatim}
-
-There are a few keywords that can be used in place of a path in a
-TALES expression as well.
-\begin{tableii}{l|p{4in}}{var}{Name}{Purpose}
-\lineii{nothing}{same as \var{None} in Python}
-\lineii{default}{keeps whatever the existing value of the element or attribute is}
-\lineii{options}{dictionary of values passed in to the template when instatiated}
-\lineii{repeat}{the repeat variable (see \ref{sec:talrepeat})}
-\lineii{attrs}{dictonary of the original attributes of the element}
-\lineii{CONTEXTS}{dictionary containing all of the above}
-\end{tableii}
-
-
-\paragraph{exists: operator}
-
-This operator returns true if the path exists.  If the path does not exist,
-the operator returns false.   The syntax is as follows.
-\begin{verbatim}
-exists:path
-\end{verbatim}
-
-The ``path'' in the code above is a path as described in section
-\ref{sec:pathoperator}.  This operator is commonly combined with the
-not: operator.
-
-
-\paragraph{nocall: operator}
-
-By default, if a property that is retrieved is callable, it will be
-called automatically.  Using the nocall: operator, prevents this
-execution from happening.  The syntax is shown below.
-\begin{verbatim}
-nocall:path
-\end{verbatim}
-
-
-\paragraph{not: operator}
-
-The not: operator simply negates the boolean result of the path.  If
-the path is a boolean true, the not: operator will return false, and
-vice versa.  The syntax is shown below.
-\begin{verbatim}
-not:path
-\end{verbatim}
-
-
-\paragraph{string: operator}
-
-The string: operator allows you to combine literal strings and paths
-into one string.  Paths are inserted into the literal string using a
-syntax much like that of Python Templates: \$path or \$\{path\}.
-The general syntax is:
-\begin{verbatim}
-string:text
-\end{verbatim}
-
-Here are some examples of using the string: operator.
-\begin{verbatim}
-string:Next - ${section/links/next}
-string:($pagenumber)
-string:[${figure/number}] ${figure/caption}
-\end{verbatim}
-
-
-\paragraph{python: operator}
-
-The python: operator allows you to evaluate a Python expression.  The
-syntax is as follows.
-\begin{verbatim}
-python:python-code
-\end{verbatim}
-
-The ``python-code'' in the expression above can include any of the Python
-built-in functions and operators as well as four new functions that
-correspond to the TALES operators: path, string, exists, and nocall.
-Each of these functions takes a string containing the path to be
-evaluated (e.g. path('foo/bar'), exists('chapter/title'), etc.).
-
-When using Python operators, you must escape any characters that would
-not be legal in an XML/HTML document (i.e. <>\&).  For example,
-to write an expression to test if a number was less than or greater than
-two numbers, you would need to do something like the following example.
-\begin{verbatim}
-# See if the figure number is less than 2 or greater than 4
-python: path('figure/number') &lt; 2 or path('figure/number') &gt; 4
-\end{verbatim}
-
-
-\paragraph{stripped: operator}
-
-The stripped: operator only exists in the SimpleTAL distribution provided
-by \plasTeX.  It evaluates the given path and removes any markup from
-that path.  Essentially, it is a way to get a plain text representation
-of the path.  The syntax is as follows.
-\begin{verbatim}
-stripped:path
-\end{verbatim}
-
-
-\subsubsection{Template Attribute Language (TAL) Attributes\label{sec:talattributes}}
-
-\paragraph{tal:define}
-
-The \attr{tal:define} attribute allows you to define a variable for use
-later in the template.  Variables can be specifies as local (only for
-use in the scope of the current element) or global (for use anywhere in
-the template).  The syntax of the define attribute is shown below.
-\begin{verbatim}
-tal:define="[ local | global ] name expression [; define-expression ]"
-\end{verbatim}
-
-The define attributes sets the value of ``name'' to ``expression.''
-By default, the scope of the variable is local, but can be specified
-as global by including the ``global'' keyword before the name of the
-variable.  As shown in the grammar above, you can specify multiple
-variables in one \attr{tal:define} attribute by separating the define
-expressions by semi-colons.
-
-Examples of using the \attr{tal:define} attribute are shown belaw.
-\begin{verbatim}
-<p tal:define="global title document/title;
-               next self/links/next;
-               previous self/links/previous;
-               length python:len(self);
-               up string:Up - ${self/links/up}">
-...
-</p>
-\end{verbatim}
-
-
-\paragraph{tal:condition}
-
-The \attr{tal:condition} attribute allows you to conditionally include
-an element.  The syntax is shown below.
-\begin{verbatim}
-tal:condition="expression"
-\end{verbatim}
-
-The \attr{tal:condition} attribute is very simple.  If the expression
-evaluates to true, the element and its children will be evaluated and
-included in the output.  If the expression evaluates to false, the element
-and its children will not be evaluated or included in the output.
-Valid expressions for the \attr{tal:condition} attribute are the same
-as those for the expressions in the \attr{tal:define} attribute.
-\begin{verbatim}
-<p tal:condition="python:len(self)">
-    <b tal:condition="self/caption">Caption for paragraph</b>
-    ...
-</p>
-\end{verbatim}
-
-
-\paragraph{tal:repeat\label{sec:talrepeat}}
-
-The \attr{tal:repeat} attribute allows you to repeat an element multiple
-times; the syntax is shown below.
-\begin{verbatim}
-tal:repeat="name expression"
-\end{verbatim}
-
-When the \attr{tal:repeat} attribute is used on an element, the
-result of``expression'' is iterated over, and a new element is generated
-for each item in the iteration.  The value of the current item is
-set to ``name'' much like in the \attr{tal:define} attribute.
-
-Within the scope of the repeated element, another variable is available:
-\var{repeat}.  This variable contains several properties related to
-the loop.
-\begin{tableii}{l|p{4in}}{var}{Name}{Purpose}
-\lineii{index}{number of the current iteration starting from zero}
-\lineii{number}{number of the current iteration starting from one}
-\lineii{even}{is true if the iteration number is even}
-\lineii{odd}{is true if the iteration number is odd}
-\lineii{start}{is true if this is the first iteration}
-\lineii{end}{is true if this is the last iteration; This is never
-    true if the repeat expression returns an iterator}
-\lineii{length}{the length of the sequence being iterated over; This
-    is set to \var{sys.maxint} for iterators.}
-\lineii{letter}{lower case letter corresponding to the current iteration
-    number starting with 'a'}
-\lineii{Letter}{upper case letter corresponding to the current iteration
-    number starting with 'A'}
-\lineii{roman}{lower case Roman numeral corresponding to the current iteration
-    number starting with 'i'}
-\lineii{Roman}{upper case Roman numeral corresponding to the current iteration
-    number starting with 'I'}
-\end{tableii}
-
-To access the properties listed above, you must use the property of
-the \var{repeat} variable that corresponds to the repeat variable name.
-For example, if your repeat variable name is ``item'', you would access
-the above variables using the expressions \var{repeat/item/index},
-\var{repeat/item/number}, \var{repeat/item/even}, etc.
-
-A simple example of the \attr{tal:repeat} attribute is shown below.
-\begin{verbatim}
-<ol>
-<li tal:repeat="option options" tal:content="option/name">option name</li>
-</ol>
-\end{verbatim}
-
-One commonly used feature of rendering tables is alternating row colors.
-This is a little bit tricky with ZPT since the \attr{tal:condition}
-attribute is evaluated before the \attr{tal:repeat} directive.  You
-can get around this by using the \namespace{metal} namespace.  This
-is the namespace used by ZPT's macro language\footnote{The macro language
-isn't discussed here.  See the official ZPT documentation for more
-information.}  You can create another element around the element you
-want to be conditional.  This wrapper element is simply there to do the
-iterating, but is not included in the output.  The example below shows
-how to do alternating row colors in an HTML table.
-\begin{verbatim}
-<table>
-<metal:block tal:repeat="employee employees">
-<!-- even rows -->
-<tr tal:condition="repeat/employee/even" style="background-color: white">
-    <td tal:content="employee/name"></td>
-    <td tal:content="employee/title"></td>
-</tr>
-<!-- odd rows -->
-<tr tal:condition="repeat/employee/odd" style="background-color: gray">
-    <td tal:content="employee/name"></td>
-    <td tal:content="employee/title"></td>
-</tr>
-</metal:block>
-</table>
-\end{verbatim}
-
-
-\paragraph{tal:content}
-
-The \attr{tal:content} attribute evaluates an expression and replaces
-the content of the element with the result of the expression.  The
-syntax is shown below.
-\begin{verbatim}
-tal:content="[ text | structure ] expression"
-\end{verbatim}
-
-The \var{text} and \var{structure} options in the \attr{tal:content}
-attribute indicate whether or not the content returned by the
-expression should be escaped (i.e. "\&<> replaced by \&quot;, \&amp;, \&lt;,
-and \&gt;, respectively).  When the \var{text} option is used, these
-special characters are escaped; this is the default behavior.  When
-the \var{structure} option is specified, the result of the expression is
-assumed to be valid markup and is not escaped.
-
-In SimpleTAL, the default
-behavior is the same as using the \var{text} option.  However, in
-\plasTeX, 99.9\% of the time the content returned by the expression is
-valid markup, so the default was changed to \var{structure} in the
-SimpleTAL package distributed with \plasTeX.
-
-
-\paragraph{tal:replace}
-
-The \attr{tal:replace} attribute is much like the \attr{tal:content}
-attribute.  They both evaluate an expression and include the content
-of that expression in the output, and they both have a \var{text} and
-\var{structure} option to indicate escaping of special characters.
-The difference is that when the \attr{tal:replace} attribute is used,
-the element with the \attr{tal:replace} attribute on it is not included
-in the output.  Only the content of the evaluated expression is returned.
-The syntax of the \attr{tal:replace} attribute is shown below.
-\begin{verbatim}
-tal:replace="[ text | structure ] expression"
-\end{verbatim}
-
-
-\paragraph{tal:attributes}
-
-The \attr{tal:attributes} attribute allows you to programatically create
-attributes on the element.  The syntax is shown below.
-\begin{verbatim}
-tal:attributes="name expression [; attribute-expression ]"
-\end{verbatim}
-
-The syntax of the \attr{tal:attributes} attribute is very similar to
-that of the \attr{tal:define} attribute.  However, in the case of the
-\attr{tal:attributes} attribute, the name is the name of the attribute
-to be created on the element and the expression is evaluated to
-get the value of the attribute.  If an error occurs or \var{None} is
-returned by the expression, then the attribute is removed from the
-element.
-
-Just as in the case of the \attr{tal:define} attribute, you can specify
-multiple attributes separated by semi-colons (;).  If a semi-colon character
-is needed in the expression, then it must be represented by a double
-semi-colon (;;).
-
-An example of using the \attr{tal:attributes} is shown below.
-\begin{verbatim}
-<a tal:attributes="href self/links/next/url;
-                   title self/links/next/title">link text</a>
-\end{verbatim}
-
-
-\paragraph{tal:omit-tag}
-
-The \attr{tal:omit-tag} attribute allows you to conditionally omit an
-element.  The syntax is shown below.
-\begin{verbatim}
-tal:omit-tag="expression"
-\end{verbatim}
-
-If the value of ``expression'' evaluates to true (or is empty), the element
-is omitted; however, the content of the element is still sent to the output.
-If the expression evaluates to false, the element is included in the
-output.
-
-
-\section{XHTML Renderer}
-
-The XHTML renderer is a subclass of the Page Template Renderer (section
-\ref{sec:zpt}).  Since the Page Template Renderer can render any variant
-of XML or HTML, the XHTML renderer has very little to do in the Python
-code.  Almost all of the additional processing in the XHTML renderer has
-to do with generated images.  Since HTML cannot render \LaTeX's vector
-graphics or equations natively, they are converted to images.  In order
-for inline equations to line up correctly with the text around them, CSS
-attributes are used to adjust the vertical alignment.  Since the images
-aren't generated until after all of the document has been rendered, this
-CSS information is added in post-processing (i.e. the \method{cleanup}
-method).
-
-In addition to the processing of images, all characters with a ordinal
-greater than 127 are converted into numerical entities.  This should
-prevent any rendering problems due to unknown encodings.
-
-Most of the work in this renderer was in creating the templates for
-every \LaTeX\ construct.  Since this renderer was intended to be the
-basis of all HTML-based renderers, it must be capable of rendering
-all \LaTeX\ constructs; therefore, there are ZPT templates for every
-\LaTeX\ command, and the commands in some common \LaTeX\ packages.
-
-While the XHTML renderer is fairly complete when it comes to standard
-\LaTeX, there are many packages which are not currently supported.
-To add support for these packages, templates (and possibly Python
-based macros; section \ref{sec:macros}) must be created.
-
-
-\subsection{Themes}
-
-The theming support in the XHTML renderer is the same as that of the
-Page Template Renderer.  Any template directory can have a subdirectory called
-\file{Themes} which contains theme directories with sets of templates
-in them.  The names of the directories in the \file{Themes} directory
-corresponds to the name of the theme.  There are currently two themes
-included with \plasTeX: default and plain.  The default theme is a
-minor variation of the one used in the Python 1.6 documentation.  The
-plain theme is a theme with no extra navigation bars.
-
 \section{HTML5 Renderer}\label{sec:html5}
 
+\subsection{Basic use and configuration}
+
 The HTML5 Renderer is a subclass of the Page Template Renderer (Section
-\ref{sec:zpt}). Therefore most of the work is done in its collection of
-templates, all written using the Jinja2 template engine. In particular
-Jinja2 must be installed on your system to use this renderer.
+\ref{sec:pt}). Therefore most of the work is done in its collection of
+templates, all written using the Jinja2 template engine. 
 
 In addition, this renderer allows packages to override certain templates,
 add css or javascript files, and push output files through various
@@ -1302,85 +877,6 @@ mathematics on the author side. For instance one can use mathjax-node
 inclusion of MathJax using option \longprogramopt{no-mathjax} and
 use option \longprogramopt{filters} to call the author-side
 mathematics renderer.
-
-\subsection{Specific packages}
-
-There a some packages that are currently supported only by the HTML5
-renderer because they use the package resources mechanism described in
-the next section or need the output format to handle svg files.
-
-\subsubsection{TikZ and TikZ-CD}\label{sec:tikz}
-
-TikZ is a general purpose drawing package for LaTeX relying on a low
-level language called PGF. The HTML5 renderer tries to handle
-\environment{tikzpicture} environments by calling regular
-\program{pdflatex} to get a pdf file, then converting to svg using
-\program{pdf2svg} and including in the final html file. This should work
-without any tweak in the simplest cases where the TeX source contains
-only \verb+\usepackage{tikz}+ with no option, tikz library etc\ldots and the
-tikzpicture environment itself uses no user defined macro.
-
-For more complicated cases, there are three configuration options that
-can be set either on the command line or in a configuration file. Option
-\longprogramopt{tikz-compiler} indicates which \LaTeX compiler to use,
-default is \program{pdflatex}. Option
-\longprogramopt{tikz-converter} indicates which pdf to svg converter
-to use, default is \program{pdf2svg}. Option
-\longprogramopt{tikz-template} can be used to indicate which file
-should be used as a template receiving the \environment{tikzpicture}
-code. By default this option is set to an empty string, in which case
-the template becomes
-\begin{verbatim}
-\documentclass{standalone}
-\usepackage{tikz}
-\begin{document}
-  {{ tikzpicture }}
-\end{document}
-\end{verbatim}
-In a more realistic setup one can use \longprogramopt{tikz-template}
-\file{mytemplate.tex} and put inside \file{mytemplate.tex} something
-like:
-\begin{verbatim}
-\documentclass{standalone}
-\usepackage{tikz}
-\usetikzlibrary{arrows,decorations.pathmorphing}
-
-\newcommand{\mymacro}{I love TikZ}
-\begin{document}
-  {{ tikzpicture }}
-\end{document}
-\end{verbatim}
-
-In the resulting html file, the \environment{tikzpicture} will appear as
-something like
-\begin{verbatim}
-<div class="tikzpicture">
-  <object class="tikzpicture" data="images/a0000000001.svg" type="image/svg+xml">
-    TikZ picture
-    Source code
-  </object>
-</div>
-\end{verbatim}
-where ``Tikz picture'' can be replaced by something else if it appears
-in a custom lang file (see Section~\ref{sec:config-document}) and
-``Source code'' will be replaced by the actual source of the
-picture. This text will appear only in browsers that cannot display the
-resulting svg picture or when using assistive technology such as screen
-readers.
-
-The package tikz-cd is a specialized set of TikZ macros for easy commutative
-diagrams creation (if you do not know what is a commutative diagram then
-you do not need tikz-cd). This package is supported in a similar way
-except that the template configuration option is
-\longprogramopt{tikz-cd-template} and the default template is:
-\begin{verbatim}
-\documentclass{standalone}
-\usepackage{tikz-cd}
-\begin{document}
-  {{ tikzpicture }}
-\end{document}
-\end{verbatim}
-and the source code is introduced by ``Commutative diagram''.
 
 \subsection{Interactions with packages}\label{sec:html5-pkg}
 
@@ -1501,11 +997,64 @@ CSS theme uses the historical \plasTeX{} green and yellow color scheme, with
 gradients and shadows. The \optval{blue} one uses a blue and gray color scheme,
 with gradients and shadows.
 
+\section{XHTML Renderer}
 
-\section{tBook Renderer}
+The XHTML renderer used to be the default renderer of plasTeX but is now 
+deprecated in favor of the HTML5 renderer, and kept only for
+backward compatibility purposes. 
+The XHTML renderer is a subclass of the Page Template Renderer (section
+\ref{sec:pt}). Since the Page Template Renderer can render any variant
+of XML or HTML, the XHTML renderer has very little to do in the Python
+code. Almost all of the additional processing in the XHTML renderer has
+to do with generated images.
+Since MathJax (or KaTeX) didn't exist at the time when XHTML was used, 
+all \LaTeX equations are converted to images by this renderer. In order
+for inline equations to line up correctly with the text around them, CSS
+attributes are used to adjust the vertical alignment.  Since the images
+aren't generated until after all of the document has been rendered, this
+CSS information is added in post-processing (i.e. the \method{cleanup}
+method).
 
-Not yet implemented.
+In addition to the processing of images, all characters with a ordinal
+greater than 127 are converted into numerical entities.  This should
+prevent any rendering problems due to unknown encodings.
 
-\section{DocBook Renderer}
+Most of the work in this renderer was in creating the templates for
+every \LaTeX\ construct.  Since this renderer was intended to be the
+basis of all HTML-based renderers, it must be capable of rendering
+all \LaTeX\ constructs; therefore, there are ZPT templates for every
+\LaTeX\ command, and the commands in some common \LaTeX\ packages.
 
-Not yet implemented.
+\subsection{Themes}
+
+The theming support in the XHTML renderer is the same as that of the
+Page Template Renderer.  Any template directory can have a subdirectory called
+\file{Themes} which contains theme directories with sets of templates
+in them.  The names of the directories in the \file{Themes} directory
+corresponds to the name of the theme.  There are currently two themes
+included with \plasTeX: default and plain.  The default theme is a
+minor variation of the one used in the Python 1.6 documentation.  The
+plain theme is a theme with no extra navigation bars.
+
+\section{Other builtin renderers}
+
+In addition to the renderers covered in previous sections, \plasTeX\ 
+comes with a couple of smaller renderers that are less tested but can
+still be useful, at least as technological examples.
+
+The simplest output format is given by the Text renderer that will
+output a simple unicode text file. It is not based on a templating
+engine, it is therefore a good example for people who want to write 
+a renderer from scratch.
+
+The ManPage renderer outputs files ready for consumption by groff 
+(directly of through man). Like the Text renderer, it is written 
+from scratch, without any template engine.
+
+The DocBook renderer is based on the Page Template Renderer.
+It supports two themes: book and article having different root elements.
+The templates for this renderer using the Cheetah engine which is not 
+installed by default when installing \plasTeX. Be careful to install
+the Cheetah3 fork which is compatible with python 3.    
+
+There is also a EPUB renderer based on the XHTML renderer.

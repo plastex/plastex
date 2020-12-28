@@ -33,11 +33,8 @@ There are two types of packages that can be loaded by \plasTeX: 1) native
 \LaTeX\ packages, and 2) packages written entirely in Python.  \plasTeX\
 first looks for packages written in Python.  Packages such as this are
 written specifically for \plasTeX\ and will yield better parsing performance
-as well as better looking output.  Python-based packages are valid Python
-packages as well.  So to load them, you must add the directory where
-your Python packages are to your \envvar{PYTHONPATH} environment variable.
-For more information about Python-based packages, see the section
-\ref{sec:packages}.
-
+as well as better looking output. 
 If you have a true \LaTeX\ package, \plasTeX\ will try to locate it using
 the \program{kpsewhich} program just like \LaTeX\ does.
+For more information about packages, see the section \ref{sec:packages}.
+

@@ -118,7 +118,7 @@ is set.
 \begin{configuration}{Renderer}
 \options{\longprogramopt{renderer=\optval{renderer-name}}}
 \config{general}{renderer}
-\default{XHTML}
+\default{HTML5}
 specifies which renderer to use. This is either one of the built in renderers,
 a renderer defined by a plugin, or a path to the directory of a renderer.
 A plugin can provide a renderer \verb+my_renderer+ by having a
@@ -502,6 +502,8 @@ Images are created by renderers when the output type in incapable of
 rendering the content in any other way. This method was commonly used
 to display equations in XHTML output. Nowadays, MathJax arguably
 provides a better method, see Section~\ref{sec:config-html5} below.
+But there are still pieces of mathematics they are not handled by MathJax, such
+as commutative diagrams written using the \verb+tikz-cd+ package.
 The following options control how images are generated.
 
 \begin{configuration}{Base URL}
@@ -547,7 +549,7 @@ indicates whether or not images should use a cache between runs.
 \begin{configuration}{Convert \LaTeX\ output to images}
 \options{\longprogramopt{imager=\optval{program}}}
 \config{images}{imager}
-\default{dvipng dvi2bitmap gsdvipng gspdfpng OSXCoreGraphics}
+\default{gspdfpng pdftoppm dvipng dvi2bitmap gsdvipng OSXCoreGraphics}
 specifies which converter will be used to take the output from the
 \LaTeX\ compiler and convert it to images.  You can specify a space
 delimited list of names as well.  If a list of names is specified,
@@ -569,7 +571,7 @@ option.
 \begin{configuration}{Convert \LaTeX\ output to vector images}
 \options{\longprogramopt{vector-imager=\optval{program}}}
 \config{images}{vector-imager}
-\default{dvisvgm}
+\default{none pdf2svg dvisvgm}
 specifies which converter will be used to take the output from the
 \LaTeX\ compiler and convert it to vector images.  You can specify a space
 delimited list of names as well.  If a list of names is specified,
