@@ -1,5 +1,6 @@
 import re
 from plasTeX.Renderers.PageTemplate import Renderer as _Renderer
+from plasTeX.Renderers.PageTemplate import xmltemplate
 from plasTeX import Command
 try:
     from lxml import etree
@@ -91,6 +92,10 @@ class DocBook(_Renderer):
     fileExtension = '.xml'
     imageTypes = ['.png','.jpg','.jpeg','.gif']
     vectorImageTypes = ['.svg']
+
+    def __init__(self, *args, **kwargs):
+        _Renderer.__init__(self, *args, **kwargs)
+        self.registerEngine('xml', None, '.xml', xmltemplate)
 
     def cleanup(self, document, files, postProcess=None):
         res = _Renderer.cleanup(self, document, files, postProcess=postProcess)
