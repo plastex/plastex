@@ -13,12 +13,13 @@ class DVISVGM(_Imager):
         if outfile is None:
             outfile = self.tmpFile.with_suffix('.dvi').name
 
-        scale = self.config["images"]["scale-factor"]
+        default_scale = self.config["images"]["scale-factor"]
 
         images = []
         for no, line in enumerate(open("images.csv")):
             out = 'img%d.svg' % no
-            page, output = line.split(",")
+            page, output, scale_str = line.split(",")
+            scale = float(scale_str.strip()) or default_scale
             images.append((out, output.rstrip()))
 
             rc = subprocess.run([

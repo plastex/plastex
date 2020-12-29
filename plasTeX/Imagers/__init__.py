@@ -1,14 +1,14 @@
 from pathlib import Path
-import os, time, tempfile, shutil, re, string, pickle
-try: from hashlib import md5
-except ImportError: from md5 import new as md5 # type: ignore # mypy#1153
-from plasTeX.Logging import getLogger
+import os, tempfile, shutil, re, string, pickle
+from hashlib import md5
 from io import StringIO
-from plasTeX.Filenames import Filenames
-from collections import OrderedDict
 import subprocess
 import shlex
 from typing import List, Tuple, Optional, Dict, Any
+
+from plasTeX import Macro
+from plasTeX.Filenames import Filenames
+from plasTeX.Logging import getLogger
 
 log = getLogger()
 depthlog = getLogger('render.images.depth')
@@ -529,10 +529,10 @@ class Imager(object):
 \newwrite\imager@log
 \immediate\openout\imager@log=images.csv
 \@ifundefined{plasTeXimage}{%
-\newenvironment{plasTeXimage}[1]{%
+\newenvironment{plasTeXimage}[2]{%
 \vfil\break\plasTeXregister%
 \thispagestyle{empty}\def\@eqnnum{}\def\tagform@{\@gobble}%
-\write\imager@log{\thepage,#1}%
+\write\imager@log{\thepage,#1,#2}%
 \ignorespaces}{}}{}
 ''')
         self.source.write(r'''
@@ -696,9 +696,9 @@ width 2pt\hskip2pt}}{}
         Execute the actual image converter
 
         The converter should read `images.csv`. Each row of `images.csv` is a
-        pair `n,dest`, where `n` is the page that contains the image and `dest`
-        is the destination filename. The converter then converts the output on
-        page `n` to an image file.
+        triple `n,dest,scale`, where `n` is the page that contains the image, `dest`
+        is the destination filename and `scale` is the requested scaling factor.
+        The converter then converts the output on page `n` to an image file.
 
         Arguments:
         outfile -- output file from latex to convert from. If left None, it
@@ -732,12 +732,12 @@ width 2pt\hskip2pt}}{}
 
         images = []
         for line in open("images.csv"):
-            page, output = line.split(",")
+            page, output, _ = line.split(",")
             images.append(("img{}{}".format(page, self.fileExtension), output.rstrip()))
 
         return images
 
-    def writeImage(self, filename, code, context):
+    def writeImage(self, filename: str, code: str, context: str='', scale: float=1.0) -> None:
         """
         Write LaTeX source for the image
 
@@ -747,14 +747,18 @@ width 2pt\hskip2pt}}{}
         context -- the LaTeX code of the context of the image
 
         """
-        self.source.write('%s\n\\begin{plasTeXimage}{%s}\n%s\n\\end{plasTeXimage}\n' % (context, filename, code))
+        self.source.write('%s\n\\begin{plasTeXimage}{%s}{%s}\n%s\n\\end{plasTeXimage}\n' % (context, filename, scale, code))
 
-    def newImage(self, text, context='', filename=None):
+    def get_scale(self, nodeName: str) -> float:
+        return self.config["images"]["scales"].get(nodeName, 
+            self.config["images"]["scale-factor"])
+
+    def newImage(self, node: Macro, context: str='', filename: Optional[str]=None) -> Image:
         """
         Invoke a new image
 
         Required Arguments:
-        text -- the LaTeX source to be rendered in an image
+        node -- the node to be rendered in an image
 
         Keyword Arguments:
         context -- LaTeX source to be executed before the image
@@ -765,24 +769,24 @@ width 2pt\hskip2pt}}{}
             should not include the file extension.
 
         """
+        text = node.source
         # Convert ligatures back to original string
         for dest, src in self.ownerDocument.charsubs:
             text = text.replace(src, dest)
 
-        key = text
-
         # See if this image has been cached
-        if key in list(self._cache.keys()):
-            return self._cache[key]
+        if text in self._cache:
+            return self._cache[text]
 
-        # Generate a filename
-        if not filename:
-            filename = self.newFilename()
+        # Generate a filename if none has been provided
+        filename = filename or self.newFilename()
+        
+        scale = self.get_scale(node.nodeName) # type: ignore
 
         # Add the image to the current document and cache
         #log.debug('Creating %s from %s', filename, text)
-        self.writeImage(filename, text, context)
-
+        self.writeImage(filename, text, context, scale)
+        
         img = Image(filename, dict(self.config['images']))
 
         # Populate image attrs that will be bound later
@@ -796,7 +800,7 @@ width 2pt\hskip2pt}}{}
                     value.imageUnits = self.imageUnits
                     setattr(img, name, value)
 
-        self.images[filename] = self._cache[key] = img
+        self.images[filename] = self._cache[text] = img
         return img
 
     def getImage(self, node):
@@ -818,7 +822,7 @@ width 2pt\hskip2pt}}{}
         """
         name = getattr(node, 'imageoverride', None)
         if name is None:
-            return self.newImage(node.source)
+            return self.newImage(node)
 
         if name in list(self.staticimages.keys()):
             return self.staticimages[name]
@@ -839,7 +843,7 @@ width 2pt\hskip2pt}}{}
                 if PILImage is None:
                     shutil.copyfile(name, path)
                     tmpl = string.Template(self.imageAttrs)
-                    width = DimensionPlaceholder(tmpl.substitute({'filename':path, 'attr':'width'}))
+                    width = DimensionPlaceholder(tmpl.substitute({'filename':path, 'attr':'width'})) 
                     height = DimensionPlaceholder(tmpl.substitute({'filename':path, 'attr':'height'}))
                     height.imageUnits = width.imageUnits = self.imageUnits
                 else:
@@ -849,7 +853,7 @@ width 2pt\hskip2pt}}{}
                     else:
                         img = PILImage.open(name)
                         width, height = img.size
-                        scale = self.config['images']['scale-factor']
+                        scale = self.get_scale(node.nodeName)
                         if scale != 1:
                             width = int(width * scale)
                             height = int(height * scale)
@@ -862,7 +866,7 @@ width 2pt\hskip2pt}}{}
             else:
                 img = PILImage.open(name)
                 width, height = img.size
-                scale = self.config['images']['scale-factor']
+                scale = self.get_scale(node.nodeName)
                 if scale != 1:
                     width = int(width * scale)
                     height = int(height * scale)
@@ -876,7 +880,7 @@ width 2pt\hskip2pt}}{}
         except Exception as msg:
             #log.warning('%s in image "%s".  Reverting to LaTeX to generate the image.' % (msg, name))
             pass
-        return self.newImage(node.source)
+        return self.newImage(node)
 
 
 class VectorImager(Imager):

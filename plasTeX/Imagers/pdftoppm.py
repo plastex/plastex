@@ -46,7 +46,7 @@ class pdftoppm(_Imager):
 
         images = []
         for line in open("images.csv"):
-            page, output = line.split(",")
+            page, output, _ = line.split(",")
             images.append(["img-{}.png".format(page), output.rstrip()])
 
         return images

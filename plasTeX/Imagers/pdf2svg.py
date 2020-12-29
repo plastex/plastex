@@ -1,7 +1,7 @@
 import subprocess
 import re
 import xml.etree.ElementTree as ET
-from typing import List, Tuple, Optional
+from typing import List, Tuple
 from plasTeX.Imagers import VectorImager
 
 length_re = re.compile('([0-9\\.]*)(.*)')
@@ -17,12 +17,11 @@ class PDFSVG(VectorImager):
 
         subprocess.call(["pdfcrop", outfile, self.tmpFile.with_suffix('.cropped.pdf').name], stdout=subprocess.DEVNULL)
 
-        scale = self.config["images"]["scale-factor"]
-
         images = []
         for no, line in enumerate(open("images.csv")):
             filename = 'img%d.svg' % no
-            page, output = line.split(",")
+            page, output, scale_str = line.split(",")
+            scale = float(scale_str.strip())
             images.append((filename, output.rstrip()))
 
             subprocess.run(['pdf2svg', self.tmpFile.with_suffix('.cropped.pdf').name, filename, str(page)], stdout=subprocess.DEVNULL, check=True)

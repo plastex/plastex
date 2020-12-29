@@ -598,8 +598,14 @@ compilation. It can be useful to retain the images for debugging purposes.
 \options{\longprogramopt{image-scale-factor}}
 \config{images}{scale-factor}
 \default{1.0}
-the scale factor to apply to images after compilation. Not all imagers respect
+the default scale factor to apply to images after compilation. Not all imagers respect
 this option.
+\end{configuration}
+
+\begin{configuration}{Scale factor for given node type}
+\options{\longprogramopt{scales=\optval{node-name scale_factor}}}
+specifies the image scale factor for the specified type of node.
+Not all imagers respect this option.
 \end{configuration}
 
 \subsection{HTML5 Renderer Options\label{sec:config-html5}}

@@ -205,6 +205,20 @@ def defaultConfig(loadConfigFiles: bool=False):
 
     images = config.addSection('images')
 
+    class ImageScaleOption(DictOption[float]):
+        @classmethod
+        def entryFromString(cls, entry: str) -> float:
+            return float(entry)
+
+        def registerArgparse(self, group: ArgumentGroup):
+            group.add_argument(*self.options, dest=self.name, help=self.description, action='append', nargs=2, metavar=("NODE", "VALUE"))
+
+    images['scales'] = ImageScaleOption(
+        """ Set image scale for given node name """,
+        options = '--scales',
+        default = {}
+    )
+    
     images['base-url'] = StringOption(
         """ Base URL for all images """,
         options = '--image-base-url',
