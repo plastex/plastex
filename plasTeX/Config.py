@@ -218,7 +218,7 @@ def defaultConfig(loadConfigFiles: bool=False):
         options = '--scales',
         default = {}
     )
-    
+
     images['base-url'] = StringOption(
         """ Base URL for all images """,
         options = '--image-base-url',
@@ -240,7 +240,7 @@ def defaultConfig(loadConfigFiles: bool=False):
     images['vector-imager'] = StringOption(
         """ LaTeX to vector image program """,
         options = '--vector-imager',
-        default = 'none pdf2svg dvisvgm',
+        default = 'pdf2svg dvisvgm',
     )
 
     images['filenames'] = StringOption(
