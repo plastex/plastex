@@ -67,7 +67,7 @@ def addConfig(config: ConfigManager):
     section['mathjax-dollars'] = BooleanOption(
         """ Use single dollars as math delimiter for mathjax """,
         options='--dollars !--no-dollars',
-        default=False,
+        default=True,
     )
 
     section['filters'] = MultiStringOption(
