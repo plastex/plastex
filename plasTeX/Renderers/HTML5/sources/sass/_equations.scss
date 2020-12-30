@@ -3,13 +3,12 @@
 div.equation
 {
     display: flex;
+    align-items:center;
 
     margin: 1rem 1rem;
 
     span.equation_label
     {
-        float: left;
-
         margin-right: 1rem;
     }
     span.equation_label::before
@@ -22,8 +21,6 @@ div.equation
     };
     div.equation_content
     {
-        float: left;
-
-        margin-left: 3rem;
+        margin: auto;
     }
 }

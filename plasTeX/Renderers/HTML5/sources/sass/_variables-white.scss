@@ -6,6 +6,11 @@ $background-color: white;
 $gray-bg-color: darken($background-color, 5%);
 $main-text-color: rgb(36, 41, 46);
 
+$doc-title-height: 2.5rem;
+$doc-title-font-size: 1.5rem;
+$doc-title-color: $titles-color;
+$doc-title-background: $gray-bg-color;
+
 $pun-height: 2.5rem;
 $pun-color: $titles-color;
 $pun-bg: rgb(250, 251, 252);
@@ -13,19 +18,17 @@ $pun-shadow: none;
 $pun-background: $gray-bg-color;
 
 $toc-width: 30rem;
-$toc-background-color: $gray-bg-color;
-$toc-text-color: $titles-color;
+$toc-background-color: white;
+$toc-text-color: lighten($doc-title-color, 15%);
 $toc-text-shadow: none;
 $header-text-shadow: none;
+
 $toc-padding: .8rem;
 $toc-font-size: 1.2rem;
 $toc-current-bg-color: $toc-background-color;
-$tox-current-font-weight: bold;
+$toc-current-font-weight: bold;
+$toc-border-right: solid 1px $gray-bg-color;
 
-$doc-title-height: 2.5rem;
-$doc-title-font-size: 1.5rem;
-$doc-title-color: $titles-color;
-$doc-title-background: $gray-bg-color;
 
 $breadcrumbs-color: lighten($titles-color, 10%);
 

@@ -49,7 +49,7 @@ def addConfig(config: ConfigManager):
     section['breadcrumbs-level'] = IntegerOption(
         """ Create breadcrumbs from this level """,
         options='--breadcrumbs-level',
-        default=-10,
+        default=10,
     )
 
     section['use-mathjax'] = BooleanOption(

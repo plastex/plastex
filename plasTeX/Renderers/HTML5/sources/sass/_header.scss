@@ -1,36 +1,27 @@
 // Header
 
-.wrapper header {
-  z-index: $header-z-index;
+body>header {
   background: $doc-title-background;
   color: $doc-title-color;
   text-shadow: $header-text-shadow;
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 100%;
   padding: .5rem;
-  margin: 0 auto;
-  text-align:center;
-  vertical-align: middle;
-  top:0;
-  left:0;
 }
 
 svg#toc-toggle {
-  font-size: .75*$doc-title-font-size;
-  margin-right: auto;
-  margin-left: .5*$doc-title-font-size;
-
-  @media (min-width: $toc-break)
-  {
-	display: none;
-  }
+  width: .75*$doc-title-font-size;
+  height: .75*$doc-title-font-size;
+  margin-right: .5rem;
 }
 
 h1#doc_title {
   color: $doc-title-color;
   font-size: $doc-title-font-size;
-  margin: 0;
+  margin: auto;
 }
 
+#doc_title a, a:visited {
+  text-decoration: none;
+  color: $doc-title-color;
+}

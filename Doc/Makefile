@@ -9,7 +9,7 @@ pdf: plastex.tex
 	pdflatex plastex
 
 html:
-	plastex --renderer=HTML5 plastex
+	plastex plastex
 
 xhtml:
 	plastex --renderer=XHTML plastex

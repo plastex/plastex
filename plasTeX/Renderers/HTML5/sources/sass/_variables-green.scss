@@ -21,7 +21,8 @@ $header-text-shadow: 1px 2px 0px rgba(0,0,0,0.8);
 $toc-padding: .8rem;
 $toc-font-size: 1.2rem;
 $toc-current-bg-color: lighten($toc-background-color,10%);
-$tox-current-font-weight: normal;
+$toc-current-font-weight: normal;
+$toc-border-right: none;
 
 $doc-title-height: 2.5rem;
 $doc-title-font-size: 1.5rem;
