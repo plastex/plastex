@@ -10,21 +10,17 @@ $(document).ready(function() {
      };
 
      $("#toc-toggle").click(function() {
-         $("nav.toc").toggleClass("active")
+         $("nav.toc").toggle()
      });
 
-     $(".close-toc").click(function() {
-         $("nav.toc").removeClass("active")
-     });
-
-    $("nav.toc").on("click", "svg.expand-toc",
+    $("nav.toc").on("click", "span.expand-toc",
             function() {
                 $(this).siblings("ul").slideToggle('fast');
 
-                if ($(this).attr('class') == 'icon icon-cross expand-toc') {
-                  $(this).replaceWith(icon('plus', 'expand-toc'));
+                if ($(this).html() == "▼") {
+                  $(this).html("▶");
                 } else {
-                  $(this).replaceWith(icon('cross', 'expand-toc'));
+                  $(this).html("▼");
                 };
 
             })
@@ -34,12 +30,12 @@ $(document).ready(function() {
 
     $("div.proof_heading").click(
            function() {
-               var expand_icon = $(this).children('svg.expand-proof');
-               if (expand_icon.attr('class') == 'icon icon-cross expand-proof') {
-                   expand_icon.replaceWith(icon('plus', 'expand-proof'));
-               } else {
-                   expand_icon.replaceWith(icon('cross', 'expand-proof'));
-               };
+               var expand_span = $(this).children('span.expand-proof');
+                if ($(expand_span).html() == "▼") {
+                  $(expand_span).html("▶");
+                } else {
+                  $(expand_span).html("▼");
+                };
 
                $(this).siblings("div.proof_content").slideToggle()
            })

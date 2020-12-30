@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>plasTeX 2.1 — A Python Framework for Processing LaTeX Documents: plasTeX.DOM — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document Object Model (DOM)</title>
+<link rel="next" href="sect0027.html" title="plas vs. XML" />
+<link rel="prev" href="sect0026.html" title="Configuration Option Types" />
+<link rel="up" href="sect0022.html" title="plas Frameworks and APIs" />
+<link rel="stylesheet" href="styles/theme-white.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref"></span> <span class="toc_entry">Introduction</span></a>
+ </li>
+<li class="">
+  <a href="sec-command-line.html"><span class="toc_ref"></span> <span class="toc_entry">plastex — The Command-Line Interface</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0002.html"><span class="toc_ref"></span> <span class="toc_entry">Command-Line and Configuration Options</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-general-options.html"><span class="toc_ref"></span> <span class="toc_entry">General Options</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-document.html"><span class="toc_ref"></span> <span class="toc_entry">Document Properties</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html"><span class="toc_ref"></span> <span class="toc_entry">Counters</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-links.html"><span class="toc_ref"></span> <span class="toc_entry">Document Links</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-files.html"><span class="toc_ref"></span> <span class="toc_entry">Input and Output Files</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-images.html"><span class="toc_ref"></span> <span class="toc_entry">Image Options</span></a>
+ </li>
+<li class="">
+  <a href="sec-config-html5.html"><span class="toc_ref"></span> <span class="toc_entry">HTML5 Renderer Options</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-document.html"><span class="toc_ref"></span> <span class="toc_entry">The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-sections.html"><span class="toc_ref"></span> <span class="toc_entry">Sections</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-links.html"><span class="toc_ref"></span> <span class="toc_entry">Navigation and Links</span></a>
+ </li>
+<li class="">
+  <a href="sec-tableofcontents.html"><span class="toc_ref"></span> <span class="toc_entry">Table of Contents</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-paragraphs.html"><span class="toc_ref"></span> <span class="toc_entry">Paragraphs</span></a>
+ </li>
+<li class="">
+  <a href="sec-complexdoc.html"><span class="toc_ref"></span> <span class="toc_entry">Complex Structures</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-lists.html"><span class="toc_ref"></span> <span class="toc_entry">Lists</span></a>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref"></span> <span class="toc_entry">Bibliography</span></a>
+ </li>
+<li class="">
+  <a href="sec-arrays.html"><span class="toc_ref"></span> <span class="toc_entry">Arrays and Tabular Environments</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html"><span class="toc_ref"></span> <span class="toc_entry">Indexes</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-macros.html"><span class="toc_ref"></span> <span class="toc_entry">Understanding Macros and Packages</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0006.html"><span class="toc_ref"></span> <span class="toc_entry">Defining Macros in L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html"><span class="toc_ref"></span> <span class="toc_entry">Defining Macros in Python</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-macroclasses.html"><span class="toc_ref"></span> <span class="toc_entry">Python Classes</span></a>
+ </li>
+<li class="">
+  <a href="sec-inimacros.html"><span class="toc_ref"></span> <span class="toc_entry">INI Files</span></a>
+ </li>
+<li class="">
+  <a href="sec-contextmacros.html"><span class="toc_ref"></span> <span class="toc_entry">The Document Context</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-packages.html"><span class="toc_ref"></span> <span class="toc_entry">Packages</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0008.html"><span class="toc_ref"></span> <span class="toc_entry">Renderers</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-simple-renderer-ex.html"><span class="toc_ref"></span> <span class="toc_entry">Simple Renderer Example</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0009.html"><span class="toc_ref"></span> <span class="toc_entry">Extending the Simple Renderer</span></a>
+ </li>
+<li class="">
+  <a href="subsec-renderer-from-script.html"><span class="toc_ref"></span> <span class="toc_entry">Using a Renderer from the plastex Script</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-renderable.html"><span class="toc_ref"></span> <span class="toc_entry">Renderable Objects</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0010.html"><span class="toc_ref"></span> <span class="toc_entry">Determining the Correct Rendering Method</span></a>
+ </li>
+<li class="">
+  <a href="sect0011.html"><span class="toc_ref"></span> <span class="toc_entry">Generating Files</span></a>
+ </li>
+<li class="">
+  <a href="sect0012.html"><span class="toc_ref"></span> <span class="toc_entry">Generating Images</span></a>
+ </li>
+<li class="">
+  <a href="sect0013.html"><span class="toc_ref"></span> <span class="toc_entry">Generating Vector Images</span></a>
+ </li>
+<li class="">
+  <a href="sect0014.html"><span class="toc_ref"></span> <span class="toc_entry">Static Images</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-pt.html"><span class="toc_ref"></span> <span class="toc_entry">Page Template Renderer</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0015.html"><span class="toc_ref"></span> <span class="toc_entry">Defining and Using Templates</span></a>
+ </li>
+<li class="">
+  <a href="sect0016.html"><span class="toc_ref"></span> <span class="toc_entry">Defining and Using Themes</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-html5.html"><span class="toc_ref"></span> <span class="toc_entry">HTML5 Renderer</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0017.html"><span class="toc_ref"></span> <span class="toc_entry">Basic use and configuration</span></a>
+ </li>
+<li class="">
+  <a href="sec-html5-pkg.html"><span class="toc_ref"></span> <span class="toc_entry">Interactions with packages</span></a>
+ </li>
+<li class="">
+  <a href="sect0018.html"><span class="toc_ref"></span> <span class="toc_entry">Themes</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0019.html"><span class="toc_ref"></span> <span class="toc_entry">XHTML Renderer</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0020.html"><span class="toc_ref"></span> <span class="toc_entry">Themes</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0021.html"><span class="toc_ref"></span> <span class="toc_entry">Other builtin renderers</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active">
+  <a href="sect0022.html"><span class="toc_ref"></span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</span></a>
+  <span class="expand-toc">▼</span>
+  <ul class="sub-toc-1 active">
+     <li class="">
+  <a href="sec-macros-api.html"><span class="toc_ref"></span> <span class="toc_entry">plasTeX — The Python Macro and Document Interfaces</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0023.html"><span class="toc_ref"></span> <span class="toc_entry">Macro Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-configuration-api.html"><span class="toc_ref"></span> <span class="toc_entry">plasTeX.ConfigManager — plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Configuration</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0024.html"><span class="toc_ref"></span> <span class="toc_entry">ConfigManager Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0025.html"><span class="toc_ref"></span> <span class="toc_entry">ConfigSection Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0026.html"><span class="toc_ref"></span> <span class="toc_entry">Configuration Option Types</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active current">
+  <a href="sec-dom-api.html"><span class="toc_ref"></span> <span class="toc_entry">plasTeX.DOM — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document Object Model (DOM)</span></a>
+  <span class="expand-toc">▼</span>
+  <ul class="sub-toc-2 active">
+     <li class="">
+  <a href="sect0027.html"><span class="toc_ref"></span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X vs. XML</span></a>
+ </li>
+<li class="">
+  <a href="sect0028.html"><span class="toc_ref"></span> <span class="toc_entry">Node Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0029.html"><span class="toc_ref"></span> <span class="toc_entry">DocumentFragment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0030.html"><span class="toc_ref"></span> <span class="toc_entry">Element Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0031.html"><span class="toc_ref"></span> <span class="toc_entry">Text Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0032.html"><span class="toc_ref"></span> <span class="toc_entry">Document Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0033.html"><span class="toc_ref"></span> <span class="toc_entry">Command Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0034.html"><span class="toc_ref"></span> <span class="toc_entry">Environment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0035.html"><span class="toc_ref"></span> <span class="toc_entry">TeXFragment Objects</span></a>
+ </li>
+<li class="">
+  <a href="sec-texdocument-objects.html"><span class="toc_ref"></span> <span class="toc_entry">TeXDocument Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0036.html"><span class="toc_ref"></span> <span class="toc_entry">plasTeX.TeX — The T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Stream</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0037.html"><span class="toc_ref"></span> <span class="toc_entry">TeX Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-context-api.html"><span class="toc_ref"></span> <span class="toc_entry">plasTeX.Context — The T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Context</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0038.html"><span class="toc_ref"></span> <span class="toc_entry">Context Objects</span></a>
+ </li>
+<li class="">
+  <a href="sec-context-language.html"><span class="toc_ref"></span> <span class="toc_entry">Context language</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0039.html"><span class="toc_ref"></span> <span class="toc_entry">plasTeX.Renderers — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Rendering Framework</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0040.html"><span class="toc_ref"></span> <span class="toc_entry">Renderer Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0041.html"><span class="toc_ref"></span> <span class="toc_entry">Renderable MixIn</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-imager-api.html"><span class="toc_ref"></span> <span class="toc_entry">plasTeX.Imagers — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Imaging Framework</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0042.html"><span class="toc_ref"></span> <span class="toc_entry">Imager Objects</span></a>
+ </li>
+<li class="">
+  <a href="sect0043.html"><span class="toc_ref"></span> <span class="toc_entry">Image Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0044.html"><span class="toc_ref"></span> <span class="toc_entry">About This Document</span></a>
+ </li>
+<li class="">
+  <a href="sect0045.html"><span class="toc_ref"></span> <span class="toc_entry">Frequently Asked Questions</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0046.html"><span class="toc_ref"></span> <span class="toc_entry">Parsing L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0047.html"><span class="toc_ref"></span> <span class="toc_entry">How can I make plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X work with my complicated macros?</span></a>
+ </li>
+<li class="">
+  <a href="sect0048.html"><span class="toc_ref"></span> <span class="toc_entry">How can I get plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X to find my L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X packages?</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0049.html"><span class="toc_ref"></span> <span class="toc_entry">Debugging</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-logging-levels.html"><span class="toc_ref"></span> <span class="toc_entry">Logging levels</span></a>
+ </li>
+<li class="">
+  <a href="sect0050.html"><span class="toc_ref"></span> <span class="toc_entry">Using the python debugger</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-zpttutorial.html"><span class="toc_ref"></span> <span class="toc_entry">Zope Page Template Tutorial</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0051.html"><span class="toc_ref"></span> <span class="toc_entry">Template Attribute Language Expression Syntax (TALES)</span></a>
+ </li>
+<li class="">
+  <a href="sec-talattributes.html"><span class="toc_ref"></span> <span class="toc_entry">Template Attribute Language (TAL) Attributes</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0052.html"><span class="toc_ref"></span> <span class="toc_entry"></span></a>
+ </li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="sec:dom-api"> plasTeX.DOM — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document Object Model (DOM)</h1>
+<p>standardplasTeX.DOM The Document Object Model (DOM) used by plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X. </p>
+<p>While most L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X processors use a stream model where the input is directly connected to the output, plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X actually works in two phases. The first phase reads in the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document, expands macros, and constructs an object similar to an XML DOM. This object is then passed to the renderer which translates it into the appropriate output format. The benefit to doing it this way is that you are not limited to a single output format. In addition, you can actually apply multiple renderers with only one parse step. This section describes the DOM used by plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X, its API, and the similarities and differences between the plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X DOM and the XML DOM. </p>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+
+<nav class="prev_up_next">
+  <a href="sect0026.html" title="Configuration Option Types"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="sect0022.html" title="plasTeX Frameworks and APIs"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="sect0027.html" title="plasTeX vs. XML"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+  <a href="sect0052.html" class="index">Index</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+</body>
+</html>

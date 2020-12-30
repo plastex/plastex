@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [ ['\\(','\\)']]}});
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
 </script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML">
 </script>
@@ -17,20 +17,24 @@
 </head>
 
 <body>
-<nav class="toc">
-<svg  class="icon icon-cross close-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</a></h1>
+</header>
 
+<div class="wrapper">
+<nav class="toc">
 <ul class="sub-toc-0">
 <li class="">
   <a href="sect0001.html"><span class="toc_ref">1</span> <span class="toc_entry">Introduction</span></a>
  </li>
 <li class=" active">
   <a href="sec-command-line.html"><span class="toc_ref">2</span> <span class="toc_entry"><b class="bf">plastex</b> — The Command-Line Interface</span></a>
-<svg  class="icon icon-cross expand-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+  <span class="expand-toc">▼</span>
   <ul class="sub-toc-1 active">
      <li class=" active">
   <a href="sect0002.html"><span class="toc_ref">2.1</span> <span class="toc_entry">Command-Line and Configuration Options</span></a>
-<svg  class="icon icon-cross expand-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+  <span class="expand-toc">▼</span>
   <ul class="sub-toc-2 active">
      <li class="">
   <a href="sec-general-options.html"><span class="toc_ref">2.1.1</span> <span class="toc_entry">General Options</span></a>
@@ -61,11 +65,11 @@
  </li>
 <li class="">
   <a href="sec-document.html"><span class="toc_ref">3</span> <span class="toc_entry">The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
   <a href="sec-sections.html"><span class="toc_ref">3.1</span> <span class="toc_entry">Sections</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sec-links.html"><span class="toc_ref">3.1.1</span> <span class="toc_entry">Navigation and Links</span></a>
@@ -81,7 +85,7 @@
  </li>
 <li class="">
   <a href="sec-complexdoc.html"><span class="toc_ref">3.3</span> <span class="toc_entry">Complex Structures</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sec-lists.html"><span class="toc_ref">3.3.1</span> <span class="toc_entry">Lists</span></a>
@@ -103,14 +107,14 @@
  </li>
 <li class="">
   <a href="sec-macros.html"><span class="toc_ref">4</span> <span class="toc_entry">Understanding Macros and Packages</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
   <a href="sect0006.html"><span class="toc_ref">4.1</span> <span class="toc_entry">Defining Macros in L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X</span></a>
  </li>
 <li class="">
   <a href="sect0007.html"><span class="toc_ref">4.2</span> <span class="toc_entry">Defining Macros in Python</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sec-macroclasses.html"><span class="toc_ref">4.2.1</span> <span class="toc_entry">Python Classes</span></a>
@@ -132,11 +136,11 @@
  </li>
 <li class="">
   <a href="sect0008.html"><span class="toc_ref">5</span> <span class="toc_entry">Renderers</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
   <a href="sec-simple-renderer-ex.html"><span class="toc_ref">5.1</span> <span class="toc_entry">Simple Renderer Example</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0009.html"><span class="toc_ref">5.1.1</span> <span class="toc_entry">Extending the Simple Renderer</span></a>
@@ -149,7 +153,7 @@
  </li>
 <li class="">
   <a href="sec-renderable.html"><span class="toc_ref">5.2</span> <span class="toc_entry">Renderable Objects</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0010.html"><span class="toc_ref">5.2.1</span> <span class="toc_entry">Determining the Correct Rendering Method</span></a>
@@ -171,7 +175,7 @@
  </li>
 <li class="">
   <a href="sec-pt.html"><span class="toc_ref">5.3</span> <span class="toc_entry">Page Template Renderer</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0015.html"><span class="toc_ref">5.3.1</span> <span class="toc_entry">Defining and Using Templates</span></a>
@@ -184,7 +188,7 @@
  </li>
 <li class="">
   <a href="sec-html5.html"><span class="toc_ref">5.4</span> <span class="toc_entry">HTML5 Renderer</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0017.html"><span class="toc_ref">5.4.1</span> <span class="toc_entry">Basic use and configuration</span></a>
@@ -200,7 +204,7 @@
  </li>
 <li class="">
   <a href="sect0019.html"><span class="toc_ref">5.5</span> <span class="toc_entry">XHTML Renderer</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0020.html"><span class="toc_ref">5.5.1</span> <span class="toc_entry">Themes</span></a>
@@ -216,11 +220,11 @@
  </li>
 <li class="">
   <a href="sect0022.html"><span class="toc_ref">6</span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
   <a href="sec-macros-api.html"><span class="toc_ref">6.1</span> <span class="toc_entry"><span class="ttfamily">plasTeX</span> — The Python Macro and Document Interfaces</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0023.html"><span class="toc_ref">6.1.1</span> <span class="toc_entry">Macro Objects</span></a>
@@ -230,7 +234,7 @@
  </li>
 <li class="">
   <a href="module-plasTeX-ConfigManager.html"><span class="toc_ref">6.2</span> <span class="toc_entry"><span class="ttfamily">plasTeX.ConfigManager</span> — plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Configuration</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0024.html"><span class="toc_ref">6.2.1</span> <span class="toc_entry">ConfigManager Objects</span></a>
@@ -246,7 +250,7 @@
  </li>
 <li class="">
   <a href="module-plasTeX-DOM.html"><span class="toc_ref">6.3</span> <span class="toc_entry"><span class="ttfamily">plasTeX.DOM</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document Object Model (DOM)</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0027.html"><span class="toc_ref">6.3.1</span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X vs. XML</span></a>
@@ -283,7 +287,7 @@
  </li>
 <li class="">
   <a href="module-plasTeX-TeX.html"><span class="toc_ref">6.4</span> <span class="toc_entry"><span class="ttfamily">plasTeX.TeX</span> — The T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Stream</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0036.html"><span class="toc_ref">6.4.1</span> <span class="toc_entry">TeX Objects</span></a>
@@ -293,7 +297,7 @@
  </li>
 <li class="">
   <a href="module-plasTeX-Context.html"><span class="toc_ref">6.5</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Context</span> — The T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Context</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0037.html"><span class="toc_ref">6.5.1</span> <span class="toc_entry">Context Objects</span></a>
@@ -306,7 +310,7 @@
  </li>
 <li class="">
   <a href="module-plasTeX-Renderers.html"><span class="toc_ref">6.6</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Renderers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Rendering Framework</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0038.html"><span class="toc_ref">6.6.1</span> <span class="toc_entry">Renderer Objects</span></a>
@@ -319,7 +323,7 @@
  </li>
 <li class="">
   <a href="module-plasTeX-Imagers.html"><span class="toc_ref">6.7</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Imagers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Imaging Framework</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0040.html"><span class="toc_ref">6.7.1</span> <span class="toc_entry">Imager Objects</span></a>
@@ -338,11 +342,11 @@
  </li>
 <li class="">
   <a href="sect0043.html"><span class="toc_ref">B</span> <span class="toc_entry">Frequently Asked Questions</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
   <a href="sect0044.html"><span class="toc_ref">B.1</span> <span class="toc_entry">Parsing L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0045.html"><span class="toc_ref">B.1.1</span> <span class="toc_entry">How can I make plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X work with my complicated macros?</span></a>
@@ -358,7 +362,7 @@
  </li>
 <li class="">
   <a href="sect0047.html"><span class="toc_ref">C</span> <span class="toc_entry">Debugging</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
   <a href="sec-logging-levels.html"><span class="toc_ref">C.1</span> <span class="toc_entry">Logging levels</span></a>
@@ -371,7 +375,7 @@
  </li>
 <li class="">
   <a href="sec-zpttutorial.html"><span class="toc_ref">D</span> <span class="toc_entry">Zope Page Template Tutorial</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
   <a href="sect0049.html"><span class="toc_ref">D.1</span> <span class="toc_entry">Template Attribute Language Expression Syntax (TALES)</span></a>
@@ -388,19 +392,11 @@
 </ul>
 </nav>
 
-<div class="wrapper with-toc">
-<header>
-<h1 id="doc_title">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</h1>
-</header>
-
-<ul class="breadcrumbs">
-<li class="crumb"><a href="index.html" class="crumb">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</a></li>
-<li class="crumb"><a href="sec-command-line.html" class="crumb"><b class="bf">plastex</b> — The Command-Line Interface</a></li>
-<li class="crumb"><a href="sect0002.html" class="crumb">Command-Line and Configuration Options</a></li>
-  <li class="last_crumb">Image Options</li>
-</ul>
-
 <div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
 <h2 id="sec:config-images">2.1.6 Image Options</h2>
 <p>Images are created by renderers when the output type in incapable of rendering the content in any other way. This method was commonly used to display equations in XHTML output. Nowadays, MathJax arguably provides a better method, see Section&#160;<a href="sec-config-html5.html">2.1.7</a> below. But there are still pieces of mathematics they are not handled by MathJax, such as commutative diagrams written using the <code class="verbatim">tikz-cd</code> package. The following options control how images are generated. </p>
 <p><dl class="description">
@@ -441,7 +437,7 @@
 </dl> </p>
 <p><dl class="description">
   <dt><b class="bfseries">Convert L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X output to vector images</b></dt>
-  <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--vector-imager=<span class="rmfamily"><i class="itshape">program</i></span></b></span><br /><b class="bfseries">Config File:</b> [ images ] vector-imager<br /><b class="bfseries">Default:</b> none pdf2svg dvisvgm<br />specifies which converter will be used to take the output from the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X compiler and convert it to vector images. You can specify a space delimited list of names as well. If a list of names is specified, each one is verified in order to see if it works on the current machine. The first one that succeeds is used. </p>
+  <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--vector-imager=<span class="rmfamily"><i class="itshape">program</i></span></b></span><br /><b class="bfseries">Config File:</b> [ images ] vector-imager<br /><b class="bfseries">Default:</b> pdf2svg dvisvgm<br />specifies which converter will be used to take the output from the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X compiler and convert it to vector images. You can specify a space delimited list of names as well. If a list of names is specified, each one is verified in order to see if it works on the current machine. The first one that succeeds is used. </p>
 <p>You can use the value of “none” to turn the vector imager off. </p>
 <p><b class="bf">Note:</b> When using the vector imager, a bitmap image is also created using the regular imager. This bitmap is used to determine the depth information about the vector image and can also be used as a backup if the vector image is not supported by the viewer. </p>
 </dd>
@@ -453,11 +449,18 @@
 </dl> </p>
 <p><dl class="description">
   <dt><b class="bfseries">Scale factor of image</b></dt>
-  <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--image-scale-factor</b></span><br /><b class="bfseries">Config File:</b> [ images ] scale-factor<br /><b class="bfseries">Default:</b> 1.0<br />the scale factor to apply to images after compilation. Not all imagers respect this option. </p>
+  <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--image-scale-factor</b></span><br /><b class="bfseries">Config File:</b> [ images ] scale-factor<br /><b class="bfseries">Default:</b> 1.0<br />the default scale factor to apply to images after compilation. Not all imagers respect this option. </p>
+</dd>
+</dl> </p>
+<p><dl class="description">
+  <dt><b class="bfseries">Scale factor for given node type</b></dt>
+  <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--scales=<span class="rmfamily"><i class="itshape">node-name scale_factor</i></span></b></span><br />specifies the image scale factor for the specified type of node. Not all imagers respect this option. </p>
 </dd>
 </dl> </p>
 
-</div>
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
 
 <nav class="prev_up_next">
   <a href="sec-config-files.html" title="Input and Output Files"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
@@ -467,12 +470,10 @@
   <a href="sec-config-html5.html" title="HTML5 Renderer Options"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
 </a>
   <a href="sect0050.html" class="index">Index</a>
-<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
 </nav>
 
 <script type="text/javascript" src="js/jquery.min.js"></script>
 <script type="text/javascript" src="js/plastex.js"></script>
 <script type="text/javascript" src="js/svgxuse.js"></script>
-</div>
 </body>
 </html>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [ ['\\(','\\)']]}});
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
 </script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML">
 </script>
@@ -17,20 +17,24 @@
 </head>
 
 <body>
-<nav class="toc">
-<svg  class="icon icon-cross close-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</a></h1>
+</header>
 
+<div class="wrapper">
+<nav class="toc">
 <ul class="sub-toc-0">
 <li class="">
   <a href="sect0001.html"><span class="toc_ref">1</span> <span class="toc_entry">Introduction</span></a>
  </li>
 <li class="">
   <a href="sec-command-line.html"><span class="toc_ref">2</span> <span class="toc_entry"><b class="bf">plastex</b> — The Command-Line Interface</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
   <a href="sect0002.html"><span class="toc_ref">2.1</span> <span class="toc_entry">Command-Line and Configuration Options</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sec-general-options.html"><span class="toc_ref">2.1.1</span> <span class="toc_entry">General Options</span></a>
@@ -61,11 +65,11 @@
  </li>
 <li class="">
   <a href="sec-document.html"><span class="toc_ref">3</span> <span class="toc_entry">The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
   <a href="sec-sections.html"><span class="toc_ref">3.1</span> <span class="toc_entry">Sections</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sec-links.html"><span class="toc_ref">3.1.1</span> <span class="toc_entry">Navigation and Links</span></a>
@@ -81,7 +85,7 @@
  </li>
 <li class="">
   <a href="sec-complexdoc.html"><span class="toc_ref">3.3</span> <span class="toc_entry">Complex Structures</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sec-lists.html"><span class="toc_ref">3.3.1</span> <span class="toc_entry">Lists</span></a>
@@ -103,14 +107,14 @@
  </li>
 <li class="">
   <a href="sec-macros.html"><span class="toc_ref">4</span> <span class="toc_entry">Understanding Macros and Packages</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
   <a href="sect0006.html"><span class="toc_ref">4.1</span> <span class="toc_entry">Defining Macros in L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X</span></a>
  </li>
 <li class="">
   <a href="sect0007.html"><span class="toc_ref">4.2</span> <span class="toc_entry">Defining Macros in Python</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sec-macroclasses.html"><span class="toc_ref">4.2.1</span> <span class="toc_entry">Python Classes</span></a>
@@ -132,11 +136,11 @@
  </li>
 <li class=" active">
   <a href="sect0008.html"><span class="toc_ref">5</span> <span class="toc_entry">Renderers</span></a>
-<svg  class="icon icon-cross expand-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+  <span class="expand-toc">▼</span>
   <ul class="sub-toc-1 active">
      <li class="">
   <a href="sec-simple-renderer-ex.html"><span class="toc_ref">5.1</span> <span class="toc_entry">Simple Renderer Example</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0009.html"><span class="toc_ref">5.1.1</span> <span class="toc_entry">Extending the Simple Renderer</span></a>
@@ -149,7 +153,7 @@
  </li>
 <li class="">
   <a href="sec-renderable.html"><span class="toc_ref">5.2</span> <span class="toc_entry">Renderable Objects</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0010.html"><span class="toc_ref">5.2.1</span> <span class="toc_entry">Determining the Correct Rendering Method</span></a>
@@ -171,7 +175,7 @@
  </li>
 <li class=" active current">
   <a href="sec-pt.html"><span class="toc_ref">5.3</span> <span class="toc_entry">Page Template Renderer</span></a>
-<svg  class="icon icon-cross expand-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+  <span class="expand-toc">▼</span>
   <ul class="sub-toc-2 active">
      <li class="">
   <a href="sect0015.html"><span class="toc_ref">5.3.1</span> <span class="toc_entry">Defining and Using Templates</span></a>
@@ -184,7 +188,7 @@
  </li>
 <li class="">
   <a href="sec-html5.html"><span class="toc_ref">5.4</span> <span class="toc_entry">HTML5 Renderer</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0017.html"><span class="toc_ref">5.4.1</span> <span class="toc_entry">Basic use and configuration</span></a>
@@ -200,7 +204,7 @@
  </li>
 <li class="">
   <a href="sect0019.html"><span class="toc_ref">5.5</span> <span class="toc_entry">XHTML Renderer</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0020.html"><span class="toc_ref">5.5.1</span> <span class="toc_entry">Themes</span></a>
@@ -216,11 +220,11 @@
  </li>
 <li class="">
   <a href="sect0022.html"><span class="toc_ref">6</span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Frameworks and APIs</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
   <a href="sec-macros-api.html"><span class="toc_ref">6.1</span> <span class="toc_entry"><span class="ttfamily">plasTeX</span> — The Python Macro and Document Interfaces</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0023.html"><span class="toc_ref">6.1.1</span> <span class="toc_entry">Macro Objects</span></a>
@@ -230,7 +234,7 @@
  </li>
 <li class="">
   <a href="module-plasTeX-ConfigManager.html"><span class="toc_ref">6.2</span> <span class="toc_entry"><span class="ttfamily">plasTeX.ConfigManager</span> — plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Configuration</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0024.html"><span class="toc_ref">6.2.1</span> <span class="toc_entry">ConfigManager Objects</span></a>
@@ -246,7 +250,7 @@
  </li>
 <li class="">
   <a href="module-plasTeX-DOM.html"><span class="toc_ref">6.3</span> <span class="toc_entry"><span class="ttfamily">plasTeX.DOM</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document Object Model (DOM)</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0027.html"><span class="toc_ref">6.3.1</span> <span class="toc_entry">plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X vs. XML</span></a>
@@ -283,7 +287,7 @@
  </li>
 <li class="">
   <a href="module-plasTeX-TeX.html"><span class="toc_ref">6.4</span> <span class="toc_entry"><span class="ttfamily">plasTeX.TeX</span> — The T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Stream</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0036.html"><span class="toc_ref">6.4.1</span> <span class="toc_entry">TeX Objects</span></a>
@@ -293,7 +297,7 @@
  </li>
 <li class="">
   <a href="module-plasTeX-Context.html"><span class="toc_ref">6.5</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Context</span> — The T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Context</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0037.html"><span class="toc_ref">6.5.1</span> <span class="toc_entry">Context Objects</span></a>
@@ -306,7 +310,7 @@
  </li>
 <li class="">
   <a href="module-plasTeX-Renderers.html"><span class="toc_ref">6.6</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Renderers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Rendering Framework</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0038.html"><span class="toc_ref">6.6.1</span> <span class="toc_entry">Renderer Objects</span></a>
@@ -319,7 +323,7 @@
  </li>
 <li class="">
   <a href="module-plasTeX-Imagers.html"><span class="toc_ref">6.7</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Imagers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Imaging Framework</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0040.html"><span class="toc_ref">6.7.1</span> <span class="toc_entry">Imager Objects</span></a>
@@ -338,11 +342,11 @@
  </li>
 <li class="">
   <a href="sect0043.html"><span class="toc_ref">B</span> <span class="toc_entry">Frequently Asked Questions</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
   <a href="sect0044.html"><span class="toc_ref">B.1</span> <span class="toc_entry">Parsing L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
   <a href="sect0045.html"><span class="toc_ref">B.1.1</span> <span class="toc_entry">How can I make plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X work with my complicated macros?</span></a>
@@ -358,7 +362,7 @@
  </li>
 <li class="">
   <a href="sect0047.html"><span class="toc_ref">C</span> <span class="toc_entry">Debugging</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
   <a href="sec-logging-levels.html"><span class="toc_ref">C.1</span> <span class="toc_entry">Logging levels</span></a>
@@ -371,7 +375,7 @@
  </li>
 <li class="">
   <a href="sec-zpttutorial.html"><span class="toc_ref">D</span> <span class="toc_entry">Zope Page Template Tutorial</span></a>
-<svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+  <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
   <a href="sect0049.html"><span class="toc_ref">D.1</span> <span class="toc_entry">Template Attribute Language Expression Syntax (TALES)</span></a>
@@ -388,18 +392,11 @@
 </ul>
 </nav>
 
-<div class="wrapper with-toc">
-<header>
-<h1 id="doc_title">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</h1>
-</header>
-
-<ul class="breadcrumbs">
-<li class="crumb"><a href="index.html" class="crumb">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</a></li>
-<li class="crumb"><a href="sect0008.html" class="crumb">Renderers</a></li>
-  <li class="last_crumb">Page Template Renderer</li>
-</ul>
-
 <div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
 <h1 id="sec:pt">5.3 Page Template Renderer</h1>
 <p>The Page Template (PT) renderer is a renderer for plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document objects that supports various page template engines such as <a href ="http://www.zope.org/Documentation/Books/ZopeBook/2_6Edition/ZPT.stx">Zope Page Templates (ZPT)</a>, <a href ="http://jinja.pocoo.org/">Jinja2 templates</a>, <a href ="http://www.cheetahtemplate.org/">Cheetah templates</a>, <a href ="http://kid-templating.org/">Kid templates</a>, <a href ="http://genshi.edgewall.org/">Genshi templates</a>, <a href ="http://docs.python.org/lib/node40.html">Python string templates</a>, as well as plain old <a href ="http://docs.python.org/lib/typesseq-strings.html">Python string formatting</a>. It is also possible to add support for other template engines. Note that all template engines except ZPT, Python formats, and Python string templates must be installed in your Python installation. They are not included. In particular the Jinja2 template engine must be installed in order to use the HTML5 renderer (this is already taken care of if you installed plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X in the recommended way). </p>
 <p>The Jinja2 engine is used for all of the plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X delivered templates in the HTML5 renderer; however, the other templates work in a very similar way. The actual ZPT implementation used is SimpleTAL (<a href="http://www.owlfish.com/software/simpleTAL/">http://www.owlfish.com/software/simpleTAL/</a>). This implementation implements almost all of the ZPT API and is very stable. However, some changes were made to this package to make it more convenient to use within plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X. These changes are discussed in detail in the ZPT Tutorial (see Appendix&#160;<a href="sec-zpttutorial.html">D</a>). </p>
@@ -407,7 +404,9 @@
 <p>As in all <span class="ttfamily">Renderer</span>-based renderers, each key in the PT renderer returns a function. These functions are actually generated when the template files are parsed by the PT renderer. As is the case with all rendering methods, the only argument is the node to be rendered, and the output is a string object containing the rendered output. In addition to the rendering methods, the <span class="ttfamily">textDefault</span> method escapes all characters that are special in XML and HTML (i.e. &lt;, &gt;, and &amp;). </p>
 <p>The following sections describe how templates are loaded into the renderer, how to extend the set of templates with your own, as well as a theming mechanism that allows you to apply different looks to output types that are visual (e.g. HTML). </p>
 
-</div>
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
 
 <nav class="prev_up_next">
   <a href="sect0014.html" title="Static Images"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
@@ -417,12 +416,10 @@
   <a href="sect0015.html" title="Defining and Using Templates"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
 </a>
   <a href="sect0050.html" class="index">Index</a>
-<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
 </nav>
 
 <script type="text/javascript" src="js/jquery.min.js"></script>
 <script type="text/javascript" src="js/plastex.js"></script>
 <script type="text/javascript" src="js/svgxuse.js"></script>
-</div>
 </body>
 </html>
