@@ -1,0 +1,55 @@
+\documentclass{article}
+\usepackage{amsthm}
+\usepackage{color}
+
+\newtheoremstyle{redPlain}  {\bigskipamount}
+                            {\bigskipamount}
+                            {\itshape}
+                            {0pt}
+                            {\color[cmyk]{0,1.00,0.65,0.34}\bfseries}
+                            {:}
+                            {1em}
+                            {\thmname{#1}\thmnumber{ #2}\thmnote{ (#3)}}
+\theoremstyle{redPlain}
+\newtheorem*{starred}{Starred}
+\newtheorem{normal}{Normal}
+\newtheorem{normalshared}[normal]{Normal And Shared}
+\theoremstyle{plain}
+\newtheorem{within}{Within}[section]
+\newtheorem{withinshared}[within]{Within And Shared}
+
+\begin{document}
+
+\section{A section}
+\begin{starred}[Note]
+    An starred theorem
+\end{starred}
+\begin{normal}
+    A normal theorem
+\end{normal}
+\begin{normalshared}[Note]
+    A normal theorem, with shared counter.
+\end{normalshared}
+\begin{within}
+    A theorem numbered within sections
+\end{within}
+\begin{withinshared}[Note]
+    A theorem with counter shared with a theorem numbered within sections
+\end{withinshared}
+\section{Another section}
+\begin{starred}
+    An starred theorem
+\end{starred}
+\begin{normal}
+    A normal theorem
+\end{normal}
+\begin{normalshared}
+    A normal theorem, with shared counter.
+\end{normalshared}
+\begin{within}
+    A theorem numbered within sections
+\end{within}
+\begin{withinshared}\label{T:1}
+    A theorem with counter shared with a theorem numbered within sections
+\end{withinshared}
+\end{document}

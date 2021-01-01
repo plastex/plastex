@@ -1,5 +1,5 @@
 name: thmenv
-<div class="{{ obj.thmName }}_thmwrapper" id="{{ obj.id }}">
+<div class="{{ obj.thmName }}_thmwrapper {% if obj.style %}theorem-style-{{ obj.style }}{% endif %}" id="{{ obj.id }}">
   <div class="{{ obj.thmName }}_thmheading">
     <span class="{{ obj.thmName }}_thmcaption">
     {{ obj.caption }}

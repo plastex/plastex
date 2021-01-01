@@ -24,6 +24,7 @@ div[class$='_thmwrapper']:target
 
 div[class$='_thmheading']
 {
+    display: flex;
     font-weight: bold;
     line-height: 150%;
 }
