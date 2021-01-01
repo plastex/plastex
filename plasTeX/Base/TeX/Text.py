@@ -3,7 +3,7 @@ B.5 Macros for text
 
 """
 
-from plasTeX import Command, Environment, sourceChildren
+from plasTeX import Command, sourceChildren
 
 class frenchspacing(Command):
     str = ''

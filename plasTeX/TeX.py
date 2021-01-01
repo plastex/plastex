@@ -940,7 +940,7 @@ class TeX(object):
 
         """
         argtypes = {}
-        for key, t in list(self.argtypes.items()):
+        for key, t in self.argtypes.items():
             if isinstance(t, tuple):
                 argtypes[key] = t[0]
             else:
@@ -951,7 +951,7 @@ class TeX(object):
             pass
 
         # Could not find specified type
-        elif dtype not in list(argtypes.keys()):
+        elif dtype not in argtypes.keys():
             log.warning('Could not find datatype "%s"' % dtype)
 
         # Casting to specified type
