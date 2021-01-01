@@ -5,6 +5,7 @@ def test_proof_in_par():
     tex = TeX()
     tex.input(r'''
       \documentclass{article}
+      \usepackage{amsthm}
       \begin{document}
 
       a
@@ -29,6 +30,7 @@ def test_proof_block_type():
     tex = TeX()
     tex.input(r'''
       \documentclass{article}
+      \usepackage{amsthm}
       \begin{document}
 
       a
