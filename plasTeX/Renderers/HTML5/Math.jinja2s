@@ -13,9 +13,9 @@ name: displaymath equation*
 name: equation
 <div class="equation" id="{{ obj.id }}">
 <p>
-  <span class="equation_label">{{ obj.ref }}</span>
   <div class="equation_content">
     {{ obj.source }}
   </div>
+  <span class="equation_label">{{ obj.ref }}</span>
 </p>
 </div>
