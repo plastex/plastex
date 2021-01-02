@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 
 from plasTeX.TeX import TeX, TeXDocument
 from plasTeX.Config import defaultConfig
@@ -24,6 +25,8 @@ def test_amsthm(tmpdir):
     html = Path(tmpdir)/'index.html'
     html_bench = root/'benchmark.html'
     assert html.exists()
-    assert html.read_text() == html_bench.read_text()
+    text = re.sub('id="[^"]*"', '', html.read_text())
+    bench = re.sub('id="[^"]*"', '', html_bench.read_text())
+    assert text == bench
     assert css.exists()
     assert css.read_text() == css_bench.read_text()
