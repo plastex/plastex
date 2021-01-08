@@ -68,7 +68,7 @@ def test_colorparser_id():
     c = ColorParser()
     c.scan('colorname')
     e = c.id()
-    assert e['element'] == ColorParser.Elements.id and e['value']=='colorname'
+    assert e['element'] == ColorParser.Elements.id and e['id']=='colorname'
     c.scan('!-invalid-colorname')
     e = c.id()
     assert e is None
@@ -77,10 +77,10 @@ def test_colorparser_function():
     c = ColorParser()
     c.scan('wheel')
     e = c.function()
-    assert e['element'] == ColorParser.Elements.id and e['value']=='wheel'
+    assert e['element'] == ColorParser.Elements.id and e['id']=='wheel'
     c.scan('twheel')
     e = c.function()
-    assert e['element'] == ColorParser.Elements.id and e['value']=='twheel'
+    assert e['element'] == ColorParser.Elements.id and e['id']=='twheel'
     c.scan('invalid-function')
     e = c.function()
     assert e is None
@@ -89,7 +89,7 @@ def test_colorparser_dot():
     c = ColorParser()
     c.scan('.')
     e = c.dot()
-    assert e['element'] == ColorParser.Elements.id and e['value']=='.'
+    assert e['element'] == ColorParser.Elements.id and e['id']=='.'
     c.scan('!')
     e = c.dot()
     assert e is None
@@ -107,35 +107,35 @@ def test_colorparser_ext_id():
     c = ColorParser()
     c.scan('foo')
     e = c.ext_id()
-    assert e['element'] == ColorParser.Elements.ext_id and e['value']==['foo','foo']
+    assert e['element'] == ColorParser.Elements.ext_id and e['ids']==['foo','foo']
     c.scan('foo=bar')
     e = c.ext_id()
-    assert e['element'] == ColorParser.Elements.ext_id and e['value']==['foo','bar']
+    assert e['element'] == ColorParser.Elements.ext_id and e['ids']==['foo','bar']
 
 def test_colorparser_id_list():
     c = ColorParser()
     c.scan('foo,foo=bar,baz,bar=baz')
     e = c.id_list()
     assert e['element'] == ColorParser.Elements.id_list
-    assert e['value'][0]['element'] == ColorParser.Elements.ext_id and e['value'][0]['value']==['foo','foo']
-    assert e['value'][1]['element'] == ColorParser.Elements.ext_id and e['value'][1]['value']==['foo','bar']
-    assert e['value'][2]['element'] == ColorParser.Elements.ext_id and e['value'][2]['value']==['baz','baz']
-    assert e['value'][3]['element'] == ColorParser.Elements.ext_id and e['value'][3]['value']==['bar','baz']
+    assert e['idlist'][0] == ['foo','foo']
+    assert e['idlist'][1] == ['foo','bar']
+    assert e['idlist'][2] == ['baz','baz']
+    assert e['idlist'][3] == ['bar','baz']
 
 def test_colorparser_name():
     c = ColorParser()
     c.scan('.')
     e = c.name()
-    assert e['element'] == ColorParser.Elements.id and e['value']=='.'
+    assert e['element'] == ColorParser.Elements.id and e['id']=='.'
     c.scan('foo')
     e = c.name()
-    assert e['element'] == ColorParser.Elements.id and e['value']=='foo'
+    assert e['element'] == ColorParser.Elements.id and e['id']=='foo'
 
 def test_colorparser_core_model():
     c = ColorParser()
     c.scan('rgb')
     e = c.core_model()
-    assert e['element'] == ColorParser.Elements.model and e['value']==ColorModel.rgb
+    assert e['element'] == ColorParser.Elements.model and e['model']==ColorModel.rgb
     c.scan('RGB')
     e = c.core_model()
     assert e is None
@@ -147,10 +147,10 @@ def test_colorparser_num_model():
     c = ColorParser()
     c.scan('rgb')
     e = c.num_model()
-    assert e['element'] == ColorParser.Elements.model and e['value']==ColorModel.rgb
+    assert e['element'] == ColorParser.Elements.model and e['model']==ColorModel.rgb
     c.scan('RGB')
     e = c.num_model()
-    assert e['element'] == ColorParser.Elements.model and e['value']==ColorModel.RGB
+    assert e['element'] == ColorParser.Elements.model and e['model']==ColorModel.RGB
     c.scan('named')
     e = c.num_model()
     assert e is None
@@ -159,10 +159,10 @@ def test_colorparser_model():
     c = ColorParser()
     c.scan('rgb')
     e = c.model()
-    assert e['element'] == ColorParser.Elements.model and e['value']==ColorModel.rgb
+    assert e['element'] == ColorParser.Elements.model and e['model']==ColorModel.rgb
     c.scan('RGB')
     e = c.model()
-    assert e['element'] == ColorParser.Elements.model and e['value']==ColorModel.RGB
+    assert e['element'] == ColorParser.Elements.model and e['model']==ColorModel.RGB
     c.scan('named')
     e = c.model()
     assert e['element'] == ColorParser.Elements.named
@@ -172,46 +172,46 @@ def test_colorparser_model_list_basic():
     c.scan('rgb/RGB/named')
     e = c.model_list_basic()
     assert e['element'] == ColorParser.Elements.model_list
-    assert e['value'][0]['element'] == ColorParser.Elements.model and e['value'][0]['value']==ColorModel.rgb
-    assert e['value'][1]['element'] == ColorParser.Elements.model and e['value'][1]['value']==ColorModel.RGB
-    assert e['value'][2]['element'] == ColorParser.Elements.named
+    assert e['models'][0]==ColorModel.rgb
+    assert e['models'][1]==ColorModel.RGB
+    assert e['models'][2]==ColorModel.natural
 
 def test_colorparser_model_list():
     c = ColorParser()
     c.scan('rgb/RGB/named')
     e = c.model_list()
     assert e['element'] == ColorParser.Elements.model_list
-    assert e['value'][0]['element'] == ColorParser.Elements.model and e['value'][0]['value']==ColorModel.rgb
-    assert e['value'][1]['element'] == ColorParser.Elements.model and e['value'][1]['value']==ColorModel.RGB
-    assert e['value'][2]['element'] == ColorParser.Elements.named
+    assert e['models'][0]==ColorModel.rgb
+    assert e['models'][1]==ColorModel.RGB
+    assert e['models'][2]==ColorModel.natural
     c.scan('hsb:rgb/RGB/named')
     e = c.model_list()
     assert e['element'] == ColorParser.Elements.model_list
-    assert e['core']['element'] == ColorParser.Elements.model and e['core']['value'] == ColorModel.hsb
-    assert e['value'][0]['element'] == ColorParser.Elements.model and e['value'][0]['value']==ColorModel.rgb
-    assert e['value'][1]['element'] == ColorParser.Elements.model and e['value'][1]['value']==ColorModel.RGB
-    assert e['value'][2]['element'] == ColorParser.Elements.named
+    assert e['models'][0]==ColorModel.rgb
+    assert e['models'][1]==ColorModel.RGB
+    assert e['models'][2]==ColorModel.natural
+    assert e['model'] == ColorModel.hsb
 
 def test_colorparser_spec():
     c = ColorParser()
     c.scan('0.25,0.75,0.1')
     e = c.spec()
-    assert e['element'] == ColorParser.Elements.spec and e['value']==[0.25,0.75,0.1]
+    assert e['element'] == ColorParser.Elements.spec and e['values']==[0.25,0.75,0.1]
     c.scan('20 40 60')
     e = c.spec()
-    assert e['element'] == ColorParser.Elements.spec and e['value']==[20,40,60]
+    assert e['element'] == ColorParser.Elements.spec and e['values']==[20,40,60]
     c.scan('123ABC')
     e = c.spec()
-    assert e['element'] == ColorParser.Elements.spec and e['value']==[1194684]
+    assert e['element'] == ColorParser.Elements.spec and e['values']==[1194684]
 
 def test_colorparser_spec_list():
     c = ColorParser()
     c.scan('0.25,0.75,0.1/20 40 60/foo')
     e = c.spec_list()
     assert e['element'] == ColorParser.Elements.spec_list
-    assert e['value'][0]['element'] == ColorParser.Elements.spec and e['value'][0]['value']==[0.25,0.75,0.1]
-    assert e['value'][1]['element'] == ColorParser.Elements.spec and e['value'][1]['value']==[20,40,60]
-    assert e['value'][2]['element'] == ColorParser.Elements.id and e['value'][2]['value']=='foo'
+    assert e['specs'][0]['values'] == [0.25,0.75,0.1]
+    assert e['specs'][1]['values'] == [20,40,60]
+    assert e['specs'][2]['id'] == 'foo'
 
 def test_colorparser_prefix():
     c = ColorParser()
@@ -232,22 +232,29 @@ def test_colorparser_mix():
     c = ColorParser()
     c.scan('!25!foo')
     e = c.mix()
-    assert e['element']==ColorParser.Elements.mix and e['pct']==25 and e['value']=='foo'
+    assert e['element']==ColorParser.Elements.mix and e['pct']==25 and e['id']=='foo'
     c.scan('!50')
     e = c.mix()
-    assert e['element']==ColorParser.Elements.mix and e['pct']==50 and e['value']=='white'
+    assert e['element']==ColorParser.Elements.mix and e['pct']==50 and e['id']=='white'
+
+def test_colorparser_mix_current_color():
+    c = ColorParser()
+    c.scan('!25!.')
+    e = c.mix()
+    assert e['element'] == ColorParser.Elements.mix
+    assert e['pct'] == 25 and e['id']=='.'
 
 def test_colorparser_mix_expr():
     c = ColorParser()
     c.scan('!25!foo!50!bar!75')
     e = c.mix_expr()
     assert e['element']==ColorParser.Elements.mix_expr
-    assert e['value'][0]['element'] == ColorParser.Elements.mix
-    assert e['value'][0]['pct'] == 25 and e['value'][0]['value']=='foo'
-    assert e['value'][1]['element'] == ColorParser.Elements.mix
-    assert e['value'][1]['pct'] == 50 and e['value'][1]['value']=='bar'
-    assert e['value'][2]['element'] == ColorParser.Elements.mix
-    assert e['value'][2]['pct'] == 75 and e['value'][2]['value']=='white'
+    assert e['mixes'][0]['element'] == ColorParser.Elements.mix
+    assert e['mixes'][0]['pct'] == 25 and e['mixes'][0]['id']=='foo'
+    assert e['mixes'][1]['element'] == ColorParser.Elements.mix
+    assert e['mixes'][1]['pct'] == 50 and e['mixes'][1]['id']=='bar'
+    assert e['mixes'][2]['element'] == ColorParser.Elements.mix
+    assert e['mixes'][2]['pct'] == 75 and e['mixes'][2]['id']=='white'
 
 def test_colorparser_expr():
     c = ColorParser()
@@ -275,8 +282,8 @@ def test_colorparser_color():
 def test_colorparser_scanner():
     c = ColorParser().scan(', RGB wave named -0.5 .25 +4.1 33 -77 --- ++ identifier !! : !')
     assert c[0]['element']==ColorParser.Elements.comma
-    assert c[1]['element']==ColorParser.Elements.model and c[1]['value']==ColorModel.RGB
-    assert c[2]['element']==ColorParser.Elements.model and c[2]['value']==ColorModel.wave
+    assert c[1]['element']==ColorParser.Elements.model and c[1]['model']==ColorModel.RGB
+    assert c[2]['element']==ColorParser.Elements.model and c[2]['model']==ColorModel.wave
     assert c[3]['element']==ColorParser.Elements.named
     assert c[4]['element']==ColorParser.Elements.dec and c[4]['value']==-0.5
     assert c[5]['element']==ColorParser.Elements.dec and c[5]['value']==0.25
@@ -285,10 +292,10 @@ def test_colorparser_scanner():
     assert c[8]['element']==ColorParser.Elements.int and c[8]['value']==-77
     assert c[9]['element']==ColorParser.Elements.minus and c[9]['value']==3
     assert c[10]['element']==ColorParser.Elements.plus and c[10]['value']==2
-    assert c[11]['element']==ColorParser.Elements.id and c[11]['value']=='identifier'
-    assert c[12]['element']==ColorParser.Elements.symbol and c[12]['value']=='!!'
-    assert c[13]['element']==ColorParser.Elements.symbol and c[13]['value']==':'
-    assert c[14]['element']==ColorParser.Elements.symbol and c[14]['value']=='!'
+    assert c[11]['element']==ColorParser.Elements.id and c[11]['id']=='identifier'
+    assert c[12]['element']==ColorParser.Elements.symbol and c[12]['id']=='!!'
+    assert c[13]['element']==ColorParser.Elements.symbol and c[13]['id']==':'
+    assert c[14]['element']==ColorParser.Elements.symbol and c[14]['id']=='!'
 
 def test_colorparser_basic_rgb_parsing():
     c = ColorParser().parseColor('.1,.2,.3', 'rgb')
@@ -356,9 +363,9 @@ def test_colorparser_color_expr_parsing():
     p.colors = basenames(ColorModel.natural)
     p.colors['foo'] = p.parseColorSeries('rgb', 'last', None, 'red', None, 'blue')
     p.colors['foo'].reset(16)
-    c = p.parseColor('-foo!25!green!50!blue!!+>wheel,1,12')
+    c = p.parseColor('-foo!25!green!50!blue!!+>wheel,1,12').as_hsb
     assert round(c.h,4) == 0.1389 and round(c.s,4) == 0.4286 and round(c.b,4) == 0.875
-    c = p.parseColor('-foo!25!green!50!blue!!+>wheel,1,12')
+    c = p.parseColor('-foo!25!green!50!blue!!+>wheel,1,12').as_hsb
     assert round(c.h,4) == 0.14 and round(c.s,4) == 0.4425 and round(c.b,4) == 0.8828
 
 def test_colorparser_ext_color_expr_parsing():
@@ -445,6 +452,21 @@ def test_color_command(tmpdir, renderXHTML, make_document):
     out = doc.getElementsByTagName('color')[0]
     output = renderXHTML(tmpdir, doc)
     assert output.findAll('span')[-1]['style'] == 'color:#FF0000'
+
+def test_extended_color_command(tmpdir, renderXHTML, make_document):
+    text = '''\\definecolorseries{foo}{rgb}{last}{red}{blue}\\resetcolorseries[20]{foo}
+        {\\color{rgb:red,1;yellow,2;-foo!25!blue!50!white!!++,3>wheel,2,12}Testing}'''
+    doc = make_document(packages='xcolor', content=text)
+    out = doc.getElementsByTagName('color')[0]
+    output = renderXHTML(tmpdir, doc)
+    assert output.findAll('span')[-1]['style'] == 'color:#2AAF0F'
+
+def test_mixing_current_color(tmpdir, renderXHTML, make_document):
+    text = '''{\\color{red}Test\\color{.!50!white}{ing}}'''
+    doc = make_document(packages='xcolor', content=text)
+    out = doc.getElementsByTagName('color')[0]
+    output = renderXHTML(tmpdir, doc)
+    assert output.findAll('span')[-1]['style'] == 'color:#FF7F7F'
 
 def test_textcolor_command(tmpdir, renderXHTML, make_document):
     text = '''\\textcolor{blue}{Testing}'''
