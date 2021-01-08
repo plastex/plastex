@@ -22,9 +22,10 @@ Current Issues:
       color profiles.
 """
 
-from plasTeX import Command, Environment, sourceChildren
-from enum import Enum
-from typing import Optional, Union
+from plasTeX import Command, Environment, sourceChildren, Node
+from enum import Enum, auto
+from typing import Optional, Union, Dict, List
+from typing_extensions import TypedDict
 from re import Scanner # type: ignore
 import math
 
@@ -42,18 +43,18 @@ class ColorModel(Enum):
     specified in. They are not converted until mixing with a color in another
     model is requested, or a HTML representation is required.
     """
-    natural = 0
-    rgb = 1
-    cmy = 2
-    cmyk = 3
-    hsb = 4
-    gray = 5
-    RGB = 6
-    HSB = 7
-    HTML = 8
-    Gray = 9
-    Hsb = 10
-    wave = 11
+    natural = auto()
+    rgb = auto()
+    cmy = auto()
+    cmyk = auto()
+    hsb = auto()
+    gray = auto()
+    RGB = auto()
+    HSB = auto()
+    HTML = auto()
+    Gray = auto()
+    Hsb = auto()
+    wave = auto()
 
 class ColorError(Exception):
     """There was some problem with color definition or mixing."""
@@ -76,10 +77,32 @@ class ColorParser:
     parseColor() method, which returns a single Color object with any requested
     color mixing or other operations applied.
     """
-    tokens = []
-    colors = {}
-    target = ColorModel.natural
-    current_color = None
+    Spec = TypedDict('Spec',{
+        'element': 'ColorParser.Elements',
+        'id': str,
+        'values': List[Union[int,float]]
+    }, total=False)
+
+    ColorMix = TypedDict('ColorMix',{
+        'element': 'ColorParser.Elements',
+        'pct': float,
+        'id': str,
+    }, total=False)
+
+    Token = TypedDict('Token',{
+            'element': 'ColorParser.Elements',
+            'id': str,
+            'ids': List[str],
+            'idlist': List[List[str]],
+            'value': Union[int,float],
+            'values': List[Union[int,float]],
+            'specs': List[Spec],
+            'mix': ColorMix,
+            'mixes': List[ColorMix],
+            'model': ColorModel,
+            'models': List[ColorModel],
+            'color': 'Color',
+    }, total=False)
 
     class Elements(Enum):
         """An enumeration of all syntax elements supported by the parser.
@@ -88,62 +111,68 @@ class ColorParser:
         with parsed elements such as real numbers, model lists and mix
         expressions.
         """
-        empty = 0
-        minus = 1
-        plus = 2
-        space = 3
-        int = 4
-        dec = 5
-        id = 6
-        model = 7
-        symbol = 8
-        comma = 9
-        ext_id = 10
-        id_list = 11
-        dot = 12
-        named = 13
-        model_list = 14
-        spec = 15
-        spec_list = 16
-        series_step = 17
-        series_access = 18
-        mix = 19
-        mix_expr = 20
-        func_expr = 21
-        expr = 22
-        color = 23
+        empty = auto()
+        minus = auto()
+        plus = auto()
+        space = auto()
+        int = auto()
+        dec = auto()
+        id = auto()
+        model = auto()
+        symbol = auto()
+        comma = auto()
+        ext_id = auto()
+        id_list = auto()
+        dot = auto()
+        named = auto()
+        model_list = auto()
+        spec = auto()
+        spec_list = auto()
+        series_step = auto()
+        series_access = auto()
+        mix = auto()
+        mix_expr = auto()
+        func_expr = auto()
+        expr = auto()
+        color = auto()
 
     class ParseError(Exception):
         """There was some problem parsing with the xcolor specification
         syntax."""
         pass
 
-    def empty(self) -> dict:
+    def __init__(self, colors:Dict[str,'Color']={}, target_model:ColorModel=ColorModel.natural):
+        self.colors:Dict[str,'Color'] = colors
+        self.target:ColorModel = target_model
+        self.tokens:List['ColorParser.Token'] = []
+        self.current_color:Optional['Color'] = None
+
+    def empty(self) -> Token:
         """An element to denote that the list of tokens is empty"""
-        return {'element': ColorParser.Elements.empty, 'value': None}
+        return {'element': ColorParser.Elements.empty}
     
-    def int(self) -> Optional[dict]:
+    def int(self) -> Optional[Token]:
         """An integer number"""
         if self.next['element'] == ColorParser.Elements.int:
             return self.tokens.pop(0)
         else:
             return None
     
-    def num(self) -> Optional[dict]:
+    def num(self) -> Optional[Token]:
         """A non-negative integer number"""
         if self.next['element'] == ColorParser.Elements.int and self.next['value'] >= 0:
             return self.tokens.pop(0)
         else:
             return None
     
-    def dec(self) -> Optional[dict]:
+    def dec(self) -> Optional[Token]:
         """A real Number"""
         if self.next['element'] == ColorParser.Elements.dec or self.next['element'] == ColorParser.Elements.int:
             return self.tokens.pop(0)
         else:
             return None
 
-    def div(self) -> Optional[dict]:
+    def div(self) -> Optional[Token]:
         """A non-zero real number"""
         if (self.next['element'] == ColorParser.Elements.dec or self.next['element'] == ColorParser.Elements.int) \
                 and int(self.next['value']) != 0:
@@ -151,7 +180,7 @@ class ColorParser:
         else:
             return None
 
-    def pct(self) -> Optional[dict]:
+    def pct(self) -> Optional[Token]:
         """A real number in the interval [0,100], a percentage"""
         if (self.next['element'] == ColorParser.Elements.dec or self.next['element'] == ColorParser.Elements.int) \
                 and self.next['value'] >=0 and self.next['value'] <=100:
@@ -159,119 +188,127 @@ class ColorParser:
         else:
             return None
 
-    def id(self) -> Optional[dict]:
+    def id(self) -> Optional[Token]:
         """An identifier, a non-empty string consisting of letters and digits"""
         if self.next['element'] == ColorParser.Elements.id:
             return self.tokens.pop(0)
         else:
             return None
     
-    def function(self) -> Optional[dict]:
+    def function(self) -> Optional[Token]:
         """A color function, 'wheel' or 'twheel'"""
         if self.next['element'] == ColorParser.Elements.id:
-            if self.next['value'] == 'wheel' or self.next['value'] == 'twheel':
+            if self.next['id'] == 'wheel' or self.next['id'] == 'twheel':
                 return self.tokens.pop(0)
         return None
 
-    def dot(self) -> Optional[dict]:
+    def dot(self) -> Optional[Token]:
         """A literal dot"""
-        if self.next['element'] == ColorParser.Elements.symbol and self.next['value'] == '.':
+        if self.next['element'] == ColorParser.Elements.symbol and self.next['id'] == '.':
             self.tokens.pop(0)
-            return {'element': ColorParser.Elements.id, 'value': '.'}
+            return {'element': ColorParser.Elements.id, 'id': '.'}
         else:
             return None
 
-    def named(self) -> Optional[dict]:
+    def named(self) -> Optional[Token]:
         """The literal string 'named'"""
         if self.next['element'] == ColorParser.Elements.named:
             return self.tokens.pop(0)
         else:
             return None
     
-    def ext_id(self) -> Optional[dict]:
+    def ext_id(self) -> Optional[Token]:
         """An identifier element or an identifier assignment ([id]=[id])"""
         if self.next['element'] == ColorParser.Elements.id:
             id1 = self.tokens.pop(0)
-            if self.next['element'] == ColorParser.Elements.symbol and self.next['value'] == '=':
+            if self.next['element'] == ColorParser.Elements.symbol and self.next['id'] == '=':
                 self.tokens.pop(0)
                 id2 = self.tokens.pop(0)
-                return {'element': ColorParser.Elements.ext_id, 'value': [id1['value'], id2['value']]}
+                return {'element': ColorParser.Elements.ext_id, 'ids': [id1['id'], id2['id']]}
             else:
-                return {'element': ColorParser.Elements.ext_id, 'value': [id1['value'], id1['value']]}
+                return {'element': ColorParser.Elements.ext_id, 'ids': [id1['id'], id1['id']]}
         else:
             return None
 
-    def id_list(self) -> Optional[dict]:
+    def id_list(self) -> Optional[Token]:
         """A list of identifier (ext_id) elements"""
-        ext_ids = [self.ext_id()]
-        if ext_ids[0] is not None:
-            while self.next['element'] == ColorParser.Elements.comma:
-                self.tokens.pop(0)
-                ext_ids.append(self.ext_id())
-            return {'element': ColorParser.Elements.id_list, 'value': ext_ids}
-        else:
+        ext_id_elem = self.ext_id()
+        if ext_id_elem is None:
             return None
+        ext_ids = [ext_id_elem['ids']]
+        while self.next['element'] == ColorParser.Elements.comma:
+            self.tokens.pop(0)
+            ext_id_elem = self.ext_id()
+            if ext_id_elem is None:
+                return None
+            ext_ids.append(ext_id_elem['ids'])
+        return {'element': ColorParser.Elements.id_list, 'idlist': ext_ids}
 
-    def name(self) -> Optional[dict]:
+    def name(self) -> Optional[Token]:
         """An implicit (the literal '.') or explicit (an identifier) color name"""
         return self.id() or self.dot()
     
-    def core_model(self) -> Optional[dict]:
+    def core_model(self) -> Optional[Token]:
         """An element corresponding to one of the core color models"""
         core_models = [ColorModel.rgb, ColorModel.cmy,
                 ColorModel.cmyk, ColorModel.hsb, ColorModel.gray]
-        if self.next['element'] == ColorParser.Elements.model and self.next['value'] in core_models:
+        if self.next['element'] == ColorParser.Elements.model and self.next['model'] in core_models:
             return self.tokens.pop(0)
         else:
             return None
     
-    def num_model(self) -> Optional[dict]:
+    def num_model(self) -> Optional[Token]:
         """An element corresponding one of the numerical color models"""
         if self.next['element'] == ColorParser.Elements.model:
             return self.tokens.pop(0)
         else:
             return None
         
-    def model(self) -> Optional[dict]:
+    def model(self) -> Optional[Token]:
         """An element corresponding to a color model"""
         return self.num_model() or self.named()
 
-    def model_list_basic(self) -> Optional[dict]:
+    def model_list_basic(self) -> Optional[Token]:
         """An element corresponding to a list of color models"""
-        models = [self.model()]
-        if models[0] is not None:
-            while self.next['element'] == ColorParser.Elements.symbol and self.next['value'] == '/':
-                self.tokens.pop(0)
-                models.append(self.model())
-            return {'element': ColorParser.Elements.model_list, 'value': models}
-        else:
+        model_elem = self.model()
+        if model_elem is None:
             return None
+        models = [model_elem['model']]
+        while self.next['element'] == ColorParser.Elements.symbol and self.next['id'] == '/':
+            self.tokens.pop(0)
+            model_elem = self.model()
+            if model_elem is None:
+                return None
+            models.append(model_elem['model'])
+        return {'element': ColorParser.Elements.model_list, 'models': models}
     
-    def model_list(self) -> Optional[dict]:
+    def model_list(self) -> Optional[Token]:
         """An element corresponding to a list of color models with a core model specified"""
         first = self.model()
-        if self.next['element'] == ColorParser.Elements.symbol and (self.next['value'] == ':' \
-                or self.next['value'] == '/'):
+        if first is None:
+            return None
+        if self.next['element'] == ColorParser.Elements.symbol and (self.next['id'] in [':','/']):
             sep = self.tokens.pop(0)
-            if sep['element'] == ColorParser.Elements.symbol and sep['value'] == ':':
+            if sep['element'] == ColorParser.Elements.symbol and sep['id'] == ':':
                 models = self.model_list_basic()
                 if models is not None:
-                    models['core'] = first
+                    models['model'] = first['model']
                 return models
-            elif sep['element'] == ColorParser.Elements.symbol and sep['value'] == '/':
+            elif sep['element'] == ColorParser.Elements.symbol and sep['id'] == '/':
                 models = self.model_list_basic()
                 if models is not None:
-                    models['value'].insert(0, first)
+                    models['models'].insert(0, first['model'])
                 return models
             else:
-                return None
+                raise ColorParser.ParseError("Missing separator in color model list")
         else:
-            return {'element': ColorParser.Elements.model_list, 'value': [first]}
+            return {'element': ColorParser.Elements.model_list, 'models': [first['model']]}
 
-    def spec(self) -> Optional[dict]:
+    def spec(self) -> Spec:
         """An implicit or explicit color specification"""
         if self.next['element'] == ColorParser.Elements.id:
-            return self.tokens.pop(0)
+            id_elem = self.tokens.pop(0)
+            return {'element': ColorParser.Elements.spec, 'id': id_elem['id']}
         else:
             valid_next = [ColorParser.Elements.int, ColorParser.Elements.dec, ColorParser.Elements.comma]
             num_elem = self.int() or self.dec()
@@ -283,31 +320,28 @@ class ColorParser:
                     num_elem = self.int() or self.dec()
                     if num_elem is not None:
                         spec.append(num_elem['value'])
-                return {'element': ColorParser.Elements.spec, 'value': spec}
+                return {'element': ColorParser.Elements.spec, 'values': spec}
             else:
                 raise ColorParser.ParseError("Missing expected integer or real.")
 
-    def spec_list(self) -> Optional[dict]:
+    def spec_list(self) -> Token:
         """An element corresponding to a list of implicit or explicit color specifications"""
         specs = [self.spec()]
-        if specs[0] is not None:
-            while self.next['element'] == ColorParser.Elements.symbol and self.next['value'] == '/':
-                self.tokens.pop(0)
-                specs.append(self.spec())
-            return {'element': ColorParser.Elements.spec_list, 'value': specs}
-        else:
-            return None
+        while self.next['element'] == ColorParser.Elements.symbol and self.next['id'] == '/':
+            self.tokens.pop(0)
+            specs.append(self.spec())
+        return {'element': ColorParser.Elements.spec_list, 'specs': specs}
 
-    def prefix(self) -> Optional[dict]:
+    def prefix(self) -> Optional[Token]:
         """A color expression prefix"""
         if self.next['element'] == ColorParser.Elements.minus:
             return self.tokens.pop(0)
         else:
             return None
 
-    def postfix(self) -> Optional[dict]:
+    def postfix(self) -> Optional[Token]:
         """A color expression postfix"""
-        if self.next['element'] == ColorParser.Elements.symbol and self.next['value'] == '!!':
+        if self.next['element'] == ColorParser.Elements.symbol and self.next['id'] == '!!':
             self.tokens.pop(0)
             if self.next['element'] == ColorParser.Elements.plus:
                 plus = self.tokens.pop(0)
@@ -321,35 +355,38 @@ class ColorParser:
                 return {'element': ColorParser.Elements.series_access, 'value': num['value'] }
         return None
 
-    def mix(self) -> Optional[dict]:
+    def mix(self) -> Optional[ColorMix]:
         """An element corresponding to a color and percentage pair for mixing"""
-        if self.next['element'] == ColorParser.Elements.symbol and self.next['value'] == '!':
+        if self.next['element'] == ColorParser.Elements.symbol and self.next['id'] == '!':
             self.tokens.pop(0)
             pct = self.pct()
             if pct is None:
                 raise ColorParser.ParseError("Missing expected real number percentage")
-            if self.next['element'] == ColorParser.Elements.symbol and self.next['value'] == '!':
+            if self.next['element'] == ColorParser.Elements.symbol and self.next['id'] == '!':
                 self.tokens.pop(0)
                 name = self.name()
                 if name is None:
                     raise ColorParser.ParseError("Missing expected color name or '.'")
-                return{'element': ColorParser.Elements.mix, 'pct': pct['value'], 'value': name['value'] }
+                return {'element': ColorParser.Elements.mix, 'pct': pct['value'], 'id': name['id'] }
             else:
-                return{'element': ColorParser.Elements.mix, 'pct': pct['value'], 'value': 'white' }
+                return {'element': ColorParser.Elements.mix, 'pct': pct['value'], 'id': 'white' }
         else:
             return None
     
-    def mix_expr(self) -> Optional[dict]:
+    def mix_expr(self) -> Optional[Token]:
         """An element corresponding to a mix of colors"""
-        mixes = [self.mix()]
-        if mixes[0] is not None:
-            while self.next['element'] == ColorParser.Elements.symbol and self.next['value'] == '!':
-                mixes.append(self.mix())
-            return {'element': ColorParser.Elements.mix_expr, 'value': mixes}
-        else:
+        mix_elem = self.mix()
+        if mix_elem is None:
             return None
+        mixes = [mix_elem]
+        while self.next['element'] == ColorParser.Elements.symbol and self.next['id'] == '!':
+            mix_elem = self.mix()
+            if mix_elem is None:
+                return None
+            mixes.append(mix_elem)
+        return {'element': ColorParser.Elements.mix_expr, 'mixes': mixes}
 
-    def expr(self) -> Optional[dict]:
+    def expr(self) -> Optional[Token]:
         """A standard color expression"""
         prefix = self.prefix()
         name = self.name()
@@ -357,35 +394,38 @@ class ColorParser:
             raise ColorParser.ParseError("Missing expected color name or '.'")
         mix = self.mix_expr()
         postfix = self.postfix()
-        color = Color().makeColor('named',name['value'], self.colors, self.current_color).copy()
+        color = Color().makeColor('named',name['id'], self.colors, self.current_color).copy()
 
         if postfix is not None:
+            color_series = self.colors[name['id']]
+            if not isinstance(color_series,ColorSeries):
+                raise ColorParser.ParseError("Postfix operator can only be used on color series")
             if postfix['element'] == ColorParser.Elements.series_step:
                 while postfix['value']>0:
-                    self.colors[name['value']].series_step()
+                    color_series.series_step()
                     postfix['value'] -= 1
             elif postfix['element'] == ColorParser.Elements.series_access:
-                color = self.colors[name['value']].series_n(postfix['value']).copy()
+                color = color_series.series_n(int(postfix['value'])).copy()
 
         if mix is not None:
-            for m in mix['value']:
+            for m in mix['mixes']:
                 mpct = m['pct']
-                mcol = Color().makeColor('named',m['value'],
+                mcol = Color().makeColor('named',m['id'],
                         self.colors, self.current_color).as_model(color.model)
                 color = color.mix(mcol, mpct)
             
         if prefix is not None and prefix['value']%2 == 1:
             color = color.complement
         
-        return {'element': ColorParser.Elements.expr, 'value': color}
+        return {'element': ColorParser.Elements.expr, 'color': color}
     
-    def ext_expr(self) -> Optional[dict]:
+    def ext_expr(self) -> Optional[Token]:
         """An extended color expression"""
-        div = 0
+        div = 0.
         model_elem = self.core_model()
         if model_elem is None:
             return None
-        model = model_elem['value']
+        model = model_elem['model']
 
         if self.next['element'] == ColorParser.Elements.comma:
             self.tokens.pop(0)
@@ -394,7 +434,7 @@ class ColorParser:
                 raise ColorParser.ParseError("Missing expected non-zero real number")
             div = div_elem['value']
         
-        if self.next['element'] == ColorParser.Elements.symbol and self.next['value'] == ':':
+        if self.next['element'] == ColorParser.Elements.symbol and self.next['id'] == ':':
             self.tokens.pop(0)
             expr_elem = self.expr()
             if expr_elem is None:
@@ -408,7 +448,7 @@ class ColorParser:
                 raise ColorParser.ParseError("Missing expected real number")
             decs = [dec_elem['value']]
 
-            while self.next['element'] == ColorParser.Elements.symbol and self.next['value'] == ';':
+            while self.next['element'] == ColorParser.Elements.symbol and self.next['id'] == ';':
                 self.tokens.pop(0)
                 expr_elem = self.expr()
                 if expr_elem is None:
@@ -427,18 +467,19 @@ class ColorParser:
 
             color = 0.0*(grayColor(0.).as_model(model))
             for expr,dec in zip(exprs,decs):
-                color = color + (dec/div)*(expr['value'].as_model(model))
+                color = color + (dec/div)*(expr['color'].as_model(model))
 
-            return {'element': ColorParser.Elements.expr, 'value': color.wrapped}
+            return {'element': ColorParser.Elements.expr, 'color': color.wrapped}
         else:
             return None
     
-    def color(self) -> Optional[dict]:
+    def color(self) -> Optional[Token]:
         """A color expression including any color functions to be applied"""
         color_expr = self.ext_expr() or self.expr()
-        if color_expr is None: return None
-        color = {'element': ColorParser.Elements.color, 'value': color_expr['value']}
-        while self.next['element'] == ColorParser.Elements.symbol and self.next['value'] == '>':
+        if color_expr is None:
+            return None
+        color = color_expr['color']
+        while self.next['element'] == ColorParser.Elements.symbol and self.next['id'] == '>':
             self.tokens.pop(0)
             func = self.function()
             if func is None:
@@ -451,21 +492,20 @@ class ColorParser:
                     raise ColorError("Invalid argument passed to color function.")
                 args.append(arg['value'])
 
-            if func['value'] == 'wheel':
+            if func['id'] == 'wheel':
                 if len(args) == 0:
                     raise ColorError("Insufficient arguments for color function: wheel.")
                 full_circle = 360. if len(args)<2 else args[1]
                 angle = args[0]
-                fcolor = color['value'].as_hsb
+                fcolor = color.as_hsb
                 fcolor.h = (fcolor.h + float(angle)/full_circle)
-                fcolor = fcolor.wrapped
-                color['value'] = fcolor
+                color = fcolor.wrapped
             else:
-                raise ColorError("Color function {} is not implemented".format(func['value']))
-        return color
+                raise ColorError("Color function {} is not implemented".format(func['id']))
+        return {'element': ColorParser.Elements.color, 'color':color}
 
     @property
-    def next(self) -> dict:
+    def next(self) -> Token:
         """Return the next element from the token stream.
 
         Returns an empty element if there are no more tokens.
@@ -474,7 +514,7 @@ class ColorParser:
             return self.tokens[0]
         return self.empty()
     
-    def scan(self, expr:str) -> list:
+    def scan(self, expr:str) -> List[Token]:
         """Scan an expression and populate the token stream.
 
         Uses SRE's Scanner to convert an expression from a string into a list of
@@ -482,20 +522,20 @@ class ColorParser:
         step in parsing a given expression string.
         """
         scanner = Scanner([
-            (r',\s*', lambda s, t: {'element': ColorParser.Elements.comma, 'value': t}),
+            (r',\s*', lambda s, t: {'element': ColorParser.Elements.comma}),
             (r'RGB|rgb|cmyk|cmy|HSB|hsb|Gray|gray|HTML|Hsb|tHsb|wave',
-                lambda s, t: {'element': ColorParser.Elements.model, 'value': ColorModel[t]}),
-            (r'named', lambda s, t: {'element': ColorParser.Elements.named, 'value': t}),
+                lambda s, t: {'element': ColorParser.Elements.model, 'model': ColorModel[t]}),
+            (r'named', lambda s, t: {'element': ColorParser.Elements.named, 'model': ColorModel.natural}),
             (r'[0-9A-F]{6}', lambda s, t: {'element': ColorParser.Elements.int, 'value': int(t,16)}),
             (r'[-+]?(\d*\.\d+)|(\d+\.\d*)',
                 lambda s, t: {'element': ColorParser.Elements.dec, 'value': float(t)}),
             (r'[-+]?\d+', lambda s, t: {'element': ColorParser.Elements.int, 'value': int(t)}),
             (r'-+', lambda s, t: {'element': ColorParser.Elements.minus, 'value': len(t)}),
             (r'\++', lambda s, t: {'element': ColorParser.Elements.plus, 'value': len(t)}),
-            (r'\w+', lambda s, t: {'element': ColorParser.Elements.id, 'value': t}),
-            (r'!!', lambda s, t: {'element': ColorParser.Elements.symbol, 'value': t}),
+            (r'\w+', lambda s, t: {'element': ColorParser.Elements.id, 'id': t}),
+            (r'!!', lambda s, t: {'element': ColorParser.Elements.symbol, 'id': t}),
             (r'\s+', lambda s, t: None),
-            (r'.', lambda s, t: {'element': ColorParser.Elements.symbol, 'value': t}),
+            (r'.', lambda s, t: {'element': ColorParser.Elements.symbol, 'id': t}),
             ])
         self.tokens, unknown = scanner.scan(expr)
         return self.tokens
@@ -511,28 +551,31 @@ class ColorParser:
             model_list = self.model_list()
             if model_list is None:
                 raise ColorParser.ParseError("Error parsing color model list")
-            models = [m['value'] for m in model_list['value']]
+            models = model_list['models']
 
             self.scan(colorspec)
             spec_list = self.spec_list()
             if spec_list is None:
                 raise ColorParser.ParseError("Error parsing color specification list")
-            specs = [s['value'] for s in spec_list['value']]
+            specs = spec_list['specs']
 
             if self.target in models:
-                color = Color().makeColor(self.target,
-                        specs[models.index(self.target)], self.colors, self.current_color)
+                spec = specs[models.index(self.target)]
+                color = Color().makeColor(self.target, spec['id'] if 'id' in spec else spec['values'],
+                        self.colors, self.current_color)
             else:
-                color = Color().makeColor(models[0], specs[0], self.colors, self.current_color)
+                spec = specs[0]
+                color = Color().makeColor(models[0], spec['id'] if 'id' in spec else spec['values'],
+                        self.colors, self.current_color)
             
-            core = model_list['core'] if 'core' in model_list else ColorModel.natural
+            core = model_list['model'] if 'model' in model_list else ColorModel.natural
             return color.as_model(core).as_model(self.target)
         else:
             self.scan(colorspec)
             color_elem = self.color()
             if color_elem is None:
                 raise ColorParser.ParseError("Error parsing color element")
-            return color_elem['value']
+            return color_elem['color']
 
     def parseColorSeries(self, model:str, method:str, b_model:Optional[str], b_spec:str,
             s_model:Optional[str], s_spec:str) -> 'ColorSeries':
@@ -548,13 +591,13 @@ class ColorParser:
         base = self.parseColor(b_spec, b_model)
         if method == 'last':
             last = self.parseColor(s_spec, s_model)
-            return ColorSeries(model_elem['value'], method, base, last = last)
+            return ColorSeries(model_elem['model'], method, base, last = last)
         else:
             self.scan(s_spec)
             spec_elem = self.spec()
             if spec_elem is None:
                 raise ColorParser.ParseError("Missing expected color specification.")
-            return ColorSeries(model_elem['value'], method, base, step = spec_elem['value'])
+            return ColorSeries(model_elem['model'], method, base, step = spec_elem['values'])
 
 class Color:
     """ A base color class representing a certain color shade in a certain color
@@ -599,8 +642,8 @@ class Color:
         c = [ a*(p/100.)+b*(1.-p/100.) for (a,b) in zip(self.as_list, mix_color.as_list)]
         return self.makeColor(self.model, c)
 
-    def makeColor(self, model: Union[str, ColorModel], spec: Union[str,list],
-            named:dict={}, current_color:Optional['Color']=None) -> 'Color':
+    def makeColor(self, model: Union[str, ColorModel], spec: Union[str,List[Union[int,float]]],
+            named:Dict[str,'Color']={}, current_color:Optional['Color']=None) -> 'Color':
         """Create a new Color object according to given arguments.
 
         Returns a color object corresponding to either a named color in the
@@ -621,13 +664,9 @@ class Color:
             * The "current color" (here given as "foo") in the rgb model:
                 makeColor('rgb','.',current_color=foo)
         """
-        if model == 'named':
-            if spec in named:
-                return named[spec]
-            else:
-                raise ColorError('Named color not found in color database.') 
-        elif isinstance(model,ColorModel) and spec == '.':
-            return current_color or grayColor(0.).as_model(model)
+        if spec == '.':
+            req_model:ColorModel = model if isinstance(model,ColorModel) else ColorModel.natural 
+            return current_color or grayColor(0.).as_model(req_model)
         elif isinstance(spec, list):
             if model == ColorModel.rgb:
                 r,g,b = spec
@@ -655,13 +694,18 @@ class Color:
                 h,s,b = spec
                 return hsbColor(h/240.,s/240.,b/240.)
             elif model == ColorModel.HTML:
-                h = spec[0]
+                h = int(spec[0])
                 r = ((h&0xFF0000)>>16)/255.
                 g = ((h&0xFF00)>>8)/255.
                 b = (h&0xFF)/255.
                 return rgbColor(r,g,b)
             elif model == ColorModel.wave:
                 return waveColor(spec[0])
+        else:
+            if spec in named:
+                return named[spec]
+            else:
+                raise ColorError('Named color not found in color database.') 
         raise ColorError('Unable to create requested ColorModel')
 
     def as_model(self, model: ColorModel) -> 'Color':
@@ -707,7 +751,7 @@ class Color:
         return self.makeColor(self.model, c)
 
     @property
-    def as_list(self) -> list:
+    def as_list(self) -> List[float]:
         """This color as a list of parameters"""
         raise NotImplementedError()
 
@@ -752,13 +796,14 @@ class Color:
 class rgbColor(Color):
     """A subclass of Color for colors in the rgb base color model"""
     model = ColorModel.rgb
-    r = g = b = 0.
 
     def __init__(self, r:float, g:float, b:float) -> None:
-        self.r, self.g, self.b = r, g, b
+        self.r:float = r
+        self.g:float = g
+        self.b:float = b
 
     @property
-    def as_list(self) -> list:
+    def as_list(self) -> List[float]:
         return [self.r, self.g, self.b]
 
     @property
@@ -807,13 +852,12 @@ class rgbColor(Color):
 class grayColor(Color):
     """A subclass of Color for colors in the gray base color model"""
     model = ColorModel.gray
-    gray = 0.
 
     def __init__(self, gray:float) -> None:
-        self.gray = gray
+        self.gray:float = gray
     
     @property
-    def as_list(self) -> list:
+    def as_list(self) -> List[float]:
         return [self.gray]
     
     @property
@@ -843,13 +887,15 @@ class grayColor(Color):
 class cmykColor(Color):
     """A subclass of Color for colors in the cmyk base color model"""
     model = ColorModel.cmyk
-    c = m = y = k = 0.
 
     def __init__(self, c:float, m:float, y:float, k:float) -> None:
-        self.c, self.m, self.y, self.k = c, m, y, k
+        self.c:float = c
+        self.m:float = m
+        self.y:float = y
+        self.k:float = k
     
     @property
-    def as_list(self) -> list:
+    def as_list(self) -> List[float]:
         return [self.c, self.m, self.y, self.k]
     
     @property
@@ -882,13 +928,14 @@ class cmykColor(Color):
 class cmyColor(Color):
     """A subclass of Color for colors in the cmy base color model"""
     model = ColorModel.cmy
-    c = m = y = 0.
 
     def __init__(self, c:float, m:float, y:float) -> None:
-        self.c, self.m, self.y = c, m, y
+        self.c:float = c
+        self.m:float = m
+        self.y:float = y
     
     @property
-    def as_list(self) -> list:
+    def as_list(self) -> List[float]:
         return [self.c, self.m, self.y]
     
     @property
@@ -923,13 +970,14 @@ class cmyColor(Color):
 class hsbColor(Color):
     """A subclass of Color for colors in the hsb base color model"""
     model = ColorModel.hsb
-    h = s = b = 0.
 
     def __init__(self, h:float, s:float, b:float) -> None:
-        self.h, self.s, self.b = h, s, b
+        self.h:float = h
+        self.s:float = s
+        self.b:float = b
     
     @property
-    def as_list(self) -> list:
+    def as_list(self) -> List[float]:
         return [self.h, self.s, self.b]
     
     @property
@@ -975,17 +1023,16 @@ class waveColor(Color):
     (c.f. Section 6.3.12, pg 55, xcolor v2.12, 2016/05/11)
     """
     model = ColorModel.wave
-    freq = 0.
 
     def __init__(self, freq:float) -> None:
-        self.freq = freq
+        self.freq:float = freq
     
     @property
     def wrapped(self) -> 'Color':
         return self
 
     @property
-    def as_list(self) -> list:
+    def as_list(self) -> List[float]:
         return [self.freq]
     
     def mix(self, mix_color:'Color', p:float) -> 'waveColor':
@@ -1038,13 +1085,15 @@ class ColorSeries(Color):
     linearly, and finishes with the end color at the end of the series.
     (c.f. Section 2.9, pg 25, xcolor v2.12, 2016/05/11)
     """
-    step = []
-    stepColor:Color = grayColor(0.)
-    model = ColorModel.natural
-    method = 'step'
-    base:Color = grayColor(0.)
-    last:Optional[Color] = None
-    current:Optional[Color] = None
+    def __init__(self, model:ColorModel, method:str, base:Color,
+            step:List[float] = [], last:Optional[Color] = None) -> None:
+        self.model:ColorModel = model
+        self.method:str = method
+        self.base:Color = base.as_model(self.model)
+        self.step:List[float] = step
+        self.last:Optional[Color] = last.as_model(self.model) if last is not None else None
+        self.stepColor:Color = grayColor(0.)
+        self.current:Optional[Color] = None
     
     def __repr__(self) -> str:
         if self.method == 'last':
@@ -1053,14 +1102,6 @@ class ColorSeries(Color):
         else:
             return '<ColorSeries(model={},current{},base={},step={})>'.format(self.model,
                     self.current, self.base, self.step)
-
-    def __init__(self, model:ColorModel, method:str, base:Color,
-            step:list = [], last:Optional[Color] = None) -> None:
-        self.model = model
-        self.method = method
-        self.base = base.as_model(self.model)
-        self.step = step
-        self.last = last.as_model(self.model) if last is not None else None
 
     def reset(self, div:float) -> None:
         """Reset the color series to the initial color.
@@ -1087,6 +1128,7 @@ class ColorSeries(Color):
         self.current = self.current.wrapped
     
     def series_n(self,n:int) -> Color:
+        """Return the n-th color in the series"""
         color = self.base
         while n>0:
             color = color + self.stepColor
@@ -1095,7 +1137,7 @@ class ColorSeries(Color):
         return color
     
     @property
-    def as_list(self) -> list:
+    def as_list(self) -> List[float]:
         if not self.current:
             raise ColorError(r'Unable to convert color series, missing \resetcolorseries?')
         return self.current.as_list
@@ -1136,595 +1178,595 @@ class ColorSeries(Color):
             raise ColorError(r'Unable to convert color series, missing \resetcolorseries?')
         return self.current.complement
 
-def basenames(target_model:ColorModel = ColorModel.natural) -> dict:
+def basenames(target_model:ColorModel = ColorModel.natural) -> Dict[str,Color]:
     """Return the base color names names dictionary.
 
     The base colors are always available in xcolor.
     """
-    colors = {}
-    colors['red'] = rgbColor(1., 0., 0.).as_model(target_model)
-    colors['green'] = rgbColor(0., 1., 0.).as_model(target_model)
-    colors['blue'] = rgbColor(0., 0., 1.).as_model(target_model)
-    colors['cyan'] = cmykColor(1., 0., 0., 0.).as_model(target_model)
-    colors['magenta'] = cmykColor(0., 1., 0., 0.).as_model(target_model)
-    colors['yellow'] = cmykColor(0., 0., 1., 0.).as_model(target_model)
-    colors['black'] = grayColor(0.).as_model(target_model)
-    colors['darkgray'] = grayColor(0.25).as_model(target_model)
-    colors['gray'] = grayColor(0.5).as_model(target_model)
-    colors['lightgray'] = grayColor(0.75).as_model(target_model)
-    colors['white'] = grayColor(1.).as_model(target_model)
-    colors['orange'] = rgbColor(1.,.5,0.).as_model(target_model)
-    colors['violet'] = rgbColor(.5,0.,.5).as_model(target_model)
-    colors['purple'] = rgbColor(.75,0.,.25).as_model(target_model)
-    colors['brown'] = rgbColor(.75,.5,.25).as_model(target_model)
-    colors['lime'] = rgbColor(.75,1.,0.).as_model(target_model)
-    colors['pink'] = rgbColor(1.,.75,.75).as_model(target_model)
-    colors['teal'] = rgbColor(0.,.5,.5).as_model(target_model)
-    colors['olive'] = rgbColor(.5,.5,0.).as_model(target_model)
-    return colors
+    return {
+        'red': rgbColor(1., 0., 0.).as_model(target_model),
+        'green': rgbColor(0., 1., 0.).as_model(target_model),
+        'blue': rgbColor(0., 0., 1.).as_model(target_model),
+        'cyan': cmykColor(1., 0., 0., 0.).as_model(target_model),
+        'magenta': cmykColor(0., 1., 0., 0.).as_model(target_model),
+        'yellow': cmykColor(0., 0., 1., 0.).as_model(target_model),
+        'black': grayColor(0.).as_model(target_model),
+        'darkgray': grayColor(0.25).as_model(target_model),
+        'gray': grayColor(0.5).as_model(target_model),
+        'lightgray': grayColor(0.75).as_model(target_model),
+        'white': grayColor(1.).as_model(target_model),
+        'orange': rgbColor(1.,.5,0.).as_model(target_model),
+        'violet': rgbColor(.5,0.,.5).as_model(target_model),
+        'purple': rgbColor(.75,0.,.25).as_model(target_model),
+        'brown': rgbColor(.75,.5,.25).as_model(target_model),
+        'lime': rgbColor(.75,1.,0.).as_model(target_model),
+        'pink': rgbColor(1.,.75,.75).as_model(target_model),
+        'teal': rgbColor(0.,.5,.5).as_model(target_model),
+        'olive': rgbColor(.5,.5,0.).as_model(target_model)
+    }
 
-def dvipsnames() -> dict:
+def dvipsnames() -> Dict[str,Color]:
     """Return the dvipsnames dictionary.
 
     The full list of 68 colors known to dvips, loaded when xcolor is invoked
     with the dvipsnames option.
     """
-    colors = {}
-    colors['GreenYellow'] = cmykColor(0.15,0,0.69,0)
-    colors['Yellow'] = cmykColor(0,0,1,0)
-    colors['Goldenrod'] = cmykColor(0,0.10,0.84,0)
-    colors['Dandelion'] = cmykColor(0,0.29,0.84,0)
-    colors['Apricot'] = cmykColor(0,0.32,0.52,0)
-    colors['Peach'] = cmykColor(0,0.50,0.70,0)
-    colors['Melon'] = cmykColor(0,0.46,0.50,0)
-    colors['YellowOrange'] = cmykColor(0,0.42,1,0)
-    colors['Orange'] = cmykColor(0,0.61,0.87,0)
-    colors['BurntOrange'] = cmykColor(0,0.51,1,0)
-    colors['Bittersweet'] = cmykColor(0,0.75,1,0.24)
-    colors['RedOrange'] = cmykColor(0,0.77,0.87,0)
-    colors['Mahogany'] = cmykColor(0,0.85,0.87,0.35)
-    colors['Maroon'] = cmykColor(0,0.87,0.68,0.32)
-    colors['BrickRed'] = cmykColor(0,0.89,0.94,0.28)
-    colors['Red'] = cmykColor(0,1,1,0)
-    colors['OrangeRed'] = cmykColor(0,1,0.50,0)
-    colors['RubineRed'] = cmykColor(0,1,0.13,0)
-    colors['WildStrawberry'] = cmykColor(0,0.96,0.39,0)
-    colors['Salmon'] = cmykColor(0,0.53,0.38,0)
-    colors['CarnationPink'] = cmykColor(0,0.63,0,0)
-    colors['Magenta'] = cmykColor(0,1,0,0)
-    colors['VioletRed'] = cmykColor(0,0.81,0,0)
-    colors['Rhodamine'] = cmykColor(0,0.82,0,0)
-    colors['Mulberry'] = cmykColor(0.34,0.90,0,0.02)
-    colors['RedViolet'] = cmykColor(0.07,0.90,0,0.34)
-    colors['Fuchsia'] = cmykColor(0.47,0.91,0,0.08)
-    colors['Lavender'] = cmykColor(0,0.48,0,0)
-    colors['Thistle'] = cmykColor(0.12,0.59,0,0)
-    colors['Orchid'] = cmykColor(0.32,0.64,0,0)
-    colors['DarkOrchid'] = cmykColor(0.40,0.80,0.20,0)
-    colors['Purple'] = cmykColor(0.45,0.86,0,0)
-    colors['Plum'] = cmykColor(0.50,1,0,0)
-    colors['Violet'] = cmykColor(0.79,0.88,0,0)
-    colors['RoyalPurple'] = cmykColor(0.75,0.90,0,0)
-    colors['BlueViolet'] = cmykColor(0.86,0.91,0,0.04)
-    colors['Periwinkle'] = cmykColor(0.57,0.55,0,0)
-    colors['CadetBlue'] = cmykColor(0.62,0.57,0.23,0)
-    colors['CornflowerBlue'] = cmykColor(0.65,0.13,0,0)
-    colors['MidnightBlue'] = cmykColor(0.98,0.13,0,0.43)
-    colors['NavyBlue'] = cmykColor(0.94,0.54,0,0)
-    colors['RoyalBlue'] = cmykColor(1,0.50,0,0)
-    colors['Blue'] = cmykColor(1,1,0,0)
-    colors['Cerulean'] = cmykColor(0.94,0.11,0,0)
-    colors['Cyan'] = cmykColor(1,0,0,0)
-    colors['ProcessBlue'] = cmykColor(0.96,0,0,0)
-    colors['SkyBlue'] = cmykColor(0.62,0,0.12,0)
-    colors['Turquoise'] = cmykColor(0.85,0,0.20,0)
-    colors['TealBlue'] = cmykColor(0.86,0,0.34,0.02)
-    colors['Aquamarine'] = cmykColor(0.82,0,0.30,0)
-    colors['BlueGreen'] = cmykColor(0.85,0,0.33,0)
-    colors['Emerald'] = cmykColor(1,0,0.50,0)
-    colors['JungleGreen'] = cmykColor(0.99,0,0.52,0)
-    colors['SeaGreen'] = cmykColor(0.69,0,0.50,0)
-    colors['Green'] = cmykColor(1,0,1,0)
-    colors['ForestGreen'] = cmykColor(0.91,0,0.88,0.12)
-    colors['PineGreen'] = cmykColor(0.92,0,0.59,0.25)
-    colors['LimeGreen'] = cmykColor(0.50,0,1,0)
-    colors['YellowGreen'] = cmykColor(0.44,0,0.74,0)
-    colors['SpringGreen'] = cmykColor(0.26,0,0.76,0)
-    colors['OliveGreen'] = cmykColor(0.64,0,0.95,0.40)
-    colors['RawSienna'] = cmykColor(0,0.72,1,0.45)
-    colors['Sepia'] = cmykColor(0,0.83,1,0.70)
-    colors['Brown'] = cmykColor(0,0.81,1,0.60)
-    colors['Tan'] = cmykColor(0.14,0.42,0.56,0)
-    colors['Gray'] = cmykColor(0,0,0,0.50)
-    colors['Black'] = cmykColor(0,0,0,1)
-    colors['White'] = cmykColor(0,0,0,0)
-    return colors
+    return {
+        'GreenYellow': cmykColor(0.15,0,0.69,0),
+        'Yellow': cmykColor(0,0,1,0),
+        'Goldenrod': cmykColor(0,0.10,0.84,0),
+        'Dandelion': cmykColor(0,0.29,0.84,0),
+        'Apricot': cmykColor(0,0.32,0.52,0),
+        'Peach': cmykColor(0,0.50,0.70,0),
+        'Melon': cmykColor(0,0.46,0.50,0),
+        'YellowOrange': cmykColor(0,0.42,1,0),
+        'Orange': cmykColor(0,0.61,0.87,0),
+        'BurntOrange': cmykColor(0,0.51,1,0),
+        'Bittersweet': cmykColor(0,0.75,1,0.24),
+        'RedOrange': cmykColor(0,0.77,0.87,0),
+        'Mahogany': cmykColor(0,0.85,0.87,0.35),
+        'Maroon': cmykColor(0,0.87,0.68,0.32),
+        'BrickRed': cmykColor(0,0.89,0.94,0.28),
+        'Red': cmykColor(0,1,1,0),
+        'OrangeRed': cmykColor(0,1,0.50,0),
+        'RubineRed': cmykColor(0,1,0.13,0),
+        'WildStrawberry': cmykColor(0,0.96,0.39,0),
+        'Salmon': cmykColor(0,0.53,0.38,0),
+        'CarnationPink': cmykColor(0,0.63,0,0),
+        'Magenta': cmykColor(0,1,0,0),
+        'VioletRed': cmykColor(0,0.81,0,0),
+        'Rhodamine': cmykColor(0,0.82,0,0),
+        'Mulberry': cmykColor(0.34,0.90,0,0.02),
+        'RedViolet': cmykColor(0.07,0.90,0,0.34),
+        'Fuchsia': cmykColor(0.47,0.91,0,0.08),
+        'Lavender': cmykColor(0,0.48,0,0),
+        'Thistle': cmykColor(0.12,0.59,0,0),
+        'Orchid': cmykColor(0.32,0.64,0,0),
+        'DarkOrchid': cmykColor(0.40,0.80,0.20,0),
+        'Purple': cmykColor(0.45,0.86,0,0),
+        'Plum': cmykColor(0.50,1,0,0),
+        'Violet': cmykColor(0.79,0.88,0,0),
+        'RoyalPurple': cmykColor(0.75,0.90,0,0),
+        'BlueViolet': cmykColor(0.86,0.91,0,0.04),
+        'Periwinkle': cmykColor(0.57,0.55,0,0),
+        'CadetBlue': cmykColor(0.62,0.57,0.23,0),
+        'CornflowerBlue': cmykColor(0.65,0.13,0,0),
+        'MidnightBlue': cmykColor(0.98,0.13,0,0.43),
+        'NavyBlue': cmykColor(0.94,0.54,0,0),
+        'RoyalBlue': cmykColor(1,0.50,0,0),
+        'Blue': cmykColor(1,1,0,0),
+        'Cerulean': cmykColor(0.94,0.11,0,0),
+        'Cyan': cmykColor(1,0,0,0),
+        'ProcessBlue': cmykColor(0.96,0,0,0),
+        'SkyBlue': cmykColor(0.62,0,0.12,0),
+        'Turquoise': cmykColor(0.85,0,0.20,0),
+        'TealBlue': cmykColor(0.86,0,0.34,0.02),
+        'Aquamarine': cmykColor(0.82,0,0.30,0),
+        'BlueGreen': cmykColor(0.85,0,0.33,0),
+        'Emerald': cmykColor(1,0,0.50,0),
+        'JungleGreen': cmykColor(0.99,0,0.52,0),
+        'SeaGreen': cmykColor(0.69,0,0.50,0),
+        'Green': cmykColor(1,0,1,0),
+        'ForestGreen': cmykColor(0.91,0,0.88,0.12),
+        'PineGreen': cmykColor(0.92,0,0.59,0.25),
+        'LimeGreen': cmykColor(0.50,0,1,0),
+        'YellowGreen': cmykColor(0.44,0,0.74,0),
+        'SpringGreen': cmykColor(0.26,0,0.76,0),
+        'OliveGreen': cmykColor(0.64,0,0.95,0.40),
+        'RawSienna': cmykColor(0,0.72,1,0.45),
+        'Sepia': cmykColor(0,0.83,1,0.70),
+        'Brown': cmykColor(0,0.81,1,0.60),
+        'Tan': cmykColor(0.14,0.42,0.56,0),
+        'Gray': cmykColor(0,0,0,0.50),
+        'Black': cmykColor(0,0,0,1),
+        'White': cmykColor(0,0,0,0)
+    }
 
-def svgnames() -> dict:
+def svgnames() -> Dict[str,Color]:
     """Return the svgnames dictionary.
 
     The full list of 151 colors defined by the SVG 1.1 specification, loaded
     when xcolor is invoked with the svgnames option.
     """
-    colors = {}
-    colors['AliceBlue'] = rgbColor(.94,.972,1)
-    colors['AntiqueWhite'] = rgbColor(.98,.92,.844)
-    colors['Aqua'] = rgbColor(0,1,1)
-    colors['Aquamarine'] = rgbColor(.498,1,.83)
-    colors['Azure'] = rgbColor(.94,1,1)
-    colors['Beige'] = rgbColor(.96,.96,.864)
-    colors['Bisque'] = rgbColor(1,.894,.77)
-    colors['Black'] = rgbColor(0,0,0)
-    colors['BlanchedAlmond'] = rgbColor(1,.92,.804)
-    colors['Blue'] = rgbColor(0,0,1)
-    colors['BlueViolet'] = rgbColor(.54,.17,.888)
-    colors['Brown'] = rgbColor(.648,.165,.165)
-    colors['BurlyWood'] = rgbColor(.87,.72,.53)
-    colors['CadetBlue'] = rgbColor(.372,.62,.628)
-    colors['Chartreuse'] = rgbColor(.498,1,0)
-    colors['Chocolate'] = rgbColor(.824,.41,.116)
-    colors['Coral'] = rgbColor(1,.498,.312)
-    colors['CornflowerBlue'] = rgbColor(.392,.585,.93)
-    colors['Cornsilk'] = rgbColor(1,.972,.864)
-    colors['Crimson'] = rgbColor(.864,.08,.235)
-    colors['Cyan'] = rgbColor(0,1,1)
-    colors['DarkBlue'] = rgbColor(0,0,.545)
-    colors['DarkCyan'] = rgbColor(0,.545,.545)
-    colors['DarkGoldenrod'] = rgbColor(.72,.525,.044)
-    colors['DarkGray'] = rgbColor(.664,.664,.664)
-    colors['DarkGreen'] = rgbColor(0,.392,0)
-    colors['DarkGrey'] = rgbColor(.664,.664,.664)
-    colors['DarkKhaki'] = rgbColor(.74,.716,.42)
-    colors['DarkMagenta'] = rgbColor(.545,0,.545)
-    colors['DarkOliveGreen'] = rgbColor(.332,.42,.185)
-    colors['DarkOrange'] = rgbColor(1,.55,0)
-    colors['DarkOrchid'] = rgbColor(.6,.196,.8)
-    colors['DarkRed'] = rgbColor(.545,0,0)
-    colors['DarkSalmon'] = rgbColor(.912,.59,.48)
-    colors['DarkSeaGreen'] = rgbColor(.56,.736,.56)
-    colors['DarkSlateBlue'] = rgbColor(.284,.24,.545)
-    colors['DarkSlateGray'] = rgbColor(.185,.31,.31)
-    colors['DarkSlateGrey'] = rgbColor(.185,.31,.31)
-    colors['DarkTurquoise'] = rgbColor(0,.808,.82)
-    colors['DarkViolet'] = rgbColor(.58,0,.828)
-    colors['DeepPink'] = rgbColor(1,.08,.576)
-    colors['DeepSkyBlue'] = rgbColor(0,.75,1)
-    colors['DimGray'] = rgbColor(.41,.41,.41)
-    colors['DimGrey'] = rgbColor(.41,.41,.41)
-    colors['DodgerBlue'] = rgbColor(.116,.565,1)
-    colors['FireBrick'] = rgbColor(.698,.132,.132)
-    colors['FloralWhite'] = rgbColor(1,.98,.94)
-    colors['ForestGreen'] = rgbColor(.132,.545,.132)
-    colors['Fuchsia'] = rgbColor(1,0,1)
-    colors['Gainsboro'] = rgbColor(.864,.864,.864)
-    colors['GhostWhite'] = rgbColor(.972,.972,1)
-    colors['Gold'] = rgbColor(1,.844,0)
-    colors['Goldenrod'] = rgbColor(.855,.648,.125)
-    colors['Gray'] = rgbColor(.5,.5,.5)
-    colors['Green'] = rgbColor(0,.5,0)
-    colors['GreenYellow'] = rgbColor(.68,1,.185)
-    colors['Grey'] = rgbColor(.5,.5,.5)
-    colors['Honeydew'] = rgbColor(.94,1,.94)
-    colors['HotPink'] = rgbColor(1,.41,.705)
-    colors['IndianRed'] = rgbColor(.804,.36,.36)
-    colors['Indigo'] = rgbColor(.294,0,.51)
-    colors['Ivory'] = rgbColor(1,1,.94)
-    colors['Khaki'] = rgbColor(.94,.9,.55)
-    colors['Lavender'] = rgbColor(.9,.9,.98)
-    colors['LavenderBlush'] = rgbColor(1,.94,.96)
-    colors['LawnGreen'] = rgbColor(.488,.99,0)
-    colors['LemonChiffon'] = rgbColor(1,.98,.804)
-    colors['LightBlue'] = rgbColor(.68,.848,.9)
-    colors['LightCoral'] = rgbColor(.94,.5,.5)
-    colors['LightCyan'] = rgbColor(.88,1,1)
-    colors['LightGoldenrod'] = rgbColor(.933,.867,.51)
-    colors['LightGoldenrodYellow'] = rgbColor(.98,.98,.824)
-    colors['LightGray'] = rgbColor(.828,.828,.828)
-    colors['LightGreen'] = rgbColor(.565,.932,.565)
-    colors['LightGrey'] = rgbColor(.828,.828,.828)
-    colors['LightPink'] = rgbColor(1,.712,.756)
-    colors['LightSalmon'] = rgbColor(1,.628,.48)
-    colors['LightSeaGreen'] = rgbColor(.125,.698,.668)
-    colors['LightSkyBlue'] = rgbColor(.53,.808,.98)
-    colors['LightSlateBlue'] = rgbColor(.518,.44,1)
-    colors['LightSlateGray'] = rgbColor(.468,.532,.6)
-    colors['LightSlateGrey'] = rgbColor(.468,.532,.6)
-    colors['LightSteelBlue'] = rgbColor(.69,.77,.87)
-    colors['LightYellow'] = rgbColor(1,1,.88)
-    colors['Lime'] = rgbColor(0,1,0)
-    colors['LimeGreen'] = rgbColor(.196,.804,.196)
-    colors['Linen'] = rgbColor(.98,.94,.9)
-    colors['Magenta'] = rgbColor(1,0,1)
-    colors['Maroon'] = rgbColor(.5,0,0)
-    colors['MediumAquamarine'] = rgbColor(.4,.804,.668)
-    colors['MediumBlue'] = rgbColor(0,0,.804)
-    colors['MediumOrchid'] = rgbColor(.73,.332,.828)
-    colors['MediumPurple'] = rgbColor(.576,.44,.86)
-    colors['MediumSeaGreen'] = rgbColor(.235,.7,.444)
-    colors['MediumSlateBlue'] = rgbColor(.484,.408,.932)
-    colors['MediumSpringGreen'] = rgbColor(0,.98,.604)
-    colors['MediumTurquoise'] = rgbColor(.284,.82,.8)
-    colors['MediumVioletRed'] = rgbColor(.78,.084,.52)
-    colors['MidnightBlue'] = rgbColor(.098,.098,.44)
-    colors['MintCream'] = rgbColor(.96,1,.98)
-    colors['MistyRose'] = rgbColor(1,.894,.884)
-    colors['Moccasin'] = rgbColor(1,.894,.71)
-    colors['NavajoWhite'] = rgbColor(1,.87,.68)
-    colors['Navy'] = rgbColor(0,0,.5)
-    colors['NavyBlue'] = rgbColor(0,0,.5)
-    colors['OldLace'] = rgbColor(.992,.96,.9)
-    colors['Olive'] = rgbColor(.5,.5,0)
-    colors['OliveDrab'] = rgbColor(.42,.556,.136)
-    colors['Orange'] = rgbColor(1,.648,0)
-    colors['OrangeRed'] = rgbColor(1,.27,0)
-    colors['Orchid'] = rgbColor(.855,.44,.84)
-    colors['PaleGoldenrod'] = rgbColor(.932,.91,.668)
-    colors['PaleGreen'] = rgbColor(.596,.985,.596)
-    colors['PaleTurquoise'] = rgbColor(.688,.932,.932)
-    colors['PaleVioletRed'] = rgbColor(.86,.44,.576)
-    colors['PapayaWhip'] = rgbColor(1,.936,.835)
-    colors['PeachPuff'] = rgbColor(1,.855,.725)
-    colors['Peru'] = rgbColor(.804,.52,.248)
-    colors['Pink'] = rgbColor(1,.752,.796)
-    colors['Plum'] = rgbColor(.868,.628,.868)
-    colors['PowderBlue'] = rgbColor(.69,.88,.9)
-    colors['Purple'] = rgbColor(.5,0,.5)
-    colors['Red'] = rgbColor(1,0,0)
-    colors['RosyBrown'] = rgbColor(.736,.56,.56)
-    colors['RoyalBlue'] = rgbColor(.255,.41,.884)
-    colors['SaddleBrown'] = rgbColor(.545,.27,.075)
-    colors['Salmon'] = rgbColor(.98,.5,.448)
-    colors['SandyBrown'] = rgbColor(.956,.644,.376)
-    colors['SeaGreen'] = rgbColor(.18,.545,.34)
-    colors['Seashell'] = rgbColor(1,.96,.932)
-    colors['Sienna'] = rgbColor(.628,.32,.176)
-    colors['Silver'] = rgbColor(.752,.752,.752)
-    colors['SkyBlue'] = rgbColor(.53,.808,.92)
-    colors['SlateBlue'] = rgbColor(.415,.352,.804)
-    colors['SlateGray'] = rgbColor(.44,.5,.565)
-    colors['SlateGrey'] = rgbColor(.44,.5,.565)
-    colors['Snow'] = rgbColor(1,.98,.98)
-    colors['SpringGreen'] = rgbColor(0,1,.498)
-    colors['SteelBlue'] = rgbColor(.275,.51,.705)
-    colors['Tan'] = rgbColor(.824,.705,.55)
-    colors['Teal'] = rgbColor(0,.5,.5)
-    colors['Thistle'] = rgbColor(.848,.75,.848)
-    colors['Tomato'] = rgbColor(1,.39,.28)
-    colors['Turquoise'] = rgbColor(.25,.88,.815)
-    colors['Violet'] = rgbColor(.932,.51,.932)
-    colors['VioletRed'] = rgbColor(.816,.125,.565)
-    colors['Wheat'] = rgbColor(.96,.87,.7)
-    colors['White'] = rgbColor(1,1,1)
-    colors['WhiteSmoke'] = rgbColor(.96,.96,.96)
-    colors['Yellow'] = rgbColor(1,1,0)
-    colors['YellowGreen'] = rgbColor(.604,.804,.196)
-    return colors
+    return {
+        'AliceBlue': rgbColor(.94,.972,1),
+        'AntiqueWhite': rgbColor(.98,.92,.844),
+        'Aqua': rgbColor(0,1,1),
+        'Aquamarine': rgbColor(.498,1,.83),
+        'Azure': rgbColor(.94,1,1),
+        'Beige': rgbColor(.96,.96,.864),
+        'Bisque': rgbColor(1,.894,.77),
+        'Black': rgbColor(0,0,0),
+        'BlanchedAlmond': rgbColor(1,.92,.804),
+        'Blue': rgbColor(0,0,1),
+        'BlueViolet': rgbColor(.54,.17,.888),
+        'Brown': rgbColor(.648,.165,.165),
+        'BurlyWood': rgbColor(.87,.72,.53),
+        'CadetBlue': rgbColor(.372,.62,.628),
+        'Chartreuse': rgbColor(.498,1,0),
+        'Chocolate': rgbColor(.824,.41,.116),
+        'Coral': rgbColor(1,.498,.312),
+        'CornflowerBlue': rgbColor(.392,.585,.93),
+        'Cornsilk': rgbColor(1,.972,.864),
+        'Crimson': rgbColor(.864,.08,.235),
+        'Cyan': rgbColor(0,1,1),
+        'DarkBlue': rgbColor(0,0,.545),
+        'DarkCyan': rgbColor(0,.545,.545),
+        'DarkGoldenrod': rgbColor(.72,.525,.044),
+        'DarkGray': rgbColor(.664,.664,.664),
+        'DarkGreen': rgbColor(0,.392,0),
+        'DarkGrey': rgbColor(.664,.664,.664),
+        'DarkKhaki': rgbColor(.74,.716,.42),
+        'DarkMagenta': rgbColor(.545,0,.545),
+        'DarkOliveGreen': rgbColor(.332,.42,.185),
+        'DarkOrange': rgbColor(1,.55,0),
+        'DarkOrchid': rgbColor(.6,.196,.8),
+        'DarkRed': rgbColor(.545,0,0),
+        'DarkSalmon': rgbColor(.912,.59,.48),
+        'DarkSeaGreen': rgbColor(.56,.736,.56),
+        'DarkSlateBlue': rgbColor(.284,.24,.545),
+        'DarkSlateGray': rgbColor(.185,.31,.31),
+        'DarkSlateGrey': rgbColor(.185,.31,.31),
+        'DarkTurquoise': rgbColor(0,.808,.82),
+        'DarkViolet': rgbColor(.58,0,.828),
+        'DeepPink': rgbColor(1,.08,.576),
+        'DeepSkyBlue': rgbColor(0,.75,1),
+        'DimGray': rgbColor(.41,.41,.41),
+        'DimGrey': rgbColor(.41,.41,.41),
+        'DodgerBlue': rgbColor(.116,.565,1),
+        'FireBrick': rgbColor(.698,.132,.132),
+        'FloralWhite': rgbColor(1,.98,.94),
+        'ForestGreen': rgbColor(.132,.545,.132),
+        'Fuchsia': rgbColor(1,0,1),
+        'Gainsboro': rgbColor(.864,.864,.864),
+        'GhostWhite': rgbColor(.972,.972,1),
+        'Gold': rgbColor(1,.844,0),
+        'Goldenrod': rgbColor(.855,.648,.125),
+        'Gray': rgbColor(.5,.5,.5),
+        'Green': rgbColor(0,.5,0),
+        'GreenYellow': rgbColor(.68,1,.185),
+        'Grey': rgbColor(.5,.5,.5),
+        'Honeydew': rgbColor(.94,1,.94),
+        'HotPink': rgbColor(1,.41,.705),
+        'IndianRed': rgbColor(.804,.36,.36),
+        'Indigo': rgbColor(.294,0,.51),
+        'Ivory': rgbColor(1,1,.94),
+        'Khaki': rgbColor(.94,.9,.55),
+        'Lavender': rgbColor(.9,.9,.98),
+        'LavenderBlush': rgbColor(1,.94,.96),
+        'LawnGreen': rgbColor(.488,.99,0),
+        'LemonChiffon': rgbColor(1,.98,.804),
+        'LightBlue': rgbColor(.68,.848,.9),
+        'LightCoral': rgbColor(.94,.5,.5),
+        'LightCyan': rgbColor(.88,1,1),
+        'LightGoldenrod': rgbColor(.933,.867,.51),
+        'LightGoldenrodYellow': rgbColor(.98,.98,.824),
+        'LightGray': rgbColor(.828,.828,.828),
+        'LightGreen': rgbColor(.565,.932,.565),
+        'LightGrey': rgbColor(.828,.828,.828),
+        'LightPink': rgbColor(1,.712,.756),
+        'LightSalmon': rgbColor(1,.628,.48),
+        'LightSeaGreen': rgbColor(.125,.698,.668),
+        'LightSkyBlue': rgbColor(.53,.808,.98),
+        'LightSlateBlue': rgbColor(.518,.44,1),
+        'LightSlateGray': rgbColor(.468,.532,.6),
+        'LightSlateGrey': rgbColor(.468,.532,.6),
+        'LightSteelBlue': rgbColor(.69,.77,.87),
+        'LightYellow': rgbColor(1,1,.88),
+        'Lime': rgbColor(0,1,0),
+        'LimeGreen': rgbColor(.196,.804,.196),
+        'Linen': rgbColor(.98,.94,.9),
+        'Magenta': rgbColor(1,0,1),
+        'Maroon': rgbColor(.5,0,0),
+        'MediumAquamarine': rgbColor(.4,.804,.668),
+        'MediumBlue': rgbColor(0,0,.804),
+        'MediumOrchid': rgbColor(.73,.332,.828),
+        'MediumPurple': rgbColor(.576,.44,.86),
+        'MediumSeaGreen': rgbColor(.235,.7,.444),
+        'MediumSlateBlue': rgbColor(.484,.408,.932),
+        'MediumSpringGreen': rgbColor(0,.98,.604),
+        'MediumTurquoise': rgbColor(.284,.82,.8),
+        'MediumVioletRed': rgbColor(.78,.084,.52),
+        'MidnightBlue': rgbColor(.098,.098,.44),
+        'MintCream': rgbColor(.96,1,.98),
+        'MistyRose': rgbColor(1,.894,.884),
+        'Moccasin': rgbColor(1,.894,.71),
+        'NavajoWhite': rgbColor(1,.87,.68),
+        'Navy': rgbColor(0,0,.5),
+        'NavyBlue': rgbColor(0,0,.5),
+        'OldLace': rgbColor(.992,.96,.9),
+        'Olive': rgbColor(.5,.5,0),
+        'OliveDrab': rgbColor(.42,.556,.136),
+        'Orange': rgbColor(1,.648,0),
+        'OrangeRed': rgbColor(1,.27,0),
+        'Orchid': rgbColor(.855,.44,.84),
+        'PaleGoldenrod': rgbColor(.932,.91,.668),
+        'PaleGreen': rgbColor(.596,.985,.596),
+        'PaleTurquoise': rgbColor(.688,.932,.932),
+        'PaleVioletRed': rgbColor(.86,.44,.576),
+        'PapayaWhip': rgbColor(1,.936,.835),
+        'PeachPuff': rgbColor(1,.855,.725),
+        'Peru': rgbColor(.804,.52,.248),
+        'Pink': rgbColor(1,.752,.796),
+        'Plum': rgbColor(.868,.628,.868),
+        'PowderBlue': rgbColor(.69,.88,.9),
+        'Purple': rgbColor(.5,0,.5),
+        'Red': rgbColor(1,0,0),
+        'RosyBrown': rgbColor(.736,.56,.56),
+        'RoyalBlue': rgbColor(.255,.41,.884),
+        'SaddleBrown': rgbColor(.545,.27,.075),
+        'Salmon': rgbColor(.98,.5,.448),
+        'SandyBrown': rgbColor(.956,.644,.376),
+        'SeaGreen': rgbColor(.18,.545,.34),
+        'Seashell': rgbColor(1,.96,.932),
+        'Sienna': rgbColor(.628,.32,.176),
+        'Silver': rgbColor(.752,.752,.752),
+        'SkyBlue': rgbColor(.53,.808,.92),
+        'SlateBlue': rgbColor(.415,.352,.804),
+        'SlateGray': rgbColor(.44,.5,.565),
+        'SlateGrey': rgbColor(.44,.5,.565),
+        'Snow': rgbColor(1,.98,.98),
+        'SpringGreen': rgbColor(0,1,.498),
+        'SteelBlue': rgbColor(.275,.51,.705),
+        'Tan': rgbColor(.824,.705,.55),
+        'Teal': rgbColor(0,.5,.5),
+        'Thistle': rgbColor(.848,.75,.848),
+        'Tomato': rgbColor(1,.39,.28),
+        'Turquoise': rgbColor(.25,.88,.815),
+        'Violet': rgbColor(.932,.51,.932),
+        'VioletRed': rgbColor(.816,.125,.565),
+        'Wheat': rgbColor(.96,.87,.7),
+        'White': rgbColor(1,1,1),
+        'WhiteSmoke': rgbColor(.96,.96,.96),
+        'Yellow': rgbColor(1,1,0),
+        'YellowGreen': rgbColor(.604,.804,.196)
+    }
 
-def x11names() -> dict:
+def x11names() -> Dict[str,Color]:
     """Return the x11names dictionary.
 
     The full list of 317 colors traditionally shipped with a X11 installation,
     loaded when xcolor is invoked with the x11names option.
     """
-    colors={}
-    colors['AntiqueWhite1'] = rgbColor(1,.936,.86)
-    colors['AntiqueWhite2'] = rgbColor(.932,.875,.8)
-    colors['AntiqueWhite3'] = rgbColor(.804,.752,.69)
-    colors['AntiqueWhite4'] = rgbColor(.545,.512,.47)
-    colors['Aquamarine1'] = rgbColor(.498,1,.83)
-    colors['Aquamarine2'] = rgbColor(.464,.932,.776)
-    colors['Aquamarine3'] = rgbColor(.4,.804,.668)
-    colors['Aquamarine4'] = rgbColor(.27,.545,.455)
-    colors['Azure1'] = rgbColor(.94,1,1)
-    colors['Azure2'] = rgbColor(.88,.932,.932)
-    colors['Azure3'] = rgbColor(.756,.804,.804)
-    colors['Azure4'] = rgbColor(.512,.545,.545)
-    colors['Bisque1'] = rgbColor(1,.894,.77)
-    colors['Bisque2'] = rgbColor(.932,.835,.716)
-    colors['Bisque3'] = rgbColor(.804,.716,.62)
-    colors['Bisque4'] = rgbColor(.545,.49,.42)
-    colors['Blue1'] = rgbColor(0,0,1)
-    colors['Blue2'] = rgbColor(0,0,.932)
-    colors['Blue3'] = rgbColor(0,0,.804)
-    colors['Blue4'] = rgbColor(0,0,.545)
-    colors['Brown1'] = rgbColor(1,.25,.25)
-    colors['Brown2'] = rgbColor(.932,.23,.23)
-    colors['Brown3'] = rgbColor(.804,.2,.2)
-    colors['Brown4'] = rgbColor(.545,.136,.136)
-    colors['Burlywood1'] = rgbColor(1,.828,.608)
-    colors['Burlywood2'] = rgbColor(.932,.772,.57)
-    colors['Burlywood3'] = rgbColor(.804,.668,.49)
-    colors['Burlywood4'] = rgbColor(.545,.45,.332)
-    colors['CadetBlue1'] = rgbColor(.596,.96,1)
-    colors['CadetBlue2'] = rgbColor(.556,.898,.932)
-    colors['CadetBlue3'] = rgbColor(.48,.772,.804)
-    colors['CadetBlue4'] = rgbColor(.325,.525,.545)
-    colors['Chartreuse1'] = rgbColor(.498,1,0)
-    colors['Chartreuse2'] = rgbColor(.464,.932,0)
-    colors['Chartreuse3'] = rgbColor(.4,.804,0)
-    colors['Chartreuse4'] = rgbColor(.27,.545,0)
-    colors['Chocolate1'] = rgbColor(1,.498,.14)
-    colors['Chocolate2'] = rgbColor(.932,.464,.13)
-    colors['Chocolate3'] = rgbColor(.804,.4,.112)
-    colors['Chocolate4'] = rgbColor(.545,.27,.075)
-    colors['Coral1'] = rgbColor(1,.448,.336)
-    colors['Coral2'] = rgbColor(.932,.415,.312)
-    colors['Coral3'] = rgbColor(.804,.356,.27)
-    colors['Coral4'] = rgbColor(.545,.244,.185)
-    colors['Cornsilk1'] = rgbColor(1,.972,.864)
-    colors['Cornsilk2'] = rgbColor(.932,.91,.804)
-    colors['Cornsilk3'] = rgbColor(.804,.785,.694)
-    colors['Cornsilk4'] = rgbColor(.545,.532,.47)
-    colors['Cyan1'] = rgbColor(0,1,1)
-    colors['Cyan2'] = rgbColor(0,.932,.932)
-    colors['Cyan3'] = rgbColor(0,.804,.804)
-    colors['Cyan4'] = rgbColor(0,.545,.545)
-    colors['DarkGoldenrod1'] = rgbColor(1,.725,.06)
-    colors['DarkGoldenrod2'] = rgbColor(.932,.68,.055)
-    colors['DarkGoldenrod3'] = rgbColor(.804,.585,.048)
-    colors['DarkGoldenrod4'] = rgbColor(.545,.396,.03)
-    colors['DarkOliveGreen1'] = rgbColor(.792,1,.44)
-    colors['DarkOliveGreen2'] = rgbColor(.736,.932,.408)
-    colors['DarkOliveGreen3'] = rgbColor(.635,.804,.352)
-    colors['DarkOliveGreen4'] = rgbColor(.43,.545,.24)
-    colors['DarkOrange1'] = rgbColor(1,.498,0)
-    colors['DarkOrange2'] = rgbColor(.932,.464,0)
-    colors['DarkOrange3'] = rgbColor(.804,.4,0)
-    colors['DarkOrange4'] = rgbColor(.545,.27,0)
-    colors['DarkOrchid1'] = rgbColor(.75,.244,1)
-    colors['DarkOrchid2'] = rgbColor(.698,.228,.932)
-    colors['DarkOrchid3'] = rgbColor(.604,.196,.804)
-    colors['DarkOrchid4'] = rgbColor(.408,.132,.545)
-    colors['DarkSeaGreen1'] = rgbColor(.756,1,.756)
-    colors['DarkSeaGreen2'] = rgbColor(.705,.932,.705)
-    colors['DarkSeaGreen3'] = rgbColor(.608,.804,.608)
-    colors['DarkSeaGreen4'] = rgbColor(.41,.545,.41)
-    colors['DarkSlateGray1'] = rgbColor(.592,1,1)
-    colors['DarkSlateGray2'] = rgbColor(.552,.932,.932)
-    colors['DarkSlateGray3'] = rgbColor(.475,.804,.804)
-    colors['DarkSlateGray4'] = rgbColor(.32,.545,.545)
-    colors['DeepPink1'] = rgbColor(1,.08,.576)
-    colors['DeepPink2'] = rgbColor(.932,.07,.536)
-    colors['DeepPink3'] = rgbColor(.804,.064,.464)
-    colors['DeepPink4'] = rgbColor(.545,.04,.312)
-    colors['DeepSkyBlue1'] = rgbColor(0,.75,1)
-    colors['DeepSkyBlue2'] = rgbColor(0,.698,.932)
-    colors['DeepSkyBlue3'] = rgbColor(0,.604,.804)
-    colors['DeepSkyBlue4'] = rgbColor(0,.408,.545)
-    colors['DodgerBlue1'] = rgbColor(.116,.565,1)
-    colors['DodgerBlue2'] = rgbColor(.11,.525,.932)
-    colors['DodgerBlue3'] = rgbColor(.094,.455,.804)
-    colors['DodgerBlue4'] = rgbColor(.064,.305,.545)
-    colors['Firebrick1'] = rgbColor(1,.19,.19)
-    colors['Firebrick2'] = rgbColor(.932,.172,.172)
-    colors['Firebrick3'] = rgbColor(.804,.15,.15)
-    colors['Firebrick4'] = rgbColor(.545,.1,.1)
-    colors['Gold1'] = rgbColor(1,.844,0)
-    colors['Gold2'] = rgbColor(.932,.79,0)
-    colors['Gold3'] = rgbColor(.804,.68,0)
-    colors['Gold4'] = rgbColor(.545,.46,0)
-    colors['Goldenrod1'] = rgbColor(1,.756,.145)
-    colors['Goldenrod2'] = rgbColor(.932,.705,.132)
-    colors['Goldenrod3'] = rgbColor(.804,.608,.112)
-    colors['Goldenrod4'] = rgbColor(.545,.41,.08)
-    colors['Green1'] = rgbColor(0,1,0)
-    colors['Green2'] = rgbColor(0,.932,0)
-    colors['Green3'] = rgbColor(0,.804,0)
-    colors['Green4'] = rgbColor(0,.545,0)
-    colors['Honeydew1'] = rgbColor(.94,1,.94)
-    colors['Honeydew2'] = rgbColor(.88,.932,.88)
-    colors['Honeydew3'] = rgbColor(.756,.804,.756)
-    colors['Honeydew4'] = rgbColor(.512,.545,.512)
-    colors['HotPink1'] = rgbColor(1,.43,.705)
-    colors['HotPink2'] = rgbColor(.932,.415,.655)
-    colors['HotPink3'] = rgbColor(.804,.376,.565)
-    colors['HotPink4'] = rgbColor(.545,.228,.385)
-    colors['IndianRed1'] = rgbColor(1,.415,.415)
-    colors['IndianRed2'] = rgbColor(.932,.39,.39)
-    colors['IndianRed3'] = rgbColor(.804,.332,.332)
-    colors['IndianRed4'] = rgbColor(.545,.228,.228)
-    colors['Ivory1'] = rgbColor(1,1,.94)
-    colors['Ivory2'] = rgbColor(.932,.932,.88)
-    colors['Ivory3'] = rgbColor(.804,.804,.756)
-    colors['Ivory4'] = rgbColor(.545,.545,.512)
-    colors['Khaki1'] = rgbColor(1,.965,.56)
-    colors['Khaki2'] = rgbColor(.932,.9,.52)
-    colors['Khaki3'] = rgbColor(.804,.776,.45)
-    colors['Khaki4'] = rgbColor(.545,.525,.305)
-    colors['LavenderBlush1'] = rgbColor(1,.94,.96)
-    colors['LavenderBlush2'] = rgbColor(.932,.88,.898)
-    colors['LavenderBlush3'] = rgbColor(.804,.756,.772)
-    colors['LavenderBlush4'] = rgbColor(.545,.512,.525)
-    colors['LemonChiffon1'] = rgbColor(1,.98,.804)
-    colors['LemonChiffon2'] = rgbColor(.932,.912,.75)
-    colors['LemonChiffon3'] = rgbColor(.804,.79,.648)
-    colors['LemonChiffon4'] = rgbColor(.545,.536,.44)
-    colors['LightBlue1'] = rgbColor(.75,.936,1)
-    colors['LightBlue2'] = rgbColor(.698,.875,.932)
-    colors['LightBlue3'] = rgbColor(.604,.752,.804)
-    colors['LightBlue4'] = rgbColor(.408,.512,.545)
-    colors['LightCyan1'] = rgbColor(.88,1,1)
-    colors['LightCyan2'] = rgbColor(.82,.932,.932)
-    colors['LightCyan3'] = rgbColor(.705,.804,.804)
-    colors['LightCyan4'] = rgbColor(.48,.545,.545)
-    colors['LightGoldenrod1'] = rgbColor(1,.925,.545)
-    colors['LightGoldenrod2'] = rgbColor(.932,.864,.51)
-    colors['LightGoldenrod3'] = rgbColor(.804,.745,.44)
-    colors['LightGoldenrod4'] = rgbColor(.545,.505,.298)
-    colors['LightPink1'] = rgbColor(1,.684,.725)
-    colors['LightPink2'] = rgbColor(.932,.635,.68)
-    colors['LightPink3'] = rgbColor(.804,.55,.585)
-    colors['LightPink4'] = rgbColor(.545,.372,.396)
-    colors['LightSalmon1'] = rgbColor(1,.628,.48)
-    colors['LightSalmon2'] = rgbColor(.932,.585,.448)
-    colors['LightSalmon3'] = rgbColor(.804,.505,.385)
-    colors['LightSalmon4'] = rgbColor(.545,.34,.26)
-    colors['LightSkyBlue1'] = rgbColor(.69,.888,1)
-    colors['LightSkyBlue2'] = rgbColor(.644,.828,.932)
-    colors['LightSkyBlue3'] = rgbColor(.552,.712,.804)
-    colors['LightSkyBlue4'] = rgbColor(.376,.484,.545)
-    colors['LightSteelBlue1'] = rgbColor(.792,.884,1)
-    colors['LightSteelBlue2'] = rgbColor(.736,.824,.932)
-    colors['LightSteelBlue3'] = rgbColor(.635,.71,.804)
-    colors['LightSteelBlue4'] = rgbColor(.43,.484,.545)
-    colors['LightYellow1'] = rgbColor(1,1,.88)
-    colors['LightYellow2'] = rgbColor(.932,.932,.82)
-    colors['LightYellow3'] = rgbColor(.804,.804,.705)
-    colors['LightYellow4'] = rgbColor(.545,.545,.48)
-    colors['Magenta1'] = rgbColor(1,0,1)
-    colors['Magenta2'] = rgbColor(.932,0,.932)
-    colors['Magenta3'] = rgbColor(.804,0,.804)
-    colors['Magenta4'] = rgbColor(.545,0,.545)
-    colors['Maroon1'] = rgbColor(1,.204,.7)
-    colors['Maroon2'] = rgbColor(.932,.19,.655)
-    colors['Maroon3'] = rgbColor(.804,.16,.565)
-    colors['Maroon4'] = rgbColor(.545,.11,.385)
-    colors['MediumOrchid1'] = rgbColor(.88,.4,1)
-    colors['MediumOrchid2'] = rgbColor(.82,.372,.932)
-    colors['MediumOrchid3'] = rgbColor(.705,.32,.804)
-    colors['MediumOrchid4'] = rgbColor(.48,.215,.545)
-    colors['MediumPurple1'] = rgbColor(.67,.51,1)
-    colors['MediumPurple2'] = rgbColor(.624,.475,.932)
-    colors['MediumPurple3'] = rgbColor(.536,.408,.804)
-    colors['MediumPurple4'] = rgbColor(.365,.28,.545)
-    colors['MistyRose1'] = rgbColor(1,.894,.884)
-    colors['MistyRose2'] = rgbColor(.932,.835,.824)
-    colors['MistyRose3'] = rgbColor(.804,.716,.71)
-    colors['MistyRose4'] = rgbColor(.545,.49,.484)
-    colors['NavajoWhite1'] = rgbColor(1,.87,.68)
-    colors['NavajoWhite2'] = rgbColor(.932,.81,.63)
-    colors['NavajoWhite3'] = rgbColor(.804,.7,.545)
-    colors['NavajoWhite4'] = rgbColor(.545,.475,.37)
-    colors['OliveDrab1'] = rgbColor(.752,1,.244)
-    colors['OliveDrab2'] = rgbColor(.7,.932,.228)
-    colors['OliveDrab3'] = rgbColor(.604,.804,.196)
-    colors['OliveDrab4'] = rgbColor(.41,.545,.132)
-    colors['Orange1'] = rgbColor(1,.648,0)
-    colors['Orange2'] = rgbColor(.932,.604,0)
-    colors['Orange3'] = rgbColor(.804,.52,0)
-    colors['Orange4'] = rgbColor(.545,.352,0)
-    colors['OrangeRed1'] = rgbColor(1,.27,0)
-    colors['OrangeRed2'] = rgbColor(.932,.25,0)
-    colors['OrangeRed3'] = rgbColor(.804,.215,0)
-    colors['OrangeRed4'] = rgbColor(.545,.145,0)
-    colors['Orchid1'] = rgbColor(1,.512,.98)
-    colors['Orchid2'] = rgbColor(.932,.48,.912)
-    colors['Orchid3'] = rgbColor(.804,.41,.79)
-    colors['Orchid4'] = rgbColor(.545,.28,.536)
-    colors['PaleGreen1'] = rgbColor(.604,1,.604)
-    colors['PaleGreen2'] = rgbColor(.565,.932,.565)
-    colors['PaleGreen3'] = rgbColor(.488,.804,.488)
-    colors['PaleGreen4'] = rgbColor(.33,.545,.33)
-    colors['PaleTurquoise1'] = rgbColor(.732,1,1)
-    colors['PaleTurquoise2'] = rgbColor(.684,.932,.932)
-    colors['PaleTurquoise3'] = rgbColor(.59,.804,.804)
-    colors['PaleTurquoise4'] = rgbColor(.4,.545,.545)
-    colors['PaleVioletRed1'] = rgbColor(1,.51,.67)
-    colors['PaleVioletRed2'] = rgbColor(.932,.475,.624)
-    colors['PaleVioletRed3'] = rgbColor(.804,.408,.536)
-    colors['PaleVioletRed4'] = rgbColor(.545,.28,.365)
-    colors['PeachPuff1'] = rgbColor(1,.855,.725)
-    colors['PeachPuff2'] = rgbColor(.932,.796,.68)
-    colors['PeachPuff3'] = rgbColor(.804,.688,.585)
-    colors['PeachPuff4'] = rgbColor(.545,.468,.396)
-    colors['Pink1'] = rgbColor(1,.71,.772)
-    colors['Pink2'] = rgbColor(.932,.664,.72)
-    colors['Pink3'] = rgbColor(.804,.57,.62)
-    colors['Pink4'] = rgbColor(.545,.39,.424)
-    colors['Plum1'] = rgbColor(1,.732,1)
-    colors['Plum2'] = rgbColor(.932,.684,.932)
-    colors['Plum3'] = rgbColor(.804,.59,.804)
-    colors['Plum4'] = rgbColor(.545,.4,.545)
-    colors['Purple1'] = rgbColor(.608,.19,1)
-    colors['Purple2'] = rgbColor(.57,.172,.932)
-    colors['Purple3'] = rgbColor(.49,.15,.804)
-    colors['Purple4'] = rgbColor(.332,.1,.545)
-    colors['Red1'] = rgbColor(1,0,0)
-    colors['Red2'] = rgbColor(.932,0,0)
-    colors['Red3'] = rgbColor(.804,0,0)
-    colors['Red4'] = rgbColor(.545,0,0)
-    colors['RosyBrown1'] = rgbColor(1,.756,.756)
-    colors['RosyBrown2'] = rgbColor(.932,.705,.705)
-    colors['RosyBrown3'] = rgbColor(.804,.608,.608)
-    colors['RosyBrown4'] = rgbColor(.545,.41,.41)
-    colors['RoyalBlue1'] = rgbColor(.284,.464,1)
-    colors['RoyalBlue2'] = rgbColor(.264,.43,.932)
-    colors['RoyalBlue3'] = rgbColor(.228,.372,.804)
-    colors['RoyalBlue4'] = rgbColor(.152,.25,.545)
-    colors['Salmon1'] = rgbColor(1,.55,.41)
-    colors['Salmon2'] = rgbColor(.932,.51,.385)
-    colors['Salmon3'] = rgbColor(.804,.44,.33)
-    colors['Salmon4'] = rgbColor(.545,.298,.224)
-    colors['SeaGreen1'] = rgbColor(.33,1,.624)
-    colors['SeaGreen2'] = rgbColor(.305,.932,.58)
-    colors['SeaGreen3'] = rgbColor(.264,.804,.5)
-    colors['SeaGreen4'] = rgbColor(.18,.545,.34)
-    colors['Seashell1'] = rgbColor(1,.96,.932)
-    colors['Seashell2'] = rgbColor(.932,.898,.87)
-    colors['Seashell3'] = rgbColor(.804,.772,.75)
-    colors['Seashell4'] = rgbColor(.545,.525,.51)
-    colors['Sienna1'] = rgbColor(1,.51,.28)
-    colors['Sienna2'] = rgbColor(.932,.475,.26)
-    colors['Sienna3'] = rgbColor(.804,.408,.224)
-    colors['Sienna4'] = rgbColor(.545,.28,.15)
-    colors['SkyBlue1'] = rgbColor(.53,.808,1)
-    colors['SkyBlue2'] = rgbColor(.494,.752,.932)
-    colors['SkyBlue3'] = rgbColor(.424,.65,.804)
-    colors['SkyBlue4'] = rgbColor(.29,.44,.545)
-    colors['SlateBlue1'] = rgbColor(.512,.435,1)
-    colors['SlateBlue2'] = rgbColor(.48,.404,.932)
-    colors['SlateBlue3'] = rgbColor(.41,.35,.804)
-    colors['SlateBlue4'] = rgbColor(.28,.235,.545)
-    colors['SlateGray1'] = rgbColor(.776,.888,1)
-    colors['SlateGray2'] = rgbColor(.725,.828,.932)
-    colors['SlateGray3'] = rgbColor(.624,.712,.804)
-    colors['SlateGray4'] = rgbColor(.424,.484,.545)
-    colors['Snow1'] = rgbColor(1,.98,.98)
-    colors['Snow2'] = rgbColor(.932,.912,.912)
-    colors['Snow3'] = rgbColor(.804,.79,.79)
-    colors['Snow4'] = rgbColor(.545,.536,.536)
-    colors['SpringGreen1'] = rgbColor(0,1,.498)
-    colors['SpringGreen2'] = rgbColor(0,.932,.464)
-    colors['SpringGreen3'] = rgbColor(0,.804,.4)
-    colors['SpringGreen4'] = rgbColor(0,.545,.27)
-    colors['SteelBlue1'] = rgbColor(.39,.72,1)
-    colors['SteelBlue2'] = rgbColor(.36,.675,.932)
-    colors['SteelBlue3'] = rgbColor(.31,.58,.804)
-    colors['SteelBlue4'] = rgbColor(.21,.392,.545)
-    colors['Tan1'] = rgbColor(1,.648,.31)
-    colors['Tan2'] = rgbColor(.932,.604,.288)
-    colors['Tan3'] = rgbColor(.804,.52,.248)
-    colors['Tan4'] = rgbColor(.545,.352,.17)
-    colors['Thistle1'] = rgbColor(1,.884,1)
-    colors['Thistle2'] = rgbColor(.932,.824,.932)
-    colors['Thistle3'] = rgbColor(.804,.71,.804)
-    colors['Thistle4'] = rgbColor(.545,.484,.545)
-    colors['Tomato1'] = rgbColor(1,.39,.28)
-    colors['Tomato2'] = rgbColor(.932,.36,.26)
-    colors['Tomato3'] = rgbColor(.804,.31,.224)
-    colors['Tomato4'] = rgbColor(.545,.21,.15)
-    colors['Turquoise1'] = rgbColor(0,.96,1)
-    colors['Turquoise2'] = rgbColor(0,.898,.932)
-    colors['Turquoise3'] = rgbColor(0,.772,.804)
-    colors['Turquoise4'] = rgbColor(0,.525,.545)
-    colors['VioletRed1'] = rgbColor(1,.244,.59)
-    colors['VioletRed2'] = rgbColor(.932,.228,.55)
-    colors['VioletRed3'] = rgbColor(.804,.196,.47)
-    colors['VioletRed4'] = rgbColor(.545,.132,.32)
-    colors['Wheat1'] = rgbColor(1,.905,.73)
-    colors['Wheat2'] = rgbColor(.932,.848,.684)
-    colors['Wheat3'] = rgbColor(.804,.73,.59)
-    colors['Wheat4'] = rgbColor(.545,.494,.4)
-    colors['Yellow1'] = rgbColor(1,1,0)
-    colors['Yellow2'] = rgbColor(.932,.932,0)
-    colors['Yellow3'] = rgbColor(.804,.804,0)
-    colors['Yellow4'] = rgbColor(.545,.545,0)
-    colors['Gray0'] = rgbColor(.745,.745,.745)
-    colors['Green0'] = rgbColor(0,1,0)
-    colors['Grey0'] = rgbColor(.745,.745,.745)
-    colors['Maroon0'] = rgbColor(.69,.19,.376)
-    colors['Purple0'] = rgbColor(.628,.125,.94)
-    return colors
+    return {
+        'AntiqueWhite1': rgbColor(1,.936,.86),
+        'AntiqueWhite2': rgbColor(.932,.875,.8),
+        'AntiqueWhite3': rgbColor(.804,.752,.69),
+        'AntiqueWhite4': rgbColor(.545,.512,.47),
+        'Aquamarine1': rgbColor(.498,1,.83),
+        'Aquamarine2': rgbColor(.464,.932,.776),
+        'Aquamarine3': rgbColor(.4,.804,.668),
+        'Aquamarine4': rgbColor(.27,.545,.455),
+        'Azure1': rgbColor(.94,1,1),
+        'Azure2': rgbColor(.88,.932,.932),
+        'Azure3': rgbColor(.756,.804,.804),
+        'Azure4': rgbColor(.512,.545,.545),
+        'Bisque1': rgbColor(1,.894,.77),
+        'Bisque2': rgbColor(.932,.835,.716),
+        'Bisque3': rgbColor(.804,.716,.62),
+        'Bisque4': rgbColor(.545,.49,.42),
+        'Blue1': rgbColor(0,0,1),
+        'Blue2': rgbColor(0,0,.932),
+        'Blue3': rgbColor(0,0,.804),
+        'Blue4': rgbColor(0,0,.545),
+        'Brown1': rgbColor(1,.25,.25),
+        'Brown2': rgbColor(.932,.23,.23),
+        'Brown3': rgbColor(.804,.2,.2),
+        'Brown4': rgbColor(.545,.136,.136),
+        'Burlywood1': rgbColor(1,.828,.608),
+        'Burlywood2': rgbColor(.932,.772,.57),
+        'Burlywood3': rgbColor(.804,.668,.49),
+        'Burlywood4': rgbColor(.545,.45,.332),
+        'CadetBlue1': rgbColor(.596,.96,1),
+        'CadetBlue2': rgbColor(.556,.898,.932),
+        'CadetBlue3': rgbColor(.48,.772,.804),
+        'CadetBlue4': rgbColor(.325,.525,.545),
+        'Chartreuse1': rgbColor(.498,1,0),
+        'Chartreuse2': rgbColor(.464,.932,0),
+        'Chartreuse3': rgbColor(.4,.804,0),
+        'Chartreuse4': rgbColor(.27,.545,0),
+        'Chocolate1': rgbColor(1,.498,.14),
+        'Chocolate2': rgbColor(.932,.464,.13),
+        'Chocolate3': rgbColor(.804,.4,.112),
+        'Chocolate4': rgbColor(.545,.27,.075),
+        'Coral1': rgbColor(1,.448,.336),
+        'Coral2': rgbColor(.932,.415,.312),
+        'Coral3': rgbColor(.804,.356,.27),
+        'Coral4': rgbColor(.545,.244,.185),
+        'Cornsilk1': rgbColor(1,.972,.864),
+        'Cornsilk2': rgbColor(.932,.91,.804),
+        'Cornsilk3': rgbColor(.804,.785,.694),
+        'Cornsilk4': rgbColor(.545,.532,.47),
+        'Cyan1': rgbColor(0,1,1),
+        'Cyan2': rgbColor(0,.932,.932),
+        'Cyan3': rgbColor(0,.804,.804),
+        'Cyan4': rgbColor(0,.545,.545),
+        'DarkGoldenrod1': rgbColor(1,.725,.06),
+        'DarkGoldenrod2': rgbColor(.932,.68,.055),
+        'DarkGoldenrod3': rgbColor(.804,.585,.048),
+        'DarkGoldenrod4': rgbColor(.545,.396,.03),
+        'DarkOliveGreen1': rgbColor(.792,1,.44),
+        'DarkOliveGreen2': rgbColor(.736,.932,.408),
+        'DarkOliveGreen3': rgbColor(.635,.804,.352),
+        'DarkOliveGreen4': rgbColor(.43,.545,.24),
+        'DarkOrange1': rgbColor(1,.498,0),
+        'DarkOrange2': rgbColor(.932,.464,0),
+        'DarkOrange3': rgbColor(.804,.4,0),
+        'DarkOrange4': rgbColor(.545,.27,0),
+        'DarkOrchid1': rgbColor(.75,.244,1),
+        'DarkOrchid2': rgbColor(.698,.228,.932),
+        'DarkOrchid3': rgbColor(.604,.196,.804),
+        'DarkOrchid4': rgbColor(.408,.132,.545),
+        'DarkSeaGreen1': rgbColor(.756,1,.756),
+        'DarkSeaGreen2': rgbColor(.705,.932,.705),
+        'DarkSeaGreen3': rgbColor(.608,.804,.608),
+        'DarkSeaGreen4': rgbColor(.41,.545,.41),
+        'DarkSlateGray1': rgbColor(.592,1,1),
+        'DarkSlateGray2': rgbColor(.552,.932,.932),
+        'DarkSlateGray3': rgbColor(.475,.804,.804),
+        'DarkSlateGray4': rgbColor(.32,.545,.545),
+        'DeepPink1': rgbColor(1,.08,.576),
+        'DeepPink2': rgbColor(.932,.07,.536),
+        'DeepPink3': rgbColor(.804,.064,.464),
+        'DeepPink4': rgbColor(.545,.04,.312),
+        'DeepSkyBlue1': rgbColor(0,.75,1),
+        'DeepSkyBlue2': rgbColor(0,.698,.932),
+        'DeepSkyBlue3': rgbColor(0,.604,.804),
+        'DeepSkyBlue4': rgbColor(0,.408,.545),
+        'DodgerBlue1': rgbColor(.116,.565,1),
+        'DodgerBlue2': rgbColor(.11,.525,.932),
+        'DodgerBlue3': rgbColor(.094,.455,.804),
+        'DodgerBlue4': rgbColor(.064,.305,.545),
+        'Firebrick1': rgbColor(1,.19,.19),
+        'Firebrick2': rgbColor(.932,.172,.172),
+        'Firebrick3': rgbColor(.804,.15,.15),
+        'Firebrick4': rgbColor(.545,.1,.1),
+        'Gold1': rgbColor(1,.844,0),
+        'Gold2': rgbColor(.932,.79,0),
+        'Gold3': rgbColor(.804,.68,0),
+        'Gold4': rgbColor(.545,.46,0),
+        'Goldenrod1': rgbColor(1,.756,.145),
+        'Goldenrod2': rgbColor(.932,.705,.132),
+        'Goldenrod3': rgbColor(.804,.608,.112),
+        'Goldenrod4': rgbColor(.545,.41,.08),
+        'Green1': rgbColor(0,1,0),
+        'Green2': rgbColor(0,.932,0),
+        'Green3': rgbColor(0,.804,0),
+        'Green4': rgbColor(0,.545,0),
+        'Honeydew1': rgbColor(.94,1,.94),
+        'Honeydew2': rgbColor(.88,.932,.88),
+        'Honeydew3': rgbColor(.756,.804,.756),
+        'Honeydew4': rgbColor(.512,.545,.512),
+        'HotPink1': rgbColor(1,.43,.705),
+        'HotPink2': rgbColor(.932,.415,.655),
+        'HotPink3': rgbColor(.804,.376,.565),
+        'HotPink4': rgbColor(.545,.228,.385),
+        'IndianRed1': rgbColor(1,.415,.415),
+        'IndianRed2': rgbColor(.932,.39,.39),
+        'IndianRed3': rgbColor(.804,.332,.332),
+        'IndianRed4': rgbColor(.545,.228,.228),
+        'Ivory1': rgbColor(1,1,.94),
+        'Ivory2': rgbColor(.932,.932,.88),
+        'Ivory3': rgbColor(.804,.804,.756),
+        'Ivory4': rgbColor(.545,.545,.512),
+        'Khaki1': rgbColor(1,.965,.56),
+        'Khaki2': rgbColor(.932,.9,.52),
+        'Khaki3': rgbColor(.804,.776,.45),
+        'Khaki4': rgbColor(.545,.525,.305),
+        'LavenderBlush1': rgbColor(1,.94,.96),
+        'LavenderBlush2': rgbColor(.932,.88,.898),
+        'LavenderBlush3': rgbColor(.804,.756,.772),
+        'LavenderBlush4': rgbColor(.545,.512,.525),
+        'LemonChiffon1': rgbColor(1,.98,.804),
+        'LemonChiffon2': rgbColor(.932,.912,.75),
+        'LemonChiffon3': rgbColor(.804,.79,.648),
+        'LemonChiffon4': rgbColor(.545,.536,.44),
+        'LightBlue1': rgbColor(.75,.936,1),
+        'LightBlue2': rgbColor(.698,.875,.932),
+        'LightBlue3': rgbColor(.604,.752,.804),
+        'LightBlue4': rgbColor(.408,.512,.545),
+        'LightCyan1': rgbColor(.88,1,1),
+        'LightCyan2': rgbColor(.82,.932,.932),
+        'LightCyan3': rgbColor(.705,.804,.804),
+        'LightCyan4': rgbColor(.48,.545,.545),
+        'LightGoldenrod1': rgbColor(1,.925,.545),
+        'LightGoldenrod2': rgbColor(.932,.864,.51),
+        'LightGoldenrod3': rgbColor(.804,.745,.44),
+        'LightGoldenrod4': rgbColor(.545,.505,.298),
+        'LightPink1': rgbColor(1,.684,.725),
+        'LightPink2': rgbColor(.932,.635,.68),
+        'LightPink3': rgbColor(.804,.55,.585),
+        'LightPink4': rgbColor(.545,.372,.396),
+        'LightSalmon1': rgbColor(1,.628,.48),
+        'LightSalmon2': rgbColor(.932,.585,.448),
+        'LightSalmon3': rgbColor(.804,.505,.385),
+        'LightSalmon4': rgbColor(.545,.34,.26),
+        'LightSkyBlue1': rgbColor(.69,.888,1),
+        'LightSkyBlue2': rgbColor(.644,.828,.932),
+        'LightSkyBlue3': rgbColor(.552,.712,.804),
+        'LightSkyBlue4': rgbColor(.376,.484,.545),
+        'LightSteelBlue1': rgbColor(.792,.884,1),
+        'LightSteelBlue2': rgbColor(.736,.824,.932),
+        'LightSteelBlue3': rgbColor(.635,.71,.804),
+        'LightSteelBlue4': rgbColor(.43,.484,.545),
+        'LightYellow1': rgbColor(1,1,.88),
+        'LightYellow2': rgbColor(.932,.932,.82),
+        'LightYellow3': rgbColor(.804,.804,.705),
+        'LightYellow4': rgbColor(.545,.545,.48),
+        'Magenta1': rgbColor(1,0,1),
+        'Magenta2': rgbColor(.932,0,.932),
+        'Magenta3': rgbColor(.804,0,.804),
+        'Magenta4': rgbColor(.545,0,.545),
+        'Maroon1': rgbColor(1,.204,.7),
+        'Maroon2': rgbColor(.932,.19,.655),
+        'Maroon3': rgbColor(.804,.16,.565),
+        'Maroon4': rgbColor(.545,.11,.385),
+        'MediumOrchid1': rgbColor(.88,.4,1),
+        'MediumOrchid2': rgbColor(.82,.372,.932),
+        'MediumOrchid3': rgbColor(.705,.32,.804),
+        'MediumOrchid4': rgbColor(.48,.215,.545),
+        'MediumPurple1': rgbColor(.67,.51,1),
+        'MediumPurple2': rgbColor(.624,.475,.932),
+        'MediumPurple3': rgbColor(.536,.408,.804),
+        'MediumPurple4': rgbColor(.365,.28,.545),
+        'MistyRose1': rgbColor(1,.894,.884),
+        'MistyRose2': rgbColor(.932,.835,.824),
+        'MistyRose3': rgbColor(.804,.716,.71),
+        'MistyRose4': rgbColor(.545,.49,.484),
+        'NavajoWhite1': rgbColor(1,.87,.68),
+        'NavajoWhite2': rgbColor(.932,.81,.63),
+        'NavajoWhite3': rgbColor(.804,.7,.545),
+        'NavajoWhite4': rgbColor(.545,.475,.37),
+        'OliveDrab1': rgbColor(.752,1,.244),
+        'OliveDrab2': rgbColor(.7,.932,.228),
+        'OliveDrab3': rgbColor(.604,.804,.196),
+        'OliveDrab4': rgbColor(.41,.545,.132),
+        'Orange1': rgbColor(1,.648,0),
+        'Orange2': rgbColor(.932,.604,0),
+        'Orange3': rgbColor(.804,.52,0),
+        'Orange4': rgbColor(.545,.352,0),
+        'OrangeRed1': rgbColor(1,.27,0),
+        'OrangeRed2': rgbColor(.932,.25,0),
+        'OrangeRed3': rgbColor(.804,.215,0),
+        'OrangeRed4': rgbColor(.545,.145,0),
+        'Orchid1': rgbColor(1,.512,.98),
+        'Orchid2': rgbColor(.932,.48,.912),
+        'Orchid3': rgbColor(.804,.41,.79),
+        'Orchid4': rgbColor(.545,.28,.536),
+        'PaleGreen1': rgbColor(.604,1,.604),
+        'PaleGreen2': rgbColor(.565,.932,.565),
+        'PaleGreen3': rgbColor(.488,.804,.488),
+        'PaleGreen4': rgbColor(.33,.545,.33),
+        'PaleTurquoise1': rgbColor(.732,1,1),
+        'PaleTurquoise2': rgbColor(.684,.932,.932),
+        'PaleTurquoise3': rgbColor(.59,.804,.804),
+        'PaleTurquoise4': rgbColor(.4,.545,.545),
+        'PaleVioletRed1': rgbColor(1,.51,.67),
+        'PaleVioletRed2': rgbColor(.932,.475,.624),
+        'PaleVioletRed3': rgbColor(.804,.408,.536),
+        'PaleVioletRed4': rgbColor(.545,.28,.365),
+        'PeachPuff1': rgbColor(1,.855,.725),
+        'PeachPuff2': rgbColor(.932,.796,.68),
+        'PeachPuff3': rgbColor(.804,.688,.585),
+        'PeachPuff4': rgbColor(.545,.468,.396),
+        'Pink1': rgbColor(1,.71,.772),
+        'Pink2': rgbColor(.932,.664,.72),
+        'Pink3': rgbColor(.804,.57,.62),
+        'Pink4': rgbColor(.545,.39,.424),
+        'Plum1': rgbColor(1,.732,1),
+        'Plum2': rgbColor(.932,.684,.932),
+        'Plum3': rgbColor(.804,.59,.804),
+        'Plum4': rgbColor(.545,.4,.545),
+        'Purple1': rgbColor(.608,.19,1),
+        'Purple2': rgbColor(.57,.172,.932),
+        'Purple3': rgbColor(.49,.15,.804),
+        'Purple4': rgbColor(.332,.1,.545),
+        'Red1': rgbColor(1,0,0),
+        'Red2': rgbColor(.932,0,0),
+        'Red3': rgbColor(.804,0,0),
+        'Red4': rgbColor(.545,0,0),
+        'RosyBrown1': rgbColor(1,.756,.756),
+        'RosyBrown2': rgbColor(.932,.705,.705),
+        'RosyBrown3': rgbColor(.804,.608,.608),
+        'RosyBrown4': rgbColor(.545,.41,.41),
+        'RoyalBlue1': rgbColor(.284,.464,1),
+        'RoyalBlue2': rgbColor(.264,.43,.932),
+        'RoyalBlue3': rgbColor(.228,.372,.804),
+        'RoyalBlue4': rgbColor(.152,.25,.545),
+        'Salmon1': rgbColor(1,.55,.41),
+        'Salmon2': rgbColor(.932,.51,.385),
+        'Salmon3': rgbColor(.804,.44,.33),
+        'Salmon4': rgbColor(.545,.298,.224),
+        'SeaGreen1': rgbColor(.33,1,.624),
+        'SeaGreen2': rgbColor(.305,.932,.58),
+        'SeaGreen3': rgbColor(.264,.804,.5),
+        'SeaGreen4': rgbColor(.18,.545,.34),
+        'Seashell1': rgbColor(1,.96,.932),
+        'Seashell2': rgbColor(.932,.898,.87),
+        'Seashell3': rgbColor(.804,.772,.75),
+        'Seashell4': rgbColor(.545,.525,.51),
+        'Sienna1': rgbColor(1,.51,.28),
+        'Sienna2': rgbColor(.932,.475,.26),
+        'Sienna3': rgbColor(.804,.408,.224),
+        'Sienna4': rgbColor(.545,.28,.15),
+        'SkyBlue1': rgbColor(.53,.808,1),
+        'SkyBlue2': rgbColor(.494,.752,.932),
+        'SkyBlue3': rgbColor(.424,.65,.804),
+        'SkyBlue4': rgbColor(.29,.44,.545),
+        'SlateBlue1': rgbColor(.512,.435,1),
+        'SlateBlue2': rgbColor(.48,.404,.932),
+        'SlateBlue3': rgbColor(.41,.35,.804),
+        'SlateBlue4': rgbColor(.28,.235,.545),
+        'SlateGray1': rgbColor(.776,.888,1),
+        'SlateGray2': rgbColor(.725,.828,.932),
+        'SlateGray3': rgbColor(.624,.712,.804),
+        'SlateGray4': rgbColor(.424,.484,.545),
+        'Snow1': rgbColor(1,.98,.98),
+        'Snow2': rgbColor(.932,.912,.912),
+        'Snow3': rgbColor(.804,.79,.79),
+        'Snow4': rgbColor(.545,.536,.536),
+        'SpringGreen1': rgbColor(0,1,.498),
+        'SpringGreen2': rgbColor(0,.932,.464),
+        'SpringGreen3': rgbColor(0,.804,.4),
+        'SpringGreen4': rgbColor(0,.545,.27),
+        'SteelBlue1': rgbColor(.39,.72,1),
+        'SteelBlue2': rgbColor(.36,.675,.932),
+        'SteelBlue3': rgbColor(.31,.58,.804),
+        'SteelBlue4': rgbColor(.21,.392,.545),
+        'Tan1': rgbColor(1,.648,.31),
+        'Tan2': rgbColor(.932,.604,.288),
+        'Tan3': rgbColor(.804,.52,.248),
+        'Tan4': rgbColor(.545,.352,.17),
+        'Thistle1': rgbColor(1,.884,1),
+        'Thistle2': rgbColor(.932,.824,.932),
+        'Thistle3': rgbColor(.804,.71,.804),
+        'Thistle4': rgbColor(.545,.484,.545),
+        'Tomato1': rgbColor(1,.39,.28),
+        'Tomato2': rgbColor(.932,.36,.26),
+        'Tomato3': rgbColor(.804,.31,.224),
+        'Tomato4': rgbColor(.545,.21,.15),
+        'Turquoise1': rgbColor(0,.96,1),
+        'Turquoise2': rgbColor(0,.898,.932),
+        'Turquoise3': rgbColor(0,.772,.804),
+        'Turquoise4': rgbColor(0,.525,.545),
+        'VioletRed1': rgbColor(1,.244,.59),
+        'VioletRed2': rgbColor(.932,.228,.55),
+        'VioletRed3': rgbColor(.804,.196,.47),
+        'VioletRed4': rgbColor(.545,.132,.32),
+        'Wheat1': rgbColor(1,.905,.73),
+        'Wheat2': rgbColor(.932,.848,.684),
+        'Wheat3': rgbColor(.804,.73,.59),
+        'Wheat4': rgbColor(.545,.494,.4),
+        'Yellow1': rgbColor(1,1,0),
+        'Yellow2': rgbColor(.932,.932,0),
+        'Yellow3': rgbColor(.804,.804,0),
+        'Yellow4': rgbColor(.545,.545,0),
+        'Gray0': rgbColor(.745,.745,.745),
+        'Green0': rgbColor(0,1,0),
+        'Grey0': rgbColor(.745,.745,.745),
+        'Maroon0': rgbColor(.69,.19,.376),
+        'Purple0': rgbColor(.628,.125,.94)
+    }
 
 def ProcessOptions(options, document): # type: ignore
     """ Load the xcolor package.
@@ -1732,8 +1774,8 @@ def ProcessOptions(options, document): # type: ignore
     Sets the target model, loads any requested colors, sets the package
     defaults, and defines the always available 19 color names.
     """
-    colors:dict = {}
-    target_model = ColorModel.natural
+    colors:Dict[colors] = {}
+    target_model:ColorModel = ColorModel.natural
     if 'rgb' in options or 'RGB' in options:
         target_model = ColorModel.rgb
     if 'cmy' in options:
@@ -1755,39 +1797,39 @@ def ProcessOptions(options, document): # type: ignore
     if 'x11names' in options:
         colors.update(x11names())
 
-class ColorCommandClass:
+class ColorCommandClass(Node):
     """A base class used to add a "current color" property to a class.
 
     Deriving from this class adds a new property current_color, which is useful
     for color mixing.
     """
-    parser = ColorParser()
-    parentNode = None
     @property
-    def current_color(self) -> Color:
+    def current_color(self) -> Optional[Color]:
         node = self.parentNode
         while node is not None and not issubclass(node.__class__, ColorEnvironment):
             node = node.parentNode
         if node is not None:
             return node.parser.parseColor(node.attributes['color'], node.attributes['model'])
         else:
-            return cmykColor(0., 0., 0., 1.)
+            return None
 
 class ColorEnvironment(Environment, ColorCommandClass):
     """A base class for plastex color environments"""
     def invoke(self, tex) -> None:
         Environment.invoke(self, tex)
         u = self.ownerDocument.userdata # type: ignore
-        self.parser.colors = u.getPath('packages/xcolor/colors')
-        self.parser.target = u.getPath('packages/xcolor/target_model')
+        self.parser:ColorParser = ColorParser(
+                u.getPath('packages/xcolor/colors'),
+                u.getPath('packages/xcolor/target_model'))
 
 class ColorCommand(Command, ColorCommandClass):
     """A base class for plastex color commands"""
     def invoke(self, tex) -> None:
         Command.invoke(self, tex)
         u = self.ownerDocument.userdata # type: ignore
-        self.parser.colors = u.getPath('packages/xcolor/colors')
-        self.parser.target = u.getPath('packages/xcolor/target_model')
+        self.parser:ColorParser = ColorParser(
+                u.getPath('packages/xcolor/colors'),
+                u.getPath('packages/xcolor/target_model'))
     
 class color(ColorEnvironment):
     r"""The \color command (c.f. pg 22, xcolor v2.12, 2016/05/11)"""
@@ -1796,7 +1838,7 @@ class color(ColorEnvironment):
     def digest(self, tokens) -> None:
         Environment.digest(self, tokens)
         self.parser.current_color = self.current_color
-        self.color = self.parser.parseColor(self.attributes['color'], self.attributes['model'])
+        self.color:Color = self.parser.parseColor(self.attributes['color'], self.attributes['model'])
         self.style['color'] = self.color.html
 
     @property
@@ -1807,7 +1849,7 @@ class color(ColorEnvironment):
         tex is used in output that doesn't support xcolor, e.g. with mathjax
         and the HTML5 renderer.
         """
-        rgb = self.color.as_rgb
+        rgb = self.color.as_model(self.parser.target).as_rgb
         return r'\require{{color}}{{\color[rgb]{{{r:.15f},{g:.15f},{b:.15f}}}{children}}}'.format(
                 r = rgb.r, g = rgb.g, b= rgb.b, children = sourceChildren(self))
 
@@ -1818,7 +1860,7 @@ class textcolor(ColorCommand):
     def digest(self, tokens) -> None:
         Command.digest(self, tokens)
         self.parser.current_color = self.current_color
-        self.color = self.parser.parseColor(self.attributes['color'], self.attributes['model'])
+        self.color:Color = self.parser.parseColor(self.attributes['color'], self.attributes['model'])
         self.style['color'] = self.color.html
 
 class colorbox(ColorCommand):
@@ -1828,13 +1870,12 @@ class colorbox(ColorCommand):
     def digest(self, tokens) -> None:
         Command.digest(self, tokens)
         self.parser.current_color = self.current_color
-        self.color = self.parser.parseColor(self.attributes['color'], self.attributes['model'])
+        self.color:Color = self.parser.parseColor(self.attributes['color'], self.attributes['model'])
         self.style['background-color'] = self.color.html
 
 class fcolorbox(ColorCommand):
     r"""The \fcolorbox command (c.f. pg 22, xcolor v2.12, 2016/05/11)"""
     args = '[ f_model:str ] f_color:str [ bg_model:str] bg_color:str self'
-    f_color = None
 
     def digest(self, tokens) -> None:
         Command.digest(self, tokens)
@@ -1842,15 +1883,15 @@ class fcolorbox(ColorCommand):
         self.parser.current_color = self.current_color
         if a['bg_model'] is None:
             a['bg_model'] = a['f_model']
-        self.f_color = self.parser.parseColor(a['f_color'], a['f_model'])
-        self.color = self.parser.parseColor(a['bg_color'], a['bg_model'])
+        self.f_color:Color = self.parser.parseColor(a['f_color'], a['f_model'])
+        self.color:Color = self.parser.parseColor(a['bg_color'], a['bg_model'])
         self.style['background-color'] = self.color.html
         self.style['border'] = '1px solid %s' % self.f_color.html
 
 class definecolor(ColorCommand):
     r"""The \definecolor command (c.f. pg 19, xcolor v2.12, 2016/05/11)"""
     args = '[ type:str ] name:str model:str color:str'
-    replace = True
+    replace:bool = True
 
     def digest(self, tokens) -> None:
         Command.digest(self, tokens)
@@ -1882,7 +1923,7 @@ class providecolor(definecolor):
     Similar to \definecolor, but the color is only defined if it does not exist
     already. (c.f. pg 19, xcolor v2.12, 2016/05/11)
     """
-    replace = False
+    replace:bool = False
 
 class preparecolor(definecolor):
     r"""The \preparecolor command, an alternate form of \definecolor.
@@ -1899,7 +1940,7 @@ class colorlet(ColorCommand):
         Command.digest(self,tokens)
         a = self.attributes
         self.parser.current_color = self.current_color
-        new_color = self.parser.parseColor(a['color'])
+        new_color:Color = self.parser.parseColor(a['color'])
         if a['model'] is not None:
             new_color = new_color.as_model(ColorModel[a['model']])
         self.parser.colors[a['name']] = new_color.copy()
@@ -1907,7 +1948,7 @@ class colorlet(ColorCommand):
 class definecolorset(ColorCommand):
     r"""The \definecolorset command (c.f. pg 20, xcolor v2.12, 2016/05/11)"""
     args = '[ type:str ] model:str head:str tail:str set_spec:str'
-    replace = True
+    replace:bool = True
 
     def digest(self, tokens) -> None:
         Command.digest(self,tokens)
@@ -1925,7 +1966,7 @@ class providecolorset(definecolorset):
     Similar to \definecolorset, but the colors are only defined if they do not
     already exist. (c.f. pg 20, xcolor v2.12, 2016/05/11)
     """
-    replace = False
+    replace:bool = False
 
 class preparecolorset(definecolorset):
     r"""The \preparecolorset command, an alternate form of \definecolorset.
@@ -1937,7 +1978,7 @@ class preparecolorset(definecolorset):
 class definecolors(ColorCommand):
     r"""The \deinecolors command (c.f. pg 21, xcolor v2.12, 2016/05/11)"""
     args = 'id_list:str'
-    replace = True
+    replace:bool = True
 
     def digest(self, tokens) -> None:
         Command.digest(self,tokens)
@@ -1947,11 +1988,11 @@ class definecolors(ColorCommand):
         id_list = self.parser.id_list()
 
         if id_list is not None:
-            for ids in id_list['value']:
-                src = self.parser.colors[ids['value'][1]]
-                if self.replace or ids['value'][0] not in self.parser.colors:
-                    self.parser.colors[ids['value'][0]] = src.copy()
-                self.parser.colors[ids['value'][1]] = src
+            for ids in id_list['idlist']:
+                src = self.parser.colors[ids[1]]
+                if self.replace or ids[0] not in self.parser.colors:
+                    self.parser.colors[ids[0]] = src.copy()
+                self.parser.colors[ids[1]] = src
 
 class providecolors(definecolors):
     r"""The \providecolors command.
@@ -1959,7 +2000,7 @@ class providecolors(definecolors):
     Similar to \definecolors, but individual colors are only defined if they do
     not exist already. (c.f. pg 21, xcolor v2.12, 2016/05/11)
     """
-    replace = False
+    replace:bool = False
 
 class definecolorseries(ColorCommand):
     r"""The \definecolorseries command (c.f. pg 25, xcolor v2.12, 2016/05/11)"""
