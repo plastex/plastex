@@ -89,6 +89,9 @@ class TestIfs(TestCase):
         expected_warning = 'WARNING:root:\\end occurred when \\if was incomplete'
         assert(expected_warning in cm.output), (" %r not in %r " % (expected_warning, cm.output))
 
+    def testNewIfIf(self):
+        compare_output(r'before \iffalse never \else always \newif \iffoobar \foobartrue \fi then \iffoobar one\else two\fi allend')
+
 if __name__ == '__main__':
     unittest.main()
 
