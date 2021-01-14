@@ -557,10 +557,15 @@ class TeX(object):
         cases = [[]]
         nesting = 0
         correctly_terminated = False
+        iterator = self.itertokens()
 
-        for t in self.itertokens():
+        for t in iterator:
             name = getattr(t, 'macroName', '') or ''
-            if name.startswith('if'):
+            if name == 'newif':
+                cases[-1].append(t)
+                cases[-1].append(next(iterator))
+                continue
+            elif name.startswith('if'):
                 cases[-1].append(t)
                 nesting += 1
             elif name == 'fi':
