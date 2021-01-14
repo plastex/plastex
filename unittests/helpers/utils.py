@@ -80,6 +80,6 @@ def compare_output(tex: str):
                 tex_out = out.stdout.strip()
                 (CACHE_LOCATION / tex_hash).write_text(tex_out)
 
-        assert plastex_out == tex_out
+        assert plastex_out == tex_out, ('%r != %r ' % (plastex_out, tex_out))
     finally:
         os.chdir(cwd)
