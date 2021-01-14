@@ -548,6 +548,7 @@ class TeX(object):
 
         cases = [[]]
         nesting = 0
+        correctly_terminated = False
 
         for t in self.itertokens():
             name = getattr(t, 'macroName', '') or ''
@@ -556,6 +557,7 @@ class TeX(object):
                 nesting += 1
             elif name == 'fi':
                 if not nesting:
+                    correctly_terminated = True
                     break
                 cases[-1].append(t)
                 nesting -= 1
@@ -567,6 +569,9 @@ class TeX(object):
                 continue
             else:
                 cases[-1].append(t)
+
+        if not correctly_terminated:
+            log.warning(r'\end occurred when \if was incomplete')
 
         # else case for ifs without elses
         cases.append([])
