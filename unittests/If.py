@@ -80,6 +80,15 @@ class TestIfs(TestCase):
     def testNestedIf2(self):
         compare_output(r'\ifnum 2 > 3 bye\iftrue text\ifcat() hi\fi\else one\fi\fi foo')
 
+    # TODO This works if the standard Python logging is used, see in TeX.py
+    @pytest.mark.xfail
+    def testUnterminatedIf(self):
+        with self.assertLogs(level='WARNING') as cm:
+            tex = r'\if one \else two '
+            plastex_out = TeX().input(tex).parse().textContent.strip()
+        expected_warning = 'WARNING:root:\\end occurred when \\if was incomplete'
+        assert(expected_warning in cm.output), (" %r not in %r " % (expected_warning, cm.output))
+
 if __name__ == '__main__':
     unittest.main()
 
