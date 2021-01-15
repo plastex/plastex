@@ -63,7 +63,7 @@ class TestIfs(TestCase):
     # This is defined to be unconditionally false
     @pytest.mark.xfail
     def testIfEOF(self):
-        compare_output(r'\ifeof12 bye\else text\fi\ifeof16 one\else two\fi')
+        compare_output(r'\ifeof12 bye\else text\fi\ifeof15 one\else two\fi')
 
     def testIfTrue(self):
         compare_output(r'\iftrue bye\else text\fi\iftrue one\else two\fi')
