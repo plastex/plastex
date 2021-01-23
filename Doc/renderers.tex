@@ -79,9 +79,9 @@ renderer that simply uses the node names as XML tag names.
 The text node renderer escapes the <, >, and \& characters.
 \begin{verbatim}
 import string
-from plasTeX.Renderers import Renderer
+from plasTeX.Renderers import Renderer as _Renderer
 
-class Renderer(Renderer):
+class Renderer(_Renderer):
 
     def default(self, node):
         """ Rendering method for all non-text nodes """
@@ -535,7 +535,7 @@ Page Templates (ZPT)}, \href{http://jinja.pocoo.org/}{Jinja2 templates},
 \href{http://genshi.edgewall.org/}{Genshi templates},
 \href{http://docs.python.org/lib/node40.html}{Python string templates},
 as well as plain old \href{http://docs.python.org/lib/typesseq-strings.html}{Python string formatting}.
-It is also possible to add support for other template engines. 
+It is also possible to add support for other template engines.
 Note that all template engines except ZPT, Python formats,
 and Python string templates must be installed in your Python installation.
 They are not included. In particular the Jinja2 template engine must be
@@ -553,7 +553,7 @@ ZPT Tutorial (see Appendix~\ref{sec:zpttutorial}).
 
 Since the above template engines can be used to generate any form of
 XML or HTML, the PT renderer is in particular a general solution for rendering
-XML or HTML from a \plasTeX\ document object.  When switching from one DTD to 
+XML or HTML from a \plasTeX\ document object.  When switching from one DTD to
 another,you simply need to use a different set of templates.
 
 As in all \class{Renderer}-based renderers, each key in the PT renderer
@@ -577,12 +577,12 @@ each of the parent renderer class modules are also loaded.  This makes
 it very easy to extend a renderer and add just a few new templates
 to support the additions that were made.
 
-The template files in the module directories can either contain a single 
+The template files in the module directories can either contain a single
 template, corresponding to a single type of node, or several templates.
 In the first case, the basename of the template file is used as the key to
-store the template in the renderer, and the extension specifies the template 
-engine to use. Keep in mind that the names of the keys in the renderer 
-correspond to the node names in the document object. The extensions used for 
+store the template in the renderer, and the extension specifies the template
+engine to use. Keep in mind that the names of the keys in the renderer
+correspond to the node names in the document object. The extensions used for
 all templating engines are shown in the table below.
 
 \begin{tableiii}{l|l|l}{}{Engine}{Extension}{Output Type}
@@ -824,7 +824,7 @@ in a renderer superclass' directory is valid as well.
 
 The HTML5 Renderer is a subclass of the Page Template Renderer (Section
 \ref{sec:pt}). Therefore most of the work is done in its collection of
-templates, all written using the Jinja2 template engine. 
+templates, all written using the Jinja2 template engine.
 
 In addition, this renderer allows packages to override certain templates,
 add css or javascript files, and push output files through various
@@ -999,15 +999,15 @@ with gradients and shadows.
 
 \section{XHTML Renderer}
 
-The XHTML renderer used to be the default renderer of plasTeX but is now 
+The XHTML renderer used to be the default renderer of plasTeX but is now
 deprecated in favor of the HTML5 renderer, and kept only for
-backward compatibility purposes. 
+backward compatibility purposes.
 The XHTML renderer is a subclass of the Page Template Renderer (section
 \ref{sec:pt}). Since the Page Template Renderer can render any variant
 of XML or HTML, the XHTML renderer has very little to do in the Python
 code. Almost all of the additional processing in the XHTML renderer has
 to do with generated images.
-Since MathJax (or KaTeX) didn't exist at the time when XHTML was used, 
+Since MathJax (or KaTeX) didn't exist at the time when XHTML was used,
 all \LaTeX equations are converted to images by this renderer. In order
 for inline equations to line up correctly with the text around them, CSS
 attributes are used to adjust the vertical alignment.  Since the images
@@ -1038,23 +1038,23 @@ plain theme is a theme with no extra navigation bars.
 
 \section{Other builtin renderers}
 
-In addition to the renderers covered in previous sections, \plasTeX\ 
+In addition to the renderers covered in previous sections, \plasTeX\
 comes with a couple of smaller renderers that are less tested but can
 still be useful, at least as technological examples.
 
 The simplest output format is given by the Text renderer that will
 output a simple unicode text file. It is not based on a templating
-engine, it is therefore a good example for people who want to write 
+engine, it is therefore a good example for people who want to write
 a renderer from scratch.
 
-The ManPage renderer outputs files ready for consumption by groff 
-(directly of through man). Like the Text renderer, it is written 
+The ManPage renderer outputs files ready for consumption by groff
+(directly of through man). Like the Text renderer, it is written
 from scratch, without any template engine.
 
 The DocBook renderer is based on the Page Template Renderer.
 It supports two themes: book and article having different root elements.
-The templates for this renderer using the Cheetah engine which is not 
+The templates for this renderer using the Cheetah engine which is not
 installed by default when installing \plasTeX. Be careful to install
-the Cheetah3 fork which is compatible with python 3.    
+the Cheetah3 fork which is compatible with python 3.
 
 There is also a EPUB renderer based on the XHTML renderer.

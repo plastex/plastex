@@ -1,9 +1,9 @@
 from pathlib import Path
 import string
 from plasTeX.TeX import TeX
-from plasTeX.Renderers import Renderer
+from plasTeX.Renderers import Renderer as _Renderer
 
-class Renderer(Renderer):
+class Renderer(_Renderer):
 
     def default(self, node):
         """ Rendering method for all non-text nodes """

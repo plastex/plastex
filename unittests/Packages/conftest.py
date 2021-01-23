@@ -1,14 +1,6 @@
 import os
 
-# Will try to use obsolete, but good enough for us, BeautifulSoup 3 if
-# BeautifulSoup 4 is not available. Need to cope with slight API difference
-try:
-    from bs4 import BeautifulSoup
-
-    def Soup(source):
-        return BeautifulSoup(source, 'html.parser')
-except ImportError:
-    from BeautifulSoup import BeautifulSoup as Soup
+from bs4 import BeautifulSoup
 
 from pytest import fixture
 
@@ -16,6 +8,8 @@ from plasTeX.TeX import TeX, TeXDocument
 from plasTeX.Config import defaultConfig
 from plasTeX.Renderers.XHTML import Renderer
 
+def Soup(source):
+    return BeautifulSoup(source, 'html.parser')
 
 @fixture(scope='session')
 def make_document():
