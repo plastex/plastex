@@ -14,10 +14,10 @@ It supports the starred version (without numbers) of `\newtheorem`.
 The `header spec` argument of `\newtheoremstyle` is not supported.
 
 This package keeps a list of user defined styles in the `userdata` space under
-`packages/amsthm/styles`. This userdata is prepopulated with (a simplified 
+`packages/amsthm/styles`. This userdata is prepopulated with (a simplified
 version of) the  default styles in amsthm.sty: plain, remark, and definition.
 
-It also keeps a list of theorem-like environments under 
+It also keeps a list of theorem-like environments under
 `packages/amsthm/theorems`.
 """
 from pathlib import Path
@@ -180,15 +180,12 @@ class newtheorem(Command):
         else:
             if parent and not shared:
                 self.ownerDocument.context.newcounter(name, initial=0, resetby=parent)
-                self.ownerDocument.context.newcommand("the"+name, 0,
-                                        "\\arabic{%s}.\\arabic{%s}"%(parent,name))
                 counter = name
             elif shared:
                 counter = shared
             else:
                 counter = name
                 self.ownerDocument.context.newcounter(name, initial=0)
-                self.ownerDocument.context.newcommand("the"+name, 0, "\\arabic{%s}" %name)
 
         data = {'nodeName': 'thmenv',
                 'thmName': name,
