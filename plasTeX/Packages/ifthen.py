@@ -249,7 +249,17 @@ class isundefined(Command):
 
 
 class lengthtest(Command):
-    """Evaluate a length test and return a _boolToken depending on the result"""
+    """
+    Evaluate a length test and return a _boolToken depending on the result
+
+    The < and > relations are implemented directly. However, equals tests if
+    the lengths are just very close. This is to ensure that the result of tests
+    such as "1cm=10mm" match in LaTeX and plasTeX.
+
+    The workaround is required because LaTeX dimension calculations are
+    internally handled by integer arithmetic rather than floating point
+    arithmetic.
+    """
     args = 'test:nox'
 
     def invoke(self, tex):
