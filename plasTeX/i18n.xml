@@ -39,6 +39,39 @@
     <term name="theorem">Theorem</term>
     <term name="Item">item</term>
   </terms>
+  <terms lang="de" babel="ngerman">
+    <term name="today">%e %B, %Y</term>
+    <term name="preface">Vorwort</term>
+    <term name="references">Verweise</term>
+    <term name="abstract">Zusammenfassung</term>
+    <term name="bib">Literaturverzeichnis</term>
+    <term name="chapter">Kapitel</term>
+    <term name="Appendix">Anhang</term>
+    <term name="contents">Inhaltsverzeichnis</term>
+    <term name="listfigure">Abbildungsverzeichnis</term>
+    <term name="listtable">Tabellenverzeichnis</term>
+    <term name="index">Index</term>
+    <term name="figure">Abbildung</term>
+    <term name="table">Tabelle</term>
+    <term name="part">Teil</term>
+    <term name="encl">Anlage</term>
+    <term name="cc">cc</term>
+    <term name="headto">An</term>
+    <term name="page">Seite</term>
+    <term name="see">siehe</term>
+    <term name="also">siehe auch</term>
+    <term name="proof">Beweis</term>
+    <term name="glossary">Glossar</term>
+    <term name="section">Abschnitt</term>
+    <term name="subsection">Unterabschnitt</term>
+    <term name="subsubsection">Unter-Unterabschnitt</term>
+    <term name="paragraph">Absatz</term>
+    <term name="Hfootnote">Fu&#223;note</term>
+    <term name="AMS">Equation</term>
+    <term name="equation">Gleichung</term>
+    <term name="theorem">Theorem</term>
+    <term name="Item">Element</term>
+  </terms>
   <terms lang="de" babel="german">
     <term name="today">%e %B, %Y</term>
     <term name="preface">Vorwort</term>
