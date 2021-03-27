@@ -28,3 +28,16 @@ def test_index_grouping():
     output = tex.parse()
     assert len(output.userdata['links']['index']) == 3
 
+def test_index_sorting():
+    tex = TeX()
+    tex.input(r'''
+    \documentclass{article}
+    \makeindex
+    \begin{document}
+    \index{0@$\to$}\index{0@$\in$}
+    \printindex
+    \end{document}
+    ''')
+    output = tex.parse()
+    assert len(output.userdata['links']['index']) == 2
+

@@ -1176,9 +1176,9 @@ class Node(object):
             if res: return res
             if self.hasChildNodes() and other.hasChildNodes():
                 return self.childNodes < other.childNodes
-        except AttributeError:
+        except (AttributeError, TypeError):
             pass
-        return self.nodeName < other
+        return self.nodeName < other.nodeName
 
     def getFeature(self, feature, version):
         """ Get the requested feature """
