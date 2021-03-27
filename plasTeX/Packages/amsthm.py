@@ -180,6 +180,8 @@ class newtheorem(Command):
         else:
             if parent and not shared:
                 self.ownerDocument.context.newcounter(name, initial=0, resetby=parent)
+                self.ownerDocument.context.newcommand("the"+name, 0,
+                                                      r"\the%s.\arabic{%s}"%(parent, name))
                 counter = name
             elif shared:
                 counter = shared
