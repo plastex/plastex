@@ -626,7 +626,7 @@ class Node(object):
     nodeValue = None # type: Optional[str]
     nodeType = None # type: Optional[NodeType]
     parentNode = None
-    ownerDocument = None
+    ownerDocument = None # type: Optional[Document]
     attributes = None
 
     str = None # type: Optional[str]
@@ -724,7 +724,7 @@ class Node(object):
 
         # Render attributes
         if self.attributes:
-            for key, value in list(self.attributes.items()):
+            for key, value in self.attributes.items():
                 if value is None:
                     s.append('    <plastex:arg name="%s"/>\n' % key)
                 elif isinstance(value, dict):
@@ -744,7 +744,7 @@ class Node(object):
 
         # Render content
         if self.hasChildNodes():
-            if not(self.attributes and 'self' in list(self.attributes.keys())):
+            if not(self.attributes and 'self' in self.attributes):
                 for value in self.childNodes:
                     if hasattr(value, 'toXML'):
                         value = value.toXML()

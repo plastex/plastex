@@ -4,7 +4,7 @@ import configparser
 import re
 import time
 from pathlib import Path
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 from importlib import import_module
 from importlib.util import find_spec
 
@@ -34,7 +34,7 @@ class ContextItem(dict):
 
     def __init__(self, data=None):
         dict.__init__(self, data or {})
-        self.categories = None
+        self.categories = None # type: Optional[List[str]]
         self.lets = {}
         self.obj = None
         self.parent = None
@@ -439,10 +439,6 @@ class Context(object):
                             'it from {}. You can fix this by creating a '
                             'plugin.'.format(module, pkg_dir))
                 break
-            if spec.origin:
-                # python found the module but not in the expected place,
-                # so we give up on this package dir.
-                continue
 
             try:
                 imported = import_module(module)
@@ -450,6 +446,7 @@ class Context(object):
                 # Error while importing
                 sys.path = orig_sys_path
                 raise
+            break
 
         if imported is None:
             for plugin in reversed(config['general']['plugins']):
