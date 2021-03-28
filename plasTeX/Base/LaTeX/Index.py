@@ -23,7 +23,7 @@ try:
     from unidecode import unidecode
 except ImportError:
     log.warning('Cannot find unidecode lib. Expect issues with index sorting')
-    def unidecode(s):
+    def unidecode(s): # type: ignore
         return s
 
 

@@ -84,7 +84,10 @@ class EndDisplayMath(Command):
 
 class BeginMath(Command):
     macroName = '('
+    disableMath:bool = False
     def invoke(self, tex):
+        if self.disableMath:
+            return Command.invoke(self,tex)
         o = self.ownerDocument.createElement('math')
         o.macroMode = Command.MODE_BEGIN
         self.ownerDocument.context.push(o)
@@ -92,7 +95,10 @@ class BeginMath(Command):
 
 class EndMath(Command):
     macroName = ')'
+    disableMath:bool = False
     def invoke(self, tex):
+        if self.disableMath:
+            return Command.invoke(self,tex)
         o = self.ownerDocument.createElement('math')
         o.macroMode = Command.MODE_END
         self.ownerDocument.context.pop(o)
