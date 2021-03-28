@@ -19,8 +19,10 @@ def test_index_grouping():
     tex = TeX()
     tex.input(r'''
     \documentclass{article}
+    \usepackage{makeidx}
     \makeindex
     \begin{document}
+    A
     \index{Abc!a}\index{Bbcd}\index{Abc!b}\index{Cdd}
     \printindex
     \end{document}
@@ -32,8 +34,10 @@ def test_index_sorting():
     tex = TeX()
     tex.input(r'''
     \documentclass{article}
+    \usepackage{makeidx}
     \makeindex
     \begin{document}
+    A
     \index{0@$\to$}\index{0@$\in$}
     \printindex
     \end{document}
