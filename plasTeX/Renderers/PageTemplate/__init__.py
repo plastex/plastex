@@ -9,6 +9,7 @@ support for your own templating engines.
 
 import sys, os, re, plasTeX, shutil, string
 from io import StringIO
+import pdb
 from plasTeX.Renderers import Renderer as BaseRenderer
 from plasTeX.Renderers.PageTemplate.simpletal import simpleTAL, simpleTALES
 from plasTeX.Renderers.PageTemplate.simpletal.simpleTALES import Context as TALContext
@@ -25,11 +26,6 @@ except ImportError:
             return s
         return renderjinja2
 else:
-    try:
-        import ipdb as pdb
-    except ImportError:
-        import pdb # type: ignore # mypy#1153
-
     @contextfunction
     def debug(context):
         pdb.set_trace()
