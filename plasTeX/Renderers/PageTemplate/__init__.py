@@ -18,6 +18,7 @@ log = plasTeX.Logging.getLogger()
 # Support for Jinja2 templates
 try:
     from jinja2 import Environment, contextfunction
+    import jinja2.exceptions
 except ImportError:
     def jinja2template(s, encoding='utf8'):
         def renderjinja2(obj):
@@ -46,7 +47,14 @@ else:
                      'templates':obj.renderer}
 
             tpl = env.from_string(s)
-            return tpl.render(tvars)
+            try:
+                return tpl.render(tvars)
+            except jinja2.exceptions.TemplateError as e:
+                log.warning('Jinja2 template error: {} while rendering node {}'
+                            ' with source\n {}\n'.format(
+                            e, obj.nodeName, obj.source))
+                return ''
+
 
         return renderjinja2
 
