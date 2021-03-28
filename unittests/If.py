@@ -1,7 +1,5 @@
 from unittest.mock import Mock
-import logging
 from plasTeX.TeX import TeX
-from plasTeX import Macro
 
 from helpers.utils import compare_output
 
