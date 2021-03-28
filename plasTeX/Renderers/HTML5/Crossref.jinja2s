@@ -1,10 +1,10 @@
 name: ref
-{% if here.idref.label.ref %}<a href="{{here.idref.label.url}}">{{here.idref.label.ref}}</a>{% else %}??{% endif %}
+{% if 'label' in obj.idref and obj.idref.label.ref %}<a href="{{obj.idref.label.url}}">{{obj.idref.label.ref}}</a>{% else %}??{% endif %}
 
 name: cref Cref
-{% if here.idref.label.ref %}<a href="{{here.idref.label.url}}">{{ here.refname() }} {{here.idref.label.ref}}</a>{% else %}??{% endif %}
+{% if 'label' in obj.idref and obj.idref.label.ref %}<a href="{{obj.idref.label.url}}">{{ obj.refname() }} {{obj.idref.label.ref}}</a>{% else %}??{% endif %}
 
 name: pageref
-{% if obj.idref.label.ref %}<a href="{{ obj.idref.label.url }}">*</a>{% else %}??{% endif %}
+{% if  'label' in obj.idref and obj.idref.label.ref %}<a href="{{ obj.idref.label.url }}">*</a>{% else %}??{% endif %}
 
 name: label
