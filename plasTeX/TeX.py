@@ -25,14 +25,7 @@ from plasTeX.Logging import getLogger, disableLogging, fileLogging
 # Only export the TeX class
 __all__ = ['TeX']
 
-### TODO if we replace
 log = getLogger()
-### with
-#import logging
-#log = logging.getLogger()
-## then 'testUnterminatedIf' in unittest.If.py  will work correctly
-## TODO so it may be useful to change the way plastex manages logging
-
 
 status = getLogger('status')
 _type = type
