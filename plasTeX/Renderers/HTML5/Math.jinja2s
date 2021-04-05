@@ -1,5 +1,5 @@
 name: math
-{{ obj.source }}
+{{ obj.mathjax_source }}
 
 name: ensuremath eqnarray eqnarray* align align* gather gather* flalign flalign* \
       multline multline* alignat alignat* split DeclareMathOperator
@@ -7,7 +7,7 @@ name: ensuremath eqnarray eqnarray* align align* gather gather* flalign flalign*
 
 name: displaymath equation* 
 <div class="displaymath" id="{{ obj.id }}">
-  {{ obj.source }}
+  {{ obj.mathjax_source }}
 </div>
 
 name: equation

@@ -49,12 +49,23 @@ class MathEnvironmentPre(MathEnvironment):
 
 # Need \newcommand\({\begin{math}} and \newcommand\){\end{math}}
 
+def mathjax_lt_gt(s: str) -> str:
+    """Help mathjax deal with < and >, see http://docs.mathjax.org/en/latest/input/tex/html.html?highlight=lt#html-special-characters."""
+    return s.replace('<', r'{\lt}').replace('>', r'{\gt}')
+
 class math(MathEnvironment):
     @property
     def source(self):
         if self.hasChildNodes():
             return u'$%s$' % sourceChildren(self)
         return '$'
+
+    @property
+    def mathjax_source(self):
+        if self.hasChildNodes():
+            s = sourceChildren(self)
+            return r'\({}\)'.format(mathjax_lt_gt(s))
+        return ''
 
 class displaymath(MathEnvironment):
     blockType = True
@@ -65,6 +76,10 @@ class displaymath(MathEnvironment):
         if self.macroMode == Command.MODE_END:
             return r'\]'
         return r'\['
+
+    @property
+    def mathjax_source(self):
+        return mathjax_lt_gt(self.source)
 
 class BeginDisplayMath(Command):
     macroName = '['
