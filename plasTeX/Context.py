@@ -427,17 +427,18 @@ class Context(object):
                 path = (Path(working_dir)/pkg_dir).absolute()
 
             pypath = (path/module).with_suffix('.py')
+            if not pypath.exists():
+                continue
             sys.path.insert(0, str(path))
             spec = find_spec(module)
             if spec is None:
                 sys.path = orig_sys_path
                 continue
-            if (module in sys.modules and pypath.exists()):
-                if spec.origin != str(pypath):
-                    log.warning('Python has already loaded a module named {} '
-                            ' independently from plasTeX, so we cannot load '
-                            'it from {}. You can fix this by creating a '
-                            'plugin.'.format(module, pkg_dir))
+            if spec.origin != str(pypath):
+                log.warning('Python has already loaded a module named {} '
+                        ' independently from plasTeX, so we cannot load '
+                        'it from {}. You can fix this by creating a '
+                        'plugin.'.format(module, pkg_dir))
                 break
 
             try:
