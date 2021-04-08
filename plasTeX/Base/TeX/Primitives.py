@@ -341,6 +341,26 @@ class ifcase(IfCommand):
         tex.processIfContent(tex.readNumber())
         return []
 
+class ifdefined(IfCommand):
+    args = 'name:Tok'
+    def invoke(self, tex):
+        a = self.parse(tex)
+        n = str(a['name'].macroName)
+        b = n in self.ownerDocument.context
+        tex.processIfContent(b)
+        return []
+
+class ifcsname(IfCommand):
+    def invoke(self, tex):
+        name = []
+        for t in tex:
+            if t.nodeType == Command.ELEMENT_NODE and t.nodeName == 'endcsname':
+                break
+            name.append(t)
+        n = ''.join(name)
+        b = n in self.ownerDocument.context
+        tex.processIfContent(b)
+        return []
 
 class let(Command):
     """ \\let """
@@ -520,7 +540,7 @@ class hfil(Command):
 class the(Command):
     args = 'arg:cs'
     def invoke(self, tex):
-        result = Command.invoke(self, tex) 
+        result = Command.invoke(self, tex)
         name = self.attributes['arg']
         if name == 'year':
             return [Other(datetime.now().strftime('%Y'))]

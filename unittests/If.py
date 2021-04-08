@@ -86,3 +86,17 @@ def testUnterminatedIf(monkeypatch):
     TeX().input(r'\if one \else two ').parse()
     mock_logger.assert_called_once_with(r'\end occurred when \if was incomplete')
 
+def test_ifdefined_ifcsname():
+    t = TeX()
+    t.input(r"""
+    \ifdefined\mathbbm Yes Mathbbm \else No mathbbm\fi
+
+    \ifcsname mathbbm\endcsname Yes Mathbbm \else No mathbbm\fi
+
+    \newcommand\mathbbm[1]{{\mathbb{#1}}}
+
+    \ifdefined\mathbbm Yes Mathbbm \else No mathbbm\fi
+
+    \ifcsname mathbbm\endcsname Yes Mathbbm \else No mathbbm\fi
+    """)
+    assert t.parse().textContent == 'No mathbbmNo mathbbm Yes Mathbbm Yes Mathbbm '
