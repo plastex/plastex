@@ -434,11 +434,11 @@ class Context(object):
             if spec is None:
                 sys.path = orig_sys_path
                 continue
-            if spec.origin != str(pypath):
+            if module in sys.modules and spec.origin != str(pypath):
                 log.warning('Python has already loaded a module named {} '
-                        ' independently from plasTeX, so we cannot load '
-                        'it from {}. You can fix this by creating a '
-                        'plugin.'.format(module, pkg_dir))
+                        ' from {}, so we cannot load it from {}. '
+                        'You can fix this by creating a '
+                        'plugin.'.format(module, spec.origin, pkg_dir))
                 break
 
             try:
