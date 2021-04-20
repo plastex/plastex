@@ -1,4 +1,4 @@
-py==1.4.34
+py==1.10.0
 pytest==3.2.3
 pytest-cov==2.5.1
 beautifulsoup4==4.6.0
