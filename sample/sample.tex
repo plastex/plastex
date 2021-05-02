@@ -1,0 +1,133 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{tikz-cd}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{remark}[theorem]{Remark}
+
+
+\DeclareMathOperator{\GL}{GL}
+\DeclareMathOperator{\PGL}{PGL}
+\DeclareMathOperator{\SL}{SL}
+\DeclareMathOperator{\ad}{ad}
+\newcommand{\Z}{\mathbf{Z}}
+\newcommand{\Gad}{{G_{\ad}}}
+\newcommand{\Gm}{\mathbf{G}_m}
+\newcommand{\Gtilde}{{\tilde{G}}}
+\newcommand{\Ttilde}{{\tilde{T}}}
+
+
+\title{Sample document}
+
+\author{Patrick Massot}
+
+\begin{document}
+\maketitle
+
+\section*{Introduction}
+
+This is a sample \LaTeX document intended to show what plas\TeX can do. It is
+made of random excerpts of mathematical texts.
+
+
+\section{Basic typesetting}
+
+Of course you can type paragraphs containing some mathematics, such as the following one.
+
+If $G=\GL_2$ then $\Gad=\PGL_2$ and so, as above, $G_1=\SL_2$.
+Now $G_2$ is the set of $(g,h)\in\SL_2\times\GL_2$ with $g=h$ in $\PGL_2$,
+so $h=\lambda g$ for some unique $\lambda\in\Gm$ and $G_2=\SL_2\times\Gm$,
+with the obvious map to $\GL_2$ sending $\Gm$ into the centre
+(or perhaps its inverse depending on how one is thinking
+about things, but this doesn't matter). The subgroup $\mu_2$
+is embedded diagonally of course, because it's the kernel
+of the map $G_2\to G$. Finally we push out via $\mu_2\to\Gm$
+and this gives us $\SL_2\times\Gm\times\Gm$ modulo
+the subgroup of order 2 with non-trivial element $(-1,-1,-1)$.
+But there's an automorphism of $\Gm\times\Gm$ sending $(-1,-1)$
+to $(-1,1)$ (namely, send $(x,y)$ to $(x,xy)$) so again
+$\Gtilde$ is just $G\times\Gm$.
+
+You can also use displayed formulas such as:
+\[
+	\int_{I \times \Sigma} \Phi^*\omega = \int_I\left(\int_{\Phi_t(\Sigma)} \iota_X \omega\right)dt.
+\]
+and refer to displayed formulas such as Equation~\ref{eq:stokes} below.
+\begin{equation}\label{eq:stokes}
+  \int_M d\omega = \int_{\partial M} \omega
+\end{equation}
+
+Commutative diagrams using \verb+tikz-cd+ are supported as well.
+
+\begin{center}
+  \begin{tikzcd}[row sep=1cm]
+  	{}   & \ker \pi' = T_mM \times \{0_p\} \ar[d, hookrightarrow] \ar["T_m F_p", dr] &  &  \\
+    \ker \pi = T_\sigma\Sigma \ar[r] \ar[r] \ar[r] \ar[r, hookrightarrow] &
+  	T_m M \times T_p P \ar["\pi", bend right, swap, rr] \ar["\pi'", d]  \ar["T_\sigma F",
+  	r, swap]& T_{F(\sigma)} N \ar["\rho", r, twoheadrightarrow]& \nu_{F(\sigma)} A \\
+     & T_p P &  &
+  \end{tikzcd}
+\end{center}
+
+\section{Theorems and proofs}
+
+You can state and prove results, and refer to them, for instance
+Lemma~\ref{lem:splittings} below.
+
+\begin{lemma}
+\label{lem:splittings}
+Splittings of $0\to\Gm\to\tilde{G}\to G\to 0$ canonically
+biject with twisting elements for~$G$.
+\end{lemma}
+
+\begin{proof}
+To give a splitting is to give a map $\tilde{G}\to\Gm$
+such that the composite $\Gm\to\Gtilde\to\Gm$ is the identity;
+then the induced map $\Gtilde\to G\times\Gm$ is an injection
+with trivial kernel so is an isomorphism for dimension reasons.
+If $\chi:\Gtilde\to\Gm$ is such a character then $\chi$ gives
+rise to an element of $X^*(\Ttilde)$ which is Galois-stable,
+whose image in~$\Z$ is~1, and which pairs to zero with each coroot
+(because $\chi$ factors through the maximal torus quotient of $\Gtilde$).
+Conversely to give such a character is to give a splitting.
+Now one checks that $\theta-\chi$ has image in $\Z$ equal to zero
+so gives rise to an element of $X^*(T)$ which is Galois-stable,
+and pairs with each simple coroot to~1---but this is precisely
+a twisting element for~$G$. Conversely if $t$ is a twisting element
+for~$G$ then $\theta-t$ gives a splitting of the exact sequence.
+\end{proof}
+
+\section{Enumerations and tables}
+
+You can use lists such as:
+
+\begin{itemize}
+  \item $(\Phi\circ \Psi)_*X=\Phi_*\Psi_*X$
+  \item $(\varphi\circ \psi)^*\alpha=\psi^*\varphi^*\alpha$
+  \item $\varphi^*d\alpha=d\varphi^*\alpha$
+  \item $\Phi^*(\mathcal{L}_X\alpha)=\mathcal{L}_{\Phi^{-1}_*X}\Phi^*\alpha$
+  \item $\Phi^*(i_X\alpha)=i_{\Phi^{-1}_*X}\Phi^*\alpha$
+\end{itemize}
+
+and tables, possibly inside a figure environment such as Figure~\ref{fig:char}.
+
+\begin{figure}[h]
+\begin{center}
+  \begin{tabular}{c|ccc}
+& (1)  & (12) & (123) \\
+   \hline
+   $\chi_\mathrm{triv}$ &  1 &  1 &  1 \\
+   $\chi_\mathrm{sgn}$ & 1 & -1 & 1 \\
+   $\chi_\mathrm{std}$ & 2 & 0  & -1 \\
+\end{tabular}
+\end{center}
+\caption{Character table for $S_3$}
+\label{fig:char}
+\end{figure}
+\end{document}

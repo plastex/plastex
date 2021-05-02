@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sample document: Basic typesetting</title>
+<link rel="next" href="sect0003.html" title="Theorems and proofs" />
+<link rel="prev" href="sect0001.html" title="Introduction" />
+<link rel="up" href="index.html" title="Sample document" />
+<link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">Sample document</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref"></span> <span class="toc_entry">Introduction</span></a>
+ </li>
+<li class=" active current">
+  <a href="sect0002.html"><span class="toc_ref">1</span> <span class="toc_entry">Basic typesetting</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html"><span class="toc_ref">2</span> <span class="toc_entry">Theorems and proofs</span></a>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref">3</span> <span class="toc_entry">Enumerations and tables</span></a>
+ </li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="a0000000003">1 Basic typesetting</h1>
+<p>Of course you can type paragraphs containing some mathematics, such as the following one. </p>
+<p>If \(G=\operatorname{GL}_2\) then \({G_{\operatorname{ad}}}=\operatorname{PGL}_2\) and so, as above, \(G_1=\operatorname{SL}_2\). Now \(G_2\) is the set of \((g,h)\in \operatorname{SL}_2\times \operatorname{GL}_2\) with \(g=h\) in \(\operatorname{PGL}_2\), so \(h=\lambda g\) for some unique \(\lambda \in \mathbf{G}_m\) and \(G_2=\operatorname{SL}_2\times \mathbf{G}_m\), with the obvious map to \(\operatorname{GL}_2\) sending \(\mathbf{G}_m\) into the centre (or perhaps its inverse depending on how one is thinking about things, but this doesn’t matter). The subgroup \(\mu _2\) is embedded diagonally of course, because it’s the kernel of the map \(G_2\to G\). Finally we push out via \(\mu _2\to \mathbf{G}_m\) and this gives us \(\operatorname{SL}_2\times \mathbf{G}_m\times \mathbf{G}_m\) modulo the subgroup of order 2 with non-trivial element \((-1,-1,-1)\). But there’s an automorphism of \(\mathbf{G}_m\times \mathbf{G}_m\) sending \((-1,-1)\) to \((-1,1)\) (namely, send \((x,y)\) to \((x,xy)\)) so again \({\tilde{G}}\) is just \(G\times \mathbf{G}_m\). </p>
+<p>You can also use displayed formulas such as: </p>
+<div class="displaymath" id="a0000000006">
+  \[  \int _{I \times \Sigma } \Phi ^*\omega = \int _I\left(\int _{\Phi _t(\Sigma )} \iota _X \omega \right)dt.  \]
+</div>
+<p> and refer to displayed formulas such as Equation&#160;<a href="sect0002.html#eq:stokes">1</a> below. </p>
+<div class="equation" id="eq:stokes">
+<p>
+  <div class="equation_content">
+    \begin{equation} \label{eq:stokes} \int _M d\omega = \int _{\partial M} \omega \end{equation}
+  </div>
+  <span class="equation_label">1</span>
+</p>
+</div>
+<p>Commutative diagrams using <code class="verbatim">tikz-cd</code> are supported as well. </p>
+<div class="centered"> <div class="tikzcd" id="a0000000007">
+    <img src="images/img-0001.svg" class="tikzcd-vector" alt="\begin{tikzcd} [row sep=1cm]
+  	{}   &amp; \ker \pi&#39; = T_mM \times \{0_p\} \ar[d, hookrightarrow] \ar[&#34;T_m F_p&#34;, dr] &amp;  &amp;  \\
+    \ker \pi = T_\sigma\Sigma \ar[r] \ar[r] \ar[r] \ar[r, hookrightarrow] &amp;
+  	T_m M \times T_p P \ar[&#34;\pi&#34;, bend right, swap, rr] \ar[&#34;\pi&#39;&#34;, d]  \ar[&#34;T_\sigma F&#34;,
+  	r, swap]&amp; T_{F(\sigma)} N \ar[&#34;\rho&#34;, r, twoheadrightarrow]&amp; \nu_{F(\sigma)} A \\
+     &amp; T_p P &amp;  &amp;
+  \end{tikzcd}" />
+</div> </div>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <a href="sect0001.html" title="Introduction"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="Sample document"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="sect0003.html" title="Theorems and proofs"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+</body>
+</html>

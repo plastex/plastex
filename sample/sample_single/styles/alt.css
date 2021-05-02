@@ -1,0 +1,16 @@
+span.equation_label { 
+  order: -1;
+}
+
+h1, h2 {
+  color: #06c; 
+  font-style: italic;
+  font-family: serif;
+}
+
+div[class$="_thmheading"], div.proof_heading {
+  font-family: serif;
+}
+div[class$="_thmcontent"] {
+  border-left: .1rem solid #06c;
+}

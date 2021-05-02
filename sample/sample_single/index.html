@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sample document: Sample document</title>
+<link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/alt.css" />
+</head>
+
+<body>
+
+<div class="wrapper">
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<div class="titlepage">
+<h1>Sample document</h1>
+<p class="authors">
+<span class="author">Patrick Massot</span>
+</p>
+</div>
+<h1 id="a0000000002">Introduction</h1>
+<p>This is a sample L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>Xdocument intended to show what plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>Xcan do. It is made of random excerpts of mathematical texts. </p>
+<h1 id="a0000000003">1 Basic typesetting</h1>
+<p>Of course you can type paragraphs containing some mathematics, such as the following one. </p>
+<p>If \(G=\operatorname{GL}_2\) then \({G_{\operatorname{ad}}}=\operatorname{PGL}_2\) and so, as above, \(G_1=\operatorname{SL}_2\). Now \(G_2\) is the set of \((g,h)\in \operatorname{SL}_2\times \operatorname{GL}_2\) with \(g=h\) in \(\operatorname{PGL}_2\), so \(h=\lambda g\) for some unique \(\lambda \in \mathbf{G}_m\) and \(G_2=\operatorname{SL}_2\times \mathbf{G}_m\), with the obvious map to \(\operatorname{GL}_2\) sending \(\mathbf{G}_m\) into the centre (or perhaps its inverse depending on how one is thinking about things, but this doesn’t matter). The subgroup \(\mu _2\) is embedded diagonally of course, because it’s the kernel of the map \(G_2\to G\). Finally we push out via \(\mu _2\to \mathbf{G}_m\) and this gives us \(\operatorname{SL}_2\times \mathbf{G}_m\times \mathbf{G}_m\) modulo the subgroup of order 2 with non-trivial element \((-1,-1,-1)\). But there’s an automorphism of \(\mathbf{G}_m\times \mathbf{G}_m\) sending \((-1,-1)\) to \((-1,1)\) (namely, send \((x,y)\) to \((x,xy)\)) so again \({\tilde{G}}\) is just \(G\times \mathbf{G}_m\). </p>
+<p>You can also use displayed formulas such as: </p>
+<div class="displaymath" id="a0000000004">
+  \[  \int _{I \times \Sigma } \Phi ^*\omega = \int _I\left(\int _{\Phi _t(\Sigma )} \iota _X \omega \right)dt.  \]
+</div>
+<p> and refer to displayed formulas such as Equation&#160;<a href="index.html#eq:stokes">1</a> below. </p>
+<div class="equation" id="eq:stokes">
+<p>
+  <div class="equation_content">
+    \begin{equation} \label{eq:stokes} \int _M d\omega = \int _{\partial M} \omega \end{equation}
+  </div>
+  <span class="equation_label">1</span>
+</p>
+</div>
+<p>Commutative diagrams using <code class="verbatim">tikz-cd</code> are supported as well. </p>
+<div class="centered"> <div class="tikzcd" id="a0000000005">
+    <img src="images/img-0001.svg" class="tikzcd-vector" alt="\begin{tikzcd} [row sep=1cm]
+  	{}   &amp; \ker \pi&#39; = T_mM \times \{0_p\} \ar[d, hookrightarrow] \ar[&#34;T_m F_p&#34;, dr] &amp;  &amp;  \\
+    \ker \pi = T_\sigma\Sigma \ar[r] \ar[r] \ar[r] \ar[r, hookrightarrow] &amp;
+  	T_m M \times T_p P \ar[&#34;\pi&#34;, bend right, swap, rr] \ar[&#34;\pi&#39;&#34;, d]  \ar[&#34;T_\sigma F&#34;,
+  	r, swap]&amp; T_{F(\sigma)} N \ar[&#34;\rho&#34;, r, twoheadrightarrow]&amp; \nu_{F(\sigma)} A \\
+     &amp; T_p P &amp;  &amp;
+  \end{tikzcd}" />
+</div> </div>
+<h1 id="a0000000006">2 Theorems and proofs</h1>
+<p>You can state and prove results, and refer to them, for instance Lemma&#160;<a href="index.html#lem:splittings">1</a> below. </p>
+<p><div class="lemma_thmwrapper theorem-style-plain" id="lem:splittings">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">1</span>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> Splittings of \(0\to \mathbf{G}_m\to \tilde{G}\to G\to 0\) canonically biject with twisting elements for&#160;\(G\). </p>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000007">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>To give a splitting is to give a map \(\tilde{G}\to \mathbf{G}_m\) such that the composite \(\mathbf{G}_m\to {\tilde{G}}\to \mathbf{G}_m\) is the identity; then the induced map \({\tilde{G}}\to G\times \mathbf{G}_m\) is an injection with trivial kernel so is an isomorphism for dimension reasons. If \(\chi :{\tilde{G}}\to \mathbf{G}_m\) is such a character then \(\chi \) gives rise to an element of \(X^*({\tilde{T}})\) which is Galois-stable, whose image in&#160;\(\mathbf{Z}\) is&#160;1, and which pairs to zero with each coroot (because \(\chi \) factors through the maximal torus quotient of \({\tilde{G}}\)). Conversely to give such a character is to give a splitting. Now one checks that \(\theta -\chi \) has image in \(\mathbf{Z}\) equal to zero so gives rise to an element of \(X^*(T)\) which is Galois-stable, and pairs with each simple coroot to&#160;1—but this is precisely a twisting element for&#160;\(G\). Conversely if \(t\) is a twisting element for&#160;\(G\) then \(\theta -t\) gives a splitting of the exact sequence. </p>
+
+  </div>
+</div>
+<h1 id="a0000000008">3 Enumerations and tables</h1>
+<p>You can use lists such as: </p>
+<ul class="itemize">
+  <li><p>\((\Phi \circ \Psi )_*X=\Phi _*\Psi _*X\) </p>
+</li>
+  <li><p>\((\varphi \circ \psi )^*\alpha =\psi ^*\varphi ^*\alpha \) </p>
+</li>
+  <li><p>\(\varphi ^*d\alpha =d\varphi ^*\alpha \) </p>
+</li>
+  <li><p>\(\Phi ^*(\mathcal{L}_X\alpha )=\mathcal{L}_{\Phi ^{-1}_*X}\Phi ^*\alpha \) </p>
+</li>
+  <li><p>\(\Phi ^*(i_X\alpha )=i_{\Phi ^{-1}_*X}\Phi ^*\alpha \) </p>
+</li>
+</ul>
+<p>and tables, possibly inside a figure environment such as Figure&#160;<a href="index.html#fig:char">1</a>. </p>
+<figure id="fig:char">
+  <div class="centered"> <table class="tabular">
+  <tr>
+    <td  style="text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">&nbsp;</td>
+    <td  style="text-align:center" 
+        rowspan=""
+        colspan="">
+      <p> (1) </p>
+
+    </td>
+    <td  style="text-align:center" 
+        rowspan=""
+        colspan="">
+      <p> (12) </p>
+
+    </td>
+    <td  style="text-align:center" 
+        rowspan=""
+        colspan="">
+      <p> (123) </p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\(\chi _\mathrm {triv}\) </p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center" 
+        rowspan=""
+        colspan="">
+      <p> 1 </p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center" 
+        rowspan=""
+        colspan="">
+      <p> 1 </p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center" 
+        rowspan=""
+        colspan="">
+      <p> 1 </p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\(\chi _\mathrm {sgn}\) </p>
+
+    </td>
+    <td  style="text-align:center" 
+        rowspan=""
+        colspan="">
+      <p> 1 </p>
+
+    </td>
+    <td  style="text-align:center" 
+        rowspan=""
+        colspan="">
+      <p> -1 </p>
+
+    </td>
+    <td  style="text-align:center" 
+        rowspan=""
+        colspan="">
+      <p> 1 </p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:center; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>\(\chi _\mathrm {std}\) </p>
+
+    </td>
+    <td  style="text-align:center" 
+        rowspan=""
+        colspan="">
+      <p> 2 </p>
+
+    </td>
+    <td  style="text-align:center" 
+        rowspan=""
+        colspan="">
+      <p> 0 </p>
+
+    </td>
+    <td  style="text-align:center" 
+        rowspan=""
+        colspan="">
+      <p> -1 </p>
+
+    </td>
+  </tr>
+</table> </div>
+<figcaption>
+  <span class="caption_title">Figure</span> 
+  <span class="caption_ref">1</span> 
+  <span class="caption_text">Character table for \(S_3\)</span> 
+</figcaption>
+
+
+</figure>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+</body>
+</html>
