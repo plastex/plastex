@@ -35,21 +35,24 @@
         document processing framework written entirely in
         <a title="Go to the Python web site" href="http://www.python.org/">Python</a>.
         It currently comes bundled with a
-        <a href="https://html.spec.whatwg.org/">HTML5</a>
+        <a href="https://www.w3.org/TR/html51/">HTML5</a>
         renderer (including multiple themes), a simple text renderer and several less developped
-	renderers targetting Man pages, DocBook and EPUB,
-	as well as a way to simply dump the document
+        renderers targetting Man pages, DocBook and EPUB,
+        as well as a way to simply dump the document
         to a generic form of <a href="http://www.w3.org/XML/">XML</a>.
         Other renderers can be added.
       </p>
       <p>
         Here is
-        <a href="sample2e/sample2e.txt">an example LaTeX document</a>
-        converted to
-        <a href="sample2e/">HTML</a>
-        using plasTeX. For reference, the
-        <a href="sample2e/sample2e.pdf">PDF</a>
-        version of the document is also available.
+        <a href="sample/sample.tex">an example LaTeX document</a>
+        converted to <a href="sample/sample/">HTML</a> using plasTeX. For reference,
+        the <a href="sample/sample.pdf">PDF</a> version of the document is also
+        available. 
+        The HTML document above was generated using the default configuration,
+        but many options can be set, including controlling splitting into multiple
+        files and adding CSS files. Here an 
+        <a href="sample/sample_single/">alternative render</a> on a single page
+        and loading a couple of <a href="sample/alt.css">CSS tweaks</a>.
       </p>
       <p>
         plasTeX differs from other tools like
@@ -70,7 +73,10 @@ a cleaner document object, so that the rendering process is easier.
 document are rendered, it is possible that the resultant document
 is structured quite differently than the input document.  This object
 actually allows you to traverse and edit the document tree. It can also be 
-used to collect statistics about the document.
+used to collect statistics about the document. 
+The <a href="https://stacks.math.columbia.edu/">Stacks project</a> is a 
+striking example of using plasTeX's flexibility.
+
       </p>
 
       <p>
@@ -84,7 +90,7 @@ was generated using pdflatex, and the HTML version was generated using
 plasTeX.
       </p>
 
-      <h2>Getting Started</h2>
+<!--      <h2>Getting Started</h2>
 
       <p>
         See the following tutorial entitled Getting Started with plasTeX.
@@ -95,29 +101,40 @@ plasTeX.
         format.  The
         <a href="tutorials/getting-started.txt">LaTeX source</a>
         of this document is also available.
-      </p>
+      </p> -->
 
       <h2>plasTeX Users</h2>
 
       <p>
         If you are interested in who else is using plasTeX, we are keeping a list
-of the projects that we know of right here.  If you are using plasTeX,
-        <a href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=Kevin.Smith@sas.com" target="_blank">let us know</a>
-        so we can post your project's name as well.
+of the projects that we know of right here.  If you are using plasTeX, let us know 
+by opening a GitHub issue so we can post your project's name as well.
       </p>
       <ul>
         <li>
           The <a href="https://stacks.math.columbia.edu/">Stacks project</a> uses plasTeX to turn 6700+ pages of algebraic
-		  geometry into a website, using plasTeX with a custom renderer. <a href="https://kerodon.net/">Kerodon</a> is a newer project using the same technology.
+                  geometry into a website, using plasTeX with a <a href="https://gerby-project.github.io/">custom renderer</a>. 
+          <a href="https://kerodon.net/">Kerodon</a> is a newer project using the same technology.
         </li>
+        <li>
+          The <a href="https://github.com/leanprover-community/lean-liquid">Liquid Tensor Experiment</a>
+          is an ambitious formalization project that uses plasTeX with a custom plugin
+          to render its <a href="https://leanprover-community.github.io/liquid/">blueprint</a>. The corresponding
+          <a href="https://leanprover-community.github.io/liquid/dep_graph.html">dependency graph</a> is
+          an interesting example of using plasTeX to collect and organize meta-data.
+        </li>
+
         <li>
             <a href="http://www.sas.com/">SAS</a>
             is currently using plasTeX to generate HTML and DocBook for 10,000+ pages of scientific documentation nightly.
         </li>
         <li>
-			<a href="https://people.csail.mit.edu/ichuang/edx/latex2edx">LaTeX2edX</a>
-			uses plasTeX for generating interactive MITx / edX courses
-			from LaTeX.
+          <a href="https://people.csail.mit.edu/ichuang/edx/latex2edx">LaTeX2edX</a>
+          uses plasTeX for generating interactive MITx / edX courses
+          from LaTeX.
+        </li>
+        <li>
+          <a href="https://github.com/coursebuilder-ncl/makecourse">CourseBuilder</a> builds lecture notes websites from LaTeX files using plasTeX.
         </li>
         <li>
             <a href="http://brltex.sourceforge.net/">BrlTex</a>
