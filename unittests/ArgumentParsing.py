@@ -12,40 +12,40 @@ class ArgumentParsing(TestCase):
         arg = foobar().arguments
         expected = [Argument('arg1', 0, {'expanded':True})]
         assert arg == expected, '"%s" != "%s"' % (arg, expected)
-
+    
     def testArgumentString2(self):
         class foobar(Macro):
             args = '* [ opt ] arg1'
         arg = foobar().arguments
         expected = [Argument('*modifier*', 0, {'spec':'*'}),
-                    Argument('opt', 1, {'spec':'[]','expanded':True}),
+                    Argument('opt', 1, {'spec':'[]','expanded':True}), 
                     Argument('arg1', 2, {'expanded':True})]
         assert arg == expected, '"%s" != "%s"' % (arg, expected)
-
+    
     def testArgumentString3(self):
         class foobar(Macro):
             args = '[ opt:dict ] arg1:list'
         arg = foobar().arguments
-        expected = [Argument('opt', 0, {'spec':'[]','type':'dict','expanded':True,'delim':None}),
+        expected = [Argument('opt', 0, {'spec':'[]','type':'dict','expanded':True,'delim':None}), 
                     Argument('arg1', 1, {'type':'list','expanded':True,'delim':None})]
         assert arg == expected, '"%s" != "%s"' % (arg, expected)
-
+    
     def testArgumentString4(self):
         class foobar(Macro):
             args = '[ opt:dict(;) ] arg1:list'
         arg = foobar().arguments
-        expected = [Argument('opt', 0, {'spec':'[]','type':'dict','delim':';','expanded':True}),
+        expected = [Argument('opt', 0, {'spec':'[]','type':'dict','delim':';','expanded':True}), 
                     Argument('arg1', 1, {'type':'list','expanded':True,'delim':None})]
         assert arg == expected, '"%s" != "%s"' % (arg, expected)
-
+    
     def testArgumentString5(self):
         class foobar(Macro):
             args = '[ opt:dict(;) ] < arg1:str >'
         arg = foobar().arguments
-        expected = [Argument('opt', 0, {'spec':'[]','type':'dict','delim':';','expanded':True}),
+        expected = [Argument('opt', 0, {'spec':'[]','type':'dict','delim':';','expanded':True}), 
                     Argument('arg1', 1, {'type':'str','spec':'<>','expanded':True, 'delim':None})]
         assert arg == expected, '"%s" != "%s"' % (arg, expected)
-
+    
     def _testInvalidArgumentString(self):
         class foobar(Macro):
             args = '[ opt:dict(;) ] < arg1:str(+) >'
@@ -174,12 +174,12 @@ class ArgumentParsing(TestCase):
         # No number
         s.input('{a}')
         arg = s.readArgument(type='dimen')
-        assert arg == dimen(0), arg
-
+        assert arg == dimen(0), arg 
+        
         # No number
         s.input('b')
         arg = s.readArgument(type='dimen')
-        assert arg == dimen(0), arg
+        assert arg == dimen(0), arg 
 
         # Coerced dimen
         s.input(r'{\mycount}')
@@ -271,12 +271,12 @@ class ArgumentParsing(TestCase):
         # No number
         s.input('{a}')
         arg = s.readArgument(type='number')
-        assert arg == count(0), arg
-
+        assert arg == count(0), arg 
+        
         # No number
         s.input('b')
         arg = s.readArgument(type='number')
-        assert arg == count(0), arg
+        assert arg == count(0), arg 
 
         # Coerced dimen
         s.input(r'{\mydimen}')
@@ -372,7 +372,7 @@ class ArgumentParsing(TestCase):
         s.input(r'{1, \mycount, 3}')
         arg = s.readArgument(type='list', subtype='int')
         assert arg == [1, 120, 3], arg
-
+    
     def testDictTypes(self):
         s = TeX()
         s.input(r'''\newcount\mycount\mycount=120
@@ -385,18 +385,6 @@ class ArgumentParsing(TestCase):
         keys = list(arg.keys())
         keys.sort()
         assert keys == ['one', 'three', 'two']
-
-    def testAndreaExample(self):
-        s = TeX()
-        s.input(r'''\documentclass{article}
-        \usepackage{amsthm}
-        \newtheorem{Theorem}{Theorem}
-        \begin{document}
-        \begin{Theorem}[The argopt contains {$]\int_\infty$} the square bracket]
-        \end{Theorem}
-        \end{document}''')
-        doc = s.parse()
-        assert  doc.childNodes[-1].childNodes[1].title.source == r'The argopt contains $]\int _\infty $ the square bracket'
 
 
 if __name__ == '__main__':

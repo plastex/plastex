@@ -875,21 +875,13 @@ class TeX(object):
             if t.catcode != Token.CC_ESCAPE and \
                (t == begin or str(t) == str(begin)):
                 level = 1
-                group = 0
                 for t in tokens:
                     source.append(t)
-                    if t.catcode == Token.CC_BGROUP:
-                        group += 1
-                    elif t.catcode == Token.CC_EGROUP:
-                        group -= 1
-                        if group < 0:
-                            log.warning('optional argument contains too many end groups %r' % source)
-                            group = 0
-                    elif t.catcode != Token.CC_ESCAPE and group == 0 and \
+                    if t.catcode != Token.CC_ESCAPE and \
                        (t == begin or str(t) == str(begin)):
                         toks.append(t)
                         level += 1
-                    elif t.catcode != Token.CC_ESCAPE and group == 0 and \
+                    elif t.catcode != Token.CC_ESCAPE and \
                          (t == end or str(t) == str(end)):
                         level -= 1
                         if level == 0:
