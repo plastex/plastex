@@ -135,3 +135,6 @@ class numberwithin(Command):
         # Formatting
         ctx['the'+target].format = '{}.${{{}}}'.format(
                 ctx['the'+control].format, target)
+
+class eqref(Command):
+    args = 'label:idref'

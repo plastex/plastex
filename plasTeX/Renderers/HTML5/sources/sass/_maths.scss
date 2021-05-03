@@ -1,3 +1,13 @@
 div.displaymath {
 	overflow: auto;
 }
+
+a.eqref::before
+{
+    content: '(';
+};
+
+a.eqref::after
+{
+    content: ')';
+};
