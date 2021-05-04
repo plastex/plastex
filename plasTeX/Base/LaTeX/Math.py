@@ -4,7 +4,7 @@ C.7 Mathematical Formulas (p187)
 """
 
 from plasTeX.Base.LaTeX.Arrays import Array
-from plasTeX import Command, Environment, sourceChildren
+from plasTeX import Command, Environment, sourceChildren, NoCharSubEnvironment
 from plasTeX import DimenCommand, GlueCommand
 from typing import Optional
 
@@ -34,7 +34,7 @@ class ThinSpace_(Command):
     macroName = '/'
     str = '\u2009'
 
-class MathEnvironment(Environment):
+class MathEnvironment(NoCharSubEnvironment):
     mathMode = True
 
 class MathEnvironmentPre(MathEnvironment):
