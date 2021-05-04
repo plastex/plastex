@@ -61,7 +61,7 @@ def addConfig(config: ConfigManager):
     section['mathjax-url'] = StringOption(
         """ Url of the MathJax lib """,
         options='--mathjax-url',
-        default='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML',
+        default='https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js',
     )
 
     section['mathjax-dollars'] = BooleanOption(
