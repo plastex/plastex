@@ -27,6 +27,6 @@ def test_amsthm(tmpdir):
     assert html.exists()
     text = re.sub('id="[^"]*"', '', html.read_text())
     bench = re.sub('id="[^"]*"', '', html_bench.read_text())
-    assert text == bench
+    assert text.strip() == bench.strip()
     assert css.exists()
     assert css.read_text() == css_bench.read_text()
