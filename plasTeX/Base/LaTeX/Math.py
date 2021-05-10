@@ -126,7 +126,7 @@ class equation(MathEnvironment):
     blockType = True
     counter = 'equation'
 
-class EqnarrayStar(Array):
+class EqnarrayStar(Array, NoCharSubEnvironment):
     macroName = 'eqnarray*' # type: Optional[str]
     blockType = True
     mathMode = True
