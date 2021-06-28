@@ -5,9 +5,9 @@ name:lstinputlisting lstlisting
   <b tal:content='string:${self/captionName} ${self/ref}'></b>: 
   <span tal:replace='self/attributes/arguments/caption'></span>
 </div>
-<pre tal:condition="self/xhtml_listing" tal:replace='self/xhtml_listing'></pre>
-<pre tal:condition="not:self/xhtml_listing" tal:content='text self/plain_listing'></pre>
+<pre tal:condition="self/html_listing" tal:replace='self/html_listing'></pre>
+<pre tal:condition="not:self/html_listing" tal:content='text self/plain_listing'></pre>
 
 name: lstinline
-<tt tal:condition="self/xhtml_listing" tal:replace='self/xhtml_listing'></tt>
-<tt tal:condition="not:self/xhtml_listing" tal:content='text self/plain_listing'></tt>
+<tt tal:condition="self/html_listing" tal:replace='self/html_listing'></tt>
+<tt tal:condition="not:self/html_listing" tal:content='text self/plain_listing'></tt>

@@ -47,8 +47,7 @@ class verb(Command):
         return tokens
 
     def digest(self, tokens):
-        for endpattern in tokens:
-            break
+        endpattern = next(iter(tokens))
         for tok in tokens:
             if tok == endpattern:
                 break
