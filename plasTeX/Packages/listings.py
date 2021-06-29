@@ -185,35 +185,28 @@ class lstinputlisting(Command):
         encoding = self.config['files']['input-encoding']
         _format(self, open(self.attributes['file'],  encoding=encoding), wrap=True)
 
-def _format(self, file, wrap: bool, language:Optional[str] = None):
-    if self.attributes['arguments'] is None:
-        self.attributes['arguments'] = {}
+def _format(self, file, wrap: bool, language:Optional[str] = None) -> None:
+    arguments = self.attributes['arguments'] or dict()
+    doc = self.ownerDocument
 
     linenos = False
-    if ('numbers' in self.attributes['arguments']
-        or 'numbers' in self.ownerDocument.userdata['listings']):
-        linenos = 'inline'
+    if ('numbers' in arguments or
+        'numbers' in doc.userdata.get('listings', dict())):
+        linenos = 'inline' # type: ignore
 
     # If this listing includes a label, inform plasTeX.
-    if 'label' in list(self.attributes['arguments'].keys()):
-        if hasattr(self.attributes['arguments']['label'], 'textContent'):
-            self.ownerDocument.context.label(
-                self.attributes['arguments']['label'].textContent)
+    label = arguments.get('label')
+    if label:
+        if hasattr(label, 'textContent'):
+            doc.context.label(label.textContent)
         else:
-            self.ownerDocument.context.label(
-                self.attributes['arguments']['label'])
+            doc.context.label(label)
 
     # Check the textual LaTeX arguments and convert them to Python
     # attributes.
-    if 'firstline' in list(self.attributes['arguments'].keys()):
-        first_line_number = int(self.attributes['arguments']['firstline'])
-    else:
-        first_line_number = 0
+    first_line_number = int(arguments.get('firstline', 0))
 
-    if 'lastline' in list(self.attributes['arguments'].keys()):
-        last_line_number = int(self.attributes['arguments']['lastline'])
-    else:
-        last_line_number = sys.maxsize
+    last_line_number = int(arguments.get('lastline', sys.maxsize))
 
     # Read the file, all the while respecting the "firstline" and
     # "lastline" arguments given in the document.
@@ -236,7 +229,7 @@ def _format(self, file, wrap: bool, language:Optional[str] = None):
 
     # Create a syntax highlighted XHTML version of the file using Pygments
     if pygments is not None:
-        ctx = self.ownerDocument.context
+        ctx = doc.context
         try:
             lexer = lexers.get_lexer_by_name(language or ctx.current_language.lower())
         except Exception as msg:
