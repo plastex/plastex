@@ -222,11 +222,12 @@ class NatBibCite(Base.cite):
         for key in self.attributes['bibkeys']:
             if key in b:
                 items.append(b[key])
-        if bibpunct.punctuation['style'] in 'ns' and \
-           ('sort' in opts or 'sort&compress' in opts or 'sortandcompress' in opts):
-            items.sort(lambda x, y: int(x.ref) - int(y.ref))
-            if 'sort&compress' in opts or 'sortandcompress' in opts:
-                items = self.compressRange(items)
+        if len(items) > 1:
+            if self.isNumeric() and \
+            ('sort' in opts or 'sort&compress' in opts or 'sortandcompress' in opts):
+                items.sort(key=lambda x: int(x.ref))
+                if 'sort&compress' in opts or 'sortandcompress' in opts:
+                    items = self.compressRange(items)
         return items
         
     def compressRange(self, items):
