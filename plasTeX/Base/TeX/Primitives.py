@@ -78,7 +78,11 @@ class MathShift(Command):
         current = self.ownerDocument.createElement('math')
         for t in tex.itertokens():
             if t.catcode == Token.CC_MATHSHIFT:
-                current = self.ownerDocument.createElement('displaymath')
+                # Case where we have $   $$    $ construction
+                if inEnv and inEnv[-1] is not None and type(inEnv[-1]) is type(current):
+                    tex.pushToken(t)
+                else:
+                    current = self.ownerDocument.createElement('displaymath')
             else:
                 tex.pushToken(t)
             break
