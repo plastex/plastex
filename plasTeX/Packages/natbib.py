@@ -453,7 +453,8 @@ class citet(NatBibCite):
         res = self.ownerDocument.createDocumentFragment()
         i = 0
         sameauthor = prevauthor = None
-        for i, item in enumerate(self.bibitems):
+        bibitems = self.bibitems
+        for i, item in enumerate(bibitems):
             if text is None:
                 if not item.bibcite.attributes:
                     continue
@@ -480,7 +481,7 @@ class citet(NatBibCite):
             # Year or text
             res.append(self.citeValue(item, text=text))
             # Separator, postnote, and closing punctuation
-            if i < (len(self.bibitems)-1):
+            if i < (len(bibitems)-1):
                 if text is None:
                     res.append(bibpunct.punctuation['close'])
                     res.append(self.separator+' ')
@@ -502,13 +503,14 @@ class citet(NatBibCite):
         i = 0
         res.append(self.prenote)
         res.append(bibpunct.punctuation['open'])
-        for i, item in enumerate(self.bibitems):
+        bibitems = self.bibitems
+        for i, item in enumerate(bibitems):
             if self.isConnector(item):
                 res.pop()
                 res.append('-')
                 continue
             res.append(self.citeValue(item))
-            if i < (len(self.bibitems)-1):
+            if i < (len(bibitems)-1):
                 res.append(self.separator+' ')
         res.append(bibpunct.punctuation['close'])
         res.append(self.postnote)
@@ -536,7 +538,8 @@ class citep(NatBibCite):
         res.append(self.prenote)
         i = 0
         sameauthor = prevauthor = None
-        for i, item in enumerate(self.bibitems):
+        bibitems = self.bibitems
+        for i, item in enumerate(bibitems):
             if text is None:
                 if item.bibcite.attributes is None:
                     continue
@@ -555,7 +558,7 @@ class citep(NatBibCite):
                         res.extend(item.bibcite.attributes[author])
                     res.append(self.dates+' ')
             res.append(self.citeValue(item, text=text))
-            if i < (len(self.bibitems)-1):
+            if i < (len(bibitems)-1):
                 res.append(self.separator+' ')
             else:
                 res.append(self.postnote)
@@ -574,13 +577,14 @@ class citep(NatBibCite):
         res.append(bibpunct.punctuation['open'])
         res.append(self.prenote)
         i = 0
-        for i, item in enumerate(self.bibitems):
+        bibitems = self.bibitems
+        for i, item in enumerate(bibitems):
             if self.isConnector(item):
                 res.pop()
                 res.append('-')
                 continue
             res.append(self.citeValue(item))
-            if i < (len(self.bibitems)-1):
+            if i < (len(bibitems)-1):
                 res.append(self.separator+' ')
             else:
                 res.append(self.postnote)
@@ -619,7 +623,8 @@ class citealt(NatBibCite):
         res = self.ownerDocument.createDocumentFragment()
         i = 0
         prevauthor = sameauthor = None
-        for i, item in enumerate(self.bibitems):
+        bibitems = self.bibitems
+        for i, item in enumerate(bibitems):
             if not item.bibcite.attributes:
                 fullauthor = '???'
             else:
@@ -641,7 +646,7 @@ class citealt(NatBibCite):
                 res.append(' ')
                 res.append(self.prenote)
             res.append(self.citeValue(item))
-            if i < (len(self.bibitems)-1):
+            if i < (len(bibitems)-1):
                 res.append(self.separator+' ')
             else:
                 res.append(self.postnote)
@@ -658,13 +663,14 @@ class citealt(NatBibCite):
             group.append(res)
         i = 0
         res.append(self.prenote)
-        for i, item in enumerate(self.bibitems):
+        bibitems = self.bibitems
+        for i, item in enumerate(bibitems):
             if self.isConnector(item):
                 res.pop()
                 res.append('-')
                 continue
             res.append(self.citeValue(item))
-            if i < (len(self.bibitems)-1):
+            if i < (len(bibitems)-1):
                 res.append(self.separator+' ')
             else:
                 res.append(self.postnote)
@@ -691,7 +697,8 @@ class citealp(NatBibCite):
         res.append(self.prenote)
         i = 0
         prevauthor = sameauthor = None
-        for i, item in enumerate(self.bibitems):
+        bibitems = self.bibitems
+        for i, item in enumerate(bibitems):
             if not item.bibcite.attributes:
                 fullauthor = '???'
             else:
@@ -712,7 +719,7 @@ class citealp(NatBibCite):
                     res.extend(item.bibcite.attributes[author])              
                 res.append(self.separator+' ')
             res.append(self.citeValue(item))
-            if i < (len(self.bibitems)-1):
+            if i < (len(bibitems)-1):
                 res.append(self.separator+' ')
             else:
                 res.append(self.postnote)
@@ -729,13 +736,14 @@ class citealp(NatBibCite):
             group.append(res)
         res.append(self.prenote)
         i = 0
-        for i, item in enumerate(self.bibitems):
+        bibitems = self.bibitems
+        for i, item in enumerate(bibitems):
             if self.isConnector(item):
                 res.pop()
                 res.append('-')
                 continue
             res.append(self.citeValue(item))
-            if i < (len(self.bibitems)-1):
+            if i < (len(bibitems)-1):
                 res.append(self.separator+' ')
         res.append(self.postnote)
         return orig
@@ -760,7 +768,8 @@ class citeauthor(NatBibCite):
         res = self.ownerDocument.createDocumentFragment()
         #res.append(self.prenote)
         i = 0
-        for i, item in enumerate(self.bibitems):
+        bibitems = self.bibitems
+        for i, item in enumerate(bibitems):
             author = self.selectAuthorField(item.attributes['key'], full=full)
             b = self.ownerDocument.createElement('bibliographyref')
             b.idref['bibitem'] = item
@@ -771,7 +780,7 @@ class citeauthor(NatBibCite):
             else:
                 b.append(item.bibcite.attributes[author])
             res.append(b)
-            if i < (len(self.bibitems)-1):
+            if i < (len(bibitems)-1):
                 res.append(self.separator+' ')
             else:
                 res.append(self.postnote)
@@ -797,7 +806,8 @@ class citeyear(NatBibCite):
         res = self.ownerDocument.createDocumentFragment()
         #res.append(self.prenote)
         i = 0
-        for i, item in enumerate(self.bibitems):
+        bibitems = self.bibitems
+        for i, item in enumerate(bibitems):
             b = self.ownerDocument.createElement('bibliographyref')
             b.idref['bibitem'] = item
             if not item.bibcite.attributes:
@@ -805,7 +815,7 @@ class citeyear(NatBibCite):
             else:
                 b.append(item.bibcite.attributes['year'])
             res.append(b)
-            if i < (len(self.bibitems)-1):
+            if i < (len(bibitems)-1):
                 res.append(self.separator+' ')
             else:
                 res.append(self.postnote)
@@ -821,7 +831,8 @@ class citeyearpar(NatBibCite):
         res.append(bibpunct.punctuation['open'])
         res.append(self.prenote)
         i = 0
-        for i, item in enumerate(self.bibitems):
+        bibitems = self.bibitems
+        for i, item in enumerate(bibitems):
             b = self.ownerDocument.createElement('bibliographyref')
             b.idref['bibitem'] = item
             if not item.bibcite.attributes:
@@ -829,7 +840,7 @@ class citeyearpar(NatBibCite):
             else:
                 b.append(item.bibcite.attributes['year'])
             res.append(b)
-            if i < (len(self.bibitems)-1):
+            if i < (len(bibitems)-1):
                 res.append(self.separator+' ')
             else:
                 res.append(self.postnote)
