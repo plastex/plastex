@@ -33,7 +33,7 @@ jobs:
         run: pytest -v --cov=plasTeX
 
       - name: Run mypy
-        run: mypy plasTeX unittests
+        run: mypy --install-types --non-interactive plasTeX unittests
 
       - name: Upload Coveralls
         run: coveralls
