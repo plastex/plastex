@@ -152,7 +152,7 @@ class TeX(object):
             return
         if self.jobname is None:
             if isinstance(source, str):
-                self.jobname = os.path.basename(os.path.splitext(source)[0])
+                self.jobname = ''
             elif isinstance(source, IOBase):
                 self.jobname = os.path.basename(os.path.splitext(source.name)[0])
 
