@@ -322,11 +322,11 @@ class Context(object):
             self.currentLanguage = lang
             self.newcommand('languagename', definition=lang)
             self.terms = self.languages[lang]
-            for key, value in self.languages[lang].items():
+            for key, value in list(self.languages[lang].items()):
                 if key == 'today':
-                    self.newcommand(key, definition=self._strftime(value), can_overwrite=True)
+                    self.newcommand(key, definition=self._strftime(value))
                 else:
-                    self.newcommand('%sname' % key, definition=value, can_overwrite=True)
+                    self.newcommand('%sname' % key, definition=value)
         else:
             log.warning('Could not load language "%s", american will be used instead' % lang)
 
@@ -999,8 +999,7 @@ class Context(object):
         newclass = type(falsename, (plasTeX.IfFalse,), {'ifclass':ifclass})
         self.addGlobal(falsename, newclass)
 
-    def newcommand(self, name, nargs=0, definition=None, opt=None,
-            can_overwrite=False, must_overwrite=False):
+    def newcommand(self, name, nargs=0, definition=None, opt=None):
         """
         Create a \\newcommand
 
@@ -1010,27 +1009,18 @@ class Context(object):
         definition -- string containing the LaTeX definition
         opt -- string containing the LaTeX code to use in the
             optional argument
-        can_overwrite -- bool controlling whether we can overwrite an existing definition
-        must_overwrite -- bool controlling whether we must overwrite an existing definition
 
         Examples::
             c.newcommand('bold', 1, r'\\textbf{#1}')
             c.newcommand('foo', 2, r'{\\bf #1#2}', opt='myprefix')
 
         """
-        if must_overwrite and not name in self:
-            log.warning('Cannot redefine {} which is not defined.'.format(name))
-            return
-
         # Macro already exists
-        if name in self:
-            if can_overwrite or issubclass(self[name], (plasTeX.NewCommand,
-                  plasTeX.UnrecognizedMacro, plasTeX.Definition, relax, plasTeX.TheCounter)):
-                macrolog.debug('redefining command "%s"', name)
-            else:
-                log.warning('{} is already defined. '.format(name) +\
-                            'The new definition is ignored.')
-                return
+        if name in list(self.keys()):
+            if not issubclass(self[name], (plasTeX.NewCommand, plasTeX.UnrecognizedMacro, plasTeX.Definition, relax)):
+                if not issubclass(self[name], plasTeX.TheCounter):
+                    return
+            macrolog.debug('redefining command "%s"', name)
 
         if nargs is None:
             nargs = 0

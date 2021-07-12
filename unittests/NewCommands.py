@@ -99,12 +99,6 @@ class NewCommands(TestCase):
         text = [x for x in output if x.nodeType == Node.TEXT_NODE]
         assert text == list('opt:barfoo:bar'), text
 
-    def testReNewCommandBuiltin(self):
-        s = TeX()
-        s.input(r'\renewcommand{\textbf}[1]{YOP}\textbf{test}')
-        doc = s.parse()
-        assert doc.textContent == 'YOP'
-
     def testSimpleNewEnvironment(self):
         s = TeX()
         s.input(r'\newenvironment{myenv}{\it}{}\begin{myenv}hi\end{myenv}')
@@ -176,7 +170,7 @@ class NewCommands(TestCase):
         s = TeX()
         s.input(r'\let\foo=\it\foo')
         output = [x for x in s]
-        assert type(output[1]) == s.ownerDocument.context['it']
+        assert type(output[1]) == s.ownerDocument.context['it'] 
 
         s = TeX()
         s.input(r'\let\bgroup={\bgroup')
@@ -198,7 +192,7 @@ class Python(TestCase):
         s.ownerDocument.context['figurename'] = figurename
         output = [x for x in s]
         assert output[0].unicode == 'Figure', output
-
+       
 
 if __name__ == '__main__':
     unittest.main()

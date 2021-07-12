@@ -5,13 +5,13 @@
 \modulesynopsis{The \TeX\ document context}
 
 The \class{Context} class stores all of the information associated with
-the currently running document.  This includes things like macros, counters,
+the currently running document.  This includes things like macros, counters, 
 labels, references, etc.  The context also makes sure that localized macros
 get popped off when processing leaves a macro or environment.  The context
 of a document also has the power to create new counters, dimens, if commands,
 macros, as well as change token category codes.
 
-Each time a \class{TeX} object is instantiated, it will create its own
+Each time a \class{TeX} object is instantiated, it will create its own 
 context.  This context will load all of the base macros and initialize
 all of the context information described above.
 
@@ -22,13 +22,13 @@ all of the context information described above.
 Instantiate a new context.
 
 If the \var{load} argument is set to true, the context will load all of the
-base macros defined in \plasTeX.  This includes all of the macros used in
+base macros defined in \plasTeX.  This includes all of the macros used in 
 the standard \TeX\ and \LaTeX\ distributions.
 \end{classdesc}
 
 \begin{memberdesc}[Context]{contexts}
-stack of all macro and category code collections currently in the document
-being processed.  The item at index 0 include the global macro set and
+stack of all macro and category code collections currently in the document 
+being processed.  The item at index 0 include the global macro set and 
 default category codes.
 \end{memberdesc}
 
@@ -51,11 +51,11 @@ a dictionary of labels and the objects that they refer to.
 
 
 \begin{methoddesc}[Context]{addGlobal}{key, value}
-add a macro \var{value} with name \var{key} to the global namespace.
+add a macro \var{value} with name \var{key} to the global namespace. 
 \end{methoddesc}
 
 \begin{methoddesc}[Context]{addLocal}{key, value}
-add a macro \var{value} with name \var{key} to the current namespace.
+add a macro \var{value} with name \var{key} to the current namespace. 
 \end{methoddesc}
 
 \begin{methoddesc}[Context]{append}{\optional{context}}
@@ -93,7 +93,7 @@ import macros from another context into the global namespace.  The argument,
 \end{methoddesc}
 
 \begin{methoddesc}[Context]{label}{label}
-set the given label to the currently labelable object.  An object can
+set the given label to the currently labelable object.  An object can 
 only have one label associated with it.
 \end{methoddesc}
 
@@ -126,12 +126,12 @@ information.
 \end{methoddesc}
 
 \begin{methoddesc}[Context]{loadINIPackage}{inifile}
-load an INI formatted package file (see section \ref{sec:packages} for
+load an INI formatted package file (see section \ref{sec:packages} for 
 more information).
 \end{methoddesc}
 
 \begin{methoddesc}[Context]{loadPackage}{tex, file, \optional{options}}
-loads a \LaTeX\ package.
+loads a \LaTeX\ package.  
 
 \var{tex} is the \TeX\ processor to use in parsing the package content
 
@@ -161,9 +161,6 @@ create a new \LaTeX\ command like \macro{newcommand}.
 
 \var{opt} is a string containing the default optional value.
 
-\var{can_overwrite} is a boolean controlling whether we can overwrite an existing definition.
-\var{must_overwrite} is a boolean controlling whether we \emph{must} overwrite an existing definition.
-
 \textbf{Examples}
 \begin{verbatim}
 c.newcommand('bold', 1, r'\\textbf{#1}')
@@ -180,7 +177,7 @@ create a new counter like \macro{newcounter}.
 
 \var{name} is the name of the counter to create.
 
-\var{resetby} is the counter that, when incremented, will reset the
+\var{resetby} is the counter that, when incremented, will reset the 
 new counter.
 
 \var{initial} is the initial value for the counter.
@@ -218,7 +215,7 @@ create a new dimen like \macro{newdimen}.
 
 \begin{methoddesc}[Context]{newenvironment}{name\optional{, nargs\optional{, definition\optional{, opt}}}}
 create a new \LaTeX\ environment like \macro{newenvironment}.  This works
-exactly like the \method{newcommand()} method, except that the
+exactly like the \method{newcommand()} method, except that the 
 \var{definition} argument is a two element tuple where the first element
 is a string containing the macro content to expand at the \macro{begin},
 and the second element is the macro content to expand at the \macro{end}.
@@ -251,24 +248,24 @@ when the package was loaded.
 \begin{methoddesc}[Context]{pop}{\optional{obj}}
 pop the top scope off of the stack.  If \var{obj} is specified, continue
 to pop scopes off of the context stack until the scope that was originally
-added by \var{obj} is found.
+added by \var{obj} is found.  
 \end{methoddesc}
 
 \begin{methoddesc}[Context]{push}{\optional{context}}
-add a new scope to the stack.  If a macro instance \var{context} is specified,
+add a new scope to the stack.  If a macro instance \var{context} is specified, 
 the new scope's namespace is given by that object.
 \end{methoddesc}
 
 \begin{methoddesc}[Context]{ref}{obj, label}
-set up a reference for resolution.
+set up a reference for resolution.  
 
 \var{obj} is the macro object that is doing the referencing.
 
 \var{label} is the label of the node that \var{obj} is looking for.
 
-If the item that \var{obj} is looking for has already been labeled,
-the \member{idref} attribute of \var{obj} is set to the abject.
-Otherwise, the reference is stored away to be resolved later.
+If the item that \var{obj} is looking for has already been labeled, 
+the \member{idref} attribute of \var{obj} is set to the abject.  
+Otherwise, the reference is stored away to be resolved later. 
 \end{methoddesc}
 
 \begin{methoddesc}[Context]{setVerbatimCatcodes}{}
@@ -278,8 +275,8 @@ environment.
 
 \begin{methoddesc}[Context]{whichCode}{char}
 return the character code that \var{char} belongs to.  The category
-codes are the same codes used by \TeX\ and are defined in the
-\class{Token} class.
+codes are the same codes used by \TeX\ and are defined in the 
+\class{Token} class.  
 \end{methoddesc}
 
 \subsection{Context language}\label{sec:context-language}

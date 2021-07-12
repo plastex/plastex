@@ -24,16 +24,7 @@ class newcommand(Command):
         self.ownerDocument.context.newcommand(*args, **kwargs)
 
 class renewcommand(newcommand):
-    """ \\renewcommand """
-    args = '* name:cs [ nargs:int ] [ opt:nox ] definition:nox'
-
-    def invoke(self, tex):
-        self.parse(tex)
-        a = self.attributes
-        args = (a['name'], a['nargs'], a['definition'])
-        kwargs = {'opt':a['opt'], 'can_overwrite': True, 'must_overwrite': True}
-        deflog.debug('command %s %s %s', *args)
-        self.ownerDocument.context.newcommand(*args, **kwargs)
+    pass
 
 class providecommand(newcommand):
     pass
