@@ -11,6 +11,6 @@ def test_intro_snippet(tmpdir):
     \end{document}
     """)
     with tmpdir.as_cwd():
-        Renderer().render(TeX(myfile='test.tex').parse())
+        Renderer().render(TeX(file='test.tex').parse())
     assert (Path(tmpdir)/'index.html').exists()
     assert 'Hello' in (Path(tmpdir)/'index.html').read_text()

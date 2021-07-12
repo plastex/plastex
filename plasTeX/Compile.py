@@ -58,7 +58,7 @@ def run(filename: str, config: ConfigManager):
     document = plasTeX.TeXDocument(config=config)
 
     # Instantiate the TeX processor
-    tex = TeX(document, myfile=filename)
+    tex = TeX(document, file=filename)
 
     # Send log message to file "jobname.log" instead of console
     if config['files']['log']:

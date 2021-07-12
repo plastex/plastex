@@ -16,7 +16,7 @@ def test_input(tmpdir):
 ''')
         Path("input2.tex").write_text(r'\foo')
 
-        tex = TeX(myfile="input.tex")
+        tex = TeX(file="input.tex")
         tex.ownerDocument.context.contexts[0]["foo"] = foo
 
         assert "./input2.tex" == tex.parse().getElementsByTagName("foo")[0].data

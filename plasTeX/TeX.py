@@ -57,11 +57,11 @@ class TeX(object):
     """
     documentClass = TeXDocument
 
-    def __init__(self, ownerDocument=None, myfile=None):
+    def __init__(self, ownerDocument=None, file=None):
         if ownerDocument is None:
             ownerDocument = self.documentClass()
             self.toplevel = True
-        elif myfile:
+        elif file:
             self.toplevel = True
         else:
             self.toplevel = False
@@ -112,10 +112,10 @@ class TeX(object):
         self.currentInput = (0,0)
 
         self.jobname = None
-        if myfile is not None:
+        if file is not None:
             # Filename
-            if isinstance(myfile, (str, bytes)):
-                myfile = str(myfile)
+            if isinstance(file, (str, bytes)):
+                file = str(file)
                 '''
                 if config has no files structure
                 or encoding is not specified
@@ -130,14 +130,14 @@ class TeX(object):
                 if encoding in ['utf8', 'utf-8', 'utf_8']:
                     encoding = 'utf_8_sig'
 
-                fname = self.kpsewhich(myfile)
+                fname = self.kpsewhich(file)
                 self.input(open(fname, encoding=encoding))
-                self.jobname = os.path.basename(os.path.splitext(myfile)[0])
+                self.jobname = os.path.basename(os.path.splitext(file)[0])
 
             # File object
             else:
-                self.input(myfile)
-                self.jobname = os.path.basename(os.path.splitext(myfile.name)[0])
+                self.input(file)
+                self.jobname = os.path.basename(os.path.splitext(file.name)[0])
 
     def input(self, source):
         """
@@ -175,12 +175,12 @@ class TeX(object):
         if self.inputs:
             self.currentInput = self.inputs[-1]
 
-    def loadPackage(self, myfile, options=None):
+    def loadPackage(self, file, options=None):
         """
         Load a LaTeX package
 
         Required Arguments:
-        myfile -- name of the file to load
+        file -- name of the file to load
 
         Keyword Arguments:
         options -- options passed to the macro which is loading the package
@@ -190,7 +190,7 @@ class TeX(object):
         config = self.ownerDocument.config
 
         try:
-            path = self.kpsewhich(myfile)
+            path = self.kpsewhich(file)
         except OSError as msg:
             log.warning(msg)
             return False
@@ -207,7 +207,7 @@ class TeX(object):
                 flag = plasTeX.Command()
                 self.pushToken(flag)
                 self.input(f)
-                self.ownerDocument.context.packages[myfile] = options or {}
+                self.ownerDocument.context.packages[file] = options or {}
                 for tok in self:
                     if tok is flag:
                         break
@@ -216,7 +216,7 @@ class TeX(object):
             if msg:
                 msg = ' ( %s )' % str(msg)
             # Failed to load LaTeX style file
-            log.warning('Error opening package "%s"%s', myfile, msg)
+            log.warning('Error opening package "%s"%s', file, msg)
             status.info(' ) ')
             return False
 
