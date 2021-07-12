@@ -28,6 +28,12 @@ def defaultConfig(loadConfigFiles: bool=False):
         default = 'default',
     )
 
+    general['extra-templates'] = MultiStringOption(
+        """ Extra templates files to use """,
+        options='--extra-templates',
+        default=[],
+    )
+
     general['copy-theme-extras'] = BooleanOption(
         """  Copy files associated with the theme to the output directory """,
         options = '--copy-theme-extras !--no-theme-extras',

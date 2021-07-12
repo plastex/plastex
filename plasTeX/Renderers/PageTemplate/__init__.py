@@ -343,12 +343,20 @@ class PageTemplate(BaseRenderer):
             # Store theme location
             themes.append(os.path.join(cwd, 'Themes', themename))
 
+
             # Load templates configured by the environment variable
             templates = os.environ.get('%sTEMPLATES' % cls.__name__,'')
             for path in [x.strip() for x in templates.split(os.pathsep) if x.strip()]:
                 log.info('Importing templates from %s' % path)
                 self.importDirectory(path)
                 themes.append(os.path.join(path, 'Themes', themename))
+
+        # Load templates configured by the extra-templates option
+        for path in document.config['general']['extra-templates']:
+            full_path = os.path.join(document.userdata['working-dir'], path)
+            log.info('Importing templates from %s' % full_path)
+            self.importDirectory(full_path)
+            themes.append(os.path.join(path, 'Themes', themename))
 
         # Load only one theme
         for theme in reversed(themes):
