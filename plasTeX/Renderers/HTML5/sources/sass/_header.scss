@@ -21,7 +21,7 @@ h1#doc_title {
   margin: auto;
 }
 
-#doc_title a, a:visited {
+#doc_title a, #doc_title a:visited {
   text-decoration: none;
   color: $doc-title-color;
 }
