@@ -18,7 +18,10 @@ class CleverRef(ref):
         label = self.idref["label"]
 
         if label.nodeName == "thmenv":
-            return label.caption.textContent
+            if isinstance(label.caption, str):
+                return label.caption
+            else:
+                return label.caption.textContent
 
         if isinstance(label, StartSection):
             if label.level >= Node.SECTION_LEVEL:
