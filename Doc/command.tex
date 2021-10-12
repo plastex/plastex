@@ -726,6 +726,16 @@ specifies whether single dollars can be used as math delimiters instead of
 \verb+\(+ and \verb+\)+. This information is used by MathJax.
 \end{configuration}
 
+\begin{configuration}{MathJax macros}
+  \options{\longprogramopt{mj-macros \optval{name value}}}
+\config{mathjax-macros}{macros}
+\default{\{\}}
+specifies a dictionary of macros for MathJax.
+This can be used for common macros that are not implemented by MathJax, for instance
+\macro{qedhere}. On the command line, the option can be provided several times
+to define several macros. But this option is much more convenient to specify in a config file in
+a \verb!mathjax-macros! section containing one line \verb!name=value! per macro.
+\end{configuration}
 
 \begin{configuration}{Filters applied on output}
   \options{\longprogramopt{filters \optval{filter1 filter2 \ldots}}}

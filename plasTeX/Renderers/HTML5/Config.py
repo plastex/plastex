@@ -1,6 +1,16 @@
 from plasTeX.ConfigManager import *
 from plasTeX.DOM import Node
 
+class MacrosOption(DictOption[str]):
+    @classmethod
+    def entryFromString(cls, entry: str) -> str:
+        return entry
+
+    def registerArgparse(self, group: ArgumentGroup):
+        group.add_argument(*self.options, dest=self.name,
+                           help=self.description, action='append',
+                           nargs=2, metavar=("MACRO", "VALUE"))
+
 def addConfig(config: ConfigManager):
     section = config.addSection('html5', 'Html5 renderer Options')
 
@@ -74,4 +84,10 @@ def addConfig(config: ConfigManager):
         """Comma separated list of commands to invoke on each output page.""",
         options='--filters',
         default=[],
+    )
+    mjsection = config.addSection('mathjax-macros', 'MathJax macros')
+    mjsection['macros'] = MacrosOption(
+        """ Set MathJax macros """,
+        options = '--mj-macros',
+        default = {}
     )

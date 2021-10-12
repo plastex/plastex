@@ -19,11 +19,21 @@
 {% if config.html5['use-mathjax'] %}
 <script type="text/x-mathjax-config">
 {% if config.html5['mathjax-dollars'] %}
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  MathJax.Hub.Config({tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
 {% else %}
-  MathJax.Hub.Config({tex2jax: {inlineMath: [ ['\\(','\\)']]}});
+  MathJax.Hub.Config({tex2jax: {inlineMath: [ ['\\(','\\)']] } }); 
 {% endif %}
 </script>
+{% if config['mathjax-macros']['macros'] %}
+<script>
+  MathJax = { 
+    tex: {
+      macros: { {% for key, val in config['mathjax-macros']['macros'].items() %}
+        {{ key }}: {{ val }},
+        {% endfor %}
+      } } }
+</script>
+{% endif %}
 <script type="text/javascript" id="MathJax-script" async src="{{ config.html5['mathjax-url'] }}">
 </script>
 {% endif %}
@@ -102,12 +112,12 @@
 <nav class=local_toc>
 <ul>
 {% for section in obj.tableofcontents recursive %}
-  <li>	
+  <li>  
   <a href="{{ section.url }}">{{ tocEntry(section) }}</a>
   {% if section.tableofcontents %}
-	<ul>
-		 {{ loop(section.tableofcontents) }}
-	</ul>
+        <ul>
+                 {{ loop(section.tableofcontents) }}
+        </ul>
   {% endif %}
   </li>
 {% endfor %}
