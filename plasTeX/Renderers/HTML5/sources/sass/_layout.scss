@@ -38,9 +38,9 @@ div.content {
 /* Alignment */
 div.centered {
   display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	flex-wrap: wrap;
-	align-items: flex-end;
+	align-items: center;
   justify-content: space-around;
 	min-width: 100%;
 	margin: 0 auto;
