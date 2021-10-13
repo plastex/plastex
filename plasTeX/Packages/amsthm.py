@@ -205,6 +205,10 @@ class qedhere(Command):
     pass
 
 
+class qed(Command):
+    pass
+
+
 class proof(Environment):
     blockType = True
     args ='[caption]'

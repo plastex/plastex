@@ -36,5 +36,5 @@ name: proof
   </div>
 </div>
 
-name: qedhere
+name: qedhere qed
 <span class="qed">□</span>
