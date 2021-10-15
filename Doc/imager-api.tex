@@ -4,25 +4,24 @@
 \declaremodule{standard}{plasTeX.Imagers}
 \modulesynopsis{The \plasTeX\ imaging framework}
 
-The imager framework is used when an output format is incapable of 
-representing part of a \LaTeX\ document natively.  One example of this
-is equations in HTML.  In cases like this you can use an 
+The imager framework is used when an output format is incapable of
+representing part of a \LaTeX\ document natively. One example of this
+TikZ pictures in HTML.  In cases like this you can use an
 \class{Imager} to generate images of the commands and environments
 that cannot be rendered in any other way.
 
 Currently, \plasTeX\ comes with several imager implementations based
 on \program{dvi2bitmap} (\url{http://dvi2bitmap.sourceforge.net/}),
 \program{dvipng} (\url{http://savannah.nongnu.org/projects/dvipng/}),
-and \program{ghostscript} with the PNG driver 
+and \program{ghostscript} with the PNG driver
 (\url{http://www.cs.wisc.edu/~ghost/doc/GPL/index.htm}) called gspdfpng
 and gspspng, as well as one that uses OS X's CoreGraphics library.
-Creating imagers based on other programs is quite simple,
-and more are planned for future releases.
+Creating imagers based on other programs is quite simple.
 
 In addition to imagers that generate bitmap images, it is also possible to
-generate vector images using programs like dvisvg 
-(\url{http://dvisvg.sourceforge.net/}) or 
-dvisvgm (\url{http://dvisvgm.sourceforge.net/}).  
+generate vector images using programs like dvisvg
+(\url{http://dvisvg.sourceforge.net/}) or
+dvisvgm (\url{http://dvisvgm.sourceforge.net/}).
 
 The \class{Imager} framework does all of its work in temporary directories
 the one requirement that it has is that \class{Imager} subclasses need
@@ -85,21 +84,21 @@ contains a string template that will be used as a placeholder in the output
 document for the image height, width, and depth.  These attributes cannot
 be determined in real-time because images are not generated until after
 the document has been fully rendered.  This template generates a string
-that is put into the output document so that the image attributes can 
+that is put into the output document so that the image attributes can
 be post-processed in.  For example, the default template (which is rather
 XML/HTML biased) is:
 \begin{verbatim}
 &${filename}-${attr};
 \end{verbatim}
-The two variables available are \var{filename}, the filename of the 
+The two variables available are \var{filename}, the filename of the
 image, and \var{attr}, the name of the attr (i.e. width, height, or depth).
 \end{memberdesc}
 
 \begin{memberdesc}[Imager]{imageUnits}
-contains a string template that will be used as a placeholder in the 
+contains a string template that will be used as a placeholder in the
 output document for the image units.  This template generates a string
 that is put into the output document so that the image attribute units
-can be post-processed in.  For example, the default template (which is 
+can be post-processed in.  For example, the default template (which is
 rather XML/HTML biased) is:
 \begin{verbatim}
 &${units);
@@ -153,7 +152,7 @@ into image files. In the default implementation, it tries to convert from
 
 \begin{methoddesc}[Imager]{getImage}{node}
 get an image for \var{node} in any way possible.  The node is first checked
-to see if the \member{imageoverride} attribute is set.  If it is, that 
+to see if the \member{imageoverride} attribute is set.  If it is, that
 image is copied to the image directory.  If \member{imageoverride} is
 not set, or there was a problem in saving the image in the correct format,
 an image is generated using the source of \var{node}.
@@ -166,7 +165,7 @@ invokes the creation of an image using the \LaTeX\ content in \var{text}.
 This generally includes the setting of counters so that counters used
 within the image code are correct.
 
-\var{filename} is an optional filename for the output image.  Generally, 
+\var{filename} is an optional filename for the output image.  Generally,
 image filenames are generated automatically, but they can be overridden
 with this argument.
 \end{methoddesc}
@@ -178,7 +177,7 @@ work, or \var{False} if it will not.
 \end{methoddesc}
 
 \begin{methoddesc}[Imager]{writeImage}{filename, code, context}
-writes the \LaTeX\ code to the generated document that creates the 
+writes the \LaTeX\ code to the generated document that creates the
 image content.
 
 \var{filename} is the final filename of the image.  This is not actually
@@ -192,7 +191,7 @@ within the image code are correct.
 \end{methoddesc}
 
 \begin{methoddesc}[Imager]{writePreamble}{document}
-this method is called when the imager is instantiated and is used to 
+this method is called when the imager is instantiated and is used to
 write any extra information to the preamble.  If overridden, the
 subclass needs to make sure that \var{document.preamble.source} is
 the first thing written to the preamble.
@@ -205,10 +204,10 @@ the first thing written to the preamble.
                          alt, depth, longdesc}}
 Instantiate an \class{Image} object.
 
-Image objects contain information about the generated images.  This 
+Image objects contain information about the generated images.  This
 information includes things such as width, height, filename, absolute
 path, etc.  Images objects also have the ability to crop the image
-that they reference and return information about the baseline of the 
+that they reference and return information about the baseline of the
 image that can be used to properly align the image with surrounding
 text.
 
@@ -225,11 +224,11 @@ from the image file automatically.
 \var{alt} is a text alternative of the image to be use by renderers such
 as HTML.
 
-\var{depth} is the depth of the image below the baseline of the 
+\var{depth} is the depth of the image below the baseline of the
 surrounding text.  This is generally calculated automatically when
 the image is cropped.
 
-\var{longdesc} is a long description used to describe the content of 
+\var{longdesc} is a long description used to describe the content of
 the image for renderers such as HTML.
 \end{classdesc}
 
@@ -242,7 +241,7 @@ the ``images'' section of the document's configuration.
 \end{memberdesc}
 
 \begin{memberdesc}[Image]{depth}
-the depth of the image below the baseline of the 
+the depth of the image below the baseline of the
 surrounding text.  This is generally calculated automatically when
 the image is cropped.
 \end{memberdesc}
@@ -256,7 +255,7 @@ the heigt of the image in pixels.
 \end{memberdesc}
 
 \begin{memberdesc}[Image]{longdesc}
-a long description used to describe the content of 
+a long description used to describe the content of
 the image for renderers such as HTML.
 \end{memberdesc}
 
@@ -274,9 +273,9 @@ the width of the image in pixels.
 
 
 \begin{methoddesc}[Image]{crop}{}
-crops the image so that the image edges are flush with the image 
+crops the image so that the image edges are flush with the image
 content.  It also sets the \member{depth} attribute of the image
 to the number of pixels that the image extends below the baseline
-of the surrounding text. 
+of the surrounding text.
 \end{methoddesc}
 
