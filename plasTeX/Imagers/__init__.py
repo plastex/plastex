@@ -750,7 +750,7 @@ width 2pt\hskip2pt}}{}
         self.source.write('%s\n\\begin{plasTeXimage}{%s}{%s}\n%s\n\\end{plasTeXimage}\n' % (context, filename, scale, code))
 
     def get_scale(self, nodeName: str) -> float:
-        return self.config["images"]["scales"].get(nodeName, 
+        return self.config["images"]["scales"].get(nodeName,
             self.config["images"]["scale-factor"])
 
     def newImage(self, node: Macro, context: str='', filename: Optional[str]=None) -> Image:
@@ -780,13 +780,13 @@ width 2pt\hskip2pt}}{}
 
         # Generate a filename if none has been provided
         filename = filename or self.newFilename()
-        
+
         scale = self.get_scale(node.nodeName) # type: ignore
 
         # Add the image to the current document and cache
         #log.debug('Creating %s from %s', filename, text)
         self.writeImage(filename, text, context, scale)
-        
+
         img = Image(filename, dict(self.config['images']))
 
         # Populate image attrs that will be bound later
@@ -824,7 +824,7 @@ width 2pt\hskip2pt}}{}
         if name is None:
             return self.newImage(node)
 
-        if name in list(self.staticimages.keys()):
+        if name in self.staticimages:
             return self.staticimages[name]
 
         # Copy or convert the image as needed
@@ -843,7 +843,7 @@ width 2pt\hskip2pt}}{}
                 if PILImage is None:
                     shutil.copyfile(name, path)
                     tmpl = string.Template(self.imageAttrs)
-                    width = DimensionPlaceholder(tmpl.substitute({'filename':path, 'attr':'width'})) 
+                    width = DimensionPlaceholder(tmpl.substitute({'filename':path, 'attr':'width'}))
                     height = DimensionPlaceholder(tmpl.substitute({'filename':path, 'attr':'height'}))
                     height.imageUnits = width.imageUnits = self.imageUnits
                 else:
