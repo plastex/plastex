@@ -16,8 +16,9 @@ div.wrapper {
 }
 
 div.content-wrapper {
-  margin-left: auto;
-  margin-right: auto;
+  @media (min-width: $toc-break)
+  { margin-left: auto;
+    margin-right: auto; };
   max-width: 75ch;
 }
 
