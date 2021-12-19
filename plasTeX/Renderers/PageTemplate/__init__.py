@@ -28,6 +28,11 @@ except ImportError:
 else:
     @contextfunction
     def debug(context):
+        obj = context["obj"]
+        config = context["config"]
+        print("\n\nWill now start a debugger in the context of the following template:\n")
+        print(context['tpl_src'])
+        print("\nYou can inspect obj and config.\n")
         pdb.set_trace()
 
     def jinja2template(s, encoding='utf8'):
@@ -40,7 +45,8 @@ else:
                      'container':obj.parentNode,
                      'config':obj.ownerDocument.config,
                      'context':obj.ownerDocument.context,
-                     'templates':obj.renderer}
+                     'templates':obj.renderer,
+                     'tpl_src': s}
 
             tpl = env.from_string(s)
             try:
