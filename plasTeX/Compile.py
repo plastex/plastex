@@ -2,8 +2,9 @@ import os, sys, string, glob
 import importlib
 import importlib.util
 from types import ModuleType
-import plasTeX
 from pathlib import Path
+import pdb
+import plasTeX
 from plasTeX.TeX import TeX
 from plasTeX.ConfigManager import *
 from plasTeX.Logging import getLogger, updateLogLevels
@@ -51,7 +52,7 @@ def load_renderer(rname: str, config: ConfigManager) -> Renderer:
         raise ImportError('Could not import renderer "%s".  Make sure that it is installed correctly, and can be imported by Python.' % rname)
 
 
-def run(filename: str, config: ConfigManager):
+def parse(filename: str, config: ConfigManager) -> TeX:
     updateLogLevels(config['logging']['logging'])
 
     # Create document instance that output will be put into
@@ -82,11 +83,26 @@ def run(filename: str, config: ConfigManager):
 
     # Parse the document
     tex.parse()
+    return tex
+
+def run(filename: str, config: ConfigManager):
+    rname = config['general']['renderer']
+    tex = parse(filename, config)
+    document = tex.ownerDocument
+    cwd = document.userdata['working-dir'] = os.getcwd()
+    jobname = document.userdata['jobname'] = tex.jobname
 
     # Set up TEXINPUTS to include the current directory for the renderer
     os.environ['TEXINPUTS'] = '%s%s%s%s' % (os.getcwd(), os.pathsep,
                                          os.environ.get('TEXINPUTS',''), os.pathsep)
 
+    if config['general']['debug']:
+        print("\n\nWill now start the python debugger. Please inspect the "
+              "document variable.\n"
+              "Useful methods include \n* print(document.toXml())\n"
+              "* document.childNodes\n* document.getElementsByTagName\n"
+              "If needed, you should install ipdb to replace pdb.")
+        pdb.set_trace()
     renderer = load_renderer(rname, config)
 
     # Change to specified directory to output to

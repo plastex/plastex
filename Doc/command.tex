@@ -158,6 +158,19 @@ specifies a list of directories where extra templates
 should be searched. Paths are relative to the current directory.
 \end{configuration}
 
+\begin{configuration}{Dump XML output}
+\options{\longprogramopt{xml}}
+\config{general}{xml}
+\default{False}
+dumps a XML representation of the document (for debugging).
+\end{configuration}
+
+\begin{configuration}{Debug parsing}
+\options{\longprogramopt{debug}}
+\config{general}{debug}
+\default{False}
+parses the document and drops into a debugger.
+\end{configuration}
 
 \subsection{Document Properties\label{sec:config-document}}
 

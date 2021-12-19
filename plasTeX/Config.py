@@ -52,6 +52,12 @@ def defaultConfig(loadConfigFiles: bool=False):
         default = False,
     )
 
+    general['debug'] = BooleanOption(
+        """ Parse the document and drop into a debugger.""",
+        options = '--debug',
+        default = False,
+    )
+
     general['paux-dirs'] = MultiStringOption(
         """Directories where *.paux files should be loaded from.""",
         options = '--paux-dirs',
