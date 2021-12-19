@@ -10,12 +10,12 @@ name:lstinputlisting lstlisting
 {% if obj.html_listing  %}
 {{ obj.html_listing  }}
 {% else %}
-<pre>{{ obj.plain_listing }}</pre>
+<code class="plain_listing">{{ obj.plain_listing }}</code>
 {% endif %}
 
 name: lstinline
 {% if obj.html_listing  %}
-{{ obj.html_listing  }}
-{% else %}
-<pre>{{ obj.plain_listing }}</pre>
-{% endif %}
+<code class="lstlinline">{{ obj.html_listing  }}</code>
+{%- else -%}
+<code class="plain_lstlinline">{{ obj.plain_listing }}</code>
+{%- endif -%}

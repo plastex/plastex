@@ -9,6 +9,7 @@ from plasTeX.PackageResource import PackagePreCleanupCB, PackageCss
 try:
     import pygments
     from pygments import lexers
+    from pygments.lexers.special import TextLexer
     from pygments.formatters import HtmlFormatter
 except:
     pygments = None
@@ -226,13 +227,13 @@ def _format(self, file, wrap: bool, language:Optional[str] = None) -> None:
             else:
                 self.plain_listing += '\n' + line
 
-
+    self.plain_listing = self.plain_listing.strip()
     # Create a syntax highlighted XHTML version of the file using Pygments
     if pygments is not None:
         ctx = doc.context
         try:
             lexer = lexers.get_lexer_by_name(language or ctx.current_language.lower())
         except Exception as msg:
-            lexer = lexers.TextLexer()
+            lexer = TextLexer()
         self.html_listing = pygments.highlight(self.plain_listing, lexer,
-                HtmlFormatter(linenos=linenos, nowrap=not wrap))
+                HtmlFormatter(linenos=linenos, nowrap=not wrap)).strip()
