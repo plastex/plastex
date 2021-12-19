@@ -54,9 +54,12 @@ provides the command \verb+settrace+ to drop into the python debugger
 while parsing. You can also use
 \verb+\usepackage[post_parse_trace]{debugplastex}+ to ask \plasTeX
 to drop into the python debugger after parsing the full LaTeX input.
+You can also use the \verb+--debug+ command line option for a similar result
+without changing the source file.
 
 When using Jinja2 templates with a renderer extending
 \verb+PageTemplate+, you can also use \verb+{{ debug() }}+ in a template in
 order to drop into the python debugger while rendering the template. In
-particular this allows to inspect \verb+context['obj']+ which contains
-the node being rendered.
+particular this allows to inspect \verb+obj+ which contains
+the node being rendered and \verb+config+ which contains the current
+plasTeX configuration.
