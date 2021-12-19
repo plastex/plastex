@@ -357,18 +357,19 @@ class PageTemplate(BaseRenderer):
                 self.importDirectory(path)
                 themes.append(os.path.join(path, 'Themes', themename))
 
+        working_dir = document.userdata.get('working-dir', '')
         # Load templates configured by the extra-templates option
         for path in document.config['general']['extra-templates']:
-            full_path = os.path.join(document.userdata['working-dir'], path)
+            full_path = os.path.join(working_dir, path)
             log.info('Importing templates from %s' % full_path)
             self.importDirectory(full_path)
             themes.append(os.path.join(path, 'Themes', themename))
-
         # Load only one theme
         for theme in reversed(themes):
-            if os.path.isdir(theme):
-                log.info('Importing templates from %s' % theme)
-                self.importDirectory(theme)
+            full_path = os.path.join(working_dir, theme)
+            if os.path.isdir(full_path):
+                log.info('Using theme %s' % theme)
+                self.importDirectory(full_path)
                 self.loadedTheme = theme
 
                 extensions = []
@@ -378,7 +379,7 @@ class PageTemplate(BaseRenderer):
                 if document.config['general']['copy-theme-extras']:
                     # Copy all theme extras
                     cwd = os.getcwd()
-                    os.chdir(theme)
+                    os.chdir(full_path)
                     for item in os.listdir('.'):
                         if os.path.isdir(item):
                             if not os.path.isdir(os.path.join(cwd,item)):
