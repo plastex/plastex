@@ -56,7 +56,7 @@ class split(_AMSEquation):
 class EquationStar(_AMSEquationStar):
     macroName = 'equation*'
 
-class aligned(_AMSEquation):
+class aligned(_AMSEquationStar):
     pass
 
 class gathered(MathEnvironmentPre):
