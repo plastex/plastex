@@ -453,6 +453,7 @@ class Context(object):
             for plugin in reversed(config['general']['plugins']):
                 sys.path = orig_sys_path
                 plugin_module = import_module(plugin)
+                assert plugin_module.__file__
                 sys.path.insert(0, str(Path(plugin_module.__file__).parent.parent))
                 try:
                     imported = import_module(plugin + '.Packages.' + module)
@@ -488,6 +489,7 @@ class Context(object):
             status.info(' (loading package %s ' % imported.__file__)
             if hasattr(imported, 'ProcessOptions'):
                 imported.ProcessOptions(options, tex.ownerDocument) # type: ignore
+            assert imported.__file__
             self.importMacros(vars(imported))
             moduleini = os.path.splitext(imported.__file__)[0] + '.ini'
             self.loadINIPackage([packagesini, moduleini])
