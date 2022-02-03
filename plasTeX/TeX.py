@@ -153,7 +153,7 @@ class TeX(object):
         if self.jobname is None:
             if isinstance(source, str):
                 self.jobname = ''
-            elif isinstance(source, IOBase):
+            elif isinstance(source, IOBase) and hasattr(source,'name'):
                 self.jobname = os.path.basename(os.path.splitext(source.name)[0])
 
         t = Tokenizer(source, self.ownerDocument.context)
