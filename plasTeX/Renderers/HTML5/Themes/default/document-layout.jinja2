@@ -84,6 +84,9 @@
   {% endif %}
  </li>
  {% endfor %}
+{% for item in rendererdata.get('extra_toc_items', []) %}
+<li {% if item.url == obj.url %}class="current"{% endif %}><a href="{{ item.url }}">{{ item.text }}</a></li>
+{% endfor %}
 </ul>
 </nav>
 {% endif %}

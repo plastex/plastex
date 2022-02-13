@@ -999,6 +999,11 @@ CSS theme uses the historical \plasTeX{} green and yellow color scheme, with
 gradients and shadows. The \optval{blue} one uses a blue and gray color scheme,
 with gradients and shadows.
 
+When displaying the table of contents navigation panel, the default theme adds
+at the end the elements of the list
+\verb+document.rendererdata['html5']['extra_toc_items']+.
+Each element should be a dictionary with keys \verb+text+ and \verb+url+.
+
 \section{XHTML Renderer}
 
 The XHTML renderer used to be the default renderer of plasTeX but is now
