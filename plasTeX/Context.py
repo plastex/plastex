@@ -429,7 +429,8 @@ class Context(object):
             pypath = (path/module).with_suffix('.py')
             if not pypath.exists():
                 continue
-            sys.path.insert(0, str(path))
+            if str(path) not in sys.path:
+                sys.path.insert(0, str(path))
             spec = find_spec(module)
             if spec is None:
                 sys.path = orig_sys_path
@@ -454,7 +455,9 @@ class Context(object):
                 sys.path = orig_sys_path
                 plugin_module = import_module(plugin)
                 assert plugin_module.__file__
-                sys.path.insert(0, str(Path(plugin_module.__file__).parent.parent))
+                p_ = str(Path(plugin_module.__file__).parent.parent)
+                if p_ not in sys.path:
+                    sys.path.insert(0, p_)
                 try:
                     imported = import_module(plugin + '.Packages.' + module)
                     break
@@ -470,7 +473,9 @@ class Context(object):
 
         if imported is None:
             # Now try builtin plasTeX packages
-            sys.path.insert(0, str(Path(__file__).parent.parent))
+            p_ = str(Path(__file__).parent.parent)
+            if p_ not in sys.path:
+                sys.path.insert(0, p_)
             try:
                 imported = import_module('plasTeX.Packages.' + module)
             except (ImportError, ModuleNotFoundError) as msg:
