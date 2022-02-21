@@ -1321,7 +1321,7 @@ class TeX(object):
 
         return dictarg
 
-    def kpsewhich(self, name):
+    def kpsewhich(self, name, shortcircuit=True):
         """
         Locate the given file using kpsewhich
 
@@ -1340,6 +1340,12 @@ class TeX(object):
         
         srcDir = None if self.main_input_file is None else  os.path.dirname(self.main_input_file)
 
+        if shortcircuit and srcDir is not None:
+            n = name if os.path.isabs(name) else os.path.join(srcDir,name)
+            for j in (n, n+'.tex', n+'.sty'):
+                if os.path.isfile(j):
+                    return j
+            
         if srcDir is not None:
             TEXINPUTS = os.environ.get("TEXINPUTS",'')
             os.environ["TEXINPUTS"] = "%s%s%s%s" % (srcDir, os.path.pathsep, TEXINPUTS, os.path.pathsep)
