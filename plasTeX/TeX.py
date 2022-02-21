@@ -1335,13 +1335,12 @@ class TeX(object):
         # When, for example, ``\Input{name}`` is encountered, we should look in
         # the directory containing the file being processed. So the following
         # code adds the directory to the start of $TEXINPUTS.
-        TEXINPUTS = None
-        try:
-            srcDir = os.path.dirname(self.filename)
-        except AttributeError:
-            # I think this happens only for the command line file.
-            pass
-        else:
+        #
+        TEXINPUTS = srcDir = None
+        
+        srcDir = None if self.main_input_file is None else  os.path.dirname(self.main_input_file)
+
+        if srcDir is not None:
             TEXINPUTS = os.environ.get("TEXINPUTS",'')
             os.environ["TEXINPUTS"] = "%s%s%s%s" % (srcDir, os.path.pathsep, TEXINPUTS, os.path.pathsep)
 
