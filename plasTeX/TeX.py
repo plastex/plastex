@@ -251,7 +251,7 @@ class TeX(object):
         disableLogging()
 
     def fileLogging(self):
-        fname = '%s/%s.log' % (os.path.dirname(self.filename), self.jobname)
+        fname = os.path.join(os.path.dirname(self.filename), self.jobname or 'null') + '.log'
         fileLogging(fname)
 
     def itertokens(self):
