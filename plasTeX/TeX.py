@@ -122,6 +122,9 @@ class TeX(object):
                 or encoding is utf-8, make encoding utf_8_sig.
                 otherwise, use the specified encoding.
                 '''
+
+                self.main_input_file = file
+                
                 try:
                     encoding = self.ownerDocument.config['files'].get('input-encoding', 'utf_8_sig')
                 except (KeyError, AttributeError):
@@ -137,7 +140,10 @@ class TeX(object):
             # File object
             else:
                 self.input(file)
+                self.main_input_file = file.name
                 self.jobname = os.path.basename(os.path.splitext(file.name)[0])
+        else:
+            self.main_input_file = None
 
     def input(self, source):
         """
@@ -155,6 +161,9 @@ class TeX(object):
                 self.jobname = ''
             elif isinstance(source, IOBase) and hasattr(source,'name'):
                 self.jobname = os.path.basename(os.path.splitext(source.name)[0])
+
+        if self.main_input_file is None and isinstance(source, IOBase) and hasattr(source,'name'):
+            self.main_input_file = source.name
 
         t = Tokenizer(source, self.ownerDocument.context)
         self.inputs.append((t, iter(t)))
