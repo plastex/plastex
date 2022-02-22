@@ -37,6 +37,10 @@ class ThinSpace_(Command):
 class MathEnvironment(NoCharSubEnvironment):
     mathMode = True
 
+    @property
+    def mathjax_source(self):
+        return mathjax_lt_gt(self.source)
+
 class MathEnvironmentPre(MathEnvironment):
     """
     A math environment whose source property keeps the begin and end markup.
@@ -76,10 +80,6 @@ class displaymath(MathEnvironment):
         if self.macroMode == Command.MODE_END:
             return r'\]'
         return r'\['
-
-    @property
-    def mathjax_source(self):
-        return mathjax_lt_gt(self.source)
 
 class BeginDisplayMath(Command):
     macroName = '['
@@ -126,7 +126,7 @@ class equation(MathEnvironment):
     blockType = True
     counter = 'equation'
 
-class EqnarrayStar(Array, NoCharSubEnvironment):
+class EqnarrayStar(Array, MathEnvironmentPre, NoCharSubEnvironment):
     macroName = 'eqnarray*' # type: Optional[str]
     blockType = True
     mathMode = True
