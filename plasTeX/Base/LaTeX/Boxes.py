@@ -54,7 +54,7 @@ class parbox(Command):
     args = '[ pos:str ] width:dimen self'
 
 class minipage(Environment):
-    args = '[ pos:str ] width:dimen'
+    args = '[ pos:str ] [ height:dimen ] [ innerpos:str ] width:dimen'
 
 class rule(Command):
     args = '[ raise:dimen ] width:dimen height:dimen'
