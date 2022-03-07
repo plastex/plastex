@@ -77,7 +77,7 @@ class TextRenderer(BaseRenderer):
             block = self.blocks[int(m.group(2))]
             block = space + block.replace('\n', u'\n%s' % space)
 
-            s = block_re.sub('%s%s' % (before, block), s, 1)
+            s = s[:m.start()] + before + block + s[m.end():]
 
         # Clean up newlines
         return re.sub(r'\s*\n\s*\n(\s*\n)+', r'\n\n\n', s)
