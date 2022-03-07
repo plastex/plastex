@@ -24,11 +24,11 @@ class NegativeThinSpace(Command):
 
 class MediumSpace(Command):
     macroName = ':'
-    str = '\u8196'
+    str = '\u205f'
 
 class ThickSpace(Command):
     macroName = ';'
-    str = '\u8194'
+    str = '\u2005'
 
 class ThinSpace_(Command):
     macroName = '/'
