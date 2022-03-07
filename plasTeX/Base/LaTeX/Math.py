@@ -121,6 +121,16 @@ class EndMath(Command):
 
 class ensuremath(Command):
     args = 'self'
+    mathMode = True
+    @property
+    def source(self):
+        return sourceChildren(self)
+
+    @property
+    def mathjax_source(self):
+        if self.hasChildNodes():
+            return mathjax_lt_gt(sourceChildren(self))
+        return ""
 
 class equation(MathEnvironment):
     blockType = True
