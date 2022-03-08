@@ -701,12 +701,13 @@ class Color:
                 return rgbColor(r,g,b)
             elif model == ColorModel.wave:
                 return waveColor(spec[0])
+            raise ColorError('Unable to create requested ColorModel "{}"'.format(model))
         else:
             if spec in named:
                 return named[spec]
             else:
-                raise ColorError('Named color not found in color database.') 
-        raise ColorError('Unable to create requested ColorModel')
+                raise ColorError('Named color "{}" not found in color database.'.format(spec))
+
 
     def as_model(self, model: ColorModel) -> 'Color':
         """Return this color in the specified color model.
