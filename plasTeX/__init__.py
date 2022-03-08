@@ -1105,7 +1105,7 @@ def expandDef(definition, params):
                 if t.catcode == Token.CC_PARAMETER:
                     output.append(t)
                 else:
-                    if params[int(t)] is not None:
+                    if int(t) < len(params) and params[int(t)] is not None:
                         # This is a pretty bad hack, but `ifx' commands
                         # need an argument to also be a token.  So we
                         # wrap them in a group here and let the
