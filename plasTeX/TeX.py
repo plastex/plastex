@@ -1100,7 +1100,7 @@ class TeX(object):
 
     def castDimen(self, tokens, **kwargs):
         """
-        Jain the tokens into a string and convert the result into a `dimen`
+        Join the tokens into a string and convert the result into a `dimen`
 
         Required Arguments:
         tokens -- list of tokens to cast
@@ -1119,7 +1119,7 @@ class TeX(object):
 
     def castMuDimen(self, tokens, **kwargs):
         """
-        Jain the tokens into a string and convert the result into a `MuDimen`
+        Join the tokens into a string and convert the result into a `MuDimen`
 
         Required Arguments:
         tokens -- list of tokens to cast
@@ -1138,7 +1138,7 @@ class TeX(object):
 
     def castGlue(self, tokens, **kwargs):
         """
-        Jain the tokens into a string and convert the result into a `Glue`
+        Join the tokens into a string and convert the result into a `Glue`
 
         Required Arguments:
         tokens -- list of tokens to cast
@@ -1157,7 +1157,7 @@ class TeX(object):
 
     def castMuGlue(self, tokens, **kwargs):
         """
-        Jain the tokens into a string and convert the result into a `MuGlue`
+        Join the tokens into a string and convert the result into a `MuGlue`
 
         Required Arguments:
         tokens -- list of tokens to cast
