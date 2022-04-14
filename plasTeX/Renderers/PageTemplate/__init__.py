@@ -18,7 +18,7 @@ log = plasTeX.Logging.getLogger()
 
 # Support for Jinja2 templates
 try:
-    from jinja2 import Environment, contextfunction
+    from jinja2 import Environment
     import jinja2.exceptions
 except ImportError:
     def jinja2template(s, encoding='utf8'):
@@ -26,7 +26,13 @@ except ImportError:
             return s
         return renderjinja2
 else:
-    @contextfunction
+    try:
+        from jinja2 import pass_context
+    except ImportError:
+        from jinja2 import contextfunction as pass_context
+
+    import jinja2.exceptions
+    @pass_context
     def debug(context):
         obj = context["obj"]
         config = context["config"]
