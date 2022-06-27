@@ -29,7 +29,7 @@ else:
     try:
         from jinja2 import pass_context
     except ImportError:
-        from jinja2 import contextfunction as pass_context
+        from jinja2 import contextfunction as pass_context  # type: ignore
 
     import jinja2.exceptions
     @pass_context
