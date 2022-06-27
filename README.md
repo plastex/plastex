@@ -7,7 +7,7 @@ http://plastex.github.io/plastex/
 
 ## Testing
 To run the tests locally, run tox.
-This will run tests locally using python 3.6 to 3.9.
+This will run tests locally using python 3.6 to 3.10.
 
 ## Status
 [![Build Status](https://github.com/plastex/plastex/workflows/tests/badge.svg)](https://github.com/plastex/plastex/actions)
