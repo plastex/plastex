@@ -302,6 +302,8 @@ class Tokenizer(object):
 
         """
         self._charBuffer.insert(0, char)
+        if char == '\n':
+            self.lineNumber -= 1
 
     def pushToken(self, token):
         """
