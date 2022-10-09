@@ -36,7 +36,7 @@ jobs:
         run: mypy --install-types --non-interactive plasTeX unittests
 
       - name: Upload Coveralls
-        run: coveralls
+        run: coveralls --service=github
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COVERALLS_FLAG_NAME: ${{ matrix.python-version }}
