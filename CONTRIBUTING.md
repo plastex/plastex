@@ -1,5 +1,29 @@
 # Contributing to plasTeX
 
+## A bit of history
+
+plasTeX is a *very* old Python project. The first public release was in 2001,
+under the name pyLaTeX. But the code base started before that, using Python
+1.5, probably around 1999. This was two years before PEP8 was written and
+*long* before many features of modern python were introduced in the language. 
+Although it now runs on present day versions of Python, the code style is very
+far from modern in most places. Modernizing it would be a huge undertaking and
+nobody ever talked about having time for it. Contributions are welcome (but see
+the warning about tests below).
+
+Kevin Smith is the author of most of the plasTeX codebase. He later received
+help from Tim Arnold. In 2019, maintaince was transferred to Patrick Massot who
+wrote the HTML5 renderer around 2016 but has very little time for this project
+(but still a tiny bit more time than Kevin or Tim).
+
+Because the code base is so old and the current maintainer wrote almost nothing
+of it, it is even more crucial than usual that every proposed modification comes with
+unit tests clearly showing what was failing and how it is fixed.
+
+Since 2020, the maintainer knows he should push a version 3.0 to pypi, but he
+wants to fix a couple of issues first, and time is flying. In the mean time, you can install 
+from source.
+
 ##  Testing
 
 We run our tests using [pytest](https://docs.pytest.org/en/latest/),
