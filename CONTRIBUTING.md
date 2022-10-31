@@ -24,7 +24,7 @@ Since 2020, the maintainer knows he should push a version 3.0 to pypi, but he
 wants to fix a couple of issues first, and time is flying. In the mean time, you can install 
 from source.
 
-##  Testing
+## Testing
 
 We run our tests using [pytest](https://docs.pytest.org/en/latest/),
 although many of our tests were written long before pytest was written. 
