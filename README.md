@@ -4,6 +4,8 @@ plasTeX is a LaTeX compiler written in Python.
 Read more at the github page for the plasTeX project:
 http://plastex.github.io/plastex/
 
+## Installation
+plasTeX can be installed like any Python package, e.g. using `pip`. The version on PyPi is currently three years old, so you may want to install from source: clone the repository and run `pip install .` in its top-level folder. The [contribution guidelines](CONTRIBUTING.md) have more nuance on this.
 
 ## Testing
 To run the tests locally, run `tox`.
