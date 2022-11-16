@@ -1,6 +1,6 @@
 
 Installation of plasTeX is very simple.  It installs just like any other
-Python package.  Simply run the following command.  Python 3.5+ is required.
+Python package.  Simply run the following command.  Python 3.1+ is required.
 
     pip install .
 
