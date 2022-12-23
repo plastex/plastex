@@ -32,7 +32,7 @@ class GSPDFPNG(_Imager):
                 img = plasTeX.Imagers.autoCrop(PILImage.open(filename),
                                                margin=3)[0]
                 width, height = [int(float(x)/scaledown) for x in img.size]
-                img = img.resize((width, height), PILImage.ANTIALIAS)
+                img = img.resize((width, height), PILImage.Resampling.LANCZOS)
                 img = img.point(self.toWhite)
                 img.save(filename)
 
