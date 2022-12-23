@@ -27,12 +27,16 @@ class GSPDFPNG(_Imager):
         if plasTeX.Imagers.PILImage is not None:
             PILImage = plasTeX.Imagers.PILImage
             scaledown = 2.2
+            if 'Resampling' in dir(PILImage):
+                resampling = PILImage.Resampling.LANCZOS
+            else:
+                resampling = PILImage.ANTIALIAS
             for filename in glob.glob('img*.png'):
                 status.info('[%s]' % filename,)
                 img = plasTeX.Imagers.autoCrop(PILImage.open(filename),
                                                margin=3)[0]
                 width, height = [int(float(x)/scaledown) for x in img.size]
-                img = img.resize((width, height), PILImage.Resampling.LANCZOS)
+                img = img.resize((width, height), resampling)
                 img = img.point(self.toWhite)
                 img.save(filename)
 
