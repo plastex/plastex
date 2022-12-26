@@ -70,6 +70,6 @@ def info(type, value, tb):
 
 #main(sys.argv)
 try:
-    main(sys.argv)
+    main(sys.argv[1:])
 except KeyboardInterrupt:
     pass
