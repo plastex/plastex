@@ -41,7 +41,7 @@ def main(argv):
 
     parser.add_argument("file", help="File to process")
 
-    data = parser.parse_args()
+    data = parser.parse_args(argv)
     data = vars(data)
     if data["config"] is not None:
         config.read(data["config"])
