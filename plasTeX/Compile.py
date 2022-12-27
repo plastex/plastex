@@ -99,7 +99,7 @@ def run(filename: str, config: ConfigManager):
     if config['general']['debug']:
         print("\n\nWill now start the python debugger. Please inspect the "
               "document variable.\n"
-              "Useful methods include \n* print(document.toXml())\n"
+              "Useful methods include \n* print(document.toXML())\n"
               "* document.childNodes\n* document.getElementsByTagName\n"
               "If needed, you should install ipdb to replace pdb.")
         pdb.set_trace()
