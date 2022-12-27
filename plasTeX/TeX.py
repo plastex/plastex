@@ -122,6 +122,9 @@ class TeX(object):
                 or encoding is utf-8, make encoding utf_8_sig.
                 otherwise, use the specified encoding.
                 '''
+
+                self.main_input_file = file
+                
                 try:
                     encoding = self.ownerDocument.config['files'].get('input-encoding', 'utf_8_sig')
                 except (KeyError, AttributeError):
@@ -137,7 +140,10 @@ class TeX(object):
             # File object
             else:
                 self.input(file)
+                self.main_input_file = file.name
                 self.jobname = os.path.basename(os.path.splitext(file.name)[0])
+        else:
+            self.main_input_file = None
 
     def input(self, source):
         """
@@ -153,8 +159,11 @@ class TeX(object):
         if self.jobname is None:
             if isinstance(source, str):
                 self.jobname = ''
-            elif isinstance(source, IOBase):
+            elif isinstance(source, IOBase) and hasattr(source,'name'):
                 self.jobname = os.path.basename(os.path.splitext(source.name)[0])
+
+        if self.main_input_file is None and isinstance(source, IOBase) and hasattr(source,'name'):
+            self.main_input_file = source.name
 
         t = Tokenizer(source, self.ownerDocument.context)
         self.inputs.append((t, iter(t)))
@@ -242,7 +251,7 @@ class TeX(object):
         disableLogging()
 
     def fileLogging(self):
-        fname = '%s/%s.log' % (os.path.dirname(self.filename), self.jobname)
+        fname = os.path.join(os.path.dirname(self.filename), self.jobname or 'null') + '.log'
         fileLogging(fname)
 
     def itertokens(self):
@@ -1312,7 +1321,7 @@ class TeX(object):
 
         return dictarg
 
-    def kpsewhich(self, name):
+    def kpsewhich(self, name, shortcircuit=True):
         """
         Locate the given file using kpsewhich
 
@@ -1326,13 +1335,18 @@ class TeX(object):
         # When, for example, ``\Input{name}`` is encountered, we should look in
         # the directory containing the file being processed. So the following
         # code adds the directory to the start of $TEXINPUTS.
-        TEXINPUTS = None
-        try:
-            srcDir = os.path.dirname(self.filename)
-        except AttributeError:
-            # I think this happens only for the command line file.
-            pass
-        else:
+        #
+        TEXINPUTS = srcDir = None
+        
+        srcDir = None if self.main_input_file is None else  os.path.dirname(self.main_input_file)
+
+        if shortcircuit and srcDir is not None:
+            n = name if os.path.isabs(name) else os.path.join(srcDir,name)
+            for j in (n, n+'.tex', n+'.sty'):
+                if os.path.isfile(j):
+                    return j
+            
+        if srcDir is not None:
             TEXINPUTS = os.environ.get("TEXINPUTS",'')
             os.environ["TEXINPUTS"] = "%s%s%s%s" % (srcDir, os.path.pathsep, TEXINPUTS, os.path.pathsep)
 

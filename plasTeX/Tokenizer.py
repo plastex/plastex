@@ -205,6 +205,8 @@ class Tokenizer(object):
         if isinstance(source, str):
             source = StringIO(source)
             self.filename = '<string>'
+        elif isinstance(source, StringIO):
+            self.filename = '<string>'
         elif isinstance(source, bytes):
             source = TextIOWrapper(BytesIO(source), encoding='utf-8')
             self.filename = '<string>'
