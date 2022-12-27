@@ -166,7 +166,7 @@ def fileLogging(fname):
 
     """
     def dotfilter(record):
-        if record.msg.strip() != '.':
+        if not isinstance(record.msg, str) or record.msg.strip() != '.':
             return True
     logfilter = Filter()
     logfilter.filter = dotfilter
