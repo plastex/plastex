@@ -5,7 +5,7 @@ C.7 Mathematical Formulas (p187)
 
 from plasTeX.Base.LaTeX.Arrays import Array
 from plasTeX import Command, Environment, sourceChildren, NoCharSubEnvironment
-from plasTeX import DimenCommand, GlueCommand
+from plasTeX import DimenCommand, GlueCommand, TeXFragment
 from typing import Optional
 
 #
@@ -55,7 +55,7 @@ class MathEnvironmentPre(MathEnvironment):
 
 def mathjax_lt_gt(s: str) -> str:
     """Help mathjax deal with < and >, see http://docs.mathjax.org/en/latest/input/tex/html.html?highlight=lt#html-special-characters."""
-    return s.replace(r'\left<', r'\left\langle ').replace(r'\right>', r'\right\rangle ').replace('<', r'{\lt}').replace('>', r'{\gt}')
+    return s.replace('<', r'{\lt}').replace('>', r'{\gt}')
 
 class math(MathEnvironment):
     @property
@@ -518,11 +518,35 @@ class tanh(MathSymbol): pass
 # C.7.5 Delimiters
 #
 
-class left(Command):
-    args = 'delim'
+class AngleReplacingDelimiter(Command):
+    """
+    Utility classes for delimiter such as `\\big` which
+    needs to replace `<` or `>` as arguments by `\\langle` or
+    `\\rangle`. Note that people should never write this anyway...
+    """
+    args = 'char'
 
-class right(Command):
-    args = 'delim'
+    def invoke(self, tex):
+        Command.invoke(self, tex)
+        print('Yo')
+        if self.attributes['char'].textContent.strip() == '<':
+            newarg = TeXFragment()
+            newarg.ownerDocument = self.ownerDocument
+            newarg.parentNode = self
+            newarg.appendChild(langle())
+            self.attributes['char'] = newarg
+            self.argSource = r'\langle '
+        elif self.attributes['char'].textContent == '>':
+            newarg = TeXFragment()
+            newarg.ownerDocument = self.ownerDocument
+            newarg.parentNode = self
+            newarg.appendChild(rangle())
+            self.attributes['char'] = newarg
+            self.argSource = r'\rangle '
+
+class left(AngleReplacingDelimiter): pass
+
+class right(AngleReplacingDelimiter): pass
 
 # Table 3.10: Delimiters and TeXbook (p359)
 
@@ -554,24 +578,22 @@ class Vert(Delimiter): pass
 class backslash(Delimiter): pass
 class bracevert(Delimiter): pass
 
-class bigl(Delimiter): pass
+class big(AngleReplacingDelimiter): pass
+class bigl(AngleReplacingDelimiter): pass
 class bigm(Delimiter): pass
-class bigr(Delimiter): pass
-class Bigl(Delimiter): pass
+class bigr(AngleReplacingDelimiter): pass
+class Bigl(AngleReplacingDelimiter): pass
 class Bigm(Delimiter): pass
-class Bigr(Delimiter): pass
-class biggl(Delimiter): pass
-class biggr(Delimiter): pass
-class Biggl(Delimiter): pass
-class Biggr(Delimiter): pass
+class Bigr(AngleReplacingDelimiter): pass
+class biggl(AngleReplacingDelimiter): pass
+class biggr(AngleReplacingDelimiter): pass
+class Biggl(AngleReplacingDelimiter): pass
+class Biggr(AngleReplacingDelimiter): pass
 class biggm(Delimiter): pass
 class Biggm(Delimiter): pass
-class Big(Delimiter):
-    args = 'char'
-class bigg(Delimiter):
-    args = 'char'
-class Bigg(Delimiter):
-    args = 'char'
+class Big(AngleReplacingDelimiter): pass
+class bigg(AngleReplacingDelimiter): pass
+class Bigg(AngleReplacingDelimiter): pass
 
 class choose(Command):
     pass
