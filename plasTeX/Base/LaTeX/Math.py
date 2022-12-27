@@ -120,6 +120,11 @@ class EndMath(Command):
         return [o]
 
 class ensuremath(Command):
+    """
+    Stub for ensuremath. This implementation is extremely wrong and (hopefully)
+    emulates the correct behavior only when used with the HTML5 renderer.
+    See the unit tests too.
+    """
     args = 'self'
     mathMode = True
     @property
