@@ -454,6 +454,8 @@ class Renderer(dict):
             if self.imager.verify():
                 log.info('Using the imager "%s".' % name)
                 break
+            else:
+                self.imager = None
 
         # Still no imager? Just use the default.
         if self.imager is None:
