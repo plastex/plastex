@@ -23,7 +23,7 @@ class pdftoppm(_Imager):
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT,
                                 universal_newlines=True)
-        return 'pdftoppm' in proc.communicate()
+        return 'pdftoppm' in str(proc.communicate())
 
     def executeConverter(self, outfile=None):
         """
