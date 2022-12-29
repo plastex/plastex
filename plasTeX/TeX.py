@@ -1362,7 +1362,7 @@ class TeX(object):
         if TEXINPUTS:
             os.environ["TEXINPUTS"] = TEXINPUTS
 
-        raise OSError('Could not find any file named: %s' % name)
+        raise FileNotFoundError('Could not find any file named: %s' % name)
 
 #
 # Parsing helper methods for parsing numbers, spaces, dimens, etc.

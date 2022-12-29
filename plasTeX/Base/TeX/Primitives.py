@@ -426,18 +426,25 @@ class endcsname(Command):
 class input(Command):
     """ \\input """
     args = 'name:str'
+
     def invoke(self, tex):
         a = self.parse(tex)
+        assert a is not None
         try:
             path = tex.kpsewhich(a['name'])
-            status.info(' ( %s ' % path)
-            encoding = self.config['files']['input-encoding']
+        except FileNotFoundError:
+            try:
+                path = tex.kpsewhich(a['name'] + '.tex')
+            except FileNotFoundError:
+                log.warning("File not found: " + a['name'])
+                return []
+        status.info(' ( %s ' % path)
+        encoding = self.config['files']['input-encoding']
+        try:
             tex.input(open(path, encoding=encoding))
-            status.info(' ) ')
-
         except (OSError, IOError) as msg:
             log.warning(msg)
-            status.info(' ) ')
+        status.info(' ) ')
         return []
 
 class endinput(Command):
