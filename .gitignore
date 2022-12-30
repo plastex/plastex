@@ -73,6 +73,14 @@ Doc/plastex.pdf
 Doc/plastex.toc
 Doc/plastex/
 Doc/plastex6.syn
+Doc/plastex.fdb_latexmk
+
+Doc/getting_started/getting_started.aux
+Doc/getting_started/getting_started.out
+Doc/getting_started/getting_started.paux
+Doc/getting_started/getting_started.pdf
+Doc/getting_started/getting_started/
+
 
 # pytest artifacts
 unittests/**/new/*
