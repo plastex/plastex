@@ -1,0 +1,11 @@
+h1 {
+	margin-top: 3rem;
+}
+
+h2 {
+	margin-top: 2rem;
+}
+
+a:visited {
+	color: inherit;
+}
