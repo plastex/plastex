@@ -1,6 +1,7 @@
 import subprocess, shlex
 import os, shutil, re
 from pathlib import Path
+from typing import IO
 from plasTeX.Renderers.PageTemplate import Renderer as _Renderer
 from plasTeX.Renderers.HTML5.Config import addConfig
 from plasTeX.Logging import getLogger
@@ -76,12 +77,22 @@ class HTML5(_Renderer):
         cssBuildDir = os.path.join(buildDir, 'styles')
         for css in config['html5']['extra-css']:
             rendererdata['css'].append(css)
-            shutil.copy(os.path.join(srcDir, css), cssBuildDir)
+            try:
+                shutil.copy(os.path.join(srcDir, css), cssBuildDir)
+            except FileNotFoundError:
+                log.error('File ' + css + ' not found')
+            except IOError as err:
+                log.error(str(err))
 
         jsBuildDir = os.path.join(buildDir, 'js')
         for js in config['html5']['extra-js']:
             rendererdata['js'].append(js)
-            shutil.copy(os.path.join(srcDir, js), jsBuildDir)
+            try:
+                shutil.copy(os.path.join(srcDir, js), jsBuildDir)
+            except FileNotFoundError:
+                log.error('File ' + js + ' not found')
+            except IOError as err:
+                log.error(str(err))
 
     def processFileContent(self, document, s):
         s = _Renderer.processFileContent(self, document, s)
