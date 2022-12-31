@@ -455,6 +455,8 @@ class Context(object):
                 sys.path = orig_sys_path
                 plugin_module = import_module(plugin)
                 assert plugin_module.__file__
+                if not (Path(plugin_module.__file__).parent/'Packages').exists():
+                    continue
                 p_ = str(Path(plugin_module.__file__).parent.parent)
                 if p_ not in sys.path:
                     sys.path.insert(0, p_)
