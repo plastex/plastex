@@ -533,7 +533,7 @@ class Imager(object):
 \newenvironment{plasTeXimage}[2]{%
 \vfil\break\plasTeXregister%
 \thispagestyle{empty}\def\@eqnnum{}\def\tagform@{\@gobble}%
-\write\imager@log{\thepage,#1,#2}%
+\write\imager@log{\arabic{page},#1,#2}%
 \ignorespaces}{}}{}
 ''')
         self.source.write(r'''
