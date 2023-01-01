@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['\\(','\\)']]
+	} }
 </script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>plasTeX 2.1 — A Python Framework for Processing LaTeX Documents: HTML5 Renderer Options</title>
+<title>plasTeX 3.0 — A Python Framework for Processing LaTeX Documents: HTML5 Renderer Options</title>
 <link rel="next" href="sec-document.html" title="The plas Document" />
 <link rel="prev" href="sec-config-images.html" title="Image Options" />
 <link rel="up" href="sect0002.html" title="Command-Line and Configuration Options" />
 <link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/pygments.css" />
 </head>
 
 <body>
 <header>
 <svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
-<h1 id="doc_title"><a href="index.html">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</a></h1>
+<h1 id="doc_title"><a href="index.html">plasTeX 3.0 — A Python Framework for Processing LaTeX Documents</a></h1>
 </header>
 
 <div class="wrapper">
@@ -334,6 +338,22 @@
 
   </ul>
  </li>
+<li class="">
+  <a href="sec-plugins.html"><span class="toc_ref">6.8</span> <span class="toc_entry">Plugins</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sub-templates-plugin.html"><span class="toc_ref">6.8.1</span> <span class="toc_entry">Templates plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-package-plugin.html"><span class="toc_ref">6.8.2</span> <span class="toc_entry">Package plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-renderer-plugin.html"><span class="toc_ref">6.8.3</span> <span class="toc_entry">Renderer plugin</span></a>
+ </li>
+
+  </ul>
+ </li>
 
   </ul>
  </li>
@@ -452,7 +472,12 @@
 </dl> </p>
 <p><dl class="description">
   <dt><b class="bfseries">Use single dollars as math delimiter for MathJax</b></dt>
-  <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--dollars</b> or <b class="bf">--no-dollars</b></span><br /><b class="bfseries">Config File:</b> [ html5 ] mathjax-dollars<br /><b class="bfseries">Default:</b> True<br />specifies whether single dollars are used as math delimiters instead of <code class="verbatim">\(</code> and <code class="verbatim">\)</code>. This information is used by MathJax. </p>
+  <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--dollars</b> or <b class="bf">--no-dollars</b></span><br /><b class="bfseries">Config File:</b> [ html5 ] mathjax-dollars<br /><b class="bfseries">Default:</b> False<br />specifies whether single dollars can be used as math delimiters instead of <code class="verbatim">\(</code> and <code class="verbatim">\)</code>. This information is used by MathJax. </p>
+</dd>
+</dl> </p>
+<p><dl class="description">
+  <dt><b class="bfseries">MathJax macros</b></dt>
+  <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--mj-macros <span class="rmfamily"><i class="itshape">name value</i></span></b></span><br /><b class="bfseries">Config File:</b> [ mathjax-macros ] macros<br /><b class="bfseries">Default:</b> {}<br />specifies a dictionary of macros for MathJax. This can be used for common macros that are not implemented by MathJax, for instance \<span class="ttfamily">qedhere</span>. On the command line, the option can be provided several times to define several macros. But this option is much more convenient to specify in a config file in a <code class="verbatim">mathjax-macros</code> section containing one line <code class="verbatim">name=value</code> per macro. </p>
 </dd>
 </dl> </p>
 <p><dl class="description">
@@ -464,6 +489,7 @@
 </div> <!--main-text -->
 </div> <!-- content-wrapper -->
 </div> <!-- content -->
+</div> <!-- wrapper -->
 
 <nav class="prev_up_next">
   <a href="sec-config-images.html" title="Image Options"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>

@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['\\(','\\)']]
+	} }
 </script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>plasTeX 2.1 — A Python Framework for Processing LaTeX Documents: The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document</title>
+<title>plasTeX 3.0 — A Python Framework for Processing LaTeX Documents: The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document</title>
 <link rel="next" href="sec-sections.html" title="Sections" />
 <link rel="prev" href="sec-config-html5.html" title="HTML5 Renderer Options" />
-<link rel="up" href="index.html" title="plasTeX 2.1 — A Python Framework for Processing LaTeX Documents" />
+<link rel="up" href="index.html" title="plasTeX 3.0 — A Python Framework for Processing LaTeX Documents" />
 <link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/pygments.css" />
 </head>
 
 <body>
 <header>
 <svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
-<h1 id="doc_title"><a href="index.html">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</a></h1>
+<h1 id="doc_title"><a href="index.html">plasTeX 3.0 — A Python Framework for Processing LaTeX Documents</a></h1>
 </header>
 
 <div class="wrapper">
@@ -334,6 +338,22 @@
 
   </ul>
  </li>
+<li class="">
+  <a href="sec-plugins.html"><span class="toc_ref">6.8</span> <span class="toc_entry">Plugins</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sub-templates-plugin.html"><span class="toc_ref">6.8.1</span> <span class="toc_entry">Templates plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-package-plugin.html"><span class="toc_ref">6.8.2</span> <span class="toc_entry">Package plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-renderer-plugin.html"><span class="toc_ref">6.8.3</span> <span class="toc_entry">Renderer plugin</span></a>
+ </li>
+
+  </ul>
+ </li>
 
   </ul>
  </li>
@@ -398,7 +418,7 @@
 
 <div class="main-text">
 <h1 id="sec:document">3 The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Document</h1>
-<p>The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document is very similar to an XML DOM structure. In fact, you can use XML DOM methods to create and populate nodes, delete or move nodes, etc. The biggest difference between the plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document and an XML document is that in XML the attributes of an element are simply string values, whereas attributes in a plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document are generally document fragments that contain the arguments of a macro. Attributes can be canfigured to hold other Python objects like lists, dictionaries, and strings as well (see the section <a href="sec-macros.html">4</a> for more information). </p>
+<p>The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document is very similar to an XML DOM structure. In fact, you can use XML DOM methods to create and populate nodes, delete or move nodes, etc. The biggest difference between the plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document and an XML document is that in XML the attributes of an element are simply string values, whereas attributes in a plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document are generally document fragments that contain the arguments of a macro. Attributes can be configured to hold other Python objects like lists, dictionaries, and strings as well (see the section <a href="sec-macros.html">4</a> for more information). </p>
 <p>While XML document objects have a very strict syntax, L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X documents are a little more free-form. Because of this, the plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X framework does a lot of normalizing of the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document to make it conform to a set of rules. This set of rules means that you will always get a consistent output document which is necessary for easy manipulation and programability. </p>
 <p>The overall document structure should not be surprising. There is a document element at the top level which corresponds to the XML Document node. The child nodes of the Document node begin with the preamble to the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document. This includes things like the \<span class="ttfamily">documentclass</span>, \<span class="ttfamily">newcommand</span>s, \<span class="ttfamily">title</span>, \<span class="ttfamily">author</span>, counter settings, etc. For the most part, these nodes can be ignored. While they are a useful part of the document, they are generally only used by internal processes in plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X. What is important is the last node in the document which corresponds to L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X’s <span class="ttfamily">document</span> environment. </p>
 <p>The <span class="ttfamily">document</span> environment has a very simple structure. It consists solely of paragraphs (actually \<span class="ttfamily">par</span>s in T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X’s terms) and sections<a class="footnote" href="#a0000000053">
@@ -452,11 +472,12 @@ Every \textbf{good} boy does \textit{fine}.
 </footer>
 </div> <!-- content-wrapper -->
 </div> <!-- content -->
+</div> <!-- wrapper -->
 
 <nav class="prev_up_next">
   <a href="sec-config-html5.html" title="HTML5 Renderer Options"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
 </a>
-  <a href="index.html" title="plasTeX 2.1 — A Python Framework for Processing LaTeX Documents"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+  <a href="index.html" title="plasTeX 3.0 — A Python Framework for Processing LaTeX Documents"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
 </a>
   <a href="sec-sections.html" title="Sections"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
 </a>

@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['\\(','\\)']]
+	} }
 </script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>plasTeX 2.1 — A Python Framework for Processing LaTeX Documents: <span class="ttfamily">plasTeX.Imagers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Imaging Framework</title>
+<title>plasTeX 3.0 — A Python Framework for Processing LaTeX Documents: <span class="ttfamily">plasTeX.Imagers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Imaging Framework</title>
 <link rel="next" href="sect0040.html" title="Imager Objects" />
 <link rel="prev" href="sect0039.html" title="Renderable MixIn" />
 <link rel="up" href="sect0022.html" title="plas Frameworks and APIs" />
 <link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/pygments.css" />
 </head>
 
 <body>
 <header>
 <svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
-<h1 id="doc_title"><a href="index.html">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</a></h1>
+<h1 id="doc_title"><a href="index.html">plasTeX 3.0 — A Python Framework for Processing LaTeX Documents</a></h1>
 </header>
 
 <div class="wrapper">
@@ -334,6 +338,22 @@
 
   </ul>
  </li>
+<li class="">
+  <a href="sec-plugins.html"><span class="toc_ref">6.8</span> <span class="toc_entry">Plugins</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sub-templates-plugin.html"><span class="toc_ref">6.8.1</span> <span class="toc_entry">Templates plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-package-plugin.html"><span class="toc_ref">6.8.2</span> <span class="toc_entry">Package plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-renderer-plugin.html"><span class="toc_ref">6.8.3</span> <span class="toc_entry">Renderer plugin</span></a>
+ </li>
+
+  </ul>
+ </li>
 
   </ul>
  </li>
@@ -399,8 +419,8 @@
 <div class="main-text">
 <h1 id="module-plasTeX.Imagers">6.7 <span class="ttfamily">plasTeX.Imagers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Imaging Framework</h1>
 <p>      <a name="a0000000288" id="a0000000288"></a>        </p>
-<p>The imager framework is used when an output format is incapable of representing part of a L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document natively. One example of this is equations in HTML. In cases like this you can use an <span class="ttfamily">Imager</span> to generate images of the commands and environments that cannot be rendered in any other way. </p>
-<p>Currently, plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X comes with several imager implementations based on <b class="bf">dvi2bitmap</b> (<a href="http://dvi2bitmap.sourceforge.net/">http://dvi2bitmap.sourceforge.net/</a>), <b class="bf">dvipng</b> (<a href="http://savannah.nongnu.org/projects/dvipng/">http://savannah.nongnu.org/projects/dvipng/</a>), and <b class="bf">ghostscript</b> with the PNG driver (<a href="http://www.cs.wisc.edu/~ghost/doc/GPL/index.htm">http://www.cs.wisc.edu/~ghost/doc/GPL/index.htm</a>) called gspdfpng and gspspng, as well as one that uses OS X’s CoreGraphics library. Creating imagers based on other programs is quite simple, and more are planned for future releases. </p>
+<p>The imager framework is used when an output format is incapable of representing part of a L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document natively. One example of this TikZ pictures in HTML. In cases like this you can use an <span class="ttfamily">Imager</span> to generate images of the commands and environments that cannot be rendered in any other way. </p>
+<p>Currently, plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X comes with several imager implementations based on <b class="bf">dvi2bitmap</b> (<a href="http://dvi2bitmap.sourceforge.net/">http://dvi2bitmap.sourceforge.net/</a>), <b class="bf">dvipng</b> (<a href="http://savannah.nongnu.org/projects/dvipng/">http://savannah.nongnu.org/projects/dvipng/</a>), and <b class="bf">ghostscript</b> with the PNG driver (<a href="http://www.cs.wisc.edu/~ghost/doc/GPL/index.htm">http://www.cs.wisc.edu/~ghost/doc/GPL/index.htm</a>) called gspdfpng and gspspng, as well as one that uses OS X’s CoreGraphics library. Creating imagers based on other programs is quite simple. </p>
 <p>In addition to imagers that generate bitmap images, it is also possible to generate vector images using programs like dvisvg (<a href="http://dvisvg.sourceforge.net/">http://dvisvg.sourceforge.net/</a>) or dvisvgm (<a href="http://dvisvgm.sourceforge.net/">http://dvisvgm.sourceforge.net/</a>). </p>
 <p>The <span class="ttfamily">Imager</span> framework does all of its work in temporary directories the one requirement that it has is that <span class="ttfamily">Imager</span> subclasses need to generate images with the basenames ‘<span class="sffamily">img%d</span>’ where ‘<span class="sffamily">%d</span>’ is the number of the image. </p>
 <p>The only requirement by the plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X framework is that the imager class within the imager module is called “Imager” and should be installed in the <span class="ttfamily">plasTeX.Imagers</span> package. The basename of the imager module is the name used when plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X looks for a specified imager. </p>
@@ -408,6 +428,7 @@
 </div> <!--main-text -->
 </div> <!-- content-wrapper -->
 </div> <!-- content -->
+</div> <!-- wrapper -->
 
 <nav class="prev_up_next">
   <a href="sect0039.html" title="Renderable MixIn"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>

@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['\\(','\\)']]
+	} }
 </script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>plasTeX 2.1 — A Python Framework for Processing LaTeX Documents: Renderers</title>
+<title>plasTeX 3.0 — A Python Framework for Processing LaTeX Documents: Renderers</title>
 <link rel="next" href="sec-simple-renderer-ex.html" title="Simple Renderer Example" />
 <link rel="prev" href="sec-packages.html" title="Packages" />
-<link rel="up" href="index.html" title="plasTeX 2.1 — A Python Framework for Processing LaTeX Documents" />
+<link rel="up" href="index.html" title="plasTeX 3.0 — A Python Framework for Processing LaTeX Documents" />
 <link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/pygments.css" />
 </head>
 
 <body>
 <header>
 <svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
-<h1 id="doc_title"><a href="index.html">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</a></h1>
+<h1 id="doc_title"><a href="index.html">plasTeX 3.0 — A Python Framework for Processing LaTeX Documents</a></h1>
 </header>
 
 <div class="wrapper">
@@ -334,6 +338,22 @@
 
   </ul>
  </li>
+<li class="">
+  <a href="sec-plugins.html"><span class="toc_ref">6.8</span> <span class="toc_entry">Plugins</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sub-templates-plugin.html"><span class="toc_ref">6.8.1</span> <span class="toc_entry">Templates plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-package-plugin.html"><span class="toc_ref">6.8.2</span> <span class="toc_entry">Package plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-renderer-plugin.html"><span class="toc_ref">6.8.3</span> <span class="toc_entry">Renderer plugin</span></a>
+ </li>
+
+  </ul>
+ </li>
 
   </ul>
  </li>
@@ -409,14 +429,14 @@
 </li>
   <li><p>image generation for portions of the document that cannot be easily rendered in a particular output formate (e.g. TikZ pictures in HTML) </p>
 </li>
-  <li><p>themeing support </p>
+  <li><p>theming support </p>
 </li>
   <li><p>hooks for post-processing of output files </p>
 </li>
   <li><p>configurable output encodings </p>
 </li>
 </ul>
-<p>The API of the renderer itself is very small. In fact, there are only a couple of methods that are of real interest to an end user: <span class="ttfamily">render</span> and <span class="ttfamily">cleanup</span>. The <span class="ttfamily">render</span> method is the method that starts the rendering process. It’s only argument is a plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document object. The <span class="ttfamily">cleanup</span> method is called at the end of the rendering process. It is passed the document object and a list of all of the files that were generated. This method allows you to do post-processing on the output files. In general, this method will probably only be of interest to someone writing a subclass of the <span class="ttfamily">Renderer</span> class, so most users of plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X will only use the <span class="ttfamily">render</span> method. The real work of the rendering process is handled in the <span class="ttfamily">Renderable</span> class which is discussed later in this chapter. </p>
+<p>The API of the renderer itself is very small. In fact, there are only a couple of methods that are of real interest to an end user: <span class="ttfamily">render</span> and <span class="ttfamily">cleanup</span>. The <span class="ttfamily">render</span> method is the method that starts the rendering process. Its only argument is a plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document object. The <span class="ttfamily">cleanup</span> method is called at the end of the rendering process. It is passed the document object and a list of all of the files that were generated. This method allows you to do post-processing on the output files. In general, this method will probably only be of interest to someone writing a subclass of the <span class="ttfamily">Renderer</span> class, so most users of plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X will only use the <span class="ttfamily">render</span> method. The real work of the rendering process is handled in the <span class="ttfamily">Renderable</span> class which is discussed later in this chapter. </p>
 <p>The <span class="ttfamily">Renderer</span> class is a subclass of the Python dictionary. Each key in the renderer corresponds to the name of a node in the document object. The value stored under each key is a function. As each node in the document object is traversed, the renderer is queried to see if there is a key that matches the name of the node. If a key is found, the value at that key (which must be a function) is called with the node as its only argument. The return value from this call must be a string object that contains the rendered output. Based on the configuration, the renderer will handle all of the file generation and encoding issues. </p>
 <p>If a node is traversed that doesn’t correspond to a key in the renderer dictionary, the default rendering method is called. The default rendering method is stored in the <span class="ttfamily">default</span> attribute. One exception to this rule is for text nodes. The default rendering method for text nodes is actually stored in <span class="ttfamily">textDefault</span>. Again, these attributes simply need to reference any Python function that returns a string object of the rendered output. The default method in both of these attributes is the <span class="ttfamily">str</span> built-in function. </p>
 <p>As mention previously, most of the work of the renderer is actually done by the <span class="ttfamily">Renderable</span> class. This is a mixin class<a class="footnote" href="#a0000000076">
@@ -431,11 +451,12 @@
 </footer>
 </div> <!-- content-wrapper -->
 </div> <!-- content -->
+</div> <!-- wrapper -->
 
 <nav class="prev_up_next">
   <a href="sec-packages.html" title="Packages"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
 </a>
-  <a href="index.html" title="plasTeX 2.1 — A Python Framework for Processing LaTeX Documents"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+  <a href="index.html" title="plasTeX 3.0 — A Python Framework for Processing LaTeX Documents"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
 </a>
   <a href="sec-simple-renderer-ex.html" title="Simple Renderer Example"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
 </a>

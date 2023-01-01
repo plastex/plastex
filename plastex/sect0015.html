@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['\\(','\\)']]
+	} }
 </script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>plasTeX 2.1 — A Python Framework for Processing LaTeX Documents: Defining and Using Templates</title>
+<title>plasTeX 3.0 — A Python Framework for Processing LaTeX Documents: Defining and Using Templates</title>
 <link rel="next" href="sect0016.html" title="Defining and Using Themes" />
 <link rel="prev" href="sec-pt.html" title="Page Template Renderer" />
 <link rel="up" href="sec-pt.html" title="Page Template Renderer" />
 <link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/pygments.css" />
 </head>
 
 <body>
 <header>
 <svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
-<h1 id="doc_title"><a href="index.html">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</a></h1>
+<h1 id="doc_title"><a href="index.html">plasTeX 3.0 — A Python Framework for Processing LaTeX Documents</a></h1>
 </header>
 
 <div class="wrapper">
@@ -330,6 +334,22 @@
  </li>
 <li class="">
   <a href="sect0041.html"><span class="toc_ref">6.7.2</span> <span class="toc_entry">Image Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-plugins.html"><span class="toc_ref">6.8</span> <span class="toc_entry">Plugins</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sub-templates-plugin.html"><span class="toc_ref">6.8.1</span> <span class="toc_entry">Templates plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-package-plugin.html"><span class="toc_ref">6.8.2</span> <span class="toc_entry">Package plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-renderer-plugin.html"><span class="toc_ref">6.8.3</span> <span class="toc_entry">Renderer plugin</span></a>
  </li>
 
   </ul>
@@ -940,13 +960,14 @@ engine: genshi
 <p>You’ll notice that Kid and Genshi templates require some extra processing of the variables in order to get the proper markup. By default, these templates escape characters like &lt;, &gt;, and &amp;. In order to get HTML/XML markup from the variables you must wrap them in the code shown in the example above. Hopefully, this limitation will be removed in the future. </p>
 <p>When using Jinja2 templates, the default configuration trims white spaces before and after template tags (see trim_blocks and lstrip_blocks in Jinja2’s documentation). Also, when developing Jinja2 templates, inserting <code class="verbatim">{{ debug() }}</code> will launch a python debugger session to allow inspection of the <span class="rmfamily"><i class="itshape">context </i></span> variable during rendering. </p>
 <h3 id="sec:tmploverrides">Template Overrides</h3>
-<p>It is possible to override the templates located in a renderer’s directory with templates defined elsewhere. This is done using the <span class="ttfamily">*TEMPLATES</span> environment variable. The “*” in the name <span class="ttfamily">*TEMPLATES</span> is a wildcard and must be replaced by the name of the renderer. For example, if you are using the HTML5 renderer, the environment variable would be <span class="ttfamily">HTML5TEMPLATES</span>. For the PageTemplate renderer, the environment variable would be <span class="ttfamily">PAGETEMPLATETEMPLATES</span>. </p>
+<p>It is possible to override the templates located in a renderer’s directory with templates defined elsewhere. This can be done using the <code class="verbatim">--extra-templates</code> option or using the <span class="ttfamily">*TEMPLATES</span> environment variable. The “*” in the name <span class="ttfamily">*TEMPLATES</span> is a wildcard and must be replaced by the name of the renderer. For example, if you are using the HTML5 renderer, the environment variable would be <span class="ttfamily">HTML5TEMPLATES</span>. For the PageTemplate renderer, the environment variable would be <span class="ttfamily">PAGETEMPLATETEMPLATES</span>. </p>
 <p>The format of this variable is the same as that of the <span class="ttfamily">PATH</span> environment variable which means that you can put multiple directory names in this variable. In addition, the environment variables for each of the parent renderers is also used, so that you can use multiple layers of template directories. </p>
 <p>You can actually create an entire renderer just using overrides and the PT renderer. Since the PT renderer doesn’t actually define any templates, it is just a framework for defining other XML/HTML renderers, you can simply load the PT renderer and set the <span class="ttfamily">PAGETEMPLATETEMPLATES</span> environment variable to the locations of your templates. This method of creating renderers will work for any XML/HTML that doesn’t require any special post-processing. </p>
 
 </div> <!--main-text -->
 </div> <!-- content-wrapper -->
 </div> <!-- content -->
+</div> <!-- wrapper -->
 
 <nav class="prev_up_next">
   <a href="sec-pt.html" title="Page Template Renderer"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>

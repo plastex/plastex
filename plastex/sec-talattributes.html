@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['\\(','\\)']]
+	} }
 </script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>plasTeX 2.1 — A Python Framework for Processing LaTeX Documents: Template Attribute Language (TAL) Attributes</title>
+<title>plasTeX 3.0 — A Python Framework for Processing LaTeX Documents: Template Attribute Language (TAL) Attributes</title>
 <link rel="next" href="sect0050.html" title="Index" />
 <link rel="prev" href="sect0049.html" title="Template Attribute Language Expression Syntax (TALES)" />
 <link rel="up" href="sec-zpttutorial.html" title="Zope Page Template Tutorial" />
 <link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/pygments.css" />
 </head>
 
 <body>
 <header>
 <svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
-<h1 id="doc_title"><a href="index.html">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</a></h1>
+<h1 id="doc_title"><a href="index.html">plasTeX 3.0 — A Python Framework for Processing LaTeX Documents</a></h1>
 </header>
 
 <div class="wrapper">
@@ -334,6 +338,22 @@
 
   </ul>
  </li>
+<li class="">
+  <a href="sec-plugins.html"><span class="toc_ref">6.8</span> <span class="toc_entry">Plugins</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sub-templates-plugin.html"><span class="toc_ref">6.8.1</span> <span class="toc_entry">Templates plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-package-plugin.html"><span class="toc_ref">6.8.2</span> <span class="toc_entry">Package plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-renderer-plugin.html"><span class="toc_ref">6.8.3</span> <span class="toc_entry">Renderer plugin</span></a>
+ </li>
+
+  </ul>
+ </li>
 
   </ul>
  </li>
@@ -398,7 +418,7 @@
 
 <div class="main-text">
 <h1 id="sec:talattributes">D.2 Template Attribute Language (TAL) Attributes</h1>
-<h4 id="a0000000326">tal:define</h4>
+<h4 id="a0000000329">tal:define</h4>
 <p>The <span class="ttfamily">tal:define</span> attribute allows you to define a variable for use later in the template. Variables can be specifies as local (only for use in the scope of the current element) or global (for use anywhere in the template). The syntax of the define attribute is shown below. </p>
 <pre class="verbatim">
 tal:define="[ local | global ] name expression [; define-expression ]"
@@ -414,7 +434,7 @@ tal:define="[ local | global ] name expression [; define-expression ]"
 ...
 &lt;/p&gt;
 </pre>
-<h4 id="a0000000327">tal:condition</h4>
+<h4 id="a0000000330">tal:condition</h4>
 <p>The <span class="ttfamily">tal:condition</span> attribute allows you to conditionally include an element. The syntax is shown below. </p>
 <pre class="verbatim">
 tal:condition="expression"
@@ -609,7 +629,7 @@ tal:repeat="name expression"
 &lt;li tal:repeat="option options" tal:content="option/name"&gt;option name&lt;/li&gt;
 &lt;/ol&gt;
 </pre>
-<p>One commonly used feature of rendering tables is alternating row colors. This is a little bit tricky with ZPT since the <span class="ttfamily">tal:condition</span> attribute is evaluated before the <span class="ttfamily">tal:repeat</span> directive. You can get around this by using the <span class="ttfamily">metal:</span> namespace. This is the namespace used by ZPT’s macro language<a class="footnote" href="#a0000000328">
+<p>One commonly used feature of rendering tables is alternating row colors. This is a little bit tricky with ZPT since the <span class="ttfamily">tal:condition</span> attribute is evaluated before the <span class="ttfamily">tal:repeat</span> directive. You can get around this by using the <span class="ttfamily">metal:</span> namespace. This is the namespace used by ZPT’s macro language<a class="footnote" href="#a0000000331">
   <sup class="footnotemark">1</sup>
 </a> You can create another element around the element you want to be conditional. This wrapper element is simply there to do the iterating, but is not included in the output. The example below shows how to do alternating row colors in an HTML table. </p>
 <pre class="verbatim">
@@ -628,19 +648,19 @@ tal:repeat="name expression"
 &lt;/metal:block&gt;
 &lt;/table&gt;
 </pre>
-<h4 id="a0000000329">tal:content</h4>
+<h4 id="a0000000332">tal:content</h4>
 <p>The <span class="ttfamily">tal:content</span> attribute evaluates an expression and replaces the content of the element with the result of the expression. The syntax is shown below. </p>
 <pre class="verbatim">
 tal:content="[ text | structure ] expression"
 </pre>
 <p>The <span class="rmfamily"><i class="itshape">text </i></span> and <span class="rmfamily"><i class="itshape">structure </i></span> options in the <span class="ttfamily">tal:content</span> attribute indicate whether or not the content returned by the expression should be escaped (i.e. "&amp;&lt;&gt; replaced by &amp;quot;, &amp;amp;, &amp;lt;, and &amp;gt;, respectively). When the <span class="rmfamily"><i class="itshape">text </i></span> option is used, these special characters are escaped; this is the default behavior. When the <span class="rmfamily"><i class="itshape">structure </i></span> option is specified, the result of the expression is assumed to be valid markup and is not escaped. </p>
 <p>In SimpleTAL, the default behavior is the same as using the <span class="rmfamily"><i class="itshape">text </i></span> option. However, in plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X, 99.9% of the time the content returned by the expression is valid markup, so the default was changed to <span class="rmfamily"><i class="itshape">structure </i></span> in the SimpleTAL package distributed with plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X. </p>
-<h4 id="a0000000330">tal:replace</h4>
+<h4 id="a0000000333">tal:replace</h4>
 <p>The <span class="ttfamily">tal:replace</span> attribute is much like the <span class="ttfamily">tal:content</span> attribute. They both evaluate an expression and include the content of that expression in the output, and they both have a <span class="rmfamily"><i class="itshape">text </i></span> and <span class="rmfamily"><i class="itshape">structure </i></span> option to indicate escaping of special characters. The difference is that when the <span class="ttfamily">tal:replace</span> attribute is used, the element with the <span class="ttfamily">tal:replace</span> attribute on it is not included in the output. Only the content of the evaluated expression is returned. The syntax of the <span class="ttfamily">tal:replace</span> attribute is shown below. </p>
 <pre class="verbatim">
 tal:replace="[ text | structure ] expression"
 </pre>
-<h4 id="a0000000331">tal:attributes</h4>
+<h4 id="a0000000334">tal:attributes</h4>
 <p>The <span class="ttfamily">tal:attributes</span> attribute allows you to programatically create attributes on the element. The syntax is shown below. </p>
 <pre class="verbatim">
 tal:attributes="name expression [; attribute-expression ]"
@@ -652,7 +672,7 @@ tal:attributes="name expression [; attribute-expression ]"
 &lt;a tal:attributes="href self/links/next/url;
                    title self/links/next/title"&gt;link text&lt;/a&gt;
 </pre>
-<h4 id="a0000000332">tal:omit-tag</h4>
+<h4 id="a0000000335">tal:omit-tag</h4>
 <p>The <span class="ttfamily">tal:omit-tag</span> attribute allows you to conditionally omit an element. The syntax is shown below. </p>
 <pre class="verbatim">
 tal:omit-tag="expression"
@@ -662,11 +682,12 @@ tal:omit-tag="expression"
 </div> <!--main-text -->
 <footer id="footnotes">
 <ol>
-  <li id="a0000000328">The macro language isn’t discussed here. See the official ZPT documentation for more information.</li>
+  <li id="a0000000331">The macro language isn’t discussed here. See the official ZPT documentation for more information.</li>
 </ol>
 </footer>
 </div> <!-- content-wrapper -->
 </div> <!-- content -->
+</div> <!-- wrapper -->
 
 <nav class="prev_up_next">
   <a href="sect0049.html" title="Template Attribute Language Expression Syntax (TALES)"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>

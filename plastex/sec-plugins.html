@@ -12,10 +12,10 @@
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>plasTeX 3.0 — A Python Framework for Processing LaTeX Documents: Renderable MixIn</title>
-<link rel="next" href="module-plasTeX-Imagers.html" title="plasTeX.Imagers — The plas Imaging Framework" />
-<link rel="prev" href="sect0038.html" title="Renderer Objects" />
-<link rel="up" href="module-plasTeX-Renderers.html" title="plasTeX.Renderers — The plas Rendering Framework" />
+<title>plasTeX 3.0 — A Python Framework for Processing LaTeX Documents: Plugins</title>
+<link rel="next" href="sub-templates-plugin.html" title="Templates plugin" />
+<link rel="prev" href="sect0041.html" title="Image Objects" />
+<link rel="up" href="sect0022.html" title="plas Frameworks and APIs" />
 <link rel="stylesheet" href="styles/theme-white.css" />
 <link rel="stylesheet" href="styles/pygments.css" />
 </head>
@@ -312,14 +312,14 @@
 
   </ul>
  </li>
-<li class=" active">
+<li class="">
   <a href="module-plasTeX-Renderers.html"><span class="toc_ref">6.6</span> <span class="toc_entry"><span class="ttfamily">plasTeX.Renderers</span> — The plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X Rendering Framework</span></a>
-  <span class="expand-toc">▼</span>
-  <ul class="sub-toc-2 active">
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
      <li class="">
   <a href="sect0038.html"><span class="toc_ref">6.6.1</span> <span class="toc_entry">Renderer Objects</span></a>
  </li>
-<li class=" active current">
+<li class="">
   <a href="sect0039.html"><span class="toc_ref">6.6.2</span> <span class="toc_entry">Renderable MixIn</span></a>
  </li>
 
@@ -338,10 +338,10 @@
 
   </ul>
  </li>
-<li class="">
+<li class=" active current">
   <a href="sec-plugins.html"><span class="toc_ref">6.8</span> <span class="toc_entry">Plugins</span></a>
-  <span class="expand-toc">▶</span>
-  <ul class="sub-toc-2">
+  <span class="expand-toc">▼</span>
+  <ul class="sub-toc-2 active">
      <li class="">
   <a href="sub-templates-plugin.html"><span class="toc_ref">6.8.1</span> <span class="toc_entry">Templates plugin</span></a>
  </li>
@@ -417,71 +417,32 @@
 
 
 <div class="main-text">
-<h2 id="a0000000040">6.6.2 Renderable MixIn</h2>
-<p>   <dl class="list">
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt><b class="bf">class </b><span class="rmfamily"><span class="ttfamily"><b class="bfseries">Renderable</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
-  <dd><p><a name="a0000000282" id="a0000000282"></a>  The <span class="ttfamily">Renderable</span> mixin is mixed into the <span class="ttfamily">Node</span> namespace prior to the rendering process. The methods mixed in assist in the rendering process. </p>
-</dd>
-</dl> </p>
-<p>  <dl class="list">
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd> </dd>
-  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">filename</b></span></span></dt>
-  <dd><p><a name="a0000000283" id="a0000000283"></a>   the filename that this object will create. Objects that don’t create new files should simply return <span class="rmfamily"><i class="itshape">None </i></span>. The configuration determines which nodes should create new files. </p>
-</dd>
-</dl> </p>
-<p>  <dl class="list">
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd> </dd>
-  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">image</b></span></span></dt>
-  <dd><p><a name="a0000000284" id="a0000000284"></a>   generate an image of the object and return the image filename. See the <span class="ttfamily">Imager</span> documentation in section <a href="module-plasTeX-Imagers.html">6.7</a> for more information. </p>
-</dd>
-</dl> </p>
-<p>  <dl class="list">
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd> </dd>
-  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">vectorImage</b></span></span></dt>
-  <dd><p><a name="a0000000285" id="a0000000285"></a>   generate a vector image of the object and return the image filename. See the <span class="ttfamily">Imager</span> documentation in section <a href="module-plasTeX-Imagers.html">6.7</a> for more information. </p>
-</dd>
-</dl> </p>
-<p>  <dl class="list">
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd> </dd>
-  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">url</b></span></span></dt>
-  <dd><p><a name="a0000000286" id="a0000000286"></a>   return the relative URL of the object. </p>
-<p>If the object actually creates a file, just the filename will be returned (e.g. ‘<span class="sffamily">foo.html</span>’). If the object is within a file, both the filename and the anchor will be returned (e.g. ‘<span class="sffamily">foo.html#bar</span>’). </p>
-</dd>
-</dl> </p>
-<p>  <dl class="list">
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd>  </dd>
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt></dt>
-  <dd></dd>
-  <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">__str__</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
-  <dd><p><a name="a0000000287" id="a0000000287"></a>   invoke the rendering process on all of the child nodes. The rendering process includes walking through the child nodes, looking up the appropriate rendering method from the renderer, and calling the method with the child node as its argument. </p>
-<p>In addition to the actual rendering process, this method also prints out some status information about the rendering process. For example, if the node being rendered has a non-empty <span class="ttfamily">filename</span> attribute, that means that the node is generating a new file. This filename information is printed to the log. One problem with this methodology is that the filename is not actually created at this time. It is assumed that the rendering method will check for the <span class="ttfamily">filename</span> attribute and actually create the file. </p>
-</dd>
-</dl> </p>
+<h1 id="sec:plugins">6.8 Plugins</h1>
+
+<p>As explained in Chapter&#160;<a href="sec-command-line.html">2</a>, one can use command line options of configuration files to use extra packages or templates or even a full custom renderer. However this is not convenient if you want use the same extras in several projects, or want to distribute them. In order to do that, you can create a plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X plugin. Such a plugin is simply a python package that contains one or several subpackages named ‘<span class="sffamily">templates</span>’, ‘<span class="sffamily">Packages</span>’ or ‘<span class="sffamily">Renderers</span>’. </p>
+<p>In this section, we describe some minimalistic plugins demonstrating the possibilities offered. For clarity we will separate the three kinds of plugin content into three plugins but of course a sophisticated plugin can combine several kinds. </p>
+<p>Any kind of python packaging can be used as long as it allows to put the plugin code into the Python search path and can bundle Python code with some other files, typically template files. In this documentation we will use <span class="ttfamily">setuptools</span> and put all configuration into a ‘<span class="sffamily">pyproject.toml</span>’ file which is essentially the same for all three examples, differing only in the name and description metadata. </p>
+<div class="highlight"><pre><span></span>[project]
+name = &quot;my_wonderful_plastex_plugin&quot;
+version = &quot;1.0.0&quot;
+description = &quot;A nice plasTeX plugin.&quot;
+requires-python = &quot;&gt;=3.7&quot;
+dependencies = [&quot;plastex&gt;=3.0&quot;]
+
+[tool.setuptools.package-data]
+plastex_markdown_renderer = [&quot;**/*.jinja2&quot;, &quot;**/*.jinja2s&quot;]
+
+[build-system]
+requires = [&quot;setuptools&quot;]
+build-backend = &quot;setuptools.build_meta&quot;
+</pre></div>
+
+<p>Note in particular the line about packaging Jinja files together with python files. Of course you can add CSS file of javascript files or any other kind of required file. Note also that you will need a bit more metadata if you want to upload your plugin to pypi for instance. </p>
+<p>You can then install this python package by running <code class="verbatim">pip install .</code> from the folder containing that ‘<span class="sffamily">pyproject.toml</span>’. Then you can compile a file ‘<span class="sffamily">text.tex</span>’ using your plugin by running </p>
+<pre class="verbatim">
+plastex --plugins my_wonderful_plastex_plugin -- test.tex
+</pre>
+<p>In the above command, the double-dash before the file name is needed because the <b class="bf">--plugins</b> options takes a list of space separated plugins. </p>
 
 </div> <!--main-text -->
 </div> <!-- content-wrapper -->
@@ -489,11 +450,11 @@
 </div> <!-- wrapper -->
 
 <nav class="prev_up_next">
-  <a href="sect0038.html" title="Renderer Objects"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+  <a href="sect0041.html" title="Image Objects"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
 </a>
-  <a href="module-plasTeX-Renderers.html" title="plasTeX.Renderers — The plasTeX Rendering Framework"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+  <a href="sect0022.html" title="plasTeX Frameworks and APIs"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
 </a>
-  <a href="module-plasTeX-Imagers.html" title="plasTeX.Imagers — The plasTeX Imaging Framework"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+  <a href="sub-templates-plugin.html" title="Templates plugin"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
 </a>
   <a href="sect0050.html" class="index">Index</a>
 </nav>

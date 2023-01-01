@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['\\(','\\)']]
+	} }
 </script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>plasTeX 2.1 — A Python Framework for Processing LaTeX Documents: Macro Objects</title>
+<title>plasTeX 3.0 — A Python Framework for Processing LaTeX Documents: Macro Objects</title>
 <link rel="next" href="module-plasTeX-ConfigManager.html" title="plasTeX.ConfigManager — plas Configuration" />
 <link rel="prev" href="sec-macros-api.html" title="plasTeX — The Python Macro and Document Interfaces" />
 <link rel="up" href="sec-macros-api.html" title="plasTeX — The Python Macro and Document Interfaces" />
 <link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/pygments.css" />
 </head>
 
 <body>
 <header>
 <svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
-<h1 id="doc_title"><a href="index.html">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</a></h1>
+<h1 id="doc_title"><a href="index.html">plasTeX 3.0 — A Python Framework for Processing LaTeX Documents</a></h1>
 </header>
 
 <div class="wrapper">
@@ -330,6 +334,22 @@
  </li>
 <li class="">
   <a href="sect0041.html"><span class="toc_ref">6.7.2</span> <span class="toc_entry">Image Objects</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-plugins.html"><span class="toc_ref">6.8</span> <span class="toc_entry">Plugins</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sub-templates-plugin.html"><span class="toc_ref">6.8.1</span> <span class="toc_entry">Templates plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-package-plugin.html"><span class="toc_ref">6.8.2</span> <span class="toc_entry">Package plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-renderer-plugin.html"><span class="toc_ref">6.8.3</span> <span class="toc_entry">Renderer plugin</span></a>
  </li>
 
   </ul>
@@ -660,7 +680,7 @@ inst.style['background-color'] = 'blue'
   <dt></dt>
   <dd></dd>
   <dt><span class="rmfamily"><span class="ttfamily"><b class="bfseries">invoke</b></span></span><span class="rmfamily"><span class="ttfamily">(</span></span><span class="parbox" style="width: 0.0pt"><span class="rmfamily"><i class="itshape"> </i></span><span class="rmfamily"><span class="ttfamily">)</span></span></span></dt>
-  <dd><p><a name="a0000000101" id="a0000000101"></a>   invakes the macro. Invoking the macro, in the general case, includes creating a new context, parsing the options of the macro, and removing the context. L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X environments are slightly different. If <span class="ttfamily">macroMode</span> is set to <span class="ttfamily">Macro.MODE_BEGIN</span>, the new context is kept on the stack. If <span class="ttfamily">macroMode</span> is set to <span class="ttfamily">Macro.MODE_END</span>, no arguments are parsed, the context is simply popped. For most macros, the default implementation will work fine. </p>
+  <dd><p><a name="a0000000101" id="a0000000101"></a>   invokes the macro. Invoking the macro, in the general case, includes creating a new context, parsing the options of the macro, and removing the context. L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X environments are slightly different. If <span class="ttfamily">macroMode</span> is set to <span class="ttfamily">Macro.MODE_BEGIN</span>, the new context is kept on the stack. If <span class="ttfamily">macroMode</span> is set to <span class="ttfamily">Macro.MODE_END</span>, no arguments are parsed, the context is simply popped. For most macros, the default implementation will work fine. </p>
 <p>The return value for this method is generally <span class="rmfamily"><i class="itshape">None </i></span> (an empty return statement or simply no return statement). In this case, the current object is simply put into the resultant output stream. However, you can also return a list of tokens. In this case, the returned tokens will be put into the output stream in place of the current object. You can even return an empty list to indicate that you don’t want anything to be inserted into the output stream. </p>
 </dd>
 </dl> </p>
@@ -884,6 +904,7 @@ inst.style['background-color'] = 'blue'
 </div> <!--main-text -->
 </div> <!-- content-wrapper -->
 </div> <!-- content -->
+</div> <!-- wrapper -->
 
 <nav class="prev_up_next">
   <a href="sec-macros-api.html" title="plasTeX — The Python Macro and Document Interfaces"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>

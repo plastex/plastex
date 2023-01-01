@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['\\(','\\)']]
+	} }
 </script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>plasTeX 2.1 — A Python Framework for Processing LaTeX Documents: Template Attribute Language Expression Syntax (TALES)</title>
+<title>plasTeX 3.0 — A Python Framework for Processing LaTeX Documents: Template Attribute Language Expression Syntax (TALES)</title>
 <link rel="next" href="sec-talattributes.html" title="Template Attribute Language (TAL) Attributes" />
 <link rel="prev" href="sec-zpttutorial.html" title="Zope Page Template Tutorial" />
 <link rel="up" href="sec-zpttutorial.html" title="Zope Page Template Tutorial" />
 <link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/pygments.css" />
 </head>
 
 <body>
 <header>
 <svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
-<h1 id="doc_title"><a href="index.html">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</a></h1>
+<h1 id="doc_title"><a href="index.html">plasTeX 3.0 — A Python Framework for Processing LaTeX Documents</a></h1>
 </header>
 
 <div class="wrapper">
@@ -334,6 +338,22 @@
 
   </ul>
  </li>
+<li class="">
+  <a href="sec-plugins.html"><span class="toc_ref">6.8</span> <span class="toc_entry">Plugins</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sub-templates-plugin.html"><span class="toc_ref">6.8.1</span> <span class="toc_entry">Templates plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-package-plugin.html"><span class="toc_ref">6.8.2</span> <span class="toc_entry">Package plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-renderer-plugin.html"><span class="toc_ref">6.8.3</span> <span class="toc_entry">Renderer plugin</span></a>
+ </li>
+
+  </ul>
+ </li>
 
   </ul>
  </li>
@@ -490,7 +510,7 @@ myoptions/encoding | myoptions/defaultencoding
     <td  style="text-align:left" 
         rowspan=""
         colspan="">
-      <p>the repeat variable (see <a href="sec-talattributes.html#sec:talrepeat">None</a>)</p>
+      <p>the repeat variable (see ??)</p>
 
     </td>
   </tr>
@@ -523,23 +543,23 @@ myoptions/encoding | myoptions/defaultencoding
     </td>
   </tr>
 </table></div> </p>
-<h4 id="a0000000320">exists: operator</h4>
+<h4 id="a0000000323">exists: operator</h4>
 <p>This operator returns true if the path exists. If the path does not exist, the operator returns false. The syntax is as follows. </p>
 <pre class="verbatim">
 exists:path
 </pre>
-<p>The “path” in the code above is a path as described in section <a href="sect0049.html#sec:pathoperator">None</a>. This operator is commonly combined with the not: operator. </p>
-<h4 id="a0000000321">nocall: operator</h4>
+<p>The “path” in the code above is a path as described in section ??. This operator is commonly combined with the not: operator. </p>
+<h4 id="a0000000324">nocall: operator</h4>
 <p>By default, if a property that is retrieved is callable, it will be called automatically. Using the nocall: operator, prevents this execution from happening. The syntax is shown below. </p>
 <pre class="verbatim">
 nocall:path
 </pre>
-<h4 id="a0000000322">not: operator</h4>
+<h4 id="a0000000325">not: operator</h4>
 <p>The not: operator simply negates the boolean result of the path. If the path is a boolean true, the not: operator will return false, and vice versa. The syntax is shown below. </p>
 <pre class="verbatim">
 not:path
 </pre>
-<h4 id="a0000000323">string: operator</h4>
+<h4 id="a0000000326">string: operator</h4>
 <p>The string: operator allows you to combine literal strings and paths into one string. Paths are inserted into the literal string using a syntax much like that of Python Templates: $path or ${path}. The general syntax is: </p>
 <pre class="verbatim">
 string:text
@@ -550,7 +570,7 @@ string:Next - ${section/links/next}
 string:($pagenumber)
 string:[${figure/number}] ${figure/caption}
 </pre>
-<h4 id="a0000000324">python: operator</h4>
+<h4 id="a0000000327">python: operator</h4>
 <p>The python: operator allows you to evaluate a Python expression. The syntax is as follows. </p>
 <pre class="verbatim">
 python:python-code
@@ -561,7 +581,7 @@ python:python-code
 # See if the figure number is less than 2 or greater than 4
 python: path('figure/number') &amp;lt; 2 or path('figure/number') &amp;gt; 4
 </pre>
-<h4 id="a0000000325">stripped: operator</h4>
+<h4 id="a0000000328">stripped: operator</h4>
 <p>The stripped: operator only exists in the SimpleTAL distribution provided by plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X. It evaluates the given path and removes any markup from that path. Essentially, it is a way to get a plain text representation of the path. The syntax is as follows. </p>
 <pre class="verbatim">
 stripped:path
@@ -570,6 +590,7 @@ stripped:path
 </div> <!--main-text -->
 </div> <!-- content-wrapper -->
 </div> <!-- content -->
+</div> <!-- wrapper -->
 
 <nav class="prev_up_next">
   <a href="sec-zpttutorial.html" title="Zope Page Template Tutorial"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>

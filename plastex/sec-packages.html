@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['\\(','\\)']]
+	} }
 </script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>plasTeX 2.1 — A Python Framework for Processing LaTeX Documents: Packages</title>
+<title>plasTeX 3.0 — A Python Framework for Processing LaTeX Documents: Packages</title>
 <link rel="next" href="sect0008.html" title="Renderers" />
 <link rel="prev" href="sec-contextmacros.html" title="The Document Context" />
 <link rel="up" href="sec-macros.html" title="Understanding Macros and Packages" />
 <link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/pygments.css" />
 </head>
 
 <body>
 <header>
 <svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
-<h1 id="doc_title"><a href="index.html">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</a></h1>
+<h1 id="doc_title"><a href="index.html">plasTeX 3.0 — A Python Framework for Processing LaTeX Documents</a></h1>
 </header>
 
 <div class="wrapper">
@@ -334,6 +338,22 @@
 
   </ul>
  </li>
+<li class="">
+  <a href="sec-plugins.html"><span class="toc_ref">6.8</span> <span class="toc_entry">Plugins</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sub-templates-plugin.html"><span class="toc_ref">6.8.1</span> <span class="toc_entry">Templates plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-package-plugin.html"><span class="toc_ref">6.8.2</span> <span class="toc_entry">Package plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-renderer-plugin.html"><span class="toc_ref">6.8.3</span> <span class="toc_entry">Renderer plugin</span></a>
+ </li>
+
+  </ul>
+ </li>
 
   </ul>
  </li>
@@ -399,12 +419,13 @@
 <div class="main-text">
 <h1 id="sec:packages">4.3 Packages</h1>
 <p>Packages in plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X are loaded in one of three ways: standard L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X package, Python package, and INI file. L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X packages are loaded in much the same way that L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X itself loads packages. The <b class="bf">kpsewhich</b> program is used to locate the requested file which can be either in the search path of your L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X distribution or in one of the directories specified in the <span class="ttfamily">TEXINPUTS</span> environment variable. plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X read the file and expand the macros therein just as L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X would do. This happens only if the <b class="bf">--load-tex-packages</b> option is set (which is the default value), or the package is white-listed in the <b class="bf">--tex-packages</b> option (see Section<a href="sec-general-options.html">2.1.1</a>). It will work as expected only for simple packages. </p>
-<p>Python packages are located by successively trying three strategies. First plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X looks into the directories listed in the <b class="bf">--packages-dirs</b> option (see Section<a href="sec-general-options.html">2.1.1</a>), in the order they are listed. If this fail then plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X looks into the plugins listed in the <b class="bf">--plugins</b> option (see Section<a href="sec-general-options.html">2.1.1</a>), in the reversed order they are listed (the general idea here is that later plugins are allowed to overrule earlier ones). If this also fails then plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X looks into the builtin packages folder that comes with every installation of plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X. After a package is loaded, it is checked to see if there is a function called <span class="ttfamily">ProcessOptions</span> in its namespace. If there is, that function is called with two arguments: 1) the dictionary of options that were specified when loading the package, and 2) the document object that is currently being processed. This function allows you to make adjustments to the loaded macros based on the options specified, and define new commands in the document’s context (see section <a href="sec-contextmacros.html">4.2.3</a> for more information). Of course, you can also define Python based macros (section <a href="sec-macroclasses.html">4.2.1</a>) in the Python package as well. </p>
+<p>Python packages are located by successively trying three strategies. First plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X looks into the directories listed in the <b class="bf">--packages-dirs</b> option (see Section<a href="sec-general-options.html">2.1.1</a>), in the order they are listed. If this fail then plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X looks into the plugins listed in the <b class="bf">--plugins</b> option (see Sections&#160;<a href="sec-general-options.html">2.1.1</a> and&#160;<a href="sec-plugins.html">6.8</a>), in the reversed order they are listed (the general idea here is that later plugins are allowed to overrule earlier ones). If this also fails then plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X looks into the builtin packages folder that comes with every installation of plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X. After a package is loaded, it is checked to see if there is a function called <span class="ttfamily">ProcessOptions</span> in its namespace. If there is, that function is called with two arguments: 1) the dictionary of options that were specified when loading the package, and 2) the document object that is currently being processed. This function allows you to make adjustments to the loaded macros based on the options specified, and define new commands in the document’s context (see section <a href="sec-contextmacros.html">4.2.3</a> for more information). Of course, you can also define Python based macros (section <a href="sec-macroclasses.html">4.2.1</a>) in the Python package as well. </p>
 <p>The last type of packages is based on the INI file format. This format is discussed in more detail in section <a href="sec-inimacros.html">4.2.2</a>. INI formatted packages are loaded in conjunction with a L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X or Python package. When a package is loaded, an INI file with the same basename is searched for in the same director as the package. If it exists, it is loaded as well. For example, if you had a package called ‘<span class="sffamily">python.sty</span>’ and a file called ‘<span class="sffamily">python.ini</span>’ in the same package directory, ‘<span class="sffamily">python.sty</span>’ would be loaded first, then ‘<span class="sffamily">python.ini</span>’ would be loaded. The same operation applies for Python based packages.  </p>
 
 </div> <!--main-text -->
 </div> <!-- content-wrapper -->
 </div> <!-- content -->
+</div> <!-- wrapper -->
 
 <nav class="prev_up_next">
   <a href="sec-contextmacros.html" title="The Document Context"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>

@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['\\(','\\)']]
+	} }
 </script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>plasTeX 2.1 — A Python Framework for Processing LaTeX Documents: General Options</title>
+<title>plasTeX 3.0 — A Python Framework for Processing LaTeX Documents: General Options</title>
 <link rel="next" href="sec-config-document.html" title="Document Properties" />
 <link rel="prev" href="sect0002.html" title="Command-Line and Configuration Options" />
 <link rel="up" href="sect0002.html" title="Command-Line and Configuration Options" />
 <link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/pygments.css" />
 </head>
 
 <body>
 <header>
 <svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
-<h1 id="doc_title"><a href="index.html">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</a></h1>
+<h1 id="doc_title"><a href="index.html">plasTeX 3.0 — A Python Framework for Processing LaTeX Documents</a></h1>
 </header>
 
 <div class="wrapper">
@@ -334,6 +338,22 @@
 
   </ul>
  </li>
+<li class="">
+  <a href="sec-plugins.html"><span class="toc_ref">6.8</span> <span class="toc_entry">Plugins</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sub-templates-plugin.html"><span class="toc_ref">6.8.1</span> <span class="toc_entry">Templates plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-package-plugin.html"><span class="toc_ref">6.8.2</span> <span class="toc_entry">Package plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-renderer-plugin.html"><span class="toc_ref">6.8.3</span> <span class="toc_entry">Renderer plugin</span></a>
+ </li>
+
+  </ul>
+ </li>
 
   </ul>
  </li>
@@ -422,7 +442,7 @@ split-level=1
 </dl> </p>
 <p><dl class="description">
   <dt><b class="bfseries">Plugins</b></dt>
-  <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--plugins=<span class="rmfamily"><i class="itshape">plugins</i></span></b></span><br /><b class="bfseries">Config File:</b> [ general ] plugins<br /><b class="bfseries">Default:</b> []<br />specifies a list of plugins to be used. Each element should be package name that python can import. </p>
+  <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--plugins=<span class="rmfamily"><i class="itshape">plugins</i></span></b></span><br /><b class="bfseries">Config File:</b> [ general ] plugins<br /><b class="bfseries">Default:</b> []<br />specifies a list of plugins to be used. Each element should be package name that python can import. See Section&#160;<a href="sec-plugins.html">6.8</a> for more details. </p>
 </dd>
 </dl> </p>
 <p><dl class="description">
@@ -455,10 +475,26 @@ split-level=1
   <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--copy-theme-extras</b> or <b class="bf">--ignore-theme-extras</b></span><br /><b class="bfseries">Config File:</b> [ general ] copy-theme-extras<br /><b class="bfseries">Default:</b> yes<br />indicates whether or not extra files that belong to a theme (if there are any) should be copied to the output directory. </p>
 </dd>
 </dl> </p>
+<p><dl class="description">
+  <dt><b class="bfseries">Extra templates directories</b></dt>
+  <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--extra-templates=<span class="rmfamily"><i class="itshape">directories</i></span></b></span><br /><b class="bfseries">Config File:</b> [ general ] extra-templates<br /><b class="bfseries">Default:</b> []<br />specifies a list of directories where extra templates should be searched. Paths are relative to the current directory. </p>
+</dd>
+</dl> </p>
+<p><dl class="description">
+  <dt><b class="bfseries">Dump XML output</b></dt>
+  <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--xml</b></span><br /><b class="bfseries">Config File:</b> [ general ] xml<br /><b class="bfseries">Default:</b> False<br />dumps a XML representation of the document (for debugging). </p>
+</dd>
+</dl> </p>
+<p><dl class="description">
+  <dt><b class="bfseries">Debug parsing</b></dt>
+  <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--debug</b></span><br /><b class="bfseries">Config File:</b> [ general ] debug<br /><b class="bfseries">Default:</b> False<br />parses the document and drops into a debugger. </p>
+</dd>
+</dl> </p>
 
 </div> <!--main-text -->
 </div> <!-- content-wrapper -->
 </div> <!-- content -->
+</div> <!-- wrapper -->
 
 <nav class="prev_up_next">
   <a href="sect0002.html" title="Command-Line and Configuration Options"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>

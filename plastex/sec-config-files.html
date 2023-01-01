@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['\\(','\\)']]
+	} }
 </script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>plasTeX 2.1 — A Python Framework for Processing LaTeX Documents: Input and Output Files</title>
+<title>plasTeX 3.0 — A Python Framework for Processing LaTeX Documents: Input and Output Files</title>
 <link rel="next" href="sec-config-images.html" title="Image Options" />
 <link rel="prev" href="sec-config-links.html" title="Document Links" />
 <link rel="up" href="sect0002.html" title="Command-Line and Configuration Options" />
 <link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/pygments.css" />
 </head>
 
 <body>
 <header>
 <svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
-<h1 id="doc_title"><a href="index.html">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</a></h1>
+<h1 id="doc_title"><a href="index.html">plasTeX 3.0 — A Python Framework for Processing LaTeX Documents</a></h1>
 </header>
 
 <div class="wrapper">
@@ -334,6 +338,22 @@
 
   </ul>
  </li>
+<li class="">
+  <a href="sec-plugins.html"><span class="toc_ref">6.8</span> <span class="toc_entry">Plugins</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sub-templates-plugin.html"><span class="toc_ref">6.8.1</span> <span class="toc_entry">Templates plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-package-plugin.html"><span class="toc_ref">6.8.2</span> <span class="toc_entry">Package plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-renderer-plugin.html"><span class="toc_ref">6.8.3</span> <span class="toc_entry">Renderer plugin</span></a>
+ </li>
+
+  </ul>
+ </li>
 
   </ul>
  </li>
@@ -456,7 +476,7 @@ $jobname_$title
 $jobname_sect$num(4)
 </pre>
 <p>Each of the alternatives is attempted until one of them succeeds. In order for an alternative to succeed, all of the variables referenced in the template must be populated. For example, the <span class="rmfamily"><i class="itshape">$id </i></span> variable will not be populated unless the node had a \<span class="ttfamily">$label</span> macro pointing to it. The <span class="rmfamily"><i class="itshape">$title </i></span> variable would not be populated unless the node had a title associated with it (e.g. such as section, subsection, etc.). Generally, the last one should contain no variables except for <span class="rmfamily"><i class="itshape">$num </i></span> as a fail-safe alternative. </p>
-<p>The default value for this option is <code class="verbatim">index [$id, sect$num(4)]</code> which, assuming HTML output, will first generate a file <span class="rmfamily"><i class="itshape">index.html </i></span>. Then, for each node triggering a file creation, it will try to use the node label. If no label exists, it will use <span class="rmfamily"><i class="itshape">sectN.html </i></span> where <span class="rmfamily"><i class="itshape">N </i></span> is the next available number (starting from one), padded to four digits. Of course the prefix <span class="rmfamily"><i class="itshape">sect </i></span> is chosen because the default value for <span class="rmfamily"><i class="itshape">split-level </i></span> is $2$, which means generating a new file or each section. </p>
+<p>The default value for this option is <code class="verbatim">index [$id, sect$num(4)]</code> which, assuming HTML output, will first generate a file <span class="rmfamily"><i class="itshape">index.html </i></span>. Then, for each node triggering a file creation, it will try to use the node label. If no label exists, it will use <span class="rmfamily"><i class="itshape">sectN.html </i></span> where <span class="rmfamily"><i class="itshape">N </i></span> is the next available number (starting from one), padded to four digits. Of course the prefix <span class="rmfamily"><i class="itshape">sect </i></span> is chosen because the default value for <span class="rmfamily"><i class="itshape">split-level </i></span> is \(2\), which means generating a new file or each section. </p>
 <p>As last example, one could use <span class="rmfamily"><i class="itshape">index $name-[$ref, sect$num(4)] </i></span>. Assuming our document contains two chapters which each contain two sections (and using the L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>Xdefault numbering scheme and default plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>Xsplit level), we would get filenames <span class="rmfamily"><i class="itshape">index.html </i></span>, <span class="rmfamily"><i class="itshape">chapter-1.html </i></span>, <span class="rmfamily"><i class="itshape">section-1-1.html </i></span>, <span class="rmfamily"><i class="itshape">section-1-2.html </i></span>, <span class="rmfamily"><i class="itshape">chapter-2.html </i></span>, <span class="rmfamily"><i class="itshape">section-2-1.html </i></span>, <span class="rmfamily"><i class="itshape">section-2-2.html </i></span>. </p>
 </dd>
 </dl> </p>
@@ -475,10 +495,16 @@ $jobname_sect$num(4)
   <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--split-level=<span class="rmfamily"><i class="itshape">integer</i></span></b></span><br /><b class="bfseries">Config File:</b> [ files ] split-level<br /><b class="bfseries">Default:</b> 2<br />specifies the highest section level that generates a new file. Each section in a L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document has a number associated with its hierarchical level. These levels are -2 for the document, -1 for parts, 0 for chapters, 1 for sections, 2 for subsections, 3 for subsubsections, 4 for paragraphs, and 5 for subparagraphs. A new file will be generated for every section in the hierarchy with a value less than or equal to the value of this option. This means that for the value of 2, files will be generated for the document, parts, chapters, sections, and subsections. </p>
 </dd>
 </dl> </p>
+<p><dl class="description">
+  <dt><b class="bfseries">Log messages to file</b></dt>
+  <dd><p><br /><b class="bfseries">Command-Line Options:</b> <span class="ttfamily"><b class="bf">--log</b></span><br /><b class="bfseries">Config File:</b> [ files ] log<br /><b class="bfseries">Default:</b> False<br />specifies whether log messages should be put into a file instead of printed. </p>
+</dd>
+</dl> </p>
 
 </div> <!--main-text -->
 </div> <!-- content-wrapper -->
 </div> <!-- content -->
+</div> <!-- wrapper -->
 
 <nav class="prev_up_next">
   <a href="sec-config-links.html" title="Document Links"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>

@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['\\(','\\)']]
+	} }
 </script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>plasTeX 2.1 — A Python Framework for Processing LaTeX Documents: About This Document</title>
+<title>plasTeX 3.0 — A Python Framework for Processing LaTeX Documents: About This Document</title>
 <link rel="next" href="sect0043.html" title="Frequently Asked Questions" />
-<link rel="prev" href="sect0041.html" title="Image Objects" />
-<link rel="up" href="index.html" title="plasTeX 2.1 — A Python Framework for Processing LaTeX Documents" />
+<link rel="prev" href="sub-renderer-plugin.html" title="Renderer plugin" />
+<link rel="up" href="index.html" title="plasTeX 3.0 — A Python Framework for Processing LaTeX Documents" />
 <link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/pygments.css" />
 </head>
 
 <body>
 <header>
 <svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
-<h1 id="doc_title"><a href="index.html">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</a></h1>
+<h1 id="doc_title"><a href="index.html">plasTeX 3.0 — A Python Framework for Processing LaTeX Documents</a></h1>
 </header>
 
 <div class="wrapper">
@@ -334,6 +338,22 @@
 
   </ul>
  </li>
+<li class="">
+  <a href="sec-plugins.html"><span class="toc_ref">6.8</span> <span class="toc_entry">Plugins</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sub-templates-plugin.html"><span class="toc_ref">6.8.1</span> <span class="toc_entry">Templates plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-package-plugin.html"><span class="toc_ref">6.8.2</span> <span class="toc_entry">Package plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-renderer-plugin.html"><span class="toc_ref">6.8.3</span> <span class="toc_entry">Renderer plugin</span></a>
+ </li>
+
+  </ul>
+ </li>
 
   </ul>
  </li>
@@ -399,23 +419,24 @@
 <div class="main-text">
 <h1 id="a0000000043">A About This Document</h1>
 <p>This document was writted using LaTeX (<a href="http://www.latex-project.org/">http://www.latex-project.org/</a>). The documents use macros written for documenting the Python (<a href="http://www.python.org">http://www.python.org</a>) language and Python packages. Generating the PDF version of the document is simply a matter of using the <b class="bf">pdflatex</b> command. Generating the HTML version of the document, of course, uses plasTeX. </p>
-<p>The wonderful thing about the HTML version is that it was generated from the LaTeX source and Python style files without customization<a class="footnote" href="#a0000000319">
+<p>The wonderful thing about the HTML version is that it was generated from the LaTeX source and Python style files without customization<a class="footnote" href="#a0000000322">
   <sup class="footnotemark">1</sup>
 </a>! In fact, in its current state, plasTeX can generate the HTML versions of the Python documentation found on their website, <a href="http://www.python.org/doc/">http://www.python.org/doc/</a>. Without customization of plasTeX, the only remaining issues are that the module index is missing and there are some formatting differences. Not bad, considering plasTeX is doing actually expanding the LaTeX document natively.  </p>
 
 </div> <!--main-text -->
 <footer id="footnotes">
 <ol>
-  <li id="a0000000319"> Ok, there was one customization to \<span class="ttfamily">var</span> for a whitespace issue, but the change works both in the PDF and HTML version</li>
+  <li id="a0000000322"> Ok, there was one customization to \<span class="ttfamily">var</span> for a whitespace issue, but the change works both in the PDF and HTML version</li>
 </ol>
 </footer>
 </div> <!-- content-wrapper -->
 </div> <!-- content -->
+</div> <!-- wrapper -->
 
 <nav class="prev_up_next">
-  <a href="sect0041.html" title="Image Objects"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+  <a href="sub-renderer-plugin.html" title="Renderer plugin"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
 </a>
-  <a href="index.html" title="plasTeX 2.1 — A Python Framework for Processing LaTeX Documents"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+  <a href="index.html" title="plasTeX 3.0 — A Python Framework for Processing LaTeX Documents"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
 </a>
   <a href="sect0043.html" title="Frequently Asked Questions"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
 </a>

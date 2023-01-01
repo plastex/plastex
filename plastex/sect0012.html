@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['\\(','\\)']]
+	} }
 </script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>plasTeX 2.1 — A Python Framework for Processing LaTeX Documents: Generating Images</title>
+<title>plasTeX 3.0 — A Python Framework for Processing LaTeX Documents: Generating Images</title>
 <link rel="next" href="sect0013.html" title="Generating Vector Images" />
 <link rel="prev" href="sect0011.html" title="Generating Files" />
 <link rel="up" href="sec-renderable.html" title="Renderable Objects" />
 <link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/pygments.css" />
 </head>
 
 <body>
 <header>
 <svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
-<h1 id="doc_title"><a href="index.html">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</a></h1>
+<h1 id="doc_title"><a href="index.html">plasTeX 3.0 — A Python Framework for Processing LaTeX Documents</a></h1>
 </header>
 
 <div class="wrapper">
@@ -334,6 +338,22 @@
 
   </ul>
  </li>
+<li class="">
+  <a href="sec-plugins.html"><span class="toc_ref">6.8</span> <span class="toc_entry">Plugins</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sub-templates-plugin.html"><span class="toc_ref">6.8.1</span> <span class="toc_entry">Templates plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-package-plugin.html"><span class="toc_ref">6.8.2</span> <span class="toc_entry">Package plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-renderer-plugin.html"><span class="toc_ref">6.8.3</span> <span class="toc_entry">Renderer plugin</span></a>
+ </li>
+
+  </ul>
+ </li>
 
   </ul>
  </li>
@@ -400,7 +420,7 @@
 <h2 id="a0000000013">5.2.3 Generating Images</h2>
 <p>Not all output types that you might render are going to support everything that L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X is capable of. For example, HTML has no way of representing TikZ pictures directly, and most output types won’t be capable of rendering L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X’s <span class="ttfamily">picture</span> environment. In cases like these, you can let plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X generate images of the document node. Generating images is done with a subclass of <span class="ttfamily">plasTeX.Imagers.Imager</span>. The imager is responsible for creating a L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document from the requested document fragments, compiling the document and converting each page of the output document into individual images. See section <a href="sec-config-images.html">2.1.6</a> on how to select an imager. The next section will explain how to generate <em>vector</em> images such as SVG images, which are often a better solution because they scale much better. </p>
 <p>To generate an image of a document node, simply access the <span class="ttfamily">image</span> property during the rendering process. This property will return an <span class="ttfamily">plasTeX.Imagers.Image</span> instance. In most cases, the image file will not be available until the rendering process is finished since most renderers will need the generated L<sup style="font-variant:small-caps; margin-left:-0.3em">a</sup>T<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X document to be complete before compiling it and generating the final images. </p>
-<p>The example below demonstrates how to generate an image for the <span class="ttfamily">tikzcd</span> environment. </p>
+<p>The example below demonstrates how to generate an image for the <span class="ttfamily">tikzcd</span> environment (this is for illustration purposes only, plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>Xactually comes with a better handling of this package). </p>
 <pre class="verbatim">
 # Import renderer from first renderer example
 from MyRenderer import Renderer
@@ -457,6 +477,7 @@ Next paragraph.
 </div> <!--main-text -->
 </div> <!-- content-wrapper -->
 </div> <!-- content -->
+</div> <!-- wrapper -->
 
 <nav class="prev_up_next">
   <a href="sect0011.html" title="Generating Files"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>

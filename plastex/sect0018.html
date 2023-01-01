@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['\\(','\\)']]
+	} }
 </script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>plasTeX 2.1 — A Python Framework for Processing LaTeX Documents: Themes</title>
+<title>plasTeX 3.0 — A Python Framework for Processing LaTeX Documents: Themes</title>
 <link rel="next" href="sect0019.html" title="XHTML Renderer" />
 <link rel="prev" href="sec-html5-pkg.html" title="Interactions with packages" />
 <link rel="up" href="sec-html5.html" title="HTML5 Renderer" />
 <link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/pygments.css" />
 </head>
 
 <body>
 <header>
 <svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
-<h1 id="doc_title"><a href="index.html">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</a></h1>
+<h1 id="doc_title"><a href="index.html">plasTeX 3.0 — A Python Framework for Processing LaTeX Documents</a></h1>
 </header>
 
 <div class="wrapper">
@@ -334,6 +338,22 @@
 
   </ul>
  </li>
+<li class="">
+  <a href="sec-plugins.html"><span class="toc_ref">6.8</span> <span class="toc_entry">Plugins</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sub-templates-plugin.html"><span class="toc_ref">6.8.1</span> <span class="toc_entry">Templates plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-package-plugin.html"><span class="toc_ref">6.8.2</span> <span class="toc_entry">Package plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-renderer-plugin.html"><span class="toc_ref">6.8.3</span> <span class="toc_entry">Renderer plugin</span></a>
+ </li>
+
+  </ul>
+ </li>
 
   </ul>
  </li>
@@ -400,10 +420,12 @@
 <h2 id="a0000000019">5.4.3 Themes</h2>
 <p>The theming support in the HTML5 renderer is a superset of that of the Page Template Renderer. Any template directory can have a subdirectory called ‘<span class="sffamily">Themes</span>’ which contains theme directories with sets of templates in them. The names of the directories in the ‘<span class="sffamily">Themes</span>’ directory corresponds to the name of the theme. Each of these directories can contain folders named ‘<span class="sffamily">css</span>’ and ‘<span class="sffamily">js</span>’, and containing CSS and javascript files respectively. Those files are copied while rendering, unless option <b class="bf">--copy-theme-extras</b> is unset. </p>
 <p>There are currently three themes included with plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X: default, minimal and fragment. The first two themes produce standalone HTML files, including a head section. The fragment theme produces output that is meant to be inserted in a HTML document already containg a head section. The default theme include some javascript and CSS file. One can choose between three variations on CSS using option <b class="bf">--theme-css</b> which can be <span class="rmfamily"><i class="itshape">white</i></span>, <span class="rmfamily"><i class="itshape">blue</i></span> or <span class="rmfamily"><i class="itshape">green</i></span>. The default value is <span class="rmfamily"><i class="itshape">white</i></span> which uses a sober black on white color scheme with no gradient background of shadow. The <span class="rmfamily"><i class="itshape">green</i></span> CSS theme uses the historical plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>X green and yellow color scheme, with gradients and shadows. The <span class="rmfamily"><i class="itshape">blue</i></span> one uses a blue and gray color scheme, with gradients and shadows. </p>
+<p>When displaying the table of contents navigation panel, the default theme adds at the end the elements of the list <code class="verbatim">document.rendererdata['html5']['extra_toc_items']</code>. Each element should be a dictionary with keys <code class="verbatim">text</code> and <code class="verbatim">url</code>. </p>
 
 </div> <!--main-text -->
 </div> <!-- content-wrapper -->
 </div> <!-- content -->
+</div> <!-- wrapper -->
 
 <nav class="prev_up_next">
   <a href="sec-html5-pkg.html" title="Interactions with packages"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>

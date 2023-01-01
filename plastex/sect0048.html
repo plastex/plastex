@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['\\(','\\)']]
+	} }
 </script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>plasTeX 2.1 — A Python Framework for Processing LaTeX Documents: Using the python debugger</title>
+<title>plasTeX 3.0 — A Python Framework for Processing LaTeX Documents: Using the python debugger</title>
 <link rel="next" href="sec-zpttutorial.html" title="Zope Page Template Tutorial" />
 <link rel="prev" href="sec-logging-levels.html" title="Logging levels" />
 <link rel="up" href="sect0047.html" title="Debugging" />
 <link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/pygments.css" />
 </head>
 
 <body>
 <header>
 <svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
-<h1 id="doc_title"><a href="index.html">plasTeX 2.1 — A Python Framework for Processing LaTeX Documents</a></h1>
+<h1 id="doc_title"><a href="index.html">plasTeX 3.0 — A Python Framework for Processing LaTeX Documents</a></h1>
 </header>
 
 <div class="wrapper">
@@ -334,6 +338,22 @@
 
   </ul>
  </li>
+<li class="">
+  <a href="sec-plugins.html"><span class="toc_ref">6.8</span> <span class="toc_entry">Plugins</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sub-templates-plugin.html"><span class="toc_ref">6.8.1</span> <span class="toc_entry">Templates plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-package-plugin.html"><span class="toc_ref">6.8.2</span> <span class="toc_entry">Package plugin</span></a>
+ </li>
+<li class="">
+  <a href="sub-renderer-plugin.html"><span class="toc_ref">6.8.3</span> <span class="toc_entry">Renderer plugin</span></a>
+ </li>
+
+  </ul>
+ </li>
 
   </ul>
  </li>
@@ -398,12 +418,13 @@
 
 <div class="main-text">
 <h1 id="a0000000049">C.2 Using the python debugger</h1>
-<p>For more drastic debugging, the <code class="verbatim">debugplastex</code> package also provides the command <code class="verbatim">settrace</code> to drop into the python debugger while parsing. You can also use <code class="verbatim">\usepackage[post_parse_trace]{debugplastex}</code> to ask plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>Xto drop into the python debugger after parsing the full LaTeX input. </p>
-<p>When using Jinja2 templates with a renderer extending <code class="verbatim">PageTemplate</code>, you can also use <code class="verbatim">{{ debug() }}</code> in a template in order to drop into the python debugger while rendering the template. In particular this allows to inspect <code class="verbatim">context['obj']</code> which contains the node being rendered.  </p>
+<p>For more drastic debugging, the <code class="verbatim">debugplastex</code> package also provides the command <code class="verbatim">settrace</code> to drop into the python debugger while parsing. You can also use <code class="verbatim">\usepackage[post_parse_trace]{debugplastex}</code> to ask plasT<sub style="text-transform:uppercase; margin-left:-0.2em">e</sub>Xto drop into the python debugger after parsing the full LaTeX input. You can also use the <code class="verbatim">--debug</code> command line option for a similar result without changing the source file. </p>
+<p>When using Jinja2 templates with a renderer extending <code class="verbatim">PageTemplate</code>, you can also use <code class="verbatim">{{ debug() }}</code> in a template in order to drop into the python debugger while rendering the template. In particular this allows to inspect <code class="verbatim">obj</code> which contains the node being rendered and <code class="verbatim">config</code> which contains the current plasTeX configuration.  </p>
 
 </div> <!--main-text -->
 </div> <!-- content-wrapper -->
 </div> <!-- content -->
+</div> <!-- wrapper -->
 
 <nav class="prev_up_next">
   <a href="sec-logging-levels.html" title="Logging levels"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
