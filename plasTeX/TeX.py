@@ -1326,15 +1326,24 @@ class TeX(object):
         # When, for example, ``\Input{name}`` is encountered, we should look in
         # the directory containing the file being processed. So the following
         # code adds the directory to the start of $TEXINPUTS.
-        TEXINPUTS = None
+        TEXINPUTS = os.environ.get("TEXINPUTS",'')
         try:
             srcDir = os.path.dirname(self.filename)
         except AttributeError:
             # I think this happens only for the command line file.
             pass
         else:
-            TEXINPUTS = os.environ.get("TEXINPUTS",'')
-            os.environ["TEXINPUTS"] = "%s%s%s%s" % (srcDir, os.path.pathsep, TEXINPUTS, os.path.pathsep)
+            if TEXINPUTS:
+                os.environ["TEXINPUTS"] = "%s%s%s%s" % (srcDir, os.path.pathsep, TEXINPUTS, os.path.pathsep)
+            else:
+                os.environ["TEXINPUTS"] = "%s%s" % (srcDir, os.path.pathsep)
+
+        def restore_texinputs():
+            # Undo any mods to $TEXINPUTS.
+            if TEXINPUTS:
+                os.environ["TEXINPUTS"] = TEXINPUTS
+            else:
+                os.environ.pop("TEXINPUTS", None)
 
         try:
             program = self.ownerDocument.config['general']['kpsewhich']
@@ -1346,6 +1355,7 @@ class TeX(object):
             output = subprocess.Popen([program, name], **kwargs).communicate()[0].strip()
             output = output.decode('utf-8')
             if output:
+                restore_texinputs()
                 return output
 
         except:
@@ -1356,12 +1366,10 @@ class TeX(object):
                     fullname = os.path.join(path,name)
                     break
             if fullname:
+                restore_texinputs()
                 return fullname
 
-        # Undo any mods to $TEXINPUTS.
-        if TEXINPUTS:
-            os.environ["TEXINPUTS"] = TEXINPUTS
-
+        restore_texinputs()
         raise FileNotFoundError('Could not find any file named: %s' % name)
 
 #

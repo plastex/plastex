@@ -92,10 +92,6 @@ def run(filename: str, config: ConfigManager):
     cwd = document.userdata['working-dir'] = os.getcwd()
     jobname = document.userdata['jobname'] = tex.jobname
 
-    # Set up TEXINPUTS to include the current directory for the renderer
-    os.environ['TEXINPUTS'] = '%s%s%s%s' % (os.getcwd(), os.pathsep,
-                                         os.environ.get('TEXINPUTS',''), os.pathsep)
-
     if config['general']['debug']:
         print("\n\nWill now start the python debugger. Please inspect the "
               "document variable.\n"

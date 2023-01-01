@@ -412,12 +412,13 @@ class Image(object):
 
         return im, depth
 
-def run_command(cmd: str):
+def run_command(cmd: str, env: Optional[Dict] = None):
     p = subprocess.Popen(shlex.split(cmd),
                  stdin=subprocess.DEVNULL,
                  stdout=subprocess.PIPE,
                  stderr=subprocess.STDOUT,
-                 universal_newlines=True)
+                 universal_newlines=True,
+                 env=env or os.environ)
     try:
         if p.stdout is not None:
             for line in p.stdout:
@@ -597,6 +598,13 @@ width 2pt\hskip2pt}}{}
 
         cwd = Path.cwd()
 
+        folders = []
+        root = Path(self.ownerDocument.userdata.get('working-dir', '.'))
+        for folder in os.environ.get('TEXINPUTS', '').split(os.pathsep):
+            if folder.strip():
+                folders.append(str((root/folder).absolute()))
+        new_texinputs = os.pathsep.join(['.'] + folders) + os.pathsep
+
         # Make a temporary directory to work in. We don't use
         # `with TemporaryDirectory() as tempdir` because we want to retain the
         # possibility of keeping the temporary directory.
@@ -615,7 +623,7 @@ width 2pt\hskip2pt}}{}
             raise e
 
         try:
-            self.compileLatex()
+            self.compileLatex(texinputs=new_texinputs)
         except Exception as e:
             log.warning("Failed to compile image: {}".format(e))
             on_error(e)
@@ -682,14 +690,15 @@ width 2pt\hskip2pt}}{}
     def getCompiler(self):
         return self.config['images']['compiler'] or self.compiler
 
-    def compileLatex(self):
+    def compileLatex(self, texinputs=''):
         """
         Compile the LaTeX source, located at self.tmpFile
 
         This should raise an exception if the compilation fails.
         """
-
-        run_command(r'%s %s' % (self.getCompiler(), self.tmpFile.name))
+        env = os.environ.copy()
+        env['TEXINPUTS'] = texinputs
+        run_command(r'%s %s' % (self.getCompiler(), self.tmpFile.name), env=env)
 
     def executeConverter(self, outfile: Optional[str] = None) -> List[Tuple[str, str]]:
         """
