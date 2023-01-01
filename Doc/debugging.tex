@@ -35,12 +35,12 @@ parse.environments=DEBUG
 \end{verbatim}
 if you want more information about environment parsing.
 
-If the renderer you use does not call \LaTeX for creating images, you
-can also achieve the same result from your \LaTeX document
+If the renderer you use does not call \LaTeX\ for creating images, you
+can also achieve the same result from your \LaTeX\ document
 by writing \verb+\usepackage{debugplastex}+ and then
 \verb+\setloglevel{parse.environments}{DEBUG}+.
 
-When using \plasTeX from python, you can use the function
+When using \plasTeX\ from python, you can use the function
 \verb+plasTeX.Logging.updateLogLevels+ to update logging levels. It takes
 a dictionary whose keys are logger names and values are levels (both are
 strings). Non-existent loggers are created, loggers whose names are not
