@@ -1,12 +1,8 @@
 
 Installation of plasTeX is very simple.  It installs just like any other
-Python package.  Simply run the following command.  Python 3.5+ is required.
+Python package.  Simply run the following command.  Python 3.6+ is required.
 
     pip install .
 
 To generate images for destinations like HTML, you will also need to have
-a LaTeX distribution installed, and either ghostscript or, preferably, 
-either dvi2bitmap (http://dvi2bitmap.sourceforge.net/) or 
-dvipng (http://savannah.nongnu.org/projects/dvipng/).  You will also
-need to install the Python Imaging Library 
-ihttp://www.pythonware.com/products/pil/).
+a LaTeX distribution installed, and a converter such as `pdf2svg`.
