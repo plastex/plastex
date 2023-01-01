@@ -61,8 +61,8 @@ class lstlisting(VerbatimEnvironment):
         bgroup = self.ownerDocument.context.categories[1][0]
         egroup = self.ownerDocument.context.categories[2][0]
         self.ownerDocument.context.push(self)
-        tokenizer = tex.inputs[0][0]
-        next_token = next(tex.inputs[0][1])
+        tokenizer = tex.inputs[-1][0]
+        next_token = next(tex.inputs[-1][1])
         if next_token == '[':
             tokenizer.pushToken(next_token)
             self.parse(tex)
