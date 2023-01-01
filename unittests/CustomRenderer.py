@@ -30,12 +30,11 @@ class Renderer(BaseRenderer):
 \end{document}
 """)
 
-    plastex = str(Path(__file__).parent.parent / "plasTeX" / "plastex")
 
     os.environ["PYTHONPATH"] = plastex_dir
     # We check the return code manually instead of setting check=True for more
     # readable error
-    ret = subprocess.run([plastex, "--renderer=CustomRenderer", "test.tex"], cwd=str(tmpdir), check=False)
+    ret = subprocess.run(["plastex", "--renderer=CustomRenderer", "test.tex"], cwd=str(tmpdir), check=False)
     assert ret.returncode == 0
 
     result = (tmpdir / "test" / "index").read_text()
@@ -61,14 +60,13 @@ class Renderer(BaseRenderer):
 \begin{document}
 \end{document}
 """)
-    plastex = str(Path(__file__).parent.parent/'plasTeX'/'plastex')
 
     ppath = ':'.join(sys.path + [str(tmpdir)])
     env = os.environ
     env['PYTHONPATH'] = ppath
     # We check the return code manually instead of setting check=True for more
     # readable error
-    ret = subprocess.run([plastex, "--plugins=my_plugin",
+    ret = subprocess.run(["plastex", "--plugins=my_plugin",
                           "--renderer=my_renderer", "test.tex"],
                          cwd=str(tmpdir), check=False, env=env)
     assert ret.returncode == 0

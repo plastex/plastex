@@ -68,8 +68,8 @@ def info(type, value, tb):
 
 #sys.setrecursionlimit(10000)
 
-#main(sys.argv)
-try:
-    main(sys.argv[1:])
-except KeyboardInterrupt:
-    pass
+def plastex():
+    try:
+        main(sys.argv[1:])
+    except KeyboardInterrupt:
+        pass

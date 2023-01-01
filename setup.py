@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from setuptools import setup
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -26,7 +23,7 @@ setup(name="plasTeX",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         ],
-      python_requires='>=3.5',
+      python_requires='>=3.6',
       packages = [
          'plasTeX',
          'plasTeX.Base',
@@ -90,6 +87,6 @@ setup(name="plasTeX",
          'plasTeX.Renderers.S5.Themes.default': templates,
          'plasTeX.Renderers.S5.Themes.default.ui.default': templates+styles+images,
       },
-      scripts=['plasTeX/plastex'],
+      entry_points={ "console_scripts": ["plastex = plasTeX.client:plastex"]},
       install_requires=['Jinja2>=2.10.1', 'Unidecode>=0.4.21', 'Pillow>=7', 'typing-extensions>=3.7']
 )
