@@ -1,0 +1,15 @@
+name: document
+{{ obj }}
+
+name: part chapter section
+# {{ obj.fullTitle }}
+{{ obj }}
+
+
+name: subsection 
+## {{ obj.fullTitle }}
+{{ obj }}
+
+name: par 
+{{ obj }}
+

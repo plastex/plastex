@@ -1,0 +1,261 @@
+\section{Plugins}
+\label{sec:plugins}
+
+As explained in Chapter~\ref{sec:command-line}, one can use command line
+options of configuration files to use extra packages or templates or even a
+full custom renderer.
+However this is not convenient if you want use the same extras in several
+projects, or want to distribute them. In order to do that, you can create a
+\plasTeX\ plugin. Such a plugin is simply a python package that contains
+one or several subpackages named \file{templates}, \file{Packages} or
+\file{Renderers}.
+
+In this section, we describe some minimalistic plugins demonstrating the
+possibilities offered. For clarity we will separate the three kinds of plugin content
+into three plugins but of course a sophisticated plugin can combine several kinds.
+
+Any kind of python packaging can be used as long as it allows to put the plugin code into
+the Python search path and can bundle Python code with some other files, typically template files.
+In this documentation we will use \texttt{setuptools} and put all configuration into
+a \file{pyproject.toml} file which is essentially the same for all three examples,
+differing only in the name and description metadata.
+\begin{lstlisting}
+[project]
+name = "my_wonderful_plastex_plugin"
+version = "1.0.0"
+description = "A nice plasTeX plugin."
+requires-python = ">=3.7"
+dependencies = ["plastex>=2.1"]
+
+[tool.setuptools.package-data]
+plastex_markdown_renderer = ["**/*.jinja2", "**/*.jinja2s"]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+\end{lstlisting}
+
+Note in particular the line about packaging Jinja files together with python files. Of course
+you can add CSS file of javascript files or any other kind of required file.
+Note also that you will need a bit more metadata if you want to upload your
+plugin to pypi for instance.
+
+You can then install this python package by running \verb+pip install .+ from the folder
+containing that \file{pyproject.toml}. Then you can compile a file \file{text.tex} using your plugin by running
+
+\begin{verbatim}
+plastex --plugins my_wonderful_plastex_plugin -- test.tex
+\end{verbatim}
+
+In the above command, the double-dash before the file name is needed because
+the \longprogramopt{plugins} options takes a list of space separated plugins.
+
+\subsection{Templates plugin}%
+\label{sub:templates-plugin}
+
+The simplest kind of plugin is useful when you need to reuse custom templates. Say you do not like the
+HTML5 template for quotes and often want to use the same custom template. You can create a folder with the
+following structure.
+
+\begin{forest}
+  for tree={
+    font=\ttfamily,
+    grow'=0,
+    child anchor=west,
+    parent anchor=south,
+    anchor=west,
+    calign=first,
+    edge path={
+      \noexpand\path [draw, \forestoption{edge}]
+      (!u.south west) +(7.5pt,0) |- node[fill,inner sep=1.25pt] {} (.child anchor)\forestoption{edge label};
+    },
+    before typesetting nodes={
+      if n=1
+        {insert before={[,phantom]}}
+        {}
+    },
+    fit=band,
+    before computing xy={l=15pt},
+  }
+[my_templates_plugin
+  [pyproject.toml]
+  [src
+    [plastex_div_quote
+      [__init__.py]
+      [templates
+        [Quote.jinja2]
+      ]
+    ]
+  ]
+]
+\end{forest}
+
+The \file{pyproject.toml} was already explained and the \file{__init__.py} can be empty in this case.
+In this case the plugin name is \texttt{plastex_div_quote}. The content of \file{Quote.jinja2} could be:
+\begin{lstlisting}[language=HTML]
+name: quote
+<div class="quote">{{ obj }}</div>
+\end{lstlisting}
+
+
+\subsection{Package plugin}%
+\label{sub:package-plugin}
+
+For a slighly more complicated example, assume that you have implemented a
+python version of some package that is not natively supported by \plasTeX, or
+you don't like the available implementation and, for some reason, contributing
+your implementation to \plasTeX is not possible. You can use the
+\longprogramopt{packages-dir} option to use your implementation, but this is
+not convenient if you want to distribute it. So you can create a folder with
+the following structure
+
+\begin{forest}
+  for tree={
+    font=\ttfamily,
+    grow'=0,
+    child anchor=west,
+    parent anchor=south,
+    anchor=west,
+    calign=first,
+    edge path={
+      \noexpand\path [draw, \forestoption{edge}]
+      (!u.south west) +(7.5pt,0) |- node[fill,inner sep=1.25pt] {} (.child anchor)\forestoption{edge label};
+    },
+    before typesetting nodes={
+      if n=1
+        {insert before={[,phantom]}}
+        {}
+    },
+    fit=band,
+    before computing xy={l=15pt},
+  }
+[my_package_plugin
+  [pyproject.toml]
+  [src
+    [plastex_foo_package
+      [__init__.py]
+          [Packages
+            [foo.py]
+          ]
+        [templates
+          [Foo.jinja2]
+        ]
+    ]
+  ]
+]
+\end{forest}
+
+The \file{pyproject.toml} was already explained and the \file{__init__.py} can be empty in this case.
+In this case the plugin name is \texttt{plastex_foo_package}. The content of \file{foo.py} could be:
+\begin{lstlisting}[language=python]
+from plasTeX import Command
+
+class foo(Command):
+    pass
+\end{lstlisting}
+and the content of \file{Foo.jinja2} could be:
+\begin{lstlisting}[language=HTML]
+name: foo
+Foo!
+\end{lstlisting}
+
+When compiling a file using this plugin, you can put \verb+\usepackage{foo}+ in the preamble and
+then use the \verb+\foo+ command that will be rendered as ``Foo!'' with any template based renderer
+(for instance the default HTML5 renderer).
+
+\subsection{Renderer plugin}%
+\label{sub:renderer-plugin}
+
+For our final example, we build a plugin which brings a new renderer. We will use as an
+example a renderer targetting Markdown. This is slightly silly since markdown itself is a source code
+format, and much cruder that \LaTeX, but this is only an example.
+
+\begin{forest}
+  for tree={
+    font=\ttfamily,
+    grow'=0,
+    child anchor=west,
+    parent anchor=south,
+    anchor=west,
+    calign=first,
+    edge path={
+      \noexpand\path [draw, \forestoption{edge}]
+      (!u.south west) +(7.5pt,0) |- node[fill,inner sep=1.25pt] {} (.child anchor)\forestoption{edge label};
+    },
+    before typesetting nodes={
+      if n=1
+        {insert before={[,phantom]}}
+        {}
+    },
+    fit=band,
+    before computing xy={l=15pt},
+  }
+[my_renderer_plugin
+[pyproject.toml]
+[src
+    [plastex_markdown_renderer
+        [__init__.py]
+        [Renderers
+            [Markdown
+                [__init__.py]
+                [Math.jinja2s]
+                [Sectioning.jinja2s]
+                [Text.jinja2s]
+                [Themes
+                    [default
+                        [default-layout.jinja2]
+                    ]
+                ]
+            ]
+        ]]]]
+\end{forest}
+
+The \file{__init__.py} in \file{plastex_markdown_renderer} is empty but the one in
+\file{Markdown} contains
+\begin{lstlisting}[language=python]
+from plasTeX.Renderers.PageTemplate import Renderer as PTRenderer
+
+class Renderer(PTRenderer):
+    """Renderer targetting Markdown using templates."""
+    fileExtension = '.md'
+\end{lstlisting}
+which simply declares a page template based renderer which will produce files with extension \file{.md}.
+The various files with \file{.jinja2s} extension contain the following code split into three files for convenience:
+\begin{lstlisting}
+name: math displaymath
+{{ obj.mathjax_source }}
+
+name: document
+{{ obj }}
+
+name: section
+# {{ obj.fullTitle }}
+{{ obj }}
+
+name: subsection
+## {{ obj.fullTitle }}
+{{ obj }}
+
+name: par
+{{ obj }}
+
+name: emph em
+*{{ obj }}*
+
+name: itshape textit
+*{{ obj }}*
+
+name: bfseries textbf
+**{{ obj }}**
+
+name: ttfamily texttt
+`{{ obj }}`
+\end{lstlisting}
+
+and the file \file{default-layout.jinja2} simply contains one line saying
+\verb+{{ obj }}+. This will allow to run
+
+\begin{verbatim}
+plastex --plugins  plastex_markdown_renderer --renderer Markdown test.tex
+\end{verbatim}
+to render a tiny subset of \LaTeX\ to markdown.

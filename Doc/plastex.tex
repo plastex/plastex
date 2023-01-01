@@ -4,6 +4,9 @@
 \usepackage{graphicx}
 \usepackage{makeidx}
 \usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{forest}
 
 \newcommand{\titleref}{\ref}
 
@@ -24,6 +27,7 @@
     \begin{description}
     \item[\textbf{#1}] \hfill\\
 }{\end{description}}
+
 
 \title{plasTeX 2.1 --- A Python Framework for Processing LaTeX Documents}
 \author{Kevin D. Smith}
@@ -58,6 +62,7 @@
 \input{context-api}
 \input{renderer-api}
 \input{imager-api}
+\input{plugins}
 
 \appendix
 

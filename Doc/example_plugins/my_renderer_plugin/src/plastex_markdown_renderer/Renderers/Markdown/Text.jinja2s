@@ -1,0 +1,11 @@
+name: emph em
+*{{ obj }}*
+
+name: itshape textit
+*{{ obj }}*
+
+name: bfseries textbf
+**{{ obj }}**
+
+name: ttfamily texttt
+`{{ obj }}`

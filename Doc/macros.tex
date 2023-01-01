@@ -603,7 +603,7 @@ the search path of your \LaTeX\ distribution or in one of the directories
 specified in the \environment{TEXINPUTS} environment variable.
 \plasTeX\ read the file and expand the macros therein just as \LaTeX\
 would do. This happens only if the \longprogramopt{load-tex-packages} option
-is set (which is the default value), or the package is white-listed in the 
+is set (which is the default value), or the package is white-listed in the
 \longprogramopt{tex-packages} option (see Section\ref{sec:general-options}).
 It will work as expected only for simple packages.
 
@@ -613,7 +613,7 @@ First \plasTeX\ looks into the directories listed in the
 Section\ref{sec:general-options}), in the order they are listed.
 If this fail then \plasTeX\ looks into the plugins listed in the
 \longprogramopt{plugins} option (see
-Section\ref{sec:general-options}), in the reversed order they are listed
+Sections~\ref{sec:general-options} and~\ref{sec:plugins}), in the reversed order they are listed
 (the general idea here is that later plugins are allowed to overrule
 earlier ones).
 If this also fails then \plasTeX\ looks into the builtin packages folder

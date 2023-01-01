@@ -1,0 +1,13 @@
+[project]
+name = "plastex_foo_package" 
+version = "1.0.0" 
+description = "A sample plasTeX plugin bringing a package." 
+requires-python = ">=3.7"
+dependencies = ["plastex>=2.1"]
+
+[tool.setuptools.package-data]
+plastex_markdown_renderer = ["**/*.jinja2", "**/*.jinja2s"]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
