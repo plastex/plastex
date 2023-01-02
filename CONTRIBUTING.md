@@ -20,10 +20,6 @@ Because the code base is so old and the current maintainer wrote almost nothing
 of it, it is even more crucial than usual that every proposed modification comes with
 unit tests clearly showing what was failing and how it is fixed.
 
-Since 2020, the maintainer knows he should push a version 3.0 to pypi, but he
-wants to fix a couple of issues first, and time is flying. In the mean time, you can install 
-from source.
-
 ## Testing
 
 We run our tests using [pytest](https://docs.pytest.org/en/latest/),
