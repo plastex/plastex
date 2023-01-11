@@ -1,4 +1,4 @@
-__version__ = '2.1'
+__version__ = '3.0'
 
 from typing import Optional, Union, List, Callable, Dict
 from plasTeX import Logging, encoding

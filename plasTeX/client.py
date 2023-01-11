@@ -4,14 +4,13 @@ import os, sys
 import importlib
 import traceback, pdb
 import plasTeX
+from plasTeX import __version__
 from argparse import ArgumentParser
 from plasTeX.Logging import getLogger
 from plasTeX.Compile import run
 from plasTeX.Config import defaultConfig
 
 log = getLogger()
-
-__version__ = '2.1'
 
 def collect_renderer_config(config):
     plastex_dir = os.path.dirname(os.path.realpath(plasTeX.__file__))
