@@ -301,7 +301,7 @@ class Array(Environment):
 #               if isinstance(self[i], Array.BorderCommand):
 #                   self.pop(i)
 
-            self.paragraphs()
+            self.paragraphs(charsubs=self.paragraphsCharsubs())
 
         @property
         def borders(self):
