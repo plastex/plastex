@@ -287,7 +287,7 @@ class SectionUtils(object):
 #           self.appendText(text, self.ownerDocument.charsubs)
             self.appendChild(item)
 #       self.appendText(text, self.ownerDocument.charsubs)
-        self.paragraphs()
+        self.paragraphs(self.paragraphsCharsubs())
 
 
 class StartSection(SectionUtils, Command):

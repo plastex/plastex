@@ -387,7 +387,6 @@ class Array(Environment):
 
         def digest(self, tokens):
             Command.digest(self, tokens)
-            #self.paragraphs()
 
 
     def invoke(self, tex):

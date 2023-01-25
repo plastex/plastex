@@ -9,7 +9,7 @@ def test_charsub():
     tex = TeX(doc)
 
     p = tex.input(r'''{``'' '---}''').parse()[0]
-    p.paragraphs()
+    p.paragraphs(charsubs=doc.charsubs)
     assert p.textContent == "“” ’—"
 
 def test_modify_charsub():
@@ -20,5 +20,5 @@ def test_modify_charsub():
     tex = TeX(doc)
 
     p = tex.input(r'''{``'' '---}''').parse()[0]
-    p.paragraphs()
+    p.paragraphs(charsubs=doc.charsubs)
     assert p.textContent == "“” '—"
