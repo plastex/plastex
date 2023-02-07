@@ -533,7 +533,6 @@ class AngleReplacingDelimiter(Command):
 
     def invoke(self, tex):
         Command.invoke(self, tex)
-        print('Yo')
         if self.attributes['char'].textContent.strip() == '<':
             newarg = TeXFragment()
             newarg.ownerDocument = self.ownerDocument
