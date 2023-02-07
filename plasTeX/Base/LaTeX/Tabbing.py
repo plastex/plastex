@@ -16,7 +16,7 @@ class tabbing(Environment):
         macroName = '>'
 
     class EndRow(Command):
-        macroName = '\\\\'
+        macroName = '\\'
    
     class kill(Command):
         pass
