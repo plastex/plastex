@@ -348,7 +348,6 @@ class Renderer(dict):
     """
 
     renderableClass = Renderable
-    renderMethod = None
     textDefault = str
     default = str
     outputType = str
@@ -509,10 +508,7 @@ class Renderer(dict):
             self.vectorImager.imageUnits = self.imageUnits
 
         # Invoke the rendering process
-        if type(self).renderMethod:
-            getattr(document, type(self).renderMethod)()
-        else:
-            str(document)
+        str(document)
 
         self.imager.close()
         self.vectorImager.close()
