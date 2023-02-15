@@ -95,25 +95,25 @@ class uncover(Command):
     args = '< overlay > self'
 
 class uncoverenv(Environment):
-    args = uncover.args
+    args = '< overlay >'
 
 class visible(Command):
     args = '< overlay > self'
 
 class visibleenv(Environment):
-    args = visible.args
+    args = '< overlay >'
 
 class invisible(Command):
     args = '< overlay > self'
 
 class invisibleenv(Environment):
-    args = invisible.args
+    args = '< overlay >'
 
 class alt(Command):
     args = '< overlay > default alternative < overlay2 >'
 
 class altenv(Environment):
-    args = '< overlay > begin end alternatebegin alternate end < overlay2 >'
+    args = '< overlay > begin end alternatebegin alternateend < overlay2 >'
 
 class temporal(Command):
     args = '< overlay > before default after'
