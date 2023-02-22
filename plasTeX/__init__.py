@@ -1100,23 +1100,23 @@ def expandDef(definition, params):
     for t in definition:
         # Expand parameters
         if t.catcode == Token.CC_PARAMETER:
-            for t in definition:
-                # Double '#'
-                if t.catcode == Token.CC_PARAMETER:
-                    output.append(t)
+            t = next(definition)
+            # Double '#'
+            if t.catcode == Token.CC_PARAMETER:
+                output.append(t)
+            # The first part of the test below is required when beamer
+            # adds a <> overlay option that we want to ignore.
+            elif int(t) < len(params) and params[int(t)] is not None:
+                # This is a pretty bad hack, but `ifx' commands
+                # need an argument to also be a token.  So we
+                # wrap them in a group here and let the
+                # TeX parser convert the group to a token.
+                if previous == 'ifx':
+                    output.append(BeginGroup(' '))
+                    output.extend(params[int(t)])
+                    output.append(EndGroup(' '))
                 else:
-                    if params[int(t)] is not None:
-                        # This is a pretty bad hack, but `ifx' commands
-                        # need an argument to also be a token.  So we
-                        # wrap them in a group here and let the
-                        # TeX parser convert the group to a token.
-                        if previous == 'ifx':
-                            output.append(BeginGroup(' '))
-                            output.extend(params[int(t)])
-                            output.append(EndGroup(' '))
-                        else:
-                            output.extend(params[int(t)])
-                break
+                    output.extend(params[int(t)])
         # Just append other tokens to the output
         else:
             output.append(t)
