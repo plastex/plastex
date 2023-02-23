@@ -7,7 +7,6 @@ class Verbatim(verbatim):
         verbatim.parse(self, tex)
 
         options = self.attributes['options']
-        print(options)
 
         if options is None:
             options = {}
