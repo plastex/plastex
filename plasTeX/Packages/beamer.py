@@ -288,10 +288,10 @@ class beamerboxesrounded(Environment):
     args = '[ options:dict ] title'
 
 class columns(Environment):
-    args = '[ options:dict ]'
+    args = '< overlay > [ options:dict ]'
 
 class column(Command):
-    args = '[ placement ] width'
+    args = '< overlay > [ placement ] width'
     def invoke(self, tex):
         # This macro can be an environment or a command each 
         # with different arguments.
