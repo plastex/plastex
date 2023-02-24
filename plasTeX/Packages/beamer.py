@@ -5,7 +5,7 @@ from plasTeX.Base import renewcommand, renewenvironment
 from plasTeX.Base import itemize, enumerate_, description
 from plasTeX.Base import part, section, subsection, subsubsection
 from plasTeX.Base import tableofcontents, thebibliography
-from plasTeX.Base import abstract, verse, quotation, quote, footnote
+from plasTeX.Base import abstract, verse, quotation, quote, footnote, footnotetext
 from plasTeX.Packages.color import color
 from plasTeX.Packages.graphicx import includegraphics
 from plasTeX.Packages.hyperref import hypertarget, hyperlink
@@ -156,7 +156,8 @@ abstract.args = '< overlay >' + abstract.args
 verse.args = '< overlay >' + verse.args
 quotation.args = '< overlay >' + quotation.args
 quote.args = '< overlay >' + quote.args
-footnote.args = '< overlay > [ options:dict ]' + footnote.args
+footnote.args = '< overlay > [ options:dict ] self' # modify options int -> dict
+footnotetext.args = '< overlay > [ options:dict ] self' # modify options int -> dict
 
 class resetcounteronoverlays(Command):
     args = 'counter'
