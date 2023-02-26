@@ -325,6 +325,8 @@ class Tokenizer(object):
 
         """
         if tokens:
+            if not isinstance(tokens, list):
+                tokens = list(tokens) # might be iterator
             for t in tokens[::-1]:
                 self.pushToken(t)
 
