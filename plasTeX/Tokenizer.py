@@ -325,9 +325,7 @@ class Tokenizer(object):
 
         """
         if tokens:
-            tokens = list(tokens)
-            tokens.reverse()
-            for t in tokens:
+            for t in tokens[::-1]:
                 self.pushToken(t)
 
     def __iter__(self):
