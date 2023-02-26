@@ -441,8 +441,6 @@ class TeX(object):
         """
         Push a token back into the token buffer to be re-read
 
-        This method also pops an item off of the output token stream.
-
         Required Arguments:
         token -- token to push back
 
