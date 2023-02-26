@@ -257,7 +257,7 @@ class Macro(Element):
             return getattr(self, '@tocEntry')
         except AttributeError:
             try:
-                if 'toc' in list(self.attributes.keys()):
+                if 'toc' in self.attributes:
                     toc = self.attributes['toc']
                     if toc is None:
                         toc = self.title
@@ -439,7 +439,7 @@ class Macro(Element):
         s = '%s%s%s' % (escape, name, argSource)
 
         # If self.childNodes is not empty, print out the contents
-        if self.attributes and 'self' in list(self.attributes.keys()):
+        if self.attributes and 'self' in self.attributes:
             pass
         else:
             if self.hasChildNodes():
@@ -1591,7 +1591,7 @@ class Counter(object):
         self.resetcounters()
 
     def resetcounters(self):
-        for counter in list(self.counters.values()):
+        for counter in self.counters.values():
             if counter.resetby and self.name and counter.resetby == self.name:
                 counter.value = 0
                 counter.resetcounters()
