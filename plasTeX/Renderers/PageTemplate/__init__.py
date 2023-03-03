@@ -41,9 +41,15 @@ else:
         print("\nYou can inspect obj and config.\n")
         pdb.set_trace()
 
+    def _jinja2_log(t):
+        log.warning(str(t)) # TODO: use a template logger? show a trace?
+        return ""
+
     def jinja2template(s, encoding='utf8'):
         env = Environment(trim_blocks=True, lstrip_blocks=True)
         env.globals['debug'] = debug
+        env.filters['debug'] = _jinja2_log
+        env.filters['log'] = _jinja2_log
 
         def renderjinja2(obj, s=s):
             tvars = {'here':obj,
