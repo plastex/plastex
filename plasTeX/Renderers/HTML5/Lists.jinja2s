@@ -6,10 +6,10 @@ name: itemize
 </ul>
 
 name: enumerate
-{% if obj.start==0 %}
-<ol class="enumerate">
-{% else %}
+{% if obj.start is defined %}
 <ol class="enumerate" start="{{ obj.start }}">
+{% else %}
+<ol class="enumerate">
 {% endif %}
 {% for item in obj %}
   <li>{{ item }}</li>
