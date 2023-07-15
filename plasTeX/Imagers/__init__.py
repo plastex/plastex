@@ -603,7 +603,7 @@ width 2pt\hskip2pt}}{}
         for folder in os.environ.get('TEXINPUTS', '').split(os.pathsep):
             if folder.strip():
                 folders.append(str((root/folder).absolute()))
-        new_texinputs = os.pathsep.join(['.'] + folders) + os.pathsep
+        new_texinputs = os.pathsep.join([str(root.absolute())] + folders) + os.pathsep
 
         # Make a temporary directory to work in. We don't use
         # `with TemporaryDirectory() as tempdir` because we want to retain the
