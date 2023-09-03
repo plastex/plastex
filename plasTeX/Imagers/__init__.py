@@ -599,11 +599,11 @@ width 2pt\hskip2pt}}{}
         cwd = Path.cwd()
 
         folders = []
-        root = Path(self.ownerDocument.userdata.get('working-dir', '.'))
+        root = Path(self.ownerDocument.userdata.get('working-dir', '.')).absolute()
         for folder in os.environ.get('TEXINPUTS', '').split(os.pathsep):
             if folder.strip():
-                folders.append(str((root/folder).absolute()))
-        new_texinputs = os.pathsep.join(['.'] + folders) + os.pathsep
+                folders.append(str((root/folder)))
+        new_texinputs = os.pathsep.join(['.'] + folders + [str(root)]) + os.pathsep
 
         # Make a temporary directory to work in. We don't use
         # `with TemporaryDirectory() as tempdir` because we want to retain the
