@@ -167,6 +167,8 @@ of the available types is shown in the table below.
    in the \member{attributes} dictionary to the string content of the argument}
 \lineii{chr}{same as `str'}
 \lineii{char}{same as `str'}
+\lineii{url}{same as `str' but change the category code of \verb+#+,\verb+~+,
+    \verb+%+ and \verb+&+ to $12$, and do not apply character substitutions.}
 \lineii{cs}{sets the attribute to an unexpanded control sequence}
 \lineii{label}{expands all macros, converts the result to a string, then sets
     the current label to the object that is in the \member{currentlabel}
