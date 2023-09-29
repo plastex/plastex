@@ -1,6 +1,6 @@
 import sys, re
 import builtins
-from typing import Optional, NewType
+from typing import Optional, NewType, List
 
 NodeType = NewType("NodeType", int)
 
@@ -628,6 +628,7 @@ class Node(object):
     parentNode = None
     ownerDocument = None # type: Optional[Document]
     attributes = None
+    nonNormalizedAttrs = [] # type: List[str]
 
     str = None # type: Optional[str]
 
@@ -1070,9 +1071,10 @@ class Node(object):
 
         """
         charsubs = charsubs or []
+
         if self.hasAttributes():
-            for value in list(self.attributes.values()):
-                if isinstance(value, Node):
+            for key, value in self.attributes.items():
+                if isinstance(value, Node) and key not in self.nonNormalizedAttrs:
                     value.normalize(charsubs)
 
         if not self.hasChildNodes():
