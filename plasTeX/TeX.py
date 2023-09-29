@@ -14,6 +14,7 @@ Example:
 
 """
 from io import IOBase
+from typing import Optional, List
 import string, os, sys, plasTeX, subprocess
 from plasTeX.Tokenizer import Tokenizer, Token, EscapeSequence, Other
 from plasTeX import TeXDocument
@@ -597,7 +598,8 @@ class TeX(object):
 
     def readArgumentAndSource(self, spec=None, type=None, subtype=None,
                     delim=',', expanded=False, default=None, parentNode=None,
-                    name=None, stripLeadingWhitespace=True):
+                    name=None, stripLeadingWhitespace=True,
+                    charsubs: Optional[List] = None):
         """
         Get an argument and the TeX source that created it
 
@@ -626,6 +628,10 @@ class TeX(object):
         name -- the name of the argument being parsed
         stripLeadingWhitespace -- if True, whitespace is skipped before
             looking for the argument
+        charsubs -- a list of character substitution to apply to the
+            argument. If None is provided then the document charsubs
+            attribute will be used if it exists, otherwise an empty
+            list will be used.
 
         Returns:
         tuple where the first argument is:
@@ -643,6 +649,9 @@ class TeX(object):
 
         # Disable expansion of parameters
         ParameterCommand.disable()
+
+        if charsubs is None:
+            charsubs = getattr(self.ownerDocument, 'charsubs', [])
 
         if type in ['Dimen','Length','Dimension']:
             n = self.readDimen()
@@ -764,7 +773,7 @@ class TeX(object):
         # Normalize any document fragments
         if expanded and \
            getattr(res,'nodeType',None) == Macro.DOCUMENT_FRAGMENT_NODE:
-            res.normalize(getattr(self.ownerDocument, 'charsubs', []))
+            res.normalize(charsubs)
 
         # Re-enable Parameters
         ParameterCommand.enable()

@@ -658,6 +658,9 @@ class Macro(Element):
                     argdict['expanded'] = False
                 else:
                     argdict['expanded'] = True
+                if argdict.get('type') == 'url':
+                    argdict['charsubs'] = []
+
                 macroargs.append(Argument(item, index, argdict))
                 index += 1
                 argdict.clear()
