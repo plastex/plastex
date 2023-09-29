@@ -29,6 +29,7 @@ class href(Command):
     def invoke(self, tex):
         res = Command.invoke(self, tex)
         self.attributes['url'] = addBaseURL(self, 'url')
+        self.nonNormalizedAttrs = ['url']
         return res
 
 class url(Command):
@@ -36,6 +37,7 @@ class url(Command):
     def invoke(self, tex):
         res = Command.invoke(self, tex)
         self.attributes['url'] = addBaseURL(self, 'url')
+        self.nonNormalizedAttrs = ['url']
         return res
 
 class nolinkurl(Command):
@@ -43,6 +45,7 @@ class nolinkurl(Command):
     def invoke(self, tex):
         res = Command.invoke(self, tex)
         self.attributes['url'] = addBaseURL(self, 'url')
+        self.nonNormalizedAttrs = ['url']
         return res
 
 class hyperbaseurl(Command):
@@ -62,6 +65,7 @@ class hyperimage(Command):
     def invoke(self, tex):
         res = Command.invoke(self, tex)
         self.attributes['url'] = addBaseURL(self, 'url')
+        self.nonNormalizedAttrs = ['url']
         return res
 
 class hyperdef(Command):
