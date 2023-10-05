@@ -10,7 +10,7 @@ CACHE_LOCATION = Path(__file__).absolute().parent / "compare_cache"
 
 def cmp_img(a: str, b: str) -> float:
     out = subprocess.run(["compare", "-quiet", "-metric", "MSE",
-        '-subimage-search', a, b, "/dev/null"],
+        '-subimage-search', a, b, "NULL:"],
         stderr=subprocess.PIPE, stdin=subprocess.DEVNULL, check=False)
 
     # return code 1 is for dissimilar images, but we use our own threshold
@@ -20,7 +20,7 @@ def cmp_img(a: str, b: str) -> float:
             def __init__(self, message):
                 self.message = message
         out = subprocess.run(["compare", "-verbose", "-metric", "MSE",
-            '-subimage-search', a, b, "/dev/null"],
+            '-subimage-search', a, b, "NULL:"],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.DEVNULL,
             check=False)
         print(out.stdout.decode())
