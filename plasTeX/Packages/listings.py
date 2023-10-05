@@ -12,7 +12,7 @@ try:
     from pygments.lexers.special import TextLexer
     from pygments.formatters import HtmlFormatter
 except:
-    pygments = None
+    pygments = None  # type: ignore
 
 class listingsname(Command):
     str = 'Listing'

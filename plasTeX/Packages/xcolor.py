@@ -484,7 +484,7 @@ class ColorParser:
             func = self.function()
             if func is None:
                 raise ColorParser.ParseError("Missing expected color function 'wheel', 'twheel'")
-            args = []
+            args: List[float] = []
             while self.next['element'] == ColorParser.Elements.comma:
                 self.tokens.pop(0)
                 arg = self.int()
