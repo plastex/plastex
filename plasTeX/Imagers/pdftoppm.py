@@ -45,7 +45,9 @@ class pdftoppm(_Imager):
         subprocess.run(shlex.split('%s %s%s img' % (self.command, options, outfile)), check=True)
 
         images = []
-        for line in open("images.csv"):
+        with open("images.csv") as fh:
+            lines = fh.readlines()
+        for line in lines:
             page, output, _ = line.split(",")
             images.append(["img-{}.png".format(page), output.rstrip()])
 
