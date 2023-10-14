@@ -468,7 +468,7 @@ class Imager(object):
                                           self.__class__.__name__+'.images'))
         if self.config['images']['cache'] and os.path.isfile(self._filecache):
             try:
-                self._cache = pickle.load(open(self._filecache, 'r'))
+                self._cache = pickle.load(open(self._filecache, 'rb'))
                 for key, value in list(self._cache.items()):
                     if not os.path.isfile(value.filename):
                         del self._cache[key]
