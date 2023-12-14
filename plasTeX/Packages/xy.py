@@ -29,7 +29,7 @@ class xymatrix(Command):
     class omit(Command):
         @property
         def source(self):
-            return '\omit'
+            return '\\omit'
 
     def preArgument(self, arg, tex):
             # Check whether there are any spacing arguments for xymatrix
