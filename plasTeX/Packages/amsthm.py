@@ -22,7 +22,7 @@ It also keeps a list of theorem-like environments under
 """
 from pathlib import Path
 
-from plasTeX import Environment, Command, dimen, TeXFragment, Node
+from plasTeX import Environment, Command, dimen, TeXFragment
 from plasTeX.Base.LaTeX.FontSelection import itshape, bfseries
 from plasTeX.PackageResource import PackagePreCleanupCB, PackageCss
 
@@ -195,7 +195,6 @@ class newtheorem(Command):
                 'counter': counter,
                 'caption': header,
                 'forcePars': True,
-                'level': Node.PAR_LEVEL,
                 'style': style
             }
         th = type(name, (Environment,), data)
