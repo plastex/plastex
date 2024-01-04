@@ -48,6 +48,7 @@ else:
         def renderjinja2(obj, s=s):
             tvars = {'here':obj,
                      'obj':obj,
+                     'doc':obj.ownerDocument,
                      'container':obj.parentNode,
                      'config':obj.ownerDocument.config,
                      'context':obj.ownerDocument.context,

@@ -723,11 +723,12 @@ a list of the variables and the templates that support them.
 \textbf{Object} & \textbf{ZPT/Python Formats/String Template} &
 \textbf{Jinja2} &
     \textbf{Cheetah} & \textbf{Kid/Genshi}\\\hline
-document node & \var{self} or \var{here} & \var{obj} or \var{here} &  \var{here} & \var{here} \\
+document node & \var{self} or \var{here} & \var{obj} &  \var{here} & \var{here} \\
 parent node & \var{container} & \var{container} & \var{container} & \var{container} \\
 document config & \var{config} & \var{config} & \var{config} & \var{config} \\
 template instance & \var{template} &  & & \\
 renderer instance & \var{templates} & \var{templates} & \var{templates} & \var{templates} \\\hline
+parent document & & \var{doc} & & \\
 \end{tabular}
 \end{center}
 
