@@ -379,24 +379,17 @@ class Context(object):
                                                 {'args': value})
             self.importMacros(macros)
 
-    def loadPackage(self, tex: TeX, file_name: str, options: Optional[Dict] = None) -> bool:
+    def loadPythonPackage(self, document: plasTeX.TeXDocument, file_name: str, options: Optional[Dict] = None) -> bool:
         """
-        Load a Python or LaTeX package
+        Load a Python package
 
-        A Python version of the package is searched for first,
-        if one cannot be found then a LaTeX version of the package
-        is searched for if config['general']['load-tex-packages']
-        is True, or the package has been white-listed in
-        config['general']['tex-packages'].
-
-        Python versions are first searched for in
+        Packages are first searched for in
         the directories of config['general']['packages-dirs'], then
         in plugins listed in config['general']['plugins'], and then
         among builtin packages.
 
         Required Arguments:
-        tex -- the instance of the TeX engine to use for parsing
-            the LaTeX file, if needed.
+        document -- the document currently being built.
         file_name -- the name of the file to load
 
         Keyword Arguments:
@@ -406,8 +399,8 @@ class Context(object):
         boolean indicating whether or not the package loaded successfully
 
         """
-        config = tex.ownerDocument.config
-        working_dir = tex.ownerDocument.userdata.get('working-dir', '')
+        config = document.config
+        working_dir = document.userdata.get('working-dir', '')
         options = options or {}
         module = os.path.splitext(file_name)[0]
         # See if it has already been loaded
@@ -495,13 +488,55 @@ class Context(object):
         if imported:
             status.info(' (loading package %s ' % imported.__file__)
             if hasattr(imported, 'ProcessOptions'):
-                imported.ProcessOptions(options, tex.ownerDocument) # type: ignore
+                imported.ProcessOptions(options, document) # type: ignore
             assert imported.__file__
             self.importMacros(vars(imported))
             moduleini = os.path.splitext(imported.__file__)[0] + '.ini'
             self.loadINIPackage([packagesini, moduleini])
             self.packages[module] = options
             status.info(' ) ')
+            return True
+        else:
+            return False
+
+    def loadPackage(self, tex: TeX, file_name: str, options: Optional[Dict] = None) -> bool:
+        """
+        Load a Python or LaTeX package
+
+        A Python version of the package is searched for first,
+        if one cannot be found then a LaTeX version of the package
+        is searched for if config['general']['load-tex-packages']
+        is True, or the package has been white-listed in
+        config['general']['tex-packages'].
+
+        Python versions are first searched for in
+        the directories of config['general']['packages-dirs'], then
+        in plugins listed in config['general']['plugins'], and then
+        among builtin packages.
+
+        Required Arguments:
+        tex -- the instance of the TeX engine to use for parsing
+            the LaTeX file, if needed.
+        file_name -- the name of the file to load
+
+        Keyword Arguments:
+        options -- the options given on the macro to pass to the package
+
+        Returns:
+        boolean indicating whether or not the package loaded successfully
+
+        """
+        config = tex.ownerDocument.config
+        options = options or {}
+        module = os.path.splitext(file_name)[0]
+        # See if it has already been loaded
+        if module in self.packages:
+            return True
+
+        packagesini = os.path.join(os.path.dirname(plasTeX.Packages.__file__),
+                                   os.path.basename(module) + '.ini')
+
+        if self.loadPythonPackage(tex.ownerDocument, file_name, options):
             return True
 
         log.warning('No Python version of %s was found' % file_name)
