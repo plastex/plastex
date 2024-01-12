@@ -16,21 +16,22 @@ class DVISVGM(_Imager):
         default_scale = self.config["images"]["scale-factor"]
 
         images = []
-        for no, line in enumerate(open("images.csv")):
-            out = 'img%d.svg' % no
-            page, output, scale_str = line.split(",")
-            scale = float(scale_str.strip()) or default_scale
-            images.append((out, output.rstrip()))
+        with open("images.csv") as fh:
+            for no, line in enumerate(fh.readlines()):
+                out = 'img%d.svg' % no
+                page, output, scale_str = line.split(",")
+                scale = float(scale_str.strip()) or default_scale
+                images.append((out, output.rstrip()))
 
-            rc = subprocess.run([
-                "dvisvgm",
-                "--exact",
-                "--scale={}".format(scale),
-                "--no-fonts",
-                "--output={}".format(out),
-                "--page={}".format(page),
-                outfile
-            ], stdout=subprocess.DEVNULL, check=True)
+                rc = subprocess.run([
+                    "dvisvgm",
+                    "--exact",
+                    "--scale={}".format(scale),
+                    "--no-fonts",
+                    "--output={}".format(out),
+                    "--page={}".format(page),
+                    outfile
+                ], stdout=subprocess.DEVNULL, check=True)
 
         return images
 

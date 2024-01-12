@@ -170,7 +170,7 @@ class TeX(object):
         if self.inputs:
             old_input = self.inputs.pop()
             try:
-                old_input.source.close()
+                old_input[0].source.close()
             except AttributeError:
                 pass
         if self.inputs:

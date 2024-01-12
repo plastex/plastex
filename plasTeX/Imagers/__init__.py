@@ -235,7 +235,8 @@ class Image(object):
 
         # Crop an SVG image
         if os.path.splitext(self.path)[-1] in ['.svg']:
-            svg = open(self.path,'r').read()
+            with open(self.path,'r') as fh:
+                svg = fh.read()
 
             self.width = 0
             width = re.search(r'width=(?:\'|")([^\d\.]+)\w*(?:\'|")', svg)
@@ -427,6 +428,7 @@ def run_command(cmd: str, env: Optional[Dict] = None):
         imagelog.error('Failed to read output from {}\n{}'.format(cmd, str(e)))
 
     p.wait()
+    p.stdout.close()
     if p.returncode:
         raise subprocess.CalledProcessError(p.returncode, cmd)
 
@@ -468,7 +470,8 @@ class Imager(object):
                                           self.__class__.__name__+'.images'))
         if self.config['images']['cache'] and os.path.isfile(self._filecache):
             try:
-                self._cache = pickle.load(open(self._filecache, 'rb'))
+                with open(self._filecache, 'rb') as fh:
+                    self._cache = pickle.load(fh)
                 for key, value in list(self._cache.items()):
                     if not os.path.isfile(value.filename):
                         del self._cache[key]
@@ -592,9 +595,10 @@ width 2pt\hskip2pt}}{}
 
         for value in list(self._cache.values()):
             if value.checksum and os.path.isfile(value.path):
-                 d = md5(open(value.path,'r').read()).digest()
-                 if value.checksum != d:
-                     log.warning('The image data for "%s" on the disk has changed.  You may want to clear the image cache.' % value.filename)
+                with open(value.path,'r') as fh:
+                    d = md5().digest(fh.read())
+                if value.checksum != d:
+                    log.warning('The image data for "%s" on the disk has changed.  You may want to clear the image cache.' % value.filename)
 
         cwd = Path.cwd()
 
@@ -675,12 +679,14 @@ width 2pt\hskip2pt}}{}
 
         for value in list(self._cache.values()):
             if value.checksum is None and os.path.isfile(value.path):
-                value.checksum = md5(open(value.path,'rb').read()).digest()
+                with open(value.path,'rb') as fh:
+                    value.checksum = md5(fh.read()).digest()
 
         if not os.path.isdir(os.path.dirname(self._filecache)):
             os.makedirs(os.path.dirname(self._filecache))
 
-        pickle.dump(self._cache, open(self._filecache,'wb'))
+        with open(self._filecache,'wb') as fh:
+            pickle.dump(self._cache, fh)
 
         if save_file:
             log.warning("Imager temp files saved at {}".format(tempdir))
@@ -740,9 +746,10 @@ width 2pt\hskip2pt}}{}
         run_command(r'%s %s%s' % (self.command, options, outfile))
 
         images = []
-        for line in open("images.csv"):
-            page, output, _ = line.split(",")
-            images.append(("img{}{}".format(page, self.fileExtension), output.rstrip()))
+        with open("images.csv") as fh:
+            for line in fh.readlines():
+                page, output, _ = line.split(",")
+                images.append(("img{}{}".format(page, self.fileExtension), output.rstrip()))
 
         return images
 
