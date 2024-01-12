@@ -97,7 +97,9 @@ def run(filename: str, config: ConfigManager):
               "document variable.\n"
               "Useful methods include \n* print(document.toXML())\n"
               "* document.childNodes\n* document.getElementsByTagName\n"
-              "If needed, you should install ipdb to replace pdb.")
+              "If needed, you should install ipdb to replace pdb.\n"
+              "Also consider installing BeautifulSoup4 and using\n"
+              "from bs4 import BeautifulSoup; print(BeautifulSoup(document.toXML(), 'xml').prettify())")
         pdb.set_trace()
     renderer = load_renderer(rname, config)
 
