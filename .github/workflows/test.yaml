@@ -34,24 +34,3 @@ jobs:
 
       - name: Run mypy
         run: mypy --install-types --non-interactive plasTeX unittests
-
-      - name: Upload Coveralls
-        run: coveralls --service=github
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COVERALLS_FLAG_NAME: ${{ matrix.python-version }}
-          COVERALLS_PARALLEL: true
-
-  finish:
-    name: Finish Coveralls
-    needs: test
-    runs-on: ubuntu-latest
-    container: python:3-slim
-
-    steps:
-      - name: Finish Coveralls
-        run: |
-          pip3 install coveralls
-          coveralls --finish
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
