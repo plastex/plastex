@@ -428,7 +428,8 @@ def run_command(cmd: str, env: Optional[Dict] = None):
         imagelog.error('Failed to read output from {}\n{}'.format(cmd, str(e)))
 
     p.wait()
-    p.stdout.close()
+    if p.stdout is not None:
+        p.stdout.close()
     if p.returncode:
         raise subprocess.CalledProcessError(p.returncode, cmd)
 
