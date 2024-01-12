@@ -194,12 +194,12 @@ a.icon
     background-color: Transparent;
 }
 
-div[class$='_thmheading']:hover div.thm_icons
+div[class$='_thmheading']:hover div.thm_header_hidden_extras
 {
     display: inline-block;
 }
 
-div.thm_icons
+div.thm_header_hidden_extras
 {
     display: none;
 }

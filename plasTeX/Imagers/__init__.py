@@ -19,7 +19,7 @@ try:
     from PIL import Image as PILImage
     from PIL import ImageChops as PILImageChops
 except ImportError:
-    PILImage = PILImageChops = None
+    PILImage = PILImageChops = None  # type: ignore
 
 def autoCrop(im, bgcolor=None, margin=0):
     """
@@ -470,7 +470,7 @@ class Imager(object):
                                           self.__class__.__name__+'.images'))
         if self.config['images']['cache'] and os.path.isfile(self._filecache):
             try:
-                with open(self._filecache, 'r') as fh:
+                with open(self._filecache, 'rb') as fh:
                     self._cache = pickle.load(fh)
                 for key, value in list(self._cache.items()):
                     if not os.path.isfile(value.filename):

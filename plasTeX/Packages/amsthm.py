@@ -195,6 +195,7 @@ class newtheorem(Command):
                 'counter': counter,
                 'caption': header,
                 'forcePars': True,
+                'blockType': True,
                 'style': style
             }
         th = type(name, (Environment,), data)

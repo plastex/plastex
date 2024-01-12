@@ -94,8 +94,7 @@ class bmatrix(Array):
 class Bmatrix(Array):
     pass
 
-#### Inline Math
-class smallmatrix(MathEnvironmentPre):
+class smallmatrix(Array):
     pass
 
 class dddot(math):

@@ -25,8 +25,19 @@ def test_amsthm(tmpdir):
     html = Path(tmpdir)/'index.html'
     html_bench = root/'benchmark.html'
     assert html.exists()
-    text = re.sub('id="[^"]*"', '', html.read_text())
+    html_text = html.read_text()
+    text = re.sub('id="[^"]*"', '', html_text)
     bench = re.sub('id="[^"]*"', '', html_bench.read_text())
+    if text.strip() != bench.strip():
+        path = Path(__file__).parent/'new.html'
+        print(f'Writing new output to {path}.')
+        path.write_text(html_text)
     assert text.strip() == bench.strip()
     assert css.exists()
+    css_text = css.read_text()
+    css_bench_text = css_bench.read_text()
+    if css_text != css_bench_text:
+        path = Path(__file__).parent/'new.css'
+        print(f'Writing new output to {path}.')
+        path.write_text(css_text)
     assert css.read_text() == css_bench.read_text()

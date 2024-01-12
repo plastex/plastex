@@ -680,7 +680,7 @@ class Node(object):
 
         style = ''
         if hasattr(self, 'style') and self.style:
-            style = ' style="%s"' % xmlstr(self.style.inline)
+            style = ' style="%s"' % xmlstr(getattr(self.style, 'inline', self.style))
 
         ref = ''
         try:

@@ -13,7 +13,7 @@ name: equation
 <div class="equation" id="{{ obj.id }}">
 <p>
   <div class="equation_content">
-    {{ obj.source }}
+    {{ obj.mathjax_source }}
   </div>
   <span class="equation_label">{{ obj.ref }}</span>
 </p>
