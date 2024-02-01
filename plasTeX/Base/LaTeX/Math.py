@@ -283,6 +283,9 @@ class chi(MathSymbol): str = chr(967)
 class psi(MathSymbol): str = chr(968)
 class omega(MathSymbol): str = chr(969)
 
+class imath(MathSymbol): str = chr(305)
+class jmath(MathSymbol): str = chr(567)
+
 # Uppercase
 class Gamma(MathSymbol): str = chr(915)
 class Delta(MathSymbol): str = chr(916)
@@ -295,7 +298,6 @@ class Upsilon(MathSymbol): str = chr(978)
 class Phi(MathSymbol): str = chr(934)
 class Psi(MathSymbol): str = chr(936)
 class Omega(MathSymbol): str = chr(8486)
-
 
 #
 # Table 3.4: Binary Operation Symbols
@@ -645,8 +647,6 @@ class ddot(MathAccent): pass
 
 class widehat(MathAccent): pass
 class widetilde(MathAccent): pass
-class imath(MathAccent): pass
-class jmath(MathAccent): pass
 class stackrel(MathAccent):
     args = 'top bottom'
 
