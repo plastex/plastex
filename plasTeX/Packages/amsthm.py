@@ -159,13 +159,13 @@ class newtheoremstyle(Command):
 
 
 class newtheorem(Command):
-    args = '* name:str [ shared:str ] header:str [ parent:str]'
+    args = '* name:str [ shared:str ] header [ parent:str]'
 
     def invoke(self, tex):
         self.parse(tex)
         a = self.attributes
         name = str(a['name'])
-        header = a['header']
+        header = a['header'].textContent
         star = a['*modifier*'] == '*'
         parent = a['parent']
         shared = a['shared']

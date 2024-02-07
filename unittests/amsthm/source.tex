@@ -18,6 +18,8 @@
 \newtheorem{within}{Within}[section]
 \newtheorem{withinshared}[within]{Within And Shared}
 
+\newtheorem{extrabracketed}{{Extra bracketed}}
+
 \begin{document}
 
 \section{A section}
@@ -52,4 +54,8 @@
 \begin{withinshared}\label{T:1}
     A theorem with counter shared with a theorem numbered within sections
 \end{withinshared}
+
+\begin{extrabracketed}
+    A theorem whose header argument has an extra pair of curly braces.
+\end{extrabracketed}
 \end{document}
