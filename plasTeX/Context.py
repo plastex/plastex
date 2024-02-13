@@ -497,6 +497,7 @@ class Context(object):
             status.info(' ) ')
             return True
         else:
+            print("Could not import. Looked in: " + str(reversed(config['general']['plugins'])))
             return False
 
     def loadPackage(self, tex: TeX, file_name: str, options: Optional[Dict] = None) -> bool:
