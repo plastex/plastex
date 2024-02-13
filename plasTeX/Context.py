@@ -446,17 +446,21 @@ class Context(object):
         if imported is None:
             for plugin in reversed(config['general']['plugins']):
                 sys.path = orig_sys_path
+                status.info(f"plugin: {plugin}\nsys.path: {sys.path}")
                 plugin_module = import_module(plugin)
                 assert plugin_module.__file__
+                status.info("Import plugin_module ok")
                 if not (Path(plugin_module.__file__).parent/'Packages').exists():
                     continue
                 p_ = str(Path(plugin_module.__file__).parent.parent)
                 if p_ not in sys.path:
                     sys.path.insert(0, p_)
                 try:
+                    status.info(f"Will try import package.\nsys.path: {sys.path}")
                     imported = import_module(plugin + '.Packages.' + module)
                     break
                 except (ImportError, ModuleNotFoundError) as msg:
+                    status.info(f"Failed with message: {msg}")
                     # No Python module
                     if 'No module' in str(msg) and module in str(msg):
                         pass
