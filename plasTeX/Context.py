@@ -403,7 +403,6 @@ class Context(object):
         working_dir = document.userdata.get('working-dir', '')
         options = options or {}
         module = os.path.splitext(file_name)[0]
-        status.info(f"Will try to load {module}. Plugins are {reversed(config['general']['plugins'])}")
         # See if it has already been loaded
         if module in self.packages:
             return True
@@ -498,7 +497,7 @@ class Context(object):
             status.info(' ) ')
             return True
         else:
-            status.info("Could not import. Looked in: " + str(reversed(config['general']['plugins'])))
+            status.info("Could not import. Looked in: " + str(list(reversed(config['general']['plugins']))))
             return False
 
     def loadPackage(self, tex: TeX, file_name: str, options: Optional[Dict] = None) -> bool:
