@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 import os, sys
-import importlib
+import traceback
+import importlib, pkgutil
 import traceback, pdb
 import plasTeX
 from plasTeX import __version__
@@ -11,6 +12,29 @@ from plasTeX.Compile import run
 from plasTeX.Config import defaultConfig
 
 log = getLogger()
+
+def list_installed_plastex_plugins():
+    knownPlugins = []
+    for aFinder, name, _ in pkgutil.iter_modules():
+        if name.startswith('plastex_') and name.endswith('_plugin'):
+            knownPlugins.append(name)
+    return knownPlugins
+
+def collect_plastex_renderer_plugins_config(config):
+    for _, name, _ in pkgutil.walk_packages():
+        if name.startswith('plastex_') and '_plugin' in name  and name.endswith('Config'):
+            try:
+                conf = importlib.import_module(name)
+            except ImportError:
+                #print(traceback.format_exc(limit=-1))
+                continue
+
+            if hasattr(conf, 'addConfig') and callable(getattr(conf, 'addConfig')):
+                #print(f"loading Renderers Options from: {name}")
+                try:
+                    conf.addConfig(config)
+                except Exception:
+                    print(traceback.format_exc(limit=-1))
 
 def collect_renderer_config(config):
     plastex_dir = os.path.dirname(os.path.realpath(plasTeX.__file__))
@@ -30,6 +54,7 @@ def main(argv):
 
     config = defaultConfig()
     collect_renderer_config(config)
+    collect_plastex_renderer_plugins_config(config)
 
     parser = ArgumentParser("plasTeX")
 
@@ -44,6 +69,15 @@ def main(argv):
     data = vars(data)
     if data["config"] is not None:
         config.read(data["config"])
+
+    if data['add-plugins'] :
+        knownPlugins = list_installed_plastex_plugins()
+        if not data['plugins']:
+            data['plugins'] = [knownPlugins]
+        else:
+            # NOTE: not sure why the extra `[0]` is needed...
+            # but it seems that the argparse data places lists inside a list.
+            data['plugins'][0].extend(knownPlugins)
 
     config.updateFromDict(data)
 

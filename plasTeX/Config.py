@@ -64,6 +64,12 @@ def defaultConfig(loadConfigFiles: bool=False):
         default = [],
     )
 
+    general['add-plugins'] = BooleanOption(
+        """Add all installed PlasTeX plugins.""",
+        options = '--add-plugins',
+        default = False,
+    )
+
     general['plugins'] = MultiStringOption(
         """
         A list of plugins to use. Each element must be a valid python module name,
