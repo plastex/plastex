@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import os, sys
-import traceback
 import importlib, pkgutil
 import traceback, pdb
 import plasTeX
@@ -26,7 +25,7 @@ def collect_plastex_renderer_plugins_config(config):
             try:
                 conf = importlib.import_module(name)
             except ImportError:
-                #print(traceback.format_exc(limit=-1))
+                #print(f"Loading Renderers Options from {name}: "+traceback.format_exc(limit=-1))
                 continue
 
             if hasattr(conf, 'addConfig') and callable(getattr(conf, 'addConfig')):
