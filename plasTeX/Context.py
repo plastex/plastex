@@ -25,7 +25,7 @@ log = getLogger()
 status = getLogger('status')
 stacklog = getLogger('context.stack')
 macrolog = getLogger('context.macros')
-plugin   = getLogger('plugin.loading')
+pluginlog = getLogger('plugin.loading')
 
 class ContextItem(dict):
     """
@@ -458,7 +458,7 @@ class Context(object):
                     imported = import_module(plugin + '.Packages.' + module)
                     break
                 except (ImportError, ModuleNotFoundError) as msg:
-                    plugin.info(traceback.format_exc(limit=-1))
+                    pluginlog.info(f"Importing package[{module}]: "+traceback.format_exc(limit=-1))
                     # No Python module
                     if 'No module' in str(msg) and module in str(msg):
                         pass

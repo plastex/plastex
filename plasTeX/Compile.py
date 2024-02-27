@@ -12,7 +12,7 @@ from plasTeX.Logging import getLogger, updateLogLevels
 from plasTeX.Renderers import Renderer
 
 log = getLogger()
-plugin = getLogger('plugin.loading')
+pluginlog = getLogger('plugin.loading')
 
 def import_file(path: Path) -> ModuleType:
     module_name = path.name
@@ -46,7 +46,7 @@ def load_renderer(rname: str, config: ConfigManager) -> Renderer:
             return getattr(importlib.import_module(plugin + '.Renderers.' + rname),
                            'Renderer')()
         except ImportError:
-            plugin.info(traceback.format_exc(limit=-1))
+            pluginlog.info(f"Loading renderer[{rname}]: "+traceback.format_exc(limit=-1))
 
     try:
         return getattr(import_file(Path(rname)), 'Renderer')()
