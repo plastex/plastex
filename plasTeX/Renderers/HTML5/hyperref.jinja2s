@@ -16,7 +16,7 @@ name: hyperdef
 <a name="{{ obj.attributes.category }}.{{ obj.attributes.name }}" >{{ obj }}</a>
 
 name: hyperref
-<a href="{{ obj.attributes.url }}#{{ obj.attributes.category }}.{{ obj.attributes.name}}" >{{ obj }}</a>
+<a href="{% if obj.idref %}{{ obj.idref.label.url }}{% else %}{{ obj.attributes.url }}#{{ obj.attributes.category }}.{{ obj.attributes.name}}{% endif %}" >{{ obj }}</a>
 
 name: hyperlink
 <a href="{{ obj.idref.label.url }}" >{{ obj }}</a>
