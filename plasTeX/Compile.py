@@ -46,7 +46,7 @@ def load_renderer(rname: str, config: ConfigManager) -> Renderer:
             return getattr(importlib.import_module(plugin + '.Renderers.' + rname),
                            'Renderer')()
         except ImportError:
-            pluginlog.info(f"Loading renderer[{rname}]: "+traceback.format_exc(limit=-1))
+            pluginlog.debug(f"Loading renderer[{rname}]: "+traceback.format_exc(limit=-1))
 
     try:
         return getattr(import_file(Path(rname)), 'Renderer')()
