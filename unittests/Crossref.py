@@ -21,8 +21,8 @@ class Labels(TestCase):
         output = s.parse()
         one = output[0]
         two = output[-1]
-        assert one.id == 'two', one.id
-        assert two.id != 'two', two.id
+        assert one.id != 'two', one.id
+        assert two.id == 'two', two.id
 
 
 if __name__ == '__main__':

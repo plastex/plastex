@@ -563,7 +563,7 @@ class Macro(Element):
         tex -- the TeX instance containing the current context
 
         """
-        if self.counter:
+        if self.counter is not None:
             self.ownerDocument.context.currentlabel = self
             self.stepcounter(tex)
 
