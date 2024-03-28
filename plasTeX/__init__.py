@@ -342,6 +342,20 @@ class Macro(Element):
         else:
             delattr(self, '@id')
 
+    @property
+    def equation_tag(self):
+        tag = getattr(self, '@equation_tag', None)
+        if tag is None:
+            return self.ref
+        return tag
+
+    @equation_tag.setter
+    def equation_tag(self, value):
+        if value:
+            setattr(self, '@equation_tag', value)
+        else:
+            delattr(self, '@equation_tag')
+
     def expand(self, tex):
         """ Fully expand the macro """
         result = self.invoke(tex)
