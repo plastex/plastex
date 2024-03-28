@@ -37,6 +37,10 @@ class ThinSpace_(Command):
 class MathEnvironment(NoCharSubEnvironment):
     mathMode = True
 
+    def refstepcounter(self, tex):
+        self.ownerDocument.context.currentequation = self
+        return super().refstepcounter(tex)
+
     @property
     def mathjax_source(self):
         return mathjax_lt_gt(self.source)
@@ -47,9 +51,17 @@ class MathEnvironmentPre(MathEnvironment):
     """
     @property
     def source(self):
-        return u"\\begin{{{0}}}{1}\\end{{{0}}}".format(
+        equation_tag = self.equation_tag
+
+        if equation_tag:
+            return u"\\begin{{{0}}}{1}\\tag{{{2}}}\\end{{{0}}}".format(
                 self.tagName,
-                sourceChildren(self))
+                sourceChildren(self).strip(),
+                equation_tag)
+        else:
+            return u"\\begin{{{0}}}{1}\\end{{{0}}}".format(
+                self.tagName,
+                sourceChildren(self).strip())
 
 # Need \newcommand\({\begin{math}} and \newcommand\){\end{math}}
 
@@ -162,6 +174,23 @@ class EqnarrayStar(Array, MathEnvironmentPre, NoCharSubEnvironment):
         @property
         def source(self):
             return '$\\displaystyle %s $' % sourceChildren(self, par=False)
+
+    class ArrayRow(Array.ArrayRow):
+        @property
+        def source(self):
+            s = []
+            argSource = sourceArguments(self.parentNode)
+            if not argSource:
+                argSource = ' '
+            if self.equation_tag:
+                s.append(r"\tag{%s}" % self.equation_tag)
+            for cell in self:
+                s.append(sourceChildren(cell, par=not (self.parentNode.mathMode)))
+                if cell.endToken is not None:
+                    s.append(cell.endToken.source)
+            if self.endToken is not None:
+                s.append(self.endToken.source)
+            return ''.join(s)
 
 class eqnarray(EqnarrayStar):
     macroName = None
