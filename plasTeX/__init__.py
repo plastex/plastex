@@ -723,7 +723,10 @@ class Macro(Element):
             node = node.parentNode
         return
 
-    def paragraphs(self, force=True):
+    def paragraphsCharsubs(self):
+        return self.ownerDocument.charsubs
+
+    def paragraphs(self, charsubs, force=True):
         """
         Group content into paragraphs
 
@@ -746,7 +749,7 @@ class Macro(Element):
 
         # No paragraphs, and we aren't forcing paragraphs...
         if parname is None and not force:
-            self.normalize(self.ownerDocument.charsubs)
+            self.normalize(charsubs)
             return
 
         if parname is None:
@@ -778,7 +781,7 @@ class Macro(Element):
         # Insert nodes into self
         for i, item in enumerate(newnodes):
             if item.level == Node.PAR_LEVEL:
-                item.normalize(self.ownerDocument.charsubs)
+                item.normalize(charsubs)
             self.insert(i, item)
 
         # Filter out any empty paragraphs
@@ -936,7 +939,7 @@ class Environment(Macro):
             self.appendChild(item)
 #       print 'DONE', type(self)
         if dopars:
-            self.paragraphs()
+            self.paragraphs(self.paragraphsCharsubs())
 
 class NoCharSubEnvironment(Environment):
     """
