@@ -5,6 +5,7 @@ C.6.3 The list and trivlist Enviroments
 """
 
 from plasTeX import Environment, Command, DimenCommand
+from plasTeX.encoding import numToRoman, numToAlpha
 
 class enuminame(Command): str = ''
 class enumiiname(Command): str = ''
@@ -77,6 +78,8 @@ class List(Environment):
                 break
         Environment.digest(self, tokens) 
 
+        self.has_custom_terms = any(tok.nodeName == 'item' and tok.attributes.get('term') is not None for tok in self.childNodes) or getattr(self, 'listType', None)
+
 #
 # Counters -- enumi, enumii, enumiii, enumiv
 #            
@@ -95,9 +98,76 @@ class labelitemiii(Command):
 class labelitemiv(Command):
     pass
 
+def term_label_formatter(label_format):
+    """ Format the label for a list item.
+        Each of the special characters is replaced by the corresponding encoding of the item's position in the list.
+        All other characters are passed through unmodified.
+    """
+    formats = {
+        'I': lambda i: numToRoman(i).upper(),
+        'i': lambda i: numToRoman(i).lower(),
+        '1': lambda i: str(i),
+        'a': lambda i: numToAlpha(i).lower(),
+        'A': lambda i: numToAlpha(i).upper(),
+    }
+
+    def format_term(position):
+        return ''.join(formats.get(c, lambda _: c)(position) for c in label_format)
+
+    return format_term
+
 class enumerate_(List): 
     macroName = 'enumerate'
-    args = '[ type ]'  # Actually defined in the enumerate package, but it doesn't hurt
+    args = '[ type:str ]'  # Actually defined in the enumerate package, but it doesn't hurt
+    listType = None
+
+    label_formats = {
+        2: '(a)',
+        3: 'i.',
+        4: 'A.',
+    }
+
+    def term(self, position):
+        if self.listType:
+            label_format = self.listType
+        else:
+            label_format = self.label_formats.get(self.listDepth, '1.')
+        formatter = term_label_formatter(label_format)
+        return formatter(position)
+
+    def invoke(self, tex):
+        super().invoke(tex)
+
+        self.listType = self.attributes.get('type')
+
+        self.listDepth = List.depth
+
+    class item(List.item):
+        @property  # type: ignore # mypy#4125
+        def ref(self):
+            doc = self.ownerDocument
+            frag = doc.createDocumentFragment()
+            terms = []
+
+            item = self
+            node = self.parentNode
+            while item is not None:
+                while node is not None and not (isinstance(node, enumerate_)):
+                    item = node
+                    node = node.parentNode
+                if not (issubclass(type(item), List.item)):
+                    break
+                terms.append(node.term(int(str(item._ref))).rstrip('.'))
+                item = node
+                node = node.parentNode
+
+            for t in reversed(terms):
+                frag.append(t)
+            return frag
+
+        @ref.setter
+        def ref(self, value):
+            self._ref = value
 
 class description(List): 
     pass

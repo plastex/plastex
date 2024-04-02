@@ -1,16 +1,46 @@
 name: itemize
-<ul class="itemize">
-{% for item in obj %}
-  <li>{{ item }}</li>
-{% endfor %}
-</ul>
+{% if obj.has_custom_terms %}
+    <ul id="{{ obj.id }}" class="itemize custom-terms">
+    {% for item in obj %}
+        <li id="{{ item.id }}">
+            {% if item.attributes.term %}<div class="list-item-marker">{{item.attributes.term}}</div>{% else %}<div class="list-item-marker default-marker"></div>{% endif %}
+            <div class="list-item-content">
+                {{ item }}
+            </div>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <ul id="{{ obj.id }}" class="itemize">
+    {% for item in obj %}
+        <li id="{{ item.id }}">
+            {{ item }}
+        </li>
+    {% endfor %}
+    </ul>
+{% endif %}
 
 name: enumerate
-<ol class="enumerate">
-{% for item in obj %}
-  <li>{{ item }}</li>
-{% endfor %}
-</ol>
+{% if obj.has_custom_terms %}
+    <ol id="{{ obj.id }}" class="enumerate custom-terms">
+    {% for item in obj %}
+        <li id="{{ item.id }}" value="{{item.position}}">
+            {% if item.attributes.term %}<div class="list-item-marker">{{item.attributes.term}}</div>{% else %}<div class="list-item-marker default-marker">{{obj.term(item.position)}}</div>{% endif %}
+            <div class="list-item-content">
+                {{ item }}
+            </div>
+        </li>
+    {% endfor %}
+    </ol>
+{% else %}
+    <ol id="{{ obj.id }}" class="enumerate">
+    {% for item in obj %}
+        <li id="{{ item.id }}" value="{{item.position}}">
+            {{ item }}
+        </li>
+    {% endfor %}
+    </ol>
+{% endif %}
 
 name: list trivlist description
 <dl class="{{ obj.nodeName }}">
