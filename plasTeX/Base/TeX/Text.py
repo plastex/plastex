@@ -180,6 +180,9 @@ class llap(Command):
 class centerline(Command):
     args = 'self'
 
+class rightline(Command):
+    args = 'self'
+
 class underbar(Command):
     args = 'self'
 

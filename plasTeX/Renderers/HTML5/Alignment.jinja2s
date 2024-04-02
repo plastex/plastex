@@ -4,7 +4,7 @@ name: center centering centerline
 name: flushleft raggedright leftline
 <div class="flushleft">{{ obj }}</div>
 
-name: raggedleft flushright llap
+name: raggedleft flushright llap rightline
 <div class="flushright">{{ obj }}</div>
 
 name: raggedbottom
