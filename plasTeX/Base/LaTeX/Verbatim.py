@@ -3,7 +3,7 @@ C.6.4 Verbatim
 
 """
 
-from plasTeX import VerbatimEnvironment, Command, sourceArguments, sourceChildren
+from plasTeX import Environment, VerbatimEnvironment, Command, sourceArguments, sourceChildren
 from plasTeX.Base.TeX.Text import bgroup
 from plasTeX.Tokenizer import Other
 
