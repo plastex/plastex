@@ -3,7 +3,7 @@ name: itemize
     <ul id="{{ obj.id }}" class="itemize custom-terms">
     {% for item in obj %}
         <li id="{{ item.id }}">
-            {% if item.attributes.term %}<div class="list-item-marker">{{item.attributes.term}}</div>{% else %}<div class="list-item-marker default-marker"></div>{% endif %}
+            {% if item.attributes.term %}<div class="list-item-marker">{{item.attributes.term|e}}</div>{% else %}<div class="list-item-marker default-marker"></div>{% endif %}
             <div class="list-item-content">
                 {{ item }}
             </div>
@@ -25,7 +25,7 @@ name: enumerate
     <ol id="{{ obj.id }}" class="enumerate custom-terms">
     {% for item in obj %}
         <li id="{{ item.id }}" value="{{item.position}}">
-            {% if item.attributes.term %}<div class="list-item-marker">{{item.attributes.term}}</div>{% else %}<div class="list-item-marker default-marker">{{obj.term(item.position)}}</div>{% endif %}
+            {% if item.attributes.term %}<div class="list-item-marker">{{item.attributes.term|e}}</div>{% else %}<div class="list-item-marker default-marker">{{obj.term(item.position)|e}}</div>{% endif %}
             <div class="list-item-content">
                 {{ item }}
             </div>
