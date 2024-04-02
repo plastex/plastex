@@ -142,7 +142,7 @@ class ControlSpace(Command):
     macroName = 'active::~'
 
 class slash(Command):
-    pass
+    str = '/'
 
 class filbreak(Command):
     pass
