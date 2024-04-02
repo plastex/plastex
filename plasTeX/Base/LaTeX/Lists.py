@@ -16,6 +16,7 @@ class List(Environment):
     depth = 0
     counters = ['enumi','enumii','enumiii','enumiv']
     blockType = True
+    allowedChildren = None # A list of names of nodes that can be direct children of this node.
 
     class item(Command):
         args = '[ term ]'
@@ -70,9 +71,8 @@ class List(Environment):
                 elif tok.nodeName == 'setcounter':
                     tok.digest([])
                     continue
-#               if tok.nodeName != 'item':
-#                   log.warning('dropping non-item from beginning of list')
-#                   continue
+                elif self.allowedChildren is not None and tok.nodeName not in self.allowedChildren:
+                    continue
                 tokens.push(tok)
                 break
         Environment.digest(self, tokens) 
@@ -98,6 +98,7 @@ class labelitemiv(Command):
 class enumerate_(List): 
     macroName = 'enumerate'
     args = '[ type ]'  # Actually defined in the enumerate package, but it doesn't hurt
+    allowedChildren = ('item',)
 
 class description(List): 
     pass
