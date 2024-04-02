@@ -69,9 +69,11 @@ def test_enumerate():
     assert enums[0].term(items[1].position) == '2.'
 
     items = enums[1].getElementsByTagName('item')
+    assert enums[1].listType == 'a)'
     assert enums[1].term(items[0].position) == 'a)'
     assert enums[1].term(items[1].position) == 'b)'
 
     items = enums[2].getElementsByTagName('item')
+    assert enums[2].listType == '<I>'
     assert enums[2].term(items[0].position) == '<I>'
     assert enums[2].term(items[11].position) == '<XII>'

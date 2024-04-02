@@ -1,8 +1,9 @@
 from plasTeX import Command, Environment
+import plasTeX.Base
 from plasTeX.Base import textbf, textit, textsl, textrm, textsf
 from plasTeX.Base import List, label, newcommand, newenvironment
 from plasTeX.Base import renewcommand, renewenvironment
-from plasTeX.Base import itemize, enumerate_, description
+from plasTeX.Base import itemize, description
 from plasTeX.Base import part, section, subsection, subsubsection
 from plasTeX.Base import tableofcontents, thebibliography
 from plasTeX.Base import abstract, verse, quotation, quote, footnote, footnotetext
@@ -152,7 +153,10 @@ renewcommand.args = '< overlay >' + renewcommand.args
 newenvironment.args = '< overlay >' + newenvironment.args
 renewenvironment.args = '< overlay >' + renewenvironment.args
 itemize.args = '[ overlay ]'
-enumerate_.args = '[ overlay ] [ template ]'
+
+class enumerate_(plasTeX.Base.enumerate_):
+    args = '[ overlay ] [ template ]'
+
 description.args = '[ overlay ] [ longtext ]'
 section.args = '< overlay >' + section.args
 subsection.args = '< overlay >' + subsection.args
