@@ -128,6 +128,10 @@ Subequations again
     \end{equation}
 \end{subequations}
 
+\begin{equation*}
+b
+\end{equation*}
+
 Refs: \ref{s1} \ref{e1a} \ref{e1b} \ref{e2} \ref{ez} \ref{s2} \ref{e3a} \ref{e3y} \ref{e3b}
 
 \end{document}
@@ -163,3 +167,9 @@ def test_subequations():
     for i, (ref, source) in enumerate(subequations_refs):
         assert subequations[i].source == source
         assert subequations[i].ref.textContent == ref
+
+
+    starred_equations = output.getElementsByTagName('equation*')
+    assert len(starred_equations) == 1
+    assert starred_equations[0].source == r'\begin{equation*}  b \end{equation*}'
+    assert starred_equations[0].ref is None
