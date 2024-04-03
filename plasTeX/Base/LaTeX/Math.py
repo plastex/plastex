@@ -149,7 +149,7 @@ class ensuremath(Command):
             return mathjax_lt_gt(sourceChildren(self))
         return ""
 
-class equation(MathEnvironment):
+class equation(MathEnvironmentPre):
     blockType = True
     counter = 'equation'
 

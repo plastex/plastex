@@ -346,7 +346,7 @@ class Macro(Element):
     def equation_tag(self):
         tag = getattr(self, '@equation_tag', None)
         if tag is None:
-            return self.ref
+            return self.ref.textContent if self.ref is not None else None
         return tag
 
     @equation_tag.setter

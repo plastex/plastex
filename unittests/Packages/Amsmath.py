@@ -118,17 +118,17 @@ Subequations again
 
 \begin{subequations}\label{s2}
     \begin{equation}
-    x = 1\label{e2a}
+    x = 1\label{e3a}
     \end{equation}
     \begin{equation}
-    y = 2\tag{y}\label{e2y}
+    y = 2\tag{y}\label{e3y}
     \end{equation}
     \begin{equation}
-    y = 3\label{e2b}
+    y = 3\label{e3b}
     \end{equation}
 \end{subequations}
 
-Refs: \ref{s1} \ref{e1a} \ref{e1b} \ref{e2} \ref{ez} \ref{s2} \ref{e2a} \ref{e2y} \ref{e2b}
+Refs: \ref{s1} \ref{e1a} \ref{e1b} \ref{e2} \ref{ez} \ref{s2} \ref{e3a} \ref{e3y} \ref{e3b}
 
 \end{document}
 """
@@ -139,7 +139,6 @@ def test_subequations():
     output = s.parse()
 
     equations = output.getElementsByTagName('equation')
-    print(equations)
 
     equation_refs = [
         '1a',
@@ -157,9 +156,10 @@ def test_subequations():
     subequations = output.getElementsByTagName('subequations')
 
     subequations_refs = [
-        '1',
-        '3',
+        ('1', r'\begin{subequations} \label{s1} \begin{equation}x = 1 \label{e1a}\tag{1a}\end{equation}\begin{equation}y = 2\label{e1b}\tag{1b}\end{equation}\end{subequations}'),
+        ('3', r'\begin{subequations} \label{s2} \begin{equation}x = 1\label{e3a}\tag{3a}\end{equation}\begin{equation}y = 2\label{e3y}\tag{y}\end{equation}\begin{equation}y = 3\label{e3b}\tag{3b}\end{equation}\end{subequations}'),
     ]
 
-    for i, ref in enumerate(subequations_refs):
+    for i, (ref, source) in enumerate(subequations_refs):
+        assert subequations[i].source == source
         assert subequations[i].ref.textContent == ref
