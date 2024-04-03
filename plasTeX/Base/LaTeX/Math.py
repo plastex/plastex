@@ -5,7 +5,7 @@ C.7 Mathematical Formulas (p187)
 
 from plasTeX.Base.LaTeX.Arrays import Array
 from plasTeX import Command, Environment, sourceChildren, NoCharSubEnvironment
-from plasTeX import DimenCommand, GlueCommand, TeXFragment
+from plasTeX import DimenCommand, GlueCommand, TeXFragment, sourceArguments
 from typing import Optional
 
 #
