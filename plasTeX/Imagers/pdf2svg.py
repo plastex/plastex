@@ -41,16 +41,5 @@ class PDFSVG(VectorImager):
 
         return images
 
-    def writePreamble(self, document):
-        ret = super().writePreamble(document)
-        self.source.write(r'''
-\ifcsname setbeamerfont\endcsname
-\setbeamertemplate{background canvas}[default]
-\setbeamercolor{background canvas}{bg=}
-\beamertemplatenavigationsymbolsempty
-\fi
-''')
-        return ret
-
 
 Imager = PDFSVG
