@@ -580,7 +580,7 @@ width 2pt\hskip2pt}}{}
             return True
         return False
 
-    def close(self):
+    def close(self) -> None:
         """ Invoke the rendering code """
         # Bail out if there are no images
         if not self.images:
@@ -623,28 +623,31 @@ width 2pt\hskip2pt}}{}
         self.tmpFile.write_text(self.source.read(), encoding=self.config['files']['input-encoding'])
 
         def on_error(e):
-            log.warning("Source files are saved at {}.".format(tempdir))
+            log.info("Source files for the failing images are saved in folder {}".format(tempdir))
             os.chdir(str(cwd))
-            raise e
 
         try:
             self.compileLatex(texinputs=new_texinputs)
         except Exception as e:
-            log.warning("Failed to compile image: {}".format(e))
+            log.error("Failed to compile image: {}".format(e))
+            log.info("The above command was ran with the environment variable:")
+            log.info("TEXINPUTS={}".format(new_texinputs))
             on_error(e)
+            return
 
         # Execute converter
         try:
             images = self.executeConverter()
         except Exception as e:
-            log.warning("Failed to convert image: {}".format(e))
+            log.error("Failed to convert image: {}".format(e))
             on_error(e)
+            return
 
         os.chdir(str(cwd))
 
         if len(images) != len(self.images):
             save_file = True
-            log.warning('The number of images generated (%d) and the number of images requested (%d) is not the same.' % (len(images), len(self.images)))
+            log.error('The number of images generated (%d) and the number of images requested (%d) is not the same.' % (len(images), len(self.images)))
 
         if PILImage is None and type(self) is not VectorImager:
             log.warning('PIL (Python Imaging Library) is not installed.  ' +
