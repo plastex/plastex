@@ -580,7 +580,7 @@ width 2pt\hskip2pt}}{}
             return True
         return False
 
-    def close(self) -> None:
+    def close(self):
         """ Invoke the rendering code """
         # Bail out if there are no images
         if not self.images:
