@@ -9,7 +9,7 @@ from plasTeX.Base import abstract, verse, quotation, quote, footnote, footnotete
 from plasTeX.Packages.color import color
 from plasTeX.Packages.graphicx import includegraphics
 from plasTeX.Packages.hyperref import hypertarget, hyperlink
-from plasTeX.Packages.article import *
+from plasTeX.Packages.article import appendix
 
 def ProcessOptions(options, document):
     # We add to the imager preamble some code removing the background color
