@@ -547,6 +547,14 @@ class Imager(object):
 width 2pt\hskip2pt}}{}
 ''')
 
+        self.source.write(r'''
+\ifcsname setbeamerfont\endcsname
+\setbeamertemplate{background canvas}[default]
+\setbeamercolor{background canvas}{bg=}
+\beamertemplatenavigationsymbolsempty
+\fi
+''')
+
     def verify(self):
         """ Verify that this commmand works on this machine """
         if self.verifications:

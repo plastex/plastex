@@ -15,6 +15,11 @@ import pytest
 from plasTeX.Renderers import Renderer
 from plasTeX.TeX import TeX
 
+# Add the unittests directory to the sys path so that the helpers module
+# can be imported when this test is run on its own.
+import sys
+sys.path.append(str(Path(__file__).parent.parent))
+
 from helpers.utils import cmp_img
 
 @pytest.mark.parametrize('imager_tuple',

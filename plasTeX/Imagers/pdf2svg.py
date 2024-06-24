@@ -41,4 +41,5 @@ class PDFSVG(VectorImager):
 
         return images
 
+
 Imager = PDFSVG
