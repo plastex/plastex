@@ -172,6 +172,9 @@ class Context(object):
         # Object that the current label points to
         self.currentlabel = None
 
+        # The current equation environment
+        self.currentequation = None
+
         # Labeled objects
         self.labels = {}
         self.persistentLabels = {}
