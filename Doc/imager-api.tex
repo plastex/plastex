@@ -192,9 +192,13 @@ within the image code are correct.
 
 \begin{methoddesc}[Imager]{writePreamble}{document}
 this method is called when the imager is instantiated and is used to
-write any extra information to the preamble.  If overridden, the
-subclass needs to make sure that \var{document.preamble.source} is
-the first thing written to the preamble.
+write any extra information to the preamble.  
+Packages implemented in python can add content to this preamble by creating or
+extending the list of strings \var{document.userdata['imager_preamble_extra']}.
+If overridden, the subclass needs to make sure that
+\var{document.preamble.source} is the first thing written to the preamble, and
+the last thing are all strings from the
+\var{document.userdata['imager_preamble_extra']} list.
 \end{methoddesc}
 
 

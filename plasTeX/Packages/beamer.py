@@ -11,6 +11,17 @@ from plasTeX.Packages.graphicx import includegraphics
 from plasTeX.Packages.hyperref import hypertarget, hyperlink
 from plasTeX.Packages.article import *
 
+def ProcessOptions(options, document):
+    # We add to the imager preamble some code removing the background color
+    # and navigation symbols that would otherwise prevent proper cropping.
+    extras = document.userdata.get('imager_preamble_extra', [])
+    extras.append(r'''
+\setbeamertemplate{background canvas}[default]
+\setbeamercolor{background canvas}{bg=}
+\beamertemplatenavigationsymbolsempty
+''')
+    document.userdata.setdefault('imager_preamble_extra', extras)
+
 class frame(Command):
     args = '< overlay > self'
     subtitle = None

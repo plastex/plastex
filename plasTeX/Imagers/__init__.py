@@ -547,13 +547,8 @@ class Imager(object):
 width 2pt\hskip2pt}}{}
 ''')
 
-        self.source.write(r'''
-\ifcsname setbeamerfont\endcsname
-\setbeamertemplate{background canvas}[default]
-\setbeamercolor{background canvas}{bg=}
-\beamertemplatenavigationsymbolsempty
-\fi
-''')
+        for extra in document.userdata.get('imager_preamble_extra', []):
+            self.source.write(extra)
 
     def verify(self):
         """ Verify that this commmand works on this machine """
