@@ -9,7 +9,7 @@ from plasTeX.Base.LaTeX.Arrays import Array
 
 
 class Caption(Command):
-    args = '[ toc ] self'
+    args = '* [ toc ] self'
     blockType = True
     # Is the caption attached to an object?
     attached = False
