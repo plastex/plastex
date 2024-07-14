@@ -21,9 +21,9 @@
   MathJax = { 
     tex: {
 {% if config.html5['mathjax-dollars'] %}
-		    inlineMath: [['$','$'], ['\\(','\\)']]
+		    inlineMath: [['$','$'], ['\\(','\\)']],
 {% else %}
-		    inlineMath: [['\\(','\\)']]
+		    inlineMath: [['\\(','\\)']],
 {% endif %}
 {% if config['mathjax-macros']['macros'] %}
       macros: { {% for key, val in config['mathjax-macros']['macros'].items() %}
