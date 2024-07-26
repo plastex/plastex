@@ -1,0 +1,22 @@
+.framed {
+    padding: 0.5em;
+    margin: 1em 0;
+}
+
+.framed-box {
+    border: thin solid;
+}
+
+.framed-shaded {
+    background: $gray-bg-color;
+}
+
+.framed-snug {
+    padding: 0;
+}
+
+.framed-leftbar {
+    border-left: medium solid;
+    padding: 0 0 0 0.5em;
+}
+
