@@ -77,6 +77,7 @@ class SectionUtils(object):
     """ General utilities for getting information about sections """
 
     tocdepth = None
+    contains_paragraphs = True
 
     @cachedproperty
     def footnotes(self):
@@ -287,7 +288,8 @@ class SectionUtils(object):
 #           self.appendText(text, self.ownerDocument.charsubs)
             self.appendChild(item)
 #       self.appendText(text, self.ownerDocument.charsubs)
-        self.paragraphs(self.paragraphsCharsubs())
+        if self.contains_paragraphs:
+            self.paragraphs(self.paragraphsCharsubs())
 
 
 class StartSection(SectionUtils, Command):
@@ -317,12 +319,13 @@ class subsubsection(StartSection):
 class paragraph(StartSection):
     level = Command.PARAGRAPH_LEVEL
     counter = 'paragraph'
+    contains_paragraphs = False
 
-class subparagraph(StartSection):
+class subparagraph(paragraph):
     level = Command.SUBPARAGRAPH_LEVEL
     counter = 'subparagraph'
 
-class subsubparagraph(StartSection):
+class subsubparagraph(paragraph):
     level = Command.SUBSUBPARAGRAPH_LEVEL
     counter = 'subsubparagraph'
 
