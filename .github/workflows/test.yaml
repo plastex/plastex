@@ -19,6 +19,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           allow-prereleases: true
+          cache: pip
+          cache-dependency-path: requirements*.txt
 
       - name: Install system dependencies
         run: sudo apt-get update && sudo apt-get install --no-install-recommends dvisvgm dvipng imagemagick inkscape pdf2svg poppler-utils texlive-binaries texlive-latex-base texlive-latex-extra texlive-extra-utils texlive-xetex
