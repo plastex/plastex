@@ -34,7 +34,7 @@
 		Module Dependencies: None
 """
 
-import io, os, stat, threading, codecs, cgi, re
+import io, os, stat, threading, codecs, html, re
 from . import __version__, simpleTAL
 
 # This is used to check for already escaped attributes.
@@ -114,7 +114,7 @@ def tagAsText (tag,atts):
 			# We already have some escaped characters in here, so assume it's all valid
 			result += ' %s="%s"' % (name, value)
 		else:
-			result += ' %s="%s"' % (name, cgi.escape (value))
+			result += ' %s="%s"' % (name, html.escape (value))
 	result += ">"
 	return result
 
@@ -195,11 +195,11 @@ class MacroExpansionInterpreter (simpleTAL.TemplateInterpreter):
 						self.file.write (str (str (resultVal), 'ascii'))
 			else:
 				if (isinstance (resultVal, str)):
-					self.file.write (cgi.escape (resultVal))
+					self.file.write (html.escape (resultVal))
 				elif (isinstance (resultVal, bytes)):
-					self.file.write (cgi.escape (str (resultVal, 'ascii')))
+					self.file.write (html.escape (str (resultVal, 'ascii')))
 				else:
-					self.file.write (cgi.escape (str (str (resultVal), 'ascii')))
+					self.file.write (html.escape (str (str (resultVal), 'ascii')))
 
 		if (self.outputTag and not args[1]):
 			self.file.write ('</' + args[0] + '>')
