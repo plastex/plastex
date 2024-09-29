@@ -9,7 +9,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
 
     steps:
       - uses: actions/checkout@v2
@@ -18,6 +18,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
+          allow-prereleases: true
 
       - name: Install system dependencies
         run: sudo apt-get update && sudo apt-get install --no-install-recommends dvisvgm dvipng imagemagick inkscape pdf2svg poppler-utils texlive-binaries texlive-latex-base texlive-latex-extra texlive-extra-utils texlive-xetex
