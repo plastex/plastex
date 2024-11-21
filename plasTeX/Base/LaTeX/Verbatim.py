@@ -5,7 +5,7 @@ C.6.4 Verbatim
 
 from plasTeX import VerbatimEnvironment, Command, sourceArguments, sourceChildren
 from plasTeX.Base.TeX.Text import bgroup
-from plasTeX.Tokenizer import Other
+from plasTeX.Tokenizer import Other, Parameter
 
 class verbatim(VerbatimEnvironment):
     pass
@@ -33,9 +33,11 @@ class verb(Command):
         self.ownerDocument.context.setVerbatimCatcodes()
         # See what the delimiter is
         for endpattern in tex:
-            self.delimiter = endpattern
             if isinstance(endpattern, bgroup):
-                self.delimiter = endpattern = Other('}')
+                endpattern = Other('}')
+            if isinstance(endpattern, Parameter):
+                endpattern = Other(str(endpattern))
+            self.delimiter = endpattern
             break
         tokens = [self, endpattern]
         # Parse until this delimiter is seen again
