@@ -141,7 +141,15 @@ class equation(MathEnvironment):
     blockType = True
     counter = 'equation'
 
-class EqnarrayStar(Array, MathEnvironmentPre, NoCharSubEnvironment):
+class NoCharSubArray:
+    def paragraphsCharsubs(self):
+        return None
+
+class MathArray(Array, NoCharSubEnvironment):
+    class ArrayCell(NoCharSubArray, Array.ArrayCell):
+        pass
+
+class EqnarrayStar(MathArray, MathEnvironmentPre, NoCharSubEnvironment):
     macroName = 'eqnarray*' # type: Optional[str]
     blockType = True
     mathMode = True
@@ -158,7 +166,7 @@ class EqnarrayStar(Array, MathEnvironmentPre, NoCharSubEnvironment):
                 obj.style['text-align'] = 'left'
             return res
 
-    class ArrayCell(Array.ArrayCell):
+    class ArrayCell(MathArray.ArrayCell):
         @property
         def source(self):
             return '$\\displaystyle %s $' % sourceChildren(self, par=False)

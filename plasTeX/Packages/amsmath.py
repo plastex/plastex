@@ -1,6 +1,5 @@
 from plasTeX import Command
-from plasTeX.Base.LaTeX.Arrays import Array
-from plasTeX.Base.LaTeX.Math import EqnarrayStar, eqnarray
+from plasTeX.Base.LaTeX.Math import EqnarrayStar, eqnarray, MathArray
 #### Imports Added by Tim ####
 from plasTeX.Base.LaTeX.Math import math, MathEnvironmentPre
 
@@ -9,7 +8,7 @@ from plasTeX.Logging import getLogger
 
 deflog = getLogger('parse.definitions')
 
-class pmatrix(Array):
+class pmatrix(MathArray):
     pass
 
 class _AMSEquation(eqnarray):
@@ -81,17 +80,17 @@ class multline(multiline):
 class MultlineStar(MultilineStar):
     macroName = 'multline*'
 
-class matrix(Array):
+class matrix(MathArray):
     pass
 
-class vmatrix(Array):
+class vmatrix(MathArray):
     pass
-class Vmatrix(Array):
+class Vmatrix(MathArray):
     pass
 
-class bmatrix(Array):
+class bmatrix(MathArray):
     pass
-class Bmatrix(Array):
+class Bmatrix(MathArray):
     pass
 
 class smallmatrix(Array):
