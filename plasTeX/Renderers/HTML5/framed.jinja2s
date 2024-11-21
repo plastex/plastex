@@ -1,0 +1,11 @@
+name: framed oframed
+<div class="framed framed-box">{{ obj }}</div>
+
+name: shaded shaded*
+<div class="framed framed-shaded">{{ obj }}</div>
+
+name: snugshade snugshade*
+<div class="framed framed-shaded framed-snug">{{ obj }}</div>
+
+name: leftbar
+<div class="framed framed-leftbar">{{ obj }}</div>
