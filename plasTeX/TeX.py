@@ -15,7 +15,7 @@ Example:
 """
 from io import IOBase
 from typing import Optional, List
-import string, os, sys, plasTeX, subprocess
+import contextlib, string, os, sys, plasTeX, subprocess
 from plasTeX.Tokenizer import Tokenizer, Token, EscapeSequence, Other
 from plasTeX import TeXDocument
 from plasTeX.Base.TeX.Primitives import MathShift
@@ -1330,53 +1330,50 @@ class TeX(object):
         full path to file -- if it is found
 
         """
-        # When, for example, ``\Input{name}`` is encountered, we should look in
-        # the directory containing the file being processed. So the following
-        # code adds the directory to the start of $TEXINPUTS.
-        TEXINPUTS = os.environ.get("TEXINPUTS",'')
-        try:
-            srcDir = os.path.dirname(self.filename)
-        except AttributeError:
-            # I think this happens only for the command line file.
-            pass
-        else:
-            if TEXINPUTS:
-                os.environ["TEXINPUTS"] = "%s%s%s%s" % (srcDir, os.path.pathsep, TEXINPUTS, os.path.pathsep)
+        if os.path.isabs(name):
+            return name
+
+        with contextlib.ExitStack() as stack:
+            # When, for example, ``\Input{name}`` is encountered, we should look in
+            # the directory containing the file being processed. So the following
+            # code adds the directory to the start of $TEXINPUTS.
+            TEXINPUTS = os.environ.get("TEXINPUTS",'')
+            try:
+                srcDir = os.path.dirname(self.filename)
+            except AttributeError:
+                # I think this happens only for the command line file.
+                pass
             else:
-                os.environ["TEXINPUTS"] = "%s%s" % (srcDir, os.path.pathsep)
+                if TEXINPUTS:
+                    os.environ["TEXINPUTS"] = "%s%s%s%s" % (srcDir, os.path.pathsep, TEXINPUTS, os.path.pathsep)
+                    @stack.callback
+                    def restore_texinputs():
+                        os.environ["TEXINPUTS"] = TEXINPUTS
+                else:
+                    os.environ["TEXINPUTS"] = "%s%s" % (srcDir, os.path.pathsep)
+                    @stack.callback
+                    def restore_texinputs():
+                        os.environ.pop("TEXINPUTS", None)
 
-        def restore_texinputs():
-            # Undo any mods to $TEXINPUTS.
-            if TEXINPUTS:
-                os.environ["TEXINPUTS"] = TEXINPUTS
-            else:
-                os.environ.pop("TEXINPUTS", None)
+            try:
+                program = self.ownerDocument.config['general']['kpsewhich']
+    
+                kwargs = {'stdout':subprocess.PIPE}
+                if sys.platform.lower().startswith('win'):
+                    kwargs['shell'] = True
+    
+                output = subprocess.Popen([program, name], **kwargs).communicate()[0].strip()
+                output = output.decode('utf-8')
+                if output:
+                    return output
+    
+            except Exception:
+                paths = os.environ.get("TEXINPUTS", '.').split(os.path.pathsep)
+                for path in paths:
+                    path = os.path.join(path, name)
+                    if os.path.exists(path):
+                        return path
 
-        try:
-            program = self.ownerDocument.config['general']['kpsewhich']
-
-            kwargs = {'stdout':subprocess.PIPE}
-            if sys.platform.lower().startswith('win'):
-                kwargs['shell'] = True
-
-            output = subprocess.Popen([program, name], **kwargs).communicate()[0].strip()
-            output = output.decode('utf-8')
-            if output:
-                restore_texinputs()
-                return output
-
-        except:
-            fullname = ''
-            paths = os.environ.get("TEXINPUTS", '.').split(os.path.pathsep)
-            for path in [x for x in paths if x]:
-                if name in os.listdir(path):
-                    fullname = os.path.join(path,name)
-                    break
-            if fullname:
-                restore_texinputs()
-                return fullname
-
-        restore_texinputs()
         raise FileNotFoundError('Could not find any file named: %s' % name)
 
 #
