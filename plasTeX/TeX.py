@@ -1357,16 +1357,16 @@ class TeX(object):
 
             try:
                 program = self.ownerDocument.config['general']['kpsewhich']
-    
+
                 kwargs = {'stdout':subprocess.PIPE}
                 if sys.platform.lower().startswith('win'):
                     kwargs['shell'] = True
-    
+
                 output = subprocess.Popen([program, name], **kwargs).communicate()[0].strip()
                 output = output.decode('utf-8')
                 if output:
                     return output
-    
+
             except Exception:
                 paths = os.environ.get("TEXINPUTS", '.').split(os.path.pathsep)
                 for path in paths:
