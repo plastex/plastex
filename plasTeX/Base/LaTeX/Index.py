@@ -14,8 +14,8 @@ from typing import Optional
 log = getLogger()
 
 try:
-    from plasTeX.Base.LaTeX.pyuca import Collator
-    collator = Collator(os.path.join(os.path.dirname(__file__), 'allkeys.txt')).sort_key
+    from pyuca import Collator_10_0_0
+    collator = Collator_10_0_0().sort_key
 except ImportError:
     collator = lambda x: x.lower()
 
