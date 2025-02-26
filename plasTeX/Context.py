@@ -1,6 +1,7 @@
 import sys
 import os
 import configparser
+import contextlib
 import re
 import time
 from pathlib import Path
@@ -411,51 +412,67 @@ class Context(object):
                                    os.path.basename(module) + '.ini')
 
         imported = None
+        # temporarily adjust the path for importing plugins
         orig_sys_path = sys.path
-
-        for pkg_dir in config['general']['packages-dirs']:
-            if Path(pkg_dir).is_absolute():
-                path = Path(pkg_dir)
-            else:
-                path = (Path(working_dir)/pkg_dir).absolute()
-
-            pypath = (path/module).with_suffix('.py')
-            if not pypath.exists():
-                continue
-            if str(path) not in sys.path:
-                sys.path.insert(0, str(path))
-            spec = find_spec(module)
-            if spec is None:
+        with contextlib.ExitStack() as stack:
+            @stack.callback
+            def _reset_sys_path():
                 sys.path = orig_sys_path
-                continue
-            if module in sys.modules and spec.origin != str(pypath):
-                log.warning('Python has already loaded a module named {} '
-                        ' from {}, so we cannot load it from {}. '
-                        'You can fix this by creating a '
-                        'plugin.'.format(module, spec.origin, pkg_dir))
+
+            for pkg_dir in config['general']['packages-dirs']:
+                if Path(pkg_dir).is_absolute():
+                    path = Path(pkg_dir)
+                else:
+                    path = (Path(working_dir)/pkg_dir).absolute()
+
+                pypath = (path/module).with_suffix('.py')
+                if not pypath.exists():
+                    continue
+                if str(path) not in sys.path:
+                    sys.path.insert(0, str(path))
+                spec = find_spec(module)
+                if spec is None:
+                    sys.path = orig_sys_path
+                    continue
+                if module in sys.modules and spec.origin != str(pypath):
+                    log.warning('Python has already loaded a module named {} '
+                            ' from {}, so we cannot load it from {}. '
+                            'You can fix this by creating a '
+                            'plugin.'.format(module, spec.origin, pkg_dir))
+                    break
+
+                imported = import_module(module)
                 break
 
-            try:
-                imported = import_module(module)
-            except (ImportError, ModuleNotFoundError) as msg:
-                # Error while importing
-                sys.path = orig_sys_path
-                raise
-            break
+            if imported is None:
+                for plugin in reversed(config['general']['plugins']):
+                    sys.path = orig_sys_path
+                    plugin_module = import_module(plugin)
+                    assert plugin_module.__file__
+                    if not (Path(plugin_module.__file__).parent/'Packages').exists():
+                        continue
+                    p_ = str(Path(plugin_module.__file__).parent.parent)
+                    if p_ not in sys.path:
+                        sys.path.insert(0, p_)
+                    try:
+                        imported = import_module(plugin + '.Packages.' + module)
+                        break
+                    except (ImportError, ModuleNotFoundError) as msg:
+                        # No Python module
+                        if 'No module' in str(msg) and module in str(msg):
+                            pass
+                            # Failed to load Python package
+                        # Error while importing
+                        else:
+                            raise
 
-        if imported is None:
-            for plugin in reversed(config['general']['plugins']):
-                sys.path = orig_sys_path
-                plugin_module = import_module(plugin)
-                assert plugin_module.__file__
-                if not (Path(plugin_module.__file__).parent/'Packages').exists():
-                    continue
-                p_ = str(Path(plugin_module.__file__).parent.parent)
+            if imported is None:
+                # Now try builtin plasTeX packages
+                p_ = str(Path(__file__).parent.parent)
                 if p_ not in sys.path:
                     sys.path.insert(0, p_)
                 try:
-                    imported = import_module(plugin + '.Packages.' + module)
-                    break
+                    imported = import_module('plasTeX.Packages.' + module)
                 except (ImportError, ModuleNotFoundError) as msg:
                     # No Python module
                     if 'No module' in str(msg) and module in str(msg):
@@ -463,27 +480,7 @@ class Context(object):
                         # Failed to load Python package
                     # Error while importing
                     else:
-                        sys.path = orig_sys_path
                         raise
-
-        if imported is None:
-            # Now try builtin plasTeX packages
-            p_ = str(Path(__file__).parent.parent)
-            if p_ not in sys.path:
-                sys.path.insert(0, p_)
-            try:
-                imported = import_module('plasTeX.Packages.' + module)
-            except (ImportError, ModuleNotFoundError) as msg:
-                # No Python module
-                if 'No module' in str(msg) and module in str(msg):
-                    pass
-                    # Failed to load Python package
-                # Error while importing
-                else:
-                    sys.path = orig_sys_path
-                    raise
-
-        sys.path = orig_sys_path
 
         if imported:
             status.info(' (loading package %s ' % imported.__file__)
