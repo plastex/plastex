@@ -82,17 +82,17 @@ class MultlineStar(MultilineStar):
     macroName = 'multline*'
 
 class matrix(Array):
-    pass
+    mathMode = True
 
 class vmatrix(Array):
-    pass
+    mathMode = True
 class Vmatrix(Array):
-    pass
+    mathMode = True
 
 class bmatrix(Array):
-    pass
+    mathMode = True
 class Bmatrix(Array):
-    pass
+    mathMode = True
 
 class smallmatrix(Array):
     pass
