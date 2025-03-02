@@ -405,7 +405,7 @@ class Renderer(dict):
 
         self.level = config["files"]["split-level"]
         filenameTemplate = config["files"]["filename"].strip()
-        if ' ' not in filenameTemplate and '[' not in filenameTemplate:
+        if not '$' in filenameTemplate:
             self.level = -10
 
         # If there are no keys, print a warning.
