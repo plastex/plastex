@@ -465,9 +465,9 @@ class active(CountCommand):
 
 class advance(Command):
     def invoke(self, tex):
-        tex.readArgument(type='Number')
+        tex.readArgument(type='Tok')
         tex.readKeyword(['by'])
-        tex.readArgument(type='Number')
+        tex.readArgument(type='dimen')
 
 class leavevmode(Command): pass
 
