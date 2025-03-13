@@ -50,15 +50,15 @@ class List(Environment):
 
     def invoke(self, tex):
         """ Set list nesting depth """
-        if self.macroMode != Environment.MODE_END:
-            List.depth += 1
-        else:
+        if self.macroMode == Environment.MODE_END:
             List.depth -= 1
-        try:
-            for i in range(List.depth, len(List.counters)):
-                self.ownerDocument.context.counters[List.counters[i]].setcounter(0)
-        except (IndexError, KeyError):
-            pass
+        else:
+            List.depth += 1
+            try:
+                for i in range(List.depth, len(List.counters)):
+                    self.ownerDocument.context.counters[List.counters[i]].setcounter(0)
+            except (IndexError, KeyError):
+                pass
         return Environment.invoke(self, tex)
 
     def digest(self, tokens):
