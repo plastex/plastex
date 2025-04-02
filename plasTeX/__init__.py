@@ -476,12 +476,12 @@ class Macro(Element):
         self.argSource = ''
         arg = None
         try:
-            for arg in self.arguments:
+            for i, arg in enumerate(self.arguments):
                 self.preArgument(arg, tex)
                 output, source = tex.readArgumentAndSource(parentNode=self,
                                                            name=arg.name,
                                                            **arg.options)
-                self.argSource += source
+                self.argSource += self.filterArgumentSource(source,i)
                 self.attributes[arg.name] = output
                 self.postArgument(arg, output, tex)
         except:
@@ -520,6 +520,17 @@ class Macro(Element):
         # the following arguments may contain labels.
         if arg.index == 0 and arg.name != '*modifier*':
             self.refstepcounter(tex)
+
+    def filterArgumentSource(self, source, i):
+        """
+        Apply some processing to the source of an argument.
+
+        Arguments:
+        source -- The unmodified source string of the argument.
+        i -- the index of the argument in the list of arguments.
+
+        """
+        return source
 
     def postArgument(self, arg, value, tex):
         """
