@@ -23,6 +23,12 @@ class newcommand(Command):
         deflog.debug('command %s %s %s', *args)
         self.ownerDocument.context.newcommand(*args, **kwargs)
 
+    def filterArgumentSource(self, source, i):
+        if i==1:
+            source = source.replace(' ','')
+
+        return super().filterArgumentSource(source, i)
+
 class renewcommand(newcommand):
     pass
 
