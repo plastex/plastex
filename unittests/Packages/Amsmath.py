@@ -51,3 +51,35 @@ def test_imath():
 
     assert len(jmath.childNodes) == 0
     assert jmath.str == chr(567)
+
+DOC_split = r"""
+\documentclass{article}
+
+\usepackage{amsmath}
+
+\begin{document}
+
+\begin{equation}
+\begin{split}
+ a\\ b\\ c\\d
+\end{split}
+\end{equation}
+
+\begin{equation}
+a
+\end{equation}
+
+\end{document}
+"""
+
+def test_split():
+    """ 
+        The split environment provides no numbering.
+    """
+    s = TeX()
+    s.input(DOC_split)
+    output = s.parse()
+    equations = output.getElementsByTagName('equation')
+
+    assert equations[0].ref.textContent == '1'
+    assert equations[1].ref.textContent == '2'
