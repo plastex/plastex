@@ -11,8 +11,8 @@ def test_comparison_operator():
       ''')
     nodes = tex.parse().getElementsByTagName('math')
     assert len(nodes) == 2
-    assert nodes[0].mathjax_source == r'\(0 {\lt} 1\)'
-    assert nodes[1].mathjax_source == r'\(2 {\gt} 1\)'
+    assert nodes[0].mathjax_source == r'\(0 \lt  1\)'
+    assert nodes[1].mathjax_source == r'\(2 \gt  1\)'
 
 
 def test_angle_brackets():

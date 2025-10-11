@@ -55,7 +55,7 @@ class MathEnvironmentPre(MathEnvironment):
 
 def mathjax_lt_gt(s: str) -> str:
     """Help mathjax deal with < and >, see http://docs.mathjax.org/en/latest/input/tex/html.html?highlight=lt#html-special-characters."""
-    return s.replace('<', r'{\lt}').replace('>', r'{\gt}')
+    return s.replace('<', r'\lt ').replace('>', r'\gt ')
 
 class math(MathEnvironment):
     @property
