@@ -1999,7 +1999,7 @@ class ProcessingInstruction(Node):
     target = None # type: Optional[str]
     data = None # type: Optional[str]
 
-    @property # type: ignore # mypy#4125
+    @property
     def nodeName(self):
         return self.target
 
@@ -2007,11 +2007,11 @@ class ProcessingInstruction(Node):
     def nodeName(self, value):
         self.target = value
 
-    @property # type: ignore # mypy#4125
+    @property
     def nodeValue(self):
         return self.data
 
-    @nodeName.setter
+    @nodeValue.setter
     def nodeValue(self, value):
         self.data = value
 
