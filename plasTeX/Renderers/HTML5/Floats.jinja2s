@@ -11,9 +11,9 @@ name: table table*
 name: marginpar
 <p class="marginpar">{{ obj.attributes.right }}</p>
 
-name: caption
+name: caption caption*
 <figcaption>
-  <span class="caption_title">{{ obj.title }}</span> 
-  <span class="caption_ref">{{ obj.ref }}</span> 
+  {% if obj.title %}<span class="caption_title">{{ obj.title }}</span>{% endif %}
+  {% if obj.ref %}<span class="caption_ref">{{ obj.ref }}</span>{% endif %}
   <span class="caption_text">{{ obj }}</span> 
 </figcaption>
