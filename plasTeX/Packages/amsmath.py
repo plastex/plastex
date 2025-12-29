@@ -50,6 +50,11 @@ class AlignatStar(_AMSEquationStar):
     macroName = 'alignat*'
 
 class split(_AMSEquation):
+    counter = None
+
+    class EndRow(_AMSEquation.EndRow):
+        counter = None
+
     pass
 
 #### Added by Tim ####
