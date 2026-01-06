@@ -165,11 +165,11 @@ class EqnarrayStar(Array, MathEnvironmentPre, NoCharSubEnvironment):
 
 class eqnarray(EqnarrayStar):
     macroName = None
-    counter = 'equation'
+    counter: Optional[str] = 'equation'
 
     class EndRow(Array.EndRow):
         """ End of a row """
-        counter = 'equation'
+        counter: Optional[str] = 'equation'
         def invoke(self, tex):
             res = Array.EndRow.invoke(self, tex)
             res[1].ref = self.ref
