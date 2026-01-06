@@ -82,6 +82,7 @@ def test_benchmark(src, tmpdir):
                     raise OSError('Preprocessing command exited abnormally with return code %s: %s' % (command, p.log))
             elif line.startswith('%#'):
                 filename = line[2:].strip()
+                (tmpdir / filename).parent.mkdir(exist_ok=True, parents=True)
                 shutil.copyfile(str(root/'extras'/filename),
                                 str(tmpdir/filename))
             elif line.startswith('%python '):
