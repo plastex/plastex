@@ -34,7 +34,7 @@ class includegraphics(Command):
 
         # Check for file using kpsewhich
         if img is None:
-            for e in ['']+ext:
+            for e in ext:
                 try:
                     img = os.path.abspath(tex.kpsewhich(f+e))
                     break
