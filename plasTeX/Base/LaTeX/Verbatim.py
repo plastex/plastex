@@ -5,7 +5,7 @@ C.6.4 Verbatim
 
 from plasTeX import VerbatimEnvironment, Command, sourceArguments, sourceChildren
 from plasTeX.Base.TeX.Text import bgroup
-from plasTeX.Tokenizer import Other
+from plasTeX.Tokenizer import Other, Parameter
 
 class verbatim(VerbatimEnvironment):
     pass
@@ -31,11 +31,20 @@ class verb(Command):
         self.ownerDocument.context.push(self)
         self.parse(tex)
         self.ownerDocument.context.setVerbatimCatcodes()
-        # See what the delimiter is
+        # Get the delimiter: it's usually the next token, with special cases for some
+        # characters.
         for endpattern in tex:
-            self.delimiter = endpattern
+            # If the opening delimiter is a ``{`` character, parsed as a ``bgroup``
+            # token, the end delimiter must be a ``}`` character.
             if isinstance(endpattern, bgroup):
-                self.delimiter = endpattern = Other('}')
+                endpattern = Other('}')
+            # The character # is parsed as a ``Parameter`` token when it immediately 
+            # follows ``\verb``, but the corresponding end delimiter will be parsed as
+            # an ``Other`` token. So if that's the case, change ``endpattern`` to an
+            # ``Other`` token with the same content.
+            if isinstance(endpattern, Parameter):
+                endpattern = Other(str(endpattern))
+            self.delimiter = endpattern
             break
         tokens = [self, endpattern]
         # Parse until this delimiter is seen again
