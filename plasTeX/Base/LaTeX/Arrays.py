@@ -301,7 +301,7 @@ class Array(Environment):
 #               if isinstance(self[i], Array.BorderCommand):
 #                   self.pop(i)
 
-            self.paragraphs()
+            self.paragraphs(charsubs=self.paragraphsCharsubs())
 
         @property
         def borders(self):
@@ -387,7 +387,6 @@ class Array(Environment):
 
         def digest(self, tokens):
             Command.digest(self, tokens)
-            #self.paragraphs()
 
 
     def invoke(self, tex):

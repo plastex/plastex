@@ -56,7 +56,7 @@ class bgroup(Command):
                 item.parentNode = self
                 item.digest(tokens)
             self.appendChild(item)
-        self.paragraphs(force=False)
+        self.paragraphs(charsubs=self.paragraphsCharsubs(), force=False)
 
     @property
     def source(self):

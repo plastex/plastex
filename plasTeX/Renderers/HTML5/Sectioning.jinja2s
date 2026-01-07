@@ -26,31 +26,58 @@ name: maketitle
 name: document
 {{ obj }}
 
-name: part chapter section
+name: part chapter
+<!-- Latex Chapter/Part -->
+
 <h1 id="{{ obj.id }}">{{ obj.fullTitle }}</h1>
+
 {{ obj }}
 
-
-name: subsection 
+name: section
+<section class="section">
 <h2 id="{{ obj.id }}">{{ obj.fullTitle }}</h2>
+
 {{ obj }}
 
+</section>
+
+name: subsection
+<section class="subsection">
+<h3 id="{{ obj.id }}">{{ obj.fullTitle }}</h3>
+
+{{ obj }}
+
+</section>
 
 name: subsubsection
-<h3 id="{{ obj.id }}">{{ obj.fullTitle }}</h3>
+<section class="subsubsection">
+<h4 id="{{ obj.id }}">{{ obj.fullTitle }}</h4>
+
 {{ obj }}
 
+</section>
 
 name: paragraph
-<h4 id="{{ obj.id }}">{{ obj.fullTitle }}</h4>
-{{ obj }}
 
+<p class="paragraph">
+    <strong class="paragraph-title" id="{{ obj.id }}">{{ obj.title }}</strong>
+
+    {{ obj }}
+</p>
 
 name: subparagraph
-<h5 id="{{ obj.id }}">{{ obj.fullTitle }}</h5>
-{{ obj }}
+
+<p class="subparagraph">
+    <strong class="paragraph-title" id="{{ obj.id }}">{{ obj.title }}</strong>
+
+    {{ obj }}
+</p>
 
 
 name: subsubparagraph
-<h6 id="{{ obj.id }}">{{ obj.fullTitle }}</h6>
-{{ obj }}
+
+<p class="subsubparagraph">
+    <strong class="paragraph-title" id="{{ obj.id }}">{{ obj.title }}</strong>
+
+    {{ obj }}
+</p>
