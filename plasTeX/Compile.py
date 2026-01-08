@@ -1,6 +1,7 @@
 import os, sys, string, glob
 import importlib
 import importlib.util
+import traceback
 from types import ModuleType
 from pathlib import Path
 import pdb
@@ -11,6 +12,7 @@ from plasTeX.Logging import getLogger, updateLogLevels
 from plasTeX.Renderers import Renderer
 
 log = getLogger()
+pluginlog = getLogger('plugin.loading')
 
 def import_file(path: Path) -> ModuleType:
     module_name = path.name
@@ -44,7 +46,7 @@ def load_renderer(rname: str, config: ConfigManager) -> Renderer:
             return getattr(importlib.import_module(plugin + '.Renderers.' + rname),
                            'Renderer')()
         except ImportError:
-            pass
+            pluginlog.debug(f"Loading renderer[{rname}]: "+traceback.format_exc(limit=-1))
 
     try:
         return getattr(import_file(Path(rname)), 'Renderer')()

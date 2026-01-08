@@ -4,6 +4,7 @@ import configparser
 import contextlib
 import re
 import time
+import traceback
 from pathlib import Path
 from typing import Optional, Dict, List
 from importlib import import_module
@@ -25,7 +26,7 @@ log = getLogger()
 status = getLogger('status')
 stacklog = getLogger('context.stack')
 macrolog = getLogger('context.macros')
-
+pluginlog = getLogger('plugin.loading')
 
 class ContextItem(dict):
     """
@@ -474,6 +475,7 @@ class Context(object):
                 try:
                     imported = import_module('plasTeX.Packages.' + module)
                 except (ImportError, ModuleNotFoundError) as msg:
+                    pluginlog.debug(f"Importing package[{module}]: "+traceback.format_exc(limit=-1))
                     # No Python module
                     if 'No module' in str(msg) and module in str(msg):
                         pass
