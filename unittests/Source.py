@@ -99,7 +99,12 @@ class Source(TestCase):
         source = normalize(output.source)
         assert input == source, '"%s" != "%s"' % (input, source)
         
-    
+    def testRenewcommand(self):
+        input = r'\renewcommand{\t}{test}\renewcommand\u{more}'
+        s = TeX()
+        s.input(input)
+        output = s.parse()
+        assert output.source == input
 
 if __name__ == '__main__':
     unittest.main()

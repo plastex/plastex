@@ -54,6 +54,7 @@ def test_imager(imager_tuple, tmpdir):
     there.}
     \begin{document}
     $a + b = x$
+    $\>$
     \end{document}
     ''')
 
