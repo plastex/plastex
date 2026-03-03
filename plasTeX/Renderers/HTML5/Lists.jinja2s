@@ -6,7 +6,7 @@ name: itemize
 </ul>
 
 name: enumerate
-<ol class="enumerate">
+<ol class="enumerate"{% if obj.start is defined %} start="{{ obj.start }}"{% endif %}{% if obj.list_style_type is defined %} style="list-style-type: {{ obj.list_style_type}};"{% endif %}>
 {% for item in obj %}
   <li>{{ item }}</li>
 {% endfor %}
