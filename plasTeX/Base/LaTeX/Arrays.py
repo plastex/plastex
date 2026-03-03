@@ -6,6 +6,7 @@ C.10.2 The array and tabular Environments
 import sys
 from plasTeX import Macro, Environment, Command, DimenCommand
 from plasTeX import sourceChildren, sourceArguments
+from plasTeX.Base.TeX import Primitives
 from typing import Optional
 
 class ColumnType(Macro):
@@ -230,7 +231,7 @@ class Array(Environment):
                 argSource = ' '
             s.append('%sbegin{%s}%s' % (escape, name, argSource))
             for cell in self:
-                s.append(sourceChildren(cell, par=not(self.parentNode.mathMode)))
+                s.append(sourceChildren(cell))
                 if cell.endToken is not None:
                     s.append(cell.endToken.source)
             if self.endToken is not None:
@@ -301,7 +302,14 @@ class Array(Environment):
 #               if isinstance(self[i], Array.BorderCommand):
 #                   self.pop(i)
 
-            self.paragraphs()
+            # do not create paragraphs in math mode arrays
+            p = self
+            while p:
+                if getattr(p, "mathMode", None) is not None:
+                    if not p.mathMode:
+                        self.paragraphs()
+                    break
+                p = p.parentNode
 
         @property
         def borders(self):
@@ -356,24 +364,14 @@ class Array(Environment):
         def isBorderOnly(self):
             """ Does this cell exist only for applying borders? """
             for par in self:
-                for item in par:
+                # In text mode, we have paragraphs, in math mode we don't!
+                for item in par if isinstance(self, Primitives.par) else [par]:
                     if item.isElementContentWhitespace:
                         continue
                     elif isinstance(item, Array.BorderCommand):
                         continue
                     return False
             return True
-
-
-        @property
-        def source(self):
-            # Don't put paragraphs into math mode arrays
-            if self.parentNode is None:
-               # no parentNode, assume mathMode==False
-               return sourceChildren(self, True)
-            return sourceChildren(self,
-                       par=not(self.parentNode.parentNode.mathMode))
-
 
 
     class multicolumn(Command):
@@ -597,7 +595,7 @@ class Array(Environment):
             if self.hasChildNodes():
                 for row in self:
                     for cell in row:
-                        s.append(sourceChildren(cell, par=not(self.mathMode)))
+                        s.append(sourceChildren(cell))
                         if cell.endToken is not None:
                             s.append(cell.endToken.source)
                     if row.endToken is not None:
