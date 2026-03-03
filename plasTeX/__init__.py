@@ -257,7 +257,7 @@ class Macro(Element):
             return getattr(self, '@tocEntry')
         except AttributeError:
             try:
-                if 'toc' in list(self.attributes.keys()):
+                if 'toc' in self.attributes:
                     toc = self.attributes['toc']
                     if toc is None:
                         toc = self.title
@@ -314,10 +314,8 @@ class Macro(Element):
             return vars(tself)[localsname]
         except KeyError:
             pass
-        mro = list(tself.__mro__)
-        mro.reverse()
         loc = {}
-        for cls in mro:
+        for cls in tself.__mro__[::1]:
             for value in list(vars(cls).values()):
                 if ismacro(value):
                     loc[macroName(value)] = value
@@ -441,7 +439,7 @@ class Macro(Element):
         s = '%s%s%s' % (escape, name, argSource)
 
         # If self.childNodes is not empty, print out the contents
-        if self.attributes and 'self' in list(self.attributes.keys()):
+        if self.attributes and 'self' in self.attributes:
             pass
         else:
             if self.hasChildNodes():
@@ -1127,7 +1125,7 @@ def expandDef(definition, params):
     return output
 
 class NewCommand(Macro):
-    """ Superclass for all \newcommand/\newenvironment type commands """
+    r""" Superclass for all \newcommand/\newenvironment type commands """
     nargs = 0
     opt = None
     definition = None
@@ -1163,7 +1161,7 @@ class NewCommand(Macro):
         return output + expandDef(self.definition, params)
 
 class Definition(Macro):
-    """ Superclass for all \\def-type commands """
+    r""" Superclass for all \def-type commands """
     args = '' # type: str
     definition = None # type: Optional[str]
 
@@ -1596,7 +1594,7 @@ class Counter(object):
         self.resetcounters()
 
     def resetcounters(self):
-        for counter in list(self.counters.values()):
+        for counter in self.counters.values():
             if counter.resetby and self.name and counter.resetby == self.name:
                 counter.value = 0
                 counter.resetcounters()
@@ -1633,7 +1631,7 @@ class Counter(object):
 
 
 class TheCounter(Command):
-    """ Base class for \\thecounter commands """
+    r""" Base class for \thecounter commands """
     format = None
     trimLeft = False
 
