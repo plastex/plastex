@@ -1,13 +1,18 @@
-from plasTeX import Command
+from plasTeX.Base.LaTeX.Arrays import Array
+from plasTeX import Command, Macro, NewCommand, TeXFragment
 from plasTeX.Base.LaTeX.Arrays import Array
 from plasTeX.Base.LaTeX.Math import EqnarrayStar, eqnarray
 #### Imports Added by Tim ####
-from plasTeX.Base.LaTeX.Math import math, MathEnvironmentPre
+from plasTeX.Base.LaTeX.Math import math, MathEnvironmentPre, MathEnvironment
 
 from plasTeX import Tokenizer
 from plasTeX.Logging import getLogger
 
 deflog = getLogger('parse.definitions')
+
+def ProcessOptions(options, document):  # type: ignore
+    context = document.context
+    context.newcounter('parentequation')
 
 class pmatrix(Array):
     pass
@@ -19,15 +24,23 @@ class _AMSEquationStar(EqnarrayStar):
     macroName = None
 
 class align(_AMSEquation):
-    pass
+    class ArrayRow(_AMSEquation.ArrayRow):
+        def digest(self, tokens):
+            self.ownerDocument.context.currentequation = self
+            return super().digest(tokens)
 
 class AlignStar(_AMSEquationStar):
     macroName = 'align*'
 
-class gather(_AMSEquation):
+    class ArrayRow(_AMSEquationStar.ArrayRow):
+        def digest(self, tokens):
+            self.ownerDocument.context.currentequation = self
+            return super().digest(tokens)
+
+class gather(align):
     pass
 
-class GatherStar(_AMSEquationStar):
+class GatherStar(AlignStar):
     macroName = 'gather*'
 
 class falign(_AMSEquation):
@@ -68,15 +81,71 @@ class gathered(MathEnvironmentPre):
     pass
 
 class cases(_AMSEquation):
-    pass
+    counter = None
+
+    def refstepcounter(self, tex):
+        return super(MathEnvironment, self).refstepcounter(tex)
+
+    class EndRow(Array.EndRow):
+        """ End of a row """
+        def invoke(self, tex):
+            res = Array.EndRow.invoke(self, tex)
+            res[1].ref = self.ref
+            return res
 
 class flalign(_AMSEquation):
     pass
 class FlalignStar(_AMSEquationStar):
     macroName = 'flalign*'
 
+class tag(Command):
+    args = 'tag:str'
+
+    @property
+    def source(self):
+        return ''
+
+    def invoke(self, tex):
+        Command.invoke(self, tex)
+        node = self.ownerDocument.context.currentequation
+        self.ownerDocument.context.counters['equation'].value -= 1
+        if node is not None:
+            node.equation_tag = self.attributes['tag']
+            node.ref = self.ownerDocument.createTextNode(node.equation_tag)
+
 class subequations(_AMSEquation):
-    pass
+    counter = 'parentequation'
+    
+    def invoke(self, tex):
+        if self.macroMode == Macro.MODE_END:
+            context = self.ownerDocument.context
+
+            equation = context.counters['equation']
+            parentequation = context.counters['parentequation']
+
+            equation.value = parentequation.value
+
+        return super().invoke(tex)
+
+    def parse(self, tex):
+        if self.macroMode == Macro.MODE_BEGIN:
+            context = self.ownerDocument.context
+
+            equation = context.counters['equation']
+            parentequation = context.counters['parentequation']
+
+            parentequation.value = equation.value
+            equation.value = 0
+
+            definition = list(Tokenizer.Tokenizer(r'\theparentequation \alph{equation}', context))
+
+            context.top['theequation'] = type(
+                'theequation', 
+                (NewCommand,),
+                {'nargs': 0, 'opt': None, 'definition': definition}
+            )
+
+        return super().parse(tex)
 
 class xalignat(alignat):
     pass

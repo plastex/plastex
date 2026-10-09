@@ -14,9 +14,9 @@ def test_amscd():
 \end{document}
 ''')
     p = t.parse()
-    assert p.getElementsByTagName('equation')[0].source == r'''\begin{equation}  \begin{CD} 
+    assert p.getElementsByTagName('equation')[0].source == r'''\begin{equation}\begin{CD} 
         A @>>> B @>>> C \\
         @VVV @AAA D @VVV \\
         E @<<< F @<<\alpha< G
-    \end{CD} \end{equation}'''
+    \end{CD}\tag{1}\end{equation}'''
 
