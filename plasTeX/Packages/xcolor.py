@@ -527,7 +527,7 @@ class ColorParser:
                 lambda s, t: {'element': ColorParser.Elements.model, 'model': ColorModel[t]}),
             (r'named', lambda s, t: {'element': ColorParser.Elements.named, 'model': ColorModel.natural}),
             (r'[0-9A-F]{6}', lambda s, t: {'element': ColorParser.Elements.int, 'value': int(t,16)}),
-            (r'[-+]?(\d*\.\d+)|(\d+\.\d*)',
+            (r'[-+]?(?:\d*\.\d+)|(?:\d+\.\d*)',
                 lambda s, t: {'element': ColorParser.Elements.dec, 'value': float(t)}),
             (r'[-+]?\d+', lambda s, t: {'element': ColorParser.Elements.int, 'value': int(t)}),
             (r'-+', lambda s, t: {'element': ColorParser.Elements.minus, 'value': len(t)}),

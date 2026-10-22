@@ -1,7 +1,7 @@
 try:
     from unittest.mock import Mock 
 except ImportError:
-    from mock import Mock
+    from mock import Mock  # type: ignore[no-redef]
 
 from plasTeX.TeX import TeX
 
